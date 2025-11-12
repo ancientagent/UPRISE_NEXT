@@ -1,0 +1,126 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  username    String    @unique
+  displayName String
+  password    String
+  bio         String?
+  avatar      String?
+  coverImage  String?
+  latitude    Float?
+  longitude   Float?
+  city        String?
+  country     String?
+  isVerified  Boolean   @default(false)
+  isArtist    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tracks             Track[]
+  communities        CommunityMember[]
+  createdCommunities Community[]
+  events             Event[]
+
+  @@map("users")
+}
+
+model Community {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String
+  coverImage  String?
+  avatar      String?
+  isPrivate   Boolean  @default(false)
+  memberCount Int      @default(0)
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // PostGIS geography column for geofencing
+  geofence Unsupported("geography(Point, 4326)")?
+  radius   Float? // radius in meters
+
+  createdBy User              @relation(fields: [createdById], references: [id])
+  members   CommunityMember[]
+  tracks    Track[]
+  events    Event[]
+
+  @@map("communities")
+}
+
+model CommunityMember {
+  id          String   @id @default(uuid())
+  userId      String
+  communityId String
+  role        String   @default("member") // member, moderator, admin
+  joinedAt    DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  community Community @relation(fields: [communityId], references: [id])
+
+  @@unique([userId, communityId])
+  @@map("community_members")
+}
+
+model Track {
+  id            String   @id @default(uuid())
+  title         String
+  artist        String
+  album         String?
+  duration      Float // in seconds
+  fileUrl       String
+  coverArt      String?
+  waveformData  Json?
+  uploadedById  String
+  communityId   String?
+  playCount     Int      @default(0)
+  likeCount     Int      @default(0)
+  status        String   @default("processing") // processing, ready, failed
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  uploadedBy User       @relation(fields: [uploadedById], references: [id])
+  community  Community? @relation(fields: [communityId], references: [id])
+
+  @@map("tracks")
+}
+
+model Event {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  coverImage    String?
+  startDate     DateTime
+  endDate       DateTime
+  locationName  String
+  address       String
+  latitude      Float
+  longitude     Float
+  communityId   String
+  createdById   String
+  attendeeCount Int      @default(0)
+  maxAttendees  Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  community Community @relation(fields: [communityId], references: [id])
+  createdBy User      @relation(fields: [createdById], references: [id])
+
+  @@map("events")
+}

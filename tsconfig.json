@@ -1,0 +1,28 @@
+
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/web"
+    },
+    {
+      "path": "./apps/api"
+    },
+    {
+      "path": "./apps/socket"
+    },
+    {
+      "path": "./apps/workers/transcoder"
+    },
+    {
+      "path": "./packages/ui"
+    },
+    {
+      "path": "./packages/config"
+    },
+    {
+      "path": "./packages/types"
+    }
+  ]
+}
