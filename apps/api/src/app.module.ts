@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { CommunitiesModule } from './communities/communities.module';
 import { TracksModule } from './tracks/tracks.module';
 import { EventsModule } from './events/events.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { EventsModule } from './events/events.module';
       },
     ]),
     PrismaModule,
+    HealthModule,
     AuthModule,
     UsersModule,
     CommunitiesModule,
