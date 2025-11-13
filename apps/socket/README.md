@@ -10,7 +10,6 @@ Socket.IO real-time server with JWT authentication and dynamic namespaces.
 - **Dynamic Namespaces**: Community-specific namespaces for isolated communication
 - **Presence Tracking**: Track user online/offline status
 - **Typing Indicators**: Show when users are typing
-- **Track Playback Sync**: Synchronize track playback across users
 
 ## Setup
 
@@ -36,8 +35,6 @@ pnpm start
 - `typing:start` - Indicate user started typing
 - `typing:stop` - Indicate user stopped typing
 - `message:send` - Send a chat message
-- `track:play` - Notify track playback started
-- `track:pause` - Notify track playback paused
 - `community:message` - Send message to community (in community namespace)
 - `track:react` - React to a track (in community namespace)
 
@@ -46,8 +43,6 @@ pnpm start
 - `presence:changed` - User presence status changed
 - `typing:user` - User typing status changed
 - `message:new` - New chat message received
-- `track:playing` - Track playback started
-- `track:paused` - Track playback paused
 - `user:joined` - User joined community (in community namespace)
 - `user:left` - User left community (in community namespace)
 - `community:message:new` - New community message (in community namespace)

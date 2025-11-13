@@ -57,7 +57,7 @@ export const FindNearbyCommunitiesSchema = z.object({
   limit: z.number().int().min(1).max(100).optional().default(20),
 });
 
-export type FindNearbyCommunities Dto = z.infer<typeof FindNearbyCommunitiesSchema>;
+export type FindNearbyCommunitiesDto = z.infer<typeof FindNearbyCommunitiesSchema>;
 
 /**
  * Verify user location within community geofence

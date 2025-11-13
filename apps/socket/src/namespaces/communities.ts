@@ -186,14 +186,6 @@ export function setupCommunityNamespaces(io: Server) {
       });
     });
 
-    /**
-     * Event: request-sync
-     * Request current playback state from community
-     */
-    socket.on('request-sync', () => {
-      logger.logEvent('request-sync', socket.id, userId);
-      socket.to(communityRoom).emit('sync-requested', { userId, username });
-    });
 
     /**
      * Event: disconnect
