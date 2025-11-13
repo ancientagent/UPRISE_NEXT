@@ -20,6 +20,7 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "noEmit": false,
     "paths": {
       "@uprise/types": ["../../packages/types/src"]
     }
