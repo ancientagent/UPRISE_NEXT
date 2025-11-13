@@ -1,6 +1,12 @@
-# generated-by: Claude-Code
-# UPRISE Infrastructure Policy Check
+# generated-by: DeepAgent on 2025-11-13
+# UPRISE Infrastructure Policy Check (T5 Implementation)
 # Enforces web-tier contract boundaries and deployment policies
+#
+# This workflow implements the T5 task: Web-Tier Contract Guard with CI Enforcement
+# It ensures that apps/web adheres to architectural boundaries defined in:
+# - docs/STRATEGY_CRITICAL_INFRA_NOTE.md
+# - docs/RUNBOOK.md
+# - apps/web/WEB_TIER_BOUNDARY.md
 
 name: Infrastructure Policy Check
 
@@ -30,8 +36,25 @@ jobs:
       - name: Install pnpm
         run: corepack prepare pnpm@9.0.0 --activate
 
-      - name: Web-tier boundary check
-        run: pnpm run infra:check:web
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Web-Tier Contract Guard
+        run: pnpm run infra-policy-check
+        continue-on-error: false
+
+      - name: Display help on failure
+        if: failure()
+        run: |
+          echo "❌ Web-Tier Contract Guard failed!"
+          echo ""
+          echo "For more information, see:"
+          echo "  • docs/STRATEGY_CRITICAL_INFRA_NOTE.md"
+          echo "  • docs/RUNBOOK.md"
+          echo "  • apps/web/WEB_TIER_BOUNDARY.md"
+          echo ""
+          echo "You can also run the guard locally:"
+          echo "  pnpm run infra-policy-check"
 
   lint-and-typecheck:
     name: Lint and Type Check
