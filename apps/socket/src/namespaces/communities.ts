@@ -1,6 +1,6 @@
 
 import { Server, Namespace } from 'socket.io';
-import { AuthenticatedSocket } from '../middleware/auth';
+import { AuthenticatedSocket, authenticateSocket } from '../middleware/auth';
 import { logger } from '../utils/logger';
 
 interface CommunityMessage {
@@ -27,6 +27,9 @@ interface LeaveCommunityData {
 export function setupCommunityNamespaces(io: Server) {
   // Dynamic namespace for communities (e.g., /community/abc-123)
   const communityNamespace = io.of(/^\/community\/[\w-]+$/);
+
+  // Apply authentication middleware to community namespaces
+  communityNamespace.use(authenticateSocket);
 
   communityNamespace.on('connection', (socket: AuthenticatedSocket) => {
     const communityId = socket.nsp.name.split('/')[2];

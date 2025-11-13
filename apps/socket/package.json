@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "smoke-test": "tsx test/smoke-test-client.ts",
+    "smoke-test:verbose": "tsx test/smoke-test-client.ts --verbose"
   },
   "dependencies": {
     "@uprise/types": "workspace:*",
@@ -24,6 +26,7 @@
     "@types/node": "^20.0.0",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/cors": "^2.8.17",
+    "socket.io-client": "^4.7.0",
     "tsx": "^4.7.0",
     "typescript": "^5.5.0"
   }
