@@ -1,4 +1,34 @@
 
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@prisma/client",
+            "message": "🚨 WEB-TIER BOUNDARY VIOLATION: @prisma/client cannot be imported in web tier. Use API endpoints instead."
+          },
+          {
+            "name": "prisma",
+            "message": "🚨 WEB-TIER BOUNDARY VIOLATION: prisma cannot be imported in web tier. Use API endpoints instead."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/prisma/*", "**/*prisma*"],
+            "message": "🚨 WEB-TIER BOUNDARY VIOLATION: Database access is forbidden in web tier. Use API endpoints instead."
+          }
+        ]
+      }
+    ],
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "PrismaClient",
+        "message": "🚨 WEB-TIER BOUNDARY VIOLATION: PrismaClient cannot be used in web tier."
+      }
+    ]
+  }
 }
