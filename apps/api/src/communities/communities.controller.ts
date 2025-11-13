@@ -10,6 +10,7 @@ import {
   Request,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { CommunitiesService } from './communities.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -22,7 +23,7 @@ import {
   VerifyLocationDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
-import { ZodQuery } from '../common/decorators/zod-query.decorator';
+import { ZodError } from 'zod';
 
 @Controller('communities')
 @UseGuards(JwtAuthGuard)
@@ -76,25 +77,46 @@ export class CommunitiesController {
    * Find communities within radius of given GPS coordinates
    * Query params: lat, lng, radius (optional, default 5000m), limit (optional)
    */
-  @Get('nearby/search')
-  @ZodQuery(FindNearbyCommunitiesSchema)
-  async findNearby(@Query() query: FindNearbyCommunitiesDto) {
-    const communities = await this.communitiesService.findNearby({
-      lat: +query.lat,
-      lng: +query.lng,
-      radius: query.radius ? +query.radius : 5000,
-      limit: query.limit ? +query.limit : 20,
-    });
+  @Get('nearby')
+  async findNearby(@Query() rawQuery: any) {
+    try {
+      // Validate query params with Zod
+      const query = FindNearbyCommunitiesSchema.parse({
+        lat: +rawQuery.lat,
+        lng: +rawQuery.lng,
+        radius: rawQuery.radius ? +rawQuery.radius : 5000,
+        limit: rawQuery.limit ? +rawQuery.limit : 20,
+      });
 
-    return {
-      success: true,
-      data: communities,
-      meta: {
-        searchLocation: { lat: query.lat, lng: query.lng },
-        radius: query.radius || 5000,
-        count: communities.length,
-      },
-    };
+      const communities = await this.communitiesService.findNearby({
+        lat: query.lat,
+        lng: query.lng,
+        radius: query.radius,
+        limit: query.limit,
+      });
+
+      return {
+        success: true,
+        data: communities,
+        meta: {
+          searchLocation: { lat: query.lat, lng: query.lng },
+          radius: query.radius,
+          count: communities.length,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
   }
 
   /**
