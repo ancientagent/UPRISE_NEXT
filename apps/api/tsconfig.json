@@ -12,6 +12,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
@@ -22,7 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     "noEmit": false,
     "paths": {
-      "@uprise/types": ["../../packages/types/src"]
+      "@uprise/types": ["../../packages/types/dist"]
     }
   },
   "include": ["src/**/*"],
