@@ -1,4 +1,5 @@
 # generated-by: DeepAgent on 2025-11-13
+# Updated: 2025-11-13 (T8 Integration)
 # UPRISE Infrastructure Policy Check (T5 Implementation)
 # Enforces web-tier contract boundaries and deployment policies
 #
@@ -7,19 +8,36 @@
 # - docs/STRATEGY_CRITICAL_INFRA_NOTE.md
 # - docs/RUNBOOK.md
 # - apps/web/WEB_TIER_BOUNDARY.md
+#
+# NOTE: This workflow is now integrated into the main CI pipeline (ci.yml)
+# It can still be run independently for quick policy checks.
 
 name: Infrastructure Policy Check
 
 on:
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'apps/web/**'
+      - 'scripts/infra-policy-check.ts'
+      - '.github/workflows/infra-policy-check.yml'
   push:
     branches: [main, develop]
+    paths:
+      - 'apps/web/**'
+      - 'scripts/infra-policy-check.ts'
+  workflow_dispatch:  # Allow manual trigger
+
+# Cancel in-progress runs for the same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   web-tier-boundary-check:
     name: Web-Tier Contract Guard
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code
@@ -33,8 +51,24 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Install pnpm
-        run: corepack prepare pnpm@9.0.0 --activate
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '9.0.0'
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -55,56 +89,3 @@ jobs:
           echo ""
           echo "You can also run the guard locally:"
           echo "  pnpm run infra-policy-check"
-
-  lint-and-typecheck:
-    name: Lint and Type Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install pnpm
-        run: corepack prepare pnpm@9.0.0 --activate
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Type check
-        run: pnpm run typecheck
-
-  build:
-    name: Build All Packages
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install pnpm
-        run: corepack prepare pnpm@9.0.0 --activate
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm run build

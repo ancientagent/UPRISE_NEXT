@@ -1,6 +1,8 @@
 
 # UPRISE NEXT
 
+[![CI Pipeline](https://github.com/ancientagent/UPRISE_NEXT/actions/workflows/ci.yml/badge.svg)](https://github.com/ancientagent/UPRISE_NEXT/actions/workflows/ci.yml) [![Secrets Scan](https://github.com/ancientagent/UPRISE_NEXT/actions/workflows/secrets-check.yml/badge.svg)](https://github.com/ancientagent/UPRISE_NEXT/actions/workflows/secrets-check.yml) [![Infrastructure Policy](https://github.com/ancientagent/UPRISE_NEXT/actions/workflows/infra-policy-check.yml/badge.svg)](https://github.com/ancientagent/UPRISE_NEXT/actions/workflows/infra-policy-check.yml)
+
 Modernized rebuild of the UPRISE music community platform.
 
 ## Architecture
