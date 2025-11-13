@@ -200,3 +200,50 @@ Read all strategy docs.
 
 This ensures UPRISE remains scalable, stable, and safe across multiple collaborating agents.
 
+---
+
+# ✅ Agent Onboarding Checklist
+
+All new agents (DeepAgent, Claude-Code, Cursor, ChatGPT, etc.) MUST complete the following before generating code:
+
+1. **Confirm repo & root**
+   - Working directory is the monorepo root (e.g., `~/UPRISE_NEXT`).
+   - `apps/`, `packages/`, `infra/`, and `docs/` are present.
+
+2. **Read critical docs**
+   - [ ] `docs/STRATEGY_CRITICAL_INFRA_NOTE.md`
+   - [ ] `docs/FEATURE_DRIFT_GUARDRAILS.md`
+   - [ ] `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+   - [ ] `docs/RUNBOOK.md`
+   - [ ] `docs/PROJECT_STRUCTURE.md`
+   - [ ] `docs/PHASE1_COMPLETION_REPORT.md`
+   - [ ] `docs/PHASE2_PLAN.md` (if present)
+
+3. **Load specs for any feature you touch**
+   - [ ] Find the relevant spec in `docs/Specifications/`
+   - [ ] Confirm the feature is explicitly defined.
+   - If not defined → **STOP** and ask for human clarification.
+
+4. **Understand your role**
+   - [ ] Are you building web, API, socket, worker, or docs?
+   - [ ] Do you know which Phase (1 / 2 / 3) your task belongs to?
+
+5. **Tag your work**
+   - When editing code, add a header comment:
+     - Example:
+       - `// generated-by: DeepAgent on 2025-11-13`
+       - `// generated-by: Claude-Code on 2025-11-13`
+
+6. **Respect boundaries**
+   - [ ] Web tier (`apps/web`) never talks directly to DB.
+   - [ ] No secrets in client components.
+   - [ ] No new features outside documented specs.
+   - [ ] No symlinks, no admin elevation, no global installs.
+
+7. **PR expectations**
+   - All changes must:
+     - Reference the spec(s) they implement.
+     - Update `docs/CHANGELOG.md` as appropriate.
+     - Use the PR template fields (Agent / Spec / Phase / Deployment Target).
+
+If any of this is unclear, the agent MUST ask for clarification before modifying the codebase.
