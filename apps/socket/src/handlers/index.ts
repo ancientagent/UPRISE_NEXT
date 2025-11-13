@@ -1,86 +1,117 @@
 
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
+import { AuthenticatedSocket } from '../middleware/auth';
+import { logger } from '../utils/logger';
 
-interface AuthenticatedSocket extends Socket {
-  user?: {
-    userId: string;
-    email: string;
-    username: string;
-  };
-}
-
+/**
+ * Setup main event handlers for root namespace
+ */
 export function setupEventHandlers(io: Server) {
   io.on('connection', (socket: AuthenticatedSocket) => {
-    console.log(`User connected: ${socket.user?.username} (${socket.id})`);
+    const { userId, username } = socket.user || {};
 
-    // Join user's personal room
-    socket.join(`user:${socket.user?.userId}`);
+    if (!userId || !username) {
+      logger.error('Socket connected without user data', undefined, {
+        socketId: socket.id,
+      });
+      socket.disconnect();
+      return;
+    }
 
-    // Handle presence updates
-    socket.on('presence:update', (data: { status: string }) => {
+    // Log connection
+    logger.logConnection(socket.id, userId, username);
+
+    // Join user's personal room for direct messages
+    const userRoom = `user:${userId}`;
+    socket.join(userRoom);
+    logger.logJoinRoom(userId, userRoom);
+
+    /**
+     * Event: presence:update
+     * Update user's online status
+     */
+    socket.on('presence:update', (data: { status: 'online' | 'away' | 'busy' | 'offline' }) => {
+      logger.logEvent('presence:update', socket.id, userId, data);
+
       io.emit('presence:changed', {
-        userId: socket.user?.userId,
-        username: socket.user?.username,
+        userId,
+        username,
         status: data.status,
+        timestamp: new Date().toISOString(),
       });
     });
 
-    // Handle typing indicators
-    socket.on('typing:start', (data: { roomId: string }) => {
-      socket.to(data.roomId).emit('typing:user', {
-        userId: socket.user?.userId,
-        username: socket.user?.username,
-        typing: true,
+    /**
+     * Event: direct-message
+     * Send direct message to another user
+     */
+    socket.on('direct-message', (data: { recipientId: string; content: string }) => {
+      logger.logEvent('direct-message', socket.id, userId, {
+        recipientId: data.recipientId,
       });
-    });
 
-    socket.on('typing:stop', (data: { roomId: string }) => {
-      socket.to(data.roomId).emit('typing:user', {
-        userId: socket.user?.userId,
-        username: socket.user?.username,
-        typing: false,
-      });
-    });
-
-    // Handle chat messages
-    socket.on('message:send', (data: { roomId: string; content: string }) => {
       const message = {
-        id: `msg_${Date.now()}`,
-        userId: socket.user?.userId,
-        username: socket.user?.username,
+        id: `dm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        senderId: userId,
+        senderUsername: username,
+        recipientId: data.recipientId,
         content: data.content,
         timestamp: new Date().toISOString(),
       };
 
-      io.to(data.roomId).emit('message:new', message);
+      // Send to recipient
+      io.to(`user:${data.recipientId}`).emit('direct-message:new', message);
+
+      // Send confirmation to sender
+      socket.emit('direct-message:sent', message);
     });
 
-    // Handle track playback sync
-    socket.on('track:play', (data: { trackId: string; communityId: string; position: number }) => {
-      socket.to(`community:${data.communityId}`).emit('track:playing', {
-        trackId: data.trackId,
-        userId: socket.user?.userId,
-        username: socket.user?.username,
-        position: data.position,
-      });
-    });
-
-    socket.on('track:pause', (data: { trackId: string; communityId: string; position: number }) => {
-      socket.to(`community:${data.communityId}`).emit('track:paused', {
-        trackId: data.trackId,
-        userId: socket.user?.userId,
-        position: data.position,
-      });
-    });
-
-    // Handle disconnection
-    socket.on('disconnect', () => {
-      console.log(`User disconnected: ${socket.user?.username} (${socket.id})`);
+    /**
+     * Event: notification-read
+     * Mark notification as read
+     */
+    socket.on('notification-read', (data: { notificationId: string }) => {
+      logger.logEvent('notification-read', socket.id, userId, data);
       
+      // You could broadcast this to sync across user's devices
+      io.to(userRoom).emit('notification:updated', {
+        notificationId: data.notificationId,
+        read: true,
+      });
+    });
+
+    /**
+     * Event: ping
+     * Health check / keep-alive
+     */
+    socket.on('ping', () => {
+      socket.emit('pong', { timestamp: Date.now() });
+    });
+
+    /**
+     * Event: disconnect
+     * Handle disconnection from root namespace
+     */
+    socket.on('disconnect', (reason) => {
+      logger.logDisconnection(socket.id, userId, username, reason);
+
+      // Update presence to offline
       io.emit('presence:changed', {
-        userId: socket.user?.userId,
-        username: socket.user?.username,
+        userId,
+        username,
         status: 'offline',
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    /**
+     * Event: error
+     * Handle socket errors
+     */
+    socket.on('error', (error) => {
+      logger.logError('Socket error in root namespace', error, {
+        socketId: socket.id,
+        userId,
       });
     });
   });

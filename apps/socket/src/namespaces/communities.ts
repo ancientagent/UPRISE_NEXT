@@ -1,62 +1,228 @@
 
-import { Server, Socket } from 'socket.io';
+import { Server, Namespace } from 'socket.io';
+import { AuthenticatedSocket } from '../middleware/auth';
+import { logger } from '../utils/logger';
 
-interface AuthenticatedSocket extends Socket {
-  user?: {
-    userId: string;
-    email: string;
-    username: string;
+interface CommunityMessage {
+  content: string;
+  type?: 'text' | 'audio' | 'system';
+}
+
+interface JoinCommunityData {
+  communityId?: string;
+  location?: {
+    lat: number;
+    lng: number;
   };
 }
 
+interface LeaveCommunityData {
+  communityId?: string;
+}
+
+/**
+ * Setup dynamic community namespaces
+ * Pattern: /community/:communityId
+ */
 export function setupCommunityNamespaces(io: Server) {
-  // Dynamic namespace for communities
+  // Dynamic namespace for communities (e.g., /community/abc-123)
   const communityNamespace = io.of(/^\/community\/[\w-]+$/);
 
   communityNamespace.on('connection', (socket: AuthenticatedSocket) => {
     const communityId = socket.nsp.name.split('/')[2];
-    console.log(`User ${socket.user?.username} joined community: ${communityId}`);
+    const { userId, username } = socket.user || {};
 
-    // Join community room
-    socket.join(`community:${communityId}`);
+    if (!userId || !username) {
+      logger.error('Socket connected without user data', undefined, {
+        socketId: socket.id,
+        namespace: socket.nsp.name,
+      });
+      socket.disconnect();
+      return;
+    }
 
-    // Notify others in the community
-    socket.to(`community:${communityId}`).emit('user:joined', {
-      userId: socket.user?.userId,
-      username: socket.user?.username,
+    // Log connection to community namespace
+    logger.logConnection(socket.id, userId, username, `community/${communityId}`);
+
+    // Automatically join the community room
+    const communityRoom = `community:${communityId}`;
+    socket.join(communityRoom);
+    logger.logJoinRoom(userId, communityRoom);
+
+    // Notify other members that user joined
+    socket.to(communityRoom).emit('user:joined', {
+      userId,
+      username,
+      timestamp: new Date().toISOString(),
     });
 
-    // Handle community-specific events
-    socket.on('community:message', (data: { content: string }) => {
-      const message = {
-        id: `msg_${Date.now()}`,
+    /**
+     * Event: join-community
+     * Explicit join event (for when user wants to "activate" in a community)
+     */
+    socket.on('join-community', (data: JoinCommunityData) => {
+      logger.logEvent('join-community', socket.id, userId, data);
+
+      // Emit to all members that user is now active
+      socket.to(communityRoom).emit('community:member-active', {
+        userId,
+        username,
+        location: data.location,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Send acknowledgment to the user
+      socket.emit('join-community:success', {
         communityId,
-        userId: socket.user?.userId,
-        username: socket.user?.username,
-        content: data.content,
+        memberCount: communityNamespace.adapter.rooms.get(communityRoom)?.size || 0,
+      });
+    });
+
+    /**
+     * Event: leave-community
+     * Explicit leave event
+     */
+    socket.on('leave-community', (data: LeaveCommunityData) => {
+      logger.logEvent('leave-community', socket.id, userId, data);
+      logger.logLeaveRoom(userId, communityRoom);
+
+      // Notify others
+      socket.to(communityRoom).emit('community:member-inactive', {
+        userId,
+        username,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Leave the room
+      socket.leave(communityRoom);
+
+      // Send acknowledgment
+      socket.emit('leave-community:success', {
+        communityId,
+      });
+    });
+
+    /**
+     * Event: community-message
+     * Send message to all members in the community
+     */
+    socket.on('community-message', (data: CommunityMessage) => {
+      logger.logEvent('community-message', socket.id, userId, {
+        contentLength: data.content?.length,
+        type: data.type,
+      });
+
+      if (!data.content || data.content.trim().length === 0) {
+        socket.emit('error', {
+          event: 'community-message',
+          message: 'Message content cannot be empty',
+        });
+        return;
+      }
+
+      const message = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        communityId,
+        userId,
+        username,
+        content: data.content.trim(),
+        type: data.type || 'text',
         timestamp: new Date().toISOString(),
       };
 
-      communityNamespace.to(`community:${communityId}`).emit('community:message:new', message);
+      // Broadcast to all members in the community (including sender)
+      communityNamespace.to(communityRoom).emit('community-message:new', message);
     });
 
-    // Handle track reactions
-    socket.on('track:react', (data: { trackId: string; reaction: string }) => {
-      socket.to(`community:${communityId}`).emit('track:reaction', {
+    /**
+     * Event: track-share
+     * Share a track with the community
+     */
+    socket.on('track-share', (data: { trackId: string; message?: string }) => {
+      logger.logEvent('track-share', socket.id, userId, data);
+
+      socket.to(communityRoom).emit('track:shared', {
         trackId: data.trackId,
-        userId: socket.user?.userId,
-        username: socket.user?.username,
-        reaction: data.reaction,
+        userId,
+        username,
+        message: data.message,
+        timestamp: new Date().toISOString(),
       });
     });
 
-    socket.on('disconnect', () => {
-      console.log(`User ${socket.user?.username} left community: ${communityId}`);
-      
-      socket.to(`community:${communityId}`).emit('user:left', {
-        userId: socket.user?.userId,
-        username: socket.user?.username,
+    /**
+     * Event: track-reaction
+     * React to a track
+     */
+    socket.on('track-reaction', (data: { trackId: string; reaction: string }) => {
+      logger.logEvent('track-reaction', socket.id, userId, data);
+
+      socket.to(communityRoom).emit('track:reaction', {
+        trackId: data.trackId,
+        userId,
+        username,
+        reaction: data.reaction,
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    /**
+     * Event: typing-indicator
+     * Typing indicator for community chat
+     */
+    socket.on('typing:start', () => {
+      socket.to(communityRoom).emit('typing:user', {
+        userId,
+        username,
+        typing: true,
+      });
+    });
+
+    socket.on('typing:stop', () => {
+      socket.to(communityRoom).emit('typing:user', {
+        userId,
+        username,
+        typing: false,
+      });
+    });
+
+    /**
+     * Event: request-sync
+     * Request current playback state from community
+     */
+    socket.on('request-sync', () => {
+      logger.logEvent('request-sync', socket.id, userId);
+      socket.to(communityRoom).emit('sync-requested', { userId, username });
+    });
+
+    /**
+     * Event: disconnect
+     * Handle disconnection
+     */
+    socket.on('disconnect', (reason) => {
+      logger.logDisconnection(socket.id, userId, username, reason);
+
+      // Notify others that user left
+      socket.to(communityRoom).emit('user:left', {
+        userId,
+        username,
+        reason,
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    /**
+     * Event: error
+     * Handle socket errors
+     */
+    socket.on('error', (error) => {
+      logger.logError('Socket error in community namespace', error, {
+        socketId: socket.id,
+        userId,
+        communityId,
       });
     });
   });
+
+  return communityNamespace;
 }
