@@ -44,7 +44,19 @@ export class CommunitiesService {
           NOW(),
           NOW()
         )
-        RETURNING *
+        RETURNING
+          id,
+          name,
+          slug,
+          description,
+          "coverImage",
+          avatar,
+          "isPrivate",
+          "memberCount",
+          "createdById",
+          radius,
+          "createdAt",
+          "updatedAt"
       `;
       
       return result[0];

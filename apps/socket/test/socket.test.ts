@@ -9,6 +9,8 @@ import { io as ioClient, Socket as ClientSocket } from 'socket.io-client';
 import { createServer } from 'http';
 import jwt from 'jsonwebtoken';
 import { authenticateSocket } from '../src/middleware/auth';
+import { setupEventHandlers } from '../src/handlers';
+import { setupCommunityNamespaces } from '../src/namespaces/communities';
 
 describe('Socket.IO Server', () => {
   let io: Server;
@@ -24,6 +26,8 @@ describe('Socket.IO Server', () => {
     });
     
     io.use(authenticateSocket);
+    setupEventHandlers(io);
+    setupCommunityNamespaces(io);
     
     httpServer.listen(PORT, () => {
       done();
@@ -106,14 +110,12 @@ describe('Socket.IO Server', () => {
     it('should emit join-community event', (done) => {
       const communityId = 'test-community';
 
-      // Set up community namespace
-      const communityNsp = io.of(`/community/${communityId}`);
-      communityNsp.use(authenticateSocket);
-
       clientSocket = ioClient(`http://localhost:${PORT}/community/${communityId}`, {
         auth: { token: validToken },
         transports: ['websocket'],
       });
+
+      clientSocket.on('connect_error', done);
 
       clientSocket.on('connect', () => {
         clientSocket.emit('join-community', { communityId });
@@ -128,13 +130,12 @@ describe('Socket.IO Server', () => {
     it('should emit community-message event', (done) => {
       const communityId = 'test-community';
 
-      const communityNsp = io.of(`/community/${communityId}`);
-      communityNsp.use(authenticateSocket);
-
       clientSocket = ioClient(`http://localhost:${PORT}/community/${communityId}`, {
         auth: { token: validToken },
         transports: ['websocket'],
       });
+
+      clientSocket.on('connect_error', done);
 
       clientSocket.on('connect', () => {
         clientSocket.emit('community-message', {
@@ -154,13 +155,12 @@ describe('Socket.IO Server', () => {
     it('should emit leave-community event', (done) => {
       const communityId = 'test-community';
 
-      const communityNsp = io.of(`/community/${communityId}`);
-      communityNsp.use(authenticateSocket);
-
       clientSocket = ioClient(`http://localhost:${PORT}/community/${communityId}`, {
         auth: { token: validToken },
         transports: ['websocket'],
       });
+
+      clientSocket.on('connect_error', done);
 
       clientSocket.on('connect', () => {
         clientSocket.emit('leave-community', { communityId });

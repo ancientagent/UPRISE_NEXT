@@ -6,6 +6,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { CommunitiesController } from '../src/communities/communities.controller';
 import { CommunitiesService } from '../src/communities/communities.service';
 import { PrismaService } from '../src/prisma/prisma.service';
@@ -20,9 +21,13 @@ describe('Communities API - PostGIS Integration', () => {
       providers: [CommunitiesService, PrismaService],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleFixture.createNestApplication(new FastifyAdapter());
     prisma = moduleFixture.get<PrismaService>(PrismaService);
     await app.init();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   afterAll(async () => {
@@ -116,24 +121,72 @@ describe('Communities API - PostGIS Integration', () => {
     it('should sort results by distance', async () => {
       const service = app.get(CommunitiesService);
 
-      const mockResults = [
-        { id: '1', distance: 3000 },
-        { id: '2', distance: 1000 },
-        { id: '3', distance: 2000 },
-      ];
+      const suffix = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+      let userId: string | null = null;
+      const createdCommunityIds: string[] = [];
 
-      jest.spyOn(service, 'findNearby').mockResolvedValue(mockResults as any);
+      try {
+        const user = await prisma.user.create({
+          data: {
+            email: `nearby_${suffix}@uprise.local`,
+            username: `nearby_${suffix}`,
+            displayName: 'Nearby Test User',
+            password: 'test-password-hash',
+          },
+        });
+        userId = user.id;
 
-      const results = await service.findNearby({
-        lat: 37.7749,
-        lng: -122.4194,
-        radius: 5000,
-        limit: 20,
-      });
+        const near = await service.create({
+          name: `Nearby Community A ${suffix}`,
+          slug: `nearby-a-${suffix}`,
+          description: 'Near community',
+          lat: 37.7749,
+          lng: -122.4194,
+          radius: 1000,
+          createdById: user.id,
+        } as any);
 
-      // Results should be sorted by distance (ascending)
-      for (let i = 1; i < results.length; i++) {
-        expect(results[i].distance).toBeGreaterThanOrEqual(results[i - 1].distance);
+        const far = await service.create({
+          name: `Nearby Community B ${suffix}`,
+          slug: `nearby-b-${suffix}`,
+          description: 'Farther community',
+          lat: 37.7849,
+          lng: -122.4194,
+          radius: 1000,
+          createdById: user.id,
+        } as any);
+
+        createdCommunityIds.push(near.id, far.id);
+        expect(typeof near.id).toBe('string');
+        expect(typeof far.id).toBe('string');
+
+        const inserted = await prisma.community.findMany({
+          where: { id: { in: createdCommunityIds } },
+          select: { id: true },
+        });
+        expect(inserted).toHaveLength(2);
+
+        const results = await service.findNearby({
+          lat: 37.7749,
+          lng: -122.4194,
+          radius: 100000,
+          limit: 50,
+        });
+
+        const subset = results.filter((c) => c.id === near.id || c.id === far.id);
+        expect(subset).toHaveLength(2);
+
+        // Query orders by distance ASC; the nearer community should come first.
+        expect(subset[0].distance).toBeLessThanOrEqual(subset[1].distance);
+      } finally {
+        if (createdCommunityIds.length > 0) {
+          await prisma.community.deleteMany({ where: { id: { in: createdCommunityIds } } });
+        }
+        if (userId) {
+          // Ensure no communities remain referencing this user (FK is RESTRICT).
+          await prisma.community.deleteMany({ where: { createdById: userId } });
+          await prisma.user.delete({ where: { id: userId } });
+        }
       }
     });
   });

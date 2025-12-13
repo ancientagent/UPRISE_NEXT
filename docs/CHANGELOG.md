@@ -6,7 +6,15 @@
 ---
 
 ## [Unreleased]
-- (add new entries here)
+### Added
+- System specs for web-tier contract guard, documentation framework, agent handoffs, and CI/CD pipeline.
+
+### Fixed
+- Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
+- Web-tier typecheck error in `apps/web/__tests__/web-tier-guard.test.ts`.
+- Socket.IO community event tests by wiring real namespace/handler setup.
+- PostGIS community creation raw SQL to avoid returning unsupported `geofence` in results.
+- Turbo test env forwarding for `DATABASE_URL` so API tests can run under `turbo run test`.
 
 ---
 
@@ -52,4 +60,3 @@
 
 ### Notes
 - CI should include a job to append merged PR titles grouped by date and labels to this file.
-

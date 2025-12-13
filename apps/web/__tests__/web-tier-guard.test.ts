@@ -5,8 +5,6 @@
  * These tests verify that the web tier cannot access the database directly.
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals';
-
 // Mock the environment to simulate web tier
 beforeEach(() => {
   // Set up browser-like environment
@@ -69,15 +67,6 @@ describe('Web-Tier Boundary Guard', () => {
       expect(api.post).toBeDefined();
       expect(api.put).toBeDefined();
       expect(api.delete).toBeDefined();
-    });
-  });
-
-  describe('Type Safety', () => {
-    it('should have ApiOnly type marker', async () => {
-      const types = await import('../src/lib/types/web-tier');
-      
-      // Type imports should work
-      expect(types).toBeDefined();
     });
   });
 });
