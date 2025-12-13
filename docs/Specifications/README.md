@@ -3,6 +3,8 @@
 **Location:** `docs/Specifications/`  
 **Purpose:** Single index of all module specs and their canonical IDs.
 
+> New module-organized specs and templates live under `docs/specs/` (see `docs/specs/README.md`). This directory remains the canonical ID index while migration is in progress.
+
 ---
 
 ## Index
@@ -23,4 +25,3 @@
 - Each spec must declare: Purpose, Components, Integration Points, API Endpoints, Data Model, Testing Requirements, Success Metrics.
 - Any change to shared contracts must be mirrored in `packages/types` and regenerate OpenAPI / SDK.
 - Link PRs to the spec sections you modified.
-

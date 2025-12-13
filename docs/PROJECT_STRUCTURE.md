@@ -177,14 +177,16 @@ pnpm run infra-policy-check --verbose
 - Feature branches: `feat/<scope>`; chore/bugfix similarly
 - Every PR:
   - includes `Deployment Target:` and `Phase:` lines
-  - links to relevant spec(s) under `/docs/Specifications`
+  - links to relevant spec(s) under `/docs/specs` (and `/docs/Specifications` while legacy IDs are still referenced)
   - updates `CHANGELOG.md`
 
 ---
 
 ## 📚 Specs Index
 
-Specs live under `/docs/Specifications`. Core files:
+Specs live under `/docs/specs` (module-organized, with templates). The legacy spec index and canonical IDs referenced elsewhere live under `/docs/Specifications`.
+
+Legacy core files (IDs/filenames):
 - `01_UPRISE_Master_Overview.md`
 - `02_UPRISE_Skeleton_Framework.md`
 - `04_UPRISE_Community_Location_System.md`
@@ -214,4 +216,3 @@ pnpm prisma migrate deploy # prod migrations
 1. Check Sentry for errors (web/api) and logs (workers/socket).
 2. Roll back last deployment on target platform (Vercel/Fly/AWS) if needed.
 3. Open a `hotfix/*` branch; patch and ship.
-

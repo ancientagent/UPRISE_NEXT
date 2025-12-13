@@ -440,7 +440,9 @@ import { api } from '@/lib/api';
 |----------|------|-------------|
 | Strategy | [STRATEGY_CRITICAL_INFRA_NOTE.md](./STRATEGY_CRITICAL_INFRA_NOTE.md) | Infrastructure policy |
 | Milestones | [PHASE1_COMPLETION_REPORT.md](./PHASE1_COMPLETION_REPORT.md) | Phase 1 completion |
-| Specs | [Specifications/README.md](./Specifications/README.md) | Module-by-module technical docs |
+| Blueprints | [blueprints/README.md](./blueprints/README.md) | Multi-agent workflows and patterns |
+| Specs (module) | [specs/README.md](./specs/README.md) | Module-organized specs + templates |
+| Specs (legacy) | [Specifications/README.md](./Specifications/README.md) | Canonical IDs referenced elsewhere |
 | Environments | [ENVIRONMENTS.md](./ENVIRONMENTS.md) | Windows/WSL setup rules |
 | Structure | [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) | Folder map & conventions |
 | Changelog | [CHANGELOG.md](./CHANGELOG.md) | Auto-generated PR logs |
@@ -451,7 +453,7 @@ import { api } from '@/lib/api';
 
 1. **Follow the Critical Infra Note** — DeepAgent may run tests, not production workloads.
 2. **Keep Docs Current** — Every merged PR must update `CHANGELOG.md` and, if scope touches architecture or ops, update this `RUNBOOK.md`.
-3. **Annotate PRs** — Link to affected specification(s) in `/docs/Specifications`.
+3. **Annotate PRs** — Link to affected specification(s) in `/docs/specs` (and `/docs/Specifications` while legacy IDs are still referenced).
 4. **Blockers** — Any CI error tagged `infra-policy-check` halts merge until fixed.
 
 ---

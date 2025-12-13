@@ -151,7 +151,7 @@ This ensures we can:
 ### 4️⃣ Every PR Must Include:
 - **Deployment Target:** Cloud Run / Vercel / Fly / AWS
 - **Phase:** 1 / 2 / 3
-- **Specs Modified:** (list from docs/Specifications)
+- **Specs Modified:** (IDs/links from `docs/specs/` and/or `docs/Specifications/` if legacy IDs are referenced)
 - **Source Agent Tag**
 
 ---
@@ -162,6 +162,8 @@ This ensures we can:
 3. `ENVIRONMENTS.md`
 4. `PROJECT_STRUCTURE.md`
 5. `PHASE1_COMPLETION_REPORT.md`
+6. `README.md`
+7. `FEATURE_DRIFT_GUARDRAILS.md`
 
 These documents define the boundaries, architecture, and environment.
 
