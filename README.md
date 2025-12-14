@@ -5,6 +5,11 @@
 
 Modernized rebuild of the UPRISE music community platform.
 
+## Start Here (Agents & Contributors)
+
+- `AGENTS.md` — required reading checklist and guardrails for agents/contributors.
+- `docs/README.md` — documentation index (specs, handoffs, architecture).
+
 ## Architecture
 
 This is a Turborepo monorepo with the following structure:
