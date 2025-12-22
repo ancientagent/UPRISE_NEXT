@@ -21,3 +21,6 @@ Working notes and completion reports that help future contributors quickly under
 - [`PHASE1_COMPLETION_REPORT.md`](../PHASE1_COMPLETION_REPORT.md)
 - [`T5_IMPLEMENTATION_SUMMARY.md`](../T5_IMPLEMENTATION_SUMMARY.md)
 - [`T6_IMPLEMENTATION_SUMMARY.md`](../T6_IMPLEMENTATION_SUMMARY.md)
+
+## Legacy (Archived) Handoffs
+- `docs/handoff/legacy/` — pre-framework handoffs and recovery notes preserved for reference.

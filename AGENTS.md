@@ -11,6 +11,7 @@ This file is intended for AI coding agents and new contributors. Follow it befor
 6. `apps/web/WEB_TIER_BOUNDARY.md`
 7. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
 8. `docs/README.md` (indexes/specs/handoffs)
+9. `docs/solutions/README.md` (recurring-issue playbooks)
 
 ## Non-Negotiables
 - **No feature drift:** implement only what’s covered by `docs/specs/` (or `docs/Specifications/` legacy IDs) unless a spec update is explicitly requested.

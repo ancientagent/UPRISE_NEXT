@@ -21,6 +21,8 @@ dist
 # Misc
 .DS_Store
 *.pem
+*.pdf
+*.pdf:Zone.Identifier
 
 # Debug
 npm-debug.log*

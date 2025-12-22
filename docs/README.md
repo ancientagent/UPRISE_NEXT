@@ -17,6 +17,7 @@ This folder contains operational docs, architecture references, specifications, 
 ## Multi-Agent Workflow
 - [`blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md`](./blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md) — Documentation + handoff strategy.
 - [`handoff/README.md`](./handoff/README.md) — Where agent notes and phase handoffs live.
+- [`solutions/README.md`](./solutions/README.md) — Playbooks for recurring issues (symptoms → fix → prevention).
 
 ## Architecture Pointers
 - [`architecture/README.md`](./architecture/README.md) — Architectural overviews.

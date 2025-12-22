@@ -752,7 +752,7 @@ The following 8 files were restored to the `/docs` directory:
 
 ### Full Recovery Documentation
 
-See `RECOVERY_SUMMARY.md` and `RECOVERY_SUMMARY.pdf` for complete details.
+See `RECOVERY_SUMMARY.md` for complete details.
 
 ---
 

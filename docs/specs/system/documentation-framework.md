@@ -23,6 +23,7 @@ UPRISE_NEXT is built and maintained by multiple contributors (often multiple cod
   - `docs/blueprints/` (workflows/patterns),
   - `docs/specs/` (module-organized specs + templates),
   - `docs/handoff/` (agent docs + phase reports),
+  - `docs/solutions/` (recurring-issue playbooks),
   - `docs/architecture/` (overviews and boundaries).
 - Keep the legacy canonical index intact while migration is ongoing: `docs/Specifications/`.
 - Ensure every docs folder has a `README.md` describing purpose and listing files.
@@ -49,12 +50,13 @@ UPRISE_NEXT is built and maintained by multiple contributors (often multiple cod
 ## Acceptance Tests / Test Plan
 - Link hygiene: key docs reachable from `docs/README.md`.
 - Template availability: `docs/specs/TEMPLATE.md`, `docs/handoff/TEMPLATE_*.md`.
+- Solutions template available: `docs/solutions/TEMPLATE.md`.
 - Manual review checklist for PRs:
   - Spec links included (new: `docs/specs/`; legacy: `docs/Specifications/` as needed).
   - Agent handoff doc created/updated for multi-step work.
 
 ## Future Work & Open Questions
-- Add a lightweight CI job to validate doc links and required files exist.
+- Add/maintain a lightweight CI job to validate doc structure and prevent forbidden artifacts (e.g., PDFs) from being committed.
 - Decide when legacy `docs/Specifications/` is fully migrated and can be frozen.
 
 ## References
@@ -63,4 +65,3 @@ UPRISE_NEXT is built and maintained by multiple contributors (often multiple cod
 - `docs/specs/README.md`
 - `docs/handoff/README.md`
 - `docs/architecture/UPRISE_OVERVIEW.md`
-

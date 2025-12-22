@@ -8,7 +8,7 @@
 
 ## Summary
 - Investigated and fixed backend build/runtime issues related to TypeScript emit paths and workspace module resolution.
-- Documented findings in `BUILD_INVESTIGATION_REPORT.md` and `BUILD_FIXES_SUMMARY.md`.
+- Documented findings in `docs/handoff/legacy/BUILD_INVESTIGATION_REPORT.md` and `docs/handoff/legacy/BUILD_FIXES_SUMMARY.md`.
 
 ## Scope & Deliverables
 - Fixed API build output path nesting (`dist/apps/api/src/...` → `dist/...`).
@@ -25,8 +25,8 @@
   - `5b805ff` — fix(api): Resolve build output directory and module resolution issues
   - `77b6dfb` — docs: Add build investigation and fixes documentation
 - Primary references:
-  - `BUILD_INVESTIGATION_REPORT.md`
-  - `BUILD_FIXES_SUMMARY.md`
+  - `docs/handoff/legacy/BUILD_INVESTIGATION_REPORT.md`
+  - `docs/handoff/legacy/BUILD_FIXES_SUMMARY.md`
 
 ## Blockers / Current Status
 - The original handoff noted potential auth-service type errors in `apps/api/src/auth/auth.service.ts`.
@@ -37,6 +37,6 @@
 - If future type errors appear in auth DTOs, validate inputs at the boundary (controller/pipe) and keep service logic typed against validated schemas.
 
 ## References
-- `BUILD_INVESTIGATION_REPORT.md`
-- `BUILD_FIXES_SUMMARY.md`
+- `docs/handoff/legacy/BUILD_INVESTIGATION_REPORT.md`
+- `docs/handoff/legacy/BUILD_FIXES_SUMMARY.md`
 - `docs/RUNBOOK.md`
