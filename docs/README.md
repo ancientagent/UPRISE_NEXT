@@ -9,6 +9,7 @@ This folder contains operational docs, architecture references, specifications, 
 - [`RUNBOOK.md`](./RUNBOOK.md) — Day-to-day operational guidance and PR requirements.
 - [`PROJECT_STRUCTURE.md`](./PROJECT_STRUCTURE.md) — Monorepo map, conventions, and boundaries.
 - [`ENVIRONMENTS.md`](./ENVIRONMENTS.md) — Local + CI setup details.
+- [`INTERVIEW_ONE_PAGER.md`](./INTERVIEW_ONE_PAGER.md) — Top-down overview (2–4 min).
 
 ## Writing Specs
 - [`specs/README.md`](./specs/README.md) — Module-organized specs + templates.
