@@ -8,6 +8,7 @@
 ## [Unreleased]
 ### Added
 - System specs for web-tier contract guard, documentation framework, agent handoffs, and CI/CD pipeline.
+- Draft spec for Deck vs. Broadcast architecture with artist decks, community tiers, and broadcast entries.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
