@@ -15,6 +15,12 @@ This folder contains operational docs, architecture references, specifications, 
 - [`specs/README.md`](./specs/README.md) — Module-organized specs + templates.
 - [`Specifications/README.md`](./Specifications/README.md) — Legacy spec index / canonical IDs referenced elsewhere.
 
+## Canon (+) Protocol (docs/canon)
+- Files starting with `+` are canon and are the source of truth.
+- Files starting with `-` are legacy (previous iterations or language not finalized/approved).
+- If two canon documents conflict, the newest creation date prevails.
+- PDF canon sources may be stored in `docs/canon/` alongside their text-converted `.md` counterparts. Keep both in git so agents can diff and quote cleanly.
+
 ## Multi-Agent Workflow
 - [`blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md`](./blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md) — Documentation + handoff strategy.
 - [`handoff/README.md`](./handoff/README.md) — Where agent notes and phase handoffs live.
