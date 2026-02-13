@@ -5,3 +5,4 @@ export * from './track';
 export * from './event';
 export * from './auth';
 export * from './api';
+export * from './signal';

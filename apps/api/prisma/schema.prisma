@@ -41,6 +41,10 @@ model User {
   createdCommunities Community[]
   events             Event[]
   tags               UserTag[]
+  signals            Signal[]
+  signalActions      SignalAction[]
+  follows            Follow[]
+  collections        Collection[]
 
   @@map("users")
 }
@@ -72,6 +76,7 @@ model Community {
   tracks    Track[]
   events    Event[]
   sectTags  SectTag[]
+  signals   Signal[]
 
   @@map("communities")
 }
@@ -139,6 +144,75 @@ model Track {
   community  Community? @relation(fields: [communityId], references: [id])
 
   @@map("tracks")
+}
+
+model Signal {
+  id          String   @id @default(uuid())
+  type        String
+  metadata    Json?
+  communityId String?
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  community Community? @relation(fields: [communityId], references: [id])
+  createdBy User?      @relation(fields: [createdById], references: [id])
+  actions   SignalAction[]
+  collectionItems CollectionItem[]
+
+  @@map("signals")
+}
+
+model SignalAction {
+  id        String   @id @default(uuid())
+  type      String
+  userId    String
+  signalId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  signal Signal @relation(fields: [signalId], references: [id])
+
+  @@unique([userId, signalId, type])
+  @@map("signal_actions")
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String
+  entityType  String
+  entityId    String
+  createdAt   DateTime @default(now())
+
+  follower User @relation(fields: [followerId], references: [id])
+
+  @@unique([followerId, entityType, entityId])
+  @@map("follows")
+}
+
+model Collection {
+  id        String   @id @default(uuid())
+  name      String
+  userId    String
+  createdAt DateTime @default(now())
+
+  user  User @relation(fields: [userId], references: [id])
+  items CollectionItem[]
+
+  @@unique([userId, name])
+  @@map("collections")
+}
+
+model CollectionItem {
+  id           String   @id @default(uuid())
+  collectionId String
+  signalId     String
+  createdAt    DateTime @default(now())
+
+  collection Collection @relation(fields: [collectionId], references: [id])
+  signal     Signal     @relation(fields: [signalId], references: [id])
+
+  @@unique([collectionId, signalId])
+  @@map("collection_items")
 }
 
 model Event {

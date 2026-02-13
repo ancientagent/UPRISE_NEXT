@@ -15,6 +15,7 @@
 - Google Places city autocomplete API (server-side) for onboarding location input.
 - Scene mapping fields on communities (`city`, `state`, `musicCommunity`, `tier`, `isActive`).
 - Sect tags and user tag linkage to support Home Scene routing.
+- Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
 - Web app font updated to Space Grotesk for non-default typography.
