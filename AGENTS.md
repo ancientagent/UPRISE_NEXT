@@ -22,6 +22,7 @@ This file is intended for AI coding agents and new contributors. Follow it befor
 - **Web-tier boundary:** `apps/web` must not import DB clients, server-only modules, or secrets; use the API layer and shared packages instead.
 - **Infrastructure policy:** DeepAgent is dev/CI only; production targets are external (Vercel/Fly/AWS/Neon/S3/R2).
 - **No unsafe environment changes:** no symlinks, no admin elevation, no global installs.
+- **Package manager rule:** UPRISE_NEXT = pnpm only. Legacy RN (`uprise_mob`) = yarn only. Do not mix.
 
 ## Before You Push
 - Run `pnpm run typecheck`

@@ -145,6 +145,11 @@ UPRISE_NEXT/
 - No symlinks, no admin elevation, no global installs
 - Use local PostGIS Docker or DeepAgent DB for development only
 
+### 2️⃣b Package Manager Boundary (Critical)
+- **UPRISE_NEXT uses pnpm only.**
+- **Legacy RN (`uprise_mob`) uses yarn only.**
+- **Never mix pnpm/yarn** in the same project to avoid permission lockouts.
+
 ### 3️⃣ Code Ownership Labels
 Every AI agent must **tag their work** so we know source-of-truth:  
 - `// generated-by: DeepAgent`  

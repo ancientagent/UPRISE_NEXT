@@ -15,6 +15,11 @@
 
 > All agents MUST read the two files above before running any task.
 
+## 🚨 Critical Package Manager Rule
+- **UPRISE_NEXT uses pnpm only.**
+- **Legacy RN (`uprise_mob`) uses yarn only.**
+- **Never mix pnpm/yarn in the same project** to avoid permission lockouts and corrupted installs.
+
 ---
 
 ## ⚙️ Development Environment
