@@ -71,7 +71,8 @@ Defines the onboarding flow for selecting a Home Scene and the input-driven reso
 
 ## Future Work & Open Questions
 - Define pioneer incentives and recruitment tooling.
-- Formalize thresholds for Sect activation and new Scene creation. See `docs/specs/DECISIONS_REQUIRED.md`.
+- Sect activation threshold is **45 minutes of total playtime** from artists who sign the motion. See `docs/specs/DECISIONS_REQUIRED.md`.
+- Formalize thresholds for new Scene creation. See `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`

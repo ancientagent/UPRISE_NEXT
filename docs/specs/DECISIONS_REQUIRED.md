@@ -4,7 +4,7 @@ This file tracks canon‑blocked items marked as WORKING / UNDECIDED / Founder L
 Do not implement these items until they are locked.
 
 ## 1) Scene & Broadcast Thresholds
-- **Sect Uprise activation threshold** (artist count + catalog minutes)
+- **Sect Uprise activation threshold**: when artists in the Sect sign a motion totaling **45 minutes of playtime**, the Sect Uprise becomes available.
 - **City → State propagation threshold**
 - **State → National propagation threshold**
 
@@ -29,4 +29,3 @@ Do not implement these items until they are locked.
 
 ## 6) Founder Locks
 - Any section marked **WORKING**, **UNDECIDED**, or **Founder Lock Needed** in `docs/canon/`
-

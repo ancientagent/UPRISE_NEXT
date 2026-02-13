@@ -22,7 +22,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - **Parent Scenes** are pre‑loaded, launch‑ready music communities that accept users immediately.
 - **Sects** are the sum of listeners and artists sharing the same taste tag inside a Home Scene.
 - Sects exist as statistical reality inside a Home Scene before they become a broadcast.
-- A Sect becomes an Uprise only after meeting the support threshold and having enough committed artist catalog to sustain rotation.
+- A Sect becomes an Uprise only after meeting the support threshold and having enough committed artist catalog to sustain rotation (**45 minutes of total playtime** from artists who sign the motion).
 - When a Sect meets the threshold, a motion is entered in the Registrar to establish the Sect Uprise.
 - Artists must commit to the Sect Uprise for it to activate. If support is insufficient, the Sect remains a tag‑based subgroup.
 - If a user enters a subsect name during onboarding, the system routes them to the Parent Scene and applies the tag.
