@@ -10,6 +10,9 @@ Feature and system specifications, organized by module. Specs are the source of 
 ## Templates
 - [`TEMPLATE.md`](./TEMPLATE.md) — Standard spec template (copy to start a new spec).
 
+## Canon‑Blocked Items
+- [`DECISIONS_REQUIRED.md`](./DECISIONS_REQUIRED.md) — Items marked WORKING/UNDECIDED that must be locked before implementation.
+
 ## Legacy Specs Index
 - [`docs/Specifications/README.md`](../Specifications/README.md) — Existing index and canonical IDs used elsewhere in the repo; keep in sync until migration is complete.
 
