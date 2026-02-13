@@ -3,35 +3,49 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
+import { api } from '@/lib/api';
 import { MUSIC_COMMUNITIES } from '@/data/music-communities';
 import { US_STATES } from '@/data/us-states';
 import { useOnboardingStore } from '@/store/onboarding';
+import { useAuthStore } from '@/store/auth';
 
 const steps = ['Home Scene', 'GPS Verification', 'Review'];
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { homeScene, gpsStatus, setHomeScene, setGpsStatus, reset } = useOnboardingStore();
+  const { token } = useAuthStore();
   const [step, setStep] = useState(0);
   const [city, setCity] = useState(homeScene?.city ?? '');
   const [state, setState] = useState(homeScene?.state ?? '');
   const [musicCommunity, setMusicCommunity] = useState(homeScene?.musicCommunity ?? '');
   const [tasteTag, setTasteTag] = useState(homeScene?.tasteTag ?? '');
   const [gpsError, setGpsError] = useState<string | null>(null);
+  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
+  const [cityLoading, setCityLoading] = useState(false);
+  const [cityError, setCityError] = useState<string | null>(null);
 
   const canContinue = useMemo(
     () => city.trim() && state.trim() && musicCommunity.trim(),
     [city, state, musicCommunity]
   );
 
-  const handleSceneContinue = () => {
+  const handleSceneContinue = async () => {
     if (!canContinue) return;
-    setHomeScene({
+    const selection = {
       city: city.trim(),
       state: state.trim(),
       musicCommunity: musicCommunity.trim(),
       tasteTag: tasteTag.trim() || undefined,
-    });
+    };
+    setHomeScene(selection);
+    if (token) {
+      try {
+        await api.post('/onboarding/home-scene', selection, { token });
+      } catch {
+        // Keep local state even if API call fails
+      }
+    }
     setStep(1);
   };
 
@@ -45,6 +59,18 @@ export default function OnboardingPage() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setGpsStatus('granted', { latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+        if (token) {
+          api
+            .post(
+              '/onboarding/gps-verify',
+              {
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+              },
+              { token }
+            )
+            .catch(() => undefined);
+        }
         setStep(2);
       },
       () => {
@@ -71,6 +97,29 @@ export default function OnboardingPage() {
     setTasteTag('');
     setGpsError(null);
     setStep(0);
+  };
+
+  const fetchCitySuggestions = async (input: string, stateValue: string) => {
+    if (!input.trim()) {
+      setCitySuggestions([]);
+      return;
+    }
+    try {
+      setCityLoading(true);
+      setCityError(null);
+      const response = await api.get<{ description: string }[]>(
+        `/places/cities?input=${encodeURIComponent(input)}&country=us`
+      );
+      const suggestions = response.data?.map((item) => item.description) ?? [];
+      const filtered = stateValue
+        ? suggestions.filter((s) => s.toLowerCase().includes(stateValue.toLowerCase()))
+        : suggestions;
+      setCitySuggestions(filtered.slice(0, 8));
+    } catch {
+      setCityError('City suggestions are unavailable right now.');
+    } finally {
+      setCityLoading(false);
+    }
   };
 
   return (
@@ -103,11 +152,23 @@ export default function OnboardingPage() {
               <div className="flex flex-col gap-2">
                 <label className="text-xs uppercase tracking-[0.2em] text-black/60">City</label>
                 <input
+                  list="cities"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setCity(value);
+                    fetchCitySuggestions(value, state);
+                  }}
                   className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
                   placeholder="Start typing your city"
                 />
+                <datalist id="cities">
+                  {citySuggestions.map((suggestion) => (
+                    <option key={suggestion} value={suggestion} />
+                  ))}
+                </datalist>
+                {cityLoading && <p className="text-xs text-black/50">Loading city suggestions…</p>}
+                {cityError && <p className="text-xs text-red-600">{cityError}</p>}
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-xs uppercase tracking-[0.2em] text-black/60">State</label>
@@ -143,6 +204,11 @@ export default function OnboardingPage() {
               <p className="text-xs text-black/50">
                 This is not a genre taxonomy. It’s the local music community you want to live in.
               </p>
+              {!token && (
+                <p className="text-xs text-black/40">
+                  Sign in to save your Home Scene on the server. You can continue locally for now.
+                </p>
+              )}
             </div>
 
             <div className="mt-6 flex flex-col gap-2">
