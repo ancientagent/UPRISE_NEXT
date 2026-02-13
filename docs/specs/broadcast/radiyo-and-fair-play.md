@@ -16,15 +16,22 @@ Defines the RaDIYo broadcast network and the Fair Play rotation system that gove
 ## Functional Requirements
 - RaDIYo is a broadcast receiver, not a playlist.
 - Tier toggle: Citywide, Statewide, National.
-- Swiping enables discovery jumps (random city/state in same music community).
+- Swiping exits Fair Play listening and enters Discover traversal (visitor mode) in another Scene; listener continues in that Scene with Visitor privileges.
 - Fair Play provides equal initial exposure for all new songs.
-- New releases play on the hour for approximately one week.
+- New releases play on the hour for approximately one week (initial exposure window).
 - Engagement score is calculated after the initial exposure window.
 - Higher engagement increases rotation frequency.
-- Upvotes determine tier progression.
-- Voting is available only to GPS-verified Home Scene listeners.
+- Engagement is additive-only: skips are non‑negative and do not demote.
+- Upvotes determine tier progression only.
+- Voting is available only to GPS‑verified Home Scene listeners and occurs during playback.
 - National tier is non-interactive and has no voting.
 - Personal Play (Collections) is separate from Fair Play and does not affect rotation.
+
+### Engagement Score (Canon)
+- Engagement score uses playback weight and contextual modifiers.
+- Playback weight: full completion = 3 points; partial listen (majority played) = 2; partial listen (minority played, ≥ 1/3 duration) = 1; skip/early interruption = 0.
+- Contextual modifiers (once per user per song per tier): ADD +0.5 points; BLAST +0.25 points.
+- Modifiers affect rotation frequency only and never tier progression.
 
 ## Non-Functional Requirements
 - No personalization or algorithmic recommendations.
@@ -64,7 +71,6 @@ Defines the RaDIYo broadcast network and the Fair Play rotation system that gove
 - National tier is listen-only.
 
 ## Future Work & Open Questions
-- Define exact engagement score weights.
 - Define rotation re-evaluation cadence. See `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References

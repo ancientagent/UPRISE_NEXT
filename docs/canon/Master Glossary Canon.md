@@ -74,17 +74,18 @@ Status: OK
 Canonical Definition: The Plot; the dashboard in which listeners interact with their community within their
 Home Scene.
 Canon Alignment: Matches Master Narrative Canon. The Plot is a civic interface, not a personalized feed.
-Activity Feed, Events, Promotions, Statistics/Scene Map, and Social (V2) are correctly scoped.
+Activity Feed (S.E.E.D Feed), Events, Promotions, Statistics/Scene Map, and Social (V2) are correctly scoped.
 Constraint Reminder: - The Plot does not rank, recommend, or personalize content.
 Action: None
 3
 
 --- Page 4 ---
 
-Activity Feed
+Activity Feed (S.E.E.D Feed)
 Status: CONSTRAIN
 Canonical Definition: The default surface of The Plot; the activity feed is the primary dashboard view
 presented when a user enters their Home Scene.
+S.E.E.D stands for Support, Explore, Engage, Distribute.
 Canonical Constraint:
 The Activity Feed reflects explicit community actions only (Blasts, registrations, releases). It is
 identical for all users in a Home Scene and never ranked, scored, or personalized.

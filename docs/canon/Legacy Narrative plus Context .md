@@ -115,7 +115,7 @@ When users toggle between broadcast tiers via the RaDIYo player, the scene plot 
 
 **Citywide Tier:**
 - Player: Fresh uploads from local artists
-- Feed: Updates from citywide Scene members, local achievements
+- Activity Feed (S.E.E.D Feed): Updates from citywide Scene members, local achievements
 - Events: Local shows in user's city (Locality + Subscription only)
 - Promotions: Local business advertisements
 - Statistics: Metrics for city's music Scene
@@ -123,7 +123,7 @@ When users toggle between broadcast tiers via the RaDIYo player, the scene plot 
 
 **Statewide Tier:**
 - Player: State-level tracks (songs that earned citywide support)
-- Feed: Activity and trends across the entire state's Scene network
+- Activity Feed (S.E.E.D Feed): Activity and trends across the entire state's Scene network
 - Events: Notable shows and festivals throughout the state
 - Promotions: Regional businesses and larger venues
 - Statistics: State-level metrics and comparative data
@@ -131,7 +131,7 @@ When users toggle between broadcast tiers via the RaDIYo player, the scene plot 
 
 **Nationwide Tier:**
 - Player: Top-tier music (songs that resonated at state level)
-- Feed: National music community trends and breakout artists
+- Activity Feed (S.E.E.D Feed): National music community trends and breakout artists
 - Events: Major festivals and landmark events
 - Promotions: Industry brands and nationwide services
 - Statistics: Music community benchmarks and national trends
@@ -159,7 +159,8 @@ When users toggle between broadcast tiers via the RaDIYo player, the scene plot 
 
 ### 3.2 Navigation Bar (Bottom)
 Three buttons, left to right:
-- **Home** (The Plot): User's Scene — Feed, Events, Promotions, Statistics, Social
+- **Home** (The Plot): User's Scene — Activity Feed (S.E.E.D Feed), Events, Promotions, Statistics, Social
+  - S.E.E.D stands for Support, Explore, Engage, Distribute.
 - **Action Wheel**: tap to reveal song engagement actions Report, Skip, Blast, Add, Upvote 
 - **Discover**: Search bar with Discovery Map (requires Discovery Pass for non-Home Scenes)
 
@@ -220,12 +221,12 @@ Note: Fliers are viewable on events but can only be obtained as an artifact thro
 - Businesses
 - Events
 - Promoters
-- Following creates a channel in your Feed for their activity/updates
+- Following creates a channel in your Activity Feed (S.E.E.D Feed) for their activity/updates
 
 ### 5.4 Universal Signal Actions
 - ADD: Save any signal to your personal Collection
-- FOLLOW: Subscribe to an entity for ongoing awareness (creates Feed channel)
-- BLAST: Publicly amplify a signal to your community Feed
+- FOLLOW: Subscribe to an entity for ongoing awareness (creates Activity Feed (S.E.E.D Feed) channel)
+- BLAST: Publicly amplify a signal to your community Activity Feed (S.E.E.D Feed)
 - SUPPORT: Express solidarity or material backing for a Project or Artist
 
 ### 5.5 Collections
@@ -595,7 +596,7 @@ All tiers: 4-hour minimum cooldown between posts.
 
 ### 12.4 Communication Model
 - Scene-wide: Public message boards (Social tab)
-- Sect-level: Feed channel within the Sect
+- Sect-level: Activity Feed (S.E.E.D Feed) channel within the Sect
 - Group-level: Private within group members
 - Artists, Businesses, Events, Promoters can message their followers (one-way broadcast)
 - Users cannot message Artists, Businesses, Events, Promoters directly
@@ -603,7 +604,7 @@ All tiers: 4-hour minimum cooldown between posts.
 
 ### 12.5 Blast
 - Public signal to your Scene
-- Amplifies a signal (song, flier, etc.) to your community Feed
+- Amplifies a signal (song, flier, etc.) to your community Activity Feed (S.E.E.D Feed)
 - NOT a private message — community action
 
 
@@ -611,7 +612,7 @@ All tiers: 4-hour minimum cooldown between posts.
 ## 19. The Registrar
 
 ### 19.1 Definition
-- Civic hub located in the Feed tab
+- Civic hub located in the Activity Feed (S.E.E.D Feed) tab
 - Where users register roles and activate official platform elements
 
 ### 19.2 Registration Functions (V1)
@@ -663,8 +664,8 @@ All tiers: 4-hour minimum cooldown between posts.
 ### 21.3 Promotional Pack Add-Ons (Artists)
 - $5 per city
 - Tour flier prominently advertised in Promotions section (citywide + statewide)
-- Users in each tour city receive notification in Feed
-- Artist profile displayed in "On Tour" carousel in Feed
+- Users in each tour city receive notification in Activity Feed (S.E.E.D Feed)
+- Artist profile displayed in "On Tour" carousel in Activity Feed (S.E.E.D Feed)
 
 ### 21.4 On-Air Promotional Ads (Artists)
 - $5/day or $20/week
@@ -951,7 +952,7 @@ All tiers: 4-hour minimum cooldown between posts.
 - User accounts (Listener)
 - Artist/Band accounts
 - Promoter accounts
-- The Plot (5 tabs: Feed, Events, Promotions, Statistics, Social placeholder)
+- The Plot (5 tabs: Activity Feed (S.E.E.D Feed), Events, Promotions, Statistics, Social placeholder)
 - RaDIYo player with tier toggle
 - Fair Play system
 - Discover section (Map View, Search)
@@ -999,7 +1000,7 @@ All tiers: 4-hour minimum cooldown between posts.
 | Parent Scene | Pre-loaded established genre Scene (open from launch) |
 | Child Genre | Microgenre mapped to a parent genre |
 | Personal Play | On-demand playback from user's Collection (isolated from Fair Play) |
-| Community Resonance Display | Scene Activity-driven content surfacing in the Feed |
+| Community Resonance Display | Scene Activity-driven content surfacing in the Activity Feed (S.E.E.D Feed) |
 | Search Party | Collaborative discovery group (V2) |
 | Listening Room | Shared playback experience space (V2) |
 | Mixologist | User who creates and sells Mixes (V2) |

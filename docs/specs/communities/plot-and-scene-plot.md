@@ -6,7 +6,7 @@
 **Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-Defines The Plot as the Home Scene dashboard where communities S.E.E.D. their Scene.
+Defines The Plot as the Home Scene dashboard where communities operate their Scene.
 
 ## User Roles & Use Cases
 - Listeners view community activity and access civic actions.
@@ -16,26 +16,28 @@ Defines The Plot as the Home Scene dashboard where communities S.E.E.D. their Sc
 ## Functional Requirements
 - The Plot is the primary Home Scene interface.
 - Tabs include:
-  - Feed (default)
+  - Activity Feed (S.E.E.D Feed) (default)
   - Events
   - Promotions
   - Statistics / Scene Map
   - Social (V2)
-- Feed surfaces community actions such as Blasts, new releases, and followed entity updates.
-- Registrar is accessed from the Feed.
+- S.E.E.D stands for Support, Explore, Engage, Distribute.
+- The Activity Feed (S.E.E.D Feed) surfaces explicit community actions only (Blasts, registrations, and new releases entering Fair Play).
+- The Activity Feed is identical for all listeners in the Home Scene and is never ranked, scored, or personalized.
+- Registrar is accessed from the Activity Feed.
 - Statistics include Activity Score and scene health metrics.
 - Events tab shows calendar and upcoming events.
-- Promotions tab shows Offers.
+- Promotions tab shows Offers; promotions do not appear in the Activity Feed by default.
 - Print Shop issuance is accessed through the Events surface.
 - Social tab hosts message boards and listening rooms (V2).
 
 ## Non-Functional Requirements
 - No personalized ranking or algorithmic feed ordering.
-- Feed reflects explicit community actions only.
+- Activity Feed reflects explicit community actions only.
 
 ## Architectural Boundaries
 - Plot is a civic interface, not a recommendation surface.
-- No private DMs outside group contexts.
+- No private DMs to random individuals; social is group‑context only.
 
 ## Data Models & Migrations
 - TBD
@@ -48,8 +50,8 @@ Defines The Plot as the Home Scene dashboard where communities S.E.E.D. their Sc
 - Scene Map and statistics are visible within the Plot.
 
 ## Acceptance Tests / Test Plan
-- Feed shows community actions only.
-- Registrar entry is visible in Feed.
+- Activity Feed shows community actions only.
+- Registrar entry is visible in Activity Feed.
 - Promotions and Events surfaces are Scene-bound.
 
 ## References

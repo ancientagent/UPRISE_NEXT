@@ -202,14 +202,14 @@ The Plot is governed by Scene rules, not individual preference.
 
 6.3 Plot Surfaces
 The Plot is composed of multiple fixed surfaces:
-Activity Feed - Displays Signals explicitly Blasted into the Scene - Displays new releases entering Fair Play -
+Activity Feed (S.E.E.D Feed) - Displays Signals explicitly Blasted into the Scene - Displays new releases entering Fair Play -
 Displays civic updates (registrations, motions, milestones) - Contains the Statistics View and Scene Map
 Events - Displays events created within the Scene - Shows upcoming shows, gatherings, and verified activity
 Promotions - Displays offers and promotions explicitly carried into the Scene - No automatic promotion or
 targeting
 Social (V2) - Scene message boards and listening rooms - The only location for public discussion
 6.4 Activity Feed Rules
-The Activity Feed is not ranked, scored, or optimized.
+The Activity Feed (S.E.E.D Feed) is not ranked, scored, or optimized. S.E.E.D stands for Support, Explore, Engage, Distribute.
 Rules: - Content appears only through explicit user action (Blast, registration, release) - No algorithmic
 ordering or recommendation - No engagement-based surfacing
 Statistics and the Scene Map are descriptive only. They visualize community activity and structure but do
@@ -222,7 +222,7 @@ No surface may reinterpret one category as another.
 7. The Registrar (Civic Activation)
 7.1 Definition
 The Registrar is the civic activation surface of a Scene.
-It is located within the Activity Feed of the Home Scene and functions as the formal gateway for
+It is located within the Activity Feed (S.E.E.D Feed) of the Home Scene and functions as the formal gateway for
 registering entities, roles, and motions.
 8
 

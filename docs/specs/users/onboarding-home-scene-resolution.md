@@ -39,8 +39,8 @@ Defines the onboarding flow for selecting a Home Scene and the input-driven reso
 
 ## Data Models & Migrations
 ### Prisma Models
-- User (HomeSceneId, GPSVerified flag)
-- Scene (City, State, Music Community)
+- User (homeSceneCity, homeSceneState, homeSceneCommunity, homeSceneTag, gpsVerified)
+- Scene (city, state, musicCommunity)
 - SectTag (name, parent Scene)
 - UserTag (User to SectTag)
 
@@ -56,7 +56,7 @@ Defines the onboarding flow for selecting a Home Scene and the input-driven reso
 
 ### Request/Response
 - Request schema: City, State, MusicCommunity, OptionalTag
-- Response schema: SceneId, AppliedTags, VotingEligible
+- Response schema: SceneId (or resolved key), AppliedTags, VotingEligible
 
 ## Web UI / Client Behavior
 - Inputs: City, State, Music Community (autocomplete).
