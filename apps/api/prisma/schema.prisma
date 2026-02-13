@@ -13,6 +13,12 @@ datasource db {
   extensions = [postgis]
 }
 
+enum CommunityTier {
+  CITY
+  STATE
+  NATION
+}
+
 model User {
   id          String    @id @default(uuid())
   email       String    @unique
@@ -35,6 +41,7 @@ model User {
   communities        CommunityMember[]
   createdCommunities Community[]
   events             Event[]
+  artistDeck         ArtistDeck?
 
   @@map("users")
 }
@@ -49,6 +56,8 @@ model Community {
   isPrivate   Boolean  @default(false)
   memberCount Int      @default(0)
   createdById String
+  tier        CommunityTier @default(CITY)
+  parentId    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -57,9 +66,12 @@ model Community {
   radius   Float? // radius in meters
 
   createdBy User              @relation(fields: [createdById], references: [id])
+  parent    Community?        @relation("CommunityHierarchy", fields: [parentId], references: [id])
+  children  Community[]       @relation("CommunityHierarchy")
   members   CommunityMember[]
   tracks    Track[]
   events    Event[]
+  broadcastEntries BroadcastEntry[]
 
   @@map("communities")
 }
@@ -71,11 +83,53 @@ model CommunityMember {
   role        String   @default("member") // member, moderator, admin
   joinedAt    DateTime @default(now())
 
+  // NOTE: membership is valid only for CITY-tier communities; enforce via app/db constraint.
   user      User      @relation(fields: [userId], references: [id])
   community Community @relation(fields: [communityId], references: [id])
 
   @@unique([userId, communityId])
   @@map("community_members")
+}
+
+// generated-by: ChatGPT on 2026-01-16
+model ArtistDeck {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  onAirMessageId String?  @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id])
+  onAirMessage OnAirMessage? @relation("ArtistDeckOnAirMessage", fields: [onAirMessageId], references: [id])
+  slots        ArtistDeckSlot[]
+
+  @@map("artist_decks")
+}
+
+model ArtistDeckSlot {
+  id           String   @id @default(uuid())
+  artistDeckId String
+  trackId      String
+  position     Int
+  createdAt    DateTime @default(now())
+
+  artistDeck ArtistDeck @relation(fields: [artistDeckId], references: [id])
+  track      Track      @relation(fields: [trackId], references: [id])
+
+  @@unique([artistDeckId, position])
+  @@unique([artistDeckId, trackId])
+  @@map("artist_deck_slots")
+}
+
+model OnAirMessage {
+  id        String   @id @default(uuid())
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  artistDeck ArtistDeck? @relation("ArtistDeckOnAirMessage")
+
+  @@map("on_air_messages")
 }
 
 model Track {
@@ -97,8 +151,26 @@ model Track {
 
   uploadedBy User       @relation(fields: [uploadedById], references: [id])
   community  Community? @relation(fields: [communityId], references: [id])
+  broadcastEntries BroadcastEntry[]
 
   @@map("tracks")
+}
+
+model BroadcastEntry {
+  id          String   @id @default(uuid())
+  communityId String
+  trackId     String
+  activatedAt DateTime @default(now())
+  deactivatedAt DateTime?
+
+  // NOTE: Broadcast entries are intended for STATE/NATION tier communities.
+  community Community @relation(fields: [communityId], references: [id])
+  track     Track     @relation(fields: [trackId], references: [id])
+
+  @@unique([communityId, trackId])
+  @@index([communityId])
+  @@index([trackId])
+  @@map("broadcast_entries")
 }
 
 model Event {

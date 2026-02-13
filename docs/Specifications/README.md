@@ -17,6 +17,9 @@
 6. **08_UPRISE_Events_System.md** — Event creation, booking, ticketing integration
 7. **09_UPRISE_Promotions_Business.md** — Promotions, partners, analytics
 
+## Module Specs (New)
+- Community broadcast architecture (Deck vs. Broadcast): `docs/specs/communities/DECK_BROADCAST_ARCHITECTURE.md`
+
 > If you are migrating specs from the legacy repo, keep these filenames and headings unchanged so cross‑repo links remain valid.
 
 ---
