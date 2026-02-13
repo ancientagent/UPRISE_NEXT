@@ -6,18 +6,17 @@
 **Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-Defines collaborative discovery groups where member actions benefit the entire party.
+Defines private discovery groups where member ADDs are shared into a group collection.
 
 ## User Roles & Use Cases
-- A user creates a Search Party and invites up to 10 members.
-- Members share discoveries through explicit actions.
+- A user creates a Search Party and invites members.
+- Members share discoveries by adding songs to their collection.
 
 ## Functional Requirements
-- Search Parties are opt‑in groups.
-- Shared actions can include ADDs, FOLLOWs, and Scene access based on party settings.
-- Members can opt out of specific sharing categories.
-- Parties have configurable focus (music community, region, mood) and duration.
-- Party statistics include discoveries, activity, and geographic spread.
+- Search Parties are private, opt‑in groups.
+- When a member ADDs a song to their collection, it is shared into the party collection.
+- Party collection is visible to members only.
+- No automatic sharing of follows or other actions.
 
 ## Non-Functional Requirements
 - No automated recommendations or algorithmic pushing.
@@ -29,19 +28,17 @@ Defines collaborative discovery groups where member actions benefit the entire p
 ## Data Models & Migrations
 - SearchParty
 - PartyMember
-- PartySettings
-- PartyActivity
+- PartyCollection
 
 ## API Design
 - TBD
 
 ## Web UI / Client Behavior
-- Party creation flow includes name, focus, settings, duration.
-- Shared collections visible to members.
+- Party creation flow includes name and member invites.
+- Shared party collection is visible to members.
 
 ## Acceptance Tests / Test Plan
-- Shared actions propagate according to settings.
-- Members can opt out of specific sharing types.
+- ADDs by a member appear in the party collection.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
