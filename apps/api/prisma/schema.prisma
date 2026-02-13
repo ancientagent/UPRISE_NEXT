@@ -26,6 +26,11 @@ model User {
   longitude   Float?
   city        String?
   country     String?
+  homeSceneCity       String?
+  homeSceneState      String?
+  homeSceneCommunity  String?
+  homeSceneTag        String?
+  gpsVerified         Boolean   @default(false)
   isVerified  Boolean   @default(false)
   isArtist    Boolean   @default(false)
   createdAt   DateTime  @default(now())

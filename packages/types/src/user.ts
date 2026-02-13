@@ -17,6 +17,11 @@ export const UserSchema = z.object({
       country: z.string().optional(),
     })
     .optional(),
+  homeSceneCity: z.string().optional(),
+  homeSceneState: z.string().optional(),
+  homeSceneCommunity: z.string().optional(),
+  homeSceneTag: z.string().optional(),
+  gpsVerified: z.boolean().default(false),
   isVerified: z.boolean().default(false),
   isArtist: z.boolean().default(false),
   createdAt: z.date(),

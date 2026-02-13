@@ -11,9 +11,11 @@
 - Onboarding flow UI in `apps/web` with Home Scene selection and GPS voting disclaimer.
 - Plot shell in `apps/web` with core tabs (Feed, Events, Promotions, Statistics, Social).
 - Web onboarding store and seed data lists for Music Communities and taste tags.
+- Onboarding API endpoints for Home Scene selection and GPS verification.
 
 ### Changed
 - Web app font updated to Space Grotesk for non-default typography.
+- User schema extended with Home Scene and GPS verification fields.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

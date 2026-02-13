@@ -9,6 +9,7 @@ import { CommunitiesModule } from './communities/communities.module';
 import { TracksModule } from './tracks/tracks.module';
 import { EventsModule } from './events/events.module';
 import { HealthModule } from './health/health.module';
+import { OnboardingModule } from './onboarding/onboarding.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { HealthModule } from './health/health.module';
     HealthModule,
     AuthModule,
     UsersModule,
+    OnboardingModule,
     CommunitiesModule,
     TracksModule,
     EventsModule,
