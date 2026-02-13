@@ -24,6 +24,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - S.E.E.D stands for Support, Explore, Engage, Distribute.
 - The Activity Feed (S.E.E.D Feed) surfaces explicit community actions only (Blasts, registrations, and new releases entering Fair Play).
 - The Activity Feed is identical for all listeners in the Home Scene and is never ranked, scored, or personalized.
+- Activity Feed items show user identity and allow follow actions.
 - Registrar is accessed from the Activity Feed.
 - Statistics include Activity Score and scene health metrics.
 - Events tab shows calendar and upcoming events.
