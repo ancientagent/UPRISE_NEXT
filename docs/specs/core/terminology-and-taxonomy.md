@@ -42,7 +42,6 @@ Use the following terms exactly as defined.
 
 **Sect:** the sum of listeners and artists sharing a taste tag inside a Home Scene. A Sect becomes an Uprise only after meeting the support threshold and having sufficient committed artist catalog to sustain rotation.
 
-**Ground Zero:** the digital habitation and tactical center of the Home Scene. It is the interface where the Community builds the Scene.  
 **The Plot:** the Home Scene dashboard surface. It is a civic interface, not a personalized feed.
 
 **RaDIYo:** the listener‑governed broadcast infrastructure that carries Uprises across tiers; the player is a receiver, not a playlist.
@@ -63,7 +62,6 @@ None.
 
 ## Web UI / Client Behavior
 - Home Scene selection labels use **City**, **State**, **Music Community**.
-- Ground Zero is the canonical name for the Home Scene interface.
 - The Plot is the Home Scene dashboard surface.
 
 ## Acceptance Tests / Test Plan
