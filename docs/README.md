@@ -15,11 +15,26 @@ This folder contains operational docs, architecture references, specifications, 
 - [`specs/README.md`](./specs/README.md) — Module-organized specs + templates.
 - [`Specifications/README.md`](./Specifications/README.md) — Legacy spec index / canonical IDs referenced elsewhere.
 
-## Canon (+) Protocol (docs/canon)
-- Files starting with `+` are canon and are the source of truth.
-- Files starting with `-` are legacy (previous iterations or language not finalized/approved).
-- If two canon documents conflict, the newest creation date prevails.
+## Canon Protocol (docs/canon)
+- **`docs/canon/` is the authoritative source of truth for product semantics.**
+- **All documents in `docs/canon/` are canon** (no `+`/`-` prefixes required).
+- If two canon documents conflict, the newest creation date prevails. If conflicts involve the Master Canon Set, **Master Canon Set wins**.
+- Any product-defining document outside `docs/canon/` should be archived under `docs/legacy/`.
 - PDF canon sources may be stored in `docs/canon/` alongside their text-converted `.md` counterparts. Keep both in git so agents can diff and quote cleanly.
+
+### Master Canon Set (Authoritative)
+These documents are the canonical foundation for building the platform (PDF + MD exports are equivalent):
+- `Master Narrative Canon`
+- `Master Glossary Canon`
+- `Master Identity and Philosohpy Canon`
+- `Master Application Surfaces, Capabilities & Lifecycle Canon`
+- `Master Revenue Strategy Canonon`
+- `How Uprise Works — Canon Audit (working)`
+- `Legacy Narrative plus Context`
+- `UPRISE_VOICE_MESSAGING_CANONICAL`
+- `Operational Getting Started`
+- `Expanded Getting Started`
+- `45c4d5ba-6438-48e2-bb13-2a929a0dd69c` (Getting Started Guide)
 
 ## Multi-Agent Workflow
 - [`blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md`](./blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md) — Documentation + handoff strategy.

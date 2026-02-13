@@ -186,6 +186,16 @@ pnpm run infra-policy-check --verbose
 
 Specs live under `/docs/specs` (module-organized, with templates). The legacy spec index and canonical IDs referenced elsewhere live under `/docs/Specifications`.
 
+### Canon Protocol — docs/canon
+`docs/canon/` is the authoritative source for product semantics.
+- **All documents in `docs/canon/` are canon** (no `+`/`-` prefixes required).
+- If two canon documents conflict, the newest creation date prevails. If conflicts involve the Master Canon Set, **Master Canon Set wins**.
+- Any product-defining document outside `docs/canon/` should be archived under `docs/legacy/`.
+
+### Discovery V2 Notes
+- **Search Parties (V2):** Opt‑in groups; when a member adds a song to their collection, all members gain access via the group collection view. No recommendations.
+- **Listening Rooms (V2):** Live in Community Social inside Ground Zero. Rooms can be **public** (open community listening) or **private** (Search Party/group sessions). Listening parties support shared playback and discussion; hosting can use message boards and/or group chat (V2).
+
 Legacy core files (IDs/filenames):
 - `01_UPRISE_Master_Overview.md`
 - `02_UPRISE_Skeleton_Framework.md`

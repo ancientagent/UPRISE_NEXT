@@ -5,6 +5,15 @@
 
 ---
 
+# 📌 Canon Protocol for docs/canon
+`docs/canon/` is the authoritative source for product semantics.
+- **All documents in `docs/canon/` are canon** (no `+`/`-` prefixes required).
+- **Canon is law. Legacy is reference only.**
+- If two canon documents conflict, the newest creation date prevails. If conflicts involve the Master Canon Set, **Master Canon Set wins**.
+- Any product-defining document outside `docs/canon/` should be archived under `docs/legacy/`.
+
+---
+
 # 📌 SECTION 1 — DeepAgent vs Cloud Infrastructure Strategy
 This section clarifies how UPRISE uses DeepAgent for development and orchestration, and how/when Cloud Run (or other container hosting) becomes part of production infrastructure.
 
