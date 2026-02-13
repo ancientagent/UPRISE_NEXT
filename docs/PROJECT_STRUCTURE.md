@@ -194,7 +194,7 @@ Specs live under `/docs/specs` (module-organized, with templates). The legacy sp
 
 ### Discovery V2 Notes
 - **Search Parties (V2):** Opt‑in groups; when a member adds a song to their collection, all members gain access via the group collection view. No recommendations.
-- **Listening Rooms (V2):** Live in Community Social inside Ground Zero. Rooms can be **public** (open community listening) or **private** (Search Party/group sessions). Listening parties support shared playback and discussion; hosting can use message boards and/or group chat (V2).
+- **Listening Rooms (V2):** Live in Community Social inside **The Plot** (Home Scene dashboard). Rooms can be **public** (open community listening) or **private** (Search Party/group sessions). Listening parties support shared playback and discussion; hosting can use message boards and/or group chat (V2).
 
 Legacy core files (IDs/filenames):
 - `01_UPRISE_Master_Overview.md`
