@@ -5,6 +5,7 @@ This folder contains **implementation seed data** used for onboarding and routin
 ## Contents
 - `music-communities.json` — Launch-ready Music Community list (parent scenes).
 - `taste-tag-map.json` — Mapping of taste tags to parent Music Communities (routing only).
+- `music-community-taxonomy.md` — Internal taxonomy reference (not user-facing).
 
 ## Rules
 - These lists are **internal** and not user-facing taxonomies.

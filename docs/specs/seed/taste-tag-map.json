@@ -1,14 +1,1315 @@
 {
   "version": "2026-02-13",
-  "notes": "Taste-tag mapping to parent Music Communities. Internal routing only; not a user-facing taxonomy.",
+  "notes": "Taste-tag mapping to parent Music Communities. Internal routing only; not user-facing taxonomy.",
+  "legend": {
+    "origin": "(US), (UK), (Jamaica), (Brazil), or region/diaspora",
+    "status": "Active, Revival, Dormant",
+    "instr": "E (electronic-dominant), A (acoustic-dominant), H (hybrid)",
+    "movement": "DIY, club culture, political, religious, queer/ballroom, soundsystem, academic/modernist, etc.",
+    "misclass": "commonly mis-tagged by streaming platforms"
+  },
   "mappings": [
-    { "tag": "Drill", "parent": "Hip Hop" },
-    { "tag": "Boom Bap", "parent": "Hip Hop" },
-    { "tag": "Trap", "parent": "Hip Hop" },
-    { "tag": "Shoegaze", "parent": "Rock" },
-    { "tag": "Hardcore", "parent": "Rock" },
-    { "tag": "Synthwave", "parent": "Electronic" },
-    { "tag": "House", "parent": "Electronic" },
-    { "tag": "Techno", "parent": "Electronic" }
+    {
+      "tag": "Classic Rock Revival",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Pub Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Garage Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Garage Revival",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Power Pop",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Heartland Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Jam Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Indie Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Alternative Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "College Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Jangle Pop",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Shoegaze",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Dream Pop",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Britpop",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Post-Britpop",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Proto-Punk",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Hardcore Punk",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Youth Crew",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "D-Beat",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Crust",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Post-Punk",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "No Wave",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Anarcho-Punk",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Oi!",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Street Punk",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Pop Punk",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Ska Punk",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Midwest Emo",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Screamo",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Post-Hardcore",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Math Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Emo-Pop",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Progressive Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Neo-Prog",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Canterbury",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Krautrock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Psychedelic Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Neo-Psych",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Space Rock",
+      "parent": "Rock, Punk & Guitar-Band Lineages"
+    },
+    {
+      "tag": "Rap Rock",
+      "parents": [
+        "Rock, Punk & Guitar-Band Lineages",
+        "Hip-Hop, Rap & Turntablism Cultures"
+      ]
+    },
+    {
+      "tag": "Punk Rap",
+      "parents": [
+        "Rock, Punk & Guitar-Band Lineages",
+        "Hip-Hop, Rap & Turntablism Cultures"
+      ]
+    },
+    {
+      "tag": "Indie Electronic Band",
+      "parents": [
+        "Rock, Punk & Guitar-Band Lineages",
+        "Electronic, Club & DJ-Soundsystem Lineages"
+      ]
+    },
+    {
+      "tag": "Afro-Rock",
+      "parents": [
+        "Rock, Punk & Guitar-Band Lineages",
+        "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+      ]
+    },
+    {
+      "tag": "Desert Blues Rock",
+      "parents": [
+        "Rock, Punk & Guitar-Band Lineages",
+        "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+      ]
+    },
+    {
+      "tag": "Heavy Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "NWOBHM",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Power Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Speed Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Glam Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Thrash Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Crossover Thrash",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Teutonic Thrash",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Old-School Death Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Swedish Death Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Technical Death Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Brutal Death Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Deathgrind",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "First Wave Black Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Second Wave Black Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Atmospheric Black Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "DSBM",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Blackgaze",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Doom Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Epic Doom",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Funeral Doom",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Sludge Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Stoner Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Desert Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Metalcore",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Deathcore",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Djent",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Nu Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Industrial Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Folk Metal",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Blackened Hardcore",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "Blackened Crust",
+      "parent": "Metal & Extreme Music Lineages"
+    },
+    {
+      "tag": "East Coast",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Boom Bap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "West Coast",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "G-Funk",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Southern Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Trap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Memphis Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Midwest Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Conscious Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Political Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Backpack",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Underground Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Battle Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Spoken-Word Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Abstract Hip-Hop",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Industrial Hip-Hop",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Jazz Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Art Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Avant-Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Instrumental Hip-Hop",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Beat Scene",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Turntablism",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Plunderphonics",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Hyphy",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Jersey Club Rap",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Grime",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Drill",
+      "parent": "Hip-Hop, Rap & Turntablism Cultures"
+    },
+    {
+      "tag": "Reggaeton",
+      "parents": [
+        "Latin & Afro-Latin Urban + Traditional Continuums",
+        "Hip-Hop, Rap & Turntablism Cultures"
+      ]
+    },
+    {
+      "tag": "Latin Rap",
+      "parents": [
+        "Latin & Afro-Latin Urban + Traditional Continuums",
+        "Hip-Hop, Rap & Turntablism Cultures"
+      ]
+    },
+    {
+      "tag": "Rap + Punk/Hardcore",
+      "parents": [
+        "Hip-Hop, Rap & Turntablism Cultures",
+        "Rock, Punk & Guitar-Band Lineages"
+      ]
+    },
+    {
+      "tag": "Rap over Techno",
+      "parents": [
+        "Hip-Hop, Rap & Turntablism Cultures",
+        "Electronic, Club & DJ-Soundsystem Lineages"
+      ]
+    },
+    {
+      "tag": "Rap over Jungle",
+      "parents": [
+        "Hip-Hop, Rap & Turntablism Cultures",
+        "Electronic, Club & DJ-Soundsystem Lineages"
+      ]
+    },
+    {
+      "tag": "Chicago House",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Deep House",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Garage House",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Tech House",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Disco",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Nu-Disco",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Italo Disco",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Ballroom/Vogue",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Detroit Techno",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Berlin Techno",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Dub Techno",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Minimal Techno",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Acid Techno",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Jungle",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Drum & Bass",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Neurofunk",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Liquid",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Jump-Up",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "UK Garage",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "2-Step",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Grime Instrumentals",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Dubstep",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Breakbeat Hardcore",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Trance",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Goa Trance",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Psytrance",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Hardstyle",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Hardcore (Gabber)",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Happy Hardcore",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Ambient",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Drone Ambient",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "IDM",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Downtempo",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Trip-Hop",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Glitch",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Synthwave",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Darkwave (Electronic)",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Vaporwave",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Electroclash",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Industrial Techno",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "Live Electronic Band",
+      "parent": "Electronic, Club & DJ-Soundsystem Lineages"
+    },
+    {
+      "tag": "New Orleans/Dixieland",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Swing",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Big Band",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Gypsy Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Manouche",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Bebop",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Hard Bop",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Post-Bop",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Modal Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Spiritual Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Contemporary Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Jazz Fusion",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Jazz-Funk",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Acid Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Nu-Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Broken Beat",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Free Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Free Improvisation",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "AACM",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Onkyokei",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Electro-jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Live Electronics Jazz",
+      "parent": "Jazz, Improvised Music & Swing-Dance Ecosystems"
+    },
+    {
+      "tag": "Jazz Rap",
+      "parents": [
+        "Jazz, Improvised Music & Swing-Dance Ecosystems",
+        "Hip-Hop, Rap & Turntablism Cultures"
+      ]
+    },
+    {
+      "tag": "Traditional Gospel",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Contemporary Gospel",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Sacred Steel",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Southern Soul",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Memphis Soul",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Philly Soul",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Motown Revival",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Deep Soul",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Contemporary R&B",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Alternative R&B",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Neo-Soul",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Quiet Storm",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "P-Funk",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Boogie",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Funk Rock",
+      "parent": "Soul, R&B, Funk & Gospel Lineages"
+    },
+    {
+      "tag": "Soulful House",
+      "parents": [
+        "Soul, R&B, Funk & Gospel Lineages",
+        "Electronic, Club & DJ-Soundsystem Lineages"
+      ]
+    },
+    {
+      "tag": "Traditional Folk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Contemporary Folk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Protest Folk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Indie Folk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Freak Folk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Americana",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Roots Rock",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Alt-Country",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Country Alternative",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Red Dirt",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Honky-Tonk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Outlaw Country",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Western Swing",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Bluegrass",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Progressive Bluegrass",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Newgrass",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Old-time",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Celtic Traditional",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Balkan Brass",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Nordic Folk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Folk Punk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Country Rap",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Electro-folk",
+      "parent": "Folk, Roots, Country & Acoustic Traditions"
+    },
+    {
+      "tag": "Traditional Ska",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Rocksteady",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Roots Reggae",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Dub",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Steppers",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "UK Dub",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Dub Poetry",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Dancehall",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Ragga",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Ragga Jungle",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Soca",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Calypso",
+      "parent": "Reggae, Dub, Ska & Caribbean Sound-System Lineages"
+    },
+    {
+      "tag": "Ska Punk",
+      "parents": [
+        "Reggae, Dub, Ska & Caribbean Sound-System Lineages",
+        "Rock, Punk & Guitar-Band Lineages"
+      ]
+    },
+    {
+      "tag": "Dub Techno",
+      "parents": [
+        "Reggae, Dub, Ska & Caribbean Sound-System Lineages",
+        "Electronic, Club & DJ-Soundsystem Lineages"
+      ]
+    },
+    {
+      "tag": "Salsa",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Son Cubano",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Timba",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Bachata",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Merengue",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Reggaeton",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Latin Trap",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Dembow",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Samba",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Pagode",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "MPB",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Bossa Nova",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Forro",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Manguebeat",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Baile Funk",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Mariachi",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Norteno",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Banda",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Corridos",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Corridos Tumbados",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Nueva Cancion",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Cumbia",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Cumbia Sonidera",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Digital Cumbia",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Latin House",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Tribal House",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Rock en Espanol",
+      "parent": "Latin & Afro-Latin Urban + Traditional Continuums"
+    },
+    {
+      "tag": "Highlife",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Afrobeats",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Afrobeat",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Soukous",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Rumba Congolaise",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Ethio-jazz",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Somali Funk",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Arabic Pop",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Rai",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Gnawa",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Dabke",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Qawwali",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Ghazal",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Bhangra",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Bollywood",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Filmi",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Enka",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Kayokyoku",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Cantopop",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Mandopop",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Afro-house",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Arab Trap",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Desi Hip-Hop",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Global Bass",
+      "parent": "Global Diasporic Traditions (Africa, Middle East, South & East Asia)"
+    },
+    {
+      "tag": "Baroque",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Classical",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Romantic",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Historically Informed Performance",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Minimalism",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Post-Minimalism",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Spectralism",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Modernism",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Post-tonal",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Contemporary Chamber",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Choral",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Film Scoring",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Game Scoring",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Electroacoustic Composition",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Modern Classical + Electronic",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Post-classical",
+      "parent": "Classical, Contemporary Composition & New Music"
+    },
+    {
+      "tag": "Harsh Noise",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Japanoise",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Power Electronics",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Harsh Noise Wall",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Industrial",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "EBM",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Dark Industrial",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Power Noise",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Industrial Hip-Hop",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Industrial Rock",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Musique Concrete",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Acousmatic",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Live Coding",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Algorave",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Circuit Bending",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Drone",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Lowercase",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Reductionism",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Deconstructed Club",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Hyperpop",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Noise Rock",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Free Improv",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    },
+    {
+      "tag": "Dark Ambient",
+      "parent": "Experimental, Noise, Industrial & Sound Art"
+    }
   ]
 }
