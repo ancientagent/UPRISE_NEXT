@@ -1,0 +1,14 @@
+{
+  "version": "2026-02-13",
+  "notes": "Taste-tag mapping to parent Music Communities. Internal routing only; not a user-facing taxonomy.",
+  "mappings": [
+    { "tag": "Drill", "parent": "Hip Hop" },
+    { "tag": "Boom Bap", "parent": "Hip Hop" },
+    { "tag": "Trap", "parent": "Hip Hop" },
+    { "tag": "Shoegaze", "parent": "Rock" },
+    { "tag": "Hardcore", "parent": "Rock" },
+    { "tag": "Synthwave", "parent": "Electronic" },
+    { "tag": "House", "parent": "Electronic" },
+    { "tag": "Techno", "parent": "Electronic" }
+  ]
+}

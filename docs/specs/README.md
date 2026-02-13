@@ -13,6 +13,9 @@ Feature and system specifications, organized by module. Specs are the source of 
 ## Canon‑Blocked Items
 - [`DECISIONS_REQUIRED.md`](./DECISIONS_REQUIRED.md) — Items marked WORKING/UNDECIDED that must be locked before implementation.
 
+## Seed Data (Implementation Support)
+- [`seed/README.md`](./seed/README.md) — Internal onboarding/route seed data (not canon).
+
 ## Legacy Specs Index
 - [`docs/Specifications/README.md`](../Specifications/README.md) — Existing index and canonical IDs used elsewhere in the repo; keep in sync until migration is complete.
 

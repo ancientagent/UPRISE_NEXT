@@ -1,0 +1,20 @@
+{
+  "version": "2026-02-13",
+  "notes": "Launch-ready Music Communities (parent scenes). Internal routing only.",
+  "communities": [
+    "Hip Hop",
+    "Rock",
+    "Electronic",
+    "Pop",
+    "Country",
+    "R&B",
+    "Jazz",
+    "Metal",
+    "Folk",
+    "Blues",
+    "Reggae",
+    "Punk",
+    "Latin",
+    "Classical"
+  ]
+}
