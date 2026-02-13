@@ -177,6 +177,12 @@ This ensures we can:
 These documents define the boundaries, architecture, and environment.
 
 ---
+## 🧱 Legacy Reference Archives (Non-Canon)
+Reference-only archives from prior iterations (do **not** override canon):
+- `docs/legacy/uprise_mob/` — prior mobile-era documentation set
+- `docs/legacy/uprise_mob_code/` — legacy code + config snapshot (includes `.env*` files)
+
+---
 
 # 🧠 Context Loss Recovery Protocol
 When an AI agent loses context:

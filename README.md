@@ -9,6 +9,8 @@ Modernized rebuild of the UPRISE music community platform.
 
 - `AGENTS.md` — required reading checklist and guardrails for agents/contributors.
 - `docs/README.md` — documentation index (specs, handoffs, architecture).
+- `docs/canon/` — canonical product semantics (source of truth).
+- `docs/legacy/uprise_mob/` and `docs/legacy/uprise_mob_code/` — legacy references (non-canon).
 
 ## Architecture
 

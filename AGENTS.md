@@ -13,6 +13,10 @@ This file is intended for AI coding agents and new contributors. Follow it befor
 8. `docs/README.md` (indexes/specs/handoffs)
 9. `docs/solutions/README.md` (recurring-issue playbooks)
 
+## Legacy Reference Archives (Non-Canon)
+- `docs/legacy/uprise_mob/` — prior mobile-era documentation set (reference only)
+- `docs/legacy/uprise_mob_code/` — legacy code + config snapshot (reference only; includes `.env*`)
+
 ## Non-Negotiables
 - **No feature drift:** implement only what’s covered by `docs/specs/` (or `docs/Specifications/` legacy IDs) unless a spec update is explicitly requested.
 - **Web-tier boundary:** `apps/web` must not import DB clients, server-only modules, or secrets; use the API layer and shared packages instead.
