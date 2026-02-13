@@ -1,0 +1,50 @@
+
+  📋 Session Startup Reading List
+
+  1. Primary Status (MUST READ)
+
+  docs/CHANGELOG.md
+  - Why: Latest session progress, current priorities, immediate next steps
+  - Contains: What was accomplished, what's broken, what's next
+
+  2. Complete Environment Status (RECOMMENDED)
+
+  .claude/context/session_logs/DEVELOPMENT_ENVIRONMENT_STATUS.md
+  - Why: Full operational status, tool inventory, agent system details
+  - Contains: 125 agents, 5 dev tools, database config, security findings, MCP analysis
+
+  3. Quick Tool Reference (AS NEEDED)
+
+  .claude/context/session_logs/TOOL_INVENTORY_REFERENCE.md
+  - Why: Exact commands and usage examples when I need to use tools
+  - Contains: Command syntax, agent invocation examples, health checks
+
+  🎯 Recommended Session Start Pattern:
+
+  Option A: Quick Start (Most Sessions)
+  1. Read CHANGELOG.md (always)
+  2. Ask: "What should we work on today?"
+  3. Read other docs only if needed for specific tasks
+
+  Option B: Full Context (After Long Breaks)
+  1. Read CHANGELOG.md (current status)
+  2. Read DEVELOPMENT_ENVIRONMENT_STATUS.md (complete picture)
+  3. Ready for complex development tasks
+
+  💡 Why This Works:
+
+  - CHANGELOG.md is the "living document" - always updated with latest progress
+  - DEVELOPMENT_ENVIRONMENT_STATUS.md is the "reference manual" - comprehensive but stable
+  - TOOL_INVENTORY_REFERENCE.md is the "cheat sheet" - only when I need specific commands
+
+  🚀 Ideal Next Session Start:
+
+  User: "Read the changelog and let's continue with Phase 1"
+  Claude: *reads CHANGELOG.md*
+  "I can see we completed the dev environment setup and found a critical
+  security issue. Ready to fix the webapp_api bcrypt issue and scan
+  webapp_ui for the hardcoded API keys. Should we start with security
+  fixes or TrackPlayer diagnostics?"
+
+  TL;DR: Just reading CHANGELOG.md will get me 90% ready. I'll grab the other docs if needed for
+  specific technical details.

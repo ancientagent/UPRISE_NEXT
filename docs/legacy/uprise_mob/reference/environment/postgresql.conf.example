@@ -1,0 +1,9 @@
+# Postgres config (non-sensitive example)
+listen_addresses = '*'
+port = 5433
+max_connections = 100
+shared_buffers = 256MB
+# Logging
+logging_collector = on
+log_line_prefix = '%m [%p] %q%u@%d '
+# Extensions loaded per-db: postgis, uuid-ossp, pgcrypto

@@ -1,0 +1,14 @@
+# webapp_ui Application Routes
+
+## Public Routes
+/login
+/register
+/welcome
+
+## Protected Routes (require authentication)
+/
+/dashboard
+/create-band
+/create-event
+/event/:eventId/edit
+/analytics

@@ -21,6 +21,7 @@ This folder contains operational docs, architecture references, specifications, 
 - If two canon documents conflict, the newest creation date prevails. If conflicts involve the Master Canon Set, **Master Canon Set wins**.
 - Any product-defining document outside `docs/canon/` should be archived under `docs/legacy/`.
 - Canon sources live as Markdown in `docs/canon/`. PDFs are not required and should not be committed.
+ - The prior mobile-era documentation set is archived at `docs/legacy/uprise_mob/` for reference only and must not override canon.
 
 ### Master Canon Set (Authoritative)
 These documents are the canonical foundation for building the platform:
