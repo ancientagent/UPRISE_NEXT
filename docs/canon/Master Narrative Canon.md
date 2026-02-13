@@ -133,7 +133,7 @@ Contextual actions may apply small, bounded modifiers to differentiate songs tha
 support beyond passive listening.
 These modifiers exist to prevent score compression and to legitimize relative position within the rotation
 stack.
-Modifiers: - ADD: +0.25 points - BLAST: +0.5 points
+Modifiers: - ADD: +0.5 points - BLAST: +0.25 points
 Rules: - Modifiers apply once per user per song per tier. - Modifiers are capped to prevent action-spam
 amplification. - Modifiers affect rotation frequency only, never tier progression. - FOLLOW actions apply
 no engagement modifier.
