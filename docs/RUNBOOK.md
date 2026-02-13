@@ -20,6 +20,14 @@
 - **Legacy RN (`uprise_mob`) uses yarn only.**
 - **Never mix pnpm/yarn in the same project** to avoid permission lockouts and corrupted installs.
 
+## 🧾 Documentation Update Policy (Required)
+After any **meaningful change** (new feature, endpoint, model, migration, or canon update):
+1. **Update `docs/CHANGELOG.md`** with a concise entry.
+2. **Do not** rewrite the Runbook for every change; keep it stable.
+3. **At milestones**, add a short summary to `docs/README.md` or a `docs/handoff/phase-*.md` report.
+
+This keeps daily edits lightweight while preserving long‑term context.
+
 ---
 
 ## ⚙️ Development Environment
