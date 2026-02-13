@@ -40,6 +40,7 @@ model User {
   communities        CommunityMember[]
   createdCommunities Community[]
   events             Event[]
+  tags               UserTag[]
 
   @@map("users")
 }
@@ -54,6 +55,11 @@ model Community {
   isPrivate   Boolean  @default(false)
   memberCount Int      @default(0)
   createdById String
+  city        String?
+  state       String?
+  musicCommunity String?
+  tier        String   @default("city") // city, state, national
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -65,8 +71,37 @@ model Community {
   members   CommunityMember[]
   tracks    Track[]
   events    Event[]
+  sectTags  SectTag[]
 
   @@map("communities")
+}
+
+model SectTag {
+  id                String   @id @default(uuid())
+  name              String
+  status            String   @default("active") // active, incubating
+  parentCommunityId String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  parentCommunity Community @relation(fields: [parentCommunityId], references: [id])
+  users           UserTag[]
+
+  @@unique([name, parentCommunityId])
+  @@map("sect_tags")
+}
+
+model UserTag {
+  id        String   @id @default(uuid())
+  userId    String
+  sectTagId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  sectTag SectTag @relation(fields: [sectTagId], references: [id])
+
+  @@unique([userId, sectTagId])
+  @@map("user_tags")
 }
 
 model CommunityMember {

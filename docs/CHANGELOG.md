@@ -13,11 +13,14 @@
 - Web onboarding store and seed data lists for Music Communities and taste tags.
 - Onboarding API endpoints for Home Scene selection and GPS verification.
 - Google Places city autocomplete API (server-side) for onboarding location input.
+- Scene mapping fields on communities (`city`, `state`, `musicCommunity`, `tier`, `isActive`).
+- Sect tags and user tag linkage to support Home Scene routing.
 
 ### Changed
 - Web app font updated to Space Grotesk for non-default typography.
 - User schema extended with Home Scene and GPS verification fields.
 - Onboarding UI now calls API when authenticated and pulls city suggestions from Places endpoint.
+- Onboarding resolution now supports sect tags and pioneer routing flags.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
