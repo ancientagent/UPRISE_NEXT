@@ -7,97 +7,102 @@
 ---
 
 ## 1. Location & Scene Structure
+- Music Community: a group of people that are a part of the same music SCENE; people who share an affinity for a particular music style(s) 									
 
 ### 1.1 Scene Definition
-- A Scene = Geographic location + Music Community
-- Scenes exist at every tier: City, State, National
-- Examples:
-  - City: "Austin Hip-Hop"
-  - State: "Texas Hip-Hop"
-  - National: "American Hip-Hop"
-- System key example: `austin-texas-hip-hop` (State included for disambiguation)
+- Scene: the all encompassing body, environment, and influence of a music community, the social / cultural imprint of a particular area created and influenced by a music community
+- system facing = Geographic location + music community
+ Examples:
+  - Citywide:  "Austin Hip-Hop" Scene 
+  - Statewide: "Texas Hip-Hop" Scene
+  - Nationwide: "American Hip-Hop" Scene
 
-### 1.2 Geographic Tiers
-- Citywide: Local community broadcast
-- Statewide: Songs that earned citywide support
-- Nationwide: Songs that resonated at state level
+ *Only "citywide" scenes contain the user infrastructure for communities to inhabit. 
+"Statewide" and "Nationwide"  Scenes exist only as aggregates that pull the collective citywide statistics and top listener voted singles from communities across the country   
+                                                                                                                                      
+### 1.2	Uprises	
+-Uprise: The established broadcast "station" operated by the music community of a particular scene; a community's access point to the RaDIYo Broadcast Network. 
+-Each Scene operates its own "Uprise" 
+
+Citywide Uprise:
+-All music enters the RaDIYo Broadcast Network from the citywide community. 
+-Singles are submitted through artist account by uploading to the Play Deck located in the Artist's management dashboard. 
+
+Statewide Uprise:
+ a rotation consisting of the top songs upvoted by the citywide music communities within a state.
+
+Nationwide Uprise:
+a rotation consisting of the top songs upvoted by the statewide music communities across the country
+-there is no voting as this is as far as the music travels (however there will be plans in the future for other user engaging features) 
 
 ### 1.3 Home Scene
-- User's primary Scene based on location + chosen music community
+- User's local music scene of choice and civic anchor of the platform
 - Onboarding message: "Welcome to [City] [Music Community]"
-- Where user has voting rights (requires GPS verification within state)
-- Users can visit any Scene via Discover, but only vote in Home Scene
+- Users can Vote in their Home Scenes (requires GPS verification within state)
+- Users can visit any Scene via Discovery section (paid subscription only), but only vote in Home Scene
+
+**During onboarding, user is asked what their local music Scene of choice is. This is the core mechanic of scene development / assignment on the platform
 
 ### 1.4 Taxonomy of Power (Enforced Hierarchy)
 1. **Scene:** The environment/container. Scenes exist at City, State, and National levels.
-2. **Uprise:** The broadcast signal inside a Scene (e.g., "The Austin Hip-Hop Uprise").
+2. **Uprise:**  The broadcast station operated by the music community of a particular Scene (e.g., "The Austin Hip-Hop Uprise").
 3. **Community:** The people operating within the Scene.
-4. **The Plot:** The interface where they interact — the digital habitation and tactical center of the Home Scene.
-5. **RaDIYo:** The receiver/transport system that tunes the Uprise.
+4. **The Plot:** The home scene dashboard; interface in which music communities engage within their scene. 
+5. **RaDIYo:** The transport system / receiver (RaDIYo Player) that powers an Uprise. 
 
-The Community inhabits the Scene and launches the Uprise. The Uprise expresses the Scene, but it is not the Scene itself. RaDIYo receives and transports the Uprise signal across tiers.
+The Community inhabits the Scene and operates the Uprise. The Uprise utilizes the RaDIYo Broadcast Network to distribute music from artists in the scene and is collectively curated by the listeners through upvoting.
 
 ### 1.5 Parent Scenes (Launch-Ready)
-- Pre-loaded in the system: established genres with scenes worldwide (Punk, Metal, Hip-Hop, Electronic, Rock, Country, Folk, Blues, etc.)
-- Open to users from day one — no activation threshold required
-- Early adopters are the recruiters who build the Scene
-- Pre-populated using external data (Bandsintown event density) to identify hotspot cities
+- Pre-loaded in the system for users to onboard; these are the Established music scenes with large communities worldwide (Punk, Metal, Hip-Hop, Electronic, Rock, Country, Folk, Blues, etc.)
+- Open to onboarding users from day one, these are the fundamental scenes in which all "sects" and future scenes are established 
+- no activation threshold required to enter, however there is threshold required to "uprise" the sect (establish an uprise)- 8 bands (45 min of music material?)
+- Early adopters will become the recruiters who help populate the Scene - awarded "Pioneer" titles that allow them to gain large activity point bonuses along with those who join through them.  
+- Major hotspots will be identified and Pre-populate in beta using bands in town and other resources as a reference. 
 
-### 1.6 Child Genres (Microgenre Taxonomy)
-- Known microgenres pre-loaded and mapped to parent genres (e.g., Drill → Hip-Hop, Shoegaze → Rock, Synthwave → Electronic)
-- NOT their own Scenes at launch
-- When a user enters a child genre during onboarding:
-  1. System recognizes it as a child of a parent genre
-  2. Routes user to nearest parent Scene in their city
-  3. Informs user they can tag themselves with their genre using the tag system
-  4. Encourages user to find others and unite as a Sect
+### 1.6 Subsects or"Sects" (Microgenre Taxonomy)
+ Known micro-communities pre-mapped as belonging to parent Scenes (e.g., Drill → Hip-Hop, Shoegaze → Hardcore, Synthwave → Electronic)
+ - NOT their own Scenes at launch, rather, can be created as a "taste tag' in both listener and artist profile, that they can assign to their profile
+ If a user enters a subsect as their "music scene of choice" during onboarding- ex. "Austin Texas Boom Bap"
+  1. System recognizes it as a subsect of Hip-Hop
+  2. Routes user to the Austin Texas Hip-Hop scene. 
+  3. Informs user they can tag themselves with their preferred subsects of Hip-Hop using the tag system in their profile manager
+  4. users who share a tag are automatically part of a "Sect" which growth can be referenced / tracked via the scene map in the plot menu)  
+ 
+### 1.7 Sect Uprising
+A Sect can Uprise into its own broadcast within the Scene once it has the registered support of enough artists within the parent scene to meet the music threshold
 
-### 1.7 Sect Activation (Uprising)
-A Sect can Uprise into its own broadcast within the Scene when it reaches:
-- 6 bands/artists tagged with the same taste tag
-- OR 45 minutes of audio content from tagged artists
-- Whichever comes first
-
-**Activation Celebration:**
-1. Immediate notification to all Sect members
-2. Announcement in parent Scene
-3. Celebration animation in app
+Process
+1. Sect member(s) reference scene map and notice there is enough presence to uprise 
+2. A motion is made in the scene Registrar for an uprise (by member(s) )
+3. The established presence (music threshold) is guaranteed by artists signing/supporting the motion
 4. Fair Play system initiates for the Sect broadcast
-5. Songs from committed artists migrate from parent rotation into Sect rotation
+5. Songs from all artists within the sect migrate from parent rotation into Sect rotation
+6. Sect will be available on registrars across all homescenes as an official sect to inspire others, once multiple cities in multiple states have their own sect it will become its own scene. 
 
-### 1.8 Geographic Uprising (New Scene Creation)
-- Users outside the nearest parent Scene's area are routed to it initially
-- As users from the same city/region accumulate, they can mobilize to Uprise their own Scene
-- Same activation threshold applies: 6 bands/artists OR 45 minutes of audio
-- Once activated, their city becomes a new Scene on the map
-- New users in that area are now routed to their local Scene instead of the nearest one
+If a user enters a city / state in their "Music scene of choice" that is not part of the pre-established cities
+1. User will be informed that their city has yet to uprise, and will be given a pioneer title and recruitment tools that will provide them large activity point bonuses to both them and those who join their city through them. 
+2. Their city of choice (verified by GPS) will be attached to their profile, all users registered city / zip will be able to be referenced / filtered in the scene map located in the plot of their homescene
+3. If a motion is made in the scene Registrar for a new local uprising, it must gain the support of enough artists whose music playtime is greater than or equal to 45 min.
+4. If support is guaranteed, (artists have signed the motion for a local new uprise (city/zip/or region) a new scene is created all artists and listeners within the city/region will be taken to the new homescene to uprise. 
 
+All users who share a taste tag for a particular sect will have a private channel that links them in their activity feed. 
+A channel for those who share a region can be created by those who support a local uprise.   
 ---
 
-## 2. RaDIYo & The Broadcast Network
-
-### 2.1 The Uprise Signal
-- Each Scene launches an "Uprise" — its broadcast signal
-- Example: "The Austin Hip-Hop Uprise" is the broadcast signal of the Austin Hip-Hop Scene
-- The Community inhabits the Scene and launches the Uprise
-- The Uprise expresses the Scene, but it is not the Scene itself
-- All Home Scenes contribute their top singles to form statewide and nationwide broadcasts
-
-### 2.2 The RaDIYo Broadcast Network
+## 2. RaDIYo Broadcast Network
 - The listener-governed broadcast layer within the UPRISE platform
 - Returns music distribution and social cohesion to local communities
 - Each Scene has its own broadcast — what plays is determined by community action through Fair Play
 - Music travels from city to state to national broadcasts based on real local support
 - "RaDIYo" = Radio + DIY
 
-### 2.3 The RaDIYo Player (Interface)
-- The user-facing receiver that tunes the Uprise signal
+### 2.1 The RaDIYo Player (Interface)
+- The user-facing receiver in which users connect to the RaDIYo Broadcast Network
 - It is a receiver — not a playlist
 - Plays the broadcast of whichever Scene the user is currently in
-- Functions as BOTH a music player AND the primary navigation system for moving between Scene levels
-- Users aren't passively consuming music — they are actively exploring and participating in Scene cultural centers
+- Functions as BOTH a music player AND as a way to "seek" new uprises 
 
-### 2.4 Player Controls
+### 2.2 Player Controls
 - Tier Toggle: Switch between City → State → National
 - Swipe RIGHT: Jump to random state (same music community) + opens Discover
 - Swipe LEFT: Jump to random city in current state (same music community) + opens Discover
@@ -105,8 +110,8 @@ A Sect can Uprise into its own broadcast within the Scene when it reaches:
 
 **Note:** Swiping is a way to jump into discovery without having to think about what you are looking for — an exciting, seamless way to discover new music all across the country.
 
-### 2.5 Complete Community Immersion
-When users toggle between broadcast tiers via RaDIYo, they are transported to completely different Scene experiences. ALL Plot tabs update to reflect the tier:
+### 2.3 Complete Community Immersion
+When users toggle between broadcast tiers via the RaDIYo player, the scene plot will update to reflect the aggregated statistics of the geographic plot 
 
 **Citywide Tier:**
 - Player: Fresh uploads from local artists
@@ -132,13 +137,13 @@ When users toggle between broadcast tiers via RaDIYo, they are transported to co
 - Statistics: Music community benchmarks and national trends
 - Social (V2): Music community-wide discussions and industry topics
 
-### 2.6 Playback Behavior
-- Continuous: RaDIYo never stops unless user explicitly pauses
-- Seamless transitions between songs — no dead air
+### 2.4 Playback Behavior
+- Continuous: RaDIYo never stops unless user explicitly pauses or skips
+- Seamless transitions between songs or artist ads — no dead air
 - Background play continuation
 - Cross-Tier Continuity: When toggling tiers, the current song completes before transitioning. Votes remain available until the song ends.
 
-### 2.7 Persistent Interface
+### 2.5 Persistent Interface
 - Always present (fixed directly above navigation bar)
 - Available across both The Plot and Discover sections
 - Single interface for both music and navigation — reduced cognitive load
@@ -148,28 +153,21 @@ When users toggle between broadcast tiers via RaDIYo, they are transported to co
 ## 3. App Structure & Navigation
 
 ### 3.1 Screen Layout (Bottom to Top)
-- **Navigation Bar** (fixed at bottom): Three buttons — Home (left), Search (center, raised above the other two), Discover (right)
+- **Navigation Bar** (fixed at bottom): Three buttons — Home (left), Action Wheel (center, raised above the other two), Discover (right)
 - **RaDIYo Player**: Fixed directly above the navigation bar, always visible, persistent across all screens
-- **Main Content Area**: Fills the rest of the screen — displays The Plot or Discover depending on active section
+- **Main Content Area**: Fills the rest of the screen — displays the scene plot or Discover interface depending on active section
 
 ### 3.2 Navigation Bar (Bottom)
 Three buttons, left to right:
 - **Home** (The Plot): User's Scene — Feed, Events, Promotions, Statistics, Social
-- **Search**: Look up music, artists, and Scenes
-- **Discover**: Explore other Scenes (requires Discovery Pass for non-Home Scenes)
+- **Action Wheel**: tap to reveal song engagement actions Report, Skip, Blast, Add, Upvote 
+- **Discover**: Search bar with Discovery Map (requires Discovery Pass for non-Home Scenes)
 
-### 3.3 Two Main Sections
-- **The Plot**: Community habitation — where users S.E.E.D.
-- **Discover**: Exploration — visit other Scenes across the country
-
-### 3.4 RaDIYo Player Position
-- Fixed ABOVE the navigation bar
-- Visible on every screen regardless of section
-- Never hidden — music and navigation are always accessible
 
 ---
 
-## 4. Discover Section
+`## 4. Discover Section
+Where listeners go to discover different scenes all across the country
 
 ### 4.1 Access
 - Bottom right nav bar
@@ -202,19 +200,20 @@ Three buttons, left to right:
 ## 5. Signals & Universal Actions
 
 ### 5.1 What is a Signal?
-- A Signal is the atomic unit of all interaction on UPRISE
-- A discrete unit of meaning that can be carried, echoed, or ignored by a community
+- A Signal is the atomic unit of supporting interaction on UPRISE
+- A discrete unit of meaning that can be carried, echoed, or ignored across the community
 - Signals are things that are created or promoted — not the entities that create them
+- Can be viewed on  activity feed in the scene plot 
 
 ### 5.2 Signal Types
-- Core Signals: Songs, Fliers, Uprises
+- Core Signals: Songs, Fliers, Uprises,  
 - Discourse Signals: Posts, Threads (situated conversations inside a Scene)
 - Economic Signals: Deals/Promotions (Offers)
 - Intent Signals: Projects (motions for collective action)
 - Materialized Signals: Wearables (patches/shirts), Printed Artifacts (posters)
 - Verification Signals: Proof-of-Support confirmations (attendance, donations, merch purchases)
 
-Note: Fliers are viewable on events but can only be obtained through attendance/Proof-of-Support.
+Note: Fliers are viewable on events but can only be obtained as an artifact through attendance/Proof-of-Support via limited "printshop runs"
 
 ### 5.3 Followable Entities (Not Signals)
 - Artists
@@ -244,20 +243,24 @@ Note: Fliers are viewable on events but can only be obtained through attendance/
 
 ---
 
-## 6. The Plot (Digital Habitation)
+## 6. The Scene Plot (Home scene dashboard)
 
 ### 6.1 Definition
-- The community's digital habitation and engagement center of the Scene
 - Where users S.E.E.D. — Support, Explore, Engage, Distribute
 - Users don't "browse" The Plot — they inhabit and cultivate it
-- One of two main sections in the mobile app (the other being Discover)
+- the prime interface of the "Home" section
 
 ### 6.2 Structure (5 Tabs)
 
 **FEED (default)**
-- Live updates: Blasts, new releases, member updates, tour news
+- Live updates: Blasts, new releases, member updates, and activities of followed artists / accounts ex tour news, promotor updates, event updates etc. 
 - Community Resonance Display: Content surfaced by Scene activity
-- Contains: The Registrar (civic actions)
+- Contains The Registrar (civic actions) and Scene statistical data including the Scenescape (scene map)
+- where all channels communication channels feed
+  STATISTICS
+- Activity Score: Sum of all community members' individual activity points
+- Scene health metrics, member counts
+- Statistics will track EVERYTHING — specifics TBD during development
 
 **EVENTS**
 - Shows all events for artists within the Scene
@@ -267,63 +270,12 @@ Note: Fliers are viewable on events but can only be obtained through attendance/
 **PROMOTIONS**
 - Local business Offers (coupons, specials, deals)
 - Off-platform event promotions
-- Appear on the Promotions tab wall within the Scene
+- Wall of local community ads 
 - Contains: The Print Shop
-
-**STATISTICS**
-- Activity Score: Sum of all community members' individual activity points
-- Points earned by: upvoting, blasting, attending events, supporting projects, and more
-- Scene health metrics, member counts
-- Valuable for artists planning tours
-- Statistics will track EVERYTHING — specifics TBD during development
 
 **SOCIAL (V2)**
 - Message boards — the ONLY place for public communication within the Scene
 - Listening Rooms
-
-### 6.3 Tier Immersion
-The Plot is not a static interface. All tabs update dynamically based on the tier the user is tuned to via RaDIYo. When a user toggles tiers, they are transported to a completely different Scene experience:
-
-**Citywide Tier:**
-- Feed: Updates from citywide Scene members, local achievements
-- Events: Local shows in user's city (Locality + Subscription only)
-- Promotions: Local business advertisements
-- Statistics: Metrics for city's music Scene
-- Social (V2): Local Scene discussions
-
-**Statewide Tier:**
-- Feed: Activity and trends across the entire state's Scene network
-- Events: Notable shows and festivals throughout the state
-- Promotions: Regional businesses and larger venues
-- Statistics: State-level metrics and comparative data
-- Social (V2): Regional discussions and collaborations
-
-**Nationwide Tier:**
-- Feed: National music community trends and breakout artists
-- Events: Major festivals and landmark events
-- Promotions: Industry brands and nationwide services
-- Statistics: Music community benchmarks and national trends
-- Social (V2): Music community-wide discussions and industry topics
-
-### 6.4 Community Resonance Display (Feed Logic)
-Community Resonance Display is how content surfaces in the Feed. It is driven entirely by Scene Activity — not by algorithms, personalization, or user behavior modeling.
-
-**What drives the Feed:**
-- High Blast counts within the Home Scene (what the community is actively sharing)
-- Recent Upvotes in the Home Scene (community validation through voting)
-- Songs and artists that have demonstrated actual community validation through Scene actions
-
-**What the Feed is NOT:**
-- NOT based on user engagement history
-- NOT based on listening patterns
-- NOT based on personalization
-- NOT based on user behavior modeling
-- NOT based on predictive algorithms
-- NOT algorithmic recommendations
-
-All users in the same Scene see the same Scene Activity-based content. No personalization.
-
----
 
 ## 7. Users & Accounts
 
@@ -331,45 +283,31 @@ All users in the same Scene see the same Scene Activity-based content. No person
 - The person — a Listener and community member
 - Has profile
 - Active participant: listens, votes, blasts, explores
-- Uses mobile app to S.E.E.D. the community
+- Uses mobile app to S.E.E.D. their scene
 
 ### 7.2 Artist/Band Account (WebApp)
-- The stage name or band — an entity, not a user
+- The stage name or band — an entity, registered by a Listener
 - Has profile
-- Uploads music, creates Fliers, manages presence
+- Uploads music, manages presence
 - Operates on the WebApp
 - Registered via The Registrar → completed on WebApp
 - One User can link to multiple Artist/Band accounts
 - Multiple Users can link to one Artist/Band account (band members)
-- Can upload unlimited songs to library
-- Only songs placed in rotation slots enter Fair Play
-- Unslotted songs don't participate in economic activity
+- songs placed in play deck slots enter Fair Play
 - Standard Artist: 1 rotation slot (free)
 - Premium Artist (Play Pass): 3 rotation slots ($9.99/mo)
 
 ### 7.3 Key Distinction
 - Users and Artists both have profiles
 - Users participate IN the community
-- Artists/Bands are what the community engages WITH
+- Artists/Bands can create, promote, list 
 
-### 7.4 Citizen vs Observer (User status)
-- Observer: Affiliated with Scene — can Listen, Blast, Add, Follow
-- Citizen: GPS verified — can also Vote
+### 7.4 Locally Affiliated vs visitor (User status)
+- Visitor: someone who is listening in a scene they are not locally affiliated with, have "read only" permissions but can — can Listen, Add, Follow
+- Locally Affiliated: can vote (if GPS verified)  can also engage completely in a community that is their "Local Scene of choice" 
 
-### 7.5 Business Roles
-- **Promoter (V1):**
-  - Register at Registrar → complete on WebApp
-  - Can add promotion company name during registration
-  - Can create events, upload fliers at Print Shop, receive QR codes for verification
-  - Can be followed
-- **Merchant (V2):** Local business ads, coupons, specials
-- **Venue (V2):** Promote venue, list events, connect with artists
 
-### 7.6 Other Capabilities (V2)
-- Mixologist: Create and sell Mixes (+$4/mo add-on)
-- Ambassador: Tour guide services for visiting artists
-
-### 7.7 Business Role Permissions
+### 7.5 Business Role Permissions
 
 **Promoter (V1):**
 - Can: Create events, upload fliers to Print Shop, receive QR codes, be followed, message followers (one-way)
@@ -388,38 +326,26 @@ All users in the same Scene see the same Scene Activity-based content. No person
 ## 8. Fair Play System
 
 ### 8.1 Definition
-- The algorithm that ensures equal opportunity for all songs entering rotation
+- The system that ensures equal opportunity for all songs entering rotation
 - NOT popularity-based — no song gets preferential treatment
 - Every song gets the same initial exposure to determine community response
 
 ### 8.2 How It Works
-- New songs enter rotation through the artist's release deck
+- New songs enter rotation through the artist's play deck
 - All new releases play on the hour for approximately one week (equal exposure)
 - After one week, engagement score is calculated based on metrics (upvotes, skips, blasts, etc.)
 - Song finds its place in the rotation stack based on engagement score
 - Higher engagement = more frequent rotation
 - Re-evaluated each cycle to stay current with community sentiment
 
-**[ARCHITECTURAL CONSTRAINT: TWO-PHASE INGESTION]**
 
-To ensure equal opportunity, the system uses a strict Two-Phase Ingestion Queue for all Active songs:
-
-- **Phase 1 (Time-Based Rotation):** Upon becoming ACTIVE, a song enters a guaranteed rotation window (e.g., ~1 week). During this phase, exposure is calculated strictly by time, ignoring engagement metrics. This ensures the system gathers accurate data before judgment.
-
-- **Phase 2 (Engagement-Based Rotation):** Only after Phase 1 completes does the song move to probability-based rotation, where frequency is weighted by the engagement metrics (Upvotes, Skips, Blasts) gathered during Phase 1.
-
-### 8.3 Tier Progression
-- Citywide: Fresh local uploads, all artists start here
-- Statewide: Songs that earned citywide support
-- Nationwide: Songs that resonated at state level
-
-### 8.4 Key Rules
+### 8.3 Key Rules
 - Upvotes determine tier progression
 - Metrics from Personal Play (Collections) do NOT affect Fair Play
-- Voting enabled only for Citizens in Home Scene
+- only locally affiliated listeners who have registered their GPS can vote in their Home Scene
 - Voting disabled at National tier
 
-### 8.5 Personal Play vs Fair Play
+### 8.4 Personal Play vs Fair Play
 These are two completely separate systems with total data isolation:
 
 **Fair Play (Primary):**
@@ -431,7 +357,7 @@ These are two completely separate systems with total data isolation:
 
 **Personal Play (Secondary):**
 - On-demand access to user's ADDed Collection
-- Manual selection, repeat, shuffle available
+- Manual selection, or  playlist, repeat, shuffle available
 - No impact on Fair Play metrics whatsoever
 - No voting capabilities in this mode
 - Play counts do NOT affect song priority
@@ -439,7 +365,7 @@ These are two completely separate systems with total data isolation:
 
 These systems never cross-contaminate. Separate analytics, separate database tables, independent calculation engines.
 
-### 8.6 Vote Casting Process
+### 8.5 Vote Casting Process
 1. Votes can only be cast while the song is currently playing
 2. User presses UPRISE logo button to reveal Action Wheel
 3. Visual feedback confirms vote registered
@@ -447,18 +373,7 @@ These systems never cross-contaminate. Separate analytics, separate database tab
 5. Once song playback completes, vote is final
 6. One-time lock: once cast for a song in a tier, cannot be changed
 
-### 8.7 National Tier Rules
-
-**Hard Constraint: Voting is DISABLED at the National Tier.**
-
-The National Tier is a Scene (atmosphere) that aggregates signals from local Scenes, but it is NOT a Voting Jurisdiction.
-
-**What the National Tier IS:**
-- An aggregation point where top singles from all Home Scenes converge
-- The highest achievement level for a song
-- A discovery point for music that has demonstrated broad community resonance
-- Every song on the national broadcast earned its spot city-by-city, state-by-state through real community action
-
+### 8.6 National Tier 
 **What the National Tier IS NOT:**
 - NOT a Voting Jurisdiction
 - NOT a place where new promotion happens
@@ -472,13 +387,10 @@ The National Tier is a Scene (atmosphere) that aggregates signals from local Sce
 - FOLLOW artists
 - Listen
 
-**Disabled Actions at National:**
-- Voting (completely disabled — no tier above National)
 
-### 8.8 Anti-Manipulation Measures
+### 8.7 Anti-Manipulation Measures
 
 **GPS Verification:**
-- Real-time location check during vote
 - Historical location pattern analysis
 - Velocity checks (impossible travel detection)
 - VPN/proxy detection
@@ -496,32 +408,18 @@ The National Tier is a Scene (atmosphere) that aggregates signals from local Sce
 - Vote audit trails
 - Reversal capability for fraudulent votes
 
-### 8.9 Phase 1 Duration
+### 8.8 Phase 1 Duration
 - Initial evaluation period: approximately one week [TUNABLE]
-
-### 8.10 Upvote Rules
-- Upvotes determine tier progression (City → State → National)
-- Users can upvote as many songs as they want
-- Each song can only be upvoted once per tier (if it progresses, can upvote again at next tier)
-- Can only upvote while the song is currently playing
-- Upvoting enabled only for Citizens in Home Scene
-- Upvoting disabled at National tier
-
-### 8.11 Engagement Metrics
-- Upvote: Positive weight (determines tier progression)
-- Blast: Positive weight
-- Skip: Heaviest negative weight
-- Other metrics factor into rotation frequency within tier
 
 ### 8.12 Skip
 - Skips the song so user doesn't hear it
-- Space filled with silence or business commercial until next song plays
+- Space filled with business / artist ads until next song plays
 - Heaviest negative weight on engagement score
 
 ### 8.13 Report
 - Sends a message to admin
 - Can be used for any number of reasons
-
+- 3 reports of any signal gets automatically removed until it can be reviewed by admin
 ---
 
 ## 9. Events & Fliers
@@ -548,51 +446,22 @@ Optional Fields:
 
 ### 9.2 Event Distribution
 Events appear based on:
-- Locality: Event is in user's Scene
-- Subscription: User follows the Artist or Promoter creating the event
-- Community action: BLASTed by other users
+- Locality: Event is in the home scene it was created in unless it is a tour
+- user can follow an event by following the Artist, Promoter, or event itself, or can be followed by a user's blast 
+- following an artist and / or promotor will automatically add events to user's calendar both in collection which can synch to google / apple calendars
 
 ### 9.3 Events Tab (in The Plot)
 - Calendar view at the top showing all upcoming events in the Scene
 - List of events below the calendar
 - Users can browse both views
 
-### 9.4 Event Page
-- Event details (date, time, venue, etc.)
-- Links to Promoter profile
-- Links to performing bands/artists profiles
-- Follow button on the event (similar to Facebook "like")
-- Following an event adds it to user's personal calendar
-
-### 9.5 User Actions on Events
-- FOLLOW the event (adds to personal calendar, receives updates in Activity Feed)
-- Tap Promoter link → visit Promoter profile → can Follow
-- Tap Band/Artist link → visit their profile, hear their music → can Follow
-- Share externally
-- BLAST to amplify in community Feed
-
-### 9.6 User Calendar
-- Located alongside Collections (user's personal space)
-- Followed artist events auto-add to user's calendar
-- Google Calendar sync available
-- Apple Calendar and Outlook sync planned
-
-### 9.7 Fliers (Memory Tokens)
+### 9.4 Fliers (Memory Tokens)
 - Earned by attending the event
-- Verified through Proof-of-Support (ticket receipt or location)
+- Verified through Proof-of-Support can scan qr at event location
 - User receives activity points for attendance
 - Tradeable (?)
 
-### 9.8 Event Distribution Rules
-
-**Events appear based on:**
-- Locality: Event is in user's Scene
-- Subscription: User follows the Artist or Promoter creating the event
-- Community action: BLASTed by other users
-
-**What Event Distribution IS:**
-- Infrastructure that connects events to relevant local audiences
-- Locality-based and subscription-based delivery only
+### 9.5 Event Distribution Rules
 
 **What Event Distribution IS NOT:**
 - NOT algorithmically recommended
@@ -623,7 +492,7 @@ The Print Shop acts as an infrastructure surface, not a store. It sells Issuance
 - **Fulfillment:** Physical fulfillment is the sole responsibility of the issuer off-platform. The system's role is strictly to mint the digital record of the transaction.
 
 **Promoters:**
-- Upload flier image → receive QR code printout for event verification
+- Upload flier image → receive QR code printout for event verification 
 
 **Artists/Bands:**
 - Purchase runs of patches, shirts, pins, posters, stickers
@@ -640,14 +509,12 @@ To support the circular economy without handling payments, the system uses Proof
 
 1. **Action:** A user donates to an artist off-platform (via Venmo, CashApp) or purchases merch/tickets external to UPRISE.
 
-2. **Verification:** The user submits the receipt or proof to UPRISE (or via API integration).
-
-3. **Trigger:** Verification triggers the minting of a Materialized Signal (Patch/Poster) and awards Activity Points.
+2. **Trigger:** Verification triggers the minting of a Materialized Signal (Patch/Poster) and awards Activity Points.
 
 ### 10.5 The Run Model
 - Transacting in Print Shop buys a "Run" (finite issuance allocation)
 - Example: Patch Run: 100 units for $10
-- Example: Short Poster Run: 20 units for first 20 ticket buyers
+- Example: an artist or a promotor wants to promote by offering limited Poster Run: 20 units for first 20 ticket buyers (users can post poster in profile can be viewed in collections)
 - Once exhausted, the Run is closed — cannot be restocked
 
 ### 10.6 Minting (Internal, Zero-Cost)
@@ -664,9 +531,7 @@ To support the circular economy without handling payments, the system uses Proof
 - Fans can add to collection, trade, admire
 
 **Attendance Artifacts:**
-- Non-repeatable signals minted after verified events
-- Memory Tokens (e.g., "I was at Austin Punk Show, 2025")
-- Records presence
+- Non-repeatable signals minted after verified events: stamps, patches posters, fliers etc
 
 All materialized signals are tradeable (for now).
 
@@ -678,12 +543,12 @@ All materialized signals are tradeable (for now).
 - Basic analytics
 
 **Premium Tier:**
-- Local + statewide Scene access
+- statewide Scene access
 - Increased post limits
 - Enhanced analytics, scheduling
 
 **Enterprise Tier:**
-- Local + statewide + national Scene access
+- national Scene access
 - Unlimited community access
 - Priority placement, advanced reporting
 
@@ -697,19 +562,12 @@ All tiers: 4-hour minimum cooldown between posts.
 
 ---
 
-## 11. Statistics Tab (in The Plot)
+### 11. Activity Points
 
-### 11.1 Scene Statistics
-- Activity Score: Sum of all community members' individual activity points
-- Scene health metrics, member counts
-- Valuable for artists planning tours
-- Statistics will track EVERYTHING — specifics TBD during development
-
-### 11.2 Activity Points
-- Users earn points through participation (upvoting, blasting, attending events, supporting projects, and more)
+- Users earn points through participation ( blasting, attending events, supporting projects, and more)
 - Individual Activity Score visible in user's profile
 - Individual points contribute to Scene's overall Activity Score
-- Large bonuses permitted for Proof-of-Support actions (verified labor/financial support)
+- Large bonuses permitted for Proof-of-Support actions (verified labor/financial support)and pioneering (recruitment)
 
 ### 11.3 Artist Analytics (WebApp)
 - Performance metrics across tiers
@@ -723,7 +581,7 @@ All tiers: 4-hour minimum cooldown between posts.
 ## 12. Social Tab (V2) (in The Plot)
 
 ### 12.1 Message Boards
-- The ONLY place for public communication within the Scene
+- The ONLY place for public communication within the Scene other than group feeds (private)
 - Community-wide discussions
 - No DMs to random individuals
 
@@ -748,213 +606,7 @@ All tiers: 4-hour minimum cooldown between posts.
 - Amplifies a signal (song, flier, etc.) to your community Feed
 - NOT a private message — community action
 
----
 
-## 13. Onboarding
-
-### 13.1 Account Creation
-- Create login credentials manually OR login with Gmail
-- Future: Login with Bandcamp/SoundCloud (seamless for artists + metadata)
-
-### 13.2 Home Scene Selection
-- Screen: "Join Your Home Scene"
-- Enter City, State (autocomplete via Places API)
-- Select Music Community:
-  - Pre-loaded communities already exist in the system (established genres/subgenres with scenes worldwide: Metal, Punk, Folk, Garage, Blues, Rockabilly, Country, Rock, Hip-Hop, etc.)
-  - As user types, matching pre-loaded communities autocomplete in a dropdown
-  - User can select from the dropdown OR continue typing a custom entry
-- Optional: Verify with GPS (to enable voting)
-- Preview: "Welcome to Austin Hip-Hop"
-
-### 13.3 Input-Driven Resolution
-When a user submits their Music Community, the system checks City + Music Community:
-
-1. Does City + Music Community exist as an **Active Home Scene**? → Join.
-2. Does City + Music Community exist as an **Active Sect**? → Join.
-3. Does City + Music Community map to a **Parent Anchor**? → Join Parent + tag user.
-4. Is it unknown? → Create **Incubating Tag** + join Parent.
-
-No forced taxonomy. The user types freely and the system resolves. Pre-loaded communities autocomplete to guide users toward established Scenes, but the field is never locked to a fixed list.
-
-### 13.4 Scenario A: Active Scene
-- User confirms → taken directly to Home Scene
-- Brief tutorial showing how RaDIYo player works
-
-### 13.5 Scenario B: Incubating Scene/Sect
-
-**Pioneer Modal Flow:**
-
-1. "[City] [Music Community] huh?... in [State] you say?"
-
-2. "Your community has yet to Uprise. Until they do, members of your community can be found in [Nearest Uprise]."
-
-3. "Until then..." — mobilizing message motivating user to free their community from corporate platforms
-
-4. Pioneer Card:
-   - QR code and shareable link
-   - User can promote to their community
-   - Major activity points bonuses for each person recruited
-
-5. Prompt: "Continue to nearest scene?"
-
-6. Once user arrives at nearest scene:
-   - Tutorial begins
-   - First message shows how to find others from their Sect
-   - Points to Activity section of The Plot
-   - Helps user keep track of who shows up from their inactive community
-
-**Progress Indicators:**
-- Current songs: X/15
-- Current artists: Y/5
-- Message: "Only [Z] more songs needed to restore [City]!"
-
-- Pioneer/Recruiter activity points for early adopters
-
-### 13.6 GPS Verification
-- Can be done during onboarding OR later in settings
-- Required for Citizen status (voting, uploading)
-- Without GPS: Observer status (listen, blast, add, follow only)
-
----
-
-## 14. Sects (Sub-Communities)
-
-### 14.1 Definition
-- A subsection of artists and listeners within the Home Scene
-- Share the same taste tag (self-assigned music style affiliation)
-- Example: "Austin Drill" within "Austin Hip Hop"
-
-### 14.2 Formation (Labor-Based)
-- NOT algorithmic — Sects form through Tagging Density (labor)
-- Users/artists self-tag their musical taste
-- When enough playtime accumulates, motion can be entered in Registrar
-- Sect "Uprises" into its own broadcast
-
-### 14.3 Signal Migration
-- When Sect activates, committed artists' songs MIGRATE from Home Scene rotation INTO Sect rotation
-- Song has only ONE primary broadcast rotation at a time
-- Prevents main Scene feed from being cluttered by polar extremes
-- Artist REMAINS in Home Scene for voting/stats — only songs migrate
-
-**[ARCHITECTURAL CONSTRAINT: CIVIC SITUATEDNESS]**
-
-- **Song Migration:** When a Sect activates, the Song migrates from the Home Scene rotation into the Sect rotation. A song has only ONE primary broadcast rotation at a time.
-
-- **Artist Anchoring:** The Artist remains situated in the Home Scene (City+State) for voting rights and statistics. The artist does not "leave" the city; their signal simply broadcasts on a specialized frequency. This prevents the artist from losing their political status in the main Scene.
-
-### 14.4 Communication
-- Sects can message each other through a feed channel
-
-### 14.5 Tagging
-- Both artists and listeners self-tag their musical taste
-- Tags create Sect affiliations
-- Same system for everyone
-
----
-
-## 15. Notifications
-
-### 15.1 Critical (Always On)
-- Voting milestones, content reported/removed, account security, payment confirmations
-
-### 15.2 Artist Notifications (Customizable)
-- New followers, song tier promotions, event milestones, upvote thresholds
-
-### 15.3 Social Notifications (Customizable)
-- Followed artist updates, Blasts from community, event reminders
-
-### 15.4 Discovery Notifications (Optional)
-- New Scene recommendations, genre updates, nearby events
-
-### 15.5 Delivery
-- In-App: Banner, badge counts, notification center
-- External: Push notifications, email digests, calendar reminders
-
-### 15.6 User Controls
-- Category toggles, quiet hours, frequency limits
-
----
-
-## 16. Profiles
-
-### 16.1 User Profile (Mobile)
-- Username
-- Location (optional)
-- Activity Score
-- Collections (signals they've Added)
-- Materialized Signals (patches, posters, attendance artifacts)
-- Artists followed
-- Users followed
-- Events followed
-- Groups (Search Parties, etc.)
-- Ambassador services offered (V2)
-
-### 16.2 Artist/Band Profile
-
-**Public (visible to listeners on Mobile):**
-- Bio
-- Photos/Videos
-- External links (website, Bandcamp, merch store, social accounts)
-- Contact information
-- Released songs (playable)
-- Upcoming events
-
-**Artist-Facing (managed on WebApp):**
-- Follower count
-- Analytics/metrics
-- Profile editing
-- Song uploads
-- Upload/edit album art
-- Add new events
-- Notifications
-- Search for ambassadors in tour cities (V2)
-
-**Band Members:**
-- Members linked to a band account can see everything the band profile displays
-- Both band account AND member/listener accounts can read band notifications
-
----
-
-## 17. Search
-
-### 17.1 Scope
-- Search is within your own Uprise (Scene)
-- Not platform-wide
-
-### 17.2 Music Search
-- Look up music currently uprising (broadcasting) in your Scene
-- Surfaces songs the community is currently carrying
-- Discovery-focused — not a streaming catalog
-
-### 17.3 Artist Search
-- Look up artists in your Scene
-- Play songs from the artist's profile
-
-### 17.4 Collections Persistence
-- Once a song is Added to a Collection, it stays
-- Users retain Personal Play access even after songs leave rotation
-- Your collection is your history — it doesn't disappear when the broadcast moves on
-
----
-
-## 18. Proof-of-Support & Event Verification
-
-### 18.1 Promoter Registration
-- Users register as Promoters at the Registrar
-- Receive code that takes them to WebApp
-- Create events on WebApp
-
-### 18.2 Flier & QR Code Flow
-- Promoter uploads flier image at the Print Shop
-- Receives QR code printout
-- Posts QR code at the door or somewhere at the event
-
-### 18.3 Attendee Verification
-- Attendees scan QR code at the event
-- Verifies attendance
-- Receives: Flier (Memory Token) + Activity Points
-
----
 
 ## 19. The Registrar
 
@@ -975,19 +627,6 @@ No forced taxonomy. The user types freely and the system resolves. Pre-loaded co
 - Sect motions (when Sect has enough density to Uprise)
 - Other civic actions TBD
 
----
-
-## 20. Subscription Tiers
-
-### 20.1 Free Listener
-- Full access to Home Scene (all tiers: city, state, national) [may change]
-- Full access to The Plot in Home Scene
-- Can Blast, Add, Follow, Vote (if Citizen)
-
-### 20.2 Discovery Pass ($5.99/mo)
-- Unlocks Scenes outside Home Scene
-- Access to Discover section (Map View, other Scenes)
-- Can visit any Scene — city, state, and/or nationwide
 
 ---
 
@@ -1130,9 +769,6 @@ No forced taxonomy. The user types freely and the system resolves. Pre-loaded co
 - Genre distribution
 - Geographic spread
 - Party engagement score
-
-### 23.5 Communication
-- Group members can communicate within the party (private)
 
 ---
 
