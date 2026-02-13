@@ -57,3 +57,6 @@ Defines the canonical revenue streams and subscription tiers. Revenue is infrast
 ## References
 - `docs/canon/Master Revenue Strategy Canonon.md`
 - `docs/canon/Master Narrative Canon.md`
+
+## Future Work & Open Questions
+- Finalize pricing for Discovery Pass and Play Pass. See `docs/specs/DECISIONS_REQUIRED.md`.

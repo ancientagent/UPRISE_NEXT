@@ -65,7 +65,7 @@ Defines the RaDIYo broadcast network and the Fair Play rotation system that gove
 
 ## Future Work & Open Questions
 - Define exact engagement score weights.
-- Define rotation re-evaluation cadence.
+- Define rotation re-evaluation cadence. See `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`

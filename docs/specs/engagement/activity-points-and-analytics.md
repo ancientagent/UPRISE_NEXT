@@ -47,3 +47,6 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
 - `docs/canon/Master Glossary Canon.md`
+
+## Future Work & Open Questions
+- Define the Activity Points scoring table and decay/seasonality rules. See `docs/specs/DECISIONS_REQUIRED.md`.

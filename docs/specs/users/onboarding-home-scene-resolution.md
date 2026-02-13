@@ -71,7 +71,7 @@ Defines the onboarding flow for selecting a Home Scene and the input-driven reso
 
 ## Future Work & Open Questions
 - Define pioneer incentives and recruitment tooling.
-- Formalize thresholds for Sect activation and new Scene creation.
+- Formalize thresholds for Sect activation and new Scene creation. See `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`

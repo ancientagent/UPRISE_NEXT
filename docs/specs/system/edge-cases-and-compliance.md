@@ -54,3 +54,6 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
+
+## Future Work & Open Questions
+- Confirm Sect threshold values for pause/reactivation. See `docs/specs/DECISIONS_REQUIRED.md`.

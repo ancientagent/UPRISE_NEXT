@@ -71,7 +71,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Registrar flow review: Sect Uprise activation requires artist commitment.
 
 ## Future Work & Open Questions
-- Define formal thresholds for Sect Uprise activation (catalog minutes, artist count).
+- Define formal thresholds for Sect Uprise activation (catalog minutes, artist count). See `docs/specs/DECISIONS_REQUIRED.md`.
 - Define Registrar motion schema and vote mechanics.
 
 ## References

@@ -52,3 +52,6 @@ Defines quality checks, reporting, and moderation processes for content and user
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
+
+## Future Work & Open Questions
+- Define report thresholds and appeal timelines. See `docs/specs/DECISIONS_REQUIRED.md`.
