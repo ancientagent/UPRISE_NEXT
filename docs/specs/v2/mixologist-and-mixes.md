@@ -1,72 +1,49 @@
-# <Spec Title>
+# Mixologist and Mixes
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `V2-MIXES`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines Mixologist capability and curated Mixes as a V2 feature.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listener upgrades to Mixologist to create and sell mixes.
+- Users explore mixes and view attribution.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Mixologist upgrade requires Discovery Pass (+$4/mo).
+- Mixes are curated collections of songs.
+- Personal mixes are free to create and share.
+- Commercial mixes require artist approval.
+- Mix Market supports premium mixes and tip jar.
+- Attribution is mandatory for all artists and songs.
+- Mixes can display community resonance and trending stats.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Mixes do not affect Fair Play rotation.
+- No automated recommendation of mixes.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Mixes are user‑generated and opt‑in.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- Mix
+- MixItem
+- MixAttribution
+- MixApproval
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Mix detail pages show attribution and Scene context.
+- Mixologists can manage approvals and pricing.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Commercial mixes blocked without artist approval.
+- Attribution displayed on all mixes.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

@@ -1,72 +1,47 @@
-# <Spec Title>
+# Vibe Check and Taste Profiles
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `DISC-VIBE`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines Vibe Check as a user‑initiated discovery tool and the optional taste profile used for comparison.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listener runs a Vibe Check between themselves and a Scene, Event, Mix, or another user.
+- Listener opts into taste profile import or questionnaire.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Vibe Check is user‑initiated only.
+- Taste Profile is optional and static unless refreshed.
+- Taste Profile can be built by questionnaire or external library import.
+- Vibe Check compares overlap and displays a match percentage.
+- Vibe Check is navigational context, not a recommendation engine.
+- System may recommend **Scenes** based on explicit profile inputs or activity, without promoting specific artists.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- No algorithmic content recommendation or ranking.
+- No predictive personalization beyond explicit user action.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Vibe Check never auto‑surfaces content.
+- Discovery must not affect Fair Play rotation.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- TasteProfile
+- VibeCheckResult
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Vibe Check is accessed explicitly via discovery tools.
+- Match results display overlaps and differences.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Vibe Check does not trigger automatic recommendations.
+- Taste Profile requires user opt‑in.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

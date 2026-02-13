@@ -1,72 +1,47 @@
-# <Spec Title>
+# Search Parties
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `V2-SEARCH`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines collaborative discovery groups where member actions benefit the entire party.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- A user creates a Search Party and invites up to 10 members.
+- Members share discoveries through explicit actions.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Search Parties are opt‑in groups.
+- Shared actions can include ADDs, FOLLOWs, and Scene access based on party settings.
+- Members can opt out of specific sharing categories.
+- Parties have configurable focus (music community, region, mood) and duration.
+- Party statistics include discoveries, activity, and geographic spread.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- No automated recommendations or algorithmic pushing.
+- Discovery remains explicit and user‑driven.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Party sharing does not affect Fair Play rotation or voting.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- SearchParty
+- PartyMember
+- PartySettings
+- PartyActivity
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Party creation flow includes name, focus, settings, duration.
+- Shared collections visible to members.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Shared actions propagate according to settings.
+- Members can opt out of specific sharing types.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

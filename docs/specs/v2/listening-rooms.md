@@ -1,72 +1,46 @@
-# <Spec Title>
+# Listening Rooms
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `V2-ROOMS`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines shared listening rooms inside the Social tab of The Plot.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Community members join public rooms for shared listening.
+- Search Parties host private listening sessions.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Listening Rooms exist in the Social tab.
+- Room types:
+  - Public rooms for community listening.
+  - Private rooms for Search Parties or groups.
+- Shared playback synchronized across members.
+- Discussion via message boards and/or group chat.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Rooms are Scene‑bound unless created by private groups.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Listening Rooms do not alter Fair Play rotation.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- ListeningRoom
+- RoomMember
+- RoomPlaybackState
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Public rooms visible to Scene members.
+- Private rooms visible to group members only.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Shared playback is synchronized.
+- Private rooms are not visible outside the group.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

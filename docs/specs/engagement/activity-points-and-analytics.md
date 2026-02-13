@@ -1,72 +1,49 @@
-# <Spec Title>
+# Activity Points and Analytics
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `ENG-ACTIVITY`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines Activity Points and analytics as descriptive metrics for participation and scene health.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listeners earn Activity Points through participation.
+- Scenes track Activity Score as aggregate community participation.
+- Artists view descriptive analytics in the WebApp.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Users earn Activity Points from participation (Blasts, attendance, support, projects).
+- Scene Activity Score is the sum of individual points.
+- Large bonuses are permitted for Proof‑of‑Support and pioneering.
+- Analytics report performance across tiers and geography.
+- Metrics are descriptive only and do not affect Fair Play or governance.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Transparency: point sources are visible.
+- No conversion of points into authority or rank.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Activity Points do not influence tier progression.
+- Analytics are not used to recommend or rank.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- ActivityPoint
+- ActivityScore
+- AnalyticsSummary
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Activity Points visible on user profile.
+- Scene Activity Score visible in Plot statistics.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Proof‑of‑Support generates activity bonuses.
+- Activity points do not alter rotation.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`
+- `docs/canon/Master Glossary Canon.md`

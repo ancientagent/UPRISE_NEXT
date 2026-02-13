@@ -1,72 +1,72 @@
-# <Spec Title>
+# Signals and Universal Actions
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `CORE-SIGNALS`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines Signals as the atomic units of interaction and the universal actions that can be applied to them.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listeners ADD, BLAST, and SUPPORT signals.
+- Users FOLLOW entities to receive updates.
+- Projects and offers propagate only through explicit actions.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- A Signal is a discrete unit of meaning created or promoted through explicit action.
+- Signal types include:
+  - Core Signals: Songs, Events
+  - Discourse Signals: Posts, Threads
+  - Economic Signals: Offers
+  - Intent Signals: Projects
+  - Materialized Signals: Wearables, Flyers, Posters
+  - Verification Signals: Proof-of-Support
+- Followable entities are not Signals: Artists, Businesses, Promoters. Events may be followed but remain Signals.
+- Universal actions:
+  - ADD: save a signal to a personal collection
+  - FOLLOW: subscribe to an entity’s updates
+  - BLAST: public amplification to the community feed
+  - SUPPORT: solidarity or material backing for a Project or Artist
+- Collections are private, on-demand, and separate from Fair Play.
+- Signal propagation is explicit only; no algorithmic surfacing or recommendation.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Signals are descriptive, not authoritative.
+- Signal visibility does not imply legitimacy.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- The platform must not interpret, score, or rank signals.
+- Metrics are descriptive only and never change propagation rules.
 
 ## Data Models & Migrations
 ### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
+- Signal (type, metadata, origin Scene)
+- SignalAction (ADD, BLAST, SUPPORT)
+- Follow
+- Collection
 
 ### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- TBD
 
 ## API Design
 ### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+| POST | `/signals` | required | Create a signal |
+| POST | `/signals/:id/add` | required | Add to collection |
+| POST | `/signals/:id/blast` | required | Blast signal |
+| POST | `/signals/:id/support` | required | Support signal |
+| POST | `/follow` | required | Follow an entity |
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Feed surfaces only explicit community actions.
+- Collections are private and on-demand.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Signals never appear without explicit action.
+- Collections do not affect Fair Play rotation.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`
+- `docs/canon/Master Glossary Canon.md`

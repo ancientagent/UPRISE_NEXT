@@ -1,72 +1,73 @@
-# <Spec Title>
+# RaDIYo and Fair Play
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `BROADCAST-FP`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines the RaDIYo broadcast network and the Fair Play rotation system that governs community broadcasts without personalization or algorithmic recommendation.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listeners tune into City, State, and National broadcasts.
+- GPS-verified listeners vote during playback.
+- Artists upload songs to enter Fair Play rotation.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- RaDIYo is a broadcast receiver, not a playlist.
+- Tier toggle: Citywide, Statewide, National.
+- Swiping enables discovery jumps (random city/state in same music community).
+- Fair Play provides equal initial exposure for all new songs.
+- New releases play on the hour for approximately one week.
+- Engagement score is calculated after the initial exposure window.
+- Higher engagement increases rotation frequency.
+- Upvotes determine tier progression.
+- Voting is available only to GPS-verified Home Scene listeners.
+- National tier is non-interactive and has no voting.
+- Personal Play (Collections) is separate from Fair Play and does not affect rotation.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- No personalization or algorithmic recommendations.
+- No pay-for-placement or visibility advantage.
+- Deterministic rotation logic.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Canon constraints prohibit taste prediction and algorithmic pushing.
+- Fair Play never assigns legitimacy or governance power.
 
 ## Data Models & Migrations
 ### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
+- Song
+- RotationEntry
+- EngagementMetrics
+- Vote
 
 ### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- TBD
 
 ## API Design
 ### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+| GET | `/broadcast/:sceneId` | required | Stream broadcast rotation |
+| POST | `/votes` | required | Cast vote during playback |
+| GET | `/fair-play/metrics` | required | Retrieve engagement metrics |
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- RaDIYo player shows current Scene and tier.
+- Action wheel supports Add, Blast, Upvote, Skip, Report.
+- Player never exposes recommendation prompts.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- New songs receive equal initial exposure.
+- Voting blocked without GPS verification.
+- National tier is listen-only.
 
 ## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+- Define exact engagement score weights.
+- Define rotation re-evaluation cadence.
+
+## References
+- `docs/canon/Legacy Narrative plus Context .md`
+- `docs/canon/Master Narrative Canon.md`
+- `docs/canon/Master Glossary Canon.md`

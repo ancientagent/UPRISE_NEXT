@@ -1,72 +1,56 @@
-# <Spec Title>
+# Edge Cases and Compliance
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `SYS-EDGE`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, and copyright compliance.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listener changes Home Scene after relocation.
+- Sect broadcast pauses when thresholds drop.
+- Admin resolves naming conflicts.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Home Scene changes:
+  - One Home Scene at a time.
+  - 30‑day cooldown between changes.
+  - Voting transfers only after GPS verification.
+- Sect threshold drop:
+  - Broadcast pauses.
+  - Members are routed back to Parent Scene.
+  - Content is preserved for reactivation.
+- Name conflicts resolved by system key and admin review.
+- Copyright compliance:
+  - Prohibit unlicensed covers, remixes, samples, and AI impersonation.
+  - Acoustic fingerprinting on upload.
+  - Immediate removal on flagged content pending review.
+  - Counter‑claim process for disputes.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Clear user messaging for transitions and removals.
+- Compliance aligned with DMCA requirements.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Platform enforces compliance but does not adjudicate disputes.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- HomeSceneChangeLog
+- SectStatus
+- CopyrightClaim
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Users can request Home Scene change with cooldown notice.
+- Content removed shows compliance notice and appeal path.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Home Scene change blocked within cooldown.
+- Sect broadcast pauses on threshold failure.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

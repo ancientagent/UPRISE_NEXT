@@ -1,72 +1,53 @@
-# <Spec Title>
+# Message Boards, Groups, and Blast
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `SOCIAL-MSG`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines community communication surfaces and rules for public and group messaging.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listeners post in Scene message boards.
+- Group members communicate privately.
+- Artists and businesses broadcast to followers.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Message Boards are the only public communication surface within a Scene.
+- Groups allow private communication between members.
+- Sect members can communicate within a Sect channel.
+- Artists, Businesses, Events, and Promoters can message followers (one‑way).
+- Users cannot DM Artists, Businesses, Events, or Promoters directly.
+- No direct DMs between users outside groups.
+- BLAST is a public signal that amplifies content to the community feed.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Clear separation of public vs private channels.
+- No algorithmic amplification of communication.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Communication is Scene‑bound except for private groups.
+- BLAST is a signal, not a private message.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- MessageBoard
+- Post
+- Thread
+- Group
+- GroupMessage
+- SectChannel
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Social tab hosts message boards and group access.
+- Followers receive one‑way updates from entities they follow.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Public posts appear only in Scene message boards.
+- DMs blocked outside groups.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

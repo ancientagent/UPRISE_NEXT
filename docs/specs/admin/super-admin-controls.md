@@ -1,72 +1,53 @@
-# <Spec Title>
+# Super Admin Controls
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `ADMIN-SUPER`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines the Super Admin’s platform oversight capabilities.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Super Admin reviews platform health, accounts, and moderation.
+- Admin configures thresholds and pricing.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Full visibility into Users, Artists, Businesses, Events, and transactions.
+- Account control: view, edit, suspend, release, or ban.
+- Moderation queue access and dispute handling.
+- Platform configuration:
+  - Scene activation thresholds
+  - Pricing for subscriptions and Runs
+  - Activity Point bonuses and multipliers
+- Overrides:
+  - Manual Scene activation
+  - Manual Activity Point adjustments
+  - Feature flags
+- Fair Play control:
+  - Adjust evaluation periods and thresholds
+  - Configure per‑Uprise tuning
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Auditability of admin actions.
+- Restricted access and logging.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Admin actions do not introduce algorithmic promotion or ranking.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- AdminActionLog
+- FeatureFlag
+- PricingConfig
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Admin console with scoped access.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Admin actions logged and auditable.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

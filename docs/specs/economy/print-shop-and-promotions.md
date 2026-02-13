@@ -1,72 +1,55 @@
-# <Spec Title>
+# Print Shop and Promotions
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `ECON-PRINTSHOP`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines the Promotions surface and the Print Shop issuance model. The Print Shop is infrastructure for limited‑run digital artifacts and Proof‑of‑Support, not a marketplace.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Artists and promoters purchase Runs to issue digital artifacts.
+- Businesses publish Offers in Promotions.
+- Listeners carry or redeem Offers explicitly.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Promotions tab displays local business Offers and off‑platform promotions.
+- Print Shop sells **Runs** (finite issuance allocations).
+- Print Shop issues **digital** artifacts only; no physical inventory or fulfillment.
+- Minting is internal, non‑blockchain, and zero marginal cost.
+- Proof‑of‑Support mints artifacts and may award Activity Points.
+- Offers propagate only when explicitly carried or redeemed.
+- Print Shop artifacts do not affect Fair Play, visibility, or governance.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- No marketplace behavior, resale, or bidding.
+- No algorithmic boosting of Offers or artifacts.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Print Shop is an issuance surface inside the Events surface.
+- Artifacts are signals, not commodities.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- Run
+- Artifact
+- Offer
+- ProofOfSupport
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Promotions surface lists Offers.
+- Print Shop surfaces in Events for Run issuance.
+- Artifact collections are visible on profiles.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Runs are finite and non‑replenishable.
+- Offers do not appear without explicit user action.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Master Glossary Canon.md`
+- `docs/canon/Master Narrative Canon.md`
+- `docs/canon/Legacy Narrative plus Context .md`
+- `docs/canon/Master Revenue Strategy Canonon.md`

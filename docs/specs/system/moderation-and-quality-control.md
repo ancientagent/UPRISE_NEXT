@@ -1,72 +1,54 @@
-# <Spec Title>
+# Moderation and Quality Control
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `SYS-MODERATION`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines quality checks, reporting, and moderation processes for content and users.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listeners report inappropriate content.
+- Admins review and take action on flagged content.
+- Automated checks validate audio uploads.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Automated quality checks:
+  - Supported formats: mp3, wav, flac, m4a, aac.
+  - File size limit: 100MB.
+  - Duration: 30 seconds to 10 minutes.
+  - Corruption and header validation.
+  - Silence detection (max 30 seconds).
+  - Acoustic fingerprinting for copyright.
+- Community reporting available on Signals and users.
+- Multiple reports trigger auto‑flag and temporary removal.
+- Admin review queue for flagged items.
+- Content standards prohibit hate, threats, illegal content, and unlicensed material.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- Timely review process.
+- Clear dispute resolution path.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Moderation does not alter Fair Play rotation.
+- Reports are community actions, not algorithmic judgments.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- Report
+- ModerationAction
+- ContentFlag
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Report action visible in player and signal views.
+- Users see status when content is removed or reinstated.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Reports trigger auto‑flag after threshold.
+- Admin action removes content and logs decision.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Legacy Narrative plus Context .md`

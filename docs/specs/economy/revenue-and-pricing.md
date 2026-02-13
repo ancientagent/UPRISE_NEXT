@@ -1,72 +1,59 @@
-# <Spec Title>
+# Revenue and Pricing
 
-**ID:** `<ID>` (e.g., `T5`, `AUTH-ONBOARDING`)  
-**Status:** `draft | active | deprecated`  
-**Owner:** `<team/agent>`  
-**Last Updated:** `<YYYY-MM-DD>`
+**ID:** `ECON-REVENUE`
+**Status:** `draft`
+**Owner:** `platform`
+**Last Updated:** `2026-02-13`
 
 ## Overview & Purpose
-- What this feature/system change does.
-- Why it exists and what problems it solves.
-- Links to any relevant blueprint(s) or architecture docs.
+Defines the canonical revenue streams and subscription tiers. Revenue is infrastructure‑aligned and cannot create visibility or governance advantages.
 
 ## User Roles & Use Cases
-- Roles affected (listener, artist, admin, etc.)
-- Key user stories / flows
+- Listeners choose Free or Discovery Pass access.
+- Artists activate Standard or Premium capability tiers.
+- Businesses purchase Promotions and Print Shop Runs.
 
 ## Functional Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
+- Revenue constraints:
+  - No prediction of success or taste.
+  - No pay‑for‑placement in Fair Play.
+  - No conversion of spending into civic authority.
+- Print Shop revenue comes from Runs (issuance capacity), not goods.
+- On‑air promotional ads use the 4th Release Deck slot.
+- Promotions surface supports paid business offers.
+- Listener tiers:
+  - Free Listener: Home Scene only.
+  - Discovery Pass: global access to all Scenes; voting remains Home Scene only.
+- Artist capability tiers:
+  - Standard: 1 active slot.
+  - Premium: 3 active slots + enhanced analytics.
+- Mixologist and Ambassador upgrades are V2 add‑ons.
 
 ## Non-Functional Requirements
-- Performance:
-- Security:
-- Reliability:
-- Observability:
-- Error handling:
+- All analytics are descriptive, not prescriptive.
+- Revenue never alters rotation, tier progression, or governance.
 
 ## Architectural Boundaries
-- Web tier: no DB access/secrets in `apps/web` (see `apps/web/WEB_TIER_BOUNDARY.md`).
-- Contracts: shared types live in `packages/types` and should remain backwards-compatible where possible.
-- Data tier: PostGIS queries must be documented and tested (see `docs/RUNBOOK.md`, `docs/PROJECT_STRUCTURE.md`).
-- Environment variables: document required env vars and which tier consumes them.
+- Revenue surfaces must align with Print Shop constraints.
+- Promotional packs are confined to Promotions surfaces.
 
 ## Data Models & Migrations
-### Prisma Models
-- Model(s) added/changed:
-- Relationships:
-- Indexes / constraints:
-
-### Migrations
-- Migration name(s):
-- Backfill strategy (if applicable):
-- Rollback considerations:
+- Subscription
+- CapabilityTier
+- PromotionOffer
+- Run
 
 ## API Design
-### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET    | `/api/...` | required/optional/none | ... |
-
-### Request/Response
-- Request schema:
-- Response schema:
-- Error codes:
+- TBD
 
 ## Web UI / Client Behavior
-- Routes/pages:
-- Components:
-- Data fetching (cache/invalidations):
-- Real-time behavior (if applicable):
-- Loading/empty/error states:
+- Subscription management surfaces show tier capabilities clearly.
+- Promotions and ads are labeled as paid surfaces.
 
 ## Acceptance Tests / Test Plan
-- Unit tests:
-- Integration tests:
-- E2E tests (if applicable):
-- Manual verification checklist:
+- Premium capability increases active slots only.
+- Discovery Pass unlocks transport without voting changes.
 
-## Future Work & Open Questions
-- Follow-ups:
-- Known tech debt:
-- Decisions to revisit:
+## References
+- `docs/canon/Master Revenue Strategy Canonon.md`
+- `docs/canon/Master Narrative Canon.md`

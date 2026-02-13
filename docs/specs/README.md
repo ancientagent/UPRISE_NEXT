@@ -41,7 +41,7 @@ This roadmap lists new product specs to be authored from `docs/canon/`.
 - `core/signals-and-universal-actions.md` — **Signals and Universal Actions** (`CORE-SIGNALS`)
   Canon sources:
   - `Legacy Narrative plus Context .md (5.x)`
-- `communities/ground-zero-and-scene-plot.md` — **Ground Zero and Scene Plot** (`COMM-GROUNDZERO`)
+- `communities/plot-and-scene-plot.md` — **The Plot and Scene Dashboard** (`COMM-PLOT`)
   Canon sources:
   - `Legacy Narrative plus Context .md (3.x, 6.x)`
   - `Master Application Surfaces, Capabilities & Lifecycle Canon.md`
