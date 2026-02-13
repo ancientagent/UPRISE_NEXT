@@ -15,7 +15,7 @@ Defines Vibe Check as a user‑initiated discovery tool and the optional taste p
 ## Functional Requirements
 - Vibe Check is user‑initiated only (no auto‑run).
 - Vibe Check is accessed via a button next to **Follow** on eligible entities.
-- Eligible entities: Music Community/Uprise, Event, Artist, Business, Listener.
+- Eligible entities: Music Community/Uprise, Event, Artist, Business, Promoter, Listener.
 - Taste Profile is optional and static unless refreshed.
 - Taste Profile can be built by:
   - Opt‑in playlist scan, or
