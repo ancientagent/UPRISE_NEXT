@@ -1,0 +1,13 @@
+The webapp_ui source code was not found in the repository. A list of frontend routes cannot be generated.
+
+Based on the API, the routes would likely include:
+- /login
+- /signup
+- /home
+- /onboarding/location
+- /onboarding/genres
+- /profile/:userId
+- /band/:bandId
+- /song/:songId
+- /radio
+- /admin

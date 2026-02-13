@@ -1,0 +1,104 @@
+# OSX
+#
+.DS_Store
+
+# Xcode
+#
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+
+# Android/IntelliJ
+#
+build/
+.idea
+.gradle
+local.properties
+*.iml
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# BUCK
+buck-out/
+\.buckd/
+*.keystore
+!debug.keystore
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
+
+# coverage
+#  
+coverage/
+
+# Bundle artifact
+*.jsbundle
+
+# CocoaPods
+/ios/Pods/
+/ios/Podfile.lock
+
+# Firebase credentials
+android/app/src/**/google-services.json
+**/google-services.json
+**/*firebase*admin*.json
+
+# Package manager files
+package-lock.json
+yarn-error.log
+# ignore editor/backup files
+*.bak
+
+# Local build artifacts
+artifacts/local/
+tools/
+
+# Google OAuth credentials
+src/config/google_calender.json
+
+# CCPM Framework - Local workspace (epics directory)
+.claude/epics/.env
+docs/env/*.local
+
+# Generated build artifacts (kept locally only)
+artifacts/*
+!artifacts/.gitkeep
+app-debug-apk/
+app-release-apk/
+ci-artifacts/
+androidappsrcmainassetsindex.android.bundle
+androidappsrcmainres/
+ci-log.txt
+hs_err_pid*.log
+local_smoke_logcat.txt
+metro.log
+Screenshot*.png
+backup/
+supabase-mcp/
+.mcp.json
+.env.backup.txt

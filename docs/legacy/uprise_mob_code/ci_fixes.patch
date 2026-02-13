@@ -1,0 +1,58 @@
+diff --git a/.github/workflows/android-debug-build.yml b/.github/workflows/android-debug-build.yml
+index 76ca074..74a2ee7 100644
+--- a/.github/workflows/android-debug-build.yml
++++ b/.github/workflows/android-debug-build.yml
+@@ -73,9 +73,6 @@ jobs:
+           echo "sdkmanager should use Java 17:"
+           "${{ steps.j17.outputs.path }}/bin/java" -version
+ 
+-      - name: Setup Android SDK (Ubuntu)
+-        uses: android-actions/setup-android@v3
+-
+       - name: Validate SDK Installation
+         shell: bash
+         run: |
+@@ -281,7 +278,9 @@ jobs:
+           java-version: '17'
+ 
+       - name: Setup Android SDK (Ubuntu)
+-        uses: android-actions/setup-android@v3
++        uses: android-actions/setup-android@v3.0.0
++        with:
++          cmdline-tools-version: 8512546
+ 
+       - name: Install SDK build-tools 31.0.0
+         shell: bash
+@@ -861,16 +860,15 @@ jobs:
+             exit 1
+           fi
+ 
+-      - name: Bootstrap Android cmdline-tools r8 (8092744)
++      - name: Bootstrap Android cmdline-tools (8512546)
+         shell: bash
+         run: |
+           set -euo pipefail
+           mkdir -p "$ANDROID_SDK_ROOT"
+-          curl -sSL -o /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-mac-8092744_latest.zip
++          curl -sSL -o /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip
+           unzip -q /tmp/cmdline-tools.zip -d "$ANDROID_SDK_ROOT"
+-          mv "$ANDROID_SDK_ROOT/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools-r8"
+-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/r8"
+-          mv "$ANDROID_SDK_ROOT/cmdline-tools-r8"/* "$ANDROID_SDK_ROOT/cmdline-tools/r8/"
++          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
++          mv "$ANDROID_SDK_ROOT/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
+           echo "$ANDROID_SDK_ROOT/platform-tools" >> "$GITHUB_PATH"
+           echo "$ANDROID_SDK_ROOT/emulator"       >> "$GITHUB_PATH"
+           echo "$ANDROID_SDK_ROOT/build-tools/${ANDROID_BUILD_TOOLS}" >> "$GITHUB_PATH"
+diff --git a/android/app/build.gradle b/android/app/build.gradle
+index 8e226a8..1a47d73 100644
+--- a/android/app/build.gradle
++++ b/android/app/build.gradle
+@@ -160,6 +160,7 @@ android {
+ 
+     buildTypes {
+         debug {
++            applicationIdSuffix ".debug"
+             // Use default debug keystore (~/.android/debug.keystore)
+             if (nativeArchitectures) {
+                 ndk {

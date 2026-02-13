@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "--root", "${workspaceRoot}"]
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-shell", "--shell", "bash"]
+    }
+  }
+}

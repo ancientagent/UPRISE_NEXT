@@ -1,0 +1,70 @@
+name: Docs Only Validation
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '**/*.md'
+
+jobs:
+  docs-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Show changed docs
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1 || true
+          git diff --name-only origin/${{ github.base_ref }}...HEAD | tee changed.txt
+
+      - name: Anchors present
+        run: |
+          set -e
+          test -f docs/INDEX.md
+          test -f docs/PHASE2_OVERVIEW.md
+          test -f docs/PHASE2_EXECUTION_PLAN.md
+          test -f docs/architecture/SYSTEM_OVERVIEW.md
+          test -f docs/specs/_fragments/params.geo-genre.md
+          echo "Anchors OK"
+
+      - name: Internal link check (Markdown)
+        shell: bash
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r -d '' f; do
+            # Extract markdown links ignoring external http(s)
+            links=$(grep -oE '\]\((\./|\.\./|docs/)[^)#?]+(#[^)]*)?\)' "$f" | sed -E 's/^.*\]\(([^)#?]+).*/\1/')
+            [ -z "$links" ] && continue
+            basedir=$(dirname "$f")
+            while IFS= read -r l; do
+              [ -z "$l" ] && continue
+              # Strip anchor
+              path="${l%%#*}"
+              # Resolve path relative to file
+              if [[ "$path" == .* ]]; then
+                target="${basedir}/$path"
+              else
+                target="$path"
+              fi
+              target="${target%/}"
+              # Normalize
+              target=$(python3 - << PY
+import os,sys
+print(os.path.normpath(sys.argv[1]))
+PY
+"$target")
+              if [ ! -f "$target" ]; then
+                echo "::error file=$f::Broken link -> $l (resolved $target)";
+                fail=1
+              fi
+            done <<< "$links"
+          done < <(find docs -type f -name '*.md' -print0)
+          exit $fail
+
+      - name: Markdown lint (basic)
+        run: |
+          echo "(Optional) Add a full markdown linter later."
+

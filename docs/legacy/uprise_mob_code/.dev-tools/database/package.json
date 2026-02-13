@@ -1,0 +1,18 @@
+{
+  "name": "uprise-database-tools",
+  "version": "1.0.0",
+  "description": "Database inspection and backup utilities for UPRISE platform",
+  "main": "index.js",
+  "scripts": {
+    "inspect": "node db-inspect.js",
+    "backup": "node db-backup.js",
+    "install-deps": "npm install pg dotenv"
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1"
+  },
+  "keywords": ["database", "postgresql", "backup", "inspection"],
+  "author": "UPRISE Platform",
+  "license": "MIT"
+}

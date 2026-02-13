@@ -1,0 +1,1336 @@
+name: Android Build & Smoke Test
+run-name: Android CI - ${{ github.ref_name }} @ ${{ github.sha }}
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_OPTIONS: --openssl-legacy-provider
+  ADB_INSTALL_TIMEOUT: 20
+  SMOKE_SOFT_FAIL: ${{ github.event.inputs.smoke_soft_fail }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      smoke_soft_fail:
+        description: "Mark smoke test neutral on failure (upload logs anyway)"
+        required: false
+        default: "false"
+  push:
+    branches:
+      - main
+      - develop
+      - feat/ccpm-framework
+      - ci/macos-hvf-install-launch
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    name: Build APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Guard fail if CRLF present in workflow
+        run: |
+          if grep -U $'\r' -n ".github/workflows/android-debug-build.yml"; then
+            echo "CRLF detected in workflow; must be LF." >&2
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CI Monitoring
+        shell: bash
+        run: |
+          # Load monitoring functions (non-invasive)
+          source .github/workflows/monitoring-functions.sh || true
+          init_monitoring || true
+
+      - name: Setup Java 11 (Gradle)
+        id: j11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Java 17 (sdkmanager tools)
+        id: j17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Verify Java toolchains
+        shell: bash
+        run: |
+          echo "Gradle should use Java 11:"
+          "${{ steps.j11.outputs.path }}/bin/java" -version
+          echo "sdkmanager should use Java 17:"
+          "${{ steps.j17.outputs.path }}/bin/java" -version
+
+      - name: Validate SDK Installation
+        shell: bash
+        run: |
+          # Non-blocking SDK validation
+          source .github/workflows/monitoring-functions.sh || true
+          validate_sdk_setup || true
+
+      - name: Guard Print Android SDK paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-<unset>}"
+          echo "ANDROID_HOME=${ANDROID_HOME:-<unset>}"
+          command -v sdkmanager || true
+          command -v adb || true
+
+      - name: Prepare Android SDK (isolated, AGP 7.0.x safe)
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+        run: |
+          set -e
+
+          # Isolate SDK so AGP doesn't see newer "33x/34x/..." tool labels
+          rm -rf "$ANDROID_SDK_ROOT"
+          mkdir -p "$ANDROID_SDK_ROOT"
+
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > ./android/local.properties
+
+          # Pin an older cmdline-tools revision compatible with AGP 7.0.x
+          # (8512546 is known-good; avoid latest which emits newer repo XML/labels)
+          CT_REV=8512546
+          curl -sSL "https://dl.google.com/android/repository/commandlinetools-linux-${CT_REV}_latest.zip" -o cmdtools.zip
+          unzip -q cmdtools.zip -d "$ANDROID_SDK_ROOT"
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/bin" "$ANDROID_SDK_ROOT/cmdline-tools/latest/" || true
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/lib" "$ANDROID_SDK_ROOT/cmdline-tools/latest/" || true
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/source.properties" "$ANDROID_SDK_ROOT/cmdline-tools/latest/" || true
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/NOTICE.txt" "$ANDROID_SDK_ROOT/cmdline-tools/latest/" || true
+
+          # Accept licenses non-interactively
+          printf 'y\ny\ny\ny\ny\ny\ny\ny\n' | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null || true
+
+          # Install ONLY what AGP 7.0.4 needs
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" \
+            "platform-tools" \
+            "platforms;android-31" \
+            "build-tools;31.0.0" || true
+
+          echo "=== Installed build-tools ==="
+          ls -1 "$ANDROID_SDK_ROOT/build-tools" || true
+
+          # Guard: fail if anything other than 31.0.0 is present
+          BT_COUNT=$(ls -1 "$ANDROID_SDK_ROOT/build-tools" | wc -l | tr -d ' ')
+          if [ "$BT_COUNT" != "1" ] || [ ! -d "$ANDROID_SDK_ROOT/build-tools/31.0.0" ]; then
+            echo "Unexpected build-tools present. Found:"
+            ls -1 "$ANDROID_SDK_ROOT/build-tools" || true
+            exit 1
+          fi
+
+      - name: Print versions
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+          JAVA_HOME: ${{ steps.j11.outputs.path }}
+        run: |
+          echo "JAVA (Gradle):" && java -version
+          echo "Gradle wrapper:" && ./android/gradlew -v
+          echo "SDK Root: $ANDROID_SDK_ROOT"
+
+      - name: Use Node 18 (with npm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Prime Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Ensure Gradle build cache on
+        run: |
+          mkdir -p ~/.gradle
+          {
+            echo "org.gradle.caching=true"
+            echo "org.gradle.parallel=false"
+          } >> ~/.gradle/gradle.properties
+          
+      - name: Install Node dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install TrackPlayer stub (TEMP for CI)
+        run: |
+          # Create TrackPlayer stub for CI builds
+          mkdir -p node_modules/react-native-track-player
+          cat > node_modules/react-native-track-player/package.json << 'EOF'
+          {
+            "name": "react-native-track-player",
+            "version": "0.0.0-stub",
+            "description": "Temporary stub for react-native-track-player (CI build only)",
+            "main": "index.js",
+            "private": true
+          }
+          EOF
+          cat > node_modules/react-native-track-player/index.js << 'EOF'
+          // TEMP STUB: react-native-track-player disabled for CI build
+          const TrackPlayer = {
+            setupPlayer: async () => console.log('TrackPlayer stub: setupPlayer called'),
+            stop: async () => console.log('TrackPlayer stub: stop called'),
+            getTrack: async () => null,
+            getState: async () => 'idle',
+            getPosition: async () => 0,
+            play: async () => {},
+            pause: async () => {},
+            reset: async () => {},
+            add: async () => {},
+            skip: async () => {},
+            skipToNext: async () => {},
+            skipToPrevious: async () => {},
+            remove: async () => {},
+            destroy: async () => {},
+            updateOptions: async () => {},
+            updateMetadataForTrack: async () => {},
+            getQueue: async () => [],
+            getCurrentTrack: async () => null,
+            getDuration: async () => 0,
+            getBufferedPosition: async () => 0,
+            getVolume: async () => 1,
+            setVolume: async () => {},
+            getRate: async () => 1,
+            setRate: async () => {},
+            seekTo: async () => {},
+            setRepeatMode: async () => {},
+            getRepeatMode: async () => 0,
+          };
+          export default TrackPlayer;
+          EOF
+          echo "TrackPlayer stub installed for CI build"
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./android/gradlew
+
+      - name: Build Debug & Release (stable flags)
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+          JAVA_HOME: ${{ steps.j11.outputs.path }}
+          NODE_OPTIONS: --openssl-legacy-provider
+          GRADLE_OPTS: "-Dorg.gradle.daemon=true -Dorg.gradle.jvmargs='-Xmx3g -XX:+HeapDumpOnOutOfMemoryError' -Dorg.gradle.workers.max=2"
+        run: |
+          set -e
+          cd android
+          ./gradlew :app:assembleDebug  --build-cache --no-parallel --stacktrace
+          ./gradlew :app:assembleRelease --build-cache --no-parallel --stacktrace
+
+      - name: Print artifact sizes
+        run: |
+          ls -lh android/app/build/outputs/apk/debug/*.apk  || true
+          ls -lh android/app/build/outputs/apk/release/*.apk || true
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 14
+
+  smoke-ubuntu:
+    name: Android Smoke (Ubuntu)
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      NODE_OPTIONS: --openssl-legacy-provider
+      ADB_INSTALL_TIMEOUT: 20
+      ANDROID_SERIAL: emulator-5554
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 11 (primary)
+        id: j11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Java 17 (sdkmanager tools)
+        id: j17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK (Ubuntu)
+        uses: android-actions/setup-android@v3.0.0
+        with:
+          cmdline-tools-version: 8512546
+
+      - name: Unified Android SDK Setup
+        shell: bash
+        run: |
+          # ### UPRISE Unified Android SDK Setup
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}"
+          export ANDROID_HOME="$ANDROID_SDK_ROOT"
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$PATH"
+          export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+          export JAVA_HOME="${{ steps.j17.outputs.path }}"
+          
+          # Accept licenses safely
+          yes | sdkmanager --licenses || true
+          
+          # Install pinned/supported components
+          sdkmanager --install \
+            "cmdline-tools;latest" \
+            "platform-tools" \
+            "emulator" \
+            "platforms;android-31" \
+            "build-tools;31.0.0" \
+            "system-images;android-31;google_apis;x86_64"
+          
+          # Fallback pin (only if latest fails on some runners)
+          if ! command -v avdmanager >/dev/null 2>&1; then
+            echo "cmdline-tools;latest not on PATH; attempting fallback pin 8512546"
+            sdkmanager --install "cmdline-tools;8512546" || true
+            export PATH="$ANDROID_SDK_ROOT/cmdline-tools/8512546/bin:$PATH"
+          fi
+          
+          echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
+          ls -la "$ANDROID_SDK_ROOT/build-tools/" || true
+          ls -la "$ANDROID_SDK_ROOT/system-images/" || true
+
+      - name: Runtime Assertion - Verify Workflow Hash
+        shell: bash
+        run: |
+          echo "=== WORKFLOW ASSERTIONS ==="
+          echo "Workflow file hash (local checkout):"
+          sha256sum .github/workflows/android-debug-build.yml || shasum -a 256 .github/workflows/android-debug-build.yml || true
+          
+          echo "sdkmanager list top-lines:"
+          sdkmanager --list | sed -n '1,60p' || true
+          
+          echo "Tool versions:"
+          adb version || true
+          emulator -version || true
+          avdmanager --help 2>/dev/null | head -1 || true
+          cmdline-tools --version 2>/dev/null || true
+          which sdkmanager || true
+          which avdmanager || true
+          which emulator || true
+
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-debug-apk
+          path: artifacts/debug
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+          path: artifacts/release
+
+      - name: Verify APK Downloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Checking downloaded APK artifacts..."
+          echo "Debug APKs:"
+          ls -la artifacts/debug/ || echo "No debug artifacts directory"
+          echo "Release APKs:"  
+          ls -la artifacts/release/ || echo "No release artifacts directory"
+          
+          # Ensure at least one APK exists
+          debug_count=$(find artifacts/debug -name "*.apk" 2>/dev/null | wc -l)
+          release_count=$(find artifacts/release -name "*.apk" 2>/dev/null | wc -l)
+          
+          echo "Found $debug_count debug APK(s), $release_count release APK(s)"
+          
+          if [ "$debug_count" -eq 0 ] && [ "$release_count" -eq 0 ]; then
+            echo "ERROR: No APK files found in downloaded artifacts"
+            exit 1
+          fi
+
+      - name: Create AVD (API 31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export JAVA_HOME="${{ steps.j17.outputs.path }}"
+          
+          # Debug available system images
+          echo "=== Available System Images ==="
+          avdmanager list target || true
+          echo "=== Creating AVD ==="
+          echo "no" | avdmanager create avd -n "ci_api_31" -k "system-images;android-31;google_apis;x86_64" --force --device "pixel_5"
+          
+          # Verify AVD was created
+          echo "=== Verifying AVD Creation ==="
+          avdmanager list avd || true
+          echo "=== AVD Directory Contents ==="
+          ls -la ~/.android/avd/ || true
+
+      - name: Setup Ubuntu graphics libraries
+        run: |
+          sudo apt-get update -qq
+          # Enable i386 architecture for 32-bit libraries
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          # Install graphics and emulator dependencies
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils xvfb
+          # Install audio libraries required by emulator
+          sudo apt-get install -y libpulse0 pulseaudio
+          # Install additional emulator dependencies
+          sudo apt-get install -y libasound2t64 libxcomposite1 libxcursor1 libxi6 libxtst6
+          # Install 32-bit libraries (best effort, some may not be available)
+          sudo apt-get install -y lib32z1 || true
+
+      - name: Start emulator with robust boot detection
+        shell: bash
+        env:
+          ANDROID_EMULATOR_USE_SYSTEM_LIBS: 1
+          DISPLAY: ":99"
+        run: |
+          set -euo pipefail
+          
+          # Start virtual display for headless graphics
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          
+          # ### UPRISE Unified Android SDK Setup (embedded in emulator start)
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}"
+          export ANDROID_HOME="$ANDROID_SDK_ROOT"
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$PATH"
+          export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+          export AVD_NAME="ci_api_31"
+          export IMG="system-images;android-31;google_apis;x86_64"
+          
+          # Accept licenses safely
+          yes | sdkmanager --licenses || true
+          
+          # Install pinned/supported components
+          sdkmanager --install \
+            "cmdline-tools;latest" \
+            "platform-tools" \
+            "emulator" \
+            "platforms;android-31" \
+            "build-tools;31.0.0" \
+            "$IMG"
+          
+          # Fallback pin (only if latest fails on some runners)
+          if ! command -v avdmanager >/dev/null 2>&1; then
+            echo "cmdline-tools;latest not on PATH; attempting fallback pin 8512546"
+            sdkmanager --install "cmdline-tools;8512546" || true
+            export PATH="$ANDROID_SDK_ROOT/cmdline-tools/8512546/bin:$PATH"
+          fi
+
+          # 1) Ensure AVD exists (heals orphans)
+          mkdir -p "$HOME/.android/avd"
+          
+          # Debug: Check available system images first
+          echo "=== Available System Images ==="
+          sdkmanager --list | grep "system-images;android-31" || true
+          
+          if ! emulator -list-avds | grep -Fx "$AVD_NAME" >/dev/null 2>&1; then
+            echo "Creating AVD: $AVD_NAME using image: $IMG"
+            
+            # Try AVD creation with better error handling
+            if echo "no" | avdmanager create avd -n "$AVD_NAME" -k "$IMG" --device "pixel_5" --force; then
+              echo "AVD creation command succeeded"
+            else
+              echo "ERROR: avdmanager create avd command failed with exit code $?"
+              echo "Trying simpler approach without --device parameter..."
+              echo "no" | avdmanager create avd -n "$AVD_NAME" -k "$IMG" --force || echo "Fallback AVD creation also failed"
+            fi
+            
+            # Verify AVD was created successfully
+            if [ -f "$HOME/.android/avd/${AVD_NAME}.avd/config.ini" ]; then
+              echo "AVD created successfully, configuring RAM..."
+              echo "hw.ramSize=1024" >> "$HOME/.android/avd/${AVD_NAME}.avd/config.ini"
+            else
+              echo "WARNING: AVD creation failed, config.ini not found"
+              echo "Directory listing:"
+              ls -lah "$HOME/.android/avd/" || true
+              echo "Attempting manual AVD directory creation..."
+              
+              # Create AVD directory structure manually
+              mkdir -p "$HOME/.android/avd/${AVD_NAME}.avd"
+              {
+                echo "hw.ramSize=1024"
+                echo "hw.lcd.density=420" 
+                echo "hw.lcd.height=2340"
+                echo "hw.lcd.width=1080"
+                echo "image.sysdir.1=system-images/android-31/google_apis/x86_64/"
+                echo "tag.display=Google APIs"
+                echo "tag.id=google_apis"
+                echo "abi.type=x86_64"
+                echo "avd.ini.encoding=UTF-8"
+                echo "disk.dataPartition.size=6442450944"
+                echo "fastboot.forceColdBoot=no"
+                echo "hw.accelerometer=yes"
+                echo "hw.audioInput=yes"
+                echo "hw.battery=yes"
+                echo "hw.camera.back=virtualscene"
+                echo "hw.camera.front=emulated"
+                echo "hw.cpu.arch=x86_64"
+                echo "hw.dPad=no"
+                echo "hw.device.manufacturer=Google"
+                echo "hw.device.name=pixel_5"
+                echo "hw.gps=yes"
+                echo "hw.gpu.enabled=yes"
+                echo "hw.gpu.mode=swiftshader_indirect"
+                echo "hw.keyboard=yes"
+                echo "hw.sensors.orientation=yes"
+                echo "hw.sensors.proximity=yes"
+                echo "hw.trackBall=no"
+                echo "runtime.network.latency=none"
+                echo "runtime.network.speed=full"
+              } > "$HOME/.android/avd/${AVD_NAME}.avd/config.ini"
+              
+              # Create AVD ini file
+              {
+                echo "avd.ini.encoding=UTF-8"
+                echo "path=$HOME/.android/avd/${AVD_NAME}.avd"
+                echo "target=android-31"
+              } > "$HOME/.android/avd/${AVD_NAME}.ini"
+              
+              echo "Manual AVD creation completed"
+            fi
+          else
+            echo "AVD $AVD_NAME already exists"
+          fi
+          
+          echo "Final AVD status:"
+          emulator -list-avds
+          ls -lah "$HOME/.android/avd" || true
+          ls -lah "$HOME/.android/avd/${AVD_NAME}.avd" || true
+
+          # 2) ADB hygiene (avoid "connection refused"/stale server)
+          adb kill-server || true
+          sleep 1
+          adb start-server
+          adb version
+
+          # 3) Launch emulator (lightweight flags)
+          EMU_LOG="artifacts/smoke/emulator_boot.log"
+          mkdir -p artifacts/smoke artifacts/monitoring
+          
+          echo "=== Pre-emulator Diagnostics ==="
+          echo "AVD Name: $AVD_NAME"
+          echo "Available AVDs:"
+          emulator -list-avds
+          echo "Emulator version:"
+          emulator -version || echo "Failed to get emulator version"
+          echo "Available system images for AVD:"
+          ls -la "$ANDROID_SDK_ROOT/system-images/android-31/google_apis/x86_64/" || echo "System image directory not found"
+          
+          echo "=== Launching Emulator ==="
+          echo "Command: emulator @$AVD_NAME with flags..."
+          emulator @"$AVD_NAME" \
+            -no-window -no-audio -no-boot-anim \
+            -gpu swiftshader_indirect -camera-back none \
+            -ports 5554,5555 \
+            -no-snapshot -wipe-data \
+            -accel off -cores 1 -memory 1024 -use-system-libs \
+            -qemu -m 1024 \
+            -timezone America/Chicago \
+            >"$EMU_LOG" 2>&1 & EMU_PID=$!
+
+          echo "Emulator PID: $EMU_PID"
+          echo "$EMU_PID" > artifacts/smoke/emulator_pid.txt
+          echo "EMU_PID=$EMU_PID" >> "$GITHUB_ENV"
+          
+          # Give emulator a moment to start, then check if it's still running
+          sleep 3
+          if ps -p "$EMU_PID" > /dev/null 2>&1; then
+            echo "Emulator process $EMU_PID is running"
+          else
+            echo "ERROR: Emulator process $EMU_PID died immediately!"
+            echo "=== Emulator Log (first 50 lines) ==="
+            head -50 "$EMU_LOG" || echo "No emulator log available"
+            echo "=== Emulator Log (last 50 lines) ==="
+            tail -50 "$EMU_LOG" || echo "No emulator log available"
+          fi
+
+          # 4) Wait for ADB device + real boot with timeouts
+          BOOT_DEADLINE=$((SECONDS+900))   # 15 minutes
+          echo "Waiting for ADB device..."
+          timeout 120s adb wait-for-device || { echo "ADB device never appeared"; exit 1; }
+
+          echo "Polling sys.boot_completed..."
+          until adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' | grep -q '^1$'; do
+            if (( SECONDS > BOOT_DEADLINE )); then
+              echo "Boot timeout hit"; break
+            fi
+            sleep 5
+          done
+
+          # 5) Verify boot success (SurfaceFlinger as secondary signal)
+          if adb shell pgrep surfaceflinger >/dev/null 2>&1 && \
+             adb shell getprop sys.boot_completed | tr -d '\r' | grep -q '^1$'; then
+            echo "Emulator booted."
+            BOOT_OK=true
+            # Optimize for testing
+            adb shell settings put global animator_duration_scale 0.0 || true
+            adb shell settings put global transition_animation_scale 0.0 || true
+            adb shell settings put global window_animation_scale 0.0 || true
+            adb shell svc power stayon true || true
+          else
+            echo "Emulator failed to fully boot."
+            BOOT_OK=false
+          fi
+
+          # 6) Always collect diagnostics, never hang
+          timeout 20s adb shell getprop > artifacts/monitoring/adb_getprop.txt || true
+          timeout 20s adb logcat -d -t 2000 > artifacts/monitoring/logcat_tail.txt || true
+          timeout 30s adb shell dumpsys package > artifacts/monitoring/dumpsys_package.txt || true
+          timeout 30s adb shell dumpsys activity > artifacts/monitoring/dumpsys_activity.txt || true
+          timeout 60s adb bugreport /tmp/bug.zip && cp /tmp/bug.zip artifacts/monitoring/bugreport.zip || true
+
+          # 7) Set environment variable for next steps
+          echo "booted=$BOOT_OK" >> "$GITHUB_ENV"
+          
+          # 8) Exit code reflects boot status (so job can mark unstable cleanly)
+          $BOOT_OK || exit 2
+
+      - name: Extract APK Metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          # APK metadata extraction function
+          extract_apk_metadata() {
+            local apk_path="$1"
+            local env_prefix="${2:-}"
+            
+            # Validate APK exists
+            if [ ! -f "$apk_path" ]; then
+              echo "APK not found: $apk_path" >&2
+              return 1
+            fi
+            
+            export PATH="$ANDROID_SDK_ROOT/build-tools/31.0.0:$PATH"
+            
+            # Try aapt first (more reliable for older APKs)
+            if command -v aapt >/dev/null 2>&1; then
+              echo "Using aapt to analyze: $apk_path"
+              
+              # Extract package name
+              APP_ID=$(aapt dump badging "$apk_path" | sed -n "s/.*package: name='\([^']*\)'.*/\1/p" | head -1)
+              
+              # Extract SDK versions (more robust parsing)
+              MIN_SDK=$(aapt dump badging "$apk_path" | sed -n "s/.*sdkVersion:'\([^']*\)'.*/\1/p" | head -1)
+              TGT_SDK=$(aapt dump badging "$apk_path" | sed -n "s/.*targetSdkVersion:'\([^']*\)'.*/\1/p" | head -1)
+              
+              # Ensure variables are not empty (bash strict mode protection)
+              MIN_SDK="${MIN_SDK:-unknown}"
+              TGT_SDK="${TGT_SDK:-unknown}"
+              
+            elif command -v apkanalyzer >/dev/null 2>&1; then
+              echo "Using apkanalyzer to analyze: $apk_path"
+              
+              APP_ID=$(apkanalyzer manifest application-id "$apk_path" 2>/dev/null || echo "")
+              MIN_SDK=$(apkanalyzer manifest min-sdk "$apk_path" 2>/dev/null || echo "")
+              TGT_SDK=$(apkanalyzer manifest target-sdk "$apk_path" 2>/dev/null || echo "")
+              
+              # Ensure variables are not empty (bash strict mode protection)
+              MIN_SDK="${MIN_SDK:-unknown}"
+              TGT_SDK="${TGT_SDK:-unknown}"
+              
+            else
+              echo "Neither aapt nor apkanalyzer found in PATH" >&2
+              return 1
+            fi
+            
+            # Validate APP_ID was found
+            if [ -z "${APP_ID:-}" ]; then
+              echo "Failed to extract APP_ID from: $apk_path" >&2
+              return 1
+            fi
+            
+            # Set environment variables with prefix if provided
+            echo "${env_prefix}APP_ID=$APP_ID" >> "$GITHUB_ENV"
+            echo "${env_prefix}MIN_SDK=${MIN_SDK:-unknown}" >> "$GITHUB_ENV"
+            echo "${env_prefix}TARGET_SDK=${TGT_SDK:-unknown}" >> "$GITHUB_ENV"
+            
+            # Output for debugging
+            echo "📱 APK Analysis Results:"
+            echo "   APP_ID: $APP_ID"
+            echo "   MIN_SDK: ${MIN_SDK:-unknown}"
+            echo "   TARGET_SDK: ${TGT_SDK:-unknown}"
+            
+            return 0
+          }
+          
+          # Find and analyze APKs
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          
+          if [ -z "$DEBUG_APK" ]; then
+            echo "No debug APK found" >&2
+            exit 1
+          fi
+          
+          if [ -z "$RELEASE_APK" ]; then
+            echo "No release APK found" >&2
+            exit 1
+          fi
+          
+          # Extract metadata from both APKs
+          extract_apk_metadata "$DEBUG_APK" "DEBUG_"
+          extract_apk_metadata "$RELEASE_APK" "RELEASE_"
+
+      - name: Validate APKs Before Testing
+        shell: bash
+        run: |
+          # Non-blocking APK validation
+          source .github/workflows/monitoring-functions.sh || true
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          validate_apk "$DEBUG_APK" "debug" || true
+          validate_apk "$RELEASE_APK" "release" || true
+
+      - name: Test Debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          echo "Installing and testing: $DEBUG_APK"
+          
+          # Pre-uninstall
+          base="${DEBUG_APP_ID%.debug}"
+          adb -s "$ANDROID_SERIAL" uninstall "$DEBUG_APP_ID" 2>/dev/null || true
+          [ "$base" != "$DEBUG_APP_ID" ] && adb -s "$ANDROID_SERIAL" uninstall "$base" 2>/dev/null || true
+          
+          # Install with 3 retries
+          installed=0
+          for i in 1 2 3; do
+            if adb -s "$ANDROID_SERIAL" install -r "$DEBUG_APK"; then
+              installed=1
+              break
+            fi
+            echo "Install attempt $i failed"
+            adb -s "$ANDROID_SERIAL" shell pm clear "$DEBUG_APP_ID" 2>/dev/null || true
+            sleep 3
+          done
+          
+          if [ "$installed" != "1" ]; then
+            echo "Failed to install debug APK after 3 attempts"
+            exit 1
+          fi
+          
+          # Resolve launcher activity
+          DEBUG_ACTIVITY=$(adb -s "$ANDROID_SERIAL" shell cmd package resolve-activity -c android.intent.category.LAUNCHER "$DEBUG_APP_ID" \
+                          | sed -n "s/.*name=//p" | tr -d '\r' | head -n1)
+          
+          if [ -z "$DEBUG_ACTIVITY" ]; then
+            echo "No launcher activity found, trying monkey fallback"
+            adb -s "$ANDROID_SERIAL" shell monkey -p "$DEBUG_APP_ID" -c android.intent.category.LAUNCHER 1
+            DEBUG_LAUNCH_RC=$?
+          else
+            echo "DEBUG_ACTIVITY=$DEBUG_ACTIVITY"
+            # Format as package/activity for am start command
+            FULL_COMPONENT="$DEBUG_APP_ID/$DEBUG_ACTIVITY"
+            echo "Starting: $FULL_COMPONENT"
+            adb -s "$ANDROID_SERIAL" shell am start -n "$FULL_COMPONENT"
+            DEBUG_LAUNCH_RC=$?
+          fi
+          
+          echo "DEBUG_LAUNCH_RC=$DEBUG_LAUNCH_RC" >> "$GITHUB_ENV"
+          sleep 8
+          
+          # Collect diagnostics
+          adb -s "$ANDROID_SERIAL" logcat -d > artifacts/smoke/debug_logcat.txt || true
+          adb -s "$ANDROID_SERIAL" shell dumpsys package "$DEBUG_APP_ID" > artifacts/smoke/debug_dumpsys_package.txt || true
+          adb -s "$ANDROID_SERIAL" shell dumpsys activity activities > artifacts/smoke/debug_dumpsys_activity.txt || true
+          adb -s "$ANDROID_SERIAL" shell pidof "$DEBUG_APP_ID" > artifacts/smoke/debug_pid.txt || true
+
+      - name: Test Release APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          echo "Installing and testing: $RELEASE_APK"
+          
+          # Pre-uninstall
+          base="${RELEASE_APP_ID%.debug}"
+          adb -s "$ANDROID_SERIAL" uninstall "$RELEASE_APP_ID" 2>/dev/null || true
+          [ "$base" != "$RELEASE_APP_ID" ] && adb -s "$ANDROID_SERIAL" uninstall "$base" 2>/dev/null || true
+          
+          # Install with 3 retries
+          installed=0
+          for i in 1 2 3; do
+            if adb -s "$ANDROID_SERIAL" install -r "$RELEASE_APK"; then
+              installed=1
+              break
+            fi
+            echo "Install attempt $i failed"
+            adb -s "$ANDROID_SERIAL" shell pm clear "$RELEASE_APP_ID" 2>/dev/null || true
+            sleep 3
+          done
+          
+          if [ "$installed" != "1" ]; then
+            echo "Failed to install release APK after 3 attempts"
+            exit 1
+          fi
+          
+          # Resolve launcher activity
+          RELEASE_ACTIVITY=$(adb -s "$ANDROID_SERIAL" shell cmd package resolve-activity -c android.intent.category.LAUNCHER "$RELEASE_APP_ID" \
+                            | sed -n "s/.*name=//p" | tr -d '\r' | head -n1)
+          
+          if [ -z "$RELEASE_ACTIVITY" ]; then
+            echo "No launcher activity found, trying monkey fallback"
+            adb -s "$ANDROID_SERIAL" shell monkey -p "$RELEASE_APP_ID" -c android.intent.category.LAUNCHER 1
+            RELEASE_LAUNCH_RC=$?
+          else
+            echo "RELEASE_ACTIVITY=$RELEASE_ACTIVITY"
+            adb -s "$ANDROID_SERIAL" shell am start -n "$RELEASE_ACTIVITY"
+            RELEASE_LAUNCH_RC=$?
+          fi
+          
+          echo "RELEASE_LAUNCH_RC=$RELEASE_LAUNCH_RC" >> "$GITHUB_ENV"
+          sleep 8
+          
+          # Collect diagnostics
+          adb -s "$ANDROID_SERIAL" logcat -d > artifacts/smoke/release_logcat.txt || true
+          adb -s "$ANDROID_SERIAL" shell dumpsys package "$RELEASE_APP_ID" > artifacts/smoke/release_dumpsys_package.txt || true
+          adb -s "$ANDROID_SERIAL" shell dumpsys activity activities > artifacts/smoke/release_dumpsys_activity.txt || true
+          adb -s "$ANDROID_SERIAL" shell pidof "$RELEASE_APP_ID" > artifacts/smoke/release_pid.txt || true
+
+      - name: Generate summary.json
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/smoke
+          
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          
+          cat > artifacts/smoke/summary.json <<JSON
+          [
+            {
+              "kind": "debug",
+              "app_id": "${DEBUG_APP_ID:-unknown}",
+              "apk": "$(basename "${DEBUG_APK:-unknown}")",
+              "launch_rc": ${DEBUG_LAUNCH_RC:-999}
+            },
+            {
+              "kind": "release",
+              "app_id": "${RELEASE_APP_ID:-unknown}",
+              "apk": "$(basename "${RELEASE_APK:-unknown}")",
+              "launch_rc": ${RELEASE_LAUNCH_RC:-999}
+            }
+          ]
+          JSON
+          
+          echo "Generated summary.json:"
+          cat artifacts/smoke/summary.json
+
+      - name: Write GitHub Step Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "## Smoke Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build Type | App ID | Launch Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------------|--------|---------------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Debug | ${DEBUG_APP_ID:-unknown} | ${DEBUG_LAUNCH_RC:-999} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Release | ${RELEASE_APP_ID:-unknown} | ${RELEASE_LAUNCH_RC:-999} |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Teardown emulator
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "${EMU_PID:-}" ] && ps -p "$EMU_PID" > /dev/null 2>&1; then
+            echo "Killing emulator pid $EMU_PID"
+            kill "$EMU_PID" || true
+            sleep 2
+          fi
+          adb -s "$ANDROID_SERIAL" emu kill || true
+
+      - name: Generate Monitoring Summary
+        if: always()
+        shell: bash
+        run: |
+          # Generate final monitoring summary with timeout
+          source .github/workflows/monitoring-functions.sh || true
+          timeout 2m generate_monitoring_summary || echo "Monitoring summary timed out"
+          
+          # Capture diagnostics if job failed
+          if [ "${{ job.status }}" = "failure" ]; then
+            capture_failure_diagnostics "smoke-ubuntu" || true
+          fi
+
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-ubuntu
+          path: |
+            artifacts/smoke/**
+            artifacts/monitoring/**
+
+  smoke-macos-hvf:
+    name: macOS HVF Smoke (Optional)
+    runs-on: macos-13
+    needs: [build]
+    continue-on-error: true
+    env:
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+      ANDROID_HOME: ${{ github.workspace }}/android-sdk
+      ANDROID_SERIAL: emulator-5554
+      AVD_NAME: ci_api_31
+      AVD_IMAGE: "system-images;android-31;google_apis;x86_64"
+      ANDROID_BUILD_TOOLS: "31.0.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CI Monitoring
+        shell: bash
+        run: |
+          # Load monitoring functions (non-invasive)
+          source .github/workflows/monitoring-functions.sh || true
+          init_monitoring || true
+
+      - name: Guard fail if CRLF present in workflow
+        shell: bash
+        run: |
+          if grep -U $'\r' -n ".github/workflows/android-debug-build.yml"; then
+            echo "CRLF detected in workflow; must be LF." >&2
+            exit 1
+          fi
+
+      - name: Bootstrap Android cmdline-tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$ANDROID_SDK_ROOT"
+          curl -sSL -o /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip
+          unzip -q /tmp/cmdline-tools.zip -d "$ANDROID_SDK_ROOT"
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+          mv "$ANDROID_SDK_ROOT/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/" 2>/dev/null || true
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> "$GITHUB_PATH"
+          echo "$ANDROID_SDK_ROOT/emulator"       >> "$GITHUB_PATH"
+          echo "$ANDROID_SDK_ROOT/build-tools/${ANDROID_BUILD_TOOLS}" >> "$GITHUB_PATH"
+          echo "JAVA_HOME_17_X64=$(/usr/libexec/java_home -v 17)" >> "$GITHUB_ENV"
+          echo "JAVA_HOME_11_X64=$(/usr/libexec/java_home -v 11)" >> "$GITHUB_ENV"
+
+      - name: Unified Android SDK Setup
+        shell: bash
+        run: |
+          # ### UPRISE Unified Android SDK Setup
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT}"
+          export ANDROID_HOME="$ANDROID_SDK_ROOT"
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator:$PATH"
+          export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+          export JAVA_HOME="$JAVA_HOME_17_X64"
+          
+          # Accept licenses safely
+          yes | sdkmanager --licenses || true
+          
+          # Install pinned/supported components
+          sdkmanager --install \
+            "cmdline-tools;latest" \
+            "platform-tools" \
+            "emulator" \
+            "platforms;android-31" \
+            "build-tools;${ANDROID_BUILD_TOOLS}" \
+            "${AVD_IMAGE}"
+          
+          # Fallback pin (only if latest fails on some runners)
+          if ! command -v avdmanager >/dev/null 2>&1; then
+            echo "cmdline-tools;latest not on PATH; attempting fallback pin 8512546"
+            sdkmanager --install "cmdline-tools;8512546" || true
+            export PATH="$ANDROID_SDK_ROOT/cmdline-tools/8512546/bin:$PATH"
+          fi
+          
+          echo "SDK components installed"
+
+      - name: Runtime Assertion - Verify Workflow Hash
+        shell: bash
+        run: |
+          echo "=== WORKFLOW ASSERTIONS ==="
+          echo "Workflow file hash (local checkout):"
+          sha256sum .github/workflows/android-debug-build.yml || shasum -a 256 .github/workflows/android-debug-build.yml || true
+          
+          echo "sdkmanager list top-lines:"
+          sdkmanager --list | sed -n '1,60p' || true
+          
+          echo "Tool versions:"
+          adb version || true
+          emulator -version || true
+          avdmanager --help 2>/dev/null | head -1 || true
+          cmdline-tools --version 2>/dev/null || true
+          which sdkmanager || true
+          which avdmanager || true
+          which emulator || true
+
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-debug-apk
+          path: artifacts/debug
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+          path: artifacts/release
+
+      - name: Verify APK Downloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Checking downloaded APK artifacts..."
+          echo "Debug APKs:"
+          ls -la artifacts/debug/ || echo "No debug artifacts directory"
+          echo "Release APKs:"  
+          ls -la artifacts/release/ || echo "No release artifacts directory"
+          
+          # Ensure at least one APK exists
+          debug_count=$(find artifacts/debug -name "*.apk" 2>/dev/null | wc -l)
+          release_count=$(find artifacts/release -name "*.apk" 2>/dev/null | wc -l)
+          
+          echo "Found $debug_count debug APK(s), $release_count release APK(s)"
+          
+          if [ "$debug_count" -eq 0 ] && [ "$release_count" -eq 0 ]; then
+            echo "ERROR: No APK files found in downloaded artifacts"
+            exit 1
+          fi
+
+      - name: Create AVD (API 31)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "no" | avdmanager create avd \
+            -n "${AVD_NAME}" -k "${AVD_IMAGE}" --force --device "pixel_5"
+
+      - name: Start emulator (background)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/smoke
+          "$ANDROID_SDK_ROOT/emulator/emulator" \
+            -avd "${AVD_NAME}" \
+            -no-window -no-snapshot -no-boot-anim -gpu swiftshader_indirect \
+            -camera-back none -accel on -ports 5554,5555 -memory 1024 -cores 1 \
+            -qemu -m 1024 \
+            > artifacts/smoke/emulator_boot.log 2>&1 &
+          echo $! > artifacts/smoke/emulator.pid
+
+      - name: Wait for boot (15m ceiling)
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$ANDROID_SDK_ROOT/platform-tools/adb" kill-server || true
+          "$ANDROID_SDK_ROOT/platform-tools/adb" start-server
+          
+          t_end=$((SECONDS+900))  # 15 minutes
+          until "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; do
+            if [ $SECONDS -gt $t_end ]; then
+              echo "BOOT TIMEOUT after 15m. Last 200 lines of logcat:"
+              "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 logcat -d | tail -n 200 || true
+              exit 1
+            fi
+            sleep 5
+          done
+          
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell settings put global window_animation_scale 0.0
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell settings put global transition_animation_scale 0.0
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell settings put global animator_duration_scale 0.0
+          echo "boot_ok=1" >> artifacts/smoke/boot_status.txt
+
+      - name: Extract APK Metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          # APK metadata extraction function (same as Ubuntu)
+          extract_apk_metadata() {
+            local apk_path="$1"
+            local env_prefix="${2:-}"
+            
+            # Validate APK exists
+            if [ ! -f "$apk_path" ]; then
+              echo "APK not found: $apk_path" >&2
+              return 1
+            fi
+            
+            # Try aapt first (more reliable for older APKs)
+            if command -v "$ANDROID_SDK_ROOT/build-tools/31.0.0/aapt" >/dev/null 2>&1; then
+              echo "Using aapt to analyze: $apk_path"
+              
+              # Extract package name
+              APP_ID=$("$ANDROID_SDK_ROOT/build-tools/31.0.0/aapt" dump badging "$apk_path" | sed -n "s/.*package: name='\([^']*\)'.*/\1/p" | head -1)
+              
+              # Extract SDK versions (more robust parsing)
+              MIN_SDK=$("$ANDROID_SDK_ROOT/build-tools/31.0.0/aapt" dump badging "$apk_path" | sed -n "s/.*sdkVersion:'\([^']*\)'.*/\1/p" | head -1)
+              TGT_SDK=$("$ANDROID_SDK_ROOT/build-tools/31.0.0/aapt" dump badging "$apk_path" | sed -n "s/.*targetSdkVersion:'\([^']*\)'.*/\1/p" | head -1)
+              
+              # Ensure variables are not empty (bash strict mode protection)
+              MIN_SDK="${MIN_SDK:-unknown}"
+              TGT_SDK="${TGT_SDK:-unknown}"
+              
+            elif command -v "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/apkanalyzer" >/dev/null 2>&1; then
+              echo "Using apkanalyzer to analyze: $apk_path"
+              
+              APP_ID=$("$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/apkanalyzer" manifest application-id "$apk_path" 2>/dev/null || echo "")
+              MIN_SDK=$("$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/apkanalyzer" manifest min-sdk "$apk_path" 2>/dev/null || echo "")
+              TGT_SDK=$("$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/apkanalyzer" manifest target-sdk "$apk_path" 2>/dev/null || echo "")
+              
+              # Ensure variables are not empty (bash strict mode protection)
+              MIN_SDK="${MIN_SDK:-unknown}"
+              TGT_SDK="${TGT_SDK:-unknown}"
+              
+            else
+              echo "Neither aapt nor apkanalyzer found in PATH" >&2
+              return 1
+            fi
+            
+            # Validate APP_ID was found
+            if [ -z "${APP_ID:-}" ]; then
+              echo "Failed to extract APP_ID from: $apk_path" >&2
+              return 1
+            fi
+            
+            # Set environment variables with prefix if provided
+            echo "${env_prefix}APP_ID=$APP_ID" >> "$GITHUB_ENV"
+            echo "${env_prefix}MIN_SDK=${MIN_SDK:-unknown}" >> "$GITHUB_ENV"
+            echo "${env_prefix}TARGET_SDK=${TGT_SDK:-unknown}" >> "$GITHUB_ENV"
+            
+            # Output for debugging
+            echo "📱 APK Analysis Results:"
+            echo "   APP_ID: $APP_ID"
+            echo "   MIN_SDK: ${MIN_SDK:-unknown}"
+            echo "   TARGET_SDK: ${TGT_SDK:-unknown}"
+            
+            return 0
+          }
+          
+          # Find and analyze APKs
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          
+          if [ -z "$DEBUG_APK" ]; then
+            echo "No debug APK found" >&2
+            exit 1
+          fi
+          
+          if [ -z "$RELEASE_APK" ]; then
+            echo "No release APK found" >&2
+            exit 1
+          fi
+          
+          # Extract metadata from both APKs
+          extract_apk_metadata "$DEBUG_APK" "DEBUG_"
+          extract_apk_metadata "$RELEASE_APK" "RELEASE_"
+
+      - name: Validate APKs Before Testing
+        shell: bash
+        run: |
+          # Non-blocking APK validation
+          source .github/workflows/monitoring-functions.sh || true
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          validate_apk "$DEBUG_APK" "debug" || true
+          validate_apk "$RELEASE_APK" "release" || true
+
+      - name: Test Debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          echo "Installing and testing: $DEBUG_APK"
+          
+          # Pre-uninstall
+          base="${DEBUG_APP_ID%.debug}"
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 uninstall "$DEBUG_APP_ID" 2>/dev/null || true
+          [ "$base" != "$DEBUG_APP_ID" ] && "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 uninstall "$base" 2>/dev/null || true
+          
+          # Install with 3 retries
+          installed=0
+          for i in 1 2 3; do
+            if "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 install -r "$DEBUG_APK"; then
+              installed=1
+              break
+            fi
+            echo "Install attempt $i failed"
+            "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell pm clear "$DEBUG_APP_ID" 2>/dev/null || true
+            sleep 3
+          done
+          
+          if [ "$installed" != "1" ]; then
+            echo "Failed to install debug APK after 3 attempts"
+            exit 1
+          fi
+          
+          # Resolve launcher activity
+          DEBUG_ACTIVITY=$("$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell cmd package resolve-activity -c android.intent.category.LAUNCHER "$DEBUG_APP_ID" \
+                          | sed -n "s/.*name=//p" | tr -d '\r' | head -n1)
+          
+          if [ -z "$DEBUG_ACTIVITY" ]; then
+            echo "No launcher activity found, trying monkey fallback"
+            "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell monkey -p "$DEBUG_APP_ID" -c android.intent.category.LAUNCHER 1
+            DEBUG_LAUNCH_RC=$?
+          else
+            echo "DEBUG_ACTIVITY=$DEBUG_ACTIVITY"
+            # Format as package/activity for am start command
+            FULL_COMPONENT="$DEBUG_APP_ID/$DEBUG_ACTIVITY"
+            echo "Starting: $FULL_COMPONENT"
+            "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell am start -n "$FULL_COMPONENT"
+            DEBUG_LAUNCH_RC=$?
+          fi
+          
+          echo "DEBUG_LAUNCH_RC=$DEBUG_LAUNCH_RC" >> "$GITHUB_ENV"
+          sleep 8
+          
+          # Collect diagnostics
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 logcat -d > artifacts/smoke/debug_logcat.txt || true
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell dumpsys package "$DEBUG_APP_ID" > artifacts/smoke/debug_dumpsys_package.txt || true
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell dumpsys activity activities > artifacts/smoke/debug_dumpsys_activity.txt || true
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell pidof "$DEBUG_APP_ID" > artifacts/smoke/debug_pid.txt || true
+
+      - name: Test Release APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          echo "Installing and testing: $RELEASE_APK"
+          
+          # Pre-uninstall
+          base="${RELEASE_APP_ID%.debug}"
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 uninstall "$RELEASE_APP_ID" 2>/dev/null || true
+          [ "$base" != "$RELEASE_APP_ID" ] && "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 uninstall "$base" 2>/dev/null || true
+          
+          # Install with 3 retries
+          installed=0
+          for i in 1 2 3; do
+            if "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 install -r "$RELEASE_APK"; then
+              installed=1
+              break
+            fi
+            echo "Install attempt $i failed"
+            "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell pm clear "$RELEASE_APP_ID" 2>/dev/null || true
+            sleep 3
+          done
+          
+          if [ "$installed" != "1" ]; then
+            echo "Failed to install release APK after 3 attempts"
+            exit 1
+          fi
+          
+          # Resolve launcher activity
+          RELEASE_ACTIVITY=$("$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell cmd package resolve-activity -c android.intent.category.LAUNCHER "$RELEASE_APP_ID" \
+                            | sed -n "s/.*name=//p" | tr -d '\r' | head -n1)
+          
+          if [ -z "$RELEASE_ACTIVITY" ]; then
+            echo "No launcher activity found, trying monkey fallback"
+            "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell monkey -p "$RELEASE_APP_ID" -c android.intent.category.LAUNCHER 1
+            RELEASE_LAUNCH_RC=$?
+          else
+            echo "RELEASE_ACTIVITY=$RELEASE_ACTIVITY"
+            "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell am start -n "$RELEASE_ACTIVITY"
+            RELEASE_LAUNCH_RC=$?
+          fi
+          
+          echo "RELEASE_LAUNCH_RC=$RELEASE_LAUNCH_RC" >> "$GITHUB_ENV"
+          sleep 8
+          
+          # Collect diagnostics
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 logcat -d > artifacts/smoke/release_logcat.txt || true
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell dumpsys package "$RELEASE_APP_ID" > artifacts/smoke/release_dumpsys_package.txt || true
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell dumpsys activity activities > artifacts/smoke/release_dumpsys_activity.txt || true
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 shell pidof "$RELEASE_APP_ID" > artifacts/smoke/release_pid.txt || true
+
+      - name: Generate summary.json
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/smoke
+          
+          DEBUG_APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          RELEASE_APK=$(find artifacts/release -name "*.apk" -type f | head -1)
+          
+          cat > artifacts/smoke/summary.json <<JSON
+          [
+            {
+              "kind": "debug",
+              "app_id": "${DEBUG_APP_ID:-unknown}",
+              "apk": "$(basename "${DEBUG_APK:-unknown}")",
+              "launch_rc": ${DEBUG_LAUNCH_RC:-999}
+            },
+            {
+              "kind": "release",
+              "app_id": "${RELEASE_APP_ID:-unknown}",
+              "apk": "$(basename "${RELEASE_APK:-unknown}")",
+              "launch_rc": ${RELEASE_LAUNCH_RC:-999}
+            }
+          ]
+          JSON
+          
+          echo "Generated summary.json:"
+          cat artifacts/smoke/summary.json
+
+      - name: Write GitHub Step Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "## Smoke Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Build Type | App ID | Launch Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------------|--------|---------------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Debug | ${DEBUG_APP_ID:-unknown} | ${DEBUG_LAUNCH_RC:-999} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Release | ${RELEASE_APP_ID:-unknown} | ${RELEASE_LAUNCH_RC:-999} |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Always stop emulator
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$ANDROID_SDK_ROOT/platform-tools/adb" -s emulator-5554 emu kill || true
+
+      - name: Generate Monitoring Summary
+        if: always()
+        shell: bash
+        run: |
+          # Generate final monitoring summary with timeout
+          source .github/workflows/monitoring-functions.sh || true
+          timeout 2m generate_monitoring_summary || echo "Monitoring summary timed out"
+          
+          # Capture diagnostics if job failed
+          if [ "${{ job.status }}" = "failure" ]; then
+            capture_failure_diagnostics "smoke-macos" || true
+          fi
+
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-macos
+          path: |
+            artifacts/smoke/**
+            artifacts/monitoring/**

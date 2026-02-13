@@ -1,0 +1,25 @@
+name: Anti-Drift Guardrails
+
+on:
+  pull_request:
+    branches: [ main, develop, feat/**, chore/** ]
+  workflow_dispatch:
+
+jobs:
+  anti-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run anti-drift checks (warn mode)
+        run: |
+          chmod +x scripts/ci/anti_drift.sh || true
+          bash scripts/ci/anti_drift.sh
+
+      # To enforce in the future, switch to STRICT=1
+      # - name: Run anti-drift checks (enforce)
+      #   run: |
+      #     chmod +x scripts/ci/anti_drift.sh
+      #     STRICT=1 bash scripts/ci/anti_drift.sh
+

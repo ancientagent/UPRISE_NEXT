@@ -1,0 +1,4 @@
+{"msg":"please run codex autorun","kind":"run-wsl","time":"2025-09-16T15:06:35.6708344Z","to":"codex-wsl","from":"mobile-win"}
+{"msg":"please run orchestrate:mobile","kind":"run-mobile","time":"2025-09-16T15:06:35.8995095Z","to":"mobile-win","from":"codex-wsl"}
+{"from":"mobile-win","to":"codex-wsl","kind":"run-wsl","msg":"please run codex autorun","time":"2025-09-16T15:16:14.1265860Z"}
+{"from":"codex-wsl","to":"mobile-win","kind":"run-mobile","msg":"please run orchestrate:mobile","time":"2025-09-16T15:16:14.3523945Z"}

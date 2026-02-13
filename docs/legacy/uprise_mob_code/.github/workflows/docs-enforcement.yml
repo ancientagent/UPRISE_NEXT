@@ -1,0 +1,92 @@
+name: Docs Enforcement
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+
+jobs:
+  docs-required:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed files
+        id: diff
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1 || true
+          git diff --name-only origin/${{ github.base_ref }}...HEAD > changed.txt || true
+          echo "Changed files:" && cat changed.txt || true
+
+      - name: Enforce CHANGELOG on code changes
+        run: |
+          if [ ! -s changed.txt ]; then
+            echo "No changes detected."; exit 0; fi
+          NEEDS_DOCS=0
+          if grep -Eq '^(android/|src/|scripts/|\.github/workflows/)' changed.txt; then
+            NEEDS_DOCS=1
+          fi
+          if [ "$NEEDS_DOCS" = "1" ]; then
+            if ! grep -q '^docs/CHANGELOG.md' changed.txt; then
+              echo "::error::Code changes detected but docs/CHANGELOG.md not updated."; exit 1
+            fi
+            if grep -Eq '^android/' changed.txt; then
+              echo "::warning::Android changes detected; consider updating docs/RUNBOOK_ANDROID.md.";
+            fi
+          fi
+          echo "Docs enforcement passed."
+
+      - name: Check for broken internal links
+        run: |
+          echo "Checking for broken internal links in changed documentation..."
+          
+          # Find changed markdown files
+          changed_docs=$(grep -E '^docs/.*\.md$' changed.txt || true)
+          
+          if [ -z "$changed_docs" ]; then
+            echo "No documentation files changed, skipping link check."
+            exit 0
+          fi
+          
+          echo "Changed documentation files:"
+          echo "$changed_docs"
+          
+          # Check each changed markdown file for broken internal links
+          echo "$changed_docs" | while read -r file; do
+            if [ -f "$file" ]; then
+              echo "Checking links in $file"
+              
+              # Extract internal links (not external URLs or anchors)
+              grep -oE '\[([^\]]+)\]\(([^)]+)\)' "$file" | while read -r link; do
+                url=$(echo "$link" | sed -n 's/.*(\([^)]*\)).*/\1/p')
+                
+                # Skip external links
+                if [[ "$url" =~ ^https?:// ]]; then
+                  continue
+                fi
+                
+                # Skip anchor links
+                if [[ "$url" =~ ^# ]]; then
+                  continue
+                fi
+                
+                # Handle relative paths
+                if [[ "$url" =~ ^\./ ]]; then
+                  target_file="$(dirname "$file")/${url#./}"
+                elif [[ "$url" =~ ^\.\./ ]]; then
+                  target_file="$(dirname "$(dirname "$file")")/${url#../}"
+                else
+                  target_file="docs/$url"
+                fi
+                
+                # Check if file exists
+                if [[ ! -f "$target_file" ]]; then
+                  echo "::error file=$file::Broken internal link: $url (target: $target_file)"
+                else
+                  echo "✅ Link OK: $url"
+                fi
+              done
+            fi
+          done
+

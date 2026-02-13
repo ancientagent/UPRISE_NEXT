@@ -1,0 +1,1064 @@
+name: Android Build & Smoke Test
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: { contents: read }
+
+defaults:
+  run:
+    shell: bash -euo pipefail
+
+env:
+  NODE_OPTIONS: --openssl-legacy-provider
+  ADB_INSTALL_TIMEOUT: 20
+  SMOKE_SOFT_FAIL: ${{ github.event.inputs.smoke_soft_fail }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      smoke_soft_fail:
+        description: "Mark smoke test neutral on failure (upload logs anyway)"
+        required: false
+        default: "false"
+  push:
+    branches:
+      - main
+      - develop
+      - feat/ccpm-framework
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    name: Build APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 11 (Gradle)
+        id: j11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Java 17 (sdkmanager tools)
+        id: j17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Verify Java toolchains
+        shell: bash
+        run: |
+          echo "Gradle should use Java 11:"
+          "${{ steps.j11.outputs.path }}/bin/java" -version
+          echo "sdkmanager should use Java 17:"
+          "${{ steps.j17.outputs.path }}/bin/java" -version
+
+
+      - name: Setup Android SDK (Ubuntu)
+        uses: android-actions/setup-android@v3
+
+      - name: Guard Print Android SDK paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-<unset>}"
+          echo "ANDROID_HOME=${ANDROID_HOME:-<unset>}"
+          command -v sdkmanager || true
+          command -v adb || true
+
+      - name: Prepare Android SDK (isolated, r8 cmdline-tools 8092744)
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+          JAVA_HOME: ${{ steps.j17.outputs.path }}
+        run: |
+          set -e
+
+          # Isolate SDK so AGP doesn't see newer "33x/34x/..." tool labels
+          rm -rf "$ANDROID_SDK_ROOT"
+          mkdir -p "$ANDROID_SDK_ROOT"
+
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > ./android/local.properties
+
+          # Bootstrap cmdline-tools r8 (8092744)
+          CT_REV=8092744
+          curl -sSL "https://dl.google.com/android/repository/commandlinetools-linux-${CT_REV}_latest.zip" -o cmdtools.zip
+          unzip -q cmdtools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/r8"
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/r8/bin:$PATH"
+
+          # Accept licenses non-interactively
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/r8/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null
+
+          # Install ONLY what AGP 7.0.4 needs
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/r8/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" \
+            "platform-tools" \
+            "platforms;android-31" \
+            "build-tools;31.0.0"
+
+          echo "=== Installed build-tools ==="
+          ls -1 "$ANDROID_SDK_ROOT/build-tools" || true
+
+          # Guard: fail if anything other than 31.0.0 is present
+          BT_COUNT=$(ls -1 "$ANDROID_SDK_ROOT/build-tools" | wc -l | tr -d ' ')
+          if [ "$BT_COUNT" != "1" ] || [ ! -d "$ANDROID_SDK_ROOT/build-tools/31.0.0" ]; then
+            echo "Unexpected build-tools present. Found:"
+            ls -1 "$ANDROID_SDK_ROOT/build-tools" || true
+            exit 1
+          fi
+
+      - name: Print versions
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+          JAVA_HOME: ${{ steps.j11.outputs.path }}
+        run: |
+          echo "JAVA (Gradle):" && java -version
+          echo "Gradle wrapper:" && ./android/gradlew -v
+          echo "SDK Root: $ANDROID_SDK_ROOT"
+
+      - name: DIAG: sdkmanager and aapt paths
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+        run: |
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/r8/bin:$PATH"
+          which sdkmanager
+          if [[ "$(which sdkmanager)" != *"/cmdline-tools/r8/bin/sdkmanager" ]]; then
+            echo "❌ sdkmanager path is not r8"; exit 1; fi
+          test -x "$ANDROID_SDK_ROOT/build-tools/31.0.0/aapt" || { echo "❌ aapt missing"; exit 1; }
+          echo "AAPT path: $ANDROID_SDK_ROOT/build-tools/31.0.0/aapt"
+
+      - name: Use Node 18 (with npm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Prime Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Ensure Gradle build cache on
+        run: |
+          mkdir -p ~/.gradle
+          {
+            echo "org.gradle.caching=true"
+            echo "org.gradle.parallel=false"
+          } >> ~/.gradle/gradle.properties
+          
+      - name: Install Node dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install TrackPlayer stub (TEMP for CI)
+        run: |
+          # Create TrackPlayer stub for CI builds
+          mkdir -p node_modules/react-native-track-player
+          cat > node_modules/react-native-track-player/package.json << 'EOF'
+          {
+            "name": "react-native-track-player",
+            "version": "0.0.0-stub",
+            "description": "Temporary stub for react-native-track-player (CI build only)",
+            "main": "index.js",
+            "private": true
+          }
+          EOF
+          cat > node_modules/react-native-track-player/index.js << 'EOF'
+          // TEMP STUB: react-native-track-player disabled for CI build
+          const TrackPlayer = {
+            setupPlayer: async () => console.log('TrackPlayer stub: setupPlayer called'),
+            stop: async () => console.log('TrackPlayer stub: stop called'),
+            getTrack: async () => null,
+            getState: async () => 'idle',
+            getPosition: async () => 0,
+            play: async () => {},
+            pause: async () => {},
+            reset: async () => {},
+            add: async () => {},
+            skip: async () => {},
+            skipToNext: async () => {},
+            skipToPrevious: async () => {},
+            remove: async () => {},
+            destroy: async () => {},
+            updateOptions: async () => {},
+            updateMetadataForTrack: async () => {},
+            getQueue: async () => [],
+            getCurrentTrack: async () => null,
+            getDuration: async () => 0,
+            getBufferedPosition: async () => 0,
+            getVolume: async () => 1,
+            setVolume: async () => {},
+            getRate: async () => 1,
+            setRate: async () => {},
+            seekTo: async () => {},
+            setRepeatMode: async () => {},
+            getRepeatMode: async () => 0,
+          };
+          export default TrackPlayer;
+          EOF
+          echo "TrackPlayer stub installed for CI build"
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./android/gradlew
+
+      - name: Build Debug & Release (stable flags)
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+          NODE_OPTIONS: --openssl-legacy-provider
+          GRADLE_OPTS: "-Dorg.gradle.daemon=true -Dorg.gradle.jvmargs='-Xmx3g -XX:+HeapDumpOnOutOfMemoryError' -Dorg.gradle.workers.max=2"
+          JAVA_HOME: ${{ steps.j11.outputs.path }}
+        run: |
+          set -e
+          cd android
+          ./gradlew :app:assembleDebug  --build-cache --no-parallel --stacktrace
+          ./gradlew :app:assembleRelease --build-cache --no-parallel --stacktrace
+
+      - name: Print artifact sizes
+        run: |
+          ls -lh android/app/build/outputs/apk/debug/*.apk  || true
+          ls -lh android/app/build/outputs/apk/release/*.apk || true
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 14
+
+      - name: Extract SDK + sizes from manifest/APKs
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          echo "${ANDROID_SDK_ROOT}/build-tools/31.0.0" >> "$GITHUB_PATH"
+          echo "${ANDROID_SDK_ROOT}/platform-tools" >> "$GITHUB_PATH"
+
+          # Create artifacts directory for metadata
+          mkdir -p artifacts/sdk-info
+
+          # Extract from AndroidManifest.xml first (more reliable)
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            echo "=== Extracting SDK info from AndroidManifest.xml ==="
+            # Extract minSdkVersion and targetSdkVersion from manifest
+            MIN_SDK_MANIFEST=$(grep -o 'android:minSdkVersion="[^"]*"' "$MANIFEST" | sed 's/.*"\([^"]*\)".*/\1/' | head -n1)
+            TGT_SDK_MANIFEST=$(grep -o 'android:targetSdkVersion="[^"]*"' "$MANIFEST" | sed 's/.*"\([^"]*\)".*/\1/' | head -n1)
+            echo "Manifest minSdkVersion: $MIN_SDK_MANIFEST"
+            echo "Manifest targetSdkVersion: $TGT_SDK_MANIFEST"
+            echo "minSdkVersion: $MIN_SDK_MANIFEST" > artifacts/sdk-info/manifest-sdk.txt
+            echo "targetSdkVersion: $TGT_SDK_MANIFEST" >> artifacts/sdk-info/manifest-sdk.txt
+          fi
+
+          # Extract from APK files
+          APK_DEBUG="$(ls -1 android/app/build/outputs/apk/debug/*.apk | head -n1)"
+          APK_RELEASE="$(ls -1 android/app/build/outputs/apk/release/*.apk | head -n1)"
+
+          echo "=== Extracting SDK info from APK files ==="
+          echo "Debug APK: $APK_DEBUG"
+          echo "Release APK: $APK_RELEASE"
+
+          # Use aapt2 if available, else aapt
+          AAPT="$(command -v aapt2 || true)"
+          [ -z "$AAPT" ] && AAPT="$(command -v aapt || true)"
+
+          # Extract SDK info from APK
+          if [ -n "$AAPT" ] && [ -f "$APK_DEBUG" ]; then
+            echo "Using $AAPT to extract APK metadata"
+            $AAPT dump badging "$APK_DEBUG" > artifacts/sdk-info/debug-apk-badging.txt
+            
+            MIN_SDK_APK="$($AAPT dump badging "$APK_DEBUG" | sed -n "s/.*sdkVersion:'\([^']*\)'.*/\1/p" | head -n1)"
+            TGT_SDK_APK="$($AAPT dump badging "$APK_DEBUG" | sed -n "s/.*targetSdkVersion:'\([^']*\)'.*/\1/p" | head -n1)"
+            echo "APK minSdkVersion: $MIN_SDK_APK"
+            echo "APK targetSdkVersion: $TGT_SDK_APK"
+          else
+            # Fallback to apkanalyzer if needed
+            if command -v apkanalyzer >/dev/null 2>&1 && [ -f "$APK_DEBUG" ]; then
+              echo "Using apkanalyzer to extract APK metadata"
+              MIN_SDK_APK="$(apkanalyzer manifest min-sdk "$APK_DEBUG" || true)"
+              TGT_SDK_APK="$(apkanalyzer manifest target-sdk "$APK_DEBUG" || true)"
+              echo "APK minSdkVersion: $MIN_SDK_APK"
+              echo "APK targetSdkVersion: $TGT_SDK_APK"
+            else
+              echo "Warning: Neither aapt nor apkanalyzer available for APK analysis"
+              MIN_SDK_APK=""
+              TGT_SDK_APK=""
+            fi
+          fi
+
+          # Calculate APK sizes
+          if [ -f "$APK_DEBUG" ]; then
+            DBG_BYTES=$(stat -c%s "$APK_DEBUG" 2>/dev/null || stat -f%z "$APK_DEBUG")
+            DBG_MB=$((DBG_BYTES / 1024 / 1024))
+            DBG_KB=$((DBG_BYTES / 1024))
+            echo "Debug APK size: ${DBG_MB} MB (${DBG_KB} KB)"
+          else
+            DBG_MB=0
+            DBG_KB=0
+            echo "Warning: Debug APK not found"
+          fi
+
+          if [ -f "$APK_RELEASE" ]; then
+            REL_BYTES=$(stat -c%s "$APK_RELEASE" 2>/dev/null || stat -f%z "$APK_RELEASE")
+            REL_MB=$((REL_BYTES / 1024 / 1024))
+            REL_KB=$((REL_BYTES / 1024))
+            echo "Release APK size: ${REL_MB} MB (${REL_KB} KB)"
+          else
+            REL_MB=0
+            REL_KB=0
+            echo "Warning: Release APK not found"
+          fi
+
+          # Use APK values if available, otherwise fall back to manifest values
+          MIN_SDK="${MIN_SDK_APK:-$MIN_SDK_MANIFEST}"
+          TGT_SDK="${TGT_SDK_APK:-$TGT_SDK_MANIFEST}"
+
+          # Save to environment variables
+          echo "SDK_MIN=$MIN_SDK" >> $GITHUB_ENV
+          echo "SDK_TARGET=$TGT_SDK" >> $GITHUB_ENV
+          echo "APK_DEBUG_MB=$DBG_MB" >> $GITHUB_ENV
+          echo "APK_RELEASE_MB=$REL_MB" >> $GITHUB_ENV
+          echo "APK_DEBUG_KB=$DBG_KB" >> $GITHUB_ENV
+          echo "APK_RELEASE_KB=$REL_KB" >> $GITHUB_ENV
+
+          # Create summary file
+          {
+            echo "=== SDK Information ==="
+            echo "minSdkVersion: $MIN_SDK"
+            echo "targetSdkVersion: $TGT_SDK"
+            echo ""
+            echo "=== APK Sizes ==="
+            echo "Debug APK: ${DBG_MB} MB (${DBG_KB} KB)"
+            echo "Release APK: ${REL_MB} MB (${REL_KB} KB)"
+            echo ""
+            echo "=== Source Priority ==="
+            echo "SDK info extracted from APK files (preferred) or AndroidManifest.xml (fallback)"
+          } > artifacts/sdk-info/summary.txt
+
+          echo "=== Final SDK Summary ==="
+          cat artifacts/sdk-info/summary.txt
+
+      - name: Ensure build-tools for apksigner/aapt
+        shell: bash
+        env:
+          JAVA_HOME: ${{ steps.j17.outputs.path }}   # keep dual-JDK design
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+        run: |
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          if [ -z "${ANDROID_SDK_ROOT}" ] || [ ! -d "${ANDROID_SDK_ROOT}" ]; then
+            echo "❌ ANDROID_SDK_ROOT not set or invalid"; exit 1
+          fi
+
+          # Use the build-tools version already installed (31.0.0)
+          echo "${ANDROID_SDK_ROOT}/build-tools/31.0.0" >> "$GITHUB_PATH"
+
+          "${ANDROID_SDK_ROOT}/build-tools/31.0.0/apksigner" version
+
+      - name: Gather APK metadata (debug + release)
+        id: apkmeta
+        shell: bash
+        run: |
+          mkdir -p artifacts/meta
+          DBG=$(ls android/app/build/outputs/apk/debug/*.apk | head -n1)
+          REL=$(ls android/app/build/outputs/apk/release/*.apk | head -n1 || true)
+
+          # Prefer aapt, fallback apkanalyzer
+          meta() {
+            local APK="$1" ; local OUT="$2"
+            if [ -z "$APK" ] || [ ! -f "$APK" ]; then return 0; fi
+            if command -v aapt >/dev/null 2>&1; then
+              {
+                echo "APK=$APK"
+                aapt dump badging "$APK"
+              } > "$OUT" || true
+            elif command -v apkanalyzer >/dev/null 2>&1; then
+              {
+                echo "APK=$APK"
+                apkanalyzer manifest print "$APK"
+              } > "$OUT" || true
+            fi
+          }
+
+          meta "$DBG" artifacts/meta/debug_badging.txt
+          meta "$REL" artifacts/meta/release_badging.txt
+
+          # Write outputs for later steps
+          echo "debug_apk=$DBG" >> $GITHUB_OUTPUT
+          echo "release_apk=$REL" >> $GITHUB_OUTPUT
+
+      - name: Verify Release APK signing
+        if: ${{ steps.apkmeta.outputs.release_apk != '' }}
+        shell: bash
+        run: |
+          apksigner verify --print-certs "${{ steps.apkmeta.outputs.release_apk }}"
+
+      - name: APK size guard
+        shell: bash
+        run: |
+          DBG=${{ steps.apkmeta.outputs.debug_apk }}
+          REL=${{ steps.apkmeta.outputs.release_apk }}
+          mkdir -p artifacts/meta
+          summary="$GITHUB_STEP_SUMMARY"
+
+          sz() { [ -f "$1" ] && stat -c%s "$1" || echo 0; }
+          DBG_SIZE=$(sz "$DBG")
+          REL_SIZE=$(sz "$REL")
+
+          # Thresholds (adjustable)
+          DBG_MAX=$((120 * 1024 * 1024))   # 120 MB
+          REL_MAX=$((80 * 1024 * 1024))    # 80 MB
+
+          echo "## 📱 APK Information" >> "$summary"
+          echo "" >> "$summary"
+          echo "### APK Sizes" >> "$summary"
+          echo "- **Debug APK**: $((DBG_SIZE/1024/1024)) MB ($((DBG_SIZE/1024)) KB)" >> "$summary"
+          if [ -f "$REL" ]; then
+            echo "- **Release APK**: $((REL_SIZE/1024/1024)) MB ($((REL_SIZE/1024)) KB)" >> "$summary"
+          fi
+          echo "" >> "$summary"
+
+          # Add SDK information from environment variables
+          if [ -n "${SDK_MIN:-}" ] || [ -n "${SDK_TARGET:-}" ]; then
+            echo "### 📋 SDK Information" >> "$summary"
+            echo "- **minSdkVersion**: \`${SDK_MIN:-unknown}\`" >> "$summary"
+            echo "- **targetSdkVersion**: \`${SDK_TARGET:-unknown}\`" >> "$summary"
+            echo "" >> "$summary"
+          fi
+
+          WARN=0
+          if [ "$DBG_SIZE" -gt "$DBG_MAX" ]; then 
+            echo "⚠️ **Warning**: Debug APK exceeds ${DBG_MAX} bytes (${DBG_MAX} MB)" >> "$summary"
+            WARN=1
+          fi
+          if [ -f "$REL" ] && [ "$REL_SIZE" -gt "$REL_MAX" ]; then 
+            echo "⚠️ **Warning**: Release APK exceeds ${REL_MAX} bytes (${REL_MAX} MB)" >> "$summary"
+            WARN=1
+          fi
+
+          if [ $WARN -eq 0 ]; then
+            echo "✅ **All APK sizes within acceptable limits**" >> "$summary"
+          fi
+
+          # Do not fail build; just warn (flip to hard fail later if desired)
+          exit 0
+
+
+
+      - name: Upload metadata artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-metadata
+          path: artifacts/meta/**
+          retention-days: 14
+
+      - name: Upload SDK info artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-info
+          path: artifacts/sdk-info/**
+          retention-days: 14
+
+      - name: Publish run identifiers
+        if: always()
+        shell: bash
+        run: |
+          echo "${GITHUB_RUN_ID}" > RUN_ID.txt
+          echo "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" > RUN_URL.txt
+
+      - name: Upload run identifiers
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ids
+          path: |
+            RUN_ID.txt
+            RUN_URL.txt
+
+  smoke-test:
+    name: Android Smoke (macOS HVF)
+    continue-on-error: true
+    needs: build
+    runs-on: macos-13
+    timeout-minutes: 35
+    env:
+      NODE_OPTIONS: --openssl-legacy-provider
+      ADB_INSTALL_TIMEOUT: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 11 (primary)
+        id: j11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Java 17 (sdkmanager tools)
+        id: j17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Verify Java toolchains
+        shell: bash
+        run: |
+          echo "macOS Gradle (if needed) uses Java 11:"
+          "${{ steps.j11.outputs.path }}/bin/java" -version
+          echo "macOS sdkmanager uses Java 17:"
+          "${{ steps.j17.outputs.path }}/bin/java" -version
+
+
+      - name: Setup Android SDK (macOS)
+        uses: android-actions/setup-android@v3
+
+      - name: ADB hygiene (macOS)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Prefer the Android SDK we just installed
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          echo "${ANDROID_SDK_ROOT}/platform-tools" >> "$GITHUB_PATH"
+
+          # Kill any stray adb and remove stale lock/state
+          pkill -9 adb || true
+          adb kill-server || true
+          rm -f "${HOME}/.android/adbkey" "${HOME}/.android/adbkey.pub" || true
+          rm -rf "${HOME}/.android/adb*" || true
+
+          # Fresh server from our platform-tools
+          adb start-server
+          adb devices -l || true
+
+      - name: Guard Print Android SDK paths (macOS)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-<unset>}"
+          echo "ANDROID_HOME=${ANDROID_HOME:-<unset>}"
+          command -v sdkmanager || true
+          command -v adb || true
+
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-debug-apk
+          path: artifacts/debug
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+          path: artifacts/release
+
+      - name: Find APK and set env
+        run: |
+          APK=$(find artifacts/debug -name "*.apk" -type f | head -1)
+          if [ -z "$APK" ]; then
+            echo "No APK found under artifacts/debug"
+            exit 1
+          fi
+          echo "APK=$APK" | tee -a "$GITHUB_ENV"
+
+      - name: Start Emulator (API 30, macOS HVF)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          profile: pixel_5
+          target: default
+          disable-animations: true
+          force-avd-creation: true
+          emulator-boot-timeout: 600
+          emulator-options: >
+            -no-snapshot
+            -no-snapshot-save
+            -no-window
+            -no-audio
+            -no-boot-anim
+            -gpu swiftshader_indirect
+            -camera-back none
+            -memory 1024
+            -netfast
+            -no-metrics
+          script: |
+            echo "Emulator starting..."
+        timeout-minutes: 12
+      
+      - name: Stabilize ADB connection (fast-fail, portable)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          echo "${ANDROID_SDK_ROOT}/platform-tools" >> "$GITHUB_PATH"
+
+          pkill -9 adb || true
+          adb kill-server || true
+          rm -f "${HOME}/.android/adbkey" "${HOME}/.android/adbkey.pub" || true
+
+          adb start-server
+          adb version || true
+
+          # Portable 120s wait (no `timeout`)
+          start_ts=$(date +%s)
+          while true; do
+            if adb devices | grep -E "emulator-[0-9]+\s+(device|offline)" >/dev/null 2>&1; then
+              break
+            fi
+            now=$(date +%s)
+            elapsed=$(( now - start_ts ))
+            if [ "$elapsed" -ge 120 ]; then
+              echo "❌ Emulator never appeared on adb within 120s"
+              exit 1
+            fi
+            sleep 2
+          done
+
+          # Try to move from 'offline' → 'device' quickly; bail if it won't
+          for attempt in 1 2 3 4 5; do
+            state="$(adb devices | awk '/emulator-/{print $2}' | head -n1 || true)"
+            if [ "$state" = "device" ]; then
+              echo "✅ ADB device is online"; break
+            fi
+            echo "ADB state=$state → recover ($attempt/5)…"
+            adb kill-server || true; sleep 2
+            adb start-server; sleep 2
+            adb reconnect offline || true; sleep 2
+          done
+
+          state="$(adb devices | awk '/emulator-/{print $2}' | head -n1 || true)"
+          if [ "$state" != "device" ]; then
+            echo "❌ ADB device stuck in state=$state after recover attempts"; exit 1
+          fi
+
+          adb devices -l
+
+  smoke-ubuntu:
+    name: smoke-ubuntu
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ANDROID_SERIAL: emulator-5554
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java toolchains
+        id: jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Setup Java 17 (sdkmanager)
+        id: jdk17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Bootstrap Android SDK (r8 8092744)
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+          JAVA_HOME: ${{ steps.jdk17.outputs.path }}
+        run: |
+          set -e
+          rm -rf "$ANDROID_SDK_ROOT" && mkdir -p "$ANDROID_SDK_ROOT"
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > ./android/local.properties
+          CT_REV=8092744
+          curl -sSL "https://dl.google.com/android/repository/commandlinetools-linux-${CT_REV}_latest.zip" -o cmdtools.zip
+          unzip -q cmdtools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/r8"
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/r8/bin:$PATH"
+          which sdkmanager
+          if [[ "$(which sdkmanager)" != *"/cmdline-tools/r8/bin/sdkmanager" ]]; then echo "sdkmanager not from r8"; exit 1; fi
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" \
+            "platform-tools" \
+            "emulator" \
+            "platforms;android-31" \
+            "build-tools;31.0.0" \
+            "system-images;android-30;default;x86_64"
+          echo "$ANDROID_SDK_ROOT/build-tools/31.0.0" >> "$GITHUB_PATH"
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> "$GITHUB_PATH"
+
+      - name: DIAG checks
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+        run: |
+          which sdkmanager
+          if [[ "$(which sdkmanager)" != *"/cmdline-tools/r8/bin/sdkmanager" ]]; then exit 1; fi
+          test -x "$ANDROID_SDK_ROOT/build-tools/31.0.0/aapt" || exit 1
+          echo "AAPT path: $ANDROID_SDK_ROOT/build-tools/31.0.0/aapt"
+
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-debug-apk
+          path: artifacts/debug
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+          path: artifacts/release
+
+      - name: Create AVD and start emulator (-accel off)
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+        run: |
+          set -e
+          avd_name=ci_api30
+          echo "no" | avdmanager create avd -n "$avd_name" -k "system-images;android-30;default;x86_64" -d pixel_5 -f
+          "$ANDROID_SDK_ROOT/emulator/emulator" -avd "$avd_name" -no-snapshot -no-snapshot-save -no-window -no-audio -no-boot-anim -accel off -gpu swiftshader_indirect -memory 1024 -port 5554 > emulator.txt 2>&1 &
+          start_ts=$(date +%s)
+          timeout_s=$((15*60))
+          while true; do
+            adb -s "$ANDROID_SERIAL" wait-for-device || true
+            if adb -s "$ANDROID_SERIAL" shell getprop sys.boot_completed 2>/dev/null | grep -q 1; then
+              break
+            fi
+            now=$(date +%s); elapsed=$((now-start_ts))
+            if [ $elapsed -ge $timeout_s ]; then
+              echo "Emulator boot timed out"; break
+            fi
+            adb devices -l || true
+            sleep 5
+          done
+          BOOT_OK=0
+          if adb -s "$ANDROID_SERIAL" shell getprop sys.boot_completed 2>/dev/null | grep -q 1; then BOOT_OK=1; fi
+          echo "BOOT_OK=$BOOT_OK" >> $GITHUB_ENV
+
+      - name: Install debug APK and verify package
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+        run: |
+          set -e
+          DBG_APK=$(ls artifacts/debug/*.apk | head -1)
+          REL_APK=$(ls artifacts/release/*.apk | head -1 || true)
+          echo "DBG_APK=$DBG_APK" >> $GITHUB_ENV
+          echo "REL_APK=$REL_APK" >> $GITHUB_ENV
+          # Determine app id from APK via aapt
+          APP_ID=$("$ANDROID_SDK_ROOT/build-tools/31.0.0/aapt" dump badging "$DBG_APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -n1)
+          echo "APP_ID=$APP_ID" >> $GITHUB_ENV
+          adb -s "$ANDROID_SERIAL" install -r "$DBG_APK"
+          adb -s "$ANDROID_SERIAL" shell pm list packages | grep -F "$APP_ID"
+
+      - name: Collect logs and write summary.json
+        if: always()
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+        run: |
+          set -e
+          mkdir -p summary
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          DBG_BYTES=$(stat -c%s "${DBG_APK:-}" 2>/dev/null || echo 0)
+          REL_BYTES=$(stat -c%s "${REL_APK:-}" 2>/dev/null || echo 0)
+          BOOT=$([[ "${BOOT_OK:-0}" = "1" ]] && echo true || echo false)
+          cat > summary/summary.json <<'EOF'
+          {
+            "run_id": ${GITHUB_RUN_ID},
+            "run_url": "${RUN_URL}",
+            "boot_ok": ${BOOT},
+            "ttjs_s": null,
+            "debug_apk_bytes": ${DBG_BYTES},
+            "release_apk_bytes": ${REL_BYTES}
+          }
+          EOF
+          # basic logs
+          adb -s "$ANDROID_SERIAL" logcat -d > logcat.txt || true
+          adb -s "$ANDROID_SERIAL" shell getprop > device-props.txt || true
+
+      - name: Upload smoke logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-logs
+          path: |
+            emulator.txt
+            logcat.txt
+            device-props.txt
+
+      - name: Upload summary.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary/summary.json
+
+      - name: Wait for boot (strict 6m, portable)
+        shell: bash
+        run: |
+          set -euo pipefail
+          adb wait-for-device
+
+          start_ts=$(date +%s)
+          while true; do
+            if adb shell getprop sys.boot_completed 2>/dev/null | grep -qx '1'; then
+              break
+            fi
+            now=$(date +%s)
+            elapsed=$(( now - start_ts ))
+            if [ "$elapsed" -ge 360 ]; then
+              echo "❌ sys.boot_completed not reached within 6 minutes"
+              exit 1
+            fi
+            sleep 3
+          done
+
+          adb shell input keyevent 82 || true
+          echo "✅ Emulator booted (macOS HVF, slim AVD)"
+
+      - name: Guardrail adb from our SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          ADB_BIN="$(command -v adb || true)"
+          echo "adb = $ADB_BIN"
+          echo "$ADB_BIN" | grep -q "${ANDROID_SDK_ROOT}/platform-tools/adb" || { echo "❌ adb not from expected SDK"; exit 1; }
+
+      - name: Ensure build-tools (smoke)
+        shell: bash
+        env:
+          JAVA_HOME: ${{ steps.j17.outputs.path }}
+        run: |
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          if [ -z "${ANDROID_SDK_ROOT}" ] || [ ! -d "${ANDROID_SDK_ROOT}" ]; then
+            echo "❌ ANDROID_SDK_ROOT not set or invalid"; exit 1
+          fi
+
+          yes | "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" "platforms;android-30" "build-tools;31.0.0" > /dev/null
+
+          echo "${ANDROID_SDK_ROOT}/build-tools/31.0.0" >> "$GITHUB_PATH"
+
+      - name: Install Debug APK
+        shell: bash
+        run: |
+          echo "Installing APK..."
+          adb install -r "$APK"
+
+      - name: Determine package + launchable activity (robust)
+        id: pkg
+        shell: bash
+        run: |
+          set -euo pipefail
+          # APK is already set from "Find APK and set env" step
+          echo "apk=$APK" >> $GITHUB_OUTPUT
+
+          # Generate APK metadata for logs
+          mkdir -p artifacts/logs
+          if command -v aapt >/dev/null 2>&1; then
+            aapt dump badging "$APK" | tee artifacts/logs/apk_badging.txt
+          fi
+
+          # Prefer aapt, fallback to apkanalyzer
+          if command -v aapt >/dev/null 2>&1; then
+            PKG=$(aapt dump badging "$APK" | sed -n "s/.*package name='\([^']*\)'.*/\1/p" | head -n1)
+          else
+            if command -v apkanalyzer >/dev/null 2>&1; then
+              PKG=$(apkanalyzer manifest application-id "$APK")
+            else
+              echo "Neither aapt nor apkanalyzer found"; exit 1
+            fi
+          fi
+          echo "pkg=$PKG" >> $GITHUB_OUTPUT
+          echo "Detected package: $PKG"
+
+          # Resolve real launchable activity from the package
+          # (uses the default LAUNCHER activity exposed by the app)
+          ACT=$(adb shell cmd package resolve-activity -c android.intent.category.LAUNCHER "$PKG" \
+                | sed -n "s/.*name=//p" | tr -d '\r' | head -n1)
+          if [ -z "$ACT" ]; then
+            # Fallback: common RN default
+            ACT="$PKG/.MainActivity"
+            echo "Fallback to $ACT"
+          fi
+          echo "act=$ACT" >> $GITHUB_OUTPUT
+          echo "Launchable activity: $ACT"
+
+      - name: Launch App (using resolved activity)
+        id: launch
+        shell: bash
+        run: |
+          # Record launch start time for TTJS metric
+          LAUNCH_START=$(date +%s)
+          echo "launch_start=$LAUNCH_START" >> $GITHUB_OUTPUT
+          echo "App launch started at: $(date -d @$LAUNCH_START)"
+          
+          adb shell am start -n "${{ steps.pkg.outputs.act }}" || true
+          sleep 10
+          adb shell pidof "${{ steps.pkg.outputs.pkg }}" || (echo "App not running" && exit 1)
+
+      - name: Assert React Native JS initialized + TTJS
+        id: ttjs
+        shell: bash
+        run: |
+          LAUNCH_START="${{ steps.launch.outputs.launch_start }}"
+          
+          # Wait up to 90s for the first JS log
+          timeout 90s bash -c 'until adb logcat -d | grep -m1 "ReactNativeJS"; do sleep 5; done'
+          
+          # Calculate TTJS metric
+          RN_START=$(date +%s)
+          TTJS_SECONDS=$((RN_START - LAUNCH_START))
+          echo "ttjs_seconds=$TTJS_SECONDS" >> $GITHUB_OUTPUT
+          echo "✅ ReactNativeJS detected in logcat"
+          echo "📊 TTJS (Time-to-first-ReactNativeJS): ${TTJS_SECONDS}s"
+
+      - name: Assert main activity has focus
+        shell: bash
+        run: |
+          PKG="${{ steps.pkg.outputs.pkg }}"
+          CURRENT=$(adb shell dumpsys window | sed -n "s/.*mCurrentFocus=Window{[^ ]* [^ ]* \\([^}]*\\)}.*/\\1/p")
+          echo "mCurrentFocus=$CURRENT"
+          echo "$CURRENT" | grep -q "$PKG" || (echo "❌ Main activity not focused" && exit 1)
+
+      - name: Collect deep diagnostics
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts/logs
+          # Full logcat since boot
+          adb logcat -d > artifacts/logs/logcat_full.txt || true
+          # Trim RN-only lines for quick read
+          grep -i "ReactNative" artifacts/logs/logcat_full.txt > artifacts/logs/logcat_reactnative.txt || true
+          # System state
+          adb shell getprop > artifacts/logs/device_getprop.txt || true
+          adb shell settings list global > artifacts/logs/settings_global.txt || true
+          adb shell settings list system > artifacts/logs/settings_system.txt || true
+          adb shell dumpsys activity > artifacts/logs/dumpsys_activity.txt || true
+          adb shell dumpsys window > artifacts/logs/dumpsys_window.txt || true
+          adb shell dumpsys package "${{ steps.pkg.outputs.pkg }}" > artifacts/logs/dumpsys_package.txt || true
+          # App process tracking  
+          adb shell pidof "${{ steps.pkg.outputs.pkg }}" > artifacts/logs/app_pid.txt || true
+          # One heavy artifact for deep dive (10–30MB typical)
+          adb bugreport artifacts/logs/bugreport.zip || true
+
+      - name: Collect ANR & tombstones (if any)
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts/logs
+          adb shell ls -l /data/anr/ > artifacts/logs/anr_dir.txt 2>/dev/null || true
+          # Pull ANRs if readable (emulators often allow)
+          for f in $(adb shell ls /data/anr/ 2>/dev/null | tr -d '\r'); do
+            adb shell cat "/data/anr/$f" > "artifacts/logs/anr_$f" 2>/dev/null || true
+          done
+          # Tombstones
+          adb shell ls -l /data/tombstones/ > artifacts/logs/tombstones_dir.txt 2>/dev/null || true
+          for f in $(adb shell ls /data/tombstones/ 2>/dev/null | tr -d '\r'); do
+            adb shell cat "/data/tombstones/$f" > "artifacts/logs/$f" 2>/dev/null || true
+          done
+
+      - name: Upload smoke logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-logs
+          path: artifacts/logs/**
+
+      - name: Summarize smoke results
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts/logs
+          LOG=artifacts/logs/logcat_full.txt
+          RN=artifacts/logs/logcat_reactnative.txt
+          SUM="$GITHUB_STEP_SUMMARY"
+
+          echo "## Smoke Summary" >> "$SUM"
+          echo "" >> "$SUM"
+
+          # Add SDK information if available
+          if [ -n "${SDK_MIN:-}" ] || [ -n "${SDK_TARGET:-}" ]; then
+            echo "### 📋 SDK Information" >> "$SUM"
+            echo "- **minSdkVersion**: \`${SDK_MIN:-unknown}\`" >> "$SUM"
+            echo "- **targetSdkVersion**: \`${SDK_TARGET:-unknown}\`" >> "$SUM"
+            echo "" >> "$SUM"
+          fi
+
+          # RN JS presence + TTJS metric
+          if grep -q "ReactNativeJS" "$RN" 2>/dev/null; then
+            echo "✅ **ReactNativeJS detected** (JS runtime initialized)" >> "$SUM"
+            # Add TTJS metric if available
+            if [ -n "${{ steps.ttjs.outputs.ttjs_seconds }}" ]; then
+              echo "📊 **TTJS (launch → first ReactNativeJS): ${{ steps.ttjs.outputs.ttjs_seconds }}s**" >> "$SUM"
+            fi
+          else
+            echo "❌ **No ReactNativeJS logs detected** (JS may not have started)" >> "$SUM"
+          fi
+
+          # Main failures to highlight
+          echo "" >> "$SUM"
+          echo "### Notable log signals" >> "$SUM"
+          grep -E "FATAL EXCEPTION|Process .* has died|ANR|E ReactNative|E AndroidRuntime" "$LOG" \
+            | tail -n 40 \
+            | sed 's/^/- /' >> "$SUM" || true
+
+          # APK + pkg info
+          if [ -f artifacts/logs/apk_badging.txt ]; then
+            VER=$(sed -n "s/.*versionName='\([^']*\)'.*/\1/p" artifacts/logs/apk_badging.txt | head -n1)
+            echo "" >> "$SUM"
+            echo "**APK versionName**: \`$VER\`" >> "$SUM"
+          fi
+          
+          echo "" >> "$SUM"
+          echo "**Resolved Package:** \`${{ steps.pkg.outputs.pkg }}\`" >> "$SUM"
+          echo "**Launch Activity:** \`${{ steps.pkg.outputs.act }}\`" >> "$SUM"
+
+          echo "" >> "$SUM"
+          echo "_Full logs available in the **smoke-logs** artifact (includes bugreport)._ " >> "$SUM"
+
+      - name: Emit machine-readable summary
+        if: always()
+        shell: bash
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          STATUS="$([[ "${{ job.status }}" == "success" ]] && echo success || echo failure)"
+          
+          # Extract TTJS and emulator boot status from step summary (still needed for smoke-specific data)
+          TTJS="$(grep -oE 'TTJS[^:]*:\s*[0-9.]+s' "$GITHUB_STEP_SUMMARY" | head -n1 | sed 's/.*:\s*//' || true)"
+          BOOT="$(grep -oE 'Emulator Boot:\s*✅.*|Emulator Boot:\s*❌.*' "$GITHUB_STEP_SUMMARY" | head -n1 | sed 's/^.*Emulator Boot:\s*//' || true)"
+          
+          echo '{' > summary.json
+          echo "  \"run_id\": ${GITHUB_RUN_ID}," >> summary.json
+          echo "  \"run_url\": \"${RUN_URL}\"," >> summary.json
+          echo "  \"status\": \"${STATUS}\"," >> summary.json
+          echo "  \"build\": { \"apk_debug_mb\": \"${APK_DEBUG_MB:-}\", \"apk_release_mb\": \"${APK_RELEASE_MB:-}\" }," >> summary.json
+          echo "  \"smoke\": { \"ttjs_s\": \"${TTJS:-}\", \"emulator_boot\": \"${BOOT:-}\", \"sdk_min\": \"${SDK_MIN:-}\", \"sdk_target\": \"${SDK_TARGET:-}\" }" >> summary.json
+          echo '}' >> summary.json
+
+      - name: Upload quick summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary.json
+

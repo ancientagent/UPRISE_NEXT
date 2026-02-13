@@ -1,0 +1,17 @@
+{
+  "GET /config": {
+    "features": {},
+    "env": "dev"
+  },
+  "GET /auth/session": {
+    "authenticated": false
+  },
+  "GET /me": {
+    "id": "dev-user",
+    "roles": [],
+    "displayName": "Dev User"
+  },
+  "GET /auth/genres": [],
+  "GET /onboarding/all-genres": [],
+  "GET /home/feed": []
+}

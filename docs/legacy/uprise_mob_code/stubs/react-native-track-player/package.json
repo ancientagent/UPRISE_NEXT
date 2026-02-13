@@ -1,0 +1,15 @@
+{
+  "name": "react-native-track-player",
+  "version": "1.0.0",
+  "description": "Stub for react-native-track-player",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["react-native", "track-player", "stub"],
+  "author": "",
+  "license": "ISC"
+}
+
+
+

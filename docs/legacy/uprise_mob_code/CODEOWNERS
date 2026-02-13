@@ -1,0 +1,37 @@
+# UPRISE Mobile - Code Owners
+
+# CI/CD Pipeline and Workflows
+.github/workflows/ @ancientagent
+.github/PULL_REQUEST_TEMPLATE/ @ancientagent
+
+# CI Scripts and Automation
+ci/ @ancientagent
+scripts/ @ancientagent
+
+# Documentation
+# uprise_docs/ (deprecated) — use docs/
+docs/ @ancientagent
+README.md @ancientagent
+CHANGELOG.md @ancientagent
+
+# Build Configuration
+package.json @ancientagent
+gradle.properties @ancientagent
+metro.config.js @ancientagent
+android/gradle/ @ancientagent
+android/build.gradle @ancientagent
+android/app/build.gradle @ancientagent
+
+# Agent HQ
+docs/Agent-HQ/ @ancientagent
+
+# Security and Compliance
+.gitignore @ancientagent
+CODEOWNERS @ancientagent
+
+# Application Code (Restricted - requires special approval)
+src/ @ancientagent
+App.js @ancientagent
+index.js @ancientagent
+android/app/src/ @ancientagent
+ios/ @ancientagent

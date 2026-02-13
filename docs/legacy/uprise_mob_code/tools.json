@@ -1,0 +1,31 @@
+{
+  "local_dev_tools": {
+    "node": {
+      "version": "20.19.0",
+      "path": "C:\\tools\\node-v20.19.0-win-x64",
+      "type": "portable",
+      "note": "User-writable portable installation"
+    },
+    "java": {
+      "version": "11.0.28",
+      "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.28.6-hotspot",
+      "type": "temurin",
+      "note": "JDK 11 for Gradle compatibility"
+    },
+    "android_sdk": {
+      "path": "%LOCALAPPDATA%\\Android\\Sdk",
+      "note": "User profile location, no global installs"
+    },
+    "npm_config": {
+      "script_shell": "powershell.exe",
+      "note": "Required for PowerShell script execution"
+    },
+    "guardrails": {
+      "windows_non_admin": true,
+      "user_writable_only": true,
+      "no_global_installs": true,
+      "node_version_pinned": "20.19.0",
+      "jdk_version_pinned": "11"
+    }
+  }
+}

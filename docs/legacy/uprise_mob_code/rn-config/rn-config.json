@@ -1,0 +1,910 @@
+{
+  "root": "/home/runner/work/uprise_mob/uprise_mob",
+  "reactNativePath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native",
+  "dependencies": {
+    "react-native-video": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-video",
+      "name": "react-native-video",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-video/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-video",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-video/ios/RCTVideo.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-video/react-native-video.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-video/ios/RCTVideo.xcodeproj",
+          "projectName": "RCTVideo.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": null
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@invertase/react-native-apple-authentication": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@invertase/react-native-apple-authentication",
+      "name": "@invertase/react-native-apple-authentication",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@invertase/react-native-apple-authentication/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@invertase/react-native-apple-authentication",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@invertase/react-native-apple-authentication/ios/RNAppleAuthentication.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@invertase/react-native-apple-authentication/RNAppleAuthentication.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@invertase/react-native-apple-authentication/ios/RNAppleAuthentication.xcodeproj",
+          "projectName": "RNAppleAuthentication.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": null
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-async-storage/async-storage": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage",
+      "name": "@react-native-async-storage/async-storage",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage/ios/RNCAsyncStorage.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage/RNCAsyncStorage.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage/ios/RNCAsyncStorage.xcodeproj",
+          "projectName": "RNCAsyncStorage.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-async-storage/async-storage",
+          "packageImportPath": "import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;",
+          "packageInstance": "new AsyncStoragePackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-community/masked-view": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view",
+      "name": "@react-native-community/masked-view",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view/ios/RNCMaskedView.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view/RNCMaskedView.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view/ios/RNCMaskedView.xcodeproj",
+          "projectName": "RNCMaskedView.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/masked-view",
+          "packageImportPath": "import org.reactnative.maskedview.RNCMaskedViewPackage;",
+          "packageInstance": "new RNCMaskedViewPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-community/netinfo": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo",
+      "name": "@react-native-community/netinfo",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo/react-native-netinfo.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj",
+          "projectName": "RNCNetInfo.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-community/netinfo",
+          "packageImportPath": "import com.reactnativecommunity.netinfo.NetInfoPackage;",
+          "packageInstance": "new NetInfoPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-firebase/analytics": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics",
+      "name": "@react-native-firebase/analytics",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics/ios/RNFBAnalytics.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics/RNFBAnalytics.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics/ios/RNFBAnalytics.xcodeproj",
+          "projectName": "RNFBAnalytics.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/analytics",
+          "packageImportPath": "import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;",
+          "packageInstance": "new ReactNativeFirebaseAnalyticsPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-firebase/app": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app",
+      "name": "@react-native-firebase/app",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app/ios/RNFBApp.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app/RNFBApp.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app/ios/RNFBApp.xcodeproj",
+          "projectName": "RNFBApp.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [
+            {
+              "name": "[RNFB] Core Configuration",
+              "path": "./ios_config.sh",
+              "execution_position": "after_compile",
+              "input_files": [
+                "$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)"
+              ]
+            }
+          ],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/app",
+          "packageImportPath": "import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;",
+          "packageInstance": "new ReactNativeFirebaseAppPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-firebase/crashlytics": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics",
+      "name": "@react-native-firebase/crashlytics",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics/ios/RNFBCrashlytics.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics/RNFBCrashlytics.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics/ios/RNFBCrashlytics.xcodeproj",
+          "projectName": "RNFBCrashlytics.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [
+            {
+              "name": "[RNFB] Crashlytics Configuration",
+              "path": "./ios_config.sh",
+              "execution_position": "after_compile",
+              "input_files": [
+                "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+                "$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)"
+              ]
+            }
+          ],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/crashlytics",
+          "packageImportPath": "import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;",
+          "packageInstance": "new ReactNativeFirebaseCrashlyticsPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-firebase/messaging": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging",
+      "name": "@react-native-firebase/messaging",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging/ios/RNFBMessaging.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging/RNFBMessaging.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging/ios/RNFBMessaging.xcodeproj",
+          "projectName": "RNFBMessaging.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-firebase/messaging",
+          "packageImportPath": "import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;",
+          "packageInstance": "new ReactNativeFirebaseMessagingPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "@react-native-google-signin/google-signin": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin",
+      "name": "@react-native-google-signin/google-signin",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin/ios/GoogleSignin.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin/RNGoogleSignin.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin/ios/GoogleSignin.xcodeproj",
+          "projectName": "GoogleSignin.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/@react-native-google-signin/google-signin",
+          "packageImportPath": "import com.reactnativegooglesignin.RNGoogleSigninPackage;",
+          "packageInstance": "new RNGoogleSigninPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "native-base": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base",
+      "name": "native-base",
+      "platforms": {
+        "ios": null,
+        "android": null
+      },
+      "assets": [
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/AntDesign.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Entypo.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/EvilIcons.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Feather.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/FontAwesome.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/FontAwesome5_Brands.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/FontAwesome5_Regular.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/FontAwesome5_Solid.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Fontisto.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Foundation.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Ionicons.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/MaterialCommunityIcons.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/MaterialIcons.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Octicons.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Roboto_medium.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Roboto.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/rubicon-icon-font.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/SimpleLineIcons.ttf",
+        "/home/runner/work/uprise_mob/uprise_mob/node_modules/native-base/Fonts/Zocial.ttf"
+      ],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-config": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config",
+      "name": "react-native-config",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config/ios/ReactNativeConfig.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config/react-native-config.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config/ios/ReactNativeConfig.xcodeproj",
+          "projectName": "ReactNativeConfig.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-config",
+          "packageImportPath": "import com.lugg.RNCConfig.RNCConfigPackage;",
+          "packageInstance": "new RNCConfigPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-geolocation-service": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service",
+      "name": "react-native-geolocation-service",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service/ios/RNFusedLocation.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service/react-native-geolocation-service.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service/ios/RNFusedLocation.xcodeproj",
+          "projectName": "RNFusedLocation.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-geolocation-service",
+          "packageImportPath": "import com.agontuk.RNFusedLocation.RNFusedLocationPackage;",
+          "packageInstance": "new RNFusedLocationPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-gesture-handler": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler",
+      "name": "react-native-gesture-handler",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler/RNGestureHandler.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj",
+          "projectName": "RNGestureHandler.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-gesture-handler",
+          "packageImportPath": "import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;",
+          "packageInstance": "new RNGestureHandlerPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-image-colors": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors",
+      "name": "react-native-image-colors",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors/ios/ImageColors.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors/RNImageColors.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors/ios/ImageColors.xcodeproj",
+          "projectName": "ImageColors.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-colors",
+          "packageImportPath": "import com.reactnativeimagecolors.ImageColorsPackage;",
+          "packageInstance": "new ImageColorsPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-image-crop-picker": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker",
+      "name": "react-native-image-crop-picker",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker/RNImageCropPicker.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj",
+          "projectName": "imageCropPicker.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-image-crop-picker",
+          "packageImportPath": "import com.reactnative.ivpusic.imagepicker.PickerPackage;",
+          "packageInstance": "new PickerPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-linear-gradient": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient",
+      "name": "react-native-linear-gradient",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient/ios/BVLinearGradient.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient/BVLinearGradient.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient/ios/BVLinearGradient.xcodeproj",
+          "projectName": "BVLinearGradient.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-linear-gradient",
+          "packageImportPath": "import com.BV.LinearGradient.LinearGradientPackage;",
+          "packageInstance": "new LinearGradientPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-pager-view": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view",
+      "name": "react-native-pager-view",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view/ios/PagerView.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view/react-native-pager-view.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view/ios/PagerView.xcodeproj",
+          "projectName": "PagerView.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-pager-view",
+          "packageImportPath": "import com.reactnativepagerview.PagerViewPackage;",
+          "packageInstance": "new PagerViewPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-reanimated": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated",
+      "name": "react-native-reanimated",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated/ios/RNReanimated.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated/RNReanimated.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated/ios/RNReanimated.xcodeproj",
+          "projectName": "RNReanimated.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-reanimated",
+          "packageImportPath": "import com.swmansion.reanimated.ReanimatedPackage;",
+          "packageInstance": "new ReanimatedPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-safe-area-context": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context",
+      "name": "react-native-safe-area-context",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context/ios/SafeAreaView.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context/react-native-safe-area-context.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context/ios/SafeAreaView.xcodeproj",
+          "projectName": "SafeAreaView.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-safe-area-context",
+          "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
+          "packageInstance": "new SafeAreaContextPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-screens": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens",
+      "name": "react-native-screens",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens/ios/RNScreens.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens/RNScreens.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens/ios/RNScreens.xcodeproj",
+          "projectName": "RNScreens.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-screens",
+          "packageImportPath": "import com.swmansion.rnscreens.RNScreensPackage;",
+          "packageInstance": "new RNScreensPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-splash-screen": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen",
+      "name": "react-native-splash-screen",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen/ios",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen/react-native-splash-screen.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj",
+          "projectName": "SplashScreen.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-splash-screen",
+          "packageImportPath": "import org.devio.rn.splashscreen.SplashScreenReactPackage;",
+          "packageInstance": "new SplashScreenReactPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-svg": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg",
+      "name": "react-native-svg",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg/apple",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg/apple/RNSVG.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg/RNSVG.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg/apple/RNSVG.xcodeproj",
+          "projectName": "RNSVG.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-svg",
+          "packageImportPath": "import com.horcrux.svg.SvgPackage;",
+          "packageInstance": "new SvgPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    },
+    "react-native-vector-icons": {
+      "root": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons",
+      "name": "react-native-vector-icons",
+      "platforms": {
+        "ios": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons",
+          "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj/project.pbxproj",
+          "podfile": null,
+          "podspecPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons/RNVectorIcons.podspec",
+          "projectPath": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj",
+          "projectName": "RNVectorIcons.xcodeproj",
+          "libraryFolder": "Libraries",
+          "sharedLibraries": [],
+          "plist": [],
+          "scriptPhases": [],
+          "configurations": []
+        },
+        "android": {
+          "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons/android",
+          "folder": "/home/runner/work/uprise_mob/uprise_mob/node_modules/react-native-vector-icons",
+          "packageImportPath": "import com.oblador.vectoricons.VectorIconsPackage;",
+          "packageInstance": "new VectorIconsPackage()",
+          "buildTypes": []
+        }
+      },
+      "assets": [],
+      "hooks": {},
+      "params": []
+    }
+  },
+  "commands": [
+    {
+      "name": "log-ios",
+      "description": "starts iOS device syslog tail"
+    },
+    {
+      "name": "run-ios",
+      "description": "builds your app and starts it on iOS simulator",
+      "examples": [
+        {
+          "desc": "Run on a different simulator, e.g. iPhone SE (2nd generation)",
+          "cmd": "react-native run-ios --simulator \"iPhone SE (2nd generation)\""
+        },
+        {
+          "desc": "Pass a non-standard location of iOS directory",
+          "cmd": "react-native run-ios --project-path \"./app/ios\""
+        },
+        {
+          "desc": "Run on a connected device, e.g. Max's iPhone",
+          "cmd": "react-native run-ios --device \"Max's iPhone\""
+        },
+        {
+          "desc": "Run on the AppleTV simulator",
+          "cmd": "react-native run-ios --simulator \"Apple TV\"  --scheme \"helloworld-tvOS\""
+        }
+      ],
+      "options": [
+        {
+          "name": "--simulator <string>",
+          "description": "Explicitly set simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version: \"iPhone 6 (10.0)\"",
+          "default": "iPhone 13"
+        },
+        {
+          "name": "--configuration <string>",
+          "description": "Explicitly set the scheme configuration to use",
+          "default": "Debug"
+        },
+        {
+          "name": "--scheme <string>",
+          "description": "Explicitly set Xcode scheme to use"
+        },
+        {
+          "name": "--project-path <string>",
+          "description": "Path relative to project root where the Xcode project (.xcodeproj) lives.",
+          "default": "ios"
+        },
+        {
+          "name": "--device [string]",
+          "description": "Explicitly set device to use by name.  The value is not required if you have a single device connected."
+        },
+        {
+          "name": "--udid <string>",
+          "description": "Explicitly set device to use by udid"
+        },
+        {
+          "name": "--no-packager",
+          "description": "Do not launch packager while building"
+        },
+        {
+          "name": "--verbose",
+          "description": "Do not use xcbeautify or xcpretty even if installed"
+        },
+        {
+          "name": "--port <number>",
+          "default": 8081
+        },
+        {
+          "name": "--terminal <string>",
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
+        }
+      ]
+    },
+    {
+      "name": "log-android",
+      "description": "starts logkitty"
+    },
+    {
+      "name": "run-android",
+      "description": "builds your app and starts it on a connected Android emulator or device",
+      "options": [
+        {
+          "name": "--root <string>",
+          "description": "[DEPRECATED - root is discovered automatically] Override the root directory for the android build (which contains the android directory)",
+          "default": ""
+        },
+        {
+          "name": "--variant <string>",
+          "description": "Specify your app's build variant",
+          "default": "debug"
+        },
+        {
+          "name": "--appFolder <string>",
+          "description": "[DEPRECATED – use \"project.android.appName\" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is \"app\""
+        },
+        {
+          "name": "--appId <string>",
+          "description": "Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.",
+          "default": ""
+        },
+        {
+          "name": "--appIdSuffix <string>",
+          "description": "Specify an applicationIdSuffix to launch after build.",
+          "default": ""
+        },
+        {
+          "name": "--main-activity <string>",
+          "description": "Name of the activity to start",
+          "default": "MainActivity"
+        },
+        {
+          "name": "--deviceId <string>",
+          "description": "builds your app and starts it on a specific device/simulator with the given device id (listed by running \"adb devices\" on the command line)."
+        },
+        {
+          "name": "--no-packager",
+          "description": "Do not launch packager while building"
+        },
+        {
+          "name": "--port <number>",
+          "default": 8081
+        },
+        {
+          "name": "--terminal <string>",
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
+        },
+        {
+          "name": "--tasks <list>",
+          "description": "Run custom Gradle tasks. By default it's \"installDebug\""
+        },
+        {
+          "name": "--no-jetifier",
+          "description": "Do not run \"jetifier\" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier."
+        },
+        {
+          "name": "--active-arch-only",
+          "description": "Build native libraries only for the current device architecture for debug builds.",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "assets": [],
+  "healthChecks": [],
+  "platforms": {
+    "ios": {},
+    "android": {}
+  },
+  "project": {
+    "ios": {
+      "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/ios",
+      "folder": "/home/runner/work/uprise_mob/uprise_mob",
+      "pbxprojPath": "/home/runner/work/uprise_mob/uprise_mob/ios/Uprise.xcodeproj/project.pbxproj",
+      "podfile": "/home/runner/work/uprise_mob/uprise_mob/ios/Podfile",
+      "podspecPath": null,
+      "projectPath": "/home/runner/work/uprise_mob/uprise_mob/ios/Uprise.xcodeproj",
+      "projectName": "Uprise.xcodeproj",
+      "libraryFolder": "Libraries",
+      "sharedLibraries": [],
+      "plist": [],
+      "scriptPhases": []
+    },
+    "android": {
+      "sourceDir": "/home/runner/work/uprise_mob/uprise_mob/android",
+      "isFlat": true,
+      "folder": "/home/runner/work/uprise_mob/uprise_mob",
+      "stringsPath": "/home/runner/work/uprise_mob/uprise_mob/android/app/src/main/res/values/strings.xml",
+      "manifestPath": "/home/runner/work/uprise_mob/uprise_mob/android/app/src/main/AndroidManifest.xml",
+      "buildGradlePath": "/home/runner/work/uprise_mob/uprise_mob/android/build.gradle",
+      "settingsGradlePath": "/home/runner/work/uprise_mob/uprise_mob/android/settings.gradle",
+      "assetsPath": "/home/runner/work/uprise_mob/uprise_mob/android/app/src/main/assets",
+      "mainFilePath": "/home/runner/work/uprise_mob/uprise_mob/android/app/src/main/java/com/app/uprise/MainApplication.java",
+      "packageName": "com.app.uprise",
+      "packageFolder": "com/app/uprise",
+      "appName": "app"
+    }
+  }
+}

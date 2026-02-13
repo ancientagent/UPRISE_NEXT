@@ -1,0 +1,1 @@
+module.exports = require('../../stubs/react-native-video.js');

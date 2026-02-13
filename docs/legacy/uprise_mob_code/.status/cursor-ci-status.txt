@@ -1,0 +1,25 @@
+CURSOR CI STATUS NOTE
+====================
+
+Last run ID worked with: 17354762146
+
+Changes made:
+- File: android/app/build.gradle
+  - Commit SHA: 3a99ccc - "ci(builds): add explicit environment variable exports for Gradle builds"
+  - Added explicit environment variable exports in build steps
+  - Previous commits: d220f30, 105c465, 51e6335, 8bf0676 (various signing config attempts)
+
+Current failing step: Android Debug Build job
+- Build step consistently fails before reaching smoke test
+- Smoke test job is skipped due to build failure
+- No specific error messages captured from ci:tail command
+
+Workflow modifications attempted:
+- Fixed signing configuration in build.gradle (removed)
+- Added explicit ANDROID_SDK_ROOT/ANDROID_HOME exports
+- Simplified to use default debug keystore for both builds
+- Updated workflow to handle release APK verification
+
+Status: Build step continues to fail despite multiple configuration attempts. Need to investigate root cause of Android SDK path resolution or Gradle build issues.
+
+

@@ -1,0 +1,4 @@
+# CI Validation Trigger
+Timestamp: 2025-09-01T11:50:00Z
+Purpose: Trigger fresh CI run with macOS HVF smoke test
+Expected: TTJS, APK sizes, SDK sanity, HVF emulator boot
