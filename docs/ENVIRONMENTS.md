@@ -51,6 +51,8 @@ Database defaults to a local/CI Postgres with **PostGIS**. For prod, use Neon/AW
 - Keep RN project under `D:\uprise_mob`.
 - Ensure **JDK 11**, **Gradle 7.0.2**, **Hermes**.
 - Use Yarn-only in RN app; do not mix with pnpm workspace.
+- **UPRISE_NEXT uses pnpm**; legacy RN (`uprise_mob`) uses **yarn only** to avoid permission lockouts.
+- Avoid admin shells and keep all files in user-writable paths to prevent access issues.
 - Android SDK installed under `C:\Android\platform-tools` (user-writable).
 
 **Scripts (example):**
@@ -131,4 +133,3 @@ MAPBOX_TOKEN=
 - File watch issues on Windows paths? Keep sources in WSL home (avoid `/mnt/c`).
 - PostGIS missing? Verify extension: `CREATE EXTENSION IF NOT EXISTS postgis;` in migration.
 - FFmpeg not found? Ensure `ffmpeg` installed in WSL or worker container.
-
