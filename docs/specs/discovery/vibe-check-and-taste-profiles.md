@@ -9,16 +9,20 @@
 Defines Vibe Check as a user‑initiated discovery tool and the optional taste profile used for comparison.
 
 ## User Roles & Use Cases
-- Listener runs a Vibe Check between themselves and a Scene, Event, Mix, or another user.
-- Listener opts into taste profile import or questionnaire.
+- Listener runs a Vibe Check between themselves and a Music Community/Uprise, Event, Artist, Business, or another Listener.
+- Listener opts into taste profile scan or builds a profile through platform questions and taste tags.
 
 ## Functional Requirements
-- Vibe Check is user‑initiated only.
+- Vibe Check is user‑initiated only (no auto‑run).
+- Vibe Check is accessed via a button next to **Follow** on eligible entities.
+- Eligible entities: Music Community/Uprise, Event, Artist, Business, Listener.
 - Taste Profile is optional and static unless refreshed.
-- Taste Profile can be built by questionnaire or external library import.
-- Vibe Check compares overlap and displays a match percentage.
+- Taste Profile can be built by:
+  - Opt‑in playlist scan, or
+  - On‑platform questions and taste tags (no external scan).
+- Vibe Check compares overlap and displays a match percentage plus shared tags/bridges.
 - Vibe Check is navigational context, not a recommendation engine.
-- System may recommend **Scenes** based on explicit profile inputs or activity, without promoting specific artists.
+- Scene recommendations may be shown based on explicit profile inputs or activity, but never by promoting specific artists.
 
 ## Non-Functional Requirements
 - No algorithmic content recommendation or ranking.
@@ -27,6 +31,7 @@ Defines Vibe Check as a user‑initiated discovery tool and the optional taste p
 ## Architectural Boundaries
 - Vibe Check never auto‑surfaces content.
 - Discovery must not affect Fair Play rotation.
+- Vibe Check must never be used to auto‑populate feeds.
 
 ## Data Models & Migrations
 - TasteProfile
@@ -36,12 +41,16 @@ Defines Vibe Check as a user‑initiated discovery tool and the optional taste p
 - TBD
 
 ## Web UI / Client Behavior
-- Vibe Check is accessed explicitly via discovery tools.
-- Match results display overlaps and differences.
+- Vibe Check appears next to **Follow** on eligible entities.
+- Match results display overlaps, shared tags, and bridges to adjacent communities.
 
 ## Acceptance Tests / Test Plan
 - Vibe Check does not trigger automatic recommendations.
 - Taste Profile requires user opt‑in.
+
+## Future Work & Open Questions
+- V1 scope: collect taste tags and optional scan data; no Vibe Check UI.
+- V2 scope: full Vibe Check interactions on eligible entities.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
