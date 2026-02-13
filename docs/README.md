@@ -20,10 +20,10 @@ This folder contains operational docs, architecture references, specifications, 
 - **All documents in `docs/canon/` are canon** (no `+`/`-` prefixes required).
 - If two canon documents conflict, the newest creation date prevails. If conflicts involve the Master Canon Set, **Master Canon Set wins**.
 - Any product-defining document outside `docs/canon/` should be archived under `docs/legacy/`.
-- PDF canon sources may be stored in `docs/canon/` alongside their text-converted `.md` counterparts. Keep both in git so agents can diff and quote cleanly.
+- Canon sources live as Markdown in `docs/canon/`. PDFs are not required and should not be committed.
 
 ### Master Canon Set (Authoritative)
-These documents are the canonical foundation for building the platform (PDF + MD exports are equivalent):
+These documents are the canonical foundation for building the platform:
 - `Master Narrative Canon`
 - `Master Glossary Canon`
 - `Master Identity and Philosohpy Canon`

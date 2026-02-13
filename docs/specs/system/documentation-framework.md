@@ -56,7 +56,7 @@ UPRISE_NEXT is built and maintained by multiple contributors (often multiple cod
   - Agent handoff doc created/updated for multi-step work.
 
 ## Future Work & Open Questions
-- Add/maintain a lightweight CI job to validate doc structure and prevent forbidden artifacts (e.g., PDFs) from being committed.
+- Add/maintain a lightweight CI job to validate doc structure and prevent PDFs from being committed.
 - Decide when legacy `docs/Specifications/` is fully migrated and can be frozen.
 
 ## References
