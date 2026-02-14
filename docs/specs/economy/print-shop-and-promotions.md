@@ -18,6 +18,8 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Print Shop sells **Runs** (finite issuance allocations).
 - Print Shop issues **digital** artifacts only; no physical inventory or fulfillment.
 - Minting is internal, non‑blockchain, and zero marginal cost.
+- Promotional Packs support paid boost-style distribution (similar to Facebook Boost) to selected
+  Scenes/communities inside Promotions surfaces only.
 - Proof‑of‑Support mints artifacts and may award Activity Points.
 - Offers propagate only when explicitly carried or redeemed.
 - Print Shop artifacts do not affect Fair Play, visibility, or governance.
@@ -25,6 +27,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 ## Non-Functional Requirements
 - No marketplace behavior, resale, or bidding.
 - No algorithmic boosting of Offers or artifacts.
+- No behavioral recommendation or ranking changes from paid Promotions.
 
 ## Architectural Boundaries
 - Print Shop is an issuance surface inside the Events surface.
@@ -42,6 +45,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 ## Web UI / Client Behavior
 - Promotions surface lists Offers.
 - Print Shop surfaces in Events for Run issuance.
+- Promotional Pack setup requires explicit target scope selection (city/state/community).
 - Artifact collections are visible on profiles.
 
 ## Acceptance Tests / Test Plan

@@ -663,9 +663,10 @@ All tiers: 4-hour minimum cooldown between posts.
 
 ### 21.3 Promotional Pack Add-Ons (Artists)
 - $5 per city
-- Tour flier prominently advertised in Promotions section (citywide + statewide)
-- Users in each tour city receive notification in Activity Feed (S.E.E.D Feed)
-- Artist profile displayed in "On Tour" carousel in Activity Feed (S.E.E.D Feed)
+- Tour flier distributed in Promotions surfaces for selected city/state/community scope
+- Boost-style paid distribution across selected communities (similar to Facebook Boost)
+- No default insertion into Activity Feed (S.E.E.D Feed)
+- No impact on Fair Play rotation, ranking, or governance
 
 ### 21.4 On-Air Promotional Ads (Artists)
 - $5/day or $20/week

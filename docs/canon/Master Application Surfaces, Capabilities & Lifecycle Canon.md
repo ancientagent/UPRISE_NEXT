@@ -38,7 +38,9 @@ Explicitly does not allow: - Song selection - Reordering - Artist management - A
 1.2 Artist Management Surface (Web App)
 Exists to: - Manage artist identity (post‑Registrar) - Upload and manage songs occupying active slots - View
 descriptive engagement data - Create and manage Events (if Promoter‑registered)
-Explicitly does not allow: - Voting - Rotation control - Promotion or boosting
+Explicitly does not allow: - Voting - Rotation control - Fair Play promotion/boosting
+Note: Paid promotional distribution (boost-style reach) is handled in Promotions surfaces via Print Shop
+Runs, not by Artist Management rotation controls.
 1.3 Registrar Surface
 Exists to: - Register Artist identities - Register Promoter identities - Register Projects
 Constraints: - Accessible only within the Home Scene - No implicit elevation or automatic registration

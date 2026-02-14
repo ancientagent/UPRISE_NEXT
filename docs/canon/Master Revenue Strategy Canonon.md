@@ -56,6 +56,13 @@ Event, Artist, or Signal.
 resale engine.
 • No speculative resale, bidding, or algorithmic promotion mechanisms are attached to Print Shop
 artifacts.
+Promotional Pack Distribution Context (Canon Clarification):
+• Promotional Packs are boost-style distribution tools (similar to Facebook Boost) for paid visibility in
+the Promotions surface across selected Scenes/communities.
+• Boost-like here means expanded ad reach only; it does not alter song rotation, song ordering, Fair
+Play propagation logic, ranking, governance, or artist legitimacy.
+• Targeting is explicit and selected (city/state/community scope purchased by Run), not behavioral
+personalization or recommendation.
 On-Air Promotional Ads
 Platform Revenue Structure:
 • Artists pay either \$5/day or \$20/week to run a 7-10 second ad promoting whatever they want
@@ -128,6 +135,8 @@ affecting Fair Play or governance
 minted artifact in the same way as patches or posters
 • Instead, the Run determines the scope and distribution size of a flier promotion across selected
 Scene(s), based on the defined print size / cost tier
+• Product intent: This is a paid cross-community Promotions distribution tool (boost-style reach), not a
+content-ranking feature
 • Distribution scale (number of Scenes and visibility density within those Promotions surfaces) is
 determined by the purchased Run tier
 • Visibility is confined strictly to the Promotions surface and does not alter Fair Play, tier progression,

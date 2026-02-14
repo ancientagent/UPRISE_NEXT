@@ -27,6 +27,8 @@
 - Revenue canon cleaned: removed anti‑poaching language.
 - Revenue canon clarified: catalog is long‑term, dependent on accumulated stats.
 - Revenue canon clarified: primary funding mix centers on artist ads, Print Shop touring promotion fees, low‑cost business Promotions ads, and subscription tiers.
+- Print Shop promotions clarified as boost-style cross-community Promotions distribution (explicit scope selection only; no Fair Play or ranking impact).
+- Canon alignment pass: synced Narrative, Glossary, Application Surfaces, Expanded Getting Started, and Legacy Narrative-in-canon to the same Promotions-only boost model.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

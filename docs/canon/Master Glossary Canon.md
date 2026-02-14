@@ -291,10 +291,14 @@ promotional items specifically representing: - Show posters - Band or single art
 flyers (digital wearables / profile items) - Limited-run promotional gear tied to Events, Artists, or releases. -
 Issued items can be collected by users and displayed on profiles or avatars. - Items are minted within
 UPRISE systems and are not blockchain-based.
+Promotional Packs (Runs) may be used for paid boost-style distribution across selected
+Scenes/communities inside Promotions surfaces only.
 Canon Constraints: - The Print Shop is not a marketplace. - No physical artifacts are issued. - No
 blockchain, NFTs, or external ledgers are used. - No resale, bidding, or speculative mechanics. - No
 algorithmic promotion, ranking, or optimization of items. - Issuance does not affect Fair Play, engagement,
 or tiering.
+Promotional distribution from Runs must not insert items into Fair Play rotation or default Activity Feed
+placement.
 Action: Non-blockchain minting explicitly locked.
 Run
 Status: OK

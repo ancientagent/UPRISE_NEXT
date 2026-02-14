@@ -19,6 +19,8 @@ Defines the canonical revenue streams and subscription tiers. Revenue is infrast
   - No pay‑for‑placement in Fair Play.
   - No conversion of spending into civic authority.
 - Print Shop revenue comes from Runs (issuance capacity), not goods.
+- Promotional Packs provide paid boost-style reach (similar to Facebook Boost) across selected
+  Scenes/communities in Promotions surfaces only.
 - On‑air promotional ads use the 4th Release Deck slot.
 - Promotions surface supports paid business offers.
 - Listener tiers:
@@ -36,6 +38,7 @@ Defines the canonical revenue streams and subscription tiers. Revenue is infrast
 ## Architectural Boundaries
 - Revenue surfaces must align with Print Shop constraints.
 - Promotional packs are confined to Promotions surfaces.
+- Promotional targeting is explicit scope selection, not behavioral personalization.
 
 ## Data Models & Migrations
 - Subscription

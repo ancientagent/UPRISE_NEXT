@@ -55,6 +55,8 @@ The rotation stack is governed exclusively by: - Upvoting - Song engagement
 2.3 Economic Surface Isolation
 Economic features are structurally isolated from governance.
 Includes: - Print Shop (Run model) - Promotional Pack - Label Visibility Service - Subscription tiers
+Promotional Pack context: paid boost-style distribution across selected Scenes/communities in Promotions
+surfaces only (no Fair Play or rotation impact).
 2
 
 --- Page 3 ---

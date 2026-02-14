@@ -334,6 +334,8 @@ Promotions appear only within the Promotions surface of the Plot.
 Rules: - Promotions are Scene-bound. - Promotions never appear in the Activity Feed by default. -
 Promotions propagate only through explicit user action (ADD, BLAST, or SUPPORT).
 There is no automatic targeting or optimization.
+Paid Promotions distribution may expand reach across selected Scenes/communities (boost-style) only
+inside Promotions surfaces.
 12
 
 --- Page 13 ---
@@ -344,8 +346,9 @@ Rules: - They may publish Promotions after registration. - They may be FOLLOWed 
 possess no civic authority and no influence over Fair Play.
 10.4 Economic Constraint
 UPRISE does not sell attention.
-Rules: - No pay-for-placement. - No bidding systems. - No algorithmic amplification. - No conversion of
-spending into visibility or authority.
+Rules: - No pay-for-placement in Fair Play, governance, or rotation systems. - No bidding systems. - No
+algorithmic amplification. - No conversion of spending into authority. - Paid placement is allowed only
+inside Promotions surfaces as explicit ad distribution.
 Promotions may inform; they may not manipulate.
 11. Activity Points (Participation Recognition)
 11.1 Definition
