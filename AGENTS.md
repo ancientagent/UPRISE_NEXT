@@ -23,12 +23,14 @@ This file is intended for AI coding agents and new contributors. Follow it befor
 - **Infrastructure policy:** DeepAgent is dev/CI only; production targets are external (Vercel/Fly/AWS/Neon/S3/R2).
 - **No unsafe environment changes:** no symlinks, no admin elevation, no global installs.
 - **Package manager rule:** UPRISE_NEXT = pnpm only. Legacy RN (`uprise_mob`) = yarn only. Do not mix.
+- **Canon import rule:** never bulk-overwrite `docs/canon/*.md` from external exports; stage raw imports in `docs/legacy/` and apply intentional canon edits separately.
 
 ## Before You Push
 - Run `pnpm run typecheck`
 - Run `DATABASE_URL=... pnpm run test` (API tests require Postgres+PostGIS)
 - Run `pnpm run build`
 - Run `pnpm run infra-policy-check`
+- Run `pnpm run docs:lint` (includes canon guardrails)
 - Update `docs/CHANGELOG.md` and any touched specs; add a handoff note under `docs/handoff/` for multi-step work.
 
 ## PR Metadata (required)

@@ -25,6 +25,8 @@ After any **meaningful change** (new feature, endpoint, model, migration, or can
 1. **Update `docs/CHANGELOG.md`** with a concise entry.
 2. **Do not** rewrite the Runbook for every change; keep it stable.
 3. **At milestones**, add a short summary to `docs/README.md` or a `docs/handoff/phase-*.md` report.
+4. **Never bulk-overwrite `docs/canon/*.md`** from imported exports. Stage raw imports under `docs/legacy/` and apply intentional canon edits in a separate commit.
+5. Run `pnpm run docs:lint` (includes `canon:lint`) before pushing doc-heavy changes.
 
 This keeps daily edits lightweight while preserving long‑term context.
 

@@ -88,7 +88,7 @@ The following concepts are intentionally excluded from UPRISE communications:
 
 ## 3.3 Key Term Definitions
 
-**Ground Zero / The Plot:** The digital habitation and tactical center of the Home Scene. It is the interface where the Community builds the Scene.
+**The Plot:** The digital habitation and tactical center of the Home Scene. It is the interface where the Community builds the Scene.
 
 **Uprise:** A dual‑state object — the broadcast station/infrastructure operated by a Music Community **and** the Signal of that community broadcast. Like a radio station (e.g., KEXP), it is both the station and the frequency.
 

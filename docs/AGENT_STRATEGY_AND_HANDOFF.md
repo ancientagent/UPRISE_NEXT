@@ -11,6 +11,8 @@
 - **Canon is law. Legacy is reference only.**
 - If two canon documents conflict, the newest creation date prevails. If conflicts involve the Master Canon Set, **Master Canon Set wins**.
 - Any product-defining document outside `docs/canon/` should be archived under `docs/legacy/`.
+- **No direct bulk canon overwrite from external exports.** Stage raw imports in `docs/legacy/` and apply intentional canon edits in a separate commit.
+- Run `pnpm run docs:lint` (includes `canon:lint`) before pushing canon updates.
 
 ---
 

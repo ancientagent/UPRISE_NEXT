@@ -2,7 +2,7 @@
 
 UPRISE — Application Surfaces, Capabilities &
 Lifecycle (Working)
-Status: WORKING (Not Canon)
+Status: CANONICAL (Working Revision)
 Purpose This document defines the operational surfaces, capabilities, and lifecycle constraints of UPRISE. It
 answers questions of what exists, what actions are possible where, and how long things persist,
 without prescribing UI layout or implementation details.
