@@ -35,7 +35,7 @@ Defines the RaDIYo broadcast network and the Fair Play rotation system that gove
 
 ## Non-Functional Requirements
 - No personalization or algorithmic recommendations.
-- No pay-for-placement or visibility advantage.
+- No pay-for-placement or visibility advantage within Fair Play, governance, or rotation systems.
 - Deterministic rotation logic.
 
 ## Architectural Boundaries
