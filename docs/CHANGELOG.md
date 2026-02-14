@@ -36,6 +36,7 @@
 - Revenue canon cleanup: removed account-identity structural statement from pricing section to keep scope strictly revenue/mechanics.
 - Canon safety guardrails added: new `canon:lint` script, `docs:lint` integration, and explicit no-bulk-import-overwrite protocol in agent/runbook/docs index guidance.
 - Branch-protection scaffolding added: `.github/CODEOWNERS`, PR template, `Canon Guard` workflow, and runbook instructions for required status checks.
+- `Canon Guard` workflow trigger widened to all PRs so it can be enforced as a required status check.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

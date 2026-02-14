@@ -3,11 +3,6 @@ name: Canon Guard
 on:
   pull_request:
     branches: [main, develop]
-    paths:
-      - 'docs/canon/**'
-      - 'docs/CHANGELOG.md'
-      - 'scripts/canon-lint.mjs'
-      - '.github/workflows/canon-guard.yml'
 
 jobs:
   canon-guard:
