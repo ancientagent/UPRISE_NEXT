@@ -293,7 +293,6 @@ For Labels:
 For the UPRISE Ecosystem:
 • Contractual revenue shares tied to optional services support platform sustainability when those
 services are used
-• Anti-poaching mechanisms prevent labels from bypassing the platform
 8
 
 --- Page 9 ---
@@ -530,7 +529,7 @@ UPRISE’s revenue model is not designed to extract value from artists or commun
 circular economy where:
 Infrastructure Sustainability: Revenue sustains platform operations and defined compensation mechanisms
 Infrastructure is Funded: Platform development serves communities
-Ecosystem is Protected: Anti-poaching mechanisms protect the platform
+Ecosystem is Protected: Participation remains opt‑in and community‑validated
 Contractual Revenue Shares: When optional services tied to label visibility result in a signing, predefined
 revenue-share terms apply
 Foundational Position: The platform is infrastructure, not a service; it re-establishes connection, it does not
