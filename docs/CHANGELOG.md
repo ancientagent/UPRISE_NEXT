@@ -26,6 +26,7 @@
 - Revenue canon clarified: catalog is an artist opt‑in feature for label discovery.
 - Revenue canon cleaned: removed anti‑poaching language.
 - Revenue canon clarified: catalog is long‑term, dependent on accumulated stats.
+- Revenue canon clarified: primary funding mix centers on artist ads, Print Shop touring promotion fees, low‑cost business Promotions ads, and subscription tiers.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

@@ -29,6 +29,12 @@ All revenue mechanisms in this document are bound by the following non-negotiabl
 • Revenue shares tied to optional services must be explicitly contractual and opt-in only
 These constraints apply globally to all sections below, whether explicitly restated or not.
 Phase 1: Launch Revenue Streams
+Primary Funding Mix (Phase 1):
+• Artist Ads: On‑Air Promotional Ads are the primary launch‑phase revenue driver.
+• Print Shop Touring Promotion Fees: Promotional Packs (Run-based issuance) provide boost‑like
+  visibility strictly inside the Promotions surface (no Fair Play impact).
+• Low‑Cost Business Ads: Affordable, Scene‑specific Promotions placements for local businesses.
+• Subscription Tiers: Discovery Pass + Artist Capability tiers provide stable recurring revenue.
 1
 
 --- Page 2 ---
