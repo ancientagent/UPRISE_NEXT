@@ -25,6 +25,7 @@
 - Canon updated: Uprise defined as a dual‑state object (station + signal); S.E.E.D Feed retained.
 - Revenue canon clarified: catalog is an artist opt‑in feature for label discovery.
 - Revenue canon cleaned: removed anti‑poaching language.
+- Revenue canon clarified: catalog is long‑term, dependent on accumulated stats.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

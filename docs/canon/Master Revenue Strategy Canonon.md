@@ -230,6 +230,8 @@ Not every artist on UPRISE dreams of signing a record deal. Some do. Some want t
 and build sustainable careers within their communities. The platform serves both paths equally.
 For artists who do want to pursue the label path, UPRISE offers a **catalog feature** they can opt into.
 It exists solely as a discovery surface for labels — not as a platform‑driven promotion tool.
+**Timing Note:** This is a long‑term, hypothetical service that depends on years of reliable community‑derived
+statistics. It is not a near‑term launch requirement, but a future use of accumulated data.
 And for UPRISE, this is a way to generate revenue from the entities that have historically taken from
 independent music ecosystems without giving anything back. Labels have always extracted talent from
 local scenes. This service ensures that if they want access to UPRISE’s artists and data, they pay for it.
