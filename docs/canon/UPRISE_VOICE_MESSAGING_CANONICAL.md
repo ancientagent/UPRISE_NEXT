@@ -301,7 +301,7 @@ The music industry generates $26 billion annually in the US alone — but the va
 Unlike streaming services that compete on catalog size and recommendation algorithms, UPRISE competes on **community**. Our architecture makes us structurally immune to the winner-take-all dynamics that dominate streaming. Every city is a new market. Every Scene is a new ecosystem.
 
 ### Demonstrate Economics
-Revenue flows through subscriptions ($5.99 listener discovery / $9.99 artist premium), promotional advertising (artists and local businesses), and (in a later phase, not the initial build) Infrastructure Reciprocity tied to optional artist opt-in catalog/label visibility services. The circular model returns value to local ecosystems rather than extracting it.
+Revenue flows through subscriptions ($5.99 listener discovery / $9.99 artist premium), promotional advertising (artists and local businesses), and (in a later phase, not the initial build) optional contractual revenue share tied to artist opt-in catalog/label visibility services. The circular model returns value to local ecosystems rather than extracting it.
 
 ### Key Messages
 - "Infrastructure, not just another app"

@@ -314,7 +314,7 @@ services are used
 
 --- Page 9 ---
 
-• Infrastructure Reciprocity, when triggered by an opted-in artist who has enrolled in the label visibility
+• Optional contractual revenue share, when triggered by an opted-in artist who has enrolled in the label visibility
 service and subsequently signs a label agreement, contributes to platform sustainability according
 to predefined percentage terms
 • Demonstrates that regenerative infrastructure can engage with the traditional industry without
