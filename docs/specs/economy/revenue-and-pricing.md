@@ -63,3 +63,4 @@ Defines the canonical revenue streams and subscription tiers. Revenue is infrast
 
 ## Future Work & Open Questions
 - Finalize pricing for Discovery Pass and Play Pass. See `docs/specs/DECISIONS_REQUIRED.md`.
+- Artist catalog / label visibility / Infrastructure Reciprocity is post-V1 and not part of the initial build scope.

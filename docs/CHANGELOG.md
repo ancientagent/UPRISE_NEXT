@@ -30,6 +30,7 @@
 - Print Shop promotions clarified as boost-style cross-community Promotions distribution (explicit scope selection only; no Fair Play or ranking impact).
 - Canon alignment pass: synced Narrative, Glossary, Application Surfaces, Expanded Getting Started, and Legacy Narrative-in-canon to the same Promotions-only boost model.
 - Fair Play spec wording clarified to scope pay-for-placement prohibitions to Fair Play/governance/rotation systems.
+- Canon/spec scope clarified: artist catalog/label-signing revenue (Infrastructure Reciprocity) is post‑V1 and not part of the initial build.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
