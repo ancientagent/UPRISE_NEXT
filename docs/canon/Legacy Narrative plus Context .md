@@ -984,7 +984,7 @@ All tiers: 4-hour minimum cooldown between posts.
 | Term | Definition |
 |------|------------|
 | Scene | Geographic location + Music Community (exists at city, state, and national tiers) |
-| Uprise | The broadcast signal; also a Scene when treated as a signal |
+| Uprise | Dual‑state object: the broadcast station/infrastructure **and** the Signal of that community broadcast |
 | The Plot | The community's digital habitation (formerly Ground Zero) |
 | RaDIYo | Broadcast receiver/player (Radio + DIY) |
 | RaDIYo broadcast network | The listener-governed broadcast layer within the UPRISE platform |
