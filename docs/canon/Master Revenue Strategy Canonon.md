@@ -228,7 +228,8 @@ has traveled, and what they bring to the table.
 The Catalog Service
 Not every artist on UPRISE dreams of signing a record deal. Some do. Some want to remain independent
 and build sustainable careers within their communities. The platform serves both paths equally.
-For artists who do want to pursue the label path, UPRISE offers a catalog service to help them get there.
+For artists who do want to pursue the label path, UPRISE offers a **catalog feature** they can opt into.
+It exists solely as a discovery surface for labels — not as a platform‑driven promotion tool.
 And for UPRISE, this is a way to generate revenue from the entities that have historically taken from
 independent music ecosystems without giving anything back. Labels have always extracted talent from
 local scenes. This service ensures that if they want access to UPRISE’s artists and data, they pay for it.
@@ -237,7 +238,7 @@ local scenes. This service ensures that if they want access to UPRISE’s artist
 --- Page 7 ---
 
 The platform does not push artists to labels, predict who will become successful, or manufacture visibility. It
-provides a catalog of opted-in artists with Ecosystem Health & Career Sustainability Analysis — and labels
+provides a catalog of **opted‑in** artists for label review with Ecosystem Health & Career Sustainability Analysis — and labels
 do their own review and due diligence.
 Artist Opt-In: Artists choose whether to be listed in the catalog. Participation is voluntary, and artists can opt
 out at any time. No artist is surfaced to labels without their explicit consent.

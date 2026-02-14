@@ -23,6 +23,7 @@
 - Onboarding UI now calls API when authenticated and pulls city suggestions from Places endpoint.
 - Onboarding resolution now supports sect tags and pioneer routing flags.
 - Canon updated: Uprise defined as a dual‑state object (station + signal); S.E.E.D Feed retained.
+- Revenue canon clarified: catalog is an artist opt‑in feature for label discovery.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
