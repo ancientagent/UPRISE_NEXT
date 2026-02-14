@@ -59,8 +59,8 @@ The Community inhabits the Scene and operates the Uprise. The Uprise utilizes th
 - Early adopters will become the recruiters who help populate the Scene - awarded "Pioneer" titles that allow them to gain large activity point bonuses along with those who join through them.  
 - Major hotspots will be identified and Pre-populate in beta using bands in town and other resources as a reference. 
 
-### 1.6 Subsects or"Sects" (Microgenre Taxonomy)
- Known micro-communities pre-mapped as belonging to parent Scenes (e.g., Drill → Hip-Hop, Shoegaze → Hardcore, Synthwave → Electronic)
+### 1.6 Subsects or"Sects" (Taste-Tag Taxonomy)
+ Known sub-communities can be mapped to parent Scenes (e.g., Drill -> Hip-Hop, Shoegaze -> Hardcore, Synthwave -> Electronic)
  - NOT their own Scenes at launch, rather, can be created as a "taste tag' in both listener and artist profile, that they can assign to their profile
  If a user enters a subsect as their "music scene of choice" during onboarding- ex. "Austin Texas Boom Bap"
   1. System recognizes it as a subsect of Hip-Hop
@@ -74,7 +74,7 @@ A Sect can Uprise into its own broadcast within the Scene once it has the regist
 Process
 1. Sect member(s) reference scene map and notice there is enough presence to uprise 
 2. A motion is made in the scene Registrar for an uprise (by member(s) )
-3. The established presence (music threshold) is guaranteed by artists signing/supporting the motion
+3. The established presence (music threshold) is guaranteed by artists explicitly supporting the motion
 4. Fair Play system initiates for the Sect broadcast
 5. Songs from all artists within the sect migrate from parent rotation into Sect rotation
 6. Sect will be available on registrars across all homescenes as an official sect to inspire others, once multiple cities in multiple states have their own sect it will become its own scene. 
@@ -85,8 +85,8 @@ If a user enters a city / state in their "Music scene of choice" that is not par
 3. If a motion is made in the scene Registrar for a new local uprising, it must gain the support of enough artists whose music playtime is greater than or equal to 45 min.
 4. If support is guaranteed, (artists have signed the motion for a local new uprise (city/zip/or region) a new scene is created all artists and listeners within the city/region will be taken to the new homescene to uprise. 
 
-All users who share a taste tag for a particular sect will have a private channel that links them in their activity feed. 
-A channel for those who share a region can be created by those who support a local uprise.   
+Sect-level communication occurs in Social tab threads/rooms, not as an auto-created Activity Feed channel.
+Regional coordination channels (when enabled) are explicit group/social constructs, not automatic feed injection.
 ---
 
 ## 2. RaDIYo Broadcast Network
@@ -180,12 +180,12 @@ Where listeners go to discover different scenes all across the country
 
 ### 4.3 Map View
 - Geographic interface with Scene flags
-- Flags sized by population, colored by genre, saturated by activity
+- Flags sized by population, colored by Music Community, saturated by activity
 - Tap a Scene flag to visit
 
-### 4.4 Artist Suggestions
-- Based on what's popular in the community user is listening to
-- Community-driven, not algorithmic prediction
+### 4.4 Discovery Cues
+- Based on explicit Scene activity and user-selected navigation only
+- No system-generated artist recommendations or predictive surfacing
 
 ### 4.5 Navigation via RaDIYo
 - Swipe right: random state (same music community)
@@ -207,7 +207,7 @@ Where listeners go to discover different scenes all across the country
 - Can be viewed on  activity feed in the scene plot 
 
 ### 5.2 Signal Types
-- Core Signals: Songs, Fliers, Uprises,  
+- Core Signals: Songs, Fliers, Events (and Uprises when referenced/shared),  
 - Discourse Signals: Posts, Threads (situated conversations inside a Scene)
 - Economic Signals: Deals/Promotions (Offers)
 - Intent Signals: Projects (motions for collective action)
@@ -221,11 +221,11 @@ Note: Fliers are viewable on events but can only be obtained as an artifact thro
 - Businesses
 - Events
 - Promoters
-- Following creates a channel in your Activity Feed (S.E.E.D Feed) for their activity/updates
+- Following creates an awareness link for entity updates without ranked or algorithmic feed injection
 
 ### 5.4 Universal Signal Actions
 - ADD: Save any signal to your personal Collection
-- FOLLOW: Subscribe to an entity for ongoing awareness (creates Activity Feed (S.E.E.D Feed) channel)
+- FOLLOW: Subscribe to an entity for ongoing awareness (no automatic ranked feed channel)
 - BLAST: Publicly amplify a signal to your community Activity Feed (S.E.E.D Feed)
 - SUPPORT: Express solidarity or material backing for a Project or Artist
 
@@ -254,10 +254,10 @@ Note: Fliers are viewable on events but can only be obtained as an artifact thro
 ### 6.2 Structure (5 Tabs)
 
 **FEED (default)**
-- Live updates: Blasts, new releases, member updates, and activities of followed artists / accounts ex tour news, promotor updates, event updates etc. 
-- Community Resonance Display: Content surfaced by Scene activity
+- Live updates: Blasts, new releases entering Fair Play, and civic updates (registrations/motions/milestones)
+- Community Resonance Display: descriptive Scene activity view (not ranked surfacing)
 - Contains The Registrar (civic actions) and Scene statistical data including the Scenescape (scene map)
-- where all channels communication channels feed
+- No automatic injection from Promotions or cross-Scene content
   STATISTICS
 - Activity Score: Sum of all community members' individual activity points
 - Scene health metrics, member counts
@@ -272,7 +272,7 @@ Note: Fliers are viewable on events but can only be obtained as an artifact thro
 - Local business Offers (coupons, specials, deals)
 - Off-platform event promotions
 - Wall of local community ads 
-- Contains: The Print Shop
+- Links to Event-associated promotional Runs (Print Shop issuance remains in Events)
 
 **SOCIAL (V2)**
 - Message boards — the ONLY place for public communication within the Scene
@@ -334,7 +334,7 @@ Note: Fliers are viewable on events but can only be obtained as an artifact thro
 ### 8.2 How It Works
 - New songs enter rotation through the artist's play deck
 - All new releases play on the hour for approximately one week (equal exposure)
-- After one week, engagement score is calculated based on metrics (upvotes, skips, blasts, etc.)
+- After one week, engagement score is calculated from playback engagement and contextual modifiers (ADD/BLAST); upvotes are separate and used for tier progression only
 - Song finds its place in the rotation stack based on engagement score
 - Higher engagement = more frequent rotation
 - Re-evaluated each cycle to stay current with community sentiment
@@ -354,7 +354,7 @@ These are two completely separate systems with total data isolation:
 - Automated rotation — no user control over song selection
 - All engagement metrics tracked and weighted
 - Songs cannot be repeated on demand
-- GPS-verified voting impacts rotation
+- GPS-verified voting impacts tier progression (not rotation frequency)
 
 **Personal Play (Secondary):**
 - On-demand access to user's ADDed Collection
@@ -415,7 +415,7 @@ These systems never cross-contaminate. Separate analytics, separate database tab
 ### 8.12 Skip
 - Skips the song so user doesn't hear it
 - Space filled with business / artist ads until next song plays
-- Heaviest negative weight on engagement score
+- Skip contributes no positive engagement score; it does not apply a negative penalty
 
 ### 8.13 Report
 - Sends a message to admin
@@ -460,7 +460,7 @@ Events appear based on:
 - Earned by attending the event
 - Verified through Proof-of-Support can scan qr at event location
 - User receives activity points for attendance
-- Tradeable (?)
+- Non-transferable and non-replicable
 
 ### 9.5 Event Distribution Rules
 
@@ -478,7 +478,7 @@ Events appear based on:
 ### 10.1 Promotions Tab (in The Plot)
 - Local business Offers (coupons, specials, deals)
 - Off-platform event promotions (mainstream acts coming through)
-- Contains: The Print Shop
+- References Event-linked promotional Runs; Print Shop issuance itself is in Events surface
 
 ### 10.2 Business Promotions
 - Businesses offer promotions, coupons, deals
@@ -487,6 +487,7 @@ Events appear based on:
 ### 10.3 The Print Shop (Issuance Infrastructure)
 
 The Print Shop acts as an infrastructure surface, not a store. It sells Issuance Capacity (the right to mint), not physical goods.
+It is scoped to Event-linked issuance in the Events surface.
 
 - **The "No Inventory" Rule:** The database tracks rights and records (e.g., "User X has the right to mint 100 Patches"), never stock levels, shipping logistics, or SKUs.
 
@@ -529,12 +530,12 @@ To support the circular economy without handling payments, the system uses Proof
 **Promotional Items:**
 - Patches, shirts, pins, posters, stickers
 - Limited minted digital assets
-- Fans can add to collection, trade, admire
+- Fans can add to collection and display
 
 **Attendance Artifacts:**
 - Non-repeatable signals minted after verified events: stamps, patches posters, fliers etc
 
-All materialized signals are tradeable (for now).
+Materialized signals are non-tradeable by default.
 
 ### 10.8 Business Subscription Tiers
 
@@ -551,7 +552,7 @@ All materialized signals are tradeable (for now).
 **Enterprise Tier:**
 - national Scene access
 - Unlimited community access
-- Priority placement, advanced reporting
+- Advanced reporting
 
 All tiers: 4-hour minimum cooldown between posts.
 
@@ -591,12 +592,12 @@ All tiers: 4-hour minimum cooldown between posts.
 - Private to group members
 
 ### 12.3 Sects
-- Sub-communities within a Scene (by sub-genre, taste, etc.)
-- Can message each other through a feed channel
+- Sub-communities within a Scene (by taste tags / other musical tastes)
+- Can coordinate through Sect threads in Social tab
 
 ### 12.4 Communication Model
 - Scene-wide: Public message boards (Social tab)
-- Sect-level: Activity Feed (S.E.E.D Feed) channel within the Sect
+- Sect-level: Social tab Sect threads/rooms
 - Group-level: Private within group members
 - Artists, Businesses, Events, Promoters can message their followers (one-way broadcast)
 - Users cannot message Artists, Businesses, Events, Promoters directly
@@ -720,7 +721,7 @@ All tiers: 4-hour minimum cooldown between posts.
 - Handle disputes
 
 ### 22.5 Platform Configuration
-- Edit music communities/genres
+- Edit music communities and taste-tag taxonomy
 - Manage Scene activation thresholds
 - Set pricing (subscriptions, Print Shop runs)
 - Configure Activity Points (bonuses, multipliers)
@@ -731,12 +732,12 @@ All tiers: 4-hour minimum cooldown between posts.
 - Manual Activity Points adjustments
 - Feature flags (enable/disable V2 features)
 
-### 22.7 Fair Play Control
-- Tweak, adjust, and tune the Fair Play algorithm
-- Can configure for particular Uprises (not just global)
-- Modify evaluation periods
-- Adjust rotation frequency calculations
-- Configure tier progression thresholds
+### 22.7 Fair Play Governance Controls
+- Monitor Fair Play health/audit signals
+- Roll out approved Fair Play versions via feature flags
+- Modify global evaluation periods only through approved policy changes
+- No manual per-Uprise overrides that change fairness outcomes
+- No manual song reordering, placement grants, or tier-progression exceptions
 
 ### 22.8 Future Controls
 - Additional controls added as features are developed
@@ -768,7 +769,7 @@ All tiers: 4-hour minimum cooldown between posts.
 ### 23.4 Party Statistics
 - Total discoveries
 - Most active contributor
-- Genre distribution
+- Music Community and taste-tag distribution
 - Geographic spread
 - Party engagement score
 
@@ -998,10 +999,10 @@ All tiers: 4-hour minimum cooldown between posts.
 | Observer | Non-verified user (cannot vote) |
 | Memory Token | Flier earned by attending event |
 | The Registrar | Civic hub for registration and project activation |
-| Parent Scene | Pre-loaded established genre Scene (open from launch) |
-| Child Genre | Microgenre mapped to a parent genre |
+| Parent Scene | Pre-loaded established Music Community Scene (open from launch) |
+| Sect Tag | Taste tag mapped to a parent Music Community |
 | Personal Play | On-demand playback from user's Collection (isolated from Fair Play) |
-| Community Resonance Display | Scene Activity-driven content surfacing in the Activity Feed (S.E.E.D Feed) |
+| Community Resonance Display | Descriptive Scene activity view in The Plot (non-ranked) |
 | Search Party | Collaborative discovery group (V2) |
 | Listening Room | Shared playback experience space (V2) |
 | Mixologist | User who creates and sells Mixes (V2) |
