@@ -37,6 +37,7 @@
 - Canon safety guardrails added: new `canon:lint` script, `docs:lint` integration, and explicit no-bulk-import-overwrite protocol in agent/runbook/docs index guidance.
 - Branch-protection scaffolding added: `.github/CODEOWNERS`, PR template, `Canon Guard` workflow, and runbook instructions for required status checks.
 - `Canon Guard` workflow trigger widened to all PRs so it can be enforced as a required status check.
+- Secrets workflow custom-pattern scan hardened to avoid false positives from workflow regex literals, test fixtures, and archived legacy `.env` snapshots under `docs/legacy/`.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
