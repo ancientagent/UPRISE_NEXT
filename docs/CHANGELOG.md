@@ -33,6 +33,7 @@
 - Canon/spec scope clarified: artist catalog/label-signing services are post‑V1 and not part of the initial build.
 - Canon revenue rule clarified: only Mix Market (V2) uses revenue sharing; all other systems use service/subscription pricing.
 - Canon alignment: `Legacy Narrative plus Context` updated to match `Master Narrative Canon` on Signals/Entities, Promotions-vs-Feed boundaries, Fair Play constraints, Registrar/Fair Play governance limits, and terminology.
+- Revenue canon cleanup: removed account-identity structural statement from pricing section to keep scope strictly revenue/mechanics.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

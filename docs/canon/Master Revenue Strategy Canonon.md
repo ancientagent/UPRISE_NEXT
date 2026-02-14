@@ -121,8 +121,6 @@ Phase 2: Dynamic Business Opportunities
 specials to take advantage of live music crowds in their area (or something similar)
 Phase 2: Subscription Models
 Artist Capability Tiers
-Structural Rule: Artist Status is an additive Capability activated on a Listener account. It is not a separate
-identity. There is only one account type (Listener); Artist is a capability.
 3
 
 --- Page 4 ---
