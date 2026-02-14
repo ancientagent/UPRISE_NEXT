@@ -15,7 +15,7 @@ Circular and Anti-Extractive Model
 Every revenue stream is structured to:
 Support Local Scenes: Revenue sustains platform infrastructure that serves artists and communities
 Maintain Artist Autonomy: Artists retain ownership and control
-Prevent Extraction: When value is extracted (e.g., label signings), the ecosystem is compensated
+Prevent Extraction: Revenue remains tied to platform services rather than external signing outcomes
 Build Infrastructure: Revenue funds platform development that serves communities
 Reject Attention Economy: No revenue from algorithmic manipulation or attention-hacking
 Revenue Model Canonical Constraints
@@ -27,6 +27,7 @@ All revenue mechanisms in this document are bound by the following non-negotiabl
 • No conversion of spending into governance power or visibility advantage
 • All analytics remain descriptive, never prescriptive
 • Revenue shares tied to optional services must be explicitly contractual and opt-in only
+• Revenue sharing is reserved for Mix Market (V2) only; all other revenue systems use service/subscription pricing
 These constraints apply globally to all sections below, whether explicitly restated or not.
 Phase 1: Launch Revenue Streams
 Primary Funding Mix (Phase 1):
@@ -43,7 +44,7 @@ Canonical Note (Print Shop): Revenue from Promotions/Offers is Selling Runs (Iss
 service fee, not selling goods or inventory. See docs/canon/+UPRISE Signal System & Print Shop
 Specification.md for the Print Shop model, Runs, and Offer Signals.
 Print Shop Revenue Model (Canon-Aligned Clarification)
-• The Print Shop does not operate through revenue-share contracts.
+• The Print Shop does not operate through shared-revenue contracts.
 • Revenue is generated solely through the purchase of Runs (finite issuance allocations).
 • A Run is a paid service that grants the right to mint a defined number of digital artifacts tied to an
 Event, Artist, or Signal.
@@ -295,8 +296,8 @@ Revenue Structure
 Only opted-in artists are listed in the catalog; labels review performance stats and community signals
 directly (no platform pushing)
 Labels pay a premium subscription to access the catalog and its data
-If an artist voluntarily enrolls in the label visibility service and later signs a label agreement, the predefined
-contractual revenue share applies according to the signed service terms
+Label visibility/catalog access is priced as a standalone subscription service only; artist signing outcomes do
+not trigger additional payment terms.
 Strategic Benefits
 For Artists:
 • Community-derived visibility without surrendering catalog control
@@ -308,15 +309,14 @@ For Labels:
 • Performance metrics based on real community actions, not manufactured signals
 • Data that reflects sustainable growth patterns, reducing signing risk
 For the UPRISE Ecosystem:
-• Contractual revenue shares tied to optional services support platform sustainability when those
-services are used
+• Subscription-based access to optional services supports platform sustainability when those services are
+used
 8
 
 --- Page 9 ---
 
-• Optional contractual revenue share, when triggered by an opted-in artist who has enrolled in the label visibility
-service and subsequently signs a label agreement, contributes to platform sustainability according
-to predefined percentage terms
+• Optional label visibility services are monetized through explicit subscription/service pricing only; no
+signing-triggered payment model applies
 • Demonstrates that regenerative infrastructure can engage with the traditional industry without
 being consumed by it
 Implementation Considerations
@@ -327,7 +327,7 @@ Studio/Label Side:
 • Industry standard percentages for comparable services
 Artist Side:
 • Average size of record deals for emerging artists
-• Fair revenue share percentage for optional label visibility service that does not discourage artist
+• Fair subscription/service pricing for optional label visibility service that does not discourage artist
 participation
 • Competitive analysis of traditional A&R fees and management cuts
 • Value proposition of data-backed negotiating power
@@ -487,7 +487,7 @@ Financial disincentives for backdoor deals
 Platform maintains position in ecosystem as artists grow
 Through its community-driven architecture, UPRISE is able to provide new, alternative, and creative revenue
 streams for independent artists and other industry and local music professionals
-Ensures contractual sustainability when optional revenue-share services are used
+Ensures contractual sustainability through defined service and subscription pricing
 Community Economic Integration
 Local businesses invest in music Scenes
 Venues get sponsorship facilitation
@@ -547,8 +547,8 @@ circular economy where:
 Infrastructure Sustainability: Revenue sustains platform operations and defined compensation mechanisms
 Infrastructure is Funded: Platform development serves communities
 Ecosystem is Protected: Participation remains opt‑in and community‑validated
-Contractual Revenue Shares: When optional services tied to label visibility result in a signing, predefined
-revenue-share terms apply
+Revenue Sharing Rule: Revenue sharing is reserved for Mix Market (V2) only; label visibility services use
+subscription/service pricing without signing-based payouts
 Foundational Position: The platform is infrastructure, not a service; it re-establishes connection, it does not
 sell engagement.
 “UPRISE is not a platform you browse; it is a movement you build.”
