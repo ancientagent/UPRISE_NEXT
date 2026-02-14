@@ -13,6 +13,7 @@ Working notes and completion reports that help future contributors quickly under
 ## Agent Documents
 - [`agent-deepagent-build-handoff-2025-12-12.md`](./agent-deepagent-build-handoff-2025-12-12.md) — Build investigation + fixes handoff.
 - [`agent-codex-5.2-type-fixes-and-specs.md`](./agent-codex-5.2-type-fixes-and-specs.md) — Jest/tooling fixes + formal system specs.
+- [`agent-codex-canon-governance-and-protection-2026-02-14.md`](./agent-codex-canon-governance-and-protection-2026-02-14.md) — Canon alignment, CI guardrails, branch protection, and open PR context.
 
 ## Handoff Reports
 - [`handoff-phase-1.md`](./handoff-phase-1.md) — Phase 1 wrapper (links to legacy completion report).
