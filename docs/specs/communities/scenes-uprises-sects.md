@@ -17,7 +17,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 ## Functional Requirements
 - A **Scene** is a place‑bound container. Scenes exist at City, State, and National levels.
 - A **Community** is the people operating within a Scene.
-- An **Uprise** is the broadcast station operated by a Community within a Scene and carried by RaDIYo.
+- An **Uprise** is a dual‑state object: the broadcast station/infrastructure operated by a Community within a Scene **and** the Signal of that community broadcast carried by RaDIYo.
 - A **Home Scene** is the user’s local music Scene of choice and civic anchor.
 - **Parent Scenes** are pre‑loaded, launch‑ready music communities that accept users immediately.
 - **Sects** are the sum of listeners and artists sharing the same taste tag inside a Home Scene.

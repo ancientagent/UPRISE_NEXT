@@ -18,19 +18,19 @@ Canon Alignment: Matches the Master Narrative Canon framing of UPRISE as infrast
 framing is acceptable as descriptive, not mechanical.
 Action: None
 Uprise
-Status: CONSTRAIN (terminology clarification only)
-Canon Truth: An Uprise is the broadcast station operated by a Music Community within a Scene.
-Audit Note: The Glossary currently labels Uprise as a "signal". This is a category error relative to the Canon,
-where: - Signals are carried units (songs, events, projects) - Uprise is the broadcast output of a Scene
-Required Correction (minimal): - Remove the word "signal" from the term header - Preserve all broadcast
-language
+Status: CONSTRAIN (dual‑state clarification)
+Canon Truth: An Uprise is a **Dual‑State Object**:
+- **Physically:** the broadcast station/infrastructure operated by a Music Community within a Scene.
+- **Non‑physically:** the Signal of that community broadcast carried by the network.
+Like a radio station (e.g., KEXP), an Uprise is both the building/staff (Entity) and the frequency/broadcast
+(Signal). It holds unique status in the Hierarchy of Authority as the bridge between structure and content.
 Approved Canon Definition:
 1
 
 --- Page 2 ---
 
-Uprise — The broadcast station operated by a Music Community within a Scene. The audible
-output of a Scene carried by the RaDIYo network. An Uprise is not a playlist and not a Signal.
+Uprise — The broadcast station/infrastructure operated by a Music Community within a Scene **and**
+the Signal of that community broadcast carried by the RaDIYo network. An Uprise is not a playlist.
 2. Structural Terms
 Scene
 Status: OK

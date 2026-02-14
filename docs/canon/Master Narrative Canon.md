@@ -16,9 +16,11 @@ Structural Constraint - Only Citywide Scenes contain user infrastructure. - Stat
 Scenes are aggregate-only constructs. - Aggregate Scenes pull statistics and top-performing songs from
 constituent Citywide Scenes. - No direct onboarding, voting, or civic actions occur at aggregate tiers.
 1.2 Uprises
-Uprise An Uprise is the broadcast station operated by a Music Community within a Scene.
+Uprise An Uprise is a **Dual‑State Object**: the broadcast station/infrastructure operated by a Music
+Community within a Scene **and** the Signal of that community broadcast carried by the network.
 Rules: - Every Scene operates exactly one Uprise per broadcast tier. - Uprises are the sole entry point into
-the RaDIYo Broadcast Network.
+the RaDIYo Broadcast Network. - The Uprise contains a rotation, but the Uprise itself may be referenced,
+shared, or tuned into as a Signal without being ranked against songs.
 Citywide Uprise - All music enters the system through Citywide Uprises. - Artists submit singles via their
 Play Deck. - Songs enter Fair Play rotation automatically.
 Statewide Uprise - Rotation consists of songs that earned sufficient Citywide support across the state. - No
@@ -298,6 +300,9 @@ UPRISE enforces a hard separation between Signals and Entities.
 • Signals are things that move.
 • Entities are actors that exist.
 No Signal is an authority. No Entity gains authority through Signal accumulation.
+**Explicit Exception:** An **Uprise** is the sole Dual‑State definition. It exists as an Entity (infrastructure)
+and as a Signal (the community broadcast) so that a Scene can be carried through explicit action while
+retaining structural authority.
 9.2 Signals
 Signals are discrete units of intentional action or expression that may propagate through a Scene.
 Examples of Signals: - Songs - Events - Projects - Fliers - Proof-of-Support artifacts

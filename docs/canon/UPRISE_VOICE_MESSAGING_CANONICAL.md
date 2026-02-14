@@ -90,6 +90,8 @@ The following concepts are intentionally excluded from UPRISE communications:
 
 **Ground Zero / The Plot:** The digital habitation and tactical center of the Home Scene. It is the interface where the Community builds the Scene.
 
+**Uprise:** A dual‑state object — the broadcast station/infrastructure operated by a Music Community **and** the Signal of that community broadcast. Like a radio station (e.g., KEXP), it is both the station and the frequency.
+
 **RaDIYo:** Not a playlist or feed. It is the transport system through which listeners move between listening contexts. Toggling tiers does not expand reach — it changes *where you are listening*. You are not served music. You arrive inside Scenes.
 
 ---

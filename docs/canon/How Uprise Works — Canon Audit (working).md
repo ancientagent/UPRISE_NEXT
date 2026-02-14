@@ -27,8 +27,9 @@ Glossary Canon.)
 (See Master Glossary Canon.)
 2) Community
 3) Uprise
-physical embodiment of the broadcast
-broadcast station / broadcast output
+dual‑state object:
+- physical broadcast station/infrastructure
+- the community Signal carried on the network
 4) Home Scene
 5) RaDIYo
 C) Listener Experience: Step-by-Step

@@ -30,7 +30,7 @@ This spec defines the canonical vocabulary for UPRISE. It prevents term drift an
 Use the following terms exactly as defined.
 
 **UPRISE (proper noun):** the platform/movement and infrastructure.  
-**Uprise:** the broadcast station operated by a Music Community within a Scene; the audible output of a Scene carried by RaDIYo. An Uprise is not a playlist and not a Signal.
+**Uprise:** a dual‑state object — the broadcast station/infrastructure operated by a Music Community within a Scene **and** the Signal of that community broadcast carried by RaDIYo. An Uprise is not a playlist.
 
 **Scene:** the place‑bound container and cultural environment. Scenes exist at City, State, and National levels.  
 **Community:** the people operating within a Scene.  
