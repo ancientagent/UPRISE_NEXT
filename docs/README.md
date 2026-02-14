@@ -25,6 +25,7 @@ This folder contains operational docs, architecture references, specifications, 
 - Legacy code/reference snapshots from the same project live under `docs/legacy/uprise_mob_code/` (non-canon; reference only).
 - **No direct bulk overwrite of canon files from imports.** Import raw external exports into `docs/legacy/` first, then apply intentional line-level canon edits in a separate commit.
 - Canon guardrails are enforced by `pnpm run canon:lint` (also included in `pnpm run docs:lint` and CI).
+- PRs touching `docs/canon/**` must also update `docs/CHANGELOG.md` (enforced by `Canon Guard` workflow).
 
 ### Master Canon Set (Authoritative)
 These documents are the canonical foundation for building the platform:

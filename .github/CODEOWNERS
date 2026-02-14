@@ -1,0 +1,16 @@
+# Global fallback owner
+* @ancientagent
+
+# Canon and specification governance
+docs/canon/** @ancientagent
+docs/specs/** @ancientagent
+docs/Specifications/** @ancientagent
+
+# Guardrail and CI policy files
+AGENTS.md @ancientagent
+docs/RUNBOOK.md @ancientagent
+docs/README.md @ancientagent
+docs/AGENT_STRATEGY_AND_HANDOFF.md @ancientagent
+scripts/docs-lint.mjs @ancientagent
+scripts/canon-lint.mjs @ancientagent
+.github/workflows/** @ancientagent

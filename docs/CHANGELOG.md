@@ -35,6 +35,7 @@
 - Canon alignment: `Legacy Narrative plus Context` updated to match `Master Narrative Canon` on Signals/Entities, Promotions-vs-Feed boundaries, Fair Play constraints, Registrar/Fair Play governance limits, and terminology.
 - Revenue canon cleanup: removed account-identity structural statement from pricing section to keep scope strictly revenue/mechanics.
 - Canon safety guardrails added: new `canon:lint` script, `docs:lint` integration, and explicit no-bulk-import-overwrite protocol in agent/runbook/docs index guidance.
+- Branch-protection scaffolding added: `.github/CODEOWNERS`, PR template, `Canon Guard` workflow, and runbook instructions for required status checks.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

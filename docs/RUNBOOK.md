@@ -28,6 +28,36 @@ After any **meaningful change** (new feature, endpoint, model, migration, or can
 4. **Never bulk-overwrite `docs/canon/*.md`** from imported exports. Stage raw imports under `docs/legacy/` and apply intentional canon edits in a separate commit.
 5. Run `pnpm run docs:lint` (includes `canon:lint`) before pushing doc-heavy changes.
 
+## 🔒 Branch Protection (Required)
+Configure GitHub branch protection for `main` (and `develop` if used) with these settings:
+1. Require a pull request before merging.
+2. Require approvals: minimum 1.
+3. Require review from Code Owners (uses `.github/CODEOWNERS`).
+4. Require status checks to pass before merging.
+5. Require branches to be up to date before merging.
+6. Include administrators.
+
+### Required Status Checks
+Set the following checks as required in branch protection:
+- `CI Pipeline / Docs Lint`
+- `CI Pipeline / Lint Code`
+- `CI Pipeline / Type Check`
+- `CI Pipeline / Test Apps (web)`
+- `CI Pipeline / Test Apps (api)`
+- `CI Pipeline / Test Apps (socket)`
+- `CI Pipeline / Build Apps (web)`
+- `CI Pipeline / Build Apps (api)`
+- `CI Pipeline / Build Apps (socket)`
+- `CI Pipeline / Infrastructure Policy Check`
+- `CI Pipeline / ✅ All CI Checks Passed`
+- `Canon Guard / Canon Guard Checks`
+- `Infrastructure Policy Check / Web-Tier Contract Guard`
+- `Secrets Scan / ✅ Secrets Scan Complete`
+
+Notes:
+- Exact check labels can vary slightly by GitHub UI; select the checks shown on a successful PR run.
+- `Canon Guard` enforces changelog updates for canon changes and runs `canon:lint`.
+
 This keeps daily edits lightweight while preserving long‑term context.
 
 ---

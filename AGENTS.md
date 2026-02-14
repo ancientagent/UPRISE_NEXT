@@ -39,3 +39,7 @@ Include in PR description:
 - Phase
 - Specs links (`docs/specs/` and/or `docs/Specifications/`)
 - Agent identifier
+
+## Branch Protection (required)
+- All changes to `main` must go through PR with required checks + codeowner review.
+- Canon changes (`docs/canon/**`) must pass `Canon Guard` and include a `docs/CHANGELOG.md` update.

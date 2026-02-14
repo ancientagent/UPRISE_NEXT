@@ -1,0 +1,67 @@
+name: Canon Guard
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'docs/canon/**'
+      - 'docs/CHANGELOG.md'
+      - 'scripts/canon-lint.mjs'
+      - '.github/workflows/canon-guard.yml'
+
+jobs:
+  canon-guard:
+    name: Canon Guard Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '9.0.0'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run canon lint
+        run: pnpm run canon:lint
+
+      - name: Require changelog update when canon changes
+        run: |
+          BASE="origin/${{ github.base_ref }}"
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          CHANGED="$(git diff --name-only "$BASE"...HEAD)"
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          CANON_CHANGED=0
+          CHANGELOG_CHANGED=0
+
+          if echo "$CHANGED" | grep -q '^docs/canon/'; then
+            CANON_CHANGED=1
+          fi
+
+          if echo "$CHANGED" | grep -q '^docs/CHANGELOG.md$'; then
+            CHANGELOG_CHANGED=1
+          fi
+
+          if [ "$CANON_CHANGED" -eq 1 ] && [ "$CHANGELOG_CHANGED" -eq 0 ]; then
+            echo "❌ Canon files changed without docs/CHANGELOG.md update."
+            exit 1
+          fi
+
+          echo "✅ Canon guard checks passed."
