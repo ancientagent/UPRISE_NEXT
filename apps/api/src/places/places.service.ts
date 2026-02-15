@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-interface PlaceSuggestion {
+export interface PlaceSuggestion {
   description: string;
   placeId: string;
 }
