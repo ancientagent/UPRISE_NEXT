@@ -59,6 +59,14 @@ Defines the RaDIYo broadcast network and the Fair Play rotation system that gove
 | GET | `/broadcast/:sceneId` | required | Stream broadcast rotation |
 | POST | `/votes` | required | Cast vote during playback |
 | GET | `/fair-play/metrics` | required | Retrieve engagement metrics |
+| POST | `/tracks/:id/engage` | required | Record playback engagement (Canon 3/2/1/0) |
+
+### Engagement Capture (Implemented)
+`POST /tracks/:id/engage` records listener engagement during playback:
+- **Payload:** `{ sessionId: string, type: "full" | "majority" | "partial" | "skip" }`
+- **Scoring:** full=3, majority=2, partial=1, skip=0 (per Canon §4.1.1)
+- **Deduplication:** Unique constraint on (userId, trackId, sessionId) prevents spam
+- **Scope:** This endpoint captures engagement events only; rotation calculation and tier propagation are deferred
 
 ## Web UI / Client Behavior
 - RaDIYo player shows current Scene and tier.

@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Track engagement recording API (`POST /tracks/:id/engage`) with Canon-aligned 3/2/1/0 scoring.
+- TrackEngagement model with spam guard (unique on userId+trackId+sessionId).
+- Unit tests for engagement scoring and service methods.
 - System specs for web-tier contract guard, documentation framework, agent handoffs, and CI/CD pipeline.
 - Onboarding flow UI in `apps/web` with Home Scene selection and GPS voting disclaimer.
 - Plot shell in `apps/web` with core tabs (Feed, Events, Promotions, Statistics, Social).

@@ -36,6 +36,13 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 ## API Design
 - TBD
 
+### Engagement Events (Implemented)
+> **Note:** This section captures engagement events for Fair Play scoring. Activity Points engine is not yet implemented.
+
+- `POST /tracks/:id/engage` records playback engagement (see `docs/specs/broadcast/radiyo-and-fair-play.md`)
+- TrackEngagement model stores: userId, trackId, type (full/majority/partial/skip), score, sessionId
+- This is separate from Activity Points; engagement affects rotation frequency, Activity Points affect participation recognition
+
 ## Web UI / Client Behavior
 - Activity Points visible on user profile.
 - Scene Activity Score visible in Plot statistics.
