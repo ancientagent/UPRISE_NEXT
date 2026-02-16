@@ -270,6 +270,7 @@ jobs:
         if: matrix.app == 'api'
         run: |
           cd apps/api
+          pnpm prisma generate
           DATABASE_URL="postgresql://uprise:uprise@127.0.0.1:5432/uprise_test" pnpm prisma migrate deploy
 
       - name: Run tests for ${{ matrix.app }}
