@@ -18,6 +18,7 @@ Defines the onboarding flow for selecting a Home Scene and the input-driven reso
 - Onboarding asks: “What is your local music scene of choice?”
 - Inputs must include **City**, **State**, **Music Community** with autocomplete from existing data.
 - Home Scene selection is stored regardless of GPS verification.
+- Setting a Home Scene also auto-joins the resolved Scene as a member.
 - GPS verification is requested **only** to enable voting rights.
 - If GPS is denied or unavailable, user remains Locally Affiliated but cannot vote.
 - Input-driven resolution:
@@ -52,11 +53,15 @@ Defines the onboarding flow for selecting a Home Scene and the input-driven reso
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/onboarding/home-scene` | required | Resolve and set Home Scene |
-| POST | `/onboarding/gps-verify` | required | Set GPS verification status |
+| POST | `/onboarding/gps-verify` | required | Attempt GPS verification (voting only) |
 
 ### Request/Response
 - Request schema: City, State, MusicCommunity, OptionalTag
 - Response schema: SceneId (or resolved key), AppliedTags, VotingEligible
+
+### GPS Verification Semantics
+- GPS verification must only grant voting when the user is within the Home Scene geofence.
+- If a Scene has no geofence configured, GPS verification stores coordinates but keeps `gpsVerified=false`.
 
 ## Web UI / Client Behavior
 - Inputs: City, State, Music Community (autocomplete).

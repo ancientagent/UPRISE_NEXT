@@ -21,7 +21,7 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
-- Web app font updated to Space Grotesk for non-default typography.
+- Web app build no longer depends on Google Fonts fetch (removed `next/font` Google import from `apps/web/src/app/layout.tsx` to avoid DNS/network build flakiness).
 - User schema extended with Home Scene and GPS verification fields.
 - Onboarding UI now calls API when authenticated and pulls city suggestions from Places endpoint.
 - Onboarding resolution now supports sect tags and pioneer routing flags.
@@ -42,6 +42,7 @@
 - `Canon Guard` workflow trigger widened to all PRs so it can be enforced as a required status check.
 - Secrets workflow custom-pattern scan hardened to avoid false positives from workflow regex literals, test fixtures, and archived legacy `.env` snapshots under `docs/legacy/`.
 - Secrets workflow temporarily relaxed for early iteration: JWT/password-pattern custom check removed from blocking logic; PR comment posting is non-blocking.
+- Added `pnpm run verify` (docs:lint + infra-policy-check + typecheck) and `pnpm run verify:full` (verify + test + build) to standardize local pre-push checks.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
@@ -49,6 +50,9 @@
 - Socket.IO community event tests by wiring real namespace/handler setup.
 - PostGIS community creation raw SQL to avoid returning unsupported `geofence` in results.
 - Turbo test env forwarding for `DATABASE_URL` so API tests can run under `turbo run test`.
+- Web typecheck/build reliability:
+  - Disabled `apps/web` incremental typecheck to avoid `tsconfig.tsbuildinfo` artifacts and stale cache issues.
+  - Added a Solutions playbook for `.next/types` TS6053 failures.
 
 ---
 

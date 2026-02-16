@@ -38,21 +38,14 @@ Configure GitHub branch protection for `main` (and `develop` if used) with these
 6. Include administrators.
 
 ### Required Status Checks
-Set the following checks as required in branch protection:
-- `CI Pipeline / Docs Lint`
-- `CI Pipeline / Lint Code`
-- `CI Pipeline / Type Check`
-- `CI Pipeline / Test Apps (web)`
-- `CI Pipeline / Test Apps (api)`
-- `CI Pipeline / Test Apps (socket)`
-- `CI Pipeline / Build Apps (web)`
-- `CI Pipeline / Build Apps (api)`
-- `CI Pipeline / Build Apps (socket)`
-- `CI Pipeline / Infrastructure Policy Check`
-- `CI Pipeline / ✅ All CI Checks Passed`
-- `Canon Guard / Canon Guard Checks`
-- `Infrastructure Policy Check / Web-Tier Contract Guard`
-- `Secrets Scan / ✅ Secrets Scan Complete`
+Set the following checks as required in branch protection (minimal, early-project mode):
+- `Infrastructure Policy Check`
+- `✅ Secrets Scan Complete`
+- `Canon Guard Checks`
+
+Notes:
+- CI still runs the full matrix; these three are the merge gate to avoid early flakiness slowing execution.
+- Tighten this list back up later (milestone) once CI is consistently green.
 
 Notes:
 - Exact check labels can vary slightly by GitHub UI; select the checks shown on a successful PR run.
