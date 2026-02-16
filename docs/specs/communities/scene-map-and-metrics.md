@@ -27,6 +27,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - `city` tier map:
   - local scene map for the selected city Scene.
   - includes sect-level composition/density and local community distribution.
+  - includes a city-scope Top 40 songs list for the selected Scene/Uprise context.
 - `state` tier map:
   - state map of cities for the same parent music-community context.
   - does **not** expand into full sect-level local detail for every city.
@@ -34,9 +35,11 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
     - number of active citywide Scenes in scope
     - Uprise macro activity metrics per city
     - top/most active sects per city (macro summary only)
+  - includes a state-scope Top 40 songs list aggregated from eligible city outputs.
 - `national` tier map:
   - national map of states for the same parent music-community context.
   - shows state-level macro statistics per state.
+  - includes a national-scope Top 40 songs list aggregated from eligible state outputs.
 - Parent context remains constant while toggling tiers; only the aggregation unit changes (`sect/local` -> `city` -> `state`).
 
 ### Required Metrics Domains
@@ -57,16 +60,22 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - Broadcast health (descriptive):
   - active tracks
   - engagement totals/distribution by tier (when rotation engine ships)
+- Top 40 broadcast list (descriptive):
+  - a maximum of 40 songs for the active scope (`city`, `state`, or `national`)
+  - reflects current tier broadcast standing for the selected parent context
 - Geography:
   - coarse member/activity distribution map for the active Scene scope
 
 ### Scope by Tier (Metrics)
 - `city`:
   - local sect composition and local activity/broadcast metrics
+  - city Top 40 songs list
 - `state`:
   - per-city macro rollups (for example: member totals, activity totals, active tracks, top sects)
+  - state Top 40 songs list
 - `national`:
   - per-state macro rollups (for example: member totals, activity totals, active tracks)
+  - national Top 40 songs list
 
 ### Implemented Now
 - Plot shell includes a Statistics tab placeholder in `apps/web/src/app/plot/page.tsx`.
@@ -116,6 +125,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - `parentContext`: selected parent music community (persistent across tiers)
 - `tierScope`: one of `city`, `state`, `national`
 - `metrics`: grouped metric domains (community, sect, activity, broadcast)
+- `topSongs`: ordered list of up to 40 songs for the active scope
 - `map`: geo buckets/clusters for active scope
 - `timeWindow`: aggregation window metadata
 - `rollupUnit`: one of `local_sect`, `city`, `state`
@@ -127,11 +137,14 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - City view emphasizes sect/local structure.
 - State view emphasizes city-level macro cards/labels.
 - National view emphasizes state-level macro cards/labels.
+- Every tier view includes a Top 40 songs list panel for that scope.
 
 ## Acceptance Tests / Test Plan
 - Tier toggle keeps parent context unchanged.
 - Statistics/map values change by scope only (`city` vs `state` vs `national`).
 - City map renders sect/local detail; state/national maps render macro rollups only.
+- `topSongs` list returns at most 40 entries for each tier scope.
+- `topSongs` ordering is deterministic for the same snapshot/time window.
 - No stats value affects voting authority or rotation ordering.
 - Metrics remain visible as descriptive-only labels in UI.
 
@@ -139,6 +152,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - Finalize geo aggregation granularity and privacy floor rules.
 - Lock activity score formula in `docs/specs/DECISIONS_REQUIRED.md`.
 - Lock broadcast-health rollup timing with Fair Play timing decisions.
+- Lock Top 40 tie-break policy for equal standing rows.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

@@ -37,6 +37,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - City map shows local sect-level/community detail.
   - State map shows city-level macro statistics.
   - National map shows state-level macro statistics.
+  - Each tier view includes a Top 40 songs list for that same scope.
 
 ### Implemented Behavior (Current)
 - Web app ships Plot shell at `apps/web/src/app/plot/page.tsx`.

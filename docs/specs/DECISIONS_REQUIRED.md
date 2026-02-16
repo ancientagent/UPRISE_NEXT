@@ -34,3 +34,4 @@ Do not implement these items until they are locked.
 - **Aggregation window(s)** for Scene metrics (for example rolling 7-day / 30-day / all-time)
 - **Geo aggregation granularity + privacy floor** (minimum cohort size before map bucket display)
 - **Tier rollup policy** for City -> State -> National map/statistics continuity
+- **Top 40 tie-break policy** when songs have equal standing within the same scope

@@ -36,15 +36,22 @@ Creates a non-code task track for designing the Statistics page so progress can 
   - activity totals
   - sect density and top sects
   - local engagement summaries
+  - city Top 40 songs list panel
 - [ ] Finalize state-tier cards:
   - number of active citywide scenes in scope
   - per-city uprise macro activity
   - top sects by city (macro only)
+  - state Top 40 songs list panel
 - [ ] Finalize national-tier cards:
   - number of active states in scope
   - per-state macro activity
   - top sects by state (macro only)
+  - national Top 40 songs list panel
 - [ ] Define metric definitions/tooltips for each card.
+- [ ] Define Top 40 song list card behavior:
+  - tie handling display
+  - metadata shown per song row
+  - click-through behavior into song/signal detail
 
 ### Phase 3 — Map Behavior and Interaction
 - [ ] Define city map interactions:
