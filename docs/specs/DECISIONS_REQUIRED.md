@@ -29,3 +29,8 @@ Do not implement these items until they are locked.
 
 ## 6) Founder Locks
 - Any section marked **WORKING**, **UNDECIDED**, or **Founder Lock Needed** in `docs/canon/`
+
+## 7) Scene Map & Statistics
+- **Aggregation window(s)** for Scene metrics (for example rolling 7-day / 30-day / all-time)
+- **Geo aggregation granularity + privacy floor** (minimum cohort size before map bucket display)
+- **Tier rollup policy** for City -> State -> National map/statistics continuity

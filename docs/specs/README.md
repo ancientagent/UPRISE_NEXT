@@ -51,6 +51,15 @@ This roadmap lists new product specs to be authored from `docs/canon/`.
   Canon sources:
   - `Legacy Narrative plus Context .md (3.x, 6.x)`
   - `Master Application Surfaces, Capabilities & Lifecycle Canon.md`
+- `communities/scene-map-and-metrics.md` — **Scene Map and Metrics** (`COMM-SCENEMAP`)
+  Canon sources:
+  - `Master Narrative Canon.md (6.3, 6.4)`
+  - `Master Glossary Canon.md`
+  - `Legacy Narrative plus Context .md (6.x, 11.x)`
+- `communities/statistics-page-design-task-list.md` — **Statistics Page Design Task List** (`COMM-STATS-DESIGN`)
+  Canon sources:
+  - `Master Narrative Canon.md (6.3, 6.4)`
+  - `Master Glossary Canon.md`
 - `events/events-and-flyers.md` — **Events and Flyers** (`EVENTS-FLYERS`)
   Canon sources:
   - `Legacy Narrative plus Context .md (9.x)`

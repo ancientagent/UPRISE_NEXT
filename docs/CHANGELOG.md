@@ -58,6 +58,16 @@
   - Updated specs index files:
     - `docs/specs/system/README.md`
     - `docs/specs/users/README.md`
+- Scene map/statistics canon-alignment pass:
+  - Added `docs/specs/communities/scene-map-and-metrics.md` (`COMM-SCENEMAP`) to define Scene Map as inherent to the Scene.
+  - Locked parent-context persistence across tier toggles (city/state/national toggles change aggregation scope only).
+  - Locked tier view semantics:
+    - city = local/sect detail
+    - state = city-level macro view
+    - national = state-level macro view
+  - Added `docs/specs/communities/statistics-page-design-task-list.md` (`COMM-STATS-DESIGN`) as a dedicated non-code task track for Statistics page design.
+  - Updated Plot and community specs indexes to reference the new Scene Map contract.
+  - Added Scene Map policy locks to `docs/specs/DECISIONS_REQUIRED.md` (aggregation windows, geo privacy floor, tier rollup continuity).
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

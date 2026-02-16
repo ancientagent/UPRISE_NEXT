@@ -20,7 +20,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - Activity Feed (S.E.E.D Feed) (default)
   - Events
   - Promotions
-  - Statistics / Scene Map
+  - Statistics / Scene Map (dedicated page-level surface)
   - Social (V2)
 - S.E.E.D stands for Support, Explore, Engage, Distribute.
 - Activity Feed semantics:
@@ -29,6 +29,14 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - no ranking, personalization, or recommendation inference
 - Promotions are distinct from Activity Feed and remain in Promotions surfaces.
 - Registrar entry is part of Plot activity/civic workflow.
+- Statistics / Scene Map rule:
+  - Scene Map is inherent to the Scene and lives inside the Statistics surface.
+  - Statistics is its own dedicated page-level surface within The Plot (not a mini widget).
+  - Tier toggles scale the same Scene context from city to state to national aggregates.
+  - Parent music-community context remains constant during tier toggles unless explicitly changed by user.
+  - City map shows local sect-level/community detail.
+  - State map shows city-level macro statistics.
+  - National map shows state-level macro statistics.
 
 ### Implemented Behavior (Current)
 - Web app ships Plot shell at `apps/web/src/app/plot/page.tsx`.
@@ -38,7 +46,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 ### Deferred Behavior (Not Implemented Yet)
 - Server-driven S.E.E.D feed data endpoint and rendering.
 - Registrar module integration into Plot UI.
-- Scene statistics/map data service integration.
+- Scene statistics/map data service integration (`COMM-SCENEMAP`).
 - Social tab message boards/listening rooms (V2).
 
 ## Non-Functional Requirements
@@ -90,8 +98,11 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 ## Future Work & Open Questions
 - Implement `/communities/:id/feed` and wire S.E.E.D surface to API.
 - Add registrar entry component and motion lifecycle surfaces.
-- Define statistics payload contract for scene map/health metrics.
+- Implement scene map/statistics payload contract in `docs/specs/communities/scene-map-and-metrics.md`.
+- Execute statistics-page design checklist in `docs/specs/communities/statistics-page-design-task-list.md`.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`
 - `docs/canon/Master Application Surfaces, Capabilities & Lifecycle Canon.md`
+- `docs/specs/communities/scene-map-and-metrics.md`
+- `docs/specs/communities/statistics-page-design-task-list.md`
