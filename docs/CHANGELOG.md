@@ -43,6 +43,21 @@
 - Secrets workflow custom-pattern scan hardened to avoid false positives from workflow regex literals, test fixtures, and archived legacy `.env` snapshots under `docs/legacy/`.
 - Secrets workflow temporarily relaxed for early iteration: JWT/password-pattern custom check removed from blocking logic; PR comment posting is non-blocking.
 - Added `pnpm run verify` (docs:lint + infra-policy-check + typecheck) and `pnpm run verify:full` (verify + test + build) to standardize local pre-push checks.
+- Core specs alignment pass:
+  - `COMM-SCENES` now documents implemented scene/sect models, migrations, and onboarding/community endpoints.
+  - `COMM-PLOT` now distinguishes implemented Plot shell from deferred S.E.E.D/registrar/statistics integrations.
+  - `USER-ONBOARDING` now documents exact request/response contracts and GPS reason codes from current API behavior.
+  - `CORE-SIGNALS` now documents implemented signal/follow/collection contracts and idempotency constraints.
+  - `BROADCAST-FP` now distinguishes implemented engagement capture from deferred rotation/vote/propagation systems.
+- Specs completion pass:
+  - Promoted remaining module specs to active status with explicit implemented-vs-deferred sections:
+    - `USER-IDENTITY`, `SYS-REGISTRAR`, `SOCIAL-MSG`, `EVENTS-FLYERS`, `ENG-ACTIVITY`,
+      `ECON-PRINTSHOP`, `ECON-REVENUE`, `SYS-MODERATION`, `SYS-EDGE`, `ADMIN-SUPER`,
+      `DISC-VIBE`, `V2-SEARCH`, `V2-ROOMS`, `V2-MIXES`, `V2-AMBASSADOR`, `SEED-TAXONOMY`.
+  - Removed remaining spec-level `TBD` placeholders from canonical module specs.
+  - Updated specs index files:
+    - `docs/specs/system/README.md`
+    - `docs/specs/users/README.md`
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

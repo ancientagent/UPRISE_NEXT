@@ -1,9 +1,9 @@
 # Activity Points and Analytics
 
 **ID:** `ENG-ACTIVITY`
-**Status:** `draft`
+**Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-13`
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
 Defines Activity Points and analytics as descriptive metrics for participation and scene health.
@@ -14,11 +14,16 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 - Artists view descriptive analytics in the WebApp.
 
 ## Functional Requirements
-- Users earn Activity Points from participation (Blasts, attendance, support, projects).
-- Scene Activity Score is the sum of individual points.
-- Large bonuses are permitted for Proof‑of‑Support and pioneering.
-- Analytics report performance across tiers and geography.
-- Metrics are descriptive only and do not affect Fair Play or governance.
+- Activity Points are user-level participation recognition.
+- Scene Activity Score aggregates user-level activity.
+- Large bonuses are permitted for verified Proof-of-Support and pioneering labor.
+- Analytics remain descriptive and must not become ranking/authority inputs.
+
+### Implemented Now
+- Engagement capture for Fair Play scoring only:
+  - `POST /tracks/:id/engage`
+  - `TrackEngagement` records (`type`, `score`, `sessionId`, `userId`, `trackId`).
+- Engagement scoring model uses canon-aligned 3/2/1/0 playback points.
 
 ## Non-Functional Requirements
 - Transparency: point sources are visible.
@@ -29,12 +34,29 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 - Analytics are not used to recommend or rank.
 
 ## Data Models & Migrations
-- ActivityPoint
-- ActivityScore
-- AnalyticsSummary
+### Implemented Models
+- `TrackEngagement` (Fair Play input; not Activity Points)
+
+### Planned Models
+- `ActivityPoint`
+- `ActivityScore`
+- `AnalyticsSummary`
+
+### Migrations
+- `20260216004000_add_user_home_scene_and_track_engagement` (engagement capture only)
 
 ## API Design
-- TBD
+### Implemented Endpoints
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/tracks/:id/engage` | required | Record playback engagement for Fair Play scoring |
+
+### Planned Endpoints (Not Implemented)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/users/:id/activity-points` | required | Fetch user activity points ledger |
+| GET | `/communities/:id/activity-score` | required | Fetch scene aggregate score |
+| POST | `/activity/proof-support` | required | Award points for verified proof-of-support |
 
 ### Engagement Events (Implemented)
 > **Note:** This section captures engagement events for Fair Play scoring. Activity Points engine is not yet implemented.
@@ -44,16 +66,18 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 - This is separate from Activity Points; engagement affects rotation frequency, Activity Points affect participation recognition
 
 ## Web UI / Client Behavior
-- Activity Points visible on user profile.
-- Scene Activity Score visible in Plot statistics.
+- Activity Points and scene activity visualization are planned for Plot statistics/profile surfaces.
+- Current implementation does not render Activity Points yet.
 
 ## Acceptance Tests / Test Plan
-- Proof‑of‑Support generates activity bonuses.
-- Activity points do not alter rotation.
+- Track engagement endpoint stores additive playback records only.
+- Engagement records do not imply tier progression or governance power.
+- When Activity Points ship, verify no coupling to rotation order/tier propagation.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
 - `docs/canon/Master Glossary Canon.md`
 
 ## Future Work & Open Questions
-- Define the Activity Points scoring table and decay/seasonality rules. See `docs/specs/DECISIONS_REQUIRED.md`.
+- Define Activity Points scoring table and decay/seasonality policy in `docs/specs/DECISIONS_REQUIRED.md`.
+- Define proof-verification trust model for high-value point awards.

@@ -1,9 +1,9 @@
 # Music Community & Taste-Tag Taxonomy (Internal)
 
 **ID:** `SEED-TAXONOMY`
-**Status:** `draft`
+**Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-14`
+**Last Updated:** `2026-02-16`
 
 This document is an internal reference for onboarding routing and Scene Map clustering.
 It is **not** user-facing language and does not override canon semantics.

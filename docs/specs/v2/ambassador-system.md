@@ -1,9 +1,9 @@
 # Ambassador System
 
 **ID:** `V2-AMBASSADOR`
-**Status:** `draft`
+**Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-13`
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
 Defines the Ambassador system (tour guide services) for artists on the road.
@@ -20,6 +20,15 @@ Defines the Ambassador system (tour guide services) for artists on the road.
 - Ratings are private between artist and ambassador.
 - Platform facilitates connection, not payment.
 
+### Implemented Now
+- No Ambassador models, APIs, or map UI currently exist.
+
+### Deferred (Not Implemented Yet)
+- Ambassador opt-in/availability lifecycle.
+- Service offering and booking flows.
+- Private bilateral review workflow.
+- Discovery/map indexing for ambassador visibility.
+
 ## Non-Functional Requirements
 - No algorithmic promotion of ambassadors.
 - Service visibility is descriptive only.
@@ -28,13 +37,25 @@ Defines the Ambassador system (tour guide services) for artists on the road.
 - Ambassador services do not affect Fair Play or discovery ranking.
 
 ## Data Models & Migrations
-- AmbassadorProfile
-- ServiceOffering
-- BookingRequest
-- BookingHistory
+### Planned Models
+- `AmbassadorProfile`
+- `ServiceOffering`
+- `BookingRequest`
+- `BookingHistory`
+- optional `ServiceReview`
+
+### Migrations
+- None yet.
 
 ## API Design
-- TBD
+### Planned Endpoints (Not Implemented)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/ambassadors/profile` | required | Create/update ambassador profile |
+| POST | `/ambassadors/services` | required | Publish service offering |
+| POST | `/ambassadors/bookings` | required | Request booking |
+| POST | `/ambassadors/bookings/:id/complete` | required | Complete booking |
+| POST | `/ambassadors/bookings/:id/review` | required | Submit private review |
 
 ## Web UI / Client Behavior
 - Discovery Pass users can opt into Ambassador visibility.
@@ -42,6 +63,7 @@ Defines the Ambassador system (tour guide services) for artists on the road.
 ## Acceptance Tests / Test Plan
 - Ambassador profiles visible only when opted‑in.
 - Booking actions logged.
+- Ambassador participation does not affect Fair Play rotation or ranking.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`

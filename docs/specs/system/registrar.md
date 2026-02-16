@@ -1,65 +1,82 @@
 # Registrar System
 
-**ID:** `SYS-REGISTRAR`
-**Status:** `draft`
-**Owner:** `platform`
-**Last Updated:** `2026-02-13`
+**ID:** `SYS-REGISTRAR`  
+**Status:** `active`  
+**Owner:** `platform`  
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
-Defines the Registrar as the civic hub where roles and projects are registered and activated.
+Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
 
 ## User Roles & Use Cases
-- Listener registers as Artist/Band or Promoter.
-- Community members register Projects after discussion.
-- Future: Sect motions are filed to initiate a new Uprise.
+- Listener starts Artist/Band capability registration.
+- Listener starts Promoter registration for event workflows.
+- Community participants formalize Project signals after discussion.
+- Sect participants file motion when uprising thresholds are met.
 
 ## Functional Requirements
-- Registrar is located in the **Feed** tab of The Plot.
-- V1 registration functions:
-  - Artist/Band registration generates a completion code for the WebApp.
-  - Promoter registration generates a completion code for the WebApp.
-- Project registration:
-  - Projects are proposed in Social message boards.
-  - Registrar activates a Project as a followable signal.
-- Future registrar functions include Sect motions and other civic actions.
+- Registrar is a Home Scene civic surface (Activity Feed context in canon narrative).
+- Registrar records and tracks registration intent/status.
+- V1 target functions:
+  - Artist/Band registration initiation.
+  - Promoter registration initiation.
+  - Project registration/activation into signal space.
+- Sect uprising motions are registrar-mediated when threshold criteria are met (45-minute committed artist playtime threshold + explicit support).
+
+### Implemented Now
+- No dedicated Registrar API routes or persistence models exist yet.
+- Related primitives are present:
+  - Signal creation/actions (`/signals`, `/signals/:id/support`, etc.) can represent project-like propagation once a project signal exists.
+
+### Deferred (Not Implemented Yet)
+- Registrar domain model (`RegistrarEntry` or equivalent).
+- Role registration code issuance and verification workflows.
+- Dedicated project registration endpoint(s) and status lifecycle.
+- Sect motion lifecycle and approval state machine.
 
 ## Non-Functional Requirements
-- Clarity: Registrar functions are civic, not administrative.
-- Traceability: registration actions are logged.
+- Traceability: registrar actions must be auditable.
+- Integrity: registrar records are append-oriented and cannot be silently mutated.
+- Clarity: registrar operations are civic process, not ranking or promotion logic.
 
 ## Architectural Boundaries
-- Registrar does not override canon definitions or governance rules.
-- Web tier initiates registration through API only.
+- Registrar cannot bypass Fair Play, voting, or propagation constraints.
+- Registrar actions do not grant automatic visibility or authority.
+- Registrar must remain Scene-scoped to preserve structural locality.
 
 ## Data Models & Migrations
-### Prisma Models
-- RegistrarEntry (type, status, owner)
-- Artist/Band registration code
-- Promoter registration code
-- Project signal
+### Target Models (Planned)
+- `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, timestamps)
+- `RegistrarCode` (for capability completion handoff flows)
+- Project linkage to `Signal` rows for follow/blast/support
+- Sect motion artifact and committed artist-catalog references
 
 ### Migrations
-- TBD
+- None yet.
 
 ## API Design
-### Endpoints
+### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/registrar/artist` | required | Start artist registration |
-| POST | `/registrar/promoter` | required | Start promoter registration |
-| POST | `/registrar/project` | required | Register a project |
+| POST | `/registrar/artist` | required | Initiate artist capability registration |
+| POST | `/registrar/promoter` | required | Initiate promoter registration |
+| POST | `/registrar/project` | required | Register project for signal activation |
+| POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
 
 ## Web UI / Client Behavior
-- Registrar is accessible from the Feed tab.
-- Users can see registration status and instructions.
+- Registrar entrypoint should be reachable from The Plot civic surfaces.
+- Users should be able to inspect registration state and required next actions.
 
 ## Acceptance Tests / Test Plan
-- Artist registration creates a code and WebApp completion path.
-- Project registration creates a followable signal.
+- Registrar submissions are Scene-scoped and auditable.
+- Duplicate submissions are idempotent or explicitly versioned by state.
+- Registrar outcomes never alter Fair Play ordering directly.
 
 ## Future Work & Open Questions
-- Define Sect motion workflow and thresholds.
-- Define Registrar permissions for new civic actions.
+- Finalize schema for role registration code flows.
+- Define who can submit and approve Sect uprising motions.
+- Lock registrar moderation/appeal behavior for rejected motions.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
+- `docs/canon/Master Narrative Canon.md`

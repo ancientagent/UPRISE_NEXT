@@ -1,88 +1,99 @@
 # Identity, Roles, and Capabilities
 
 **ID:** `USER-IDENTITY`  
-**Status:** `draft`  
+**Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-13`
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
-Defines the account model and role/capability structure for UPRISE. A Listener account is the core identity; additional capabilities allow users to operate artist, band, and business entities without creating separate user accounts.
+Defines identity and permission boundaries for UPRISE. The canonical rule is one user identity with additive capabilities; role/capability expansion must not split civic identity from participation.
 
 ## User Roles & Use Cases
-- **Listener:** participates in a Home Scene, listens, engages, and votes (if GPS verified).
-- **Artist capability:** enables a Listener to register and manage one or more Artist/Band profiles.
-- **Business roles:** Promoter (V1), Merchant (V2), Venue (V2) for event and offer functions.
-- **Super Admin:** platform-level control and moderation.
-- **Visitor:** Listener in a non‑Home Scene with non‑civic permissions only.
+- **Listener (base user):** default account type; can participate in Home Scene and as Visitor elsewhere.
+- **Artist capability (additive):** enables contribution-side tooling without creating a second user account.
+- **Promoter capability (additive, V1 target):** enables event-side workflows.
+- **Business capabilities (V2+):** merchant/venue style economic surfaces.
+- **Super Admin:** platform operations and moderation authority.
+- **Visitor state:** listener in a non-Home Scene with non-civic permissions only.
 
 ## Functional Requirements
-- Every person has one Listener account (core identity).
-- A Listener may unlock **Artist capability** to register and manage Artist/Band profiles.
-- Artist/Band profiles are entities registered by a Listener; they are not separate user accounts.
-- A Listener may link to multiple Artist/Band profiles; multiple Listeners may link to the same Artist/Band profile.
-- Artist capability includes upload and catalog management in the WebApp.
-- Rotation slots:
-  - Standard Artist capability: **1 active slot**.
-  - Premium Artist capability (Play Pass): **3 active slots**.
-- **Locally Affiliated** status is determined by Home Scene selection. GPS verification gates **voting only**.
-- **Visitor** capabilities are limited to non‑civic actions (Listen, ADD, FOLLOW, BLAST, SKIP, REPORT).
+- Every person has one `User` identity.
+- Home Scene affiliation and GPS verification determine voting eligibility; GPS gates voting only.
+- Capability expansion is additive permissions attached to existing user identity.
+- Visitor state may listen and use non-civic actions; Visitor state cannot vote.
+- Role/capability language in docs and API must not imply separate listener-vs-artist account trees.
+
+### Implemented Now
+- Auth and identity:
+  - `POST /auth/register`
+  - `POST /auth/login`
+  - JWT-based authenticated access on protected routes.
+- User listing/profile reads:
+  - `GET /users`
+  - `GET /users/:id`
+- Schema fields currently present:
+  - `User.isArtist`
+  - `User.gpsVerified`
+  - home-scene fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`)
+
+### Deferred (Not Implemented Yet)
+- Artist/Band entity model + membership model.
+- Promoter registration flow and capability grants.
+- Business profile role surfaces.
+- Capability grant audit log and admin role-management APIs.
 
 ## Non-Functional Requirements
-- Clarity: role language must not imply separate user accounts.
-- Consistency: role terms match canon definitions.
-- Safety: voting remains limited to GPS‑verified Home Scene listeners.
+- Clarity: role semantics must remain unambiguous in docs and API contracts.
+- Security: auth routes hash passwords and enforce credential validation.
+- Consistency: capability behavior must align with canon terminology.
 
 ## Architectural Boundaries
-- Canon definitions come from `docs/canon/`.
-- Role descriptions must not introduce new structural terms outside canon.
-- Web tier must use API endpoints for role and capability changes.
+- Canon identity semantics are sourced from `docs/canon/`.
+- Web tier must consume role/capability changes through API only.
+- Capabilities cannot be used to bypass civic limits (for example, voting boundaries).
 
 ## Data Models & Migrations
 ### Prisma Models
-- User (Listener identity)
-- ArtistProfile (Artist/Band entity)
-- ArtistMembership (many‑to‑many between Users and ArtistProfiles)
-- BusinessProfile (Promoter/Merchant/Venue roles)
-- Role/Capability flags (per user)
-- HomeSceneId, GPSVerified status
+- `User`
+  - Identity and auth fields (`email`, `username`, `displayName`, `password`)
+  - Capability/verification fields (`isArtist`, `gpsVerified`, `isVerified`)
+  - Home-scene affinity fields
 
 ### Migrations
-- TBD (as models are finalized)
+- `20260216004000_add_user_home_scene_and_track_engagement` (home-scene affinity and GPS-related user fields)
 
 ## API Design
 ### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/auth/register` | none | Create Listener account |
-| POST | `/auth/login` | none | Login |
-| POST | `/artists` | required | Create Artist/Band profile |
-| GET  | `/artists/:id` | required | Fetch Artist/Band profile |
-| POST | `/artists/:id/members` | required | Link Listener to Artist/Band |
-| POST | `/businesses` | required | Create Business profile |
-| GET  | `/businesses/:id` | required | Fetch Business profile |
+| POST | `/auth/register` | none | Create base user identity |
+| POST | `/auth/login` | none | Authenticate and return tokens |
+| GET | `/users` | required | List users (paginated) |
+| GET | `/users/:id` | required | Fetch a user profile |
 
 ### Request/Response
-- Schemas defined in `packages/types` (TBD)
-- Error codes: 401/403 for auth and permission violations
+- `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.
+- Protected routes require JWT bearer token.
+- Error behavior:
+  - `401` for invalid credentials / missing auth
+  - `403` for forbidden actions when role/civic constraints apply (as new capability routes are added)
 
 ## Web UI / Client Behavior
-- Listener onboarding is mobile‑first.
-- Artist/Band management is WebApp‑first.
-- Capability upgrade surfaces clearly separate **User identity** from **Artist/Band entity** management.
-- Role‑specific dashboards show only permitted actions.
+- Onboarding establishes Home Scene and then optional GPS verification for voting rights.
+- Capability management UI beyond base listener flows is deferred.
 
 ## Acceptance Tests / Test Plan
-- Verify a Listener can create and manage Artist/Band profiles.
-- Verify multiple users can be linked to one Artist/Band profile.
-- Verify voting is blocked without GPS verification.
-- Verify Visitor permissions exclude voting.
+- Register/login succeeds with valid payload and hashed-password compare.
+- Invalid login credentials return unauthorized.
+- Protected `/users` routes reject unauthenticated requests.
+- Home Scene + GPS flow controls voting eligibility without disabling non-civic participation.
 
 ## Future Work & Open Questions
-- Formalize business profile permissions and tiers (Promoter/Merchant/Venue).
-- Finalize role/capability storage in Prisma schema.
-- Define audit logs for role changes.
+- Define Artist/Band capability persistence and membership graph.
+- Define Promoter capability registration and code exchange flow.
+- Define business capability model for Promotions/Print Shop workflows.
 
 ## References
 - `docs/canon/Master Identity and Philosohpy Canon.md`
+- `docs/canon/Master Narrative Canon.md`
 - `docs/canon/Master Glossary Canon.md`
-- `docs/canon/Legacy Narrative plus Context .md`

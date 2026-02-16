@@ -1,9 +1,9 @@
 # Print Shop and Promotions
 
 **ID:** `ECON-PRINTSHOP`
-**Status:** `draft`
+**Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-13`
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
 Defines the Promotions surface and the Print Shop issuance model. The Print Shop is infrastructure for limited‑run digital artifacts and Proof‑of‑Support, not a marketplace.
@@ -14,15 +14,24 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Listeners carry or redeem Offers explicitly.
 
 ## Functional Requirements
-- Promotions tab displays local business Offers and off‑platform promotions.
-- Print Shop sells **Runs** (finite issuance allocations).
-- Print Shop issues **digital** artifacts only; no physical inventory or fulfillment.
-- Minting is internal, non‑blockchain, and zero marginal cost.
-- Promotional Packs support paid boost-style distribution (similar to Facebook Boost) to selected
-  Scenes/communities inside Promotions surfaces only.
-- Proof‑of‑Support mints artifacts and may award Activity Points.
-- Offers propagate only when explicitly carried or redeemed.
-- Print Shop artifacts do not affect Fair Play, visibility, or governance.
+- Promotions displays local offers and paid placements within explicit scope.
+- Print Shop sells **Runs** (issuance capacity), not retail inventory.
+- Minting is internal database issuance (non-blockchain).
+- Print Shop cannot include warehousing/shipping/fulfillment logic.
+- Promotional Packs provide boost-style ad reach in Promotions surfaces only.
+- Proof-of-Support may mint artifacts and award Activity Points.
+- Offers propagate only by explicit user carry/redeem action.
+- Print Shop and promotions must never alter Fair Play, propagation thresholds, or civic authority.
+
+### Implemented Now
+- No Print Shop API/domain model yet.
+- No Promotions API/domain model yet.
+
+### Deferred (Not Implemented Yet)
+- Run purchase and issuance lifecycle.
+- Offer creation/carry/redeem workflows.
+- Proof-of-Support verification and artifact minting.
+- Promotional pack targeting and billing integration.
 
 ## Non-Functional Requirements
 - No marketplace behavior, resale, or bidding.
@@ -30,17 +39,31 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - No behavioral recommendation or ranking changes from paid Promotions.
 
 ## Architectural Boundaries
-- Print Shop is an issuance surface inside the Events surface.
-- Artifacts are signals, not commodities.
+- Print Shop is an issuance infrastructure surface linked to Events/Promotions workflows.
+- Artifacts are participation records/signals, not commodities.
+- Paid distribution is explicit-scope ad infrastructure, not algorithmic recommendation.
 
 ## Data Models & Migrations
-- Run
-- Artifact
-- Offer
-- ProofOfSupport
+### Planned Models
+- `Run`
+- `Artifact` (or generalized materialized signal record)
+- `Offer`
+- `ProofOfSupport`
+- optional redemption/carry ledger model
+
+### Migrations
+- None yet.
 
 ## API Design
-- TBD
+### Planned Endpoints (Not Implemented)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/print-shop/runs` | required | Purchase/create issuance run |
+| POST | `/print-shop/runs/:id/mint` | required | Mint artifact within run capacity |
+| POST | `/offers` | required | Create offer signal |
+| POST | `/offers/:id/carry` | required | Carry offer into user context |
+| POST | `/offers/:id/redeem` | required | Redeem offer |
+| POST | `/proof-support` | required | Submit/verify support proof |
 
 ## Web UI / Client Behavior
 - Promotions surface lists Offers.
@@ -51,6 +74,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 ## Acceptance Tests / Test Plan
 - Runs are finite and non‑replenishable.
 - Offers do not appear without explicit user action.
+- Paid promotions never alter Fair Play ordering or tier progression.
 
 ## References
 - `docs/canon/Master Glossary Canon.md`

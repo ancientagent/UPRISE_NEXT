@@ -1,9 +1,9 @@
 # Terminology and Taxonomy
 
 **ID:** `CORE-TERMS`  
-**Status:** `draft`  
+**Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-13`
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
 This spec defines the canonical vocabulary for UPRISE. It prevents term drift and establishes the official meaning of structural terms used in specs, UI labels, and implementation notes.

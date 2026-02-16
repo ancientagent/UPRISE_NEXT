@@ -1,87 +1,115 @@
 # RaDIYo and Fair Play
 
-**ID:** `BROADCAST-FP`
-**Status:** `draft`
-**Owner:** `platform`
-**Last Updated:** `2026-02-13`
+**ID:** `BROADCAST-FP`  
+**Status:** `active`  
+**Owner:** `platform`  
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
-Defines the RaDIYo broadcast network and the Fair Play rotation system that governs community broadcasts without personalization or algorithmic recommendation.
+Defines the RaDIYo broadcast network and Fair Play constraints. This spec distinguishes canon-locked behavior from currently implemented API components.
 
 ## User Roles & Use Cases
-- Listeners tune into City, State, and National broadcasts.
-- GPS-verified listeners vote during playback.
-- Artists upload songs to enter Fair Play rotation.
+- Listeners tune into City/State/National broadcast contexts.
+- GPS-verified Home Scene listeners vote during playback (when voting endpoints are implemented).
+- Artists upload tracks to enter Fair Play rotation.
 
-## Functional Requirements
+## Functional Requirements (Canon)
 - RaDIYo is a broadcast receiver, not a playlist.
-- Tier toggle: Citywide, Statewide, National.
-- Swiping exits Fair Play listening and enters Discover traversal (visitor mode) in another Scene; listener continues in that Scene with Visitor privileges.
-- Fair Play provides equal initial exposure for all new songs.
-- New releases play on the hour for approximately one week (initial exposure window).
-- Engagement score is calculated after the initial exposure window.
-- Higher engagement increases rotation frequency.
-- Engagement is additive-only: skips are non‑negative and do not demote.
-- Upvotes determine tier progression only.
-- Voting is available only to GPS‑verified Home Scene listeners and occurs during playback.
-- National tier is non-interactive and has no voting.
-- Personal Play (Collections) is separate from Fair Play and does not affect rotation.
+- Tier model: Citywide, Statewide, National.
+- Swiping exits Fair Play listening and enters discovery traversal in visitor mode.
+- Fair Play provides equal initial exposure for new songs.
+- Engagement is additive-only and never demotes via negative scoring.
+- Upvotes affect propagation/tier progression only.
+- Voting is available only to GPS-verified Home Scene listeners.
+- National tier is non-interactive (no voting).
+- Personal collections are separate from Fair Play.
 
-### Engagement Score (Canon)
-- Engagement score uses playback weight and contextual modifiers.
-- Playback weight: full completion = 3 points; partial listen (majority played) = 2; partial listen (minority played, ≥ 1/3 duration) = 1; skip/early interruption = 0.
-- Contextual modifiers (once per user per song per tier): ADD +0.5 points; BLAST +0.25 points.
-- Modifiers affect rotation frequency only and never tier progression.
+### Engagement Score Inputs (Canon)
+- Playback weight:
+  - full completion = 3
+  - majority listen (>1/2) = 2
+  - partial listen (>=1/3) = 1
+  - skip/early interruption = 0
+- Contextual modifiers (bounded, additive):
+  - ADD +0.5
+  - BLAST +0.25
+- Modifiers affect rotation frequency only, not tier progression.
+
+## Implemented Behavior (Current)
+- `POST /tracks/:id/engage` records playback engagement events.
+- Engagement events are deduplicated by `(userId, trackId, sessionId)`.
+- Engagement rows store normalized score (`3|2|1|0`) derived from engagement type.
+
+## Deferred Behavior (Not Implemented Yet)
+- Broadcast rotation engine endpoint/service (`/broadcast/:sceneId`) is not implemented.
+- Voting endpoint and propagation logic are not implemented.
+- Tier progression thresholds and release-window timing remain founder-lock items.
+- Rotation weighting job/location (API vs worker) remains undecided.
 
 ## Non-Functional Requirements
-- No personalization or algorithmic recommendations.
-- No pay-for-placement or visibility advantage within Fair Play, governance, or rotation systems.
-- Deterministic rotation logic.
+- No personalization or algorithmic recommendation.
+- No pay-for-placement inside Fair Play/governance/rotation systems.
+- Deterministic and auditable engagement inputs.
 
 ## Architectural Boundaries
-- Canon constraints prohibit taste prediction and algorithmic pushing.
 - Fair Play never assigns legitimacy or governance power.
+- Engagement capture is one input layer only; it is not equivalent to promotion authority.
+- Canon constraints prohibit taste prediction and algorithmic push.
 
 ## Data Models & Migrations
 ### Prisma Models
-- Song
-- RotationEntry
-- EngagementMetrics
-- Vote
+- `Track`
+- `TrackEngagement`
+  - `type`: `full | majority | partial | skip`
+  - `score`: normalized additive score
+  - `sessionId`: dedupe guard
+  - Unique constraint: `(userId, trackId, sessionId)`
+  - Index: `(trackId, createdAt)`
 
 ### Migrations
-- TBD
+- `20260216004000_add_user_home_scene_and_track_engagement`
 
 ## API Design
-### Endpoints
+### Endpoints (Implemented)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/tracks/:id/engage` | required | Record playback engagement event |
+
+### Endpoints (Planned)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/broadcast/:sceneId` | required | Stream broadcast rotation |
-| POST | `/votes` | required | Cast vote during playback |
-| GET | `/fair-play/metrics` | required | Retrieve engagement metrics |
-| POST | `/tracks/:id/engage` | required | Record playback engagement (Canon 3/2/1/0) |
+| POST | `/votes` | required | Cast upvote during playback |
+| GET | `/fair-play/metrics` | required | Retrieve engagement/rotation metrics |
 
-### Engagement Capture (Implemented)
-`POST /tracks/:id/engage` records listener engagement during playback:
-- **Payload:** `{ sessionId: string, type: "full" | "majority" | "partial" | "skip" }`
-- **Scoring:** full=3, majority=2, partial=1, skip=0 (per Canon §4.1.1)
-- **Deduplication:** Unique constraint on (userId, trackId, sessionId) prevents spam
-- **Scope:** This endpoint captures engagement events only; rotation calculation and tier propagation are deferred
+### `POST /tracks/:id/engage` Contract
+- Request: `{ sessionId: string, type: "full" | "majority" | "partial" | "skip" }`
+- Behavior:
+  - validates track existence
+  - maps type to score (`3|2|1|0`)
+  - records idempotent-per-session engagement row
+- Scope:
+  - captures engagement events only
+  - does not perform rotation recalculation or propagation
 
 ## Web UI / Client Behavior
-- RaDIYo player shows current Scene and tier.
-- Action wheel supports Add, Blast, Upvote, Skip, Report.
-- Player never exposes recommendation prompts.
+- Player semantics remain broadcast-first (no direct song picking in Fair Play).
+- Upvote controls must remain disabled unless GPS-verified and in Home Scene.
+- Collection actions remain decoupled from voting/propagation.
 
 ## Acceptance Tests / Test Plan
-- New songs receive equal initial exposure.
-- Voting blocked without GPS verification.
-- National tier is listen-only.
+- `POST /tracks/:id/engage`:
+  - full/majority/partial/skip map to `3/2/1/0`
+  - duplicate session rows are blocked by unique constraint
+- Validate no tier progression side effects from engagement capture alone.
+- Validate no negative score paths exist.
 
 ## Future Work & Open Questions
-- Define rotation re-evaluation cadence. See `docs/specs/DECISIONS_REQUIRED.md`.
+- Lock release-cycle timing and reevaluation cadence.
+- Implement vote and propagation services after threshold decisions are finalized.
+- Define moderation effects on rotation without violating canon constraints.
 
 ## References
-- `docs/canon/Legacy Narrative plus Context .md`
 - `docs/canon/Master Narrative Canon.md`
 - `docs/canon/Master Glossary Canon.md`
+- `docs/specs/DECISIONS_REQUIRED.md`

@@ -1,9 +1,9 @@
 # Scenes, Uprises, and Sects
 
 **ID:** `COMM-SCENES`  
-**Status:** `draft`  
+**Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-13`
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -15,18 +15,28 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Visitors traverse other Scenes without civic voting rights.
 
 ## Functional Requirements
-- A **Scene** is a place‑bound container. Scenes exist at City, State, and National levels.
+- A **Scene** is a place-bound container. Scenes exist at City, State, and National levels.
 - A **Community** is the people operating within a Scene.
-- An **Uprise** is a dual‑state object: the broadcast station/infrastructure operated by a Community within a Scene **and** the Signal of that community broadcast carried by RaDIYo.
+- An **Uprise** is a dual-state object: the broadcast station/infrastructure operated by a Community within a Scene and the Signal of that community broadcast carried by RaDIYo.
 - A **Home Scene** is the user’s local music Scene of choice and civic anchor.
-- **Parent Scenes** are pre‑loaded, launch‑ready music communities that accept users immediately.
 - **Sects** are the sum of listeners and artists sharing the same taste tag inside a Home Scene.
 - Sects exist as statistical reality inside a Home Scene before they become a broadcast.
-- A Sect becomes an Uprise only after meeting the support threshold and having enough committed artist catalog to sustain rotation (**45 minutes of total playtime** from artists who sign the motion).
+- A Sect becomes an Uprise only after meeting the support threshold and having enough committed artist catalog to sustain rotation (45 minutes of total playtime from artists who sign the motion).
 - When a Sect meets the threshold, a motion is entered in the Registrar to establish the Sect Uprise.
-- Artists must commit to the Sect Uprise for it to activate. If support is insufficient, the Sect remains a tag‑based subgroup.
-- If a user enters a subsect name during onboarding, the system routes them to the Parent Scene and applies the tag.
+- Artists must commit to the Sect Uprise for it to activate. If support is insufficient, the Sect remains a tag-based subgroup.
 - Citywide is the only tier with civic infrastructure. Statewide and National are aggregate broadcasts only.
+
+### Implemented Behavior (Current)
+- Home Scene selection currently resolves exact `{city, state, musicCommunity}` in `Community` (tier `city`).
+- If the city-tier community does not exist, the system creates it as inactive (`isActive=false`) and marks the user as pioneer.
+- Optional `tasteTag` creates/associates `SectTag` + `UserTag`; this is tag association only.
+- User is auto-joined to the resolved Scene via `CommunityMember`.
+
+### Deferred Behavior (Not Implemented Yet)
+- Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
+- Parent-scene routing and taxonomy inference for free-text sect names during onboarding.
+- Registrar motion objects, voting workflow, and automatic Sect-to-Uprise activation.
+- City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
 ## Non-Functional Requirements
 - Consistency: Scene, Community, and Uprise are never treated as interchangeable.
@@ -35,45 +45,76 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 
 ## Architectural Boundaries
 - Canon definitions come from `docs/canon/`.
-- “Genre/subgenre/microgenre” may appear only as optional **taste tags** and not as structural selectors.
+- “Genre/subgenre/microgenre” may appear only as optional taste tags and not as structural selectors.
 - Home Scene selection uses **City**, **State**, **Music Community** labels.
 
 ## Data Models & Migrations
 ### Prisma Models
-- Model(s) added/changed: TBD
-- Relationships: TBD
-- Indexes / constraints: TBD
+- `Community`
+  - Structural fields: `city`, `state`, `musicCommunity`, `tier`, `isActive`
+  - Geofence fields: `geofence` (PostGIS geography), `radius`
+- `CommunityMember`
+  - Scene membership linkage (`userId`, `communityId`, `role`)
+  - Unique membership constraint on `(userId, communityId)`
+- `SectTag`
+  - Tag within parent community (`name`, `status`, `parentCommunityId`)
+  - Unique constraint on `(name, parentCommunityId)`
+- `UserTag`
+  - User<->SectTag association
+  - Unique constraint on `(userId, sectTagId)`
+- `User`
+  - Home-scene affinity fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`, `gpsVerified`)
 
 ### Migrations
-- Migration name(s): TBD
-- Backfill strategy (if applicable): TBD
-- Rollback considerations: TBD
+- `20260213154237_add_scene_and_sect_tags` (scene metadata + sect/user tag tables)
+- `20260216004000_add_user_home_scene_and_track_engagement` (user home-scene/gps fields)
+- Backfill strategy: none required (nullable adds + new tables)
+- Rollback: drop added columns/tables only if no onboarding/tag data is needed
 
 ## API Design
 ### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| TBD    | TBD  | TBD  | Scene and Sect resolution endpoints |
+| POST | `/onboarding/home-scene` | required | Resolve/create Home Scene and auto-join membership |
+| POST | `/onboarding/gps-verify` | required | Verify voting eligibility against Home Scene geofence |
+| GET | `/communities` | required | List communities |
+| GET | `/communities/:id` | required | Community details |
+| POST | `/communities` | required | Create community (supports geofence fields) |
+| GET | `/communities/nearby` | required | Nearby scene lookup by lat/lng |
+| POST | `/communities/:id/verify-location` | required | Verify user location against a community geofence |
 
 ### Request/Response
-- Request schema: TBD
-- Response schema: TBD
-- Error codes: TBD
+- `POST /onboarding/home-scene` request:
+  - `city`, `state`, `musicCommunity`, optional `tasteTag`
+- `POST /onboarding/home-scene` response:
+  - user home-scene fields + `sceneId`, `appliedTags[]`, `votingEligible`, `pioneer`
+- `POST /onboarding/gps-verify` response:
+  - `gpsVerified`, `votingEligible`, `distance`, optional reason:
+    - `NO_HOME_SCENE`
+    - `SCENE_NOT_FOUND`
+    - `SCENE_NO_GEOFENCE`
+    - `OUTSIDE_GEOFENCE`
 
 ## Web UI / Client Behavior
 - Onboarding prompts for **City**, **State**, **Music Community**.
-- If a subsect is entered, route to the Parent Scene and apply the taste tag.
+- Optional taste tag is captured as association metadata and does not create broadcast authority by itself.
 - Plot surfaces show Scene membership and Sect tags without implying algorithmic ranking.
 
 ## Acceptance Tests / Test Plan
 - Doc review: Scene, Community, and Uprise definitions align to canon.
 - UI copy review: no “genre selection” wording.
-- Registrar flow review: Sect Uprise activation requires artist commitment.
+- API behavior:
+  - Unknown city/community creates inactive pioneer Scene and auto-joins user.
+  - Existing city/community resolves without duplicate membership.
+  - GPS verify changes voting eligibility only.
+- Tag behavior:
+  - `tasteTag` creates/links `SectTag` and `UserTag` records idempotently.
 
 ## Future Work & Open Questions
-- Define formal thresholds for Sect Uprise activation (catalog minutes, artist count). See `docs/specs/DECISIONS_REQUIRED.md`.
-- Define Registrar motion schema and vote mechanics.
+- Define formal Sect Uprise activation mechanics beyond the 45-minute artist playtime threshold (motion schema + approvals).
+- Add explicit Uprise model and Scene<->Uprise lifecycle constraints.
+- Lock propagation thresholds and policy in `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
-- `docs/canon/Legacy Narrative plus Context .md`
 - `docs/canon/Master Narrative Canon.md`
+- `docs/canon/Master Glossary Canon.md`
