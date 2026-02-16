@@ -18,8 +18,10 @@ import {
   CreateCommunityWithGeoSchema,
   FindNearbyCommunitiesSchema,
   VerifyLocationSchema,
+  GetCommunityFeedSchema,
   CreateCommunityWithGeoDto,
   VerifyLocationDto,
+  GetCommunityFeedDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodError } from 'zod';
@@ -41,6 +43,45 @@ export class CommunitiesController {
       data: result.communities,
       meta: { page: result.page, limit: result.limit, total: result.total },
     };
+  }
+
+  /**
+   * GET /api/communities/:id/feed
+   * Scene-scoped S.E.E.D feed (explicit actions only)
+   */
+  @Get(':id/feed')
+  async getFeed(
+    @Param('id') id: string,
+    @Query() rawQuery: any,
+  ): Promise<{ success: true; data: any[]; meta: { limit: number; nextCursor: string | null } }> {
+    try {
+      const query: GetCommunityFeedDto = GetCommunityFeedSchema.parse({
+        limit: rawQuery.limit,
+        before: rawQuery.before,
+      });
+
+      const result = await this.communitiesService.getFeed(id, query);
+      return {
+        success: true,
+        data: result.items,
+        meta: {
+          limit: result.limit,
+          nextCursor: result.nextCursor,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
   }
 
   /**

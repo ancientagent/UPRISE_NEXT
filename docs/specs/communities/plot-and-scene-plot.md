@@ -45,7 +45,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Copy and framing align with canon (“anchor this dashboard”).
 
 ### Deferred Behavior (Not Implemented Yet)
-- Server-driven S.E.E.D feed data endpoint and rendering.
+- Server-driven S.E.E.D feed rendering in web.
 - Registrar module integration into Plot UI.
 - Scene statistics/map data service integration (`COMM-SCENEMAP`).
 - Social tab message boards/listening rooms (V2).
@@ -75,11 +75,11 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 ### Current
 - No dedicated `/plot` API endpoint is implemented yet.
 - Plot currently reads local onboarding state in web store.
+- `GET /communities/:id/feed` is implemented for scene-scoped S.E.E.D feed projection.
 
 ### Required for Full Surface
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | `/communities/:id/feed` | required | Scene-scoped S.E.E.D activity feed |
 | GET | `/communities/:id/events` | required | Scene event listing for Plot events surface |
 | GET | `/communities/:id/promotions` | required | Scene promotions/offers surface |
 | GET | `/communities/:id/statistics` | required | Scene metrics and map aggregates |
@@ -97,7 +97,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Promotions and Events remain represented as separate surfaces.
 
 ## Future Work & Open Questions
-- Implement `/communities/:id/feed` and wire S.E.E.D surface to API.
+- Wire S.E.E.D surface to `/communities/:id/feed` API.
 - Add registrar entry component and motion lifecycle surfaces.
 - Implement scene map/statistics payload contract in `docs/specs/communities/scene-map-and-metrics.md`.
 - Execute statistics-page design checklist in `docs/specs/communities/statistics-page-design-task-list.md`.
