@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Track engagement recording API (`POST /tracks/:id/engage`) with Canon-aligned 3/2/1/0 scoring.
+- TrackEngagement model with spam guard (unique on userId+trackId+sessionId).
+- Unit tests for engagement scoring and service methods.
 - System specs for web-tier contract guard, documentation framework, agent handoffs, and CI/CD pipeline.
 - Onboarding flow UI in `apps/web` with Home Scene selection and GPS voting disclaimer.
 - Plot shell in `apps/web` with core tabs (Feed, Events, Promotions, Statistics, Social).
@@ -37,6 +40,8 @@
 - Canon safety guardrails added: new `canon:lint` script, `docs:lint` integration, and explicit no-bulk-import-overwrite protocol in agent/runbook/docs index guidance.
 - Branch-protection scaffolding added: `.github/CODEOWNERS`, PR template, `Canon Guard` workflow, and runbook instructions for required status checks.
 - `Canon Guard` workflow trigger widened to all PRs so it can be enforced as a required status check.
+- Secrets workflow custom-pattern scan hardened to avoid false positives from workflow regex literals, test fixtures, and archived legacy `.env` snapshots under `docs/legacy/`.
+- Secrets workflow temporarily relaxed for early iteration: JWT/password-pattern custom check removed from blocking logic; PR comment posting is non-blocking.
 
 ### Fixed
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.

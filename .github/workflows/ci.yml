@@ -261,19 +261,22 @@ jobs:
             -p 5432:5432 \
             postgis/postgis:15-3.3
           
-          # Wait for PostgreSQL to be ready
-          timeout 60 bash -c 'until docker exec postgres pg_isready -U uprise; do sleep 1; done'
+          # Wait for PostgreSQL to be ready (TCP inside container + host port).
+          # NOTE: pg_isready without -h checks the Unix socket; Prisma needs TCP.
+          timeout 60 bash -c 'until docker exec postgres pg_isready -U uprise -h 127.0.0.1 -p 5432; do sleep 1; done'
+          timeout 60 bash -c 'until (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; do sleep 1; done'
 
       - name: Run Prisma migrations (for API tests)
         if: matrix.app == 'api'
         run: |
           cd apps/api
-          DATABASE_URL="postgresql://uprise:uprise@localhost:5432/uprise_test" pnpm prisma migrate deploy
+          pnpm prisma generate
+          DATABASE_URL="postgresql://uprise:uprise@127.0.0.1:5432/uprise_test" pnpm prisma migrate deploy
 
       - name: Run tests for ${{ matrix.app }}
         run: pnpm --filter ${{ matrix.app }} test
         env:
-          DATABASE_URL: ${{ matrix.app == 'api' && 'postgresql://uprise:uprise@localhost:5432/uprise_test' || '' }}
+          DATABASE_URL: ${{ matrix.app == 'api' && 'postgresql://uprise:uprise@127.0.0.1:5432/uprise_test' || '' }}
 
       - name: Upload test coverage
         if: always()
@@ -331,7 +334,8 @@ jobs:
             ${{ runner.os }}-turbo-build-${{ matrix.app }}-
 
       - name: Build ${{ matrix.app }}
-        run: pnpm --filter ${{ matrix.app }} build
+        # Include workspace dependencies (e.g., @uprise/types) so builds don't rely on prebuilt dist artifacts.
+        run: pnpm --filter ${{ matrix.app }}... build
 
       - name: Upload build artifacts
         if: matrix.app == 'web'
@@ -410,6 +414,7 @@ jobs:
 
       - name: Post status to PR
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |

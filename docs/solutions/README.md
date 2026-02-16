@@ -22,3 +22,7 @@ If an issue happens **twice**, it gets a Solutions doc.
 
 Start from: `docs/solutions/TEMPLATE.md`
 
+## Agent Qualification
+
+For new model onboarding and stress-testing, use:
+- `docs/solutions/MODEL_ONBOARDING_EVAL.md`
