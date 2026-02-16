@@ -334,7 +334,8 @@ jobs:
             ${{ runner.os }}-turbo-build-${{ matrix.app }}-
 
       - name: Build ${{ matrix.app }}
-        run: pnpm --filter ${{ matrix.app }} build
+        # Include workspace dependencies (e.g., @uprise/types) so builds don't rely on prebuilt dist artifacts.
+        run: pnpm --filter ${{ matrix.app }}... build
 
       - name: Upload build artifacts
         if: matrix.app == 'web'
