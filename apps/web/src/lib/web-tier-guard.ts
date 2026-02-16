@@ -96,7 +96,7 @@ if (isWebTier()) {
     const Module = originalRequire('module');
     const originalLoad = Module._load;
 
-    Module._load = function (request: string, parent: any) {
+    Module._load = function (request: string, _parent: any) {
       if (request.includes('@prisma/client')) {
         throw new WebTierViolationError(
           'Attempted to import @prisma/client in web tier. Database access is forbidden.'
@@ -107,7 +107,7 @@ if (isWebTier()) {
   }
 }
 
-export default {
+const webTierGuard = {
   isWebTier,
   assertNotWebTier,
   guardPrismaClient,
@@ -115,3 +115,5 @@ export default {
   WebTierViolationError,
   ApiOnly,
 };
+
+export default webTierGuard;

@@ -26,3 +26,8 @@ Start from: `docs/solutions/TEMPLATE.md`
 
 For new model onboarding and stress-testing, use:
 - `docs/solutions/MODEL_ONBOARDING_EVAL.md`
+
+## Web Build/Typecheck Incidents
+
+- `docs/solutions/WEB_TS6053_NEXT_TYPES.md` — `.next/types` TS6053 failures
+- `docs/solutions/NEXT_FONT_GOOGLE_FONTS_BUILD_FAIL.md` — `next/font` Google Fonts build failures

@@ -19,7 +19,9 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "typecheck": "turbo run typecheck",
     "infra-policy-check": "tsx scripts/infra-policy-check.ts",
-    "infra:check:web": "tsx scripts/infra-policy-check.ts"
+    "infra:check:web": "tsx scripts/infra-policy-check.ts",
+    "verify": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run typecheck",
+    "verify:full": "pnpm run verify && pnpm run test && pnpm run build"
   },
   "devDependencies": {
     "@turbo/gen": "^2.0.0",

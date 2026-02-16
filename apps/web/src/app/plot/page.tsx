@@ -19,7 +19,7 @@ export default function PlotPage() {
             {homeScene ? `${homeScene.city}, ${homeScene.state}` : 'Your Home Scene'}
           </h1>
           <p className="mt-2 text-sm text-black/60">
-            {homeScene?.musicCommunity ?? 'Select a Home Scene to personalize this view.'}
+            {homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
           </p>
           {homeScene?.tasteTag && (
             <p className="mt-1 text-sm text-black/50">Taste tag: {homeScene.tasteTag}</p>

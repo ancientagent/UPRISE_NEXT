@@ -14,8 +14,11 @@ interface OnboardingState {
   homeScene: HomeSceneSelection | null;
   gpsStatus: GpsStatus;
   gpsCoords?: { latitude: number; longitude: number };
+  votingEligible: boolean;
+  gpsReason: string | null;
   setHomeScene: (homeScene: HomeSceneSelection) => void;
   setGpsStatus: (status: GpsStatus, coords?: { latitude: number; longitude: number }) => void;
+  setVotingEligibility: (eligible: boolean, reason?: string | null) => void;
   reset: () => void;
 }
 
@@ -25,9 +28,19 @@ export const useOnboardingStore = create<OnboardingState>()(
       homeScene: null,
       gpsStatus: 'unknown',
       gpsCoords: undefined,
+      votingEligible: false,
+      gpsReason: null,
       setHomeScene: (homeScene) => set({ homeScene }),
       setGpsStatus: (status, coords) => set({ gpsStatus: status, gpsCoords: coords }),
-      reset: () => set({ homeScene: null, gpsStatus: 'unknown', gpsCoords: undefined }),
+      setVotingEligibility: (eligible, reason = null) => set({ votingEligible: eligible, gpsReason: reason }),
+      reset: () =>
+        set({
+          homeScene: null,
+          gpsStatus: 'unknown',
+          gpsCoords: undefined,
+          votingEligible: false,
+          gpsReason: null,
+        }),
     }),
     { name: 'onboarding-storage' }
   )

@@ -13,7 +13,8 @@ const steps = ['Home Scene', 'GPS Verification', 'Review'];
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { homeScene, gpsStatus, setHomeScene, setGpsStatus, reset } = useOnboardingStore();
+  const { homeScene, votingEligible, gpsReason, setHomeScene, setGpsStatus, setVotingEligibility, reset } =
+    useOnboardingStore();
   const { token } = useAuthStore();
   const [step, setStep] = useState(0);
   const [city, setCity] = useState(homeScene?.city ?? '');
@@ -39,6 +40,7 @@ export default function OnboardingPage() {
       tasteTag: tasteTag.trim() || undefined,
     };
     setHomeScene(selection);
+    setVotingEligibility(false, null);
     if (token) {
       try {
         await api.post('/onboarding/home-scene', selection, { token });
@@ -49,32 +51,47 @@ export default function OnboardingPage() {
     setStep(1);
   };
 
-  const handleGpsRequest = () => {
+  const handleGpsRequest = async () => {
     setGpsError(null);
     if (!navigator.geolocation) {
       setGpsStatus('denied');
+      setVotingEligibility(false, 'GPS is not available on this device.');
       setGpsError('GPS is not available on this device. You can still continue without voting access.');
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         setGpsStatus('granted', { latitude: pos.coords.latitude, longitude: pos.coords.longitude });
         if (token) {
-          api
-            .post(
+          try {
+            const response = await api.post<{
+              id: string;
+              gpsVerified: boolean;
+              votingEligible: boolean;
+              reason?: string | null;
+            }>(
               '/onboarding/gps-verify',
-              {
-                latitude: pos.coords.latitude,
-                longitude: pos.coords.longitude,
-              },
+              { latitude: pos.coords.latitude, longitude: pos.coords.longitude },
               { token }
-            )
-            .catch(() => undefined);
+            );
+            if (response.data?.votingEligible) {
+              setVotingEligibility(true, null);
+            } else {
+              setVotingEligibility(false, response.data?.reason ?? 'GPS did not verify for voting.');
+              setGpsError('GPS did not verify for voting. You can still continue without voting access.');
+            }
+          } catch {
+            setVotingEligibility(false, 'GPS verification request failed.');
+            setGpsError('GPS verification could not be completed. You can still continue without voting access.');
+          }
+        } else {
+          setVotingEligibility(false, 'Sign in to verify voting access.');
         }
         setStep(2);
       },
       () => {
         setGpsStatus('denied');
+        setVotingEligibility(false, 'GPS permission denied.');
         setGpsError('GPS verification was denied. You can still continue without voting access.');
       }
     );
@@ -82,6 +99,7 @@ export default function OnboardingPage() {
 
   const handleSkipGps = () => {
     setGpsStatus('denied');
+    setVotingEligibility(false, 'Skipped GPS verification.');
     setStep(2);
   };
 
@@ -284,11 +302,16 @@ export default function OnboardingPage() {
               <div className="rounded-2xl border border-black/10 bg-white p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-black/50">Voting Eligibility</p>
                 <p className="mt-2 text-base text-black">
-                  {gpsStatus === 'granted' ? 'Enabled (GPS verified)' : 'Not enabled yet'}
+                  {votingEligible ? 'Enabled (GPS verified)' : 'Not enabled'}
                 </p>
                 <p className="mt-1 text-sm text-black/60">
                   Voting is the only action gated by GPS verification.
                 </p>
+                {!votingEligible && (gpsError || gpsReason) && (
+                  <p className="mt-2 text-sm text-black/50">
+                    {gpsError ?? gpsReason}
+                  </p>
+                )}
               </div>
             </div>
 
