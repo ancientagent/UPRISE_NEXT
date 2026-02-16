@@ -19,7 +19,6 @@ import {
   FindNearbyCommunitiesSchema,
   VerifyLocationSchema,
   CreateCommunityWithGeoDto,
-  FindNearbyCommunitiesDto,
   VerifyLocationDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';

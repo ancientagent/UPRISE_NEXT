@@ -1,7 +1,6 @@
 
 import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
 import {
   CreateCommunityWithGeoDto,
   FindNearbyCommunitiesDto,
@@ -97,7 +96,7 @@ export class CommunitiesService {
 
       // Use PostGIS ST_DWithin for spatial query
       // ST_Distance returns distance in meters for geography type
-      const communities = await this.prisma.$queryRaw<any[]>`
+      const communities = await this.prisma.$queryRaw<CommunityWithDistance[]>`
         SELECT 
           id,
           name,
@@ -122,9 +121,9 @@ export class CommunitiesService {
         LIMIT ${limit}
       `;
 
-      return communities.map(c => ({
+      return communities.map((c) => ({
         ...c,
-        distance: Math.round(c.distance), // Round to nearest meter
+        distance: Math.round(Number(c.distance)), // Round to nearest meter (driver may return string)
       }));
     } catch (error) {
       // Check if it's a PostGIS error

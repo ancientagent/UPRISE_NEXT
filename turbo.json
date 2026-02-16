@@ -33,7 +33,7 @@
       "dependsOn": ["^lint"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"],
+      "dependsOn": ["^build", "^typecheck"],
       "outputs": ["*.tsbuildinfo"]
     },
     "clean": {

@@ -26,8 +26,6 @@ export class HealthService {
    * Overall health check
    */
   async check(): Promise<HealthStatus> {
-    const startTime = Date.now();
-
     const checks: HealthStatus['checks'] = {
       api: { status: 'healthy' },
     };

@@ -261,19 +261,20 @@ jobs:
             -p 5432:5432 \
             postgis/postgis:15-3.3
           
-          # Wait for PostgreSQL to be ready
+          # Wait for PostgreSQL to be ready (container + host port)
           timeout 60 bash -c 'until docker exec postgres pg_isready -U uprise; do sleep 1; done'
+          timeout 60 bash -c 'until (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; do sleep 1; done'
 
       - name: Run Prisma migrations (for API tests)
         if: matrix.app == 'api'
         run: |
           cd apps/api
-          DATABASE_URL="postgresql://uprise:uprise@localhost:5432/uprise_test" pnpm prisma migrate deploy
+          DATABASE_URL="postgresql://uprise:uprise@127.0.0.1:5432/uprise_test" pnpm prisma migrate deploy
 
       - name: Run tests for ${{ matrix.app }}
         run: pnpm --filter ${{ matrix.app }} test
         env:
-          DATABASE_URL: ${{ matrix.app == 'api' && 'postgresql://uprise:uprise@localhost:5432/uprise_test' || '' }}
+          DATABASE_URL: ${{ matrix.app == 'api' && 'postgresql://uprise:uprise@127.0.0.1:5432/uprise_test' || '' }}
 
       - name: Upload test coverage
         if: always()
