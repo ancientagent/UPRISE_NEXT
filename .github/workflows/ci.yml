@@ -261,8 +261,9 @@ jobs:
             -p 5432:5432 \
             postgis/postgis:15-3.3
           
-          # Wait for PostgreSQL to be ready (container + host port)
-          timeout 60 bash -c 'until docker exec postgres pg_isready -U uprise; do sleep 1; done'
+          # Wait for PostgreSQL to be ready (TCP inside container + host port).
+          # NOTE: pg_isready without -h checks the Unix socket; Prisma needs TCP.
+          timeout 60 bash -c 'until docker exec postgres pg_isready -U uprise -h 127.0.0.1 -p 5432; do sleep 1; done'
           timeout 60 bash -c 'until (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; do sleep 1; done'
 
       - name: Run Prisma migrations (for API tests)

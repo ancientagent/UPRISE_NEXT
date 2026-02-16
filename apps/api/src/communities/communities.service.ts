@@ -121,7 +121,7 @@ export class CommunitiesService {
         LIMIT ${limit}
       `;
 
-      return communities.map((c) => ({
+      return communities.map((c: CommunityWithDistance) => ({
         ...c,
         distance: Math.round(Number(c.distance)), // Round to nearest meter (driver may return string)
       }));
