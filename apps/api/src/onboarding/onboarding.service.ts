@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type { HomeSceneSelectionDto, GpsVerifyDto } from './dto/onboarding.dto';
 
@@ -61,7 +62,7 @@ export class OnboardingService {
 
     const inferredTag = tasteTag || (appliedTags.length > 0 ? appliedTags[0] : null);
 
-    const user = await this.prisma.$transaction(async (tx) => {
+    const user = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const updatedUser = await tx.user.update({
         where: { id: userId },
         data: {
