@@ -22,6 +22,9 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Plot statistics panel cleanup:
+  - `StatisticsPanel` now uses `SceneMap` as the single map/marker renderer (removed duplicated inline marker logic).
+  - Added `shouldFetchNearbyForTier` guard and tests to enforce canon behavior: only `city` tier performs nearby lookup; `state`/`national` do not use radius queries.
 - Agent governance tightened to prevent cross-platform trope drift:
   - Added `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` playbook.
   - Linked anti-trope guardrails in `docs/solutions/README.md`.

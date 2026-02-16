@@ -5,6 +5,8 @@ import { api } from '@/lib/api';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 import type { CommunityWithDistance } from '@/lib/types/community';
+import SceneMap from '@/components/plot/SceneMap';
+import { shouldFetchNearbyForTier } from '@/components/plot/tier-guard';
 
 interface CommunityFeedItem {
   id: string;
@@ -74,7 +76,7 @@ export default function StatisticsPanel({
   useEffect(() => {
     async function fetchNearbyCommunities() {
       // Canon: state/national are macro aggregation tiers, not larger radius queries.
-      if (selectedTier !== 'city') {
+      if (!shouldFetchNearbyForTier(selectedTier)) {
         setCommunities([]);
         setSelectedCommunity(null);
         setLoading(false);
@@ -272,40 +274,12 @@ export default function StatisticsPanel({
         </div>
       </div>
 
-      {/* Map placeholder - visual indicator of map area */}
-      <div className="h-48 w-full mb-4 rounded-2xl bg-gradient-to-br from-black/5 to-black/10 border border-black/10 flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-4xl mb-1">🗺️</p>
-            <p className="text-xs text-black/50">Interactive map</p>
-          </div>
-        </div>
-        {/* User location indicator */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
-          <div className="w-10 h-10 rounded-full bg-blue-500/20 absolute -top-3 -left-3 animate-ping" />
-        </div>
-        {/* Community markers */}
-        {communities.slice(0, 8).map((community, index) => {
-          const angle = (index / Math.min(communities.length, 8)) * 2 * Math.PI;
-          const distance = 25 + (index * 10);
-          const x = 50 + Math.cos(angle) * distance;
-          const y = 50 + Math.sin(angle) * distance;
-          const isSelected = selectedCommunity?.id === community.id;
-          return (
-            <button
-              key={community.id}
-              onClick={() => handleCommunitySelect(community)}
-              className={`absolute w-3 h-3 rounded-full transition-all ${
-                isSelected
-                  ? 'bg-black scale-125'
-                  : 'bg-black/40 hover:bg-black/60'
-              } border border-white/50 shadow-sm`}
-              style={{ left: `${x}%`, top: `${y}%` }}
-              title={community.name}
-            />
-          );
-        })}
+      <div className="h-48 w-full mb-4">
+        <SceneMap
+          communities={communities}
+          selectedCommunity={selectedCommunity}
+          onCommunitySelect={handleCommunitySelect}
+        />
       </div>
 
       {/* Community list */}
