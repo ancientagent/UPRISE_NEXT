@@ -57,20 +57,7 @@ export default function StatisticsPanel({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
-
-  // Determine radius based on tier
-  const radius = useMemo(() => {
-    switch (selectedTier) {
-      case 'city':
-        return 10000; // 10km
-      case 'state':
-        return 100000; // 100km
-      case 'national':
-        return 500000; // 500km
-      default:
-        return 10000;
-    }
-  }, [selectedTier]);
+  const cityRadiusMeters = 10000;
 
   // Map center coordinates
   const mapCenter = useMemo(() => {
@@ -86,6 +73,15 @@ export default function StatisticsPanel({
   // Fetch nearby communities
   useEffect(() => {
     async function fetchNearbyCommunities() {
+      // Canon: state/national are macro aggregation tiers, not larger radius queries.
+      if (selectedTier !== 'city') {
+        setCommunities([]);
+        setSelectedCommunity(null);
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
       if (!mapCenter.lat || !mapCenter.lng) {
         setError('Location not available');
         return;
@@ -96,7 +92,7 @@ export default function StatisticsPanel({
 
       try {
         const response = await api.get<CommunityWithDistance[]>(
-          `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=${radius}&limit=50`,
+          `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=${cityRadiusMeters}&limit=50`,
           { token: token || undefined }
         );
 
@@ -119,7 +115,7 @@ export default function StatisticsPanel({
     }
 
     fetchNearbyCommunities();
-  }, [mapCenter, radius, token, selectedTier, selectedCommunity, onCommunitiesUpdate]);
+  }, [mapCenter, cityRadiusMeters, token, selectedTier, selectedCommunity, onCommunitiesUpdate]);
 
   // Fetch feed for selected community
   useEffect(() => {
@@ -181,7 +177,7 @@ export default function StatisticsPanel({
           <div className="h-64 w-full bg-black/5 rounded-2xl flex items-center justify-center">
             <div className="text-center">
               <div className="h-8 w-8 mx-auto mb-3 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-              <p className="text-sm text-black/50">Finding nearby scenes...</p>
+              <p className="text-sm text-black/50">Loading scene data...</p>
             </div>
           </div>
           <div className="space-y-2">
@@ -208,6 +204,28 @@ export default function StatisticsPanel({
     );
   }
 
+  // City/state/national are structurally different map layers.
+  if (selectedTier !== 'city') {
+    return (
+      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
+        <div className="text-center py-8">
+          <p className="text-4xl mb-3">🧭</p>
+          <h3 className="font-semibold text-black mb-1">
+            {selectedTier === 'state' ? 'State Scene Overview' : 'National Scene Overview'}
+          </h3>
+          <p className="text-sm text-black/60">
+            {selectedTier === 'state'
+              ? 'State view aggregates citywide scenes and their macro statistics.'
+              : 'National view aggregates statewide scenes and their macro statistics.'}
+          </p>
+          <p className="text-xs text-black/50 mt-2">
+            This tier is not radius-based.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Empty state
   if (communities.length === 0) {
     return (
@@ -218,7 +236,7 @@ export default function StatisticsPanel({
           <p className="text-sm text-black/60">
             {!homeScene
               ? 'Select a Home Scene to see your local music community.'
-              : `No communities within ${radius / 1000}km of your location.`}
+              : 'No communities found in your local city radius.'}
           </p>
         </div>
       </div>
@@ -230,7 +248,7 @@ export default function StatisticsPanel({
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-black">Scene Map</h2>
         <p className="text-sm text-black/60">
-          {communities.length} communities within {radius / 1000}km
+          {communities.length} communities in your local city radius
         </p>
       </div>
 

@@ -26,6 +26,7 @@ Start from: `docs/solutions/TEMPLATE.md`
 
 For new model onboarding and stress-testing, use:
 - `docs/solutions/MODEL_ONBOARDING_EVAL.md`
+- `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` (prevents non-canon product-pattern assumptions)
 
 ## Web Build/Typecheck Incidents
 

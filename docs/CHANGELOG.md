@@ -22,6 +22,10 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Agent governance tightened to prevent cross-platform trope drift:
+  - Added `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` playbook.
+  - Linked anti-trope guardrails in `docs/solutions/README.md`.
+  - Added non-negotiable anti-trope rule in `AGENTS.md`.
 - Web app build no longer depends on Google Fonts fetch (removed `next/font` Google import from `apps/web/src/app/layout.tsx` to avoid DNS/network build flakiness).
 - User schema extended with Home Scene and GPS verification fields.
 - Onboarding UI now calls API when authenticated and pulls city suggestions from Places endpoint.
