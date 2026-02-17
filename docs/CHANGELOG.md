@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Broadcast simulation tool for Fair Play exploration:
+  - `scripts/fair_play_rotation_sim.py`
+  - includes new `lateral_vote_mid_entry` mode where songs start neutral/mid-cycle and cadence is adjusted by lateral vote signal (`more`, `fine`, `less`) with min/max replay-gap safety bounds.
 - Track engagement recording API (`POST /tracks/:id/engage`) with Canon-aligned 3/2/1/0 scoring.
 - TrackEngagement model with spam guard (unique on userId+trackId+sessionId).
 - Unit tests for engagement scoring and service methods.
