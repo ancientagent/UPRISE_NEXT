@@ -122,6 +122,9 @@ export default function PlotPage() {
             <Button size="sm" variant="outline" onClick={() => router.push('/discover')}>
               Open Discover
             </Button>
+            <p className="mt-2 text-xs text-black/50">
+              Home Scene changes are explicit in Discover and require confirmation.
+            </p>
           </div>
         </header>
 

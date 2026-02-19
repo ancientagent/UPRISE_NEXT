@@ -16,6 +16,8 @@ import { CommunitiesService } from './communities.service';
 import {
   GetDiscoverScenesDto,
   GetDiscoverScenesSchema,
+  PostDiscoverSetHomeSceneDto,
+  PostDiscoverSetHomeSceneSchema,
   PostDiscoverTuneDto,
   PostDiscoverTuneSchema,
 } from './dto/community.dto';
@@ -108,6 +110,40 @@ export class DiscoveryController {
     };
   }> {
     const result = await this.communitiesService.tuneScene(req.user.userId, dto);
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  /**
+   * POST /api/discover/set-home-scene
+   * Explicit Home Scene reassignment from discovery context.
+   */
+  @Post('set-home-scene')
+  @HttpCode(HttpStatus.OK)
+  @ZodBody(PostDiscoverSetHomeSceneSchema)
+  async setHomeScene(
+    @Body() dto: PostDiscoverSetHomeSceneDto,
+    @Request() req: { user: { userId: string } }
+  ): Promise<{
+    success: true;
+    data: {
+      previousHomeSceneId: string | null;
+      homeSceneId: string;
+      homeScene: {
+        id: string;
+        name: string;
+        city: string | null;
+        state: string | null;
+        musicCommunity: string | null;
+        tier: string;
+        isActive: boolean;
+      };
+      changed: boolean;
+    };
+  }> {
+    const result = await this.communitiesService.setHomeScene(req.user.userId, dto);
     return {
       success: true,
       data: result,
