@@ -117,6 +117,17 @@ export const GetCommunityPromotionsSchema = z.object({
 export type GetCommunityPromotionsDto = z.infer<typeof GetCommunityPromotionsSchema>;
 
 /**
+ * Resolve home-scene anchor query params
+ */
+export const ResolveHomeCommunitySchema = z.object({
+  city: z.string().min(1),
+  state: z.string().min(1),
+  musicCommunity: z.string().min(1),
+});
+
+export type ResolveHomeCommunityDto = z.infer<typeof ResolveHomeCommunitySchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

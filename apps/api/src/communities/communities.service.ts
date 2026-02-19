@@ -11,6 +11,7 @@ import {
   GetCommunitySceneMapDto,
   GetCommunityEventsDto,
   GetCommunityPromotionsDto,
+  ResolveHomeCommunityDto,
 } from './dto/community.dto';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
@@ -142,6 +143,39 @@ interface CommunityPromotionItem {
 @Injectable()
 export class CommunitiesService {
   constructor(private prisma: PrismaService) {}
+
+  /**
+   * Resolve a city-tier community by exact Home Scene tuple.
+   * Returns null when no match exists.
+   */
+  async resolveHomeCommunity(query: ResolveHomeCommunityDto) {
+    const city = query.city.trim();
+    const state = query.state.trim();
+    const musicCommunity = query.musicCommunity.trim();
+
+    const community = await this.prisma.community.findFirst({
+      where: {
+        city,
+        state,
+        musicCommunity,
+        tier: 'city',
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        memberCount: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+        isActive: true,
+      },
+      orderBy: [{ isActive: 'desc' }, { createdAt: 'asc' }],
+    });
+
+    return community;
+  }
 
   /**
    * Create community with optional geospatial data

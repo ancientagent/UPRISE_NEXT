@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Plot Home Scene anchor resolver:
+  - Added `GET /communities/resolve-home` for exact `{city,state,musicCommunity}` resolution.
+  - Plot now anchors Feed/Events/Promotions by Home Scene before GPS-nearby fallback.
+  - Added service unit tests: `apps/api/test/communities.resolve-home.service.test.ts`.
 - Plot Promotions surface web + API wiring:
   - Added `GET /communities/:id/promotions` endpoint (scene-scoped read surface).
   - Added `PlotPromotionsPanel` component in `apps/web/src/components/plot/PlotPromotionsPanel.tsx`.

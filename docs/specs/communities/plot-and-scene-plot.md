@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-22`
+**Last Updated:** `2026-02-23`
 
 ## Overview & Purpose
 Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -48,6 +48,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Feed tab now renders server-driven S.E.E.D activity via `GET /communities/:id/feed` (cursor-paginated, non-personalized).
 - Events tab now renders scene-scoped listings via `GET /communities/:id/events`.
 - Promotions tab now renders scene-scoped listings via `GET /communities/:id/promotions`.
+- Plot now resolves default community anchor from Home Scene tuple via `GET /communities/resolve-home` before GPS-nearby fallback.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Registrar module integration into Plot UI.
@@ -79,6 +80,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - No dedicated `/plot` API endpoint is implemented yet.
 - Plot currently reads local onboarding state in web store.
 - `GET /communities/:id/feed` is implemented for scene-scoped S.E.E.D feed projection.
+- `GET /communities/resolve-home` resolves exact Home Scene tuple for deterministic Plot anchoring.
 
 ### Required for Full Surface
 | Method | Path | Auth | Description |

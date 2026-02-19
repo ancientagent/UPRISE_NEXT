@@ -3,7 +3,7 @@
 **ID:** `USER-ONBOARDING`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-23`
 
 ## Overview & Purpose
 Defines the onboarding flow for selecting a Home Scene and the current input-driven resolution logic that routes users into a city-tier Scene container and optional sect tagging.
@@ -71,6 +71,7 @@ Defines the onboarding flow for selecting a Home Scene and the current input-dri
 |--------|------|------|-------------|
 | POST | `/onboarding/home-scene` | required | Resolve/create Home Scene, persist user affinity, auto-join Scene |
 | POST | `/onboarding/gps-verify` | required | Verify geofence and set voting eligibility |
+| GET | `/communities/resolve-home` | required | Resolve exact Home Scene tuple for Plot/community anchoring |
 
 ### Request/Response
 - `POST /onboarding/home-scene` request:
