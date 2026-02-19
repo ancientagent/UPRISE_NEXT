@@ -23,6 +23,7 @@ import {
   GetCommunitySceneMapSchema,
   GetCommunityEventsSchema,
   GetCommunityPromotionsSchema,
+  ResolveHomeCommunitySchema,
   CreateCommunityWithGeoDto,
   VerifyLocationDto,
   GetCommunityFeedDto,
@@ -30,6 +31,7 @@ import {
   GetCommunitySceneMapDto,
   GetCommunityEventsDto,
   GetCommunityPromotionsDto,
+  ResolveHomeCommunityDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodError } from 'zod';
@@ -51,6 +53,36 @@ export class CommunitiesController {
       data: result.communities,
       meta: { page: result.page, limit: result.limit, total: result.total },
     };
+  }
+
+  /**
+   * GET /api/communities/resolve-home
+   * Resolve exact Home Scene tuple to a city-tier community anchor.
+   */
+  @Get('resolve-home')
+  async resolveHome(@Query() rawQuery: any): Promise<{ success: true; data: any | null }> {
+    try {
+      const query: ResolveHomeCommunityDto = ResolveHomeCommunitySchema.parse({
+        city: rawQuery.city,
+        state: rawQuery.state,
+        musicCommunity: rawQuery.musicCommunity,
+      });
+
+      const result = await this.communitiesService.resolveHomeCommunity(query);
+      return { success: true, data: result };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
   }
 
   /**

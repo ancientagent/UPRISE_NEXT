@@ -54,22 +54,44 @@ export default function PlotPage() {
 
   useEffect(() => {
     async function resolveDefaultCommunity() {
-      if (selectedCommunity || !mapCenter) return;
+      if (selectedCommunity) return;
 
       try {
-        const response = await api.get<CommunityWithDistance[]>(
-          `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=10000&limit=1`,
-          { token: token || undefined },
-        );
-        const closest = response.data?.[0];
-        if (closest) setSelectedCommunity(closest);
+        // Canon anchor: exact Home Scene tuple first.
+        if (homeScene?.city && homeScene?.state && homeScene?.musicCommunity) {
+          const homeParams = new URLSearchParams({
+            city: homeScene.city,
+            state: homeScene.state,
+            musicCommunity: homeScene.musicCommunity,
+          });
+
+          const homeResponse = await api.get<CommunityWithDistance | null>(
+            `/communities/resolve-home?${homeParams.toString()}`,
+            { token: token || undefined },
+          );
+
+          if (homeResponse.data) {
+            setSelectedCommunity(homeResponse.data);
+            return;
+          }
+        }
+
+        // Fallback: nearest community from GPS when available.
+        if (mapCenter) {
+          const nearbyResponse = await api.get<CommunityWithDistance[]>(
+            `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=10000&limit=1`,
+            { token: token || undefined },
+          );
+          const closest = nearbyResponse.data?.[0];
+          if (closest) setSelectedCommunity(closest);
+        }
       } catch {
         // Leave unselected; Feed/Stats panels render guidance states.
       }
     }
 
     resolveDefaultCommunity();
-  }, [selectedCommunity, mapCenter, token]);
+  }, [selectedCommunity, mapCenter, token, homeScene]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
