@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Plot Events surface web + API wiring:
+  - Added `GET /communities/:id/events` endpoint (scene-scoped listing, deterministic ordering).
+  - Added `PlotEventsPanel` component in `apps/web/src/components/plot/PlotEventsPanel.tsx`.
+  - Plot Events tab now renders API-backed scene events from selected community anchor.
+  - Added service unit tests: `apps/api/test/communities.events.service.test.ts`.
 - Plot S.E.E.D Feed web wiring:
   - Added `SeedFeedPanel` component in `apps/web/src/components/plot/SeedFeedPanel.tsx`.
   - Plot Feed tab now calls `GET /communities/:id/feed` and renders cursor-paginated scene activity.

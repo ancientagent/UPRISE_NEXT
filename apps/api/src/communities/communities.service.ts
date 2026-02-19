@@ -9,6 +9,7 @@ import {
   GetCommunityFeedDto,
   GetCommunityStatisticsDto,
   GetCommunitySceneMapDto,
+  GetCommunityEventsDto,
 } from './dto/community.dto';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
@@ -103,6 +104,25 @@ export interface CommunitySceneMap {
     days: number;
     asOf: string;
   };
+}
+
+interface CommunityEventItem {
+  id: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  locationName: string;
+  address: string;
+  attendeeCount: number;
+  maxAttendees: number | null;
+  createdAt: string;
+  createdBy: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string | null;
+  } | null;
 }
 
 @Injectable()
@@ -536,6 +556,63 @@ export class CommunitiesService {
       items,
       limit,
       nextCursor,
+    };
+  }
+
+  /**
+   * Scene-scoped events listing for Plot Events tab.
+   * Deterministic ordering; no personalization.
+   */
+  async getEvents(communityId: string, query: GetCommunityEventsDto) {
+    const community = await this.prisma.community.findUnique({
+      where: { id: communityId },
+      select: { id: true },
+    });
+
+    if (!community) {
+      throw new NotFoundException(`Community with ID ${communityId} not found`);
+    }
+
+    const limit = query.limit ?? 20;
+    const includePast = query.includePast ?? false;
+    const now = new Date();
+
+    const where = includePast
+      ? { communityId }
+      : {
+          communityId,
+          endDate: { gte: now },
+        };
+
+    const events = await this.prisma.event.findMany({
+      where,
+      orderBy: [{ startDate: 'asc' }, { createdAt: 'desc' }],
+      take: limit,
+      include: {
+        createdBy: {
+          select: { id: true, username: true, displayName: true, avatar: true },
+        },
+      },
+    });
+
+    const items: CommunityEventItem[] = events.map((event: any) => ({
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      startDate: event.startDate.toISOString(),
+      endDate: event.endDate.toISOString(),
+      locationName: event.locationName,
+      address: event.address,
+      attendeeCount: event.attendeeCount,
+      maxAttendees: event.maxAttendees,
+      createdAt: event.createdAt.toISOString(),
+      createdBy: event.createdBy ?? null,
+    }));
+
+    return {
+      items,
+      limit,
+      includePast,
     };
   }
 
