@@ -58,4 +58,76 @@ export class FairPlayService {
       throw error;
     }
   }
+
+  async aggregateRecurrenceScores(sceneId: string, asOf = new Date()) {
+    const scene = await this.prisma.community.findUnique({
+      where: { id: sceneId },
+      select: { id: true },
+    });
+    if (!scene) {
+      throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
+    }
+
+    const windowStart = new Date(asOf.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const entries = await this.prisma.rotationEntry.findMany({
+      where: {
+        sceneId,
+        pool: RotationPool.MAIN_ROTATION,
+      },
+      select: {
+        id: true,
+        trackId: true,
+      },
+    });
+
+    if (entries.length === 0) {
+      return {
+        success: true,
+        data: {
+          sceneId,
+          updatedCount: 0,
+          windowStart,
+          asOf,
+        },
+      };
+    }
+
+    const scores = await this.prisma.trackEngagement.findMany({
+      where: {
+        trackId: { in: entries.map((entry) => entry.trackId) },
+        createdAt: {
+          gte: windowStart,
+          lte: asOf,
+        },
+      },
+      select: {
+        trackId: true,
+        score: true,
+      },
+    });
+
+    const scoreByTrackId = new Map<string, number>();
+    for (const row of scores) {
+      scoreByTrackId.set(row.trackId, (scoreByTrackId.get(row.trackId) ?? 0) + row.score);
+    }
+
+    const updates = entries.map((entry) =>
+      this.prisma.rotationEntry.update({
+        where: { id: entry.id },
+        data: { recurrenceScore: scoreByTrackId.get(entry.trackId) ?? 0 },
+      }),
+    );
+
+    await this.prisma.$transaction(updates);
+
+    return {
+      success: true,
+      data: {
+        sceneId,
+        updatedCount: updates.length,
+        windowStart,
+        asOf,
+      },
+    };
+  }
 }

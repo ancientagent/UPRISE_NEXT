@@ -12,6 +12,10 @@
   - Added `FairPlayModule` and `FairPlayService` with `ingestNewRelease(trackId, sceneId)` to place tracks into `NEW_RELEASES`.
   - Enforced one active new release per artist per scene in ingestion logic.
   - Added unit tests for Fair Play ingestion service (`apps/api/test/fair-play.service.test.ts`).
+- Fair Play recurrence aggregation foundation (Task 3):
+  - Added `aggregateRecurrenceScores(sceneId, asOf)` in `FairPlayService` with 14-day rolling window aggregation for `MAIN_ROTATION`.
+  - Added `RecurrenceAggregationJob` surface (`apps/api/src/fair-play/jobs/recurrence-aggregation.job.ts`).
+  - Added recurrence aggregation tests (`apps/api/test/fair-play.recurrence.test.ts`) including idempotent rerun behavior.
 - Fair Play density analysis doc for punk city modeling (`docs/solutions/FAIR_PLAY_PUNK_CITY_DENSITY_STUDY_2026-02-18.md`) with Austin/LA calibration, dial-variance results, and 60/75/90 minute capped-cycle comparisons.
 - Analytics instrumentation framework spec (`docs/specs/engagement/analytics-and-instrumentation-framework.md`) for Home Scene descriptive metrics tracking.
 - Super-admin analytics governance scope: full telemetry visibility + custom metric/module definition controls (descriptive-only boundary).
