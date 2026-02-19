@@ -4,6 +4,7 @@ Specifications for community-facing functionality, especially anything involving
 
 ## Files
 - [`scenes-uprises-sects.md`](./scenes-uprises-sects.md) — `COMM-SCENES` structural scene/community/sect contract.
+- [`discovery-scene-switching.md`](./discovery-scene-switching.md) — `COMM-DISCOVERY` explicit Scene discovery/tuning rules and Home Scene change boundary.
 - [`plot-and-scene-plot.md`](./plot-and-scene-plot.md) — `COMM-PLOT` Plot surfaces and civic interface boundaries.
 - [`scene-map-and-metrics.md`](./scene-map-and-metrics.md) — `COMM-SCENEMAP` Scene-inherent statistics/map contract and tier-scaling behavior.
 - [`statistics-page-design-task-list.md`](./statistics-page-design-task-list.md) — `COMM-STATS-DESIGN` non-code design backlog for the dedicated Statistics page.

@@ -20,7 +20,7 @@ infrastructure rather than isolated content feeds • Geographic Context: Scenes
 require robust geospatial capabilities • Structured Participation: Artists and listeners require defined roles,
 governance boundaries, and surface separation
 Who Is It For? Primary Users: - Musicians & Artists: Share music, collaborate, and build local followings -
-Music Fans: Discover local talent, join communities, and attend events - Venue Owners & Promoters:
+Music Fans: Discover local talent, select Home Scenes, and attend events - Venue Owners & Promoters:
 Connect with artists and promote events - Scene Participants: Operate within and contribute to location-
 bound music Scenes
 Technical Stakeholders: - Developers: Building and maintaining the platform - Agents (AI/LLM): Autonomous
