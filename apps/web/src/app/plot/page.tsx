@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
+import { useAuthStore } from '@/store/auth';
+import { api } from '@/lib/api';
 import TierToggle from '@/components/plot/TierToggle';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
+import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -34,10 +37,37 @@ const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene } = useOnboardingStore();
-  const [activeTab, setActiveTab] = useState('Statistics');
+  const { homeScene, gpsCoords } = useOnboardingStore();
+  const { token } = useAuthStore();
+  const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
+
+  const mapCenter = useMemo(() => {
+    if (gpsCoords) {
+      return { lat: gpsCoords.latitude, lng: gpsCoords.longitude };
+    }
+    return null;
+  }, [gpsCoords]);
+
+  useEffect(() => {
+    async function resolveDefaultCommunity() {
+      if (selectedCommunity || !mapCenter) return;
+
+      try {
+        const response = await api.get<CommunityWithDistance[]>(
+          `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=10000&limit=1`,
+          { token: token || undefined },
+        );
+        const closest = response.data?.[0];
+        if (closest) setSelectedCommunity(closest);
+      } catch {
+        // Leave unselected; Feed/Stats panels render guidance states.
+      }
+    }
+
+    resolveDefaultCommunity();
+  }, [selectedCommunity, mapCenter, token]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
@@ -114,10 +144,14 @@ export default function PlotPage() {
                 onCommunitySelect={handleCommunitySelect}
                 onCommunitiesUpdate={handleCommunitiesUpdate}
               />
+            ) : activeTab === 'Feed' ? (
+              <SeedFeedPanel
+                communityId={selectedCommunity?.id ?? null}
+                communityName={selectedCommunity?.name ?? null}
+              />
             ) : (
               <div className="text-center py-12 border border-dashed border-black/20 rounded-2xl">
                 <p className="text-4xl mb-3">
-                  {activeTab === 'Feed' && '📰'}
                   {activeTab === 'Events' && '📅'}
                   {activeTab === 'Promotions' && '🏷️'}
                   {activeTab === 'Social' && '💬'}

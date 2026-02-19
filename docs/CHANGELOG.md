@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Plot S.E.E.D Feed web wiring:
+  - Added `SeedFeedPanel` component in `apps/web/src/components/plot/SeedFeedPanel.tsx`.
+  - Plot Feed tab now calls `GET /communities/:id/feed` and renders cursor-paginated scene activity.
+  - Feed rendering remains scene-scoped and non-personalized.
 - Scene map API + web wiring:
   - Added `GET /communities/:id/scene-map?tier=city|state|national`.
   - Added tier-scoped scene-map payload in `CommunitiesService.getSceneMap` with:

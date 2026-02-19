@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -45,11 +45,10 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Copy and framing align with canon (“anchor this dashboard”).
 - Statistics surface now calls `GET /communities/:id/statistics` for tier-scoped metrics and Top 40 payload.
 - Statistics Scene Map now calls `GET /communities/:id/scene-map` for tier-scoped map points/rollups.
+- Feed tab now renders server-driven S.E.E.D activity via `GET /communities/:id/feed` (cursor-paginated, non-personalized).
 
 ### Deferred Behavior (Not Implemented Yet)
-- Server-driven S.E.E.D feed rendering in web.
 - Registrar module integration into Plot UI.
-- Scene statistics/map data service integration (`COMM-SCENEMAP`).
 - Social tab message boards/listening rooms (V2).
 
 ## Non-Functional Requirements
@@ -91,7 +90,8 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Plot is Home Scene scoped.
 - Tabs are fixed civic surfaces, not algorithmic sections.
 - Home Scene and optional taste tag are visible context on entry.
-- Placeholder panels remain until API surfaces are implemented.
+- Feed uses explicit scene actions from API; it does not rank or personalize.
+- Events/Promotions/Social remain placeholder panels until endpoints ship.
 
 ## Acceptance Tests / Test Plan
 - Plot loads and displays Home Scene context from onboarding state.
@@ -100,7 +100,6 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Promotions and Events remain represented as separate surfaces.
 
 ## Future Work & Open Questions
-- Wire S.E.E.D surface to `/communities/:id/feed` API.
 - Add registrar entry component and motion lifecycle surfaces.
 - Implement scene map/statistics payload contract in `docs/specs/communities/scene-map-and-metrics.md`.
 - Execute statistics-page design checklist in `docs/specs/communities/statistics-page-design-task-list.md`.
