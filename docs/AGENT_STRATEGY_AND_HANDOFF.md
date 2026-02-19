@@ -170,6 +170,10 @@ This ensures we can:
 - **Specs Modified:** (IDs/links from `docs/specs/` and/or `docs/Specifications/` if legacy IDs are referenced)
 - **Source Agent Tag**
 
+### 5️⃣ Approval Gate for User-Facing Actions
+- Do not add placeholder CTAs or speculative actions (e.g., `Coming Soon`, `Join`, `Upgrade`) unless explicitly approved by spec or founder direction in-thread.
+- If approval is unclear, stop and request confirmation before implementation.
+
 ---
 
 # 📚 Required Reading for Any New Agent

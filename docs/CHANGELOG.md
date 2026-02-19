@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Drift guard hardening:
+  - Added explicit policy banning unapproved placeholder CTAs in `AGENTS.md`, `docs/FEATURE_DRIFT_GUARDRAILS.md`, and `docs/RUNBOOK.md`.
+- Community profile action alignment:
+  - Replaced `Join (Coming Soon)` with canon-safe navigation action `Visit Scene in Plot`.
 - Plot Home Scene anchor resolver:
   - Added `GET /communities/resolve-home` for exact `{city,state,musicCommunity}` resolution.
   - Plot now anchors Feed/Events/Promotions by Home Scene before GPS-nearby fallback.
@@ -101,6 +105,8 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Guidance/index sync for current policy:
+  - Updated `docs/README.md`, `docs/handoff/README.md`, and `docs/AGENT_STRATEGY_AND_HANDOFF.md` to reflect active drift-correction and approval-gate rules.
 - Fair Play services now read `recurrenceRollingWindowDays` from global admin config (`fair_play_config`) with fallback default (`14`) when unset.
 - Docs readiness state normalized:
   - Canon-side generated readiness report removed.

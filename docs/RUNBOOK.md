@@ -33,6 +33,7 @@ After any **meaningful change** (new feature, endpoint, model, migration, or can
 3. **At milestones**, add a short summary to `docs/README.md` or a `docs/handoff/phase-*.md` report.
 4. **Never bulk-overwrite `docs/canon/*.md`** from imported exports. Stage raw imports under `docs/legacy/` and apply intentional canon edits in a separate commit.
 5. Run `pnpm run docs:lint` (includes `canon:lint`) before pushing doc-heavy changes.
+6. Do not ship placeholder user actions for unapproved capabilities (no speculative `Coming Soon` CTAs in production surfaces).
 
 ## 🔒 Branch Protection (Required)
 Configure GitHub branch protection for `main` (and `develop` if used) with these settings:

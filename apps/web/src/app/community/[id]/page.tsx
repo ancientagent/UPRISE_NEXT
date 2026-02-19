@@ -160,7 +160,9 @@ export default function CommunityProfilePage() {
             <Button variant="outline" onClick={() => router.push('/plot')}>
               Back to Plot
             </Button>
-            <Button disabled>Join (Coming Soon)</Button>
+            <Button variant="outline" onClick={() => router.push('/plot')}>
+              Visit Scene in Plot
+            </Button>
           </div>
         </section>
 
