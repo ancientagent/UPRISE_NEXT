@@ -1,6 +1,5 @@
 
 import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateCommunityWithGeoDto,
@@ -78,6 +77,14 @@ interface SceneMapPoint {
   activeSects: number;
   eventsThisWeek: number;
   kind: 'community' | 'city' | 'state';
+}
+
+interface ScopeCommunity {
+  id: string;
+  name: string;
+  city: string | null;
+  state: string | null;
+  memberCount: number;
 }
 
 export interface CommunitySceneMap {
@@ -568,7 +575,7 @@ export class CommunitiesService {
             musicCommunity: anchor.musicCommunity,
           };
 
-    const scopeCommunities = await this.prisma.community.findMany({
+    const scopeCommunities: ScopeCommunity[] = await this.prisma.community.findMany({
       where: scopeWhere,
       select: {
         id: true,
@@ -765,15 +772,22 @@ export class CommunitiesService {
       };
     }
 
-    const scopeCommunityIds = scopeCommunities.map((c: { id: string }) => c.id);
-    const communityIndex = new Map(scopeCommunities.map((c) => [c.id, c]));
+    const scopeCommunityIds = scopeCommunities.map((c: ScopeCommunity) => c.id);
+    const communityIndex = new Map<string, ScopeCommunity>(
+      scopeCommunities.map((c: ScopeCommunity) => [c.id, c])
+    );
 
     const [geoRows, activeTrackRows, activeSectRows, eventRows] = await Promise.all([
-      this.prisma.$queryRaw<Array<{ id: string; lat: number | null; lng: number | null }>>`
-        SELECT id::text as id, ST_Y(geofence::geometry) as lat, ST_X(geofence::geometry) as lng
-        FROM communities
-        WHERE id IN (${Prisma.join(scopeCommunityIds.map((id) => Prisma.sql`${id}::uuid`))})
-      `,
+      Promise.all(
+        scopeCommunityIds.map(async (id: string) => {
+          const row = await this.prisma.$queryRaw<Array<{ id: string; lat: number | null; lng: number | null }>>`
+            SELECT id::text as id, ST_Y(geofence::geometry) as lat, ST_X(geofence::geometry) as lng
+            FROM communities
+            WHERE id = ${id}::uuid
+          `;
+          return row[0] ?? { id, lat: null, lng: null };
+        })
+      ),
       this.prisma.track.groupBy({
         by: ['communityId'],
         where: {
@@ -800,12 +814,30 @@ export class CommunitiesService {
       }),
     ]);
 
-    const geoIndex = new Map(geoRows.map((row) => [row.id, row]));
-    const trackIndex = new Map(activeTrackRows.map((row) => [row.communityId, row._count._all]));
-    const sectIndex = new Map(activeSectRows.map((row) => [row.parentCommunityId, row._count._all]));
-    const eventIndex = new Map(eventRows.map((row) => [row.communityId, row._count._all]));
+    const geoIndex = new Map<string, { id: string; lat: number | null; lng: number | null }>(
+      geoRows.map((row: { id: string; lat: number | null; lng: number | null }) => [row.id, row])
+    );
+    const trackIndex = new Map<string, number>(
+      activeTrackRows
+        .filter(
+          (row: { communityId: string | null; _count: { _all: number } }): row is {
+            communityId: string;
+            _count: { _all: number };
+          } => row.communityId !== null
+        )
+        .map((row: { communityId: string; _count: { _all: number } }) => [row.communityId, row._count._all])
+    );
+    const sectIndex = new Map<string, number>(
+      activeSectRows.map((row: { parentCommunityId: string; _count: { _all: number } }) => [
+        row.parentCommunityId,
+        row._count._all,
+      ])
+    );
+    const eventIndex = new Map<string, number>(
+      eventRows.map((row: { communityId: string; _count: { _all: number } }) => [row.communityId, row._count._all])
+    );
 
-    const basePoints = scopeCommunityIds.map((id): SceneMapPoint => {
+    const basePoints = scopeCommunityIds.map((id: string): SceneMapPoint => {
       const community = communityIndex.get(id);
       const geo = geoIndex.get(id);
 
