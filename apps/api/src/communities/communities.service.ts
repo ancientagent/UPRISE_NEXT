@@ -10,6 +10,7 @@ import {
   GetCommunityStatisticsDto,
   GetCommunitySceneMapDto,
   GetCommunityEventsDto,
+  GetCommunityPromotionsDto,
 } from './dto/community.dto';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
@@ -123,6 +124,19 @@ interface CommunityEventItem {
     displayName: string;
     avatar: string | null;
   } | null;
+}
+
+interface CommunityPromotionItem {
+  id: string;
+  type: string;
+  createdAt: string;
+  actor: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string | null;
+  } | null;
+  metadata: Record<string, unknown> | null;
 }
 
 @Injectable()
@@ -613,6 +627,50 @@ export class CommunitiesService {
       items,
       limit,
       includePast,
+    };
+  }
+
+  /**
+   * Scene-scoped promotions/offers listing.
+   * Interim read model backed by Signal types (PROMOTION/OFFER).
+   */
+  async getPromotions(communityId: string, query: GetCommunityPromotionsDto) {
+    const community = await this.prisma.community.findUnique({
+      where: { id: communityId },
+      select: { id: true },
+    });
+
+    if (!community) {
+      throw new NotFoundException(`Community with ID ${communityId} not found`);
+    }
+
+    const limit = query.limit ?? 20;
+
+    const promotions = await this.prisma.signal.findMany({
+      where: {
+        communityId,
+        type: { in: ['PROMOTION', 'OFFER'] },
+      },
+      orderBy: [{ createdAt: 'desc' }],
+      take: limit,
+      include: {
+        createdBy: {
+          select: { id: true, username: true, displayName: true, avatar: true },
+        },
+      },
+    });
+
+    const items: CommunityPromotionItem[] = promotions.map((promotion: any) => ({
+      id: promotion.id,
+      type: promotion.type,
+      createdAt: promotion.createdAt.toISOString(),
+      actor: promotion.createdBy ?? null,
+      metadata: (promotion.metadata as Record<string, unknown> | null) ?? null,
+    }));
+
+    return {
+      items,
+      limit,
     };
   }
 

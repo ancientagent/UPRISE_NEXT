@@ -3,7 +3,7 @@
 **ID:** `ECON-PRINTSHOP`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-22`
 
 ## Overview & Purpose
 Defines the Promotions surface and the Print Shop issuance model. The Print Shop is infrastructure for limited‑run digital artifacts and Proof‑of‑Support, not a marketplace.
@@ -25,13 +25,15 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 
 ### Implemented Now
 - No Print Shop API/domain model yet.
-- No Promotions API/domain model yet.
+- Read-only Promotions surface endpoint:
+  - `GET /communities/:id/promotions` (scene-scoped projection from promotion/offer signals).
 
 ### Deferred (Not Implemented Yet)
 - Run purchase and issuance lifecycle.
 - Offer creation/carry/redeem workflows.
 - Proof-of-Support verification and artifact minting.
 - Promotional pack targeting and billing integration.
+- Dedicated Promotions domain models (`Offer`, billing linkage, carry/redeem ledger) beyond read projection.
 
 ## Non-Functional Requirements
 - No marketplace behavior, resale, or bidding.
@@ -55,6 +57,11 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - None yet.
 
 ## API Design
+### Implemented Endpoint
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/communities/:id/promotions` | required | Scene-scoped promotions/offers read surface |
+
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
@@ -66,7 +73,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 | POST | `/proof-support` | required | Submit/verify support proof |
 
 ## Web UI / Client Behavior
-- Promotions surface lists Offers.
+- Plot Promotions tab lists scene-scoped promotions/offers via `/communities/:id/promotions`.
 - Print Shop surfaces in Events for Run issuance.
 - Promotional Pack setup requires explicit target scope selection (city/state/community).
 - Artifact collections are visible on profiles.
