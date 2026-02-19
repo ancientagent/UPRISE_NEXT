@@ -30,6 +30,10 @@ This roadmap lists new product specs to be authored from `docs/canon/`.
   Canon sources:
   - `Legacy Narrative plus Context .md (1.x)`
   - `Master Narrative Canon.md`
+- `communities/discovery-scene-switching.md` — **Scene Discovery and Switching** (`COMM-DISCOVERY`)
+  Canon sources:
+  - `Master Narrative Canon.md (2.3)`
+  - `Master Glossary Canon.md`
 - `users/identity-roles-capabilities.md` — **Identity, Roles, and Capabilities** (`USER-IDENTITY`)
   Canon sources:
   - `Master Identity and Philosohpy Canon.md`

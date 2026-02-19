@@ -7,6 +7,16 @@
 
 ## [Unreleased]
 ### Added
+- Discovery contract spec:
+  - Added `docs/specs/communities/discovery-scene-switching.md` (`COMM-DISCOVERY`) to lock explicit Scene tuning, visitor privilege, and Home Scene reassignment boundaries.
+- Discovery API foundation:
+  - Added `GET /discover/scenes` deterministic scene listing by scope + music community.
+  - Supports `city`/`state` city-scene results and `national` state rollups.
+  - Marks Home Scene/state relationship in payload without introducing join semantics.
+- Discovery web surface foundation:
+  - Added `/discover` page with explicit scope + music-community filtering.
+  - Added scene actions: `Open Scene` and `Set as Home Scene` (separate from discovery browsing).
+  - Added Discover entry links from `/` and `/plot`.
 - Drift guard hardening:
   - Added explicit policy banning unapproved placeholder CTAs in `AGENTS.md`, `docs/FEATURE_DRIFT_GUARDRAILS.md`, and `docs/RUNBOOK.md`.
 - Community profile action alignment:
@@ -105,6 +115,8 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Spec consistency cleanup:
+  - `COMM-SCENEMAP` now marks `/communities/:id/statistics` and `/communities/:id/scene-map` as implemented endpoints with current response contract language.
 - Guidance/index sync for current policy:
   - Updated `docs/README.md`, `docs/handoff/README.md`, and `docs/AGENT_STRATEGY_AND_HANDOFF.md` to reflect active drift-correction and approval-gate rules.
 - Fair Play services now read `recurrenceRollingWindowDays` from global admin config (`fair_play_config`) with fallback default (`14`) when unset.

@@ -26,6 +26,9 @@ export default function Home() {
           <Button asChild size="lg" variant="outline">
             <Link href="/plot">Open The Plot</Link>
           </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="/discover">Open Discover</Link>
+          </Button>
         </div>
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           {[

@@ -128,6 +128,19 @@ export const ResolveHomeCommunitySchema = z.object({
 export type ResolveHomeCommunityDto = z.infer<typeof ResolveHomeCommunitySchema>;
 
 /**
+ * Discover scenes query params
+ */
+export const GetDiscoverScenesSchema = z.object({
+  tier: z.enum(['city', 'state', 'national']).optional().default('city'),
+  musicCommunity: z.string().min(1),
+  state: z.string().min(1).optional(),
+  city: z.string().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(200).optional().default(100),
+});
+
+export type GetDiscoverScenesDto = z.infer<typeof GetDiscoverScenesSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

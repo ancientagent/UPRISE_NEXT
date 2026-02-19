@@ -118,6 +118,11 @@ export default function PlotPage() {
           {homeScene?.tasteTag && (
             <p className="mt-1 text-sm text-black/50">Taste tag: {homeScene.tasteTag}</p>
           )}
+          <div className="mt-4">
+            <Button size="sm" variant="outline" onClick={() => router.push('/discover')}>
+              Open Discover
+            </Button>
+          </div>
         </header>
 
         {/* Tier Toggle */}

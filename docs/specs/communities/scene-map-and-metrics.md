@@ -91,10 +91,9 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - Top Songs panel now consumes `topSongs` from the statistics endpoint (instead of feed-derived approximation).
 
 ### Deferred (Not Implemented Yet)
-- Scene metrics aggregation service.
-- Scene Map payload and geo-clustering endpoint(s).
-- Tier rollup logic for map/statistics across city/state/national.
-- Activity Points integration into scene-level score.
+- Activity Points engine integration into scene-level score semantics.
+- Final geo aggregation/privacy floor policy locks from `docs/specs/DECISIONS_REQUIRED.md`.
+- Advanced clustering and pagination controls for very large national map payloads.
 
 ## Non-Functional Requirements
 - No personalization or recommendation behavior.
@@ -123,13 +122,13 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - No Scene Map-specific migration exists yet.
 
 ## API Design
-### Planned Endpoints (Not Implemented)
+### Implemented Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/communities/:id/statistics` | required | Scene statistics summary for active tier |
 | GET | `/communities/:id/scene-map` | required | Scene map payload for active tier |
 
-### Response Contract (Planned)
+### Response Contract (Current)
 - `community`: selected scene identity payload
 - `parentContext`: selected parent music community (persistent across tiers)
 - `tierScope`: one of `city`, `state`, `national`

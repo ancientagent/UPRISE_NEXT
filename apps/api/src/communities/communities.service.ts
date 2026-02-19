@@ -12,6 +12,7 @@ import {
   GetCommunityEventsDto,
   GetCommunityPromotionsDto,
   ResolveHomeCommunityDto,
+  GetDiscoverScenesDto,
 } from './dto/community.dto';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
@@ -140,9 +141,165 @@ interface CommunityPromotionItem {
   metadata: Record<string, unknown> | null;
 }
 
+interface DiscoverCitySceneItem {
+  entryType: 'city_scene';
+  sceneId: string;
+  name: string;
+  city: string | null;
+  state: string | null;
+  musicCommunity: string | null;
+  memberCount: number;
+  isActive: boolean;
+  isHomeScene: boolean;
+}
+
+interface DiscoverStateRollupItem {
+  entryType: 'state_rollup';
+  state: string;
+  musicCommunity: string;
+  citySceneCount: number;
+  totalMembers: number;
+  representativeSceneId: string | null;
+  isHomeSceneState: boolean;
+}
+
 @Injectable()
 export class CommunitiesService {
   constructor(private prisma: PrismaService) {}
+
+  /**
+   * Deterministic scene discovery list (no personalization/ranking).
+   * Scope:
+   * - city/state: city-scene entries
+   * - national: state rollups derived from city scenes
+   */
+  async discoverScenes(userId: string, query: GetDiscoverScenesDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const tier = query.tier;
+    const musicCommunity = query.musicCommunity.trim();
+    const stateFilter = query.state?.trim();
+    const cityFilter = query.city?.trim();
+    const limit = query.limit;
+
+    const baseWhere: {
+      tier: 'city';
+      musicCommunity: string;
+      state?: string;
+      city?: string;
+    } = {
+      tier: 'city',
+      musicCommunity,
+    };
+
+    if (tier === 'state' && stateFilter) baseWhere.state = stateFilter;
+    if (tier === 'city' && stateFilter) baseWhere.state = stateFilter;
+    if (tier === 'city' && cityFilter) baseWhere.city = cityFilter;
+
+    const cityScenes = await this.prisma.community.findMany({
+      where: baseWhere,
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        memberCount: true,
+        isActive: true,
+      },
+      orderBy: [{ memberCount: 'desc' }, { name: 'asc' }, { id: 'asc' }],
+      take: tier === 'national' ? 500 : limit,
+    });
+
+    if (tier !== 'national') {
+      const items: DiscoverCitySceneItem[] = cityScenes.slice(0, limit).map((scene) => ({
+        entryType: 'city_scene',
+        sceneId: scene.id,
+        name: scene.name,
+        city: scene.city,
+        state: scene.state,
+        musicCommunity: scene.musicCommunity,
+        memberCount: scene.memberCount,
+        isActive: scene.isActive,
+        isHomeScene:
+          scene.city === user.homeSceneCity &&
+          scene.state === user.homeSceneState &&
+          scene.musicCommunity === user.homeSceneCommunity,
+      }));
+
+      return {
+        tier,
+        musicCommunity,
+        filters: {
+          state: stateFilter ?? null,
+          city: cityFilter ?? null,
+        },
+        items,
+      };
+    }
+
+    const byState = new Map<
+      string,
+      {
+        state: string;
+        citySceneCount: number;
+        totalMembers: number;
+        representativeSceneId: string | null;
+      }
+    >();
+
+    for (const scene of cityScenes) {
+      const state = scene.state ?? 'Unknown';
+      const current = byState.get(state) ?? {
+        state,
+        citySceneCount: 0,
+        totalMembers: 0,
+        representativeSceneId: null,
+      };
+      current.citySceneCount += 1;
+      current.totalMembers += scene.memberCount;
+      if (!current.representativeSceneId) current.representativeSceneId = scene.id;
+      byState.set(state, current);
+    }
+
+    const items: DiscoverStateRollupItem[] = Array.from(byState.values())
+      .sort((a, b) => {
+        if (b.totalMembers !== a.totalMembers) return b.totalMembers - a.totalMembers;
+        return a.state.localeCompare(b.state);
+      })
+      .slice(0, limit)
+      .map((row) => ({
+        entryType: 'state_rollup',
+        state: row.state,
+        musicCommunity,
+        citySceneCount: row.citySceneCount,
+        totalMembers: row.totalMembers,
+        representativeSceneId: row.representativeSceneId,
+        isHomeSceneState:
+          row.state === user.homeSceneState && musicCommunity === user.homeSceneCommunity,
+      }));
+
+    return {
+      tier,
+      musicCommunity,
+      filters: {
+        state: stateFilter ?? null,
+        city: cityFilter ?? null,
+      },
+      items,
+    };
+  }
 
   /**
    * Resolve a city-tier community by exact Home Scene tuple.
