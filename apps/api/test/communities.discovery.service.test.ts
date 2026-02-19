@@ -324,4 +324,50 @@ describe('CommunitiesService.discoverScenes', () => {
 
     await expect(service.setHomeScene('u1', { sceneId: 's1' })).rejects.toThrow(BadRequestException);
   });
+
+  it('resolveActiveSceneId returns tuned scene id when available', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: 'c2',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c2',
+      name: 'Dallas Punk',
+      city: 'Dallas',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    await expect(service.resolveActiveSceneId('u1')).resolves.toBe('c2');
+  });
+
+  it('resolveActiveSceneId falls back to home scene id when tuned is absent', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: null,
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    await expect(service.resolveActiveSceneId('u1')).resolves.toBe('c1');
+  });
 });

@@ -8,6 +8,7 @@ const mockPrisma = {
   },
   community: {
     findUnique: jest.fn(),
+    findFirst: jest.fn(),
   },
   user: {
     findUnique: jest.fn(),
@@ -90,5 +91,60 @@ describe('FairPlayService.getRotation', () => {
       orderBy: [{ recurrenceScore: 'desc' }, { enteredPoolAt: 'asc' }],
       include: { track: true },
     });
+  });
+});
+
+describe('FairPlayService.getActiveRotation', () => {
+  let service: FairPlayService;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    service = new FairPlayService(mockPrisma as any);
+  });
+
+  it('uses tuned scene id when present', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: 'scene-tuned',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.community.findUnique.mockResolvedValueOnce({ id: 'scene-tuned' });
+    mockPrisma.rotationEntry.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+
+    const result = await service.getActiveRotation('u1');
+
+    expect(result.success).toBe(true);
+    expect(result.meta.sceneId).toBe('scene-tuned');
+    expect(mockPrisma.community.findFirst).toHaveBeenCalledTimes(1);
+  });
+
+  it('falls back to home scene when tuned scene id is absent', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: null,
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'scene-home' });
+    mockPrisma.community.findUnique.mockResolvedValueOnce({ id: 'scene-home' });
+    mockPrisma.rotationEntry.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+
+    const result = await service.getActiveRotation('u1');
+
+    expect(result.success).toBe(true);
+    expect(result.meta.sceneId).toBe('scene-home');
+  });
+
+  it('throws NotFoundException when user does not exist', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue(null);
+
+    await expect(service.getActiveRotation('missing-user')).rejects.toThrow(NotFoundException);
   });
 });
