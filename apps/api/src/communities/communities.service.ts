@@ -13,6 +13,7 @@ import {
   GetCommunityPromotionsDto,
   ResolveHomeCommunityDto,
   GetDiscoverScenesDto,
+  PostDiscoverTuneDto,
 } from './dto/community.dto';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
@@ -298,6 +299,75 @@ export class CommunitiesService {
         city: cityFilter ?? null,
       },
       items,
+    };
+  }
+
+  /**
+   * Resolve a tune request for a listener session without mutating Home Scene.
+   * Home Scene remains the civic anchor; this only sets listening context.
+   */
+  async tuneScene(userId: string, dto: PostDiscoverTuneDto) {
+    const [user, tunedScene] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          homeSceneCity: true,
+          homeSceneState: true,
+          homeSceneCommunity: true,
+        },
+      }),
+      this.prisma.community.findUnique({
+        where: { id: dto.sceneId },
+        select: {
+          id: true,
+          name: true,
+          city: true,
+          state: true,
+          musicCommunity: true,
+          tier: true,
+          isActive: true,
+        },
+      }),
+    ]);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    if (!tunedScene) {
+      throw new NotFoundException(`Community with ID ${dto.sceneId} not found`);
+    }
+
+    let homeSceneId: string | null = null;
+    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
+      const homeScene = await this.prisma.community.findFirst({
+        where: {
+          city: user.homeSceneCity,
+          state: user.homeSceneState,
+          musicCommunity: user.homeSceneCommunity,
+          tier: 'city',
+        },
+        select: { id: true },
+      });
+      homeSceneId = homeScene?.id ?? null;
+    }
+
+    const isVisitor = homeSceneId ? homeSceneId !== tunedScene.id : true;
+
+    return {
+      tunedSceneId: tunedScene.id,
+      tunedScene: {
+        id: tunedScene.id,
+        name: tunedScene.name,
+        city: tunedScene.city,
+        state: tunedScene.state,
+        musicCommunity: tunedScene.musicCommunity,
+        tier: tunedScene.tier,
+        isActive: tunedScene.isActive,
+      },
+      homeSceneId,
+      isVisitor,
     };
   }
 

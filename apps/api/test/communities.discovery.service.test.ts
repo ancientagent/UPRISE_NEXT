@@ -4,7 +4,7 @@ import { CommunitiesService } from '../src/communities/communities.service';
 describe('CommunitiesService.discoverScenes', () => {
   const mockPrisma = {
     user: { findUnique: jest.fn() },
-    community: { findMany: jest.fn() },
+    community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn() },
   };
 
   let service: CommunitiesService;
@@ -134,5 +134,59 @@ describe('CommunitiesService.discoverScenes', () => {
       totalMembers: 120,
       isHomeSceneState: true,
     });
+  });
+
+  it('returns tune context and visitor=true when scene differs from home scene', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c2',
+      name: 'Dallas Punk',
+      city: 'Dallas',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+
+    const result = await service.tuneScene('u1', { sceneId: 'c2' });
+
+    expect(result.tunedSceneId).toBe('c2');
+    expect(result.homeSceneId).toBe('c1');
+    expect(result.isVisitor).toBe(true);
+  });
+
+  it('returns tune context and visitor=false when scene equals home scene', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+
+    const result = await service.tuneScene('u1', { sceneId: 'c1' });
+
+    expect(result.tunedSceneId).toBe('c1');
+    expect(result.homeSceneId).toBe('c1');
+    expect(result.isVisitor).toBe(false);
   });
 });

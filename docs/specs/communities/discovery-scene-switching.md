@@ -34,7 +34,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 - Web discovery surface is implemented at `apps/web/src/app/discover/page.tsx`:
   - explicit scope toggle (`city/state/national`)
   - explicit music-community filter
-  - city-scene rows expose `Open Scene` and `Set as Home Scene` actions
+  - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
   - no “Join Community” language or behavior
 
 ### Scope Model (Locked)
@@ -78,11 +78,11 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 | GET | `/communities/nearby` | required | Nearby city-scene lookup by coordinates |
 | GET | `/communities/resolve-home` | required | Resolve exact Home Scene tuple for anchor/switch correctness |
 | GET | `/discover/scenes` | required | Deterministic scene search/list by scope + music community |
+| POST | `/discover/tune` | required | Set tuned Scene context for the active listener session |
 
 ### Required Endpoints (Not Implemented Yet)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/discover/tune` | required | Set current tuned Scene for listener session (visitor-safe) |
 | POST | `/users/home-scene` | required | Explicit Home Scene reassignment (separate from tune action) |
 
 ### Request/Response Contract (Required)

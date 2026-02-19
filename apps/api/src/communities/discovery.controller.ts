@@ -1,8 +1,25 @@
-import { Controller, Get, Query, Request, UseGuards, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Body,
+  Request,
+  UseGuards,
+  BadRequestException,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ZodError } from 'zod';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommunitiesService } from './communities.service';
-import { GetDiscoverScenesDto, GetDiscoverScenesSchema } from './dto/community.dto';
+import {
+  GetDiscoverScenesDto,
+  GetDiscoverScenesSchema,
+  PostDiscoverTuneDto,
+  PostDiscoverTuneSchema,
+} from './dto/community.dto';
+import { ZodBody } from '../common/decorators/zod-body.decorator';
 
 @Controller('discover')
 @UseGuards(JwtAuthGuard)
@@ -61,5 +78,39 @@ export class DiscoveryController {
       }
       throw error;
     }
+  }
+
+  /**
+   * POST /api/discover/tune
+   * Set listener tuned scene context (visitor-safe; does not change Home Scene).
+   */
+  @Post('tune')
+  @HttpCode(HttpStatus.OK)
+  @ZodBody(PostDiscoverTuneSchema)
+  async tuneScene(
+    @Body() dto: PostDiscoverTuneDto,
+    @Request() req: { user: { userId: string } }
+  ): Promise<{
+    success: true;
+    data: {
+      tunedSceneId: string;
+      tunedScene: {
+        id: string;
+        name: string;
+        city: string | null;
+        state: string | null;
+        musicCommunity: string | null;
+        tier: string;
+        isActive: boolean;
+      };
+      homeSceneId: string | null;
+      isVisitor: boolean;
+    };
+  }> {
+    const result = await this.communitiesService.tuneScene(req.user.userId, dto);
+    return {
+      success: true,
+      data: result,
+    };
   }
 }

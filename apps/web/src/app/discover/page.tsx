@@ -45,6 +45,8 @@ export default function DiscoverPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savingHomeSceneId, setSavingHomeSceneId] = useState<string | null>(null);
+  const [tuningSceneId, setTuningSceneId] = useState<string | null>(null);
+  const [tunedSceneId, setTunedSceneId] = useState<string | null>(null);
 
   const canSearch = useMemo(() => musicCommunity.trim().length > 0, [musicCommunity]);
 
@@ -119,6 +121,25 @@ export default function DiscoverPage() {
       setError(message);
     } finally {
       setSavingHomeSceneId(null);
+    }
+  };
+
+  const handleTuneScene = async (item: DiscoverCitySceneItem) => {
+    if (!token) return;
+    setTuningSceneId(item.sceneId);
+    setError(null);
+    try {
+      const response = await api.post<{ tunedSceneId: string; isVisitor: boolean }>(
+        '/discover/tune',
+        { sceneId: item.sceneId },
+        { token }
+      );
+      setTunedSceneId(response.data?.tunedSceneId ?? item.sceneId);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unable to tune to scene.';
+      setError(message);
+    } finally {
+      setTuningSceneId(null);
     }
   };
 
@@ -222,6 +243,18 @@ export default function DiscoverPage() {
                       <div className="flex gap-2">
                         <Button asChild size="sm" variant="outline">
                           <Link href={`/community/${item.sceneId}`}>Open Scene</Link>
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={tunedSceneId === item.sceneId ? 'default' : 'outline'}
+                          disabled={tuningSceneId === item.sceneId}
+                          onClick={() => handleTuneScene(item)}
+                        >
+                          {tunedSceneId === item.sceneId
+                            ? 'Tuned'
+                            : tuningSceneId === item.sceneId
+                            ? 'Tuning...'
+                            : 'Tune to Scene'}
                         </Button>
                         <Button
                           size="sm"

@@ -141,6 +141,15 @@ export const GetDiscoverScenesSchema = z.object({
 export type GetDiscoverScenesDto = z.infer<typeof GetDiscoverScenesSchema>;
 
 /**
+ * Discover tune request
+ */
+export const PostDiscoverTuneSchema = z.object({
+  sceneId: z.string().min(1),
+});
+
+export type PostDiscoverTuneDto = z.infer<typeof PostDiscoverTuneSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({
