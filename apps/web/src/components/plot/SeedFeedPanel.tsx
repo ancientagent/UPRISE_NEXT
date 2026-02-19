@@ -72,8 +72,6 @@ export default function SeedFeedPanel({ communityId, communityName }: SeedFeedPa
 
   const fetchPage = useCallback(
     async (before?: string | null) => {
-      if (!communityId) return;
-
       setLoading(true);
       setError(null);
 
@@ -81,11 +79,11 @@ export default function SeedFeedPanel({ communityId, communityName }: SeedFeedPa
         const query = new URLSearchParams();
         query.set('limit', '20');
         if (before) query.set('before', before);
+        const basePath = communityId ? `/communities/${communityId}/feed` : '/communities/active/feed';
 
-        const response = await api.get<FeedItem[]>(
-          `/communities/${communityId}/feed?${query.toString()}`,
-          { token: token || undefined },
-        );
+        const response = await api.get<FeedItem[]>(`${basePath}?${query.toString()}`, {
+          token: token || undefined,
+        });
 
         const pageItems = response.data ?? [];
         const meta = response.meta as FeedMeta | undefined;
@@ -105,20 +103,8 @@ export default function SeedFeedPanel({ communityId, communityName }: SeedFeedPa
   useEffect(() => {
     setItems([]);
     setNextCursor(null);
-    if (!communityId) return;
     fetchPage(null);
   }, [communityId, fetchPage]);
-
-  if (!communityId) {
-    return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6">
-        <h2 className="text-lg font-semibold text-black">S.E.E.D Feed</h2>
-        <p className="mt-2 text-sm text-black/60">
-          Select a community in Statistics to anchor scene feed activity.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6">

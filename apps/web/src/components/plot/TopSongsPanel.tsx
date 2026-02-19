@@ -33,17 +33,15 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   useEffect(() => {
     async function fetchTopSongs() {
-      if (!communityId) {
-        setSongs([]);
-        return;
-      }
-
       setLoading(true);
       setError(null);
 
       try {
+        const path = communityId
+          ? `/communities/${communityId}/statistics?tier=${selectedTier}`
+          : `/communities/active/statistics?tier=${selectedTier}`;
         const response = await api.get<CommunityStatisticsResponse>(
-          `/communities/${communityId}/statistics?tier=${selectedTier}`,
+          path,
           { token: token || undefined }
         );
 
@@ -87,20 +85,6 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-6 h-full">
         <p className="text-sm text-red-600">{error}</p>
-      </div>
-    );
-  }
-
-  if (!communityId) {
-    return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
-        <div className="text-center py-8">
-          <p className="text-4xl mb-3">🎵</p>
-          <h3 className="font-semibold text-black mb-1">No Anchor Community</h3>
-          <p className="text-sm text-black/60">
-            Select a city community first to view {selectedTier} Top 40.
-          </p>
-        </div>
       </div>
     );
   }

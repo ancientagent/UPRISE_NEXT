@@ -86,6 +86,156 @@ export class CommunitiesController {
   }
 
   /**
+   * GET /api/communities/active/feed
+   * Active-scene S.E.E.D feed (tuned scene first, Home Scene fallback)
+   */
+  @Get('active/feed')
+  async getActiveFeed(
+    @Request() req: { user: { userId: string } },
+    @Query() rawQuery: any,
+  ): Promise<{ success: true; data: any[]; meta: { limit: number; nextCursor: string | null; sceneId: string } }> {
+    try {
+      const query: GetCommunityFeedDto = GetCommunityFeedSchema.parse({
+        limit: rawQuery.limit,
+        before: rawQuery.before,
+      });
+
+      const sceneId = await this.communitiesService.resolveActiveSceneId(req.user.userId);
+      const result = await this.communitiesService.getFeed(sceneId, query);
+      return {
+        success: true,
+        data: result.items,
+        meta: {
+          sceneId,
+          limit: result.limit,
+          nextCursor: result.nextCursor,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/communities/active/statistics
+   * Active-scene statistics (tuned scene first, Home Scene fallback)
+   */
+  @Get('active/statistics')
+  async getActiveStatistics(@Request() req: { user: { userId: string } }, @Query() rawQuery: any) {
+    try {
+      const query: GetCommunityStatisticsDto = GetCommunityStatisticsSchema.parse({
+        tier: rawQuery.tier,
+      });
+
+      const sceneId = await this.communitiesService.resolveActiveSceneId(req.user.userId);
+      const result = await this.communitiesService.getStatistics(sceneId, query);
+      return { success: true, data: result, meta: { sceneId } };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/communities/active/events
+   * Active-scene events listing (tuned scene first, Home Scene fallback)
+   */
+  @Get('active/events')
+  async getActiveEvents(
+    @Request() req: { user: { userId: string } },
+    @Query() rawQuery: any,
+  ): Promise<{ success: true; data: any[]; meta: { limit: number; includePast: boolean; sceneId: string } }> {
+    try {
+      const query: GetCommunityEventsDto = GetCommunityEventsSchema.parse({
+        limit: rawQuery.limit,
+        includePast: rawQuery.includePast,
+      });
+
+      const sceneId = await this.communitiesService.resolveActiveSceneId(req.user.userId);
+      const result = await this.communitiesService.getEvents(sceneId, query);
+      return {
+        success: true,
+        data: result.items,
+        meta: {
+          sceneId,
+          limit: result.limit,
+          includePast: result.includePast,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/communities/active/promotions
+   * Active-scene promotions listing (tuned scene first, Home Scene fallback)
+   */
+  @Get('active/promotions')
+  async getActivePromotions(
+    @Request() req: { user: { userId: string } },
+    @Query() rawQuery: any,
+  ): Promise<{ success: true; data: any[]; meta: { limit: number; sceneId: string } }> {
+    try {
+      const query: GetCommunityPromotionsDto = GetCommunityPromotionsSchema.parse({
+        limit: rawQuery.limit,
+      });
+
+      const sceneId = await this.communitiesService.resolveActiveSceneId(req.user.userId);
+      const result = await this.communitiesService.getPromotions(sceneId, query);
+      return {
+        success: true,
+        data: result.items,
+        meta: {
+          sceneId,
+          limit: result.limit,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
    * GET /api/communities/:id/feed
    * Scene-scoped S.E.E.D feed (explicit actions only)
    */

@@ -46,6 +46,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - no “Join Community” language or behavior
 - Plot surface consumes persisted discovery context for default scene selection.
   - read-only context chip is rendered in Plot header for visibility of transport vs authority context
+  - when no explicit scene is selected, Plot read surfaces resolve active scene as tuned scene first, then Home Scene fallback
 
 ### Scope Model (Locked)
 - `city` scope:
@@ -91,6 +92,10 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 | GET | `/discover/context` | required | Read persisted tuned-scene context + visitor status for current user |
 | POST | `/discover/tune` | required | Set tuned Scene context for the active listener session |
 | POST | `/discover/set-home-scene` | required | Explicit Home Scene reassignment with discovery guardrails |
+| GET | `/communities/active/feed` | required | Active-scene S.E.E.D feed projection (tuned -> home fallback) |
+| GET | `/communities/active/events` | required | Active-scene events projection (tuned -> home fallback) |
+| GET | `/communities/active/promotions` | required | Active-scene promotions projection (tuned -> home fallback) |
+| GET | `/communities/active/statistics` | required | Active-scene statistics projection (tuned -> home fallback) |
 
 ### Request/Response Contract (Required)
 - `GET /discover/scenes` query:

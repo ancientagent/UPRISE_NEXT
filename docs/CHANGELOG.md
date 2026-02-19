@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Active-scene read defaults for Plot and broadcast:
+  - Added `GET /communities/active/feed|events|promotions|statistics` to resolve scene context as tuned scene first, Home Scene fallback.
+  - Added `GET /broadcast/rotation` to resolve Fair Play rotation by active scene context (tuned -> home).
+  - Plot Feed/Events/Promotions/Top Songs panels now automatically use active-scene endpoints when no explicit community anchor is selected.
 - Discovery contract spec:
   - Added `docs/specs/communities/discovery-scene-switching.md` (`COMM-DISCOVERY`) to lock explicit Scene tuning, visitor privilege, and Home Scene reassignment boundaries.
 - Discovery API foundation:

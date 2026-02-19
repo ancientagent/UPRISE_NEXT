@@ -49,6 +49,11 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Events tab now renders scene-scoped listings via `GET /communities/:id/events`.
 - Promotions tab now renders scene-scoped listings via `GET /communities/:id/promotions`.
 - Plot now resolves default community anchor from Home Scene tuple via `GET /communities/resolve-home` before GPS-nearby fallback.
+- Plot read surfaces now support active-scene fallback (tuned scene first, Home Scene fallback) when no explicit scene anchor is selected:
+  - `GET /communities/active/feed`
+  - `GET /communities/active/events`
+  - `GET /communities/active/promotions`
+  - `GET /communities/active/statistics`
 
 ### Deferred Behavior (Not Implemented Yet)
 - Registrar module integration into Plot UI.
@@ -81,6 +86,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Plot currently reads local onboarding state in web store.
 - `GET /communities/:id/feed` is implemented for scene-scoped S.E.E.D feed projection.
 - `GET /communities/resolve-home` resolves exact Home Scene tuple for deterministic Plot anchoring.
+- `GET /communities/active/feed|events|promotions|statistics` is implemented for active-scene read defaults.
 
 ### Required for Full Surface
 | Method | Path | Auth | Description |
