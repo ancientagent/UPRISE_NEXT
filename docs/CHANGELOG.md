@@ -34,6 +34,10 @@
   - Added rotation service tests (`apps/api/test/fair-play.rotation.test.ts`).
 - Fair Play API spec alignment:
   - `docs/specs/broadcast/radiyo-and-fair-play.md` now reflects implemented vote endpoint path `POST /tracks/:id/vote` (replacing legacy planned `/votes` path).
+- Fair Play diagnostics endpoint:
+  - Added `GET /fair-play/metrics?sceneId=:sceneId` to return scene-scoped lifecycle/recurrence telemetry.
+  - Includes `activeNewCount`, `mainRotationCount`, recurrence summary (`avg/min/max`), and 14-day `votesInWindow`.
+  - Added unit tests (`apps/api/test/fair-play.metrics.test.ts`).
 - Fair Play density analysis doc for punk city modeling (`docs/solutions/FAIR_PLAY_PUNK_CITY_DENSITY_STUDY_2026-02-18.md`) with Austin/LA calibration, dial-variance results, and 60/75/90 minute capped-cycle comparisons.
 - Analytics instrumentation framework spec (`docs/specs/engagement/analytics-and-instrumentation-framework.md`) for Home Scene descriptive metrics tracking.
 - Super-admin analytics governance scope: full telemetry visibility + custom metric/module definition controls (descriptive-only boundary).

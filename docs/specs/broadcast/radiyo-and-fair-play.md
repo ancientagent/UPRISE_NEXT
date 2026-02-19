@@ -126,13 +126,13 @@ Hard constraints:
 | POST | `/tracks/:id/engage` | required | Record recurrence input event |
 | POST | `/tracks/:id/vote` | required | Cast propagation vote (GPS/Home Scene gated; currently-playing assertion required) |
 | GET | `/broadcast/:sceneId/rotation` | required | Retrieve ordered New Releases + Main Rotation pools with metadata |
+| GET | `/fair-play/metrics?sceneId=:sceneId` | required | Retrieve scene lifecycle/recurrence diagnostics |
 
 ### Planned
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/broadcast/:sceneId/new` | required | Stream New Releases pool |
 | GET | `/broadcast/:sceneId/main` | required | Stream Main Rotation pool |
-| GET | `/fair-play/metrics` | required | Retrieve lifecycle/recurrence diagnostics |
 
 ## Acceptance Criteria
 - New songs remain in New Releases for their assigned window and cannot be buried.

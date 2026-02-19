@@ -270,4 +270,57 @@ export class FairPlayService {
       },
     };
   }
+
+  async getMetrics(sceneId: string, asOf = new Date()) {
+    const scene = await this.prisma.community.findUnique({
+      where: { id: sceneId },
+      select: { id: true },
+    });
+    if (!scene) {
+      throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
+    }
+
+    const windowStart = new Date(asOf.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+    const [activeNewCount, mainRotationCount, recurrenceStats, votesInWindow] = await Promise.all([
+      this.prisma.rotationEntry.count({
+        where: { sceneId, pool: RotationPool.NEW_RELEASES },
+      }),
+      this.prisma.rotationEntry.count({
+        where: { sceneId, pool: RotationPool.MAIN_ROTATION },
+      }),
+      this.prisma.rotationEntry.aggregate({
+        where: { sceneId, pool: RotationPool.MAIN_ROTATION },
+        _avg: { recurrenceScore: true },
+        _min: { recurrenceScore: true },
+        _max: { recurrenceScore: true },
+      }),
+      this.prisma.trackVote.count({
+        where: {
+          sceneId,
+          createdAt: {
+            gte: windowStart,
+            lte: asOf,
+          },
+        },
+      }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        sceneId,
+        asOf: asOf.toISOString(),
+        windowStart: windowStart.toISOString(),
+        activeNewCount,
+        mainRotationCount,
+        recurrence: {
+          avg: recurrenceStats._avg.recurrenceScore ?? 0,
+          min: recurrenceStats._min.recurrenceScore ?? 0,
+          max: recurrenceStats._max.recurrenceScore ?? 0,
+        },
+        votesInWindow,
+      },
+    };
+  }
 }
