@@ -66,6 +66,7 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Fair Play services now read `recurrenceRollingWindowDays` from global admin config (`fair_play_config`) with fallback default (`14`) when unset.
 - Docs readiness state normalized:
   - Canon-side generated readiness report removed.
   - Consolidated to single active readiness report at `docs/Specifications/FRESH_READINESS_REPORT.md`.
