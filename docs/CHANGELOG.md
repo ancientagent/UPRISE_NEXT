@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- User collection shelves and profile visibility:
+  - Added typed collection shelf mapping for `ADD` (`singles`, `uprises`, `posters`, `fliers`, `merch_buttons`, `merch_patches`, `merch_shirts`).
+  - Added profile-level collection display toggle (`User.collectionDisplayEnabled`) with endpoint `POST /users/me/collection-display`.
+  - Added `GET /users/:id/profile` for profile + collection shelves (owner/private + opt-in public visibility rules).
+  - Added web user profile page at `/users/[id]` and wired S.E.E.D feed actor names to user profiles.
 - Active-scene read defaults for Plot and broadcast:
   - Added `GET /communities/active/feed|events|promotions|statistics` to resolve scene context as tuned scene first, Home Scene fallback.
   - Added `GET /broadcast/rotation` to resolve Fair Play rotation by active scene context (tuned -> home).

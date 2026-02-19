@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
@@ -127,7 +128,17 @@ export default function SeedFeedPanel({ communityId, communityName }: SeedFeedPa
             <li key={item.id} className="rounded-xl border border-black/10 p-3">
               <p className="text-sm text-black">
                 <span className="font-medium">{formatTypeLabel(item.type)}</span>
-                <span className="text-black/60"> by {formatActor(item.actor)}</span>
+                <span className="text-black/60">
+                  {' '}
+                  by{' '}
+                  {item.actor ? (
+                    <Link className="underline underline-offset-2" href={`/users/${item.actor.id}`}>
+                      {formatActor(item.actor)}
+                    </Link>
+                  ) : (
+                    formatActor(item.actor)
+                  )}
+                </span>
               </p>
               <p className="mt-1 text-xs text-black/50">
                 {new Date(item.occurredAt).toLocaleString()} • {item.entity.type}
