@@ -31,10 +31,15 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 - API endpoint `GET /discover/scenes` is implemented with deterministic results by:
   - `tier=city|state`: city-scene entries
   - `tier=national`: state rollups derived from city scenes
+- API endpoint `POST /discover/set-home-scene` is implemented for explicit Home Scene reassignment:
+  - target must be `city` tier
+  - cross-state switches are rejected when the user already has a Home Scene state
+  - action is separate from tune transport context
 - Web discovery surface is implemented at `apps/web/src/app/discover/page.tsx`:
   - explicit scope toggle (`city/state/national`)
   - explicit music-community filter
   - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
+  - Home Scene action requires explicit confirmation copy
   - no “Join Community” language or behavior
 
 ### Scope Model (Locked)
@@ -79,11 +84,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 | GET | `/communities/resolve-home` | required | Resolve exact Home Scene tuple for anchor/switch correctness |
 | GET | `/discover/scenes` | required | Deterministic scene search/list by scope + music community |
 | POST | `/discover/tune` | required | Set tuned Scene context for the active listener session |
-
-### Required Endpoints (Not Implemented Yet)
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/users/home-scene` | required | Explicit Home Scene reassignment (separate from tune action) |
+| POST | `/discover/set-home-scene` | required | Explicit Home Scene reassignment with discovery guardrails |
 
 ### Request/Response Contract (Required)
 - `GET /discover/scenes` query:

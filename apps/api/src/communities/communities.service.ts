@@ -1,5 +1,6 @@
 
 import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateCommunityWithGeoDto,
@@ -13,6 +14,7 @@ import {
   GetCommunityPromotionsDto,
   ResolveHomeCommunityDto,
   GetDiscoverScenesDto,
+  PostDiscoverSetHomeSceneDto,
   PostDiscoverTuneDto,
 } from './dto/community.dto';
 
@@ -380,6 +382,97 @@ export class CommunitiesService {
       },
       homeSceneId,
       isVisitor,
+    };
+  }
+
+  /**
+   * Explicitly set Home Scene from discovery context.
+   * Guardrails:
+   * - Target must be a city-tier scene.
+   * - Cross-state switches are rejected when user already has a Home Scene state.
+   */
+  async setHomeScene(userId: string, dto: PostDiscoverSetHomeSceneDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const scene = await this.prisma.community.findUnique({
+      where: { id: dto.sceneId },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+        isActive: true,
+      },
+    });
+
+    if (!scene) {
+      throw new NotFoundException(`Community with ID ${dto.sceneId} not found`);
+    }
+
+    if (scene.tier !== 'city') {
+      throw new BadRequestException('Home Scene can only be set to a city-tier scene');
+    }
+
+    if (user.homeSceneState && scene.state && user.homeSceneState !== scene.state) {
+      throw new BadRequestException('Home Scene switch must stay within your current home state');
+    }
+
+    let previousHomeSceneId: string | null = null;
+    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
+      const previousHome = await this.prisma.community.findFirst({
+        where: {
+          city: user.homeSceneCity,
+          state: user.homeSceneState,
+          musicCommunity: user.homeSceneCommunity,
+          tier: 'city',
+        },
+        select: { id: true },
+      });
+      previousHomeSceneId = previousHome?.id ?? null;
+    }
+
+    await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          homeSceneCity: scene.city,
+          homeSceneState: scene.state,
+          homeSceneCommunity: scene.musicCommunity,
+        },
+      });
+
+      try {
+        await tx.communityMember.create({
+          data: { userId, communityId: scene.id, role: 'member' },
+        });
+        await tx.community.update({
+          where: { id: scene.id },
+          data: { memberCount: { increment: 1 } },
+        });
+      } catch (error: any) {
+        if (error?.code !== 'P2002') throw error;
+      }
+    });
+
+    return {
+      previousHomeSceneId,
+      homeSceneId: scene.id,
+      homeScene: scene,
+      changed: previousHomeSceneId !== scene.id,
     };
   }
 

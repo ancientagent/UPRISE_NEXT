@@ -84,25 +84,31 @@ export default function DiscoverPage() {
 
   const handleSetHomeScene = async (item: DiscoverCitySceneItem) => {
     if (!token) return;
+
+    const targetLabel = `${item.city ?? 'Unknown City'}, ${item.state ?? 'Unknown State'} — ${
+      item.musicCommunity ?? musicCommunity
+    }`;
+    const proceed = window.confirm(
+      `Set Home Scene to ${targetLabel}? This changes your civic anchor and voting authority context.`
+    );
+    if (!proceed) return;
+
     setSavingHomeSceneId(item.sceneId);
     setError(null);
 
     try {
-      await api.post(
-        '/onboarding/home-scene',
-        {
-          city: item.city ?? '',
-          state: item.state ?? '',
-          musicCommunity: item.musicCommunity ?? musicCommunity,
-          tasteTag: homeScene?.tasteTag,
-        },
-        { token }
-      );
+      const response = await api.post<{
+        homeScene: {
+          city: string | null;
+          state: string | null;
+          musicCommunity: string | null;
+        };
+      }>('/discover/set-home-scene', { sceneId: item.sceneId }, { token });
 
       setHomeScene({
-        city: item.city ?? '',
-        state: item.state ?? '',
-        musicCommunity: item.musicCommunity ?? musicCommunity,
+        city: response.data?.homeScene?.city ?? item.city ?? '',
+        state: response.data?.homeScene?.state ?? item.state ?? '',
+        musicCommunity: response.data?.homeScene?.musicCommunity ?? item.musicCommunity ?? musicCommunity,
         tasteTag: homeScene?.tasteTag,
       });
 
@@ -152,6 +158,9 @@ export default function DiscoverPage() {
           <p className="mt-2 text-sm text-black/60">
             Discover is explicit navigation. It does not auto-join communities or change your Home Scene unless you
             choose to set one.
+          </p>
+          <p className="mt-2 text-xs text-black/50">
+            Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
           </p>
           <div className="mt-4 flex gap-3">
             <Button asChild variant="outline" size="sm">

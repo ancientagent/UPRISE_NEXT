@@ -150,6 +150,15 @@ export const PostDiscoverTuneSchema = z.object({
 export type PostDiscoverTuneDto = z.infer<typeof PostDiscoverTuneSchema>;
 
 /**
+ * Discover set-home-scene request
+ */
+export const PostDiscoverSetHomeSceneSchema = z.object({
+  sceneId: z.string().min(1),
+});
+
+export type PostDiscoverSetHomeSceneDto = z.infer<typeof PostDiscoverSetHomeSceneSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

@@ -1,16 +1,19 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CommunitiesService } from '../src/communities/communities.service';
 
 describe('CommunitiesService.discoverScenes', () => {
   const mockPrisma = {
-    user: { findUnique: jest.fn() },
-    community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn() },
+    user: { findUnique: jest.fn(), update: jest.fn() },
+    community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    communityMember: { create: jest.fn() },
+    $transaction: jest.fn(),
   };
 
   let service: CommunitiesService;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.$transaction.mockImplementation(async (callback: any) => callback(mockPrisma));
     service = new CommunitiesService(mockPrisma as any);
   });
 
@@ -188,5 +191,77 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.tunedSceneId).toBe('c1');
     expect(result.homeSceneId).toBe('c1');
     expect(result.isVisitor).toBe(false);
+  });
+
+  it('sets home scene to a city-tier scene in the same state', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c2',
+      name: 'Dallas Punk',
+      city: 'Dallas',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+    mockPrisma.user.update.mockResolvedValue({ id: 'u1' });
+    mockPrisma.communityMember.create.mockResolvedValue({ id: 'm1' });
+    mockPrisma.community.update.mockResolvedValue({ id: 'c2' });
+
+    const result = await service.setHomeScene('u1', { sceneId: 'c2' });
+
+    expect(result.homeSceneId).toBe('c2');
+    expect(result.previousHomeSceneId).toBe('c1');
+    expect(result.changed).toBe(true);
+  });
+
+  it('rejects cross-state home scene switches', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c3',
+      name: 'Los Angeles Punk',
+      city: 'Los Angeles',
+      state: 'CA',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    await expect(service.setHomeScene('u1', { sceneId: 'c3' })).rejects.toThrow(BadRequestException);
+  });
+
+  it('rejects non-city scenes when setting home scene', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 's1',
+      name: 'Texas Punk',
+      city: null,
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'state',
+      isActive: true,
+    });
+
+    await expect(service.setHomeScene('u1', { sceneId: 's1' })).rejects.toThrow(BadRequestException);
   });
 });
