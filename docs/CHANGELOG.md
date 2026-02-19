@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Web community profile read surface:
+  - Added `apps/web/src/app/community/[id]/page.tsx` to display community metadata, counts, and recent S.E.E.D activity.
+  - Added Plot-to-profile navigation via `Open Profile` action in `apps/web/src/app/plot/page.tsx`.
 - Admin Fair Play config surface (global policy variables only):
   - Added `FairPlayConfig` model in `apps/api/prisma/schema.prisma`.
   - Added `AdminConfigModule` with endpoints:

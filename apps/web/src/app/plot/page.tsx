@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
@@ -32,6 +33,7 @@ const StatisticsPanel = dynamic(
 const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
 
 export default function PlotPage() {
+  const router = useRouter();
   const { homeScene } = useOnboardingStore();
   const [activeTab, setActiveTab] = useState('Statistics');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
@@ -149,6 +151,15 @@ export default function PlotPage() {
                         : `${(selectedCommunity.distance / 1000).toFixed(1)}km`}
                     </p>
                   )}
+                  <div className="mt-3">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => router.push(`/community/${selectedCommunity.id}`)}
+                    >
+                      Open Profile
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
