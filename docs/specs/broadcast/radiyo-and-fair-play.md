@@ -3,7 +3,7 @@
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
@@ -66,8 +66,8 @@ Per-song assignment:
 
 ## Recurrence Engine (Main Rotation)
 Cadence:
-- Recompute recurrence weights daily.
-- Use rolling window (start with 7 or 14 days; founder lock).
+- Recompute recurrence weights every `48 hours`.
+- Use rolling window of `14 days` for recurrence calculation.
 
 Input model:
 - Engagement signal model is configurable (playback-weight model or explicit preference dial).
@@ -97,6 +97,9 @@ Hard constraints:
   - minimum unique eligible listeners
   - rate-based thresholding
   - optional confidence-bound gate
+- A song is only graduation-eligible after a minimum active lifecycle age of `14 days`.
+- Graduation execution runs every `14 days` (batched promotion runs, not continuous draining).
+- Graduation cap per run is enforced to prevent pool churn (`GRADUATION_CAP_PER_RUN`, value TBD).
 
 ## Non-Functional Requirements
 - No personalization.
@@ -141,9 +144,9 @@ Hard constraints:
 - Stable behavior across density scenarios (`~6`, `15`, `25`, `35+` active new songs).
 
 ## Open Decisions
-- Recurrence rolling window days (`7` vs `14` default).
 - Exact propagation threshold formula.
 - Practical floor/removal policy for persistently low-recurrence songs.
+- `GRADUATION_CAP_PER_RUN` numeric value.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

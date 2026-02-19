@@ -9,10 +9,10 @@ Do not implement these items until they are locked.
 - **State → National propagation threshold**
 
 ## 2) Fair Play Two-Pool Locks
-- **Recurrence rolling window days** (`7` vs `14` default for daily recompute)
 - **Main Rotation recurrence mapping** (discrete frequency tiers vs weighted scheduler implementation)
 - **Practical floor/removal policy** for persistently low-recurrence songs
 - **Propagation threshold formula** (minimum unique listeners + rate + optional confidence bound)
+- **Graduation cap per run** (`GRADUATION_CAP_PER_RUN`)
 
 ## 3) Activity Points
 - **Scoring table**

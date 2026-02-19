@@ -28,6 +28,11 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Fair Play Two-Pool policy locks:
+  - recurrence reorder cadence set to 48 hours
+  - recurrence rolling window set to 14 days
+  - graduation minimum lifecycle age set to 14 days
+  - graduation execution cadence set to biweekly (14 days)
 - Plot statistics panel cleanup:
   - `StatisticsPanel` now uses `SceneMap` as the single map/marker renderer (removed duplicated inline marker logic).
   - Added `shouldFetchNearbyForTier` guard and tests to enforce canon behavior: only `city` tier performs nearby lookup; `state`/`national` do not use radius queries.
