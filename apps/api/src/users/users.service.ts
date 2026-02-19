@@ -117,11 +117,30 @@ export class UsersService {
           }>;
         }
       >(
-        collections.map((collection) => [collection.name, collection]),
+        collections.map((collection: {
+          name: string;
+          items: Array<{
+            createdAt: Date;
+            signal: {
+              id: string;
+              type: string;
+              metadata: unknown;
+              createdAt: Date;
+            };
+          }>;
+        }) => [collection.name, collection]),
       );
       collectionShelves = COLLECTION_SHELVES.map((shelf) => {
         const collection = byName.get(shelf);
-        const items = (collection?.items ?? []).map((item) => ({
+        const items = (collection?.items ?? []).map((item: {
+          createdAt: Date;
+          signal: {
+            id: string;
+            type: string;
+            metadata: unknown;
+            createdAt: Date;
+          };
+        }) => ({
           signalId: item.signal.id,
           type: item.signal.type,
           metadata: (item.signal.metadata as Record<string, unknown> | null) ?? null,
