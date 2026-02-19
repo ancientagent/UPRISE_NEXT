@@ -164,6 +164,16 @@ interface DiscoverStateRollupItem {
   isHomeSceneState: boolean;
 }
 
+interface DiscoverCitySceneRow {
+  id: string;
+  name: string;
+  city: string | null;
+  state: string | null;
+  musicCommunity: string | null;
+  memberCount: number;
+  isActive: boolean;
+}
+
 @Injectable()
 export class CommunitiesService {
   constructor(private prisma: PrismaService) {}
@@ -208,7 +218,7 @@ export class CommunitiesService {
     if (tier === 'city' && stateFilter) baseWhere.state = stateFilter;
     if (tier === 'city' && cityFilter) baseWhere.city = cityFilter;
 
-    const cityScenes = await this.prisma.community.findMany({
+    const cityScenes: DiscoverCitySceneRow[] = await this.prisma.community.findMany({
       where: baseWhere,
       select: {
         id: true,
@@ -224,7 +234,9 @@ export class CommunitiesService {
     });
 
     if (tier !== 'national') {
-      const items: DiscoverCitySceneItem[] = cityScenes.slice(0, limit).map((scene) => ({
+      const items: DiscoverCitySceneItem[] = cityScenes
+        .slice(0, limit)
+        .map((scene: DiscoverCitySceneRow) => ({
         entryType: 'city_scene',
         sceneId: scene.id,
         name: scene.name,
@@ -237,7 +249,7 @@ export class CommunitiesService {
           scene.city === user.homeSceneCity &&
           scene.state === user.homeSceneState &&
           scene.musicCommunity === user.homeSceneCommunity,
-      }));
+        }));
 
       return {
         tier,
