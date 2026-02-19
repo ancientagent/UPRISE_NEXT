@@ -13,6 +13,7 @@ import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
+import SceneContextBadge from '@/components/plot/SceneContextBadge';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -39,7 +40,7 @@ const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, gpsCoords, tunedSceneId, setTunedSceneId } = useOnboardingStore();
+  const { homeScene, gpsCoords, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
   const { token } = useAuthStore();
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
@@ -58,16 +59,29 @@ export default function PlotPage() {
       try {
         const response = await api.get<{
           tunedSceneId: string | null;
+          tunedScene: {
+            id: string;
+            name: string;
+            city: string | null;
+            state: string | null;
+            musicCommunity: string | null;
+            tier: string;
+            isActive: boolean;
+          } | null;
           homeSceneId: string | null;
           isVisitor: boolean;
         }>('/discover/context', { token });
-        setTunedSceneId(response.data?.tunedSceneId ?? null);
+        setDiscoveryContext({
+          tunedSceneId: response.data?.tunedSceneId ?? null,
+          tunedScene: response.data?.tunedScene ?? null,
+          isVisitor: response.data?.isVisitor ?? null,
+        });
       } catch {
         // Keep local state if context fetch fails.
       }
     }
     fetchDiscoveryContext();
-  }, [token, setTunedSceneId]);
+  }, [token, setDiscoveryContext]);
 
   useEffect(() => {
     async function resolveDefaultCommunity() {
@@ -146,6 +160,7 @@ export default function PlotPage() {
           {homeScene?.tasteTag && (
             <p className="mt-1 text-sm text-black/50">Taste tag: {homeScene.tasteTag}</p>
           )}
+          <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4">
             <Button size="sm" variant="outline" onClick={() => router.push('/discover')}>
               Open Discover

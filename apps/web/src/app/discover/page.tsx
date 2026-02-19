@@ -6,6 +6,7 @@ import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
+import SceneContextBadge from '@/components/plot/SceneContextBadge';
 
 type TierScope = 'city' | 'state' | 'national';
 
@@ -35,7 +36,14 @@ type DiscoverItem = DiscoverCitySceneItem | DiscoverStateRollupItem;
 
 export default function DiscoverPage() {
   const { token } = useAuthStore();
-  const { homeScene, tunedSceneId, setHomeScene, setTunedSceneId } = useOnboardingStore();
+  const {
+    homeScene,
+    tunedSceneId,
+    tunedScene,
+    isVisitor,
+    setHomeScene,
+    setDiscoveryContext,
+  } = useOnboardingStore();
 
   const [tier, setTier] = useState<TierScope>('city');
   const [musicCommunity, setMusicCommunity] = useState(homeScene?.musicCommunity ?? '');
@@ -55,17 +63,30 @@ export default function DiscoverPage() {
       try {
         const response = await api.get<{
           tunedSceneId: string | null;
+          tunedScene: {
+            id: string;
+            name: string;
+            city: string | null;
+            state: string | null;
+            musicCommunity: string | null;
+            tier: string;
+            isActive: boolean;
+          } | null;
           homeSceneId: string | null;
           isVisitor: boolean;
         }>('/discover/context', { token });
-        setTunedSceneId(response.data?.tunedSceneId ?? null);
+        setDiscoveryContext({
+          tunedSceneId: response.data?.tunedSceneId ?? null,
+          tunedScene: response.data?.tunedScene ?? null,
+          isVisitor: response.data?.isVisitor ?? null,
+        });
       } catch {
         // Keep persisted client context when fetch fails.
       }
     }
 
     fetchContext();
-  }, [token, setTunedSceneId]);
+  }, [token, setDiscoveryContext]);
 
   useEffect(() => {
     async function fetchScenes() {
@@ -115,6 +136,16 @@ export default function DiscoverPage() {
 
     try {
       const response = await api.post<{
+        tunedScene: {
+          id: string;
+          name: string;
+          city: string | null;
+          state: string | null;
+          musicCommunity: string | null;
+          tier: string;
+          isActive: boolean;
+        };
+        isVisitor: boolean;
         homeScene: {
           city: string | null;
           state: string | null;
@@ -129,7 +160,11 @@ export default function DiscoverPage() {
         musicCommunity: response.data?.homeScene?.musicCommunity ?? item.musicCommunity ?? musicCommunity,
         tasteTag: homeScene?.tasteTag,
       });
-      setTunedSceneId(response.data?.tunedSceneId ?? item.sceneId);
+      setDiscoveryContext({
+        tunedSceneId: response.data?.tunedSceneId ?? item.sceneId,
+        tunedScene: response.data?.tunedScene ?? null,
+        isVisitor: response.data?.isVisitor ?? null,
+      });
 
       setItems((prev) =>
         prev.map((entry) =>
@@ -159,7 +194,25 @@ export default function DiscoverPage() {
         { sceneId: item.sceneId },
         { token }
       );
-      setTunedSceneId(response.data?.tunedSceneId ?? item.sceneId);
+      const context = await api.get<{
+        tunedSceneId: string | null;
+        tunedScene: {
+          id: string;
+          name: string;
+          city: string | null;
+          state: string | null;
+          musicCommunity: string | null;
+          tier: string;
+          isActive: boolean;
+        } | null;
+        homeSceneId: string | null;
+        isVisitor: boolean;
+      }>('/discover/context', { token });
+      setDiscoveryContext({
+        tunedSceneId: context.data?.tunedSceneId ?? response.data?.tunedSceneId ?? item.sceneId,
+        tunedScene: context.data?.tunedScene ?? null,
+        isVisitor: context.data?.isVisitor ?? response.data?.isVisitor ?? null,
+      });
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Unable to tune to scene.';
       setError(message);
@@ -181,6 +234,7 @@ export default function DiscoverPage() {
           <p className="mt-2 text-xs text-black/50">
             Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
           </p>
+          <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
             <Button asChild variant="outline" size="sm">
               <Link href="/plot">Back to Plot</Link>

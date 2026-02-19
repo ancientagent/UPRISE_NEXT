@@ -42,8 +42,10 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - explicit music-community filter
   - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
   - Home Scene action requires explicit confirmation copy
+  - read-only context chip shows Home Scene, Tuned Scene, and Visitor/Local status
   - no “Join Community” language or behavior
 - Plot surface consumes persisted discovery context for default scene selection.
+  - read-only context chip is rendered in Plot header for visibility of transport vs authority context
 
 ### Scope Model (Locked)
 - `city` scope:
@@ -110,6 +112,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - selected music community filter
   - scope toggle (`city/state/national`)
   - current tuned Scene vs Home Scene badges
+  - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status
 - Tune action:
   - explicit button: “Tune to Scene”
   - does not say “Join”

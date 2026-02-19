@@ -23,6 +23,8 @@
   - Added scene actions: `Open Scene`, `Tune to Scene`, and `Set as Home Scene` (separate controls).
   - Added explicit confirmation prompt before Home Scene reassignment.
   - Discover + Plot now consume shared persisted tuned-scene context from API.
+  - Added read-only context chip (`Home Scene`, `Tuned Scene`, `Visitor/Local`) on Discover and Plot headers.
+  - Added same context chip on community profile page for transport/authority clarity.
   - Added Discover entry links from `/` and `/plot`.
 - Drift guard hardening:
   - Added explicit policy banning unapproved placeholder CTAs in `AGENTS.md`, `docs/FEATURE_DRIFT_GUARDRAILS.md`, and `docs/RUNBOOK.md`.
