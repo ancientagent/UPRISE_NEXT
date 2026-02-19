@@ -1,5 +1,6 @@
 
 import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateCommunityWithGeoDto,
@@ -8,6 +9,7 @@ import {
   CommunityWithDistance,
   GetCommunityFeedDto,
   GetCommunityStatisticsDto,
+  GetCommunitySceneMapDto,
 } from './dto/community.dto';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
@@ -60,6 +62,36 @@ export interface CommunityStatistics {
     communityId: string | null;
     communityName: string | null;
   }>;
+  timeWindow: {
+    days: number;
+    asOf: string;
+  };
+}
+
+interface SceneMapPoint {
+  id: string;
+  label: string;
+  lat: number | null;
+  lng: number | null;
+  memberCount: number;
+  activeTracks: number;
+  activeSects: number;
+  eventsThisWeek: number;
+  kind: 'community' | 'city' | 'state';
+}
+
+export interface CommunitySceneMap {
+  community: {
+    id: string;
+    name: string;
+    city: string | null;
+    state: string | null;
+    musicCommunity: string | null;
+  };
+  tierScope: 'city' | 'state' | 'national';
+  rollupUnit: 'local_sect' | 'city' | 'state';
+  center: { lat: number; lng: number } | null;
+  points: SceneMapPoint[];
   timeWindow: {
     days: number;
     asOf: string;
@@ -670,6 +702,201 @@ export class CommunitiesService {
         days: windowDays,
         asOf: new Date().toISOString(),
       },
+    };
+  }
+
+  async getSceneMap(communityId: string, query: GetCommunitySceneMapDto): Promise<CommunitySceneMap> {
+    const anchor = await this.prisma.community.findUnique({
+      where: { id: communityId },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+      },
+    });
+
+    if (!anchor) {
+      throw new NotFoundException(`Community with ID ${communityId} not found`);
+    }
+
+    const tierScope = query.tier;
+    const rollupUnit = tierScope === 'city' ? 'local_sect' : tierScope === 'state' ? 'city' : 'state';
+    const windowDays = 7;
+    const windowStart = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000);
+
+    const scopeWhere =
+      tierScope === 'city'
+        ? { id: anchor.id }
+        : tierScope === 'state'
+        ? {
+            tier: 'city',
+            state: anchor.state,
+            musicCommunity: anchor.musicCommunity,
+          }
+        : {
+            tier: 'city',
+            musicCommunity: anchor.musicCommunity,
+          };
+
+    const scopeCommunities = await this.prisma.community.findMany({
+      where: scopeWhere,
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        memberCount: true,
+      },
+    });
+
+    if (scopeCommunities.length === 0) {
+      return {
+        community: anchor,
+        tierScope,
+        rollupUnit,
+        center: null,
+        points: [],
+        timeWindow: {
+          days: windowDays,
+          asOf: new Date().toISOString(),
+        },
+      };
+    }
+
+    const scopeCommunityIds = scopeCommunities.map((c: { id: string }) => c.id);
+    const communityIndex = new Map(scopeCommunities.map((c) => [c.id, c]));
+
+    const [geoRows, activeTrackRows, activeSectRows, eventRows] = await Promise.all([
+      this.prisma.$queryRaw<Array<{ id: string; lat: number | null; lng: number | null }>>`
+        SELECT id::text as id, ST_Y(geofence::geometry) as lat, ST_X(geofence::geometry) as lng
+        FROM communities
+        WHERE id IN (${Prisma.join(scopeCommunityIds.map((id) => Prisma.sql`${id}::uuid`))})
+      `,
+      this.prisma.track.groupBy({
+        by: ['communityId'],
+        where: {
+          communityId: { in: scopeCommunityIds },
+          status: 'ready',
+        },
+        _count: { _all: true },
+      }),
+      this.prisma.sectTag.groupBy({
+        by: ['parentCommunityId'],
+        where: {
+          parentCommunityId: { in: scopeCommunityIds },
+          status: 'active',
+        },
+        _count: { _all: true },
+      }),
+      this.prisma.event.groupBy({
+        by: ['communityId'],
+        where: {
+          communityId: { in: scopeCommunityIds },
+          createdAt: { gte: windowStart },
+        },
+        _count: { _all: true },
+      }),
+    ]);
+
+    const geoIndex = new Map(geoRows.map((row) => [row.id, row]));
+    const trackIndex = new Map(activeTrackRows.map((row) => [row.communityId, row._count._all]));
+    const sectIndex = new Map(activeSectRows.map((row) => [row.parentCommunityId, row._count._all]));
+    const eventIndex = new Map(eventRows.map((row) => [row.communityId, row._count._all]));
+
+    const basePoints = scopeCommunityIds.map((id): SceneMapPoint => {
+      const community = communityIndex.get(id);
+      const geo = geoIndex.get(id);
+
+      return {
+        id,
+        label: community?.name ?? id,
+        lat: geo?.lat ?? null,
+        lng: geo?.lng ?? null,
+        memberCount: community?.memberCount ?? 0,
+        activeTracks: trackIndex.get(id) ?? 0,
+        activeSects: sectIndex.get(id) ?? 0,
+        eventsThisWeek: eventIndex.get(id) ?? 0,
+        kind: 'community',
+      };
+    });
+
+    const points =
+      tierScope === 'city'
+        ? basePoints
+        : tierScope === 'state'
+        ? this.rollupByLabel(basePoints, (p) => communityIndex.get(p.id)?.city ?? 'Unknown City', 'city')
+        : this.rollupByLabel(basePoints, (p) => communityIndex.get(p.id)?.state ?? 'Unknown State', 'state');
+
+    const center = this.computeCenter(points);
+
+    return {
+      community: anchor,
+      tierScope,
+      rollupUnit,
+      center,
+      points,
+      timeWindow: {
+        days: windowDays,
+        asOf: new Date().toISOString(),
+      },
+    };
+  }
+
+  private rollupByLabel(
+    points: SceneMapPoint[],
+    labelFn: (point: SceneMapPoint) => string,
+    kind: 'city' | 'state'
+  ): SceneMapPoint[] {
+    const grouped = new Map<string, SceneMapPoint[]>();
+
+    for (const point of points) {
+      const key = labelFn(point);
+      const current = grouped.get(key) ?? [];
+      current.push(point);
+      grouped.set(key, current);
+    }
+
+    return Array.from(grouped.entries()).map(([label, group]) => {
+      const latValues = group.map((g) => g.lat).filter((lat): lat is number => lat !== null);
+      const lngValues = group.map((g) => g.lng).filter((lng): lng is number => lng !== null);
+
+      const sum = group.reduce(
+        (acc, g) => ({
+          memberCount: acc.memberCount + g.memberCount,
+          activeTracks: acc.activeTracks + g.activeTracks,
+          activeSects: acc.activeSects + g.activeSects,
+          eventsThisWeek: acc.eventsThisWeek + g.eventsThisWeek,
+        }),
+        { memberCount: 0, activeTracks: 0, activeSects: 0, eventsThisWeek: 0 }
+      );
+
+      return {
+        id: `${kind}:${label}`,
+        label,
+        lat: latValues.length > 0 ? latValues.reduce((a, b) => a + b, 0) / latValues.length : null,
+        lng: lngValues.length > 0 ? lngValues.reduce((a, b) => a + b, 0) / lngValues.length : null,
+        memberCount: sum.memberCount,
+        activeTracks: sum.activeTracks,
+        activeSects: sum.activeSects,
+        eventsThisWeek: sum.eventsThisWeek,
+        kind,
+      };
+    });
+  }
+
+  private computeCenter(points: SceneMapPoint[]): { lat: number; lng: number } | null {
+    const latValues = points.map((p) => p.lat).filter((lat): lat is number => lat !== null);
+    const lngValues = points.map((p) => p.lng).filter((lng): lng is number => lng !== null);
+
+    if (latValues.length === 0 || lngValues.length === 0) {
+      return null;
+    }
+
+    return {
+      lat: latValues.reduce((a, b) => a + b, 0) / latValues.length,
+      lng: lngValues.reduce((a, b) => a + b, 0) / lngValues.length,
     };
   }
 }

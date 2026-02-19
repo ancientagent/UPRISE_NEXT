@@ -89,6 +89,15 @@ export const GetCommunityStatisticsSchema = z.object({
 export type GetCommunityStatisticsDto = z.infer<typeof GetCommunityStatisticsSchema>;
 
 /**
+ * Scene map query params
+ */
+export const GetCommunitySceneMapSchema = z.object({
+  tier: z.enum(['city', 'state', 'national']).optional().default('city'),
+});
+
+export type GetCommunitySceneMapDto = z.infer<typeof GetCommunitySceneMapSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

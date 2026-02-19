@@ -44,6 +44,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Current shell includes tab switching and Home Scene identity summary.
 - Copy and framing align with canon (“anchor this dashboard”).
 - Statistics surface now calls `GET /communities/:id/statistics` for tier-scoped metrics and Top 40 payload.
+- Statistics Scene Map now calls `GET /communities/:id/scene-map` for tier-scoped map points/rollups.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Server-driven S.E.E.D feed rendering in web.
@@ -84,6 +85,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 | GET | `/communities/:id/events` | required | Scene event listing for Plot events surface |
 | GET | `/communities/:id/promotions` | required | Scene promotions/offers surface |
 | GET | `/communities/:id/statistics` | required | Scene metrics and top songs aggregates (implemented) |
+| GET | `/communities/:id/scene-map` | required | Scene map points/rollups by active tier (implemented) |
 
 ## Web UI / Client Behavior
 - Plot is Home Scene scoped.

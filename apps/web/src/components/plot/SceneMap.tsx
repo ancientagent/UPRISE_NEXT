@@ -1,48 +1,81 @@
 'use client';
 
 import { useMemo } from 'react';
-import type { CommunityWithDistance } from '@/lib/types/community';
 
-interface SceneMapProps {
-  communities: CommunityWithDistance[];
-  selectedCommunity: CommunityWithDistance | null;
-  onCommunitySelect?: (community: CommunityWithDistance) => void;
+export interface SceneMapPoint {
+  id: string;
+  label: string;
+  lat: number | null;
+  lng: number | null;
+  memberCount: number;
+  activeTracks: number;
+  activeSects: number;
+  eventsThisWeek: number;
+  kind: 'community' | 'city' | 'state';
 }
 
-export default function SceneMap({
-  communities,
-  selectedCommunity,
-  onCommunitySelect,
-}: SceneMapProps) {
-  // Calculate marker positions in a circular pattern around center
-  const markerPositions = useMemo(() => {
-    return communities.map((community, index) => {
-      // Distribute markers in a circular pattern
-      const count = Math.min(communities.length, 12);
-      const angle = (index / count) * 2 * Math.PI;
-      // Vary distance based on index to create more organic spread
-      const baseDistance = 25;
-      const distanceVariance = (index % 3) * 8;
-      const distance = baseDistance + distanceVariance;
-      const x = 50 + Math.cos(angle) * distance;
-      const y = 50 + Math.sin(angle) * distance;
+interface SceneMapProps {
+  points: SceneMapPoint[];
+  selectedPointId?: string | null;
+  onSelectPoint?: (point: SceneMapPoint) => void;
+}
 
+export default function SceneMap({ points, selectedPointId, onSelectPoint }: SceneMapProps) {
+  const markerPositions = useMemo(() => {
+    const withCoords = points.filter((p) => p.lat !== null && p.lng !== null);
+
+    if (withCoords.length >= 2) {
+      const lats = withCoords.map((p) => p.lat as number);
+      const lngs = withCoords.map((p) => p.lng as number);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+      const latRange = Math.max(maxLat - minLat, 0.0001);
+      const lngRange = Math.max(maxLng - minLng, 0.0001);
+
+      return points.map((point, index) => {
+        if (point.lat !== null && point.lng !== null) {
+          const x = 10 + ((point.lng - minLng) / lngRange) * 80;
+          const y = 12 + (1 - (point.lat - minLat) / latRange) * 76;
+          return {
+            point,
+            x,
+            y,
+            isSelected: selectedPointId === point.id,
+          };
+        }
+
+        const angle = (index / Math.max(points.length, 1)) * 2 * Math.PI;
+        const radius = 28 + (index % 3) * 6;
+        return {
+          point,
+          x: 50 + Math.cos(angle) * radius,
+          y: 50 + Math.sin(angle) * radius,
+          isSelected: selectedPointId === point.id,
+        };
+      });
+    }
+
+    return points.map((point, index) => {
+      const count = Math.min(points.length, 12);
+      const angle = (index / Math.max(count, 1)) * 2 * Math.PI;
+      const distance = 24 + (index % 4) * 7;
       return {
-        community,
-        x,
-        y,
-        isSelected: selectedCommunity?.id === community.id,
+        point,
+        x: 50 + Math.cos(angle) * distance,
+        y: 50 + Math.sin(angle) * distance,
+        isSelected: selectedPointId === point.id,
       };
     });
-  }, [communities, selectedCommunity]);
+  }, [points, selectedPointId]);
 
-  // Empty state
-  if (communities.length === 0) {
+  if (points.length === 0) {
     return (
       <div className="h-full w-full rounded-2xl bg-gradient-to-br from-black/5 to-black/10 border border-black/10 flex items-center justify-center">
         <div className="text-center">
           <p className="text-4xl mb-2">🗺️</p>
-          <p className="text-sm text-black/60">No communities to display</p>
+          <p className="text-sm text-black/60">No map data in this scope</p>
         </div>
       </div>
     );
@@ -50,7 +83,6 @@ export default function SceneMap({
 
   return (
     <div className="h-full w-full rounded-2xl bg-gradient-to-br from-black/5 to-black/10 border border-black/10 flex items-center justify-center relative overflow-hidden">
-      {/* Background pattern */}
       <div className="absolute inset-0 opacity-30">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -62,70 +94,29 @@ export default function SceneMap({
         </svg>
       </div>
 
-      {/* Center label */}
-      <div className="absolute top-4 left-4 bg-white/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-black/60">
-        You are here
-      </div>
-
-      {/* User location indicator (center) */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-        <div className="relative">
-          <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
-          <div className="w-10 h-10 rounded-full bg-blue-500/20 absolute -top-3 -left-3 animate-ping" />
-        </div>
-      </div>
-
-      {/* Community markers */}
-      {markerPositions.map(({ community, x, y, isSelected }) => (
+      {markerPositions.map(({ point, x, y, isSelected }) => (
         <button
-          key={community.id}
-          onClick={() => onCommunitySelect?.(community)}
+          key={point.id}
+          onClick={() => onSelectPoint?.(point)}
           className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all ${
-            isSelected ? 'z-20' : 'z-10'
+            isSelected ? 'z-20 scale-110' : 'z-10'
           }`}
           style={{ left: `${x}%`, top: `${y}%` }}
-          title={community.name}
+          title={point.label}
         >
-          <div
-            className={`relative flex items-center justify-center ${
-              isSelected ? 'scale-125' : 'scale-100'
-            }`}
-          >
-            {/* Outer ring for selected */}
-            {isSelected && (
-              <div className="absolute inset-0 rounded-full bg-black/20 animate-pulse" />
-            )}
-            {/* Marker dot */}
+          <div className="relative">
             <div
               className={`w-3 h-3 rounded-full border-2 border-white shadow-sm ${
-                isSelected ? 'bg-black' : 'bg-black/60 hover:bg-black/80'
+                isSelected ? 'bg-black' : 'bg-black/70 hover:bg-black'
               }`}
             />
-            {/* Tooltip on hover */}
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-black text-white text-xs rounded whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-              {community.name}
-              {community.distance && (
-                <span className="text-white/60 ml-1">
-                  ({community.distance < 1000
-                    ? `${Math.round(community.distance)}m`
-                    : `${(community.distance / 1000).toFixed(1)}km`})
-                </span>
-              )}
-            </div>
+            {isSelected && <div className="absolute inset-0 rounded-full bg-black/20 animate-ping" />}
           </div>
         </button>
       ))}
 
-      {/* Legend */}
-      <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg text-xs">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-blue-500" />
-          <span className="text-black/60">You</span>
-        </div>
-        <div className="flex items-center gap-2 mt-1">
-          <div className="w-3 h-3 rounded-full bg-black" />
-          <span className="text-black/60">Community</span>
-        </div>
+      <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg text-[10px] text-black/70">
+        {points.length} point{points.length !== 1 ? 's' : ''}
       </div>
     </div>
   );
