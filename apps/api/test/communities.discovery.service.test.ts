@@ -164,6 +164,12 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.tunedSceneId).toBe('c2');
     expect(result.homeSceneId).toBe('c1');
     expect(result.isVisitor).toBe(true);
+    expect(mockPrisma.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'u1' },
+        data: expect.objectContaining({ tunedSceneId: 'c2' }),
+      })
+    );
   });
 
   it('returns tune context and visitor=false when scene equals home scene', async () => {
@@ -219,8 +225,62 @@ describe('CommunitiesService.discoverScenes', () => {
     const result = await service.setHomeScene('u1', { sceneId: 'c2' });
 
     expect(result.homeSceneId).toBe('c2');
+    expect(result.tunedSceneId).toBe('c2');
     expect(result.previousHomeSceneId).toBe('c1');
     expect(result.changed).toBe(true);
+  });
+
+  it('returns persisted tuned scene context when available', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: 'c2',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c2',
+      name: 'Dallas Punk',
+      city: 'Dallas',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    const result = await service.getDiscoveryContext('u1');
+
+    expect(result.tunedSceneId).toBe('c2');
+    expect(result.homeSceneId).toBe('c1');
+    expect(result.isVisitor).toBe(true);
+  });
+
+  it('falls back to home scene when tuned scene is not set', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: null,
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    const result = await service.getDiscoveryContext('u1');
+    expect(result.tunedSceneId).toBe('c1');
+    expect(result.homeSceneId).toBe('c1');
+    expect(result.isVisitor).toBe(false);
   });
 
   it('rejects cross-state home scene switches', async () => {

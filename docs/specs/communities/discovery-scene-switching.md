@@ -31,16 +31,19 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 - API endpoint `GET /discover/scenes` is implemented with deterministic results by:
   - `tier=city|state`: city-scene entries
   - `tier=national`: state rollups derived from city scenes
+- API endpoint `GET /discover/context` is implemented to return persisted tune context for the current user.
 - API endpoint `POST /discover/set-home-scene` is implemented for explicit Home Scene reassignment:
   - target must be `city` tier
   - cross-state switches are rejected when the user already has a Home Scene state
   - action is separate from tune transport context
+- API endpoint `POST /discover/tune` persists tuned-scene transport context on the user record.
 - Web discovery surface is implemented at `apps/web/src/app/discover/page.tsx`:
   - explicit scope toggle (`city/state/national`)
   - explicit music-community filter
   - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
   - Home Scene action requires explicit confirmation copy
   - no “Join Community” language or behavior
+- Plot surface consumes persisted discovery context for default scene selection.
 
 ### Scope Model (Locked)
 - `city` scope:
@@ -83,6 +86,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 | GET | `/communities/nearby` | required | Nearby city-scene lookup by coordinates |
 | GET | `/communities/resolve-home` | required | Resolve exact Home Scene tuple for anchor/switch correctness |
 | GET | `/discover/scenes` | required | Deterministic scene search/list by scope + music community |
+| GET | `/discover/context` | required | Read persisted tuned-scene context + visitor status for current user |
 | POST | `/discover/tune` | required | Set tuned Scene context for the active listener session |
 | POST | `/discover/set-home-scene` | required | Explicit Home Scene reassignment with discovery guardrails |
 
@@ -95,8 +99,11 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - deterministic list of scene entries with scope metadata
   - includes whether each entry equals current Home Scene
 - `POST /discover/tune`:
-  - sets current listening context only
+  - sets current listening context and persists tuned scene id for user transport state
   - returns `{ tunedSceneId, isVisitor, homeSceneId }`
+- `GET /discover/context`:
+  - returns persisted tuned scene context
+  - falls back to Home Scene when tuned scene has not been set
 
 ## Web UI / Client Behavior
 - Discover surface must show:
@@ -120,7 +127,6 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 ## Future Work & Open Questions
 - Add “swipe” gesture semantics once mobile interaction layer is implemented.
 - Finalize discover pagination windows and caching strategy.
-- Decide whether tune context persists across sessions or resets per login.
 
 ## References
 - `docs/canon/Master Narrative Canon.md` (2.3, 6.x)

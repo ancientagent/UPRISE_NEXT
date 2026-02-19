@@ -35,7 +35,7 @@ type DiscoverItem = DiscoverCitySceneItem | DiscoverStateRollupItem;
 
 export default function DiscoverPage() {
   const { token } = useAuthStore();
-  const { homeScene, setHomeScene } = useOnboardingStore();
+  const { homeScene, tunedSceneId, setHomeScene, setTunedSceneId } = useOnboardingStore();
 
   const [tier, setTier] = useState<TierScope>('city');
   const [musicCommunity, setMusicCommunity] = useState(homeScene?.musicCommunity ?? '');
@@ -46,9 +46,26 @@ export default function DiscoverPage() {
   const [error, setError] = useState<string | null>(null);
   const [savingHomeSceneId, setSavingHomeSceneId] = useState<string | null>(null);
   const [tuningSceneId, setTuningSceneId] = useState<string | null>(null);
-  const [tunedSceneId, setTunedSceneId] = useState<string | null>(null);
 
   const canSearch = useMemo(() => musicCommunity.trim().length > 0, [musicCommunity]);
+
+  useEffect(() => {
+    async function fetchContext() {
+      if (!token) return;
+      try {
+        const response = await api.get<{
+          tunedSceneId: string | null;
+          homeSceneId: string | null;
+          isVisitor: boolean;
+        }>('/discover/context', { token });
+        setTunedSceneId(response.data?.tunedSceneId ?? null);
+      } catch {
+        // Keep persisted client context when fetch fails.
+      }
+    }
+
+    fetchContext();
+  }, [token, setTunedSceneId]);
 
   useEffect(() => {
     async function fetchScenes() {
@@ -103,6 +120,7 @@ export default function DiscoverPage() {
           state: string | null;
           musicCommunity: string | null;
         };
+        tunedSceneId: string;
       }>('/discover/set-home-scene', { sceneId: item.sceneId }, { token });
 
       setHomeScene({
@@ -111,6 +129,7 @@ export default function DiscoverPage() {
         musicCommunity: response.data?.homeScene?.musicCommunity ?? item.musicCommunity ?? musicCommunity,
         tasteTag: homeScene?.tasteTag,
       });
+      setTunedSceneId(response.data?.tunedSceneId ?? item.sceneId);
 
       setItems((prev) =>
         prev.map((entry) =>

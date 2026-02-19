@@ -13,6 +13,8 @@
   - Added `GET /discover/scenes` deterministic scene listing by scope + music community.
   - Added `POST /discover/tune` to set tuned listening context without changing Home Scene.
   - Added `POST /discover/set-home-scene` for explicit Home Scene reassignment from discovery context.
+  - Added `GET /discover/context` to read persisted tuned-scene transport context + visitor status.
+  - Persisted tune context on `User` (`tunedSceneId`, `tunedSceneUpdatedAt`) for cross-surface consistency.
   - Added reassignment guardrails: city-tier only, in-state only for existing Home Scene holders.
   - Supports `city`/`state` city-scene results and `national` state rollups.
   - Marks Home Scene/state relationship in payload without introducing join semantics.
@@ -20,6 +22,7 @@
   - Added `/discover` page with explicit scope + music-community filtering.
   - Added scene actions: `Open Scene`, `Tune to Scene`, and `Set as Home Scene` (separate controls).
   - Added explicit confirmation prompt before Home Scene reassignment.
+  - Discover + Plot now consume shared persisted tuned-scene context from API.
   - Added Discover entry links from `/` and `/plot`.
 - Drift guard hardening:
   - Added explicit policy banning unapproved placeholder CTAs in `AGENTS.md`, `docs/FEATURE_DRIFT_GUARDRAILS.md`, and `docs/RUNBOOK.md`.
