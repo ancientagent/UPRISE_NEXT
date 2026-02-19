@@ -1,25 +1,7 @@
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { COLLECTION_SHELVES } from '../common/constants/collection-shelves';
-
-type CollectionWithItems = Prisma.CollectionGetPayload<{
-  include: {
-    items: {
-      include: {
-        signal: {
-          select: {
-            id: true;
-            type: true;
-            metadata: true;
-            createdAt: true;
-          };
-        };
-      };
-    };
-  };
-}>;
 
 @Injectable()
 export class UsersService {
@@ -120,12 +102,26 @@ export class UsersService {
         },
       });
 
-      const byName = new Map<string, CollectionWithItems>(
-        collections.map((collection: CollectionWithItems) => [collection.name, collection]),
+      const byName = new Map<
+        string,
+        {
+          name: string;
+          items: Array<{
+            createdAt: Date;
+            signal: {
+              id: string;
+              type: string;
+              metadata: unknown;
+              createdAt: Date;
+            };
+          }>;
+        }
+      >(
+        collections.map((collection) => [collection.name, collection]),
       );
       collectionShelves = COLLECTION_SHELVES.map((shelf) => {
         const collection = byName.get(shelf);
-        const items = (collection?.items ?? []).map((item: CollectionWithItems['items'][number]) => ({
+        const items = (collection?.items ?? []).map((item) => ({
           signalId: item.signal.id,
           type: item.signal.type,
           metadata: (item.signal.metadata as Record<string, unknown> | null) ?? null,
