@@ -289,6 +289,46 @@ export class FairPlayService {
     };
   }
 
+  async getActiveRotation(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        tunedSceneId: true,
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException({ success: false, error: { message: 'User not found' } });
+    }
+
+    let homeSceneId: string | null = null;
+    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
+      const homeScene = await this.prisma.community.findFirst({
+        where: {
+          city: user.homeSceneCity,
+          state: user.homeSceneState,
+          musicCommunity: user.homeSceneCommunity,
+          tier: 'city',
+        },
+        select: { id: true },
+      });
+      homeSceneId = homeScene?.id ?? null;
+    }
+
+    const activeSceneId = user.tunedSceneId ?? homeSceneId;
+    if (!activeSceneId) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'No active scene context available' },
+      });
+    }
+
+    return this.getRotation(activeSceneId);
+  }
+
   async getMetrics(sceneId: string, asOf = new Date()) {
     const scene = await this.prisma.community.findUnique({
       where: { id: sceneId },

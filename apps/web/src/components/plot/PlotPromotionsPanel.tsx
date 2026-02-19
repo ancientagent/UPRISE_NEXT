@@ -38,15 +38,14 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
 
   useEffect(() => {
     async function fetchPromotions() {
-      if (!communityId) return;
-
       setLoading(true);
       setError(null);
 
       try {
-        const response = await api.get<PromotionItem[]>(`/communities/${communityId}/promotions?limit=20`, {
-          token: token || undefined,
-        });
+        const path = communityId
+          ? `/communities/${communityId}/promotions?limit=20`
+          : '/communities/active/promotions?limit=20';
+        const response = await api.get<PromotionItem[]>(path, { token: token || undefined });
         setItems(response.data ?? []);
       } catch (e) {
         const message = e instanceof Error ? e.message : 'Unable to load promotions.';
@@ -59,17 +58,6 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
     setItems([]);
     fetchPromotions();
   }, [communityId, token]);
-
-  if (!communityId) {
-    return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6">
-        <h2 className="text-lg font-semibold text-black">Promotions</h2>
-        <p className="mt-2 text-sm text-black/60">
-          Select a community in Statistics to anchor scene promotions.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6">

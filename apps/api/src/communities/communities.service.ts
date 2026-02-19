@@ -468,6 +468,18 @@ export class CommunitiesService {
   }
 
   /**
+   * Resolve active scene context for read surfaces:
+   * tuned scene first, otherwise Home Scene.
+   */
+  async resolveActiveSceneId(userId: string): Promise<string> {
+    const context = await this.getDiscoveryContext(userId);
+    if (!context.tunedSceneId) {
+      throw new BadRequestException('No active scene context available');
+    }
+    return context.tunedSceneId;
+  }
+
+  /**
    * Explicitly set Home Scene from discovery context.
    * Guardrails:
    * - Target must be a city-tier scene.

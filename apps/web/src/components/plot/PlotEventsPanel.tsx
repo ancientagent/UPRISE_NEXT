@@ -31,14 +31,15 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
 
   useEffect(() => {
     async function fetchEvents() {
-      if (!communityId) return;
-
       setLoading(true);
       setError(null);
 
       try {
+        const path = communityId
+          ? `/communities/${communityId}/events?limit=20&includePast=${includePast}`
+          : `/communities/active/events?limit=20&includePast=${includePast}`;
         const response = await api.get<PlotEvent[]>(
-          `/communities/${communityId}/events?limit=20&includePast=${includePast}`,
+          path,
           { token: token || undefined },
         );
 
@@ -54,17 +55,6 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
     setItems([]);
     fetchEvents();
   }, [communityId, includePast, token]);
-
-  if (!communityId) {
-    return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6">
-        <h2 className="text-lg font-semibold text-black">Events</h2>
-        <p className="mt-2 text-sm text-black/60">
-          Select a community in Statistics to anchor scene events.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6">
