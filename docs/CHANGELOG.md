@@ -7,6 +7,13 @@
 
 ## [Unreleased]
 ### Added
+- Admin Fair Play config surface (global policy variables only):
+  - Added `FairPlayConfig` model in `apps/api/prisma/schema.prisma`.
+  - Added `AdminConfigModule` with endpoints:
+    - `GET /admin/config/fair-play`
+    - `POST /admin/config/fair-play`
+  - Added service tests for config read/update:
+    - `apps/api/test/admin-config.service.test.ts`
 - Fair Play foundation (Task 1 + Task 2):
   - Added `RotationPool` enum and `RotationEntry` model to `apps/api/prisma/schema.prisma`.
   - Added `FairPlayModule` and `FairPlayService` with `ingestNewRelease(trackId, sceneId)` to place tracks into `NEW_RELEASES`.

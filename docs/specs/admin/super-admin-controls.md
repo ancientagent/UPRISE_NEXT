@@ -43,7 +43,11 @@ Defines the Super Admin’s platform oversight capabilities.
     - propagation threshold parameters (minimum unique listeners, rate threshold, confidence gate)
 
 ### Implemented Now
-- No dedicated super-admin role model or admin console API exists.
+- Fair Play config surface exists (global policy variables only):
+  - `GET /admin/config/fair-play`
+  - `POST /admin/config/fair-play`
+  - current guard: authenticated user (`JwtAuthGuard`)
+  - RBAC/super-admin enforcement: deferred
 - No admin audit log model currently exists.
 
 ### Deferred (Not Implemented Yet)
@@ -51,7 +55,6 @@ Defines the Super Admin’s platform oversight capabilities.
 - Audit log and policy-change ledger.
 - Moderation queue and account-control endpoints.
 - Configuration management for pricing/threshold flags.
-- Fair Play policy controls (global only; no manual per-song or per-uprise overrides).
 - Analytics governance APIs for custom metric definitions and retention.
 
 ## Non-Functional Requirements
@@ -87,6 +90,12 @@ Defines the Super Admin’s platform oversight capabilities.
 - None yet.
 
 ## API Design
+### Implemented Endpoints
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/admin/config/fair-play` | authenticated (RBAC deferred) | View current Fair Play policy variables |
+| POST | `/admin/config/fair-play` | authenticated (RBAC deferred) | Update Fair Play policy variables (global) |
+
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
@@ -95,8 +104,6 @@ Defines the Super Admin’s platform oversight capabilities.
 | POST | `/admin/users/:id/ban` | super-admin | Ban account |
 | POST | `/admin/config/pricing` | super-admin | Update pricing config |
 | POST | `/admin/config/feature-flags` | super-admin | Toggle feature flags |
-| GET | `/admin/config/fair-play` | super-admin | View current Fair Play policy variables |
-| POST | `/admin/config/fair-play` | super-admin | Update Fair Play policy variables (global) |
 | GET | `/admin/analytics/metrics` | super-admin | List metric definitions and status |
 | POST | `/admin/analytics/metrics` | super-admin | Create metric definition |
 | PATCH | `/admin/analytics/metrics/:id` | super-admin | Update or deprecate metric definition |
