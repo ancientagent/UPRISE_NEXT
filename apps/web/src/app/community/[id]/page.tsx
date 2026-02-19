@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
+import { useOnboardingStore } from '@/store/onboarding';
+import SceneContextBadge from '@/components/plot/SceneContextBadge';
 
 type CommunityProfile = {
   id: string;
@@ -34,6 +36,7 @@ export default function CommunityProfilePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { token } = useAuthStore();
+  const { homeScene, tunedScene, isVisitor } = useOnboardingStore();
 
   const [community, setCommunity] = useState<CommunityProfile | null>(null);
   const [feedItems, setFeedItems] = useState<CommunityFeedItem[]>([]);
@@ -130,6 +133,7 @@ export default function CommunityProfilePage() {
           <p className="text-xs uppercase tracking-[0.22em] text-black/50">Community Profile</p>
           <h1 className="mt-2 text-3xl font-semibold text-black">{community.name}</h1>
           <p className="mt-2 text-sm text-black/70">{community.description ?? 'No description yet.'}</p>
+          <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-xl bg-black/5 p-3">

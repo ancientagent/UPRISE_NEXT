@@ -556,6 +556,8 @@ export class CommunitiesService {
       previousHomeSceneId,
       homeSceneId: scene.id,
       tunedSceneId: scene.id,
+      tunedScene: scene,
+      isVisitor: false,
       homeScene: scene,
       changed: previousHomeSceneId !== scene.id,
     };

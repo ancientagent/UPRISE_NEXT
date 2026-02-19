@@ -163,6 +163,16 @@ export class DiscoveryController {
       previousHomeSceneId: string | null;
       homeSceneId: string;
       tunedSceneId: string;
+      tunedScene: {
+        id: string;
+        name: string;
+        city: string | null;
+        state: string | null;
+        musicCommunity: string | null;
+        tier: string;
+        isActive: boolean;
+      };
+      isVisitor: boolean;
       homeScene: {
         id: string;
         name: string;
