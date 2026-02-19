@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -31,6 +31,9 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - If the city-tier community does not exist, the system creates it as inactive (`isActive=false`) and marks the user as pioneer.
 - Optional `tasteTag` creates/associates `SectTag` + `UserTag`; this is tag association only.
 - User is auto-joined to the resolved Scene via `CommunityMember`.
+- Community profile read surface is available in web at `apps/web/src/app/community/[id]/page.tsx` using:
+  - `GET /communities/:id` for profile metadata
+  - `GET /communities/:id/feed` for recent S.E.E.D activity projection
 
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
