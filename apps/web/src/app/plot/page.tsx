@@ -39,7 +39,7 @@ const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, gpsCoords } = useOnboardingStore();
+  const { homeScene, gpsCoords, tunedSceneId, setTunedSceneId } = useOnboardingStore();
   const { token } = useAuthStore();
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
@@ -53,10 +53,38 @@ export default function PlotPage() {
   }, [gpsCoords]);
 
   useEffect(() => {
+    async function fetchDiscoveryContext() {
+      if (!token) return;
+      try {
+        const response = await api.get<{
+          tunedSceneId: string | null;
+          homeSceneId: string | null;
+          isVisitor: boolean;
+        }>('/discover/context', { token });
+        setTunedSceneId(response.data?.tunedSceneId ?? null);
+      } catch {
+        // Keep local state if context fetch fails.
+      }
+    }
+    fetchDiscoveryContext();
+  }, [token, setTunedSceneId]);
+
+  useEffect(() => {
     async function resolveDefaultCommunity() {
       if (selectedCommunity) return;
 
       try {
+        if (tunedSceneId) {
+          const tunedResponse = await api.get<CommunityWithDistance | null>(
+            `/communities/${tunedSceneId}`,
+            { token: token || undefined },
+          );
+          if (tunedResponse.data) {
+            setSelectedCommunity(tunedResponse.data);
+            return;
+          }
+        }
+
         // Canon anchor: exact Home Scene tuple first.
         if (homeScene?.city && homeScene?.state && homeScene?.musicCommunity) {
           const homeParams = new URLSearchParams({
@@ -91,7 +119,7 @@ export default function PlotPage() {
     }
 
     resolveDefaultCommunity();
-  }, [selectedCommunity, mapCenter, token, homeScene]);
+  }, [selectedCommunity, mapCenter, token, homeScene, tunedSceneId]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);

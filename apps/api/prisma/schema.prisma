@@ -30,6 +30,8 @@ model User {
   homeSceneState      String?
   homeSceneCommunity  String?
   homeSceneTag        String?
+  tunedSceneId        String?
+  tunedSceneUpdatedAt DateTime?
   gpsVerified         Boolean   @default(false)
   isVerified  Boolean   @default(false)
   isArtist    Boolean   @default(false)

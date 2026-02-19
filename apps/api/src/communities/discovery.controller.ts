@@ -117,6 +117,37 @@ export class DiscoveryController {
   }
 
   /**
+   * GET /api/discover/context
+   * Get persisted tuned-scene context for current user.
+   */
+  @Get('context')
+  async getContext(
+    @Request() req: { user: { userId: string } }
+  ): Promise<{
+    success: true;
+    data: {
+      tunedSceneId: string | null;
+      tunedScene: {
+        id: string;
+        name: string;
+        city: string | null;
+        state: string | null;
+        musicCommunity: string | null;
+        tier: string;
+        isActive: boolean;
+      } | null;
+      homeSceneId: string | null;
+      isVisitor: boolean;
+    };
+  }> {
+    const result = await this.communitiesService.getDiscoveryContext(req.user.userId);
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  /**
    * POST /api/discover/set-home-scene
    * Explicit Home Scene reassignment from discovery context.
    */
@@ -131,6 +162,7 @@ export class DiscoveryController {
     data: {
       previousHomeSceneId: string | null;
       homeSceneId: string;
+      tunedSceneId: string;
       homeScene: {
         id: string;
         name: string;

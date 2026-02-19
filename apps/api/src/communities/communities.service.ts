@@ -369,6 +369,14 @@ export class CommunitiesService {
 
     const isVisitor = homeSceneId ? homeSceneId !== tunedScene.id : true;
 
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        tunedSceneId: tunedScene.id,
+        tunedSceneUpdatedAt: new Date(),
+      },
+    });
+
     return {
       tunedSceneId: tunedScene.id,
       tunedScene: {
@@ -382,6 +390,80 @@ export class CommunitiesService {
       },
       homeSceneId,
       isVisitor,
+    };
+  }
+
+  /**
+   * Resolve persisted discovery context for the current user.
+   * Falls back to Home Scene when no tuned scene has been persisted yet.
+   */
+  async getDiscoveryContext(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        tunedSceneId: true,
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    let homeSceneId: string | null = null;
+    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
+      const homeScene = await this.prisma.community.findFirst({
+        where: {
+          city: user.homeSceneCity,
+          state: user.homeSceneState,
+          musicCommunity: user.homeSceneCommunity,
+          tier: 'city',
+        },
+        select: { id: true },
+      });
+      homeSceneId = homeScene?.id ?? null;
+    }
+
+    const resolvedTunedSceneId = user.tunedSceneId ?? homeSceneId ?? null;
+    if (!resolvedTunedSceneId) {
+      return {
+        tunedSceneId: null,
+        tunedScene: null,
+        homeSceneId,
+        isVisitor: true,
+      };
+    }
+
+    const tunedScene = await this.prisma.community.findUnique({
+      where: { id: resolvedTunedSceneId },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+        isActive: true,
+      },
+    });
+
+    if (!tunedScene) {
+      return {
+        tunedSceneId: null,
+        tunedScene: null,
+        homeSceneId,
+        isVisitor: true,
+      };
+    }
+
+    return {
+      tunedSceneId: tunedScene.id,
+      tunedScene,
+      homeSceneId,
+      isVisitor: homeSceneId ? homeSceneId !== tunedScene.id : true,
     };
   }
 
@@ -452,6 +534,8 @@ export class CommunitiesService {
           homeSceneCity: scene.city,
           homeSceneState: scene.state,
           homeSceneCommunity: scene.musicCommunity,
+          tunedSceneId: scene.id,
+          tunedSceneUpdatedAt: new Date(),
         },
       });
 
@@ -471,6 +555,7 @@ export class CommunitiesService {
     return {
       previousHomeSceneId,
       homeSceneId: scene.id,
+      tunedSceneId: scene.id,
       homeScene: scene,
       changed: previousHomeSceneId !== scene.id,
     };
