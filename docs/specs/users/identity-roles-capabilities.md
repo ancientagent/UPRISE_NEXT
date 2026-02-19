@@ -3,7 +3,7 @@
 **ID:** `USER-IDENTITY`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
 Defines identity and permission boundaries for UPRISE. The canonical rule is one user identity with additive capabilities; role/capability expansion must not split civic identity from participation.
@@ -31,9 +31,12 @@ Defines identity and permission boundaries for UPRISE. The canonical rule is one
 - User listing/profile reads:
   - `GET /users`
   - `GET /users/:id`
+  - `GET /users/:id/profile`
+  - `POST /users/me/collection-display`
 - Schema fields currently present:
   - `User.isArtist`
   - `User.gpsVerified`
+  - `User.collectionDisplayEnabled`
   - home-scene fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`)
 
 ### Deferred (Not Implemented Yet)
@@ -70,6 +73,8 @@ Defines identity and permission boundaries for UPRISE. The canonical rule is one
 | POST | `/auth/login` | none | Authenticate and return tokens |
 | GET | `/users` | required | List users (paginated) |
 | GET | `/users/:id` | required | Fetch a user profile |
+| GET | `/users/:id/profile` | required | Fetch user profile + collection shelves (respect visibility rules) |
+| POST | `/users/me/collection-display` | required | Set profile collection visibility toggle |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.

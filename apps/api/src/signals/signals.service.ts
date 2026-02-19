@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CreateSignalDto, FollowDto } from './dto/signal.dto';
+import { mapSignalToShelf } from '../common/constants/collection-shelves';
 
 @Injectable()
 export class SignalsService {
@@ -17,16 +18,25 @@ export class SignalsService {
     });
   }
 
-  private async getOrCreateDefaultCollection(userId: string) {
+  private async getOrCreateDefaultCollection(userId: string, shelfName: string) {
     return this.prisma.collection.upsert({
-      where: { userId_name: { userId, name: 'Personal' } },
+      where: { userId_name: { userId, name: shelfName } },
       update: {},
-      create: { userId, name: 'Personal' },
+      create: { userId, name: shelfName },
     });
   }
 
   async addToCollection(userId: string, signalId: string) {
-    const collection = await this.getOrCreateDefaultCollection(userId);
+    const signal = await this.prisma.signal.findUnique({
+      where: { id: signalId },
+      select: { id: true, type: true, metadata: true },
+    });
+    if (!signal) {
+      throw new NotFoundException('Signal not found');
+    }
+
+    const shelf = mapSignalToShelf(signal.type, (signal.metadata as Record<string, unknown> | null) ?? null);
+    const collection = await this.getOrCreateDefaultCollection(userId, shelf);
     const action = await this.prisma.signalAction.upsert({
       where: { userId_signalId_type: { userId, signalId, type: 'ADD' } },
       update: {},
@@ -39,7 +49,7 @@ export class SignalsService {
       create: { collectionId: collection.id, signalId },
     });
 
-    return { action, item, collectionId: collection.id };
+    return { action, item, collectionId: collection.id, shelf };
   }
 
   async blastSignal(userId: string, signalId: string) {

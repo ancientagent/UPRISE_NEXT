@@ -3,7 +3,7 @@
 **ID:** `CORE-SIGNALS`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
 Defines Signals as atomic units of interaction and the universal actions applied to them. This spec covers implemented contracts and the canonical constraints that prohibit algorithmic interpretation.
@@ -11,7 +11,7 @@ Defines Signals as atomic units of interaction and the universal actions applied
 ## User Roles & Use Cases
 - Listeners create signals (where allowed) and perform ADD, BLAST, and SUPPORT.
 - Users FOLLOW entities for awareness.
-- Users save signals to personal collections.
+- Users save signals to typed collection shelves on their profile.
 
 ## Functional Requirements
 - A Signal is a discrete unit created or propagated through explicit user action.
@@ -21,7 +21,8 @@ Defines Signals as atomic units of interaction and the universal actions applied
   - `SUPPORT`: explicit support action
   - `FOLLOW`: awareness subscription to an entity
 - Action application is idempotent at user/signal/action scope.
-- Collections are private, on-demand, and separate from Fair Play.
+- Collections are profile-bound and separate from Fair Play.
+- Public collection visibility is opt-in (`collectionDisplayEnabled`).
 - Signal propagation is explicit only; no algorithmic surfacing or recommendation.
 
 ## Non-Functional Requirements
@@ -54,7 +55,7 @@ Defines Signals as atomic units of interaction and the universal actions applied
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/signals` | required | Create a signal |
-| POST | `/signals/:id/add` | required | Add signal to Personal collection + record ADD action |
+| POST | `/signals/:id/add` | required | Add signal to typed shelf + record ADD action |
 | POST | `/signals/:id/blast` | required | Record BLAST action |
 | POST | `/signals/:id/support` | required | Record SUPPORT action |
 | POST | `/follow` | required | Follow an entity by type/id |
@@ -71,14 +72,15 @@ Defines Signals as atomic units of interaction and the universal actions applied
 
 ## Web UI / Client Behavior
 - Feed surfaces only explicit community actions.
-- Collections are private and on-demand.
+- Collections render as typed shelves on user profile.
+- Other users only see shelves when profile display toggle is enabled.
 - Follow actions subscribe users to future entity updates without changing ranking/placement logic.
 
 ## Acceptance Tests / Test Plan
 - `POST /signals` creates signal rows with optional metadata/community.
 - Repeating `ADD`/`BLAST`/`SUPPORT` for same user/signal returns idempotent result (no duplicate rows).
 - Repeating `FOLLOW` for same user/entity returns idempotent result.
-- ADD creates/uses default Personal collection and links `CollectionItem`.
+- ADD maps signals to fixed shelves (`singles`, `uprises`, `posters`, `fliers`, merch shelves) and links `CollectionItem`.
 
 ## Future Work & Open Questions
 - Add discourse signals (post/thread) service contracts (currently spec-level only).
