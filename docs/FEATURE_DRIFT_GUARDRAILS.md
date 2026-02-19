@@ -31,6 +31,7 @@ Examples:
 - New API endpoints, DB models, or migrations outside documented requirements.
 - New auth/roles/permissions semantics without an approved spec.
 - Web-tier violations (DB access, secrets, server-only imports).
+- Placeholder CTAs for unapproved capabilities (e.g., `Coming Soon` action buttons that imply unsupported workflows).
 
 If it’s unclear whether something is “new behavior”, treat it as drift and stop.
 
@@ -53,6 +54,7 @@ If the relevant spec does not exist:
 ## Practical Checklist (Before You Code)
 
 - [ ] I can point to the spec that authorizes this work (`docs/specs/...` or `docs/Specifications/...`).
+- [ ] Every new user-facing action has explicit spec authorization (no implicit/placeholder workflows).
 - [ ] Web-tier boundary is respected (`apps/web/WEB_TIER_BOUNDARY.md`).
 - [ ] Any shared contract changes are reflected in `packages/types` (and regenerated where applicable).
 - [ ] PR description will include: Deployment Target, Phase, Specs links, and source agent tag.

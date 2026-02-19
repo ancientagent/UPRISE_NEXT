@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Drift guard hardening:
+  - Added explicit policy banning unapproved placeholder CTAs in `AGENTS.md`, `docs/FEATURE_DRIFT_GUARDRAILS.md`, and `docs/RUNBOOK.md`.
+- Community profile action alignment:
+  - Replaced `Join (Coming Soon)` with canon-safe navigation action `Visit Scene in Plot`.
 - Plot Home Scene anchor resolver:
   - Added `GET /communities/resolve-home` for exact `{city,state,musicCommunity}` resolution.
   - Plot now anchors Feed/Events/Promotions by Home Scene before GPS-nearby fallback.
