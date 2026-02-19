@@ -9,6 +9,7 @@
 ### Added
 - Fair Play density analysis doc for punk city modeling (`docs/solutions/FAIR_PLAY_PUNK_CITY_DENSITY_STUDY_2026-02-18.md`) with Austin/LA calibration, dial-variance results, and 60/75/90 minute capped-cycle comparisons.
 - Analytics instrumentation framework spec (`docs/specs/engagement/analytics-and-instrumentation-framework.md`) for Home Scene descriptive metrics tracking.
+- Super-admin analytics governance scope: full telemetry visibility + custom metric/module definition controls (descriptive-only boundary).
 - Broadcast simulation tool for Fair Play exploration:
   - `scripts/fair_play_rotation_sim.py`
   - includes new `lateral_vote_mid_entry` mode where songs start neutral/mid-cycle and cadence is adjusted by lateral vote signal (`more`, `fine`, `less`) with min/max replay-gap safety bounds.

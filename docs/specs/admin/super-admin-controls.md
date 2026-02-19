@@ -3,7 +3,7 @@
 **ID:** `ADMIN-SUPER`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
 Defines the Super Admin’s platform oversight capabilities.
@@ -14,6 +14,7 @@ Defines the Super Admin’s platform oversight capabilities.
 
 ## Functional Requirements
 - Full visibility into Users, Artists, Businesses, Events, and transactions.
+- Full visibility into all analytics and instrumentation datasets (including non-UI metrics).
 - Account control: view, edit, suspend, release, or ban.
 - Moderation queue access and dispute handling.
 - Platform configuration:
@@ -24,6 +25,10 @@ Defines the Super Admin’s platform oversight capabilities.
   - Manual Scene activation
   - Manual Activity Point adjustments
   - Feature flags
+- Instrumentation governance:
+  - Create/activate/deprecate tracking modules and metric definitions.
+  - Configure metric retention policy windows.
+  - Define metric metadata (owner, scope, cadence, source, descriptive-only classification).
 - Fair Play control:
   - Adjust evaluation periods and thresholds
   - Configure per‑Uprise tuning
@@ -38,6 +43,7 @@ Defines the Super Admin’s platform oversight capabilities.
 - Moderation queue and account-control endpoints.
 - Configuration management for pricing/threshold flags.
 - Fair Play policy controls (global only; no manual per-song or per-uprise overrides).
+- Analytics governance APIs for custom metric definitions and retention.
 
 ## Non-Functional Requirements
 - Auditability of admin actions.
@@ -49,6 +55,10 @@ Defines the Super Admin’s platform oversight capabilities.
   - no manual song reordering
   - no tier-progression exceptions
   - no governance authority based on payment/engagement metrics
+- Admin-defined metrics are descriptive only:
+  - cannot feed recommendation/personalization systems
+  - cannot change Fair Play recurrence
+  - cannot change propagation eligibility
 
 ## Data Models & Migrations
 ### Planned Models
@@ -56,6 +66,9 @@ Defines the Super Admin’s platform oversight capabilities.
 - `FeatureFlag`
 - `PricingConfig`
 - optional `PolicyChangeApproval`
+- `InstrumentationMetricDefinition`
+- `InstrumentationModule`
+- optional `InstrumentationRetentionPolicy`
 
 ### Migrations
 - None yet.
@@ -69,6 +82,10 @@ Defines the Super Admin’s platform oversight capabilities.
 | POST | `/admin/users/:id/ban` | super-admin | Ban account |
 | POST | `/admin/config/pricing` | super-admin | Update pricing config |
 | POST | `/admin/config/feature-flags` | super-admin | Toggle feature flags |
+| GET | `/admin/analytics/metrics` | super-admin | List metric definitions and status |
+| POST | `/admin/analytics/metrics` | super-admin | Create metric definition |
+| PATCH | `/admin/analytics/metrics/:id` | super-admin | Update or deprecate metric definition |
+| GET | `/admin/analytics/query` | super-admin | Query historical telemetry datasets |
 
 ## Web UI / Client Behavior
 - Admin console with scoped access.

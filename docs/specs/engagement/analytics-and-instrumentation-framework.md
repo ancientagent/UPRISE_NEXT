@@ -1,5 +1,10 @@
 # UPRISE Home Scene Statistics — Analytics & Instrumentation Framework
 
+**ID:** `ENG-INSTRUMENTATION`
+**Status:** `active`
+**Owner:** `platform`
+**Last Updated:** `2026-02-19`
+
 **Purpose:** Exhaustive list of meaningful, measurable statistics that can be recorded for every **Home Scene (Citywide)**.
 
 **Scope:** Instrumentation and storage only (what we *track*). Display decisions are deferred.
@@ -7,6 +12,13 @@
 **Canon constraints (reminders):**
 - Metrics are **descriptive only** and must not become legitimacy, ranking, or authority.
 - Tracking ≠ endorsement; presentation can create drift.
+
+## System Policy Locks (V1)
+
+- **Track-everything policy:** if a metric is defined in this framework, it should be captured and retained historically even if not currently surfaced in user-facing UI.
+- **Display separation:** storage/instrumentation scope is broader than display scope; hidden metrics remain queryable for audits and longitudinal analysis.
+- **Admin visibility:** Super Admin has full read access across all instrumentation domains.
+- **Custom instrumentation:** Super Admin can define and register new tracking modules/metrics, provided they remain descriptive-only and do not alter Fair Play recurrence, propagation, legitimacy, or governance.
 
 ---
 
