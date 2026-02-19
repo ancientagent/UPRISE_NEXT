@@ -19,9 +19,11 @@ import {
   FindNearbyCommunitiesSchema,
   VerifyLocationSchema,
   GetCommunityFeedSchema,
+  GetCommunityStatisticsSchema,
   CreateCommunityWithGeoDto,
   VerifyLocationDto,
   GetCommunityFeedDto,
+  GetCommunityStatisticsDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodError } from 'zod';
@@ -69,6 +71,34 @@ export class CommunitiesController {
           nextCursor: result.nextCursor,
         },
       };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/communities/:id/statistics
+   * Tier-scoped scene statistics summary (descriptive only)
+   */
+  @Get(':id/statistics')
+  async getStatistics(@Param('id') id: string, @Query() rawQuery: any) {
+    try {
+      const query: GetCommunityStatisticsDto = GetCommunityStatisticsSchema.parse({
+        tier: rawQuery.tier,
+      });
+
+      const result = await this.communitiesService.getStatistics(id, query);
+      return { success: true, data: result };
     } catch (error) {
       if (error instanceof ZodError) {
         throw new BadRequestException({

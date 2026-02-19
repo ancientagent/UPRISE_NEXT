@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENEMAP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
 Defines the Scene Map and Statistics contract as an inherent Scene surface inside The Plot. The map is not a separate product; it is the descriptive structural view of a Scene and its community activity.
@@ -78,8 +78,13 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
   - national Top 40 songs list
 
 ### Implemented Now
-- Plot shell includes a Statistics tab placeholder in `apps/web/src/app/plot/page.tsx`.
-- No dedicated Scene Map/Statistics API endpoint exists yet.
+- Plot shell includes a Statistics tab in `apps/web/src/app/plot/page.tsx`.
+- `GET /communities/:id/statistics?tier=city|state|national` is implemented and returns:
+  - tier-scoped metrics (`members`, `activeSects`, `eventsThisWeek`, `activityScore`, `activeTracks`)
+  - deterministic Top 40 payload (`topSongs`)
+  - rollup metadata (`tierScope`, `rollupUnit`, `timeWindow`)
+- Web Statistics panel consumes the statistics endpoint for metrics across tiers.
+- Top Songs panel now consumes `topSongs` from the statistics endpoint (instead of feed-derived approximation).
 
 ### Deferred (Not Implemented Yet)
 - Scene metrics aggregation service.
