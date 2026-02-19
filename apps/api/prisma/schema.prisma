@@ -307,3 +307,28 @@ model Event {
 
   @@map("events")
 }
+
+model FairPlayConfig {
+  id                               String   @id @default(uuid())
+  scope                            String   @unique @default("global")
+  recurrenceReorderHours           Int?
+  recurrenceRollingWindowDays      Int?
+  bandPersistDays                  Int?
+  newWindowBandLowMaxActive        Int?
+  newWindowBandLowDays             Int?
+  newWindowBandMidMinActive        Int?
+  newWindowBandMidMaxActive        Int?
+  newWindowBandMidDays             Int?
+  newWindowBandHighMinActive       Int?
+  newWindowBandHighDays            Int?
+  graduationMinAgeDays             Int?
+  graduationExecutionCadenceDays   Int?
+  graduationCapPerRun              Int?
+  propagationMinUniqueListeners    Int?
+  propagationRateThreshold         Float?
+  propagationConfidenceGate        Float?
+  createdAt                        DateTime @default(now())
+  updatedAt                        DateTime @updatedAt
+
+  @@map("fair_play_config")
+}

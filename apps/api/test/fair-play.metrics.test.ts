@@ -2,6 +2,9 @@ import { NotFoundException } from '@nestjs/common';
 import { FairPlayService } from '../src/fair-play/fair-play.service';
 
 const mockPrisma = {
+  fairPlayConfig: {
+    findUnique: jest.fn(),
+  },
   track: {
     findUnique: jest.fn(),
   },
@@ -35,6 +38,7 @@ describe('FairPlayService.getMetrics', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.fairPlayConfig.findUnique.mockResolvedValue({ recurrenceRollingWindowDays: 14 });
     service = new FairPlayService(mockPrisma as any);
   });
 
@@ -67,6 +71,7 @@ describe('FairPlayService.getMetrics', () => {
       min: 0.5,
       max: 9.75,
     });
+    expect(result.data.recurrenceRollingWindowDays).toBe(14);
     expect(result.data.votesInWindow).toBe(22);
   });
 });

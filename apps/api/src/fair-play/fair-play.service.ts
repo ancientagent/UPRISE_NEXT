@@ -11,6 +11,19 @@ const ROTATION_POOL = {
 export class FairPlayService {
   constructor(private prisma: PrismaService) {}
 
+  private async getFairPlayConfigSnapshot() {
+    const config = await this.prisma.fairPlayConfig.findUnique({
+      where: { scope: 'global' },
+      select: {
+        recurrenceRollingWindowDays: true,
+      },
+    });
+
+    return {
+      recurrenceRollingWindowDays: config?.recurrenceRollingWindowDays ?? 14,
+    };
+  }
+
   async ingestNewRelease(trackId: string, sceneId: string) {
     const track = await this.prisma.track.findUnique({
       where: { id: trackId },
@@ -73,7 +86,8 @@ export class FairPlayService {
       throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
     }
 
-    const windowStart = new Date(asOf.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const config = await this.getFairPlayConfigSnapshot();
+    const windowStart = new Date(asOf.getTime() - config.recurrenceRollingWindowDays * 24 * 60 * 60 * 1000);
     const entries = await this.prisma.rotationEntry.findMany({
       where: {
         sceneId,
@@ -284,7 +298,8 @@ export class FairPlayService {
       throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
     }
 
-    const windowStart = new Date(asOf.getTime() - 14 * 24 * 60 * 60 * 1000);
+    const config = await this.getFairPlayConfigSnapshot();
+    const windowStart = new Date(asOf.getTime() - config.recurrenceRollingWindowDays * 24 * 60 * 60 * 1000);
 
     const [activeNewCount, mainRotationCount, recurrenceStats, votesInWindow] = await Promise.all([
       this.prisma.rotationEntry.count({
@@ -323,6 +338,7 @@ export class FairPlayService {
           min: recurrenceStats._min.recurrenceScore ?? 0,
           max: recurrenceStats._max.recurrenceScore ?? 0,
         },
+        recurrenceRollingWindowDays: config.recurrenceRollingWindowDays,
         votesInWindow,
       },
     };

@@ -13,6 +13,7 @@ import { OnboardingModule } from './onboarding/onboarding.module';
 import { PlacesModule } from './places/places.module';
 import { SignalsModule } from './signals/signals.module';
 import { FairPlayModule } from './fair-play/fair-play.module';
+import { AdminConfigModule } from './admin-config/admin-config.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { FairPlayModule } from './fair-play/fair-play.module';
     EventsModule,
     SignalsModule,
     FairPlayModule,
+    AdminConfigModule,
   ],
 })
 export class AppModule {}

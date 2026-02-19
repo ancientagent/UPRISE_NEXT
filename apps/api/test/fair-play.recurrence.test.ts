@@ -3,6 +3,9 @@ import { RotationPool } from '@prisma/client';
 import { FairPlayService } from '../src/fair-play/fair-play.service';
 
 const mockPrisma = {
+  fairPlayConfig: {
+    findUnique: jest.fn(),
+  },
   track: {
     findUnique: jest.fn(),
   },
@@ -27,6 +30,7 @@ describe('FairPlayService.aggregateRecurrenceScores', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.fairPlayConfig.findUnique.mockResolvedValue({ recurrenceRollingWindowDays: 14 });
     service = new FairPlayService(mockPrisma as any);
   });
 
