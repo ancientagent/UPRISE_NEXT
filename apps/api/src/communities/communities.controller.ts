@@ -20,10 +20,12 @@ import {
   VerifyLocationSchema,
   GetCommunityFeedSchema,
   GetCommunityStatisticsSchema,
+  GetCommunitySceneMapSchema,
   CreateCommunityWithGeoDto,
   VerifyLocationDto,
   GetCommunityFeedDto,
   GetCommunityStatisticsDto,
+  GetCommunitySceneMapDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodError } from 'zod';
@@ -98,6 +100,34 @@ export class CommunitiesController {
       });
 
       const result = await this.communitiesService.getStatistics(id, query);
+      return { success: true, data: result };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/communities/:id/scene-map
+   * Tier-scoped scene map payload
+   */
+  @Get(':id/scene-map')
+  async getSceneMap(@Param('id') id: string, @Query() rawQuery: any) {
+    try {
+      const query: GetCommunitySceneMapDto = GetCommunitySceneMapSchema.parse({
+        tier: rawQuery.tier,
+      });
+
+      const result = await this.communitiesService.getSceneMap(id, query);
       return { success: true, data: result };
     } catch (error) {
       if (error instanceof ZodError) {

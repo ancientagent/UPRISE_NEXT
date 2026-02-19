@@ -7,6 +7,14 @@
 
 ## [Unreleased]
 ### Added
+- Scene map API + web wiring:
+  - Added `GET /communities/:id/scene-map?tier=city|state|national`.
+  - Added tier-scoped scene-map payload in `CommunitiesService.getSceneMap` with:
+    - city scope: community points
+    - state scope: city rollups
+    - national scope: state rollups
+  - Statistics page map now consumes the scene-map endpoint across tiers.
+  - Added service unit tests: `apps/api/test/communities.scene-map.service.test.ts`.
 - Community statistics API + web wiring:
   - Added `GET /communities/:id/statistics?tier=city|state|national`.
   - Added tier-scoped metrics and deterministic `topSongs` payload (max 40) in `CommunitiesService.getStatistics`.

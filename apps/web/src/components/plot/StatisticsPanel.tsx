@@ -5,7 +5,7 @@ import { api } from '@/lib/api';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 import type { CommunityWithDistance } from '@/lib/types/community';
-import SceneMap from '@/components/plot/SceneMap';
+import SceneMap, { type SceneMapPoint } from '@/components/plot/SceneMap';
 import { shouldFetchNearbyForTier } from '@/components/plot/tier-guard';
 
 type TierScope = 'city' | 'state' | 'national';
@@ -47,6 +47,13 @@ interface CommunityStatisticsResponse {
   };
 }
 
+interface CommunitySceneMapResponse {
+  tierScope: TierScope;
+  rollupUnit: 'local_sect' | 'city' | 'state';
+  center: { lat: number; lng: number } | null;
+  points: SceneMapPoint[];
+}
+
 interface StatisticsPanelProps {
   selectedTier: TierScope;
   onCommunitySelect?: (community: CommunityWithDistance) => void;
@@ -64,6 +71,7 @@ export default function StatisticsPanel({
   const [communities, setCommunities] = useState<CommunityWithDistance[]>([]);
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [statistics, setStatistics] = useState<CommunityStatisticsResponse | null>(null);
+  const [sceneMap, setSceneMap] = useState<CommunitySceneMapResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -150,6 +158,27 @@ export default function StatisticsPanel({
     fetchStatistics();
   }, [selectedCommunity, selectedTier, token]);
 
+  useEffect(() => {
+    async function fetchSceneMap() {
+      if (!selectedCommunity) {
+        setSceneMap(null);
+        return;
+      }
+
+      try {
+        const response = await api.get<CommunitySceneMapResponse>(
+          `/communities/${selectedCommunity.id}/scene-map?tier=${selectedTier}`,
+          { token: token || undefined }
+        );
+        setSceneMap(response.data ?? null);
+      } catch {
+        setSceneMap(null);
+      }
+    }
+
+    fetchSceneMap();
+  }, [selectedCommunity, selectedTier, token]);
+
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
     onCommunitySelect?.(community);
@@ -231,9 +260,12 @@ export default function StatisticsPanel({
         <>
           <div className="h-48 w-full mb-4">
             <SceneMap
-              communities={communities}
-              selectedCommunity={selectedCommunity}
-              onCommunitySelect={handleCommunitySelect}
+              points={sceneMap?.points ?? []}
+              selectedPointId={selectedCommunity?.id ?? null}
+              onSelectPoint={(point) => {
+                const matched = communities.find((c) => c.id === point.id);
+                if (matched) handleCommunitySelect(matched);
+              }}
             />
           </div>
 
@@ -273,15 +305,21 @@ export default function StatisticsPanel({
           </div>
         </>
       ) : (
-        <div className="rounded-xl border border-black/10 p-4">
-          <p className="text-sm text-black/70">
-            {selectedTier === 'state'
-              ? 'State tier aggregates city-scoped scenes in this parent music community context.'
-              : 'National tier aggregates state-level macro context in this parent music community.'}
-          </p>
-          <p className="text-xs text-black/50 mt-2">
-            Scope communities: {metrics.scopeCommunityCount.toLocaleString()} • Active tracks: {metrics.activeTracks.toLocaleString()}
-          </p>
+        <div className="space-y-3">
+          <div className="h-48 w-full">
+            <SceneMap points={sceneMap?.points ?? []} />
+          </div>
+          <div className="rounded-xl border border-black/10 p-4">
+            <p className="text-sm text-black/70">
+              {selectedTier === 'state'
+                ? 'State tier aggregates city-scoped scenes in this parent music community context.'
+                : 'National tier aggregates state-level macro context in this parent music community.'}
+            </p>
+            <p className="text-xs text-black/50 mt-2">
+              Scope communities: {metrics.scopeCommunityCount.toLocaleString()} • Active tracks:{' '}
+              {metrics.activeTracks.toLocaleString()}
+            </p>
+          </div>
         </div>
       )}
     </div>

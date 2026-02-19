@@ -83,7 +83,11 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
   - tier-scoped metrics (`members`, `activeSects`, `eventsThisWeek`, `activityScore`, `activeTracks`)
   - deterministic Top 40 payload (`topSongs`)
   - rollup metadata (`tierScope`, `rollupUnit`, `timeWindow`)
+- `GET /communities/:id/scene-map?tier=city|state|national` is implemented and returns:
+  - `points[]` with tier-scoped markers/rollups (`community` at city scope, city rollups at state scope, state rollups at national scope)
+  - `center` and rollup metadata (`tierScope`, `rollupUnit`, `timeWindow`)
 - Web Statistics panel consumes the statistics endpoint for metrics across tiers.
+- Web Scene Map now consumes `/communities/:id/scene-map` for city/state/national map data.
 - Top Songs panel now consumes `topSongs` from the statistics endpoint (instead of feed-derived approximation).
 
 ### Deferred (Not Implemented Yet)
