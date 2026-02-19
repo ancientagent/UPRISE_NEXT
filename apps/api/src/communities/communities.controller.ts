@@ -22,12 +22,14 @@ import {
   GetCommunityStatisticsSchema,
   GetCommunitySceneMapSchema,
   GetCommunityEventsSchema,
+  GetCommunityPromotionsSchema,
   CreateCommunityWithGeoDto,
   VerifyLocationDto,
   GetCommunityFeedDto,
   GetCommunityStatisticsDto,
   GetCommunitySceneMapDto,
   GetCommunityEventsDto,
+  GetCommunityPromotionsDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodError } from 'zod';
@@ -168,6 +170,43 @@ export class CommunitiesController {
         meta: {
           limit: result.limit,
           includePast: result.includePast,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/communities/:id/promotions
+   * Scene-scoped promotions/offers listing for Plot Promotions tab
+   */
+  @Get(':id/promotions')
+  async getPromotions(
+    @Param('id') id: string,
+    @Query() rawQuery: any,
+  ): Promise<{ success: true; data: any[]; meta: { limit: number } }> {
+    try {
+      const query: GetCommunityPromotionsDto = GetCommunityPromotionsSchema.parse({
+        limit: rawQuery.limit,
+      });
+
+      const result = await this.communitiesService.getPromotions(id, query);
+      return {
+        success: true,
+        data: result.items,
+        meta: {
+          limit: result.limit,
         },
       };
     } catch (error) {

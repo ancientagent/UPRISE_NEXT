@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-21`
+**Last Updated:** `2026-02-22`
 
 ## Overview & Purpose
 Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -47,6 +47,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Statistics Scene Map now calls `GET /communities/:id/scene-map` for tier-scoped map points/rollups.
 - Feed tab now renders server-driven S.E.E.D activity via `GET /communities/:id/feed` (cursor-paginated, non-personalized).
 - Events tab now renders scene-scoped listings via `GET /communities/:id/events`.
+- Promotions tab now renders scene-scoped listings via `GET /communities/:id/promotions`.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Registrar module integration into Plot UI.
@@ -93,7 +94,8 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Home Scene and optional taste tag are visible context on entry.
 - Feed uses explicit scene actions from API; it does not rank or personalize.
 - Events uses scene-scoped API listings from selected community anchor.
-- Promotions/Social remain placeholder panels until endpoints ship.
+- Promotions uses scene-scoped API listings from selected community anchor.
+- Social remains placeholder until endpoint ships.
 
 ## Acceptance Tests / Test Plan
 - Plot loads and displays Home Scene context from onboarding state.

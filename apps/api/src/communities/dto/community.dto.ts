@@ -108,6 +108,15 @@ export const GetCommunityEventsSchema = z.object({
 export type GetCommunityEventsDto = z.infer<typeof GetCommunityEventsSchema>;
 
 /**
+ * Scene promotions query params
+ */
+export const GetCommunityPromotionsSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+});
+
+export type GetCommunityPromotionsDto = z.infer<typeof GetCommunityPromotionsSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

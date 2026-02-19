@@ -12,6 +12,7 @@ import TierToggle from '@/components/plot/TierToggle';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
+import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -126,7 +127,7 @@ export default function PlotPage() {
               <p className="text-sm text-black/60">
                 {activeTab === 'Feed' && 'Community actions appear here.'}
                 {activeTab === 'Events' && 'Scene events listing from your selected community anchor.'}
-                {activeTab === 'Promotions' && 'Local offers and promotions.'}
+                {activeTab === 'Promotions' && 'Scene-scoped promotions and offers from your selected anchor.'}
                 {activeTab === 'Statistics' && (
                   <>
                     Scene metrics and activity from{' '}
@@ -155,10 +156,14 @@ export default function PlotPage() {
                 communityId={selectedCommunity?.id ?? null}
                 communityName={selectedCommunity?.name ?? null}
               />
+            ) : activeTab === 'Promotions' ? (
+              <PlotPromotionsPanel
+                communityId={selectedCommunity?.id ?? null}
+                communityName={selectedCommunity?.name ?? null}
+              />
             ) : (
               <div className="text-center py-12 border border-dashed border-black/20 rounded-2xl">
                 <p className="text-4xl mb-3">
-                  {activeTab === 'Promotions' && '🏷️'}
                   {activeTab === 'Social' && '💬'}
                 </p>
                 <p className="text-sm text-black/60">

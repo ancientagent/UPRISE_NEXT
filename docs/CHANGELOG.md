@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Plot Promotions surface web + API wiring:
+  - Added `GET /communities/:id/promotions` endpoint (scene-scoped read surface).
+  - Added `PlotPromotionsPanel` component in `apps/web/src/components/plot/PlotPromotionsPanel.tsx`.
+  - Plot Promotions tab now renders API-backed scene promotions from selected community anchor.
+  - Added service unit tests: `apps/api/test/communities.promotions.service.test.ts`.
 - Plot Events surface web + API wiring:
   - Added `GET /communities/:id/events` endpoint (scene-scoped listing, deterministic ordering).
   - Added `PlotEventsPanel` component in `apps/web/src/components/plot/PlotEventsPanel.tsx`.
