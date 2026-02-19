@@ -32,6 +32,15 @@ Defines the Super Admin’s platform oversight capabilities.
 - Fair Play control:
   - Adjust evaluation periods and thresholds
   - Configure per‑Uprise tuning
+  - Update global Fair Play policy variables when needed:
+    - `RECURRENCE_REORDER_CADENCE`
+    - `RECURRENCE_ROLLING_WINDOW_DAYS`
+    - `NEW_WINDOW_DAYS_BANDS`
+    - `BAND_PERSIST_DAYS`
+    - `GRADUATION_MIN_AGE`
+    - `GRADUATION_EXECUTION_CADENCE`
+    - `GRADUATION_CAP_PER_RUN`
+    - propagation threshold parameters (minimum unique listeners, rate threshold, confidence gate)
 
 ### Implemented Now
 - No dedicated super-admin role model or admin console API exists.
@@ -59,6 +68,10 @@ Defines the Super Admin’s platform oversight capabilities.
   - cannot feed recommendation/personalization systems
   - cannot change Fair Play recurrence
   - cannot change propagation eligibility
+- Fair Play variable changes are policy-level only:
+  - no manual per-song ordering
+  - no per-artist exceptions
+  - no retroactive mutation of already-recorded engagement or vote history
 
 ## Data Models & Migrations
 ### Planned Models
@@ -82,6 +95,8 @@ Defines the Super Admin’s platform oversight capabilities.
 | POST | `/admin/users/:id/ban` | super-admin | Ban account |
 | POST | `/admin/config/pricing` | super-admin | Update pricing config |
 | POST | `/admin/config/feature-flags` | super-admin | Toggle feature flags |
+| GET | `/admin/config/fair-play` | super-admin | View current Fair Play policy variables |
+| POST | `/admin/config/fair-play` | super-admin | Update Fair Play policy variables (global) |
 | GET | `/admin/analytics/metrics` | super-admin | List metric definitions and status |
 | POST | `/admin/analytics/metrics` | super-admin | Create metric definition |
 | PATCH | `/admin/analytics/metrics/:id` | super-admin | Update or deprecate metric definition |

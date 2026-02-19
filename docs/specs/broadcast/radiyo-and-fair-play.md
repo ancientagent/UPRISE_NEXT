@@ -124,6 +124,7 @@ Hard constraints:
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/tracks/:id/engage` | required | Record recurrence input event |
+| POST | `/tracks/:id/vote` | required | Cast propagation vote (GPS/Home Scene gated; currently-playing assertion required) |
 | GET | `/broadcast/:sceneId/rotation` | required | Retrieve ordered New Releases + Main Rotation pools with metadata |
 
 ### Planned
@@ -131,7 +132,6 @@ Hard constraints:
 |--------|------|------|-------------|
 | GET | `/broadcast/:sceneId/new` | required | Stream New Releases pool |
 | GET | `/broadcast/:sceneId/main` | required | Stream Main Rotation pool |
-| POST | `/votes` | required | Cast upvote (propagation only) |
 | GET | `/fair-play/metrics` | required | Retrieve lifecycle/recurrence diagnostics |
 
 ## Acceptance Criteria
