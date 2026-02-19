@@ -547,8 +547,11 @@ export class CommunitiesService {
       },
     });
 
-    const scopeCommunityIds = scopeCommunities.map((c) => c.id);
-    const totalMembers = scopeCommunities.reduce((sum, c) => sum + c.memberCount, 0);
+    const scopeCommunityIds = scopeCommunities.map((c: { id: string }) => c.id);
+    const totalMembers = scopeCommunities.reduce(
+      (sum: number, c: { memberCount: number }) => sum + c.memberCount,
+      0
+    );
 
     const [activeSects, eventsThisWeek, activityScore, activeTracks, topSongs] =
       scopeCommunityIds.length === 0
@@ -646,7 +649,15 @@ export class CommunitiesService {
         votingEligibleUsers: gpsVerifiedUsers,
         scopeCommunityCount: scopeCommunities.length,
       },
-      topSongs: topSongs.map((song) => ({
+      topSongs: topSongs.map((song: {
+        id: string;
+        title: string;
+        artist: string;
+        duration: number;
+        playCount: number;
+        communityId: string | null;
+        community: { name: string } | null;
+      }) => ({
         trackId: song.id,
         title: song.title,
         artist: song.artist,
