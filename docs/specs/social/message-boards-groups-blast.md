@@ -1,56 +1,93 @@
 # Message Boards, Groups, and Blast
 
-**ID:** `SOCIAL-MSG`
-**Status:** `draft`
-**Owner:** `platform`
-**Last Updated:** `2026-02-13`
+**ID:** `SOCIAL-MSG`  
+**Status:** `active`  
+**Owner:** `platform`  
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
-Defines community communication surfaces and rules for public and group messaging. The Social tab message board is the primary place for users to see each other and follow.
+Defines scene communication surfaces and BLAST behavior. Public discourse is Scene-bound; private communication is group-scoped; BLAST remains a signal action, not a chat primitive.
 
 ## User Roles & Use Cases
-- Listeners post in Scene message boards.
-- Group members communicate privately.
-- Artists and businesses broadcast to followers.
+- Listeners participate in Scene-wide public discussions.
+- Group members coordinate privately (for example Search Parties in V2).
+- Artists, businesses, events, and promoters can publish one-way updates to followers.
+- Users use BLAST to publicly carry signals into Scene activity surfaces.
 
 ## Functional Requirements
-- Message Boards are the only public communication surface within a Scene.
-- Groups allow private communication between members.
-- Sect members can communicate within a Sect channel.
-- Artists, Businesses, Events, and Promoters can message followers (one‑way).
-- Users cannot DM Artists, Businesses, Events, or Promoters directly.
-- No direct DMs between users outside groups.
-- BLAST is a public signal that amplifies content to the community feed.
-- Users can discover and follow other users through Social tab message boards.
-- Users can also discover and follow other users from Activity Feed (S.E.E.D Feed) actions.
+- Public communication is restricted to Scene-bound boards/threads.
+- Group communication is private to group membership.
+- Sect-level discourse occurs inside Scene social structures, not as separate authority layers.
+- One-way entity-to-follower messaging is supported for registered entities.
+- No user-to-user open DM surface outside approved group contexts.
+- BLAST is an explicit signal propagation action and appears in S.E.E.D activity context.
+
+### Implemented Now
+- BLAST action persistence exists:
+  - `POST /signals/:id/blast` upserts `SignalAction(type='BLAST')`.
+- Follow graph exists:
+  - `POST /follow` creates/upserts entity follow rows.
+- No message board/group/chat models or endpoints currently exist.
+
+### Deferred (Not Implemented Yet)
+- Scene message boards, posts, and threads.
+- Group membership + group messaging.
+- Sect thread/room surfaces.
+- One-way entity messaging timelines.
 
 ## Non-Functional Requirements
-- Clear separation of public vs private channels.
-- No algorithmic amplification of communication.
+- No algorithmic amplification, ranking, or recommendation in social communication.
+- Clear channel separation (public Scene vs private group).
+- Auditability for moderation actions on social content.
 
 ## Architectural Boundaries
-- Communication is Scene‑bound except for private groups.
-- BLAST is a signal, not a private message.
+- Social discourse is Scene-scoped by default.
+- BLAST is a signal action and cannot become private messaging transport.
+- Social systems must not bypass canon locality and authority constraints.
 
 ## Data Models & Migrations
-- MessageBoard
-- Post
-- Thread
-- Group
-- GroupMessage
-- SectChannel
+### Implemented Models
+- `SignalAction` (includes BLAST action rows)
+- `Follow`
+
+### Planned Models
+- `MessageBoard`
+- `Post`
+- `Thread`
+- `Group`
+- `GroupMessage`
+- `SectChannel` or equivalent scoped-thread model
 
 ## API Design
-- TBD
+### Implemented Endpoints
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/signals/:id/blast` | required | Record BLAST action for a signal |
+| POST | `/follow` | required | Follow an entity |
+
+### Planned Endpoints (Not Implemented)
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/social/boards/:sceneId` | required | List scene boards |
+| POST | `/social/boards/:sceneId/posts` | required | Create scene post |
+| POST | `/social/groups` | required | Create group |
+| POST | `/social/groups/:id/messages` | required | Send group message |
 
 ## Web UI / Client Behavior
-- Social tab hosts message boards and group access.
-- Followers receive one‑way updates from entities they follow.
-- Message board posts and Activity Feed items surface user identity and follow actions.
+- Current Plot shell includes a Social tab placeholder only.
+- Future Social tab hosts boards, threads, and group access.
+- BLAST-origin activity is visible through shared activity surfaces (non-personalized).
 
 ## Acceptance Tests / Test Plan
-- Public posts appear only in Scene message boards.
-- DMs blocked outside groups.
+- BLAST action is idempotent per user/signal/action type.
+- Follow action is idempotent per user/entity.
+- When social boards ship, enforce Scene scoping and group-only private messaging.
+
+## Future Work & Open Questions
+- Finalize moderation and report taxonomy for social content.
+- Define cross-scene group constraints for V2 Search Parties.
+- Lock social retention and archival policy.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`
+- `docs/canon/Master Narrative Canon.md`

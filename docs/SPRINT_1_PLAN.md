@@ -22,9 +22,9 @@
 - RaDIYo player (non‑personalized)
 
 ### Fair Play (Skeleton)
-- Equal initial exposure window (fixed value)
-- Engagement score calculation
-- Rotation stack generation
+- Two-pool broadcast lifecycle (New Releases -> Main Rotation)
+- Density-adaptive new-window assignment with hysteresis
+- Main Rotation recurrence weight generation (upvotes separated for propagation)
 
 ## Dependencies
 - Decisions locked in Sprint 0
@@ -33,7 +33,7 @@
 ## Deliverables
 - Working onboarding flow
 - Working RaDIYo playback endpoint
-- Minimal Fair Play rotation
+- Minimal Two-Pool Fair Play scheduling
 
 ## Risks
 - Threshold decisions may still be open

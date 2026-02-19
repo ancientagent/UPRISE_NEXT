@@ -8,11 +8,11 @@ Do not implement these items until they are locked.
 - **City → State propagation threshold**
 - **State → National propagation threshold**
 
-## 2) Fair Play Timing & Rotation
-- **Initial release window duration**
-- **Re‑evaluation cadence**
-- **Backlog ordering policy**
-- **Mid‑rotation removal cooldown**
+## 2) Fair Play Two-Pool Locks
+- **Main Rotation recurrence mapping** (discrete frequency tiers vs weighted scheduler implementation)
+- **Practical floor/removal policy** for persistently low-recurrence songs
+- **Propagation threshold formula** (minimum unique listeners + rate + optional confidence bound)
+- **Graduation cap per run** (`GRADUATION_CAP_PER_RUN`)
 
 ## 3) Activity Points
 - **Scoring table**
@@ -29,3 +29,9 @@ Do not implement these items until they are locked.
 
 ## 6) Founder Locks
 - Any section marked **WORKING**, **UNDECIDED**, or **Founder Lock Needed** in `docs/canon/`
+
+## 7) Scene Map & Statistics
+- **Aggregation window(s)** for Scene metrics (for example rolling 7-day / 30-day / all-time)
+- **Geo aggregation granularity + privacy floor** (minimum cohort size before map bucket display)
+- **Tier rollup policy** for City -> State -> National map/statistics continuity
+- **Top 40 tie-break policy** when songs have equal standing within the same scope

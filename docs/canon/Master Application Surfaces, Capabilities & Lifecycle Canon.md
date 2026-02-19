@@ -66,39 +66,26 @@ Cycle.
 
 Post-Beta (Future Policy): - Release deck size and per-artist new-release limits may be revisited after
 observing real Scene density and behavior.
-2.3 Radio‑Hour Pacing & Density
-Founder Clarification (Conceptual): UPRISE broadcast pacing is modeled after the traditional radio hour,
-with the purpose of informing listeners about what new music is available.
-Sweet‑Spot Constraint (Conceptual): - The effective broadcast cycle should be long enough to sustain
-familiarity but short enough to remain fresh. - Target range: approximately 45 minutes (minimum) to 2.5
-hours (maximum) for a complete rotation cycle.
-New‑Music Allocation Rule (Conceptual): - At any moment, newly introduced songs should occupy only a
-percentage of the Rotation Stack. - This ensures new music repeats predictably while older songs continue
-to circulate beyond the introduction window.
-Artist‑Level Constraint (Conceptual): - Even if an artist has multiple songs in their release deck, only one
-song may be treated as a “new release” at a time within the Release Cycle. - This prevents a constant
-stream of brand‑new songs from a single artist dominating the hourly introduction block.
-Density‑Based Behavior: - Higher Scene density → longer rotation cycle and slower introduction pacing. -
-Lower Scene density → shorter cycle and faster introduction pacing.
-This ensures: - New music reliably gets a shot. - Songs listeners actively want can sustain beyond the intro
-period. - Skipping and intentional seeking become the mechanisms that credit genuine interest. - No artist
-can monopolize broadcast attention through output alone.
-2.3.1 Backlog (Overflow) of New Songs
-Founder Proposal (Policy Direction): When new releases exceed the Release Cycle’s capacity, the Scene
-may maintain a backlog (overflow queue) of songs awaiting entry into the Release Cycle.
-Intent: - Prevent flooding the hourly / multi-hour introduction block. - Preserve fairness of initial exposure. -
-Ensure new songs still receive a guaranteed shot, just paced.
-Release Date Semantics (Clarification): - Backlog entries introduce an explicit release date concept at the
-broadcast level. - Artists may prepare and promote in advance, knowing when a song is scheduled to enter
-the Release Cycle. - The release date reflects scheduled broadcast entry, not upload time.
-UNDECIDED (Founder Lock Needed): - Backlog ordering rule (e.g., first-in/first-out, registrar timestamp,
-scheduled date) - Whether artists can schedule a release date or only accept the next available slot -
-Whether backlog visibility is artist-only or also visible to listeners - Maximum backlog size and overflow
-behavior - Whether artists can withdraw a queued song without penalty
-3
-
---- Page 4 ---
-
+2.3 Radio‑Hour Pacing & Density (Two-Pool V1)
+UPRISE Fair Play pacing is modeled as two pools, not one flat stack:
+• New Releases Pool (time-protected)
+• Main Rotation Pool (engagement-recurrence)
+Hard rhythm guardrails:
+• State/National cycle targets remain between 45 minutes minimum and 120 minutes maximum.
+• Main Rotation repeat cap: no song more than once per hour.
+2.3.1 New Window by Density
+Density driver is ActiveNewCount only (songs currently in New Releases):
+• <=10 active new songs -> 10-day window
+• 11-25 active new songs -> 7-day window
+• >25 active new songs -> 5-day window
+Stability (hysteresis):
+• New density band must hold for 3 consecutive days before global target changes.
+Per-song assignment:
+• A song locks new_window_days at entry and keeps that value until graduation.
+2.3.2 Artist-Level Constraint
+• An artist may maintain limited active slots.
+• Only one song per artist may occupy the New Releases Pool at a time.
+This prevents single-artist flooding while preserving fair exposure.
 2.4 Mid‑Rotation Removal
 Known Constraints: - Removal must not retroactively penalize engagement. - Removal must not affect
 other songs’ Fair Play behavior.
@@ -111,25 +98,17 @@ across the Rotation Stack, re‑adding a removed song should be subject to a coo
 UNDECIDED (Founder Lock Needed): - Length and conditions of the cooldown before re‑adding a removed
 song. - Whether cooldown applies per song, per artist, or per Scene.
 2.5 Pressure Relief via Sects & Local Uprises
-Founder Clarification (Structural): In highly dense Scenes, pressure on the Rotation Stack is relieved
-structurally through:
-• Sects — more unified stylistic sub‑communities within a Scene that can establish their own Uprises.
-• Local Uprises — parallel broadcast outputs that reduce contention within a single high‑density
-rotation.
-This allows: - Music to offload into more coherent contexts. - Dense communities to scale without flooding a
-single broadcast. - Discovery to remain meaningful even as participation increases.
+Founder Clarification (Structural): In highly dense Scenes, pressure on broadcast inventory is relieved
+through:
+• Sects — unified stylistic sub‑communities that can establish their own Uprises.
+• Local Uprises — parallel outputs that reduce contention in one dense Scene.
 3. Fair Play Timing & Windows
-3.1 Initial Exposure Window
-Known: - All songs receive standardized initial exposure - No engagement weighting during this window
-Founder Proposal (Policy Direction): - All songs are locked into the initial visibility cycle (also referred to
-as a Release Cycle) once they enter. - Artists cannot bypass or reset this cycle via removal and re‑add.
-UNDECIDED (Founder Lock Needed): - Fixed duration vs dynamic (Scene density‑based) - Engagement
-accumulation timing (during vs after window)
-Related Term (Glossary Candidate): - Release Cycle — the initial, mandatory visibility period during which
-a newly uploaded song receives standardized exposure before engagement‑weighted rotation applies.
-4
-
---- Page 5 ---
+3.1 Two-Pool Timing Rules
+• Songs enter New Releases on upload.
+• Songs remain in New Releases for assigned new_window_days.
+• After expiry they graduate into Main Rotation automatically.
+• Main Rotation recurrence weights recompute daily.
+• Recurrence and propagation remain strictly separated (engagement vs upvotes).
 
 4. Activity Points Resolution
 Purpose: Activity Points are a user‑level gamification system that reinforces healthy participation and

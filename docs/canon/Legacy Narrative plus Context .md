@@ -329,13 +329,13 @@ Note: Fliers are viewable on events but can only be obtained as an artifact thro
 ### 8.1 Definition
 - The system that ensures equal opportunity for all songs entering rotation
 - NOT popularity-based — no song gets preferential treatment
-- Every song gets the same initial exposure to determine community response
+- Every song enters the New Releases Pool with a density-assigned, time-protected New Window before Main Rotation recurrence
 
 ### 8.2 How It Works
 - New songs enter rotation through the artist's play deck
 - All new releases play on the hour for approximately one week (equal exposure)
 - After one week, engagement score is calculated from playback engagement and contextual modifiers (ADD/BLAST); upvotes are separate and used for tier progression only
-- Song finds its place in the rotation stack based on engagement score
+- Song enters the Two-Pool Fair Play lifecycle: time-protected New Releases, then engagement-weighted Main Rotation recurrence
 - Higher engagement = more frequent rotation
 - Re-evaluated each cycle to stay current with community sentiment
 

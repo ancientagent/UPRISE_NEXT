@@ -10,7 +10,7 @@
 ## MVP Slice (Target)
 - Onboarding → Home Scene selection
 - RaDIYo playback (non‑personalized)
-- Fair Play rotation skeleton
+- Fair Play Two-Pool skeleton
 
 ## Canon Inputs (Source of Truth)
 - `docs/canon/` (all canon)
@@ -19,8 +19,8 @@
 
 ## Decisions to Lock (Sprint 0)
 1. **Fair Play timing**
-   - Initial exposure window duration
-   - Re‑evaluation cadence
+   - Recurrence rolling window days (7 vs 14)
+   - Daily recompute + max-repeat guard behavior
 2. **Thresholds**
    - Sect Uprise activation threshold
    - City → State → National propagation thresholds

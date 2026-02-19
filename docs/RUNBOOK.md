@@ -20,6 +20,12 @@
 - **Legacy RN (`uprise_mob`) uses yarn only.**
 - **Never mix pnpm/yarn in the same project** to avoid permission lockouts and corrupted installs.
 
+## 🧠 Anti-Trope Rule (Required)
+- Do not import default product behavior from legacy social/music platforms (Spotify/Instagram/TikTok/Facebook tropes).
+- Implement only canon/spec behavior defined in this repo.
+- For agent tasks, include the guard in `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md`.
+- Treat `city/state/national` as structural scopes, not concentric distance rings.
+
 ## 🧾 Documentation Update Policy (Required)
 After any **meaningful change** (new feature, endpoint, model, migration, or canon update):
 1. **Update `docs/CHANGELOG.md`** with a concise entry.

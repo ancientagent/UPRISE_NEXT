@@ -1,84 +1,123 @@
 # Onboarding and Home Scene Resolution
 
-**ID:** `USER-ONBOARDING`
-**Status:** `draft`
-**Owner:** `platform`
-**Last Updated:** `2026-02-13`
+**ID:** `USER-ONBOARDING`  
+**Status:** `active`  
+**Owner:** `platform`  
+**Last Updated:** `2026-02-16`
 
 ## Overview & Purpose
-Defines the onboarding flow for selecting a Home Scene and the input-driven resolution logic that routes users to the correct Scene or Sect.
+Defines the onboarding flow for selecting a Home Scene and the current input-driven resolution logic that routes users into a city-tier Scene container and optional sect tagging.
 
 ## User Roles & Use Cases
 - New Listener selects a Home Scene during onboarding.
 - Listener denies GPS and still participates without voting.
-- User enters a subsect term and is routed to the Parent Scene with a tag.
-- User enters a new city or unlisted scene and receives pioneer routing.
+- User enters optional other musical taste tag (sub/microgenre tag).
+- User enters a city/community not in DB and is treated as a pioneer.
 
 ## Functional Requirements
-- Onboarding asks: “What is your local music scene of choice?”
-- Inputs must include **City**, **State**, **Music Community** with autocomplete from existing data.
+- Onboarding asks for local scene context using **City**, **State**, and **Music Community**.
 - Home Scene selection is stored regardless of GPS verification.
-- Setting a Home Scene also auto-joins the resolved Scene as a member.
-- GPS verification is requested **only** to enable voting rights.
-- If GPS is denied or unavailable, user remains Locally Affiliated but cannot vote.
-- Input-driven resolution:
-  - If City + Music Community matches an active Home Scene, join it.
-  - If City + text matches an active Sect, join the Parent Scene and apply the tag.
-  - If City + text maps to a Parent Scene, join the Parent Scene and apply the tag.
-  - If unknown, create an incubating tag and join the Parent Scene; flag the user as a pioneer.
-- If a city has no active Home Scene, inform the user, attach their city to their profile, and mark for pioneer recruitment tools while routing to the Parent Scene of the chosen music community.
+- Setting a Home Scene auto-joins the resolved city-tier Scene membership.
+- GPS verification is requested only to enable voting rights.
+- If GPS is denied or unavailable, user remains affiliated but cannot vote.
+
+### Implemented Resolution Logic
+- Input:
+  - `city`, `state`, `musicCommunity`, optional `tasteTag`
+- Resolution:
+  - Find city-tier `Community` by exact `{city, state, musicCommunity, tier='city'}`.
+  - If not found, create new inactive `Community` (`isActive=false`) and mark user as pioneer.
+  - Persist user home-scene fields.
+  - Auto-join via `CommunityMember` (idempotent; duplicate join ignored).
+  - If `tasteTag` provided, upsert `SectTag` and link via `UserTag`.
+
+### GPS Verification Semantics (Implemented)
+- Verification checks user coordinates against Home Scene geofence/radius.
+- Voting is enabled only when user is within geofence.
+- If no Home Scene or geofence, coordinates are stored but `gpsVerified=false`.
 
 ## Non-Functional Requirements
-- Clarity: onboarding copy must avoid “genre selection” language.
-- Consistency: Home Scene is always defined as City + State + Music Community.
-- Safety: GPS is never required to access non-civic features.
+- Clarity: onboarding copy must avoid “genre selection” framing.
+- Consistency: Home Scene is represented as city+state+music community.
+- Safety: GPS is never required for non-civic participation.
 
 ## Architectural Boundaries
 - Canon definitions come from `docs/canon/`.
-- “Genre/subgenre/microgenre” is not structural and may appear only as optional taste tags.
 - Voting is the only action gated by GPS verification.
+- Web tier stores local onboarding state but uses API for authoritative server persistence when authenticated.
 
 ## Data Models & Migrations
 ### Prisma Models
-- User (homeSceneCity, homeSceneState, homeSceneCommunity, homeSceneTag, gpsVerified)
-- Scene (city, state, musicCommunity)
-- SectTag (name, parent Scene)
-- UserTag (User to SectTag)
+- `User`
+  - `homeSceneCity`
+  - `homeSceneState`
+  - `homeSceneCommunity`
+  - `homeSceneTag`
+  - `gpsVerified`
+  - `latitude` / `longitude`
+- `Community`
+  - `city`, `state`, `musicCommunity`, `tier`, `isActive`, `geofence`, `radius`
+- `CommunityMember`
+- `SectTag`
+- `UserTag`
 
 ### Migrations
-- TBD
+- `20260213154237_add_scene_and_sect_tags`
+- `20260216004000_add_user_home_scene_and_track_engagement`
 
 ## API Design
 ### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/onboarding/home-scene` | required | Resolve and set Home Scene |
-| POST | `/onboarding/gps-verify` | required | Attempt GPS verification (voting only) |
+| POST | `/onboarding/home-scene` | required | Resolve/create Home Scene, persist user affinity, auto-join Scene |
+| POST | `/onboarding/gps-verify` | required | Verify geofence and set voting eligibility |
 
 ### Request/Response
-- Request schema: City, State, MusicCommunity, OptionalTag
-- Response schema: SceneId (or resolved key), AppliedTags, VotingEligible
+- `POST /onboarding/home-scene` request:
+  - `city: string`
+  - `state: string`
+  - `musicCommunity: string`
+  - `tasteTag?: string`
+- `POST /onboarding/home-scene` response:
+  - user affinity fields
+  - `sceneId: string`
+  - `appliedTags: string[]`
+  - `votingEligible: boolean`
+  - `pioneer: boolean`
 
-### GPS Verification Semantics
-- GPS verification must only grant voting when the user is within the Home Scene geofence.
-- If a Scene has no geofence configured, GPS verification stores coordinates but keeps `gpsVerified=false`.
+- `POST /onboarding/gps-verify` request:
+  - `latitude: number`
+  - `longitude: number`
+- `POST /onboarding/gps-verify` response:
+  - `id`, `gpsVerified`, `latitude`, `longitude`
+  - `votingEligible: boolean`
+  - `distance: number | null`
+  - `reason: string | null` where applicable:
+    - `NO_HOME_SCENE`
+    - `SCENE_NOT_FOUND`
+    - `SCENE_NO_GEOFENCE`
+    - `OUTSIDE_GEOFENCE`
 
 ## Web UI / Client Behavior
-- Inputs: City, State, Music Community (autocomplete).
-- GPS disclaimer shown after selection and before voting actions.
-- Pioneer messaging when Scene or city is not active.
+- `apps/web/src/app/onboarding/page.tsx`:
+  - captures City/State/Music Community + optional taste tag
+  - requests GPS with clear voting-only gating copy
+  - shows voting eligibility and failure reason in review step
+- `apps/web/src/store/onboarding.ts`:
+  - persists local onboarding state (`homeScene`, `gpsStatus`, `votingEligible`, `gpsReason`)
 
 ## Acceptance Tests / Test Plan
-- Enter active Scene: user joins directly.
-- Enter active Sect: user joins Parent Scene with tag.
-- Deny GPS: user cannot vote but can participate.
-- Unknown Scene: incubating tag created, user routed to Parent Scene.
+- Active existing scene input resolves and persists correctly.
+- New scene input creates inactive pioneer scene and auto-joins user.
+- Duplicate scene join does not create duplicate `CommunityMember` rows.
+- Denied GPS keeps participation intact and voting disabled.
+- Geofence miss returns `OUTSIDE_GEOFENCE` and leaves `gpsVerified=false`.
 
 ## Future Work & Open Questions
-- Define pioneer incentives and recruitment tooling.
-- Sect activation threshold is **45 minutes of total playtime** from artists who sign the motion. See `docs/specs/DECISIONS_REQUIRED.md`.
-- Formalize thresholds for new Scene creation. See `docs/specs/DECISIONS_REQUIRED.md`.
+- Parent-scene mapping for free-text sect names is not yet implemented.
+- Pioneer incentives/recruitment tooling remains open.
+- Sect uprising motion mechanics remain governed by `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
-- `docs/canon/Legacy Narrative plus Context .md`
+- `docs/canon/Master Narrative Canon.md`
 - `docs/canon/Master Glossary Canon.md`

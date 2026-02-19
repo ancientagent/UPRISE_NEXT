@@ -6,7 +6,27 @@ import {
   FindNearbyCommunitiesDto,
   VerifyLocationDto,
   CommunityWithDistance,
+  GetCommunityFeedDto,
 } from './dto/community.dto';
+
+type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
+
+interface CommunityFeedItem {
+  id: string;
+  type: FeedItemType;
+  occurredAt: Date;
+  actor: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string | null;
+  } | null;
+  entity: {
+    type: 'signal' | 'track' | 'event';
+    id: string;
+  };
+  metadata?: Record<string, unknown>;
+}
 
 @Injectable()
 export class CommunitiesService {
@@ -311,5 +331,134 @@ export class CommunitiesService {
     ]);
 
     return { communities, total, page, limit };
+  }
+
+  /**
+   * Scene-scoped S.E.E.D feed projection.
+   * Explicit actions/events only; no personalization.
+   */
+  async getFeed(communityId: string, query: GetCommunityFeedDto) {
+    const community = await this.prisma.community.findUnique({
+      where: { id: communityId },
+      select: { id: true },
+    });
+
+    if (!community) {
+      throw new NotFoundException(`Community with ID ${communityId} not found`);
+    }
+
+    const limit = query.limit ?? 50;
+    const before = query.before ?? new Date();
+    const perSourceTake = Math.min(Math.max(limit * 2, 20), 200);
+
+    const [blastActions, trackReleases, eventCreates, signalCreates] = await Promise.all([
+      this.prisma.signalAction.findMany({
+        where: {
+          type: 'BLAST',
+          createdAt: { lte: before },
+          signal: { communityId },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: perSourceTake,
+        include: {
+          user: {
+            select: { id: true, username: true, displayName: true, avatar: true },
+          },
+          signal: {
+            select: { id: true, type: true, metadata: true },
+          },
+        },
+      }),
+      this.prisma.track.findMany({
+        where: { communityId, status: 'ready', createdAt: { lte: before } },
+        orderBy: { createdAt: 'desc' },
+        take: perSourceTake,
+        include: {
+          uploadedBy: {
+            select: { id: true, username: true, displayName: true, avatar: true },
+          },
+        },
+      }),
+      this.prisma.event.findMany({
+        where: { communityId, createdAt: { lte: before } },
+        orderBy: { createdAt: 'desc' },
+        take: perSourceTake,
+        include: {
+          createdBy: {
+            select: { id: true, username: true, displayName: true, avatar: true },
+          },
+        },
+      }),
+      this.prisma.signal.findMany({
+        where: { communityId, createdAt: { lte: before } },
+        orderBy: { createdAt: 'desc' },
+        take: perSourceTake,
+        include: {
+          createdBy: {
+            select: { id: true, username: true, displayName: true, avatar: true },
+          },
+        },
+      }),
+    ]);
+
+    const feedItems: CommunityFeedItem[] = [
+      ...blastActions.map((action: any) => ({
+        id: `blast:${action.id}`,
+        type: 'blast' as const,
+        occurredAt: action.createdAt,
+        actor: action.user,
+        entity: { type: 'signal' as const, id: action.signalId },
+        metadata: {
+          signalType: action.signal.type,
+          signalMetadata: action.signal.metadata as Record<string, unknown> | null,
+        },
+      })),
+      ...trackReleases.map((track: any) => ({
+        id: `track_release:${track.id}`,
+        type: 'track_release' as const,
+        occurredAt: track.createdAt,
+        actor: track.uploadedBy,
+        entity: { type: 'track' as const, id: track.id },
+        metadata: {
+          title: track.title,
+          artist: track.artist,
+          duration: track.duration,
+        },
+      })),
+      ...eventCreates.map((event: any) => ({
+        id: `event_created:${event.id}`,
+        type: 'event_created' as const,
+        occurredAt: event.createdAt,
+        actor: event.createdBy,
+        entity: { type: 'event' as const, id: event.id },
+        metadata: {
+          title: event.title,
+          startDate: event.startDate.toISOString(),
+          locationName: event.locationName,
+        },
+      })),
+      ...signalCreates.map((signal: any) => ({
+        id: `signal_created:${signal.id}`,
+        type: 'signal_created' as const,
+        occurredAt: signal.createdAt,
+        actor: signal.createdBy ?? null,
+        entity: { type: 'signal' as const, id: signal.id },
+        metadata: {
+          signalType: signal.type,
+          signalMetadata: signal.metadata as Record<string, unknown> | null,
+        },
+      })),
+    ];
+
+    feedItems.sort((a, b) => b.occurredAt.getTime() - a.occurredAt.getTime());
+
+    const items = feedItems.slice(0, limit);
+    const nextCursor = items.length === limit ? items[items.length - 1].occurredAt.toISOString() : null;
+
+    return {
+      items,
+      limit,
+      nextCursor,
+    };
   }
 }

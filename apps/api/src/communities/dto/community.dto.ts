@@ -70,6 +70,16 @@ export const VerifyLocationSchema = z.object({
 export type VerifyLocationDto = z.infer<typeof VerifyLocationSchema>;
 
 /**
+ * Scene feed query params (S.E.E.D feed)
+ */
+export const GetCommunityFeedSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).optional().default(50),
+  before: z.coerce.date().optional(),
+});
+
+export type GetCommunityFeedDto = z.infer<typeof GetCommunityFeedSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

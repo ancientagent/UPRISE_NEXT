@@ -144,15 +144,11 @@ jobs:
         with:
           version: ${{ env.PNPM_VERSION }}
 
-      - name: Restore node_modules cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/node_modules
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
+      # NOTE: we intentionally avoid restoring **/node_modules here.
+      # In this job, cache extraction intermittently fails on GitHub-hosted runners
+      # with tar mkdir collisions; a clean install is slower but deterministic.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Setup Turborepo cache
         uses: actions/cache@v4
