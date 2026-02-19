@@ -105,6 +105,8 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Guidance/index sync for current policy:
+  - Updated `docs/README.md`, `docs/handoff/README.md`, and `docs/AGENT_STRATEGY_AND_HANDOFF.md` to reflect active drift-correction and approval-gate rules.
 - Fair Play services now read `recurrenceRollingWindowDays` from global admin config (`fair_play_config`) with fallback default (`14`) when unset.
 - Docs readiness state normalized:
   - Canon-side generated readiness report removed.

@@ -46,6 +46,9 @@ These documents are the canonical foundation for building the platform:
 - [`blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md`](./blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md) — Documentation + handoff strategy.
 - [`handoff/README.md`](./handoff/README.md) — Where agent notes and phase handoffs live.
 - [`solutions/README.md`](./solutions/README.md) — Playbooks for recurring issues (symptoms → fix → prevention).
+- Drift correction policy (active):
+  - Placeholder actions are not allowed unless explicitly approved by spec/founder.
+  - See `AGENTS.md`, `FEATURE_DRIFT_GUARDRAILS.md`, and `RUNBOOK.md` for enforcement.
 
 ## Architecture Pointers
 - [`architecture/README.md`](./architecture/README.md) — Architectural overviews.
