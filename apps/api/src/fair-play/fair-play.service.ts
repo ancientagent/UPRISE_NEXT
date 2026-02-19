@@ -1,7 +1,11 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { RotationPool } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type { TrackVoteDto } from './dto/track-vote.dto';
+
+const ROTATION_POOL = {
+  NEW_RELEASES: 'NEW_RELEASES',
+  MAIN_ROTATION: 'MAIN_ROTATION',
+} as const;
 
 @Injectable()
 export class FairPlayService {
@@ -27,7 +31,7 @@ export class FairPlayService {
     const activeArtistEntry = await this.prisma.rotationEntry.findFirst({
       where: {
         sceneId,
-        pool: RotationPool.NEW_RELEASES,
+        pool: ROTATION_POOL.NEW_RELEASES as any,
         track: { artist: track.artist },
       },
       select: { id: true, trackId: true },
@@ -44,7 +48,7 @@ export class FairPlayService {
         data: {
           trackId,
           sceneId,
-          pool: RotationPool.NEW_RELEASES,
+          pool: ROTATION_POOL.NEW_RELEASES as any,
           enteredPoolAt: new Date(),
         },
       });
@@ -73,7 +77,7 @@ export class FairPlayService {
     const entries = await this.prisma.rotationEntry.findMany({
       where: {
         sceneId,
-        pool: RotationPool.MAIN_ROTATION,
+        pool: ROTATION_POOL.MAIN_ROTATION as any,
       },
       select: {
         id: true,
@@ -95,7 +99,7 @@ export class FairPlayService {
 
     const scores = await this.prisma.trackEngagement.findMany({
       where: {
-        trackId: { in: entries.map((entry) => entry.trackId) },
+        trackId: { in: entries.map((entry: { trackId: string }) => entry.trackId) },
         createdAt: {
           gte: windowStart,
           lte: asOf,
@@ -112,7 +116,7 @@ export class FairPlayService {
       scoreByTrackId.set(row.trackId, (scoreByTrackId.get(row.trackId) ?? 0) + row.score);
     }
 
-    const updates = entries.map((entry) =>
+    const updates = entries.map((entry: { id: string; trackId: string }) =>
       this.prisma.rotationEntry.update({
         where: { id: entry.id },
         data: { recurrenceScore: scoreByTrackId.get(entry.trackId) ?? 0 },
@@ -169,7 +173,7 @@ export class FairPlayService {
         where: {
           trackId,
           sceneId: dto.sceneId,
-          pool: { in: [RotationPool.NEW_RELEASES, RotationPool.MAIN_ROTATION] },
+          pool: { in: [ROTATION_POOL.NEW_RELEASES, ROTATION_POOL.MAIN_ROTATION] as any },
         },
         select: { id: true },
       }),
@@ -245,12 +249,12 @@ export class FairPlayService {
 
     const [newEntries, mainEntries] = await Promise.all([
       this.prisma.rotationEntry.findMany({
-        where: { sceneId, pool: RotationPool.NEW_RELEASES },
+        where: { sceneId, pool: ROTATION_POOL.NEW_RELEASES as any },
         orderBy: { enteredPoolAt: 'asc' },
         include: { track: true },
       }),
       this.prisma.rotationEntry.findMany({
-        where: { sceneId, pool: RotationPool.MAIN_ROTATION },
+        where: { sceneId, pool: ROTATION_POOL.MAIN_ROTATION as any },
         orderBy: [{ recurrenceScore: 'desc' }, { enteredPoolAt: 'asc' }],
         include: { track: true },
       }),
@@ -259,8 +263,8 @@ export class FairPlayService {
     return {
       success: true,
       data: {
-        newReleases: newEntries.map((entry) => entry.track),
-        mainRotation: mainEntries.map((entry) => entry.track),
+        newReleases: newEntries.map((entry: { track: unknown }) => entry.track),
+        mainRotation: mainEntries.map((entry: { track: unknown }) => entry.track),
       },
       meta: {
         sceneId,
@@ -284,13 +288,13 @@ export class FairPlayService {
 
     const [activeNewCount, mainRotationCount, recurrenceStats, votesInWindow] = await Promise.all([
       this.prisma.rotationEntry.count({
-        where: { sceneId, pool: RotationPool.NEW_RELEASES },
+        where: { sceneId, pool: ROTATION_POOL.NEW_RELEASES as any },
       }),
       this.prisma.rotationEntry.count({
-        where: { sceneId, pool: RotationPool.MAIN_ROTATION },
+        where: { sceneId, pool: ROTATION_POOL.MAIN_ROTATION as any },
       }),
       this.prisma.rotationEntry.aggregate({
-        where: { sceneId, pool: RotationPool.MAIN_ROTATION },
+        where: { sceneId, pool: ROTATION_POOL.MAIN_ROTATION as any },
         _avg: { recurrenceScore: true },
         _min: { recurrenceScore: true },
         _max: { recurrenceScore: true },

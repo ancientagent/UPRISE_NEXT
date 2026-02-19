@@ -402,7 +402,7 @@ export class CommunitiesService {
     ]);
 
     const feedItems: CommunityFeedItem[] = [
-      ...blastActions.map((action) => ({
+      ...blastActions.map((action: any) => ({
         id: `blast:${action.id}`,
         type: 'blast' as const,
         occurredAt: action.createdAt,
@@ -413,7 +413,7 @@ export class CommunitiesService {
           signalMetadata: action.signal.metadata as Record<string, unknown> | null,
         },
       })),
-      ...trackReleases.map((track) => ({
+      ...trackReleases.map((track: any) => ({
         id: `track_release:${track.id}`,
         type: 'track_release' as const,
         occurredAt: track.createdAt,
@@ -425,7 +425,7 @@ export class CommunitiesService {
           duration: track.duration,
         },
       })),
-      ...eventCreates.map((event) => ({
+      ...eventCreates.map((event: any) => ({
         id: `event_created:${event.id}`,
         type: 'event_created' as const,
         occurredAt: event.createdAt,
@@ -437,7 +437,7 @@ export class CommunitiesService {
           locationName: event.locationName,
         },
       })),
-      ...signalCreates.map((signal) => ({
+      ...signalCreates.map((signal: any) => ({
         id: `signal_created:${signal.id}`,
         type: 'signal_created' as const,
         occurredAt: signal.createdAt,
