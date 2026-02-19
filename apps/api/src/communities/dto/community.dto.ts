@@ -80,6 +80,15 @@ export const GetCommunityFeedSchema = z.object({
 export type GetCommunityFeedDto = z.infer<typeof GetCommunityFeedSchema>;
 
 /**
+ * Scene statistics query params
+ */
+export const GetCommunityStatisticsSchema = z.object({
+  tier: z.enum(['city', 'state', 'national']).optional().default('city'),
+});
+
+export type GetCommunityStatisticsDto = z.infer<typeof GetCommunityStatisticsSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

@@ -132,7 +132,7 @@ export default function PlotPage() {
           {/* Right Panel - Top Songs & Community Info */}
           <div className="space-y-6">
             {/* Top Songs Panel */}
-            <TopSongsPanel communityId={selectedCommunity?.id ?? null} />
+            <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
 
             {/* Selected Community Info */}
             {selectedCommunity && (

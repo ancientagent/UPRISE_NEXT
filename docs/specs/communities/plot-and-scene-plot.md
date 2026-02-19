@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
 Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -43,6 +43,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Web app ships Plot shell at `apps/web/src/app/plot/page.tsx`.
 - Current shell includes tab switching and Home Scene identity summary.
 - Copy and framing align with canon (“anchor this dashboard”).
+- Statistics surface now calls `GET /communities/:id/statistics` for tier-scoped metrics and Top 40 payload.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Server-driven S.E.E.D feed rendering in web.
@@ -82,7 +83,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 |--------|------|------|-------------|
 | GET | `/communities/:id/events` | required | Scene event listing for Plot events surface |
 | GET | `/communities/:id/promotions` | required | Scene promotions/offers surface |
-| GET | `/communities/:id/statistics` | required | Scene metrics and map aggregates |
+| GET | `/communities/:id/statistics` | required | Scene metrics and top songs aggregates (implemented) |
 
 ## Web UI / Client Behavior
 - Plot is Home Scene scoped.

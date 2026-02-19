@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Community statistics API + web wiring:
+  - Added `GET /communities/:id/statistics?tier=city|state|national`.
+  - Added tier-scoped metrics and deterministic `topSongs` payload (max 40) in `CommunitiesService.getStatistics`.
+  - Statistics tab now reads API-backed metrics from `/communities/:id/statistics`.
+  - Top Songs panel now reads `topSongs` from the statistics endpoint (instead of feed approximation).
+  - Added service unit tests: `apps/api/test/communities.statistics.service.test.ts`.
 - Web community profile read surface:
   - Added `apps/web/src/app/community/[id]/page.tsx` to display community metadata, counts, and recent S.E.E.D activity.
   - Added Plot-to-profile navigation via `Open Profile` action in `apps/web/src/app/plot/page.tsx`.

@@ -7,6 +7,7 @@ import {
   VerifyLocationDto,
   CommunityWithDistance,
   GetCommunityFeedDto,
+  GetCommunityStatisticsDto,
 } from './dto/community.dto';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
@@ -26,6 +27,43 @@ interface CommunityFeedItem {
     id: string;
   };
   metadata?: Record<string, unknown>;
+}
+
+export interface CommunityStatistics {
+  community: {
+    id: string;
+    name: string;
+    city: string | null;
+    state: string | null;
+    musicCommunity: string | null;
+    tier: string;
+    isActive: boolean;
+  };
+  tierScope: 'city' | 'state' | 'national';
+  rollupUnit: 'local_sect' | 'city' | 'state';
+  metrics: {
+    totalMembers: number;
+    activeSects: number;
+    eventsThisWeek: number;
+    activityScore: number;
+    activeTracks: number;
+    gpsVerifiedUsers: number;
+    votingEligibleUsers: number;
+    scopeCommunityCount: number;
+  };
+  topSongs: Array<{
+    trackId: string;
+    title: string;
+    artist: string;
+    duration: number;
+    playCount: number;
+    communityId: string | null;
+    communityName: string | null;
+  }>;
+  timeWindow: {
+    days: number;
+    asOf: string;
+  };
 }
 
 @Injectable()
@@ -459,6 +497,179 @@ export class CommunitiesService {
       items,
       limit,
       nextCursor,
+    };
+  }
+
+  async getStatistics(communityId: string, query: GetCommunityStatisticsDto): Promise<CommunityStatistics> {
+    const anchor = await this.prisma.community.findUnique({
+      where: { id: communityId },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+        isActive: true,
+      },
+    });
+
+    if (!anchor) {
+      throw new NotFoundException(`Community with ID ${communityId} not found`);
+    }
+
+    const tierScope = query.tier;
+    const windowDays = 7;
+    const windowStart = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000);
+
+    const scopeWhere =
+      tierScope === 'city'
+        ? { id: anchor.id }
+        : tierScope === 'state'
+        ? {
+            tier: 'city',
+            state: anchor.state,
+            musicCommunity: anchor.musicCommunity,
+          }
+        : {
+            tier: 'city',
+            musicCommunity: anchor.musicCommunity,
+          };
+
+    const scopeCommunities = await this.prisma.community.findMany({
+      where: scopeWhere,
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        memberCount: true,
+      },
+    });
+
+    const scopeCommunityIds = scopeCommunities.map((c: { id: string }) => c.id);
+    const totalMembers = scopeCommunities.reduce(
+      (sum: number, c: { memberCount: number }) => sum + c.memberCount,
+      0
+    );
+
+    const [activeSects, eventsThisWeek, activityScore, activeTracks, topSongs] =
+      scopeCommunityIds.length === 0
+        ? [0, 0, 0, 0, [] as Array<{
+            id: string;
+            title: string;
+            artist: string;
+            duration: number;
+            playCount: number;
+            communityId: string | null;
+            community: { name: string } | null;
+          }>]
+        : await Promise.all([
+            this.prisma.sectTag.count({
+              where: {
+                status: 'active',
+                parentCommunityId: { in: scopeCommunityIds },
+              },
+            }),
+            this.prisma.event.count({
+              where: {
+                communityId: { in: scopeCommunityIds },
+                createdAt: { gte: windowStart },
+              },
+            }),
+            this.prisma.signalAction.count({
+              where: {
+                createdAt: { gte: windowStart },
+                signal: {
+                  communityId: { in: scopeCommunityIds },
+                },
+              },
+            }),
+            this.prisma.track.count({
+              where: {
+                communityId: { in: scopeCommunityIds },
+                status: 'ready',
+              },
+            }),
+            this.prisma.track.findMany({
+              where: {
+                communityId: { in: scopeCommunityIds },
+                status: 'ready',
+              },
+              select: {
+                id: true,
+                title: true,
+                artist: true,
+                duration: true,
+                playCount: true,
+                communityId: true,
+                community: { select: { name: true } },
+              },
+              orderBy: [{ playCount: 'desc' }, { createdAt: 'desc' }],
+              take: 40,
+            }),
+          ]);
+
+    const gpsVerifiedUsers =
+      tierScope === 'city'
+        ? await this.prisma.user.count({
+            where: {
+              gpsVerified: true,
+              homeSceneCity: anchor.city,
+              homeSceneState: anchor.state,
+              homeSceneCommunity: anchor.musicCommunity,
+            },
+          })
+        : tierScope === 'state'
+        ? await this.prisma.user.count({
+            where: {
+              gpsVerified: true,
+              homeSceneState: anchor.state,
+              homeSceneCommunity: anchor.musicCommunity,
+            },
+          })
+        : await this.prisma.user.count({
+            where: {
+              gpsVerified: true,
+              homeSceneCommunity: anchor.musicCommunity,
+            },
+          });
+
+    return {
+      community: anchor,
+      tierScope,
+      rollupUnit: tierScope === 'city' ? 'local_sect' : tierScope === 'state' ? 'city' : 'state',
+      metrics: {
+        totalMembers,
+        activeSects,
+        eventsThisWeek,
+        activityScore,
+        activeTracks,
+        gpsVerifiedUsers,
+        votingEligibleUsers: gpsVerifiedUsers,
+        scopeCommunityCount: scopeCommunities.length,
+      },
+      topSongs: topSongs.map((song: {
+        id: string;
+        title: string;
+        artist: string;
+        duration: number;
+        playCount: number;
+        communityId: string | null;
+        community: { name: string } | null;
+      }) => ({
+        trackId: song.id,
+        title: song.title,
+        artist: song.artist,
+        duration: song.duration,
+        playCount: song.playCount,
+        communityId: song.communityId,
+        communityName: song.community?.name ?? null,
+      })),
+      timeWindow: {
+        days: windowDays,
+        asOf: new Date().toISOString(),
+      },
     };
   }
 }
