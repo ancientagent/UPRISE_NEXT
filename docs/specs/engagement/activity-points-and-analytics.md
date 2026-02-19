@@ -3,7 +3,7 @@
 **ID:** `ENG-ACTIVITY`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
 Defines Activity Points and analytics as descriptive metrics for participation and scene health.
@@ -20,10 +20,10 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 - Analytics remain descriptive and must not become ranking/authority inputs.
 
 ### Implemented Now
-- Engagement capture for Fair Play scoring only:
+- Engagement capture for Fair Play recurrence inputs only:
   - `POST /tracks/:id/engage`
   - `TrackEngagement` records (`type`, `score`, `sessionId`, `userId`, `trackId`).
-- Engagement scoring model uses canon-aligned 3/2/1/0 playback points.
+- Current implementation stores additive recurrence events only; pool scheduling logic is deferred.
 
 ## Non-Functional Requirements
 - Transparency: point sources are visible.
@@ -35,7 +35,7 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 
 ## Data Models & Migrations
 ### Implemented Models
-- `TrackEngagement` (Fair Play input; not Activity Points)
+- `TrackEngagement` (Fair Play recurrence input; not Activity Points)
 
 ### Planned Models
 - `ActivityPoint`
@@ -49,7 +49,7 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 ### Implemented Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/tracks/:id/engage` | required | Record playback engagement for Fair Play scoring |
+| POST | `/tracks/:id/engage` | required | Record recurrence input event for Fair Play |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
@@ -59,11 +59,11 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 | POST | `/activity/proof-support` | required | Award points for verified proof-of-support |
 
 ### Engagement Events (Implemented)
-> **Note:** This section captures engagement events for Fair Play scoring. Activity Points engine is not yet implemented.
+> **Note:** This section captures recurrence input events for Fair Play. Activity Points engine is not yet implemented.
 
-- `POST /tracks/:id/engage` records playback engagement (see `docs/specs/broadcast/radiyo-and-fair-play.md`)
-- TrackEngagement model stores: userId, trackId, type (full/majority/partial/skip), score, sessionId
-- This is separate from Activity Points; engagement affects rotation frequency, Activity Points affect participation recognition
+- `POST /tracks/:id/engage` records recurrence input events (see `docs/specs/broadcast/radiyo-and-fair-play.md`)
+- TrackEngagement model stores: `userId`, `trackId`, `type`, `score`, `sessionId`
+- This remains separate from Activity Points; recurrence input affects Main Rotation frequency only.
 
 ## Web UI / Client Behavior
 - Activity Points and scene activity visualization are planned for Plot statistics/profile surfaces.
@@ -72,7 +72,7 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 ## Acceptance Tests / Test Plan
 - Track engagement endpoint stores additive playback records only.
 - Engagement records do not imply tier progression or governance power.
-- When Activity Points ship, verify no coupling to rotation order/tier propagation.
+- When Activity Points ship, verify no coupling to recurrence order or tier propagation.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`

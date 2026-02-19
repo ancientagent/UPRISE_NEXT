@@ -94,71 +94,48 @@ ADD — Save to personal collection (no broadcast effect) FOLLOW — Subscribe t
 Public propagation to Home Scene feed SUPPORT — Material or civic backing (Proof-of-Support)
 None of these actions influence Fair Play rotation.
 4. Fair Play System
-4.0 Rotation & Engagement (Narrative Canon)
-Each Scene maintains a single, shared rotation. All listeners encounter the same music in the same order.
-• Listeners traverse the rotation independently.
-• Traversal speed does not alter the structure of the broadcast.
-New songs enter the rotation on a fixed schedule and receive standardized exposure during an introductory
-period.
-Fair Play guarantees opportunity for exposure, not outcomes. Listeners are never required to complete a
-song.
-Engagement in UPRISE is additive-only. Songs gain standing only through demonstrated listener
-engagement. No listener action subtracts from a song’s standing.
-Skipping a song does not function as a penalty or negative signal. A skipped song receives no engagement
-contribution for that encounter.
-Rotation order evolves gradually through accumulated collective engagement. Songs rise relative to others
-through presence and support, not through suppression or rejection.
-To preserve fairness, individual listener influence on engagement totals is rate-limited over time. No single
-listener can disproportionately affect rotation order through speed, repetition, or traversal behavior.
-UPRISE does not personalize, predict, or optimize listener taste. The system records engagement only when
-it occurs and does not infer meaning from its absence.
-Standing within the rotation reflects sustained, collective attention from the community.
-4.1 Definition
-Fair Play is the rotation system governing all broadcasts.
-4
-
---- Page 5 ---
-
-Rules: - Every song receives equal initial exposure. - No song receives preferential placement. - Rotation
-frequency is recalculated based on community response.
-4.1.1 Engagement Score Foundation
-Engagement Score is the primary quantitative input to Fair Play rotation weighting.
-Engagement Score is composed of Playback Weight and Contextual Support Modifiers.
-A. Playback Weight (Primary)
-Playback behavior establishes the baseline signal of listener interest.
-Base allocation per play: - Full song completion: 3 points - Partial listen (majority played): 2 points -
-Partial listen (minority played): 1 point (requires ≥ 1/3 of song duration played) - Skip / early
-interruption: 0 points
-Playback Weight is always applied.
-B. Contextual Support Modifiers (Secondary)
-Contextual actions may apply small, bounded modifiers to differentiate songs that receive explicit community
-support beyond passive listening.
-These modifiers exist to prevent score compression and to legitimize relative position within the rotation
-stack.
-Modifiers: - ADD: +0.5 points - BLAST: +0.25 points
-Rules: - Modifiers apply once per user per song per tier. - Modifiers are capped to prevent action-spam
-amplification. - Modifiers affect rotation frequency only, never tier progression. - FOLLOW actions apply
-no engagement modifier.
-C. Prohibited Modifiers
-The following must never affect Engagement Score: - Follows - Profile views - External shares - Personal Play
-activity - Repeated actions by the same user
-D. Structural Safeguards
-• Playback Weight always outweighs modifier influence.
-5
-
---- Page 6 ---
-
-• No song can advance tiers without upvotes.
-• No combination of modifiers can overcome consistent skips.
-4.2 Voting Constraints
-• Voting is permitted only:
+4.0 Two-Pool Broadcast Model (Narrative Canon)
+Fair Play in V1 operates as two listening pools, not one undifferentiated rotation.
+Pool A — New Releases
+• Contains songs inside an assigned New Window.
+• Songs in this pool cannot be buried during the assigned window.
+• Runs as continuous fair pool-local rotation.
+Pool B — Main Rotation
+• Contains songs that have graduated from New Releases.
+• Recurrence frequency is controlled by engagement-derived recurrence weights.
+• Hard repeat cap: no song may repeat more than once per hour in Main Rotation.
+Listeners can explicitly tune either pool. No automatic switching occurs.
+4.1 Lifecycle and Density Rule
+On upload, a song enters New Releases and is assigned:
+• entered_new_at
+• new_window_days
+new_window_days is assigned from ActiveNewCount bands:
+• <=10 active new songs -> 10 days
+• 11-25 active new songs -> 7 days
+• >25 active new songs -> 5 days
+Band target changes are hysteresis-locked: a new band must hold for 3 consecutive days before global target update.
+Per-song new_window_days is locked at entry and never retroactively changed.
+Upon expiry of assigned window, songs graduate automatically to Main Rotation.
+4.2 Recurrence and Propagation Separation
+Engagement affects recurrence only.
+Upvotes affect propagation/tier advancement only.
+These domains are strictly separated:
+• Upvotes never alter recurrence order.
+• Recurrence scores never advance a song between tiers.
+Recurrence weights are recomputed daily from a rolling window.
+4.3 Voting Constraints
+Voting is permitted only:
 • Within the user's Home Scene
 • While the song is actively playing
 • By GPS-verified users
-• Voting is disabled at the National tier.
-Votes: - Are single-use per song per tier - Cannot be changed after playback ends
-4.3 Prohibitions
-Fair Play must never: - Predict taste - Optimize virality - Assign legitimacy - Accelerate recognition
+Voting is disabled at National tier.
+Votes are single-use per song per tier.
+4.4 Prohibitions
+Fair Play must never:
+• Personalize playback
+• Predict taste
+• Convert payment/authority into recurrence advantage
+• Convert engagement into civic legitimacy
 5. Users, Roles & Affiliation
 5.1 User (Listener)
 A User is a listener and civic participant within a Scene.

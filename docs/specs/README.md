@@ -74,6 +74,10 @@ This roadmap lists new product specs to be authored from `docs/canon/`.
 - `engagement/activity-points-and-analytics.md` — **Activity Points and Analytics** (`ENG-ACTIVITY`)
   Canon sources:
   - `Legacy Narrative plus Context .md (11.x)`
+- `engagement/analytics-and-instrumentation-framework.md` — **Analytics and Instrumentation Framework** (`ENG-INSTRUMENTATION`)
+  Canon sources:
+  - `Master Narrative Canon.md (Plot statistics + descriptive metrics constraints)`
+  - `Master Glossary Canon.md`
 - `system/moderation-and-quality-control.md` — **Moderation and Quality Control** (`SYS-MODERATION`)
   Canon sources:
   - `Legacy Narrative plus Context .md (28.x)`

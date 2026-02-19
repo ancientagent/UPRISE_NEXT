@@ -1,113 +1,149 @@
-# RaDIYo and Fair Play
+# RaDIYo and Fair Play (Two-Pool Broadcast V1)
 
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-19`
 
 ## Overview & Purpose
-Defines the RaDIYo broadcast network and Fair Play constraints. This spec distinguishes canon-locked behavior from currently implemented API components.
+Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
 
-## User Roles & Use Cases
-- Listeners tune into City/State/National broadcast contexts.
-- GPS-verified Home Scene listeners vote during playback (when voting endpoints are implemented).
-- Artists upload tracks to enter Fair Play rotation.
+## Core Concept
+Fair Play uses two listening pools:
 
-## Functional Requirements (Canon)
-- RaDIYo is a broadcast receiver, not a playlist.
-- Tier model: Citywide, Statewide, National.
-- Swiping exits Fair Play listening and enters discovery traversal in visitor mode.
-- Fair Play provides equal initial exposure for new songs.
-- Engagement is additive-only and never demotes via negative scoring.
-- Upvotes affect propagation/tier progression only.
-- Voting is available only to GPS-verified Home Scene listeners.
-- National tier is non-interactive (no voting).
-- Personal collections are separate from Fair Play.
+1. `New Releases Pool`
+- Songs in the active New Window.
+- Songs cannot be buried during this window.
+- Continuous pool-local rotation.
 
-### Engagement Score Inputs (Canon)
-- Playback weight:
-  - full completion = 3
-  - majority listen (>1/2) = 2
-  - partial listen (>=1/3) = 1
-  - skip/early interruption = 0
-- Contextual modifiers (bounded, additive):
-  - ADD +0.5
-  - BLAST +0.25
-- Modifiers affect rotation frequency only, not tier progression.
+2. `Main Rotation Pool`
+- Songs that graduated from New Window.
+- Recurrence governed by engagement-derived recurrence weights.
+- Hard cap: no song repeats more than once per hour in Main Rotation.
 
-## Implemented Behavior (Current)
-- `POST /tracks/:id/engage` records playback engagement events.
-- Engagement events are deduplicated by `(userId, trackId, sessionId)`.
-- Engagement rows store normalized score (`3|2|1|0`) derived from engagement type.
+Listeners can explicitly toggle between:
+- `New Releases`
+- `Main Rotation`
 
-## Deferred Behavior (Not Implemented Yet)
-- Broadcast rotation engine endpoint/service (`/broadcast/:sceneId`) is not implemented.
-- Voting endpoint and propagation logic are not implemented.
-- Tier progression thresholds and release-window timing remain founder-lock items.
-- Rotation weighting job/location (API vs worker) remains undecided.
+No automatic switching.
+
+## Separation of Concerns (Locked)
+- Engagement affects recurrence only.
+- Upvotes affect propagation/tier advancement only.
+- Upvotes never affect recurrence.
+- Engagement never advances tier.
+
+## Song Lifecycle
+1. Upload:
+- Song enters `New Releases Pool`.
+- Assign `entered_new_at`.
+- Assign `new_window_days` from current density target.
+
+2. New Window:
+- Song remains visible for full assigned duration.
+- Cannot be buried by scoring.
+
+3. Graduation:
+- When `now >= entered_new_at + new_window_days`, song exits New Releases and enters Main Rotation.
+- Initial recurrence weight is derived from engagement within the configured rolling window.
+
+## Density-Based New Window
+Density driver:
+- `ActiveNewCount = number of songs currently in New Releases Pool`
+- Listener population is not used for this calculation.
+
+Default step bands:
+- `ActiveNewCount <= 10` -> `new_window_days = 10`
+- `11 <= ActiveNewCount <= 25` -> `new_window_days = 7`
+- `ActiveNewCount > 25` -> `new_window_days = 5`
+
+Hysteresis rule:
+- Band changes only commit after `3` consecutive days in the new band.
+
+Per-song assignment:
+- `new_window_days` is locked at entry.
+- No retroactive per-song window edits.
+
+## Recurrence Engine (Main Rotation)
+Cadence:
+- Recompute recurrence weights daily.
+- Use rolling window (start with 7 or 14 days; founder lock).
+
+Input model:
+- Engagement signal model is configurable (playback-weight model or explicit preference dial).
+- V1 preference model target: sticky per-user per-song dial (`-5..+5`), recurrence-only.
+
+Mapping:
+- Recurrence weights map to frequency tiers or weighted scheduling.
+- Must remain deterministic and auditable.
+
+Hard constraints:
+- `MAX_REPEAT_MAIN = 60 minutes`
+- No removal purely from low engagement; low-performing songs become increasingly infrequent before any lifecycle removal policy applies.
+
+## Scheduling
+### New Releases Pool
+- Continuous fair rotation of active new songs.
+- No on-the-hour requirement.
+
+### Main Rotation Pool
+- Continuous weighted scheduling by recurrence weight.
+- Enforce max-repeat cap.
+- Maintain scheduler diagnostics for repeat interval compliance.
+
+## Propagation / Tier Advancement
+- Upvotes are the only advancement signal.
+- Threshold model is configurable and must support:
+  - minimum unique eligible listeners
+  - rate-based thresholding
+  - optional confidence-bound gate
 
 ## Non-Functional Requirements
-- No personalization or algorithmic recommendation.
-- No pay-for-placement inside Fair Play/governance/rotation systems.
-- Deterministic and auditable engagement inputs.
+- No personalization.
+- No recommendation engines.
+- No pay-for-placement in broadcast governance.
+- Deterministic, auditable weight and schedule outputs.
 
-## Architectural Boundaries
-- Fair Play never assigns legitimacy or governance power.
-- Engagement capture is one input layer only; it is not equivalent to promotion authority.
-- Canon constraints prohibit taste prediction and algorithmic push.
+## Telemetry Requirements
+- `ActiveNewCount` (daily)
+- `current_new_window_days_target`
+- Per-song lifecycle:
+  - `entered_new_at`
+  - `scheduled_graduation_at`
+  - `entered_main_at`
+- `recurrence_weight(song_id)` (daily snapshot)
+- Scheduling diagnostics:
+  - average repeat interval by weight/frequency tier
+  - repeat-cap violations (must be zero)
 
-## Data Models & Migrations
-### Prisma Models
-- `Track`
-- `TrackEngagement`
-  - `type`: `full | majority | partial | skip`
-  - `score`: normalized additive score
-  - `sessionId`: dedupe guard
-  - Unique constraint: `(userId, trackId, sessionId)`
-  - Index: `(trackId, createdAt)`
-
-### Migrations
-- `20260216004000_add_user_home_scene_and_track_engagement`
-
-## API Design
-### Endpoints (Implemented)
+## API Design (Target)
+### Implemented now
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/tracks/:id/engage` | required | Record playback engagement event |
+| POST | `/tracks/:id/engage` | required | Record recurrence input event |
 
-### Endpoints (Planned)
+### Planned
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | `/broadcast/:sceneId` | required | Stream broadcast rotation |
-| POST | `/votes` | required | Cast upvote during playback |
-| GET | `/fair-play/metrics` | required | Retrieve engagement/rotation metrics |
+| GET | `/broadcast/:sceneId/new` | required | Stream New Releases pool |
+| GET | `/broadcast/:sceneId/main` | required | Stream Main Rotation pool |
+| POST | `/votes` | required | Cast upvote (propagation only) |
+| GET | `/fair-play/metrics` | required | Retrieve lifecycle/recurrence diagnostics |
 
-### `POST /tracks/:id/engage` Contract
-- Request: `{ sessionId: string, type: "full" | "majority" | "partial" | "skip" }`
-- Behavior:
-  - validates track existence
-  - maps type to score (`3|2|1|0`)
-  - records idempotent-per-session engagement row
-- Scope:
-  - captures engagement events only
-  - does not perform rotation recalculation or propagation
+## Acceptance Criteria
+- New songs remain in New Releases for their assigned window and cannot be buried.
+- New-window target changes only after 3-day hysteresis.
+- Songs graduate automatically after window expiry.
+- Main Rotation recurrence changes only at daily recompute cadence.
+- No Main Rotation repeat faster than once/hour.
+- Upvotes do not affect recurrence.
+- Engagement does not affect propagation.
+- Stable behavior across density scenarios (`~6`, `15`, `25`, `35+` active new songs).
 
-## Web UI / Client Behavior
-- Player semantics remain broadcast-first (no direct song picking in Fair Play).
-- Upvote controls must remain disabled unless GPS-verified and in Home Scene.
-- Collection actions remain decoupled from voting/propagation.
-
-## Acceptance Tests / Test Plan
-- `POST /tracks/:id/engage`:
-  - full/majority/partial/skip map to `3/2/1/0`
-  - duplicate session rows are blocked by unique constraint
-- Validate no tier progression side effects from engagement capture alone.
-- Validate no negative score paths exist.
-
-## Future Work & Open Questions
-- Lock release-cycle timing and reevaluation cadence.
-- Implement vote and propagation services after threshold decisions are finalized.
-- Define moderation effects on rotation without violating canon constraints.
+## Open Decisions
+- Recurrence rolling window days (`7` vs `14` default).
+- Exact propagation threshold formula.
+- Practical floor/removal policy for persistently low-recurrence songs.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

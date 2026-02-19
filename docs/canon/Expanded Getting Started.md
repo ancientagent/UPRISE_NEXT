@@ -38,10 +38,10 @@ Architectural Principles
 2.1 Architectural Rationale — Why This Structure Exists
 UPRISE is discovery infrastructure, not a personalized content platform.
 Discovery occurs through: - Scene selection - Tier toggling (City → State → National) - Geospatial queries -
-Explicit user actions (upvoting, adding, blasting)
+Explicit user actions (voting, adding, blasting)
 No collaborative filtering, taste modeling, or ranked feeds are permitted.
 Broadcast is a passive discovery mechanism, not the system’s identity.
-Fair Play isolation: - Only upvoting and song engagement influence rotation - No payment, role, or
+Fair Play isolation: - Engagement controls Main Rotation recurrence - Upvoting controls propagation only - No payment, role, or
 subscription alters governance
 Scenes are governance containers. Communities exist within Scenes.
 Geospatial queries replace algorithmic personalization.
@@ -51,7 +51,7 @@ The Release Deck is a submission gate, not a rotation controller.
 • Release Deck slot ≠ rotation position
 • Rotation ordering is computed by Fair Play in the API tier
 • Promotional slots do not influence rotation
-The rotation stack is governed exclusively by: - Upvoting - Song engagement
+Fair Play governance is separated: - Main Rotation recurrence by engagement - Tier propagation by upvotes
 2.3 Economic Surface Isolation
 Economic features are structurally isolated from governance.
 Includes: - Print Shop (Run model) - Promotional Pack - Label Visibility Service - Subscription tiers
@@ -104,18 +104,18 @@ Prerequisites
 • Git
 Setup
 corepack enable
-yarn install
+pnpm install
 Configure environment variables in: - apps/api/.env - apps/socket/.env - apps/web/.env.local
 Start database (Docker recommended):
 docker-compose up -d
 Run services:
-yarn dev
+pnpm dev
 Verify:
-yarn lint
-yarn typecheck
-yarn test
-yarn build
-yarn infra-policy-check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm infra-policy-check
 4
 
 --- Page 5 ---
@@ -132,7 +132,7 @@ Product Drift Prohibitions
 • No taste prediction
 • No ranked feeds
 • No personalization
-• Fair Play inputs limited to upvoting + engagement
+• Fair Play domains separated: engagement for recurrence, upvotes for propagation
 7. Development Workflow
 Branching: - main - develop - feat/<scope> - fix/<scope> - chore/<scope> - docs/<scope> - hotfix/<scope>
 PRs must include: - Deployment target - Phase - Specs - Tests - CI passing
@@ -147,12 +147,12 @@ Refer to docs/PROJECT_STRUCTURE.md.
 
 10. Quick Reference
 Common Commands:
-yarn install
-yarn dev
-yarn lint
-yarn typecheck
-yarn test
-yarn build
-yarn infra-policy-check
+pnpm install
+pnpm dev
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm infra-policy-check
 You’re Ready. Follow specs. Respect boundaries. Build within the system.
 6

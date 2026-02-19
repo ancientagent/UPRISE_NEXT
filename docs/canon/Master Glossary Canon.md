@@ -208,33 +208,21 @@ Canon Constraints: - REPORT does not affect Fair Play, engagement, or tiering. -
 moderation and safety workflows.
 Action: None
 Engagement Score
-Status: OK
-Canonical Definition: A per-song metric derived from additive listener engagement that influences
-rotation frequency after the initial exposure window.
-Canon Constraints: - Engagement is additive-only. - Absence of engagement is not interpreted. -
-Engagement Score never affects tier progression.
-Action: None
+Status: UPDATED (Two-Pool V1)
+Canonical Definition: A per-song recurrence input metric used only in Main Rotation after New Window graduation.
+Canon Constraints: - Engagement is additive and explicit. - Engagement never affects tier propagation. - Absence of engagement is not interpreted as rejection.
+Action: Updated to align with Two-Pool Fair Play separation.
 Fair Play
-Status: OK (engagement rules incorporated)
-Canonical Definition: The listener-governed broadcast governance system that ensures equal opportunity
-at entry and community-determined outcomes over time.
-Core Properties: - Equal exposure at entry. - No personalization or prediction. - No platform discretion over
-outcomes. - Separation of rotation frequency (engagement) and tier progression (UPVOTE).
-Engagement Rules (Song-Level)
-Engagement for songs is calculated using a fixed, additive point system. Points are awarded per listener
-encounter and influence rotation frequency only.
-8
-
---- Page 9 ---
-
-Point Allocation: - 3 points — Full song completion - 2 points — Majority listen (more than half of song
-duration) - 1 point — Partial listen (at least one-third of song duration) - 0 points — Skip or early traversal
-before one-third completion
-Engagement Constraints: - Engagement is additive-only. - Absence of engagement is not interpreted. - No
-action subtracts points. - Engagement points never affect tier progression.
-Phases: - Initial Exposure Window: standardized rotation independent of engagement. - Engagement-
-Weighted Rotation: rotation frequency reflects accumulated engagement points.
-Action: Engagement point system explicitly incorporated into Fair Play.
+Status: UPDATED (Two-Pool V1)
+Canonical Definition: The listener-governed broadcast governance system composed of two pools:
+- New Releases Pool (time-protected visibility)
+- Main Rotation Pool (engagement-weighted recurrence)
+Core Properties: - New songs are time-protected and cannot be buried in their assigned New Window. - Recurrence is computed daily in Main Rotation. - Upvote domain is separate and controls propagation only. - No personalization or prediction.
+New Window Density Rule: - ActiveNewCount <= 10: 10 days - 11 to 25: 7 days - >25: 5 days
+Stability Rule: Band changes commit only after 3 consecutive days in the new density band.
+Main Rotation Guardrail: No song may repeat more than once per hour.
+UPVOTE Separation Rule: UPVOTE influences propagation only and never recurrence.
+Action: Replaced legacy single-rotation wording with Two-Pool V1 semantics.
 PASS 3 complete. No Canon mechanics introduced; action semantics aligned to Master Narrative Canon.
 5. Subscriptions & Access (PASS 4)
 Discovery Pass

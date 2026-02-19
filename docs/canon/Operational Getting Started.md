@@ -48,7 +48,7 @@ Architectural Principles - Web tier has no direct database access - API tier is 
 data and business logic - Real-time layer handles subscription-based events only - Workers perform
 asynchronous processing only - No personalization or recommendation services are present in the
 architecture
-Key Technologies Core Stack - Monorepo: Turborepo with Yarn workspaces - Frontend: Next.js (App Router) -
+Key Technologies Core Stack - Monorepo: Turborepo with pnpm workspaces - Frontend: Next.js (App Router) -
 Backend: NestJS (REST API) - Real-time: Socket.IO (authenticated namespaces) - Database: PostgreSQL with
 PostGIS - ORM: Prisma - Language: TypeScript (strict mode)
 Geospatial Model - Communities are implemented as location-bound Scene containers - PostGIS is used for
@@ -92,7 +92,7 @@ Environment Setup
 Enable corepack (for Yarn)
 corepack enable
 Install all dependencies
-yarn install
+pnpm install
 1. Set Up Environment Variables
 Copy environment templates
 cp apps/api/.env.example apps/api/.env cp apps/socket/.env.example apps/socket/.env cp apps/
@@ -130,19 +130,19 @@ PostgreSQL + PostGIS installation guide and ensure the PostGIS extension is enab
 database.
 1. Initialize Database cd apps/api
 Generate Prisma Client
-yarn prisma generate
+pnpm prisma generate
 Run migrations
-yarn prisma migrate dev
+pnpm prisma migrate dev
 (Optional) Seed development data
-yarn prisma db seed
+pnpm prisma db seed
 1. Verify Setup
 Run all checks
-yarn lint # ✅ Should pass yarn typecheck # ✅ Should pass yarn build # ✅ Should build all apps yarn test #
-✅ Should run all tests yarn infra-policy-check # ✅ Should pass
+pnpm lint # ✅ Should pass pnpm typecheck # ✅ Should pass pnpm build # ✅ Should build all apps pnpm test #
+✅ Should run all tests pnpm infra-policy-check # ✅ Should pass
 Quick Start Commands
 Development Mode
 Run all services in development mode
-yarn dev
+pnpm dev
 5
 
 --- Page 6 ---
@@ -154,15 +154,15 @@ Services will be available at:
 - Transcoder: (background worker)
 Run Individual Services
 Run specific app
-yarn workspace web dev # Next.js web app yarn workspace api dev # NestJS API yarn workspace socket dev
-# Socket.IO server yarn workspace transcoder dev # Transcoder worker
+pnpm --filter web dev # Next.js web app pnpm --filter api dev # NestJS API pnpm --filter socket dev
+# Socket.IO server pnpm --filter transcoder dev # Transcoder worker
 Run multiple specific apps
-yarn workspace web dev && yarn workspace api dev
+pnpm --filter web dev && pnpm --filter api dev
 How to Run Locally
 Step-by-Step: 1. Terminal 1 - Database: docker-compose up
-1. Terminal 2 - API: yarn workspace api dev Wait for: 🚀 API server running on http://localhost:4000
-2. Terminal 3 - Socket: yarn workspace socket dev Wait for: 🔌 Socket.IO server running on port 4001
-3. Terminal 4 - Web: yarn workspace web dev Wait for: ✓ Ready on http://localhost:3000
+1. Terminal 2 - API: pnpm --filter api dev Wait for: 🚀 API server running on http://localhost:4000
+2. Terminal 3 - Socket: pnpm --filter socket dev Wait for: 🔌 Socket.IO server running on port 4001
+3. Terminal 4 - Web: pnpm --filter web dev Wait for: ✓ Ready on http://localhost:3000
 4. Test the Setup:
 # Check API health
 curl http://localhost:4000/api/health
@@ -177,33 +177,33 @@ Visit http://localhost:3000 in your browser
 How to Run Tests
 All Tests
 Run all tests across all workspaces
-yarn test
+pnpm test
 With coverage
-yarn test --coverage
+pnpm test --coverage
 Specific App Tests
 Web app tests
-yarn workspace web test
+pnpm --filter web test
 API tests (requires database)
-DATABASE_URL="postgresql://..." yarn workspace api test
+DATABASE_URL="postgresql://..." pnpm --filter api test
 Socket tests
-yarn workspace socket test
+pnpm --filter socket test
 Watch Mode (for development)
 Watch mode for web
-yarn workspace web test:watch
+pnpm --filter web test:watch
 Watch mode for API
-yarn workspace api test:watch
+pnpm --filter api test:watch
 7
 
 --- Page 8 ---
 
 Test Coverage
 Generate coverage report
-yarn workspace api test:coverage
+pnpm --filter api test:coverage
 Coverage report will be in apps/api/coverage/
 How to Build
 Production Build
 Build all apps
-yarn build
+pnpm build
 Build outputs:
 - apps/web/.next/
 - apps/api/dist/
@@ -212,9 +212,9 @@ Build outputs:
 Build Individual Apps yarn workspace web build yarn workspace api build yarn workspace socket build
 Clean Build
 Remove all build artifacts and node_modules
-yarn clean
+pnpm clean
 Reinstall and rebuild
-yarn install yarn build
+pnpm install pnpm build
 8
 
 --- Page 9 ---
@@ -222,7 +222,7 @@ yarn install yarn build
 Troubleshooting Common Issues
 Issue: Prisma Client not found
 Solution: Generate Prisma Client
-cd apps/api yarn prisma generate
+cd apps/api pnpm prisma generate
 Issue: PostGIS extension not available
 Solution: Enable PostGIS in your database
 psql uprise -c "CREATE EXTENSION IF NOT EXISTS postgis;"
@@ -239,7 +239,7 @@ relevant .env files.
 Or change port in .env
 Issue: Web-tier boundary violations
 Solution: Run policy check to see violations
-yarn infra-policy-check
+pnpm infra-policy-check
 9
 
 --- Page 10 ---
@@ -251,7 +251,7 @@ api'
 - Use NEXT_PUBLIC_ env vars for client-side
 Issue: Tests failing due to database
 Solution: Ensure DATABASE_URL is set for tests
-DATABASE_URL="postgresql://..." yarn test
+DATABASE_URL="postgresql://..." pnpm test
 Or add to apps/api/.env.test
 1. Documentation Guide
 Documentation Structure UPRISE uses a comprehensive, hierarchical documentation system organized by
@@ -294,7 +294,7 @@ Product Drift Prohibitions (Development Guardrail) - Do NOT implement recommenda
 collaborative filtering, or taste prediction systems. - Do NOT introduce engagement-ranked feeds or
 algorithmic content boosting. - Do NOT add personalization layers that infer preferences from behavior. -
 Discovery must remain Scene-based and user-initiated (geospatial queries, tier toggling, explicit traversal). -
-Fair Play may only be influenced by upvoting and song engagement as defined in canon.
+Fair Play domains are separated in canon: engagement controls Main Rotation recurrence, while upvoting controls propagation only.
 1. Zero-Drift Policy
 2. No feature implemented without a spec
 3. No spec changes without human approval
@@ -328,8 +328,8 @@ specs: If spec references canonical IDs, read docs/Specifications/ • Review re
 handoff/handoff-phase-<n>.md for context
 Step 3: Validate Boundaries • Web-tier: Read apps/web/WEB_TIER_BOUNDARY.md if touching web •
 Database: Ensure you’re in apps/api for data access • Secrets: Verify no hardcoded secrets in code
-Step 4: Set Up Locally • Follow Section 4: Getting Started of this document • Run all checks: yarn lint && yarn
-typecheck && yarn test • Run infra policy check: yarn infra-policy-check
+Step 4: Set Up Locally • Follow Section 4: Getting Started of this document • Run all checks: pnpm lint && yarn
+typecheck && pnpm test • Run infra policy check: pnpm infra-policy-check
 Step 5: Create Agent Handoff Document
 Copy template
 cp docs/handoff/TEMPLATE_agent-handoff.md docs/handoff/agent-<your-name>-<task>.md
@@ -357,7 +357,7 @@ features without specs - Do not ignore CI failures
 1. Project Structure
 Directory Layout (See docs/PROJECT_STRUCTURE.md for canonical details.)
 1. Quick Reference
-Common Commands - Install: yarn install - Dev: yarn dev - Lint: yarn lint - Typecheck: yarn typecheck - Test:
-yarn test - Build: yarn build - Policy check: yarn infra-policy-check
+Common Commands - Install: pnpm install - Dev: pnpm dev - Lint: pnpm lint - Typecheck: pnpm typecheck - Test:
+pnpm test - Build: pnpm build - Policy check: pnpm infra-policy-check
 You’re Ready Follow Section 4, read RUNBOOK + Guardrails, then work from approved specs only.
 13

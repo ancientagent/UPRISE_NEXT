@@ -7,10 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Fair Play density analysis doc for punk city modeling (`docs/solutions/FAIR_PLAY_PUNK_CITY_DENSITY_STUDY_2026-02-18.md`) with Austin/LA calibration, dial-variance results, and 60/75/90 minute capped-cycle comparisons.
+- Analytics instrumentation framework spec (`docs/specs/engagement/analytics-and-instrumentation-framework.md`) for Home Scene descriptive metrics tracking.
 - Broadcast simulation tool for Fair Play exploration:
   - `scripts/fair_play_rotation_sim.py`
   - includes new `lateral_vote_mid_entry` mode where songs start neutral/mid-cycle and cadence is adjusted by lateral vote signal (`more`, `fine`, `less`) with min/max replay-gap safety bounds.
-- Track engagement recording API (`POST /tracks/:id/engage`) with Canon-aligned 3/2/1/0 scoring.
+- Track engagement recording API (`POST /tracks/:id/engage`) for Fair Play recurrence inputs (legacy 3/2/1/0 mapping retained in historical implementation notes, superseded by Two-Pool V1 spec direction).
 - TrackEngagement model with spam guard (unique on userId+trackId+sessionId).
 - Unit tests for engagement scoring and service methods.
 - Scene-scoped S.E.E.D feed API: `GET /communities/:id/feed` (explicit actions/events only, non-personalized).

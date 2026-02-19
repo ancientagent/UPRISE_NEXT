@@ -2,6 +2,12 @@
 
 How UPRISE Works — Canon
 Purpose
+
+Canonical Update (2026-02-19): Fair Play now follows Two-Pool Broadcast V1.
+- New Releases Pool: time-protected visibility window (density-adaptive with hysteresis).
+- Main Rotation Pool: engagement-derived recurrence, daily recompute, max once/hour repeat cap.
+- Upvotes: propagation only; never recurrence.
+
 Source: how_uprise_works_canonical_verbatim.md
 Method: Master Narrative Canon Master
 Glossary Canon Identity & Philosophy Canon
