@@ -137,7 +137,7 @@ Hard constraints:
 - New songs remain in New Releases for their assigned window and cannot be buried.
 - New-window target changes only after 3-day hysteresis.
 - Songs graduate automatically after window expiry.
-- Main Rotation recurrence changes only at daily recompute cadence.
+- Main Rotation recurrence changes only at 48-hour recompute cadence.
 - No Main Rotation repeat faster than once/hour.
 - Upvotes do not affect recurrence.
 - Engagement does not affect propagation.

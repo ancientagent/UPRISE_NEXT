@@ -12,6 +12,7 @@ import { HealthModule } from './health/health.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { PlacesModule } from './places/places.module';
 import { SignalsModule } from './signals/signals.module';
+import { FairPlayModule } from './fair-play/fair-play.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SignalsModule } from './signals/signals.module';
     TracksModule,
     EventsModule,
     SignalsModule,
+    FairPlayModule,
   ],
 })
 export class AppModule {}

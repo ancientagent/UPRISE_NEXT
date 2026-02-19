@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Fair Play foundation (Task 1 + Task 2):
+  - Added `RotationPool` enum and `RotationEntry` model to `apps/api/prisma/schema.prisma`.
+  - Added `FairPlayModule` and `FairPlayService` with `ingestNewRelease(trackId, sceneId)` to place tracks into `NEW_RELEASES`.
+  - Enforced one active new release per artist per scene in ingestion logic.
+  - Added unit tests for Fair Play ingestion service (`apps/api/test/fair-play.service.test.ts`).
 - Fair Play density analysis doc for punk city modeling (`docs/solutions/FAIR_PLAY_PUNK_CITY_DENSITY_STUDY_2026-02-18.md`) with Austin/LA calibration, dial-variance results, and 60/75/90 minute capped-cycle comparisons.
 - Analytics instrumentation framework spec (`docs/specs/engagement/analytics-and-instrumentation-framework.md`) for Home Scene descriptive metrics tracking.
 - Super-admin analytics governance scope: full telemetry visibility + custom metric/module definition controls (descriptive-only boundary).
@@ -28,6 +33,9 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Docs readiness state normalized:
+  - Canon-side generated readiness report removed.
+  - Consolidated to single active readiness report at `docs/Specifications/FRESH_READINESS_REPORT.md`.
 - Fair Play Two-Pool policy locks:
   - recurrence reorder cadence set to 48 hours
   - recurrence rolling window set to 14 days

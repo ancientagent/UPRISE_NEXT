@@ -78,6 +78,7 @@ model Community {
   events    Event[]
   sectTags  SectTag[]
   signals   Signal[]
+  rotationEntries RotationEntry[]
 
   @@map("communities")
 }
@@ -144,6 +145,7 @@ model Track {
   uploadedBy    User             @relation(fields: [uploadedById], references: [id])
   community     Community?       @relation(fields: [communityId], references: [id])
   engagements   TrackEngagement[]
+  rotationEntries RotationEntry[]
 
   @@map("tracks")
 }
@@ -164,6 +166,32 @@ model TrackEngagement {
   @@unique([userId, trackId, sessionId])
   @@index([trackId, createdAt])
   @@map("track_engagements")
+}
+
+enum RotationPool {
+  NEW_RELEASES
+  MAIN_ROTATION
+}
+
+model RotationEntry {
+  id              String       @id @default(uuid())
+  trackId         String
+  sceneId         String
+  pool            RotationPool
+  enteredPoolAt   DateTime
+  lastPlayedAt    DateTime?
+  recurrenceScore Float        @default(0)
+  graduatedAt     DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  track           Track        @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  scene           Community    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+
+  @@unique([trackId, sceneId])
+  @@index([sceneId, pool, recurrenceScore])
+  @@index([pool, enteredPoolAt])
+  @@map("rotation_entries")
 }
 
 model Signal {
