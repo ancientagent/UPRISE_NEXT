@@ -21,11 +21,13 @@ import {
   GetCommunityFeedSchema,
   GetCommunityStatisticsSchema,
   GetCommunitySceneMapSchema,
+  GetCommunityEventsSchema,
   CreateCommunityWithGeoDto,
   VerifyLocationDto,
   GetCommunityFeedDto,
   GetCommunityStatisticsDto,
   GetCommunitySceneMapDto,
+  GetCommunityEventsDto,
 } from './dto/community.dto';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodError } from 'zod';
@@ -129,6 +131,45 @@ export class CommunitiesController {
 
       const result = await this.communitiesService.getSceneMap(id, query);
       return { success: true, data: result };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/communities/:id/events
+   * Scene-scoped events listing for Plot Events tab
+   */
+  @Get(':id/events')
+  async getEvents(
+    @Param('id') id: string,
+    @Query() rawQuery: any,
+  ): Promise<{ success: true; data: any[]; meta: { limit: number; includePast: boolean } }> {
+    try {
+      const query: GetCommunityEventsDto = GetCommunityEventsSchema.parse({
+        limit: rawQuery.limit,
+        includePast: rawQuery.includePast,
+      });
+
+      const result = await this.communitiesService.getEvents(id, query);
+      return {
+        success: true,
+        data: result.items,
+        meta: {
+          limit: result.limit,
+          includePast: result.includePast,
+        },
+      };
     } catch (error) {
       if (error instanceof ZodError) {
         throw new BadRequestException({

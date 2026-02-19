@@ -3,7 +3,7 @@
 **ID:** `EVENTS-FLYERS`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-21`
 
 ## Overview & Purpose
 Defines Scene-bound events, event discovery surfaces, and attendance flyer artifacts (materialized signals) without introducing recommendation behavior.
@@ -24,6 +24,7 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 - Read endpoints:
   - `GET /events`
   - `GET /events/:id`
+  - `GET /communities/:id/events` (scene-scoped listing for Plot Events surface)
 - Backing model:
   - `Event` with core metadata, location coordinates, `communityId`, `createdById`.
 
@@ -58,6 +59,7 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 |--------|------|------|-------------|
 | GET | `/events` | required | List events (paginated) |
 | GET | `/events/:id` | required | Fetch event detail |
+| GET | `/communities/:id/events` | required | Scene-scoped events listing (supports `limit`, `includePast`) |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
@@ -69,7 +71,8 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 
 ## Web UI / Client Behavior
 - Plot includes an Events tab shell.
-- Event detail presentation is currently API-backed read-only.
+- Plot Events tab now uses `/communities/:id/events` and selected community anchor from Statistics.
+- Event detail presentation remains API-backed read-only.
 - Flyer displays and redemption UI are deferred.
 
 ## Acceptance Tests / Test Plan
