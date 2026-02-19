@@ -124,6 +124,7 @@ Hard constraints:
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/tracks/:id/engage` | required | Record recurrence input event |
+| GET | `/broadcast/:sceneId/rotation` | required | Retrieve ordered New Releases + Main Rotation pools with metadata |
 
 ### Planned
 | Method | Path | Auth | Description |

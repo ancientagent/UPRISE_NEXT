@@ -25,6 +25,13 @@
     - Home Scene match required
     - track must be present in scene broadcast rotation
   - Added vote unit tests (`apps/api/test/fair-play.vote.test.ts`).
+- Fair Play rotation serving (Task 5):
+  - Added `GET /broadcast/:sceneId/rotation` via `BroadcastController`.
+  - Added `FairPlayService.getRotation(sceneId)` returning deterministic ordered pools:
+    - `newReleases` ordered by `enteredPoolAt ASC`
+    - `mainRotation` ordered by `recurrenceScore DESC`, then `enteredPoolAt ASC`
+  - Added response metadata (`sceneId`, `generatedAt`, `newReleasesCount`, `mainRotationCount`).
+  - Added rotation service tests (`apps/api/test/fair-play.rotation.test.ts`).
 - Fair Play density analysis doc for punk city modeling (`docs/solutions/FAIR_PLAY_PUNK_CITY_DENSITY_STUDY_2026-02-18.md`) with Austin/LA calibration, dial-variance results, and 60/75/90 minute capped-cycle comparisons.
 - Analytics instrumentation framework spec (`docs/specs/engagement/analytics-and-instrumentation-framework.md`) for Home Scene descriptive metrics tracking.
 - Super-admin analytics governance scope: full telemetry visibility + custom metric/module definition controls (descriptive-only boundary).

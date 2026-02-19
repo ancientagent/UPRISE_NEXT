@@ -233,4 +233,41 @@ export class FairPlayService {
       throw error;
     }
   }
+
+  async getRotation(sceneId: string) {
+    const scene = await this.prisma.community.findUnique({
+      where: { id: sceneId },
+      select: { id: true },
+    });
+    if (!scene) {
+      throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
+    }
+
+    const [newEntries, mainEntries] = await Promise.all([
+      this.prisma.rotationEntry.findMany({
+        where: { sceneId, pool: RotationPool.NEW_RELEASES },
+        orderBy: { enteredPoolAt: 'asc' },
+        include: { track: true },
+      }),
+      this.prisma.rotationEntry.findMany({
+        where: { sceneId, pool: RotationPool.MAIN_ROTATION },
+        orderBy: [{ recurrenceScore: 'desc' }, { enteredPoolAt: 'asc' }],
+        include: { track: true },
+      }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        newReleases: newEntries.map((entry) => entry.track),
+        mainRotation: mainEntries.map((entry) => entry.track),
+      },
+      meta: {
+        sceneId,
+        generatedAt: new Date().toISOString(),
+        newReleasesCount: newEntries.length,
+        mainRotationCount: mainEntries.length,
+      },
+    };
+  }
 }
