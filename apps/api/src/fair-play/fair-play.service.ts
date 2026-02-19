@@ -1,6 +1,7 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { RotationPool } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import type { TrackVoteDto } from './dto/track-vote.dto';
 
 @Injectable()
 export class FairPlayService {
@@ -129,5 +130,107 @@ export class FairPlayService {
         asOf,
       },
     };
+  }
+
+  async castVote(userId: string, trackId: string, dto: TrackVoteDto) {
+    if (dto.nowPlayingTrackId !== trackId) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'Vote allowed only for the currently playing track' },
+      });
+    }
+
+    const [user, track, scene, inRotation] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          gpsVerified: true,
+          homeSceneCity: true,
+          homeSceneState: true,
+          homeSceneCommunity: true,
+        },
+      }),
+      this.prisma.track.findUnique({
+        where: { id: trackId },
+        select: { id: true },
+      }),
+      this.prisma.community.findUnique({
+        where: { id: dto.sceneId },
+        select: {
+          id: true,
+          tier: true,
+          city: true,
+          state: true,
+          musicCommunity: true,
+        },
+      }),
+      this.prisma.rotationEntry.findFirst({
+        where: {
+          trackId,
+          sceneId: dto.sceneId,
+          pool: { in: [RotationPool.NEW_RELEASES, RotationPool.MAIN_ROTATION] },
+        },
+        select: { id: true },
+      }),
+    ]);
+
+    if (!user) {
+      throw new NotFoundException({ success: false, error: { message: 'User not found' } });
+    }
+    if (!track) {
+      throw new NotFoundException({ success: false, error: { message: 'Track not found' } });
+    }
+    if (!scene) {
+      throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
+    }
+    if (!inRotation) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'Track is not currently in the scene broadcast' },
+      });
+    }
+
+    if (!user.gpsVerified) {
+      throw new ForbiddenException({
+        success: false,
+        error: { message: 'GPS verification required to vote' },
+      });
+    }
+
+    const homeCity = (user.homeSceneCity ?? '').toLowerCase();
+    const homeState = (user.homeSceneState ?? '').toLowerCase();
+    const homeCommunity = (user.homeSceneCommunity ?? '').toLowerCase();
+    const sceneCity = (scene.city ?? '').toLowerCase();
+    const sceneState = (scene.state ?? '').toLowerCase();
+    const sceneCommunity = (scene.musicCommunity ?? '').toLowerCase();
+
+    if (!homeCity || !homeState || !homeCommunity || homeCity !== sceneCity || homeState !== sceneState || homeCommunity !== sceneCommunity) {
+      throw new ForbiddenException({
+        success: false,
+        error: { message: 'Voting is limited to your GPS-verified Home Scene' },
+      });
+    }
+
+    try {
+      const vote = await this.prisma.trackVote.create({
+        data: {
+          userId,
+          trackId,
+          sceneId: scene.id,
+          tier: scene.tier,
+          playbackSessionId: dto.playbackSessionId,
+        },
+      });
+      return { success: true, data: vote };
+    } catch (error: any) {
+      if (error?.code === 'P2002') {
+        throw new ConflictException({
+          success: false,
+          error: { message: 'Vote already recorded for this track in this scene tier' },
+        });
+      }
+      throw error;
+    }
   }
 }

@@ -16,6 +16,15 @@
   - Added `aggregateRecurrenceScores(sceneId, asOf)` in `FairPlayService` with 14-day rolling window aggregation for `MAIN_ROTATION`.
   - Added `RecurrenceAggregationJob` surface (`apps/api/src/fair-play/jobs/recurrence-aggregation.job.ts`).
   - Added recurrence aggregation tests (`apps/api/test/fair-play.recurrence.test.ts`) including idempotent rerun behavior.
+- Fair Play vote foundation (Task 4):
+  - Added `TrackVote` model to `apps/api/prisma/schema.prisma` (scene-tier uniqueness guard).
+  - Added `POST /tracks/:id/vote` via `FairPlayController` with Zod DTO validation.
+  - Added vote gates in `FairPlayService.castVote()`:
+    - currently-playing assertion (`nowPlayingTrackId` must match route track)
+    - GPS verification required
+    - Home Scene match required
+    - track must be present in scene broadcast rotation
+  - Added vote unit tests (`apps/api/test/fair-play.vote.test.ts`).
 - Fair Play density analysis doc for punk city modeling (`docs/solutions/FAIR_PLAY_PUNK_CITY_DENSITY_STUDY_2026-02-18.md`) with Austin/LA calibration, dial-variance results, and 60/75/90 minute capped-cycle comparisons.
 - Analytics instrumentation framework spec (`docs/specs/engagement/analytics-and-instrumentation-framework.md`) for Home Scene descriptive metrics tracking.
 - Super-admin analytics governance scope: full telemetry visibility + custom metric/module definition controls (descriptive-only boundary).

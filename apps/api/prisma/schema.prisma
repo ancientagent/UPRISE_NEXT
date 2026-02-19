@@ -46,6 +46,7 @@ model User {
   follows            Follow[]
   collections        Collection[]
   trackEngagements   TrackEngagement[]
+  trackVotes         TrackVote[]
 
   @@map("users")
 }
@@ -79,6 +80,7 @@ model Community {
   sectTags  SectTag[]
   signals   Signal[]
   rotationEntries RotationEntry[]
+  trackVotes TrackVote[]
 
   @@map("communities")
 }
@@ -146,6 +148,7 @@ model Track {
   community     Community?       @relation(fields: [communityId], references: [id])
   engagements   TrackEngagement[]
   rotationEntries RotationEntry[]
+  trackVotes    TrackVote[]
 
   @@map("tracks")
 }
@@ -192,6 +195,24 @@ model RotationEntry {
   @@index([sceneId, pool, recurrenceScore])
   @@index([pool, enteredPoolAt])
   @@map("rotation_entries")
+}
+
+model TrackVote {
+  id                String    @id @default(uuid())
+  userId            String
+  trackId           String
+  sceneId           String
+  tier              String
+  playbackSessionId String
+  createdAt         DateTime  @default(now())
+
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track             Track     @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  scene             Community @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackId, sceneId, tier])
+  @@index([sceneId, tier, createdAt])
+  @@map("track_votes")
 }
 
 model Signal {
