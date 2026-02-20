@@ -133,6 +133,9 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Identity model correction (canon-alignment):
+  - Corrected docs to reflect canonical Artist/Band as Registrar-linked entity model (not additive user capability flag).
+  - Updated `USER-IDENTITY`, `SYS-REGISTRAR`, `users/README`, analytics wording, and master handoff archive references accordingly.
 - Documentation alignment pass (2026-02-20):
   - Updated `SOCIAL-MSG` spec with locked messaging rules: `/sectname` broadcast pathway, mutual-follow DM constraint, and no DM-to-artist policy.
   - Updated `ECON-PRINTSHOP` + `EVENTS-FLYERS` + `USER-IDENTITY` specs for Print Shop-first event creation, promoter Production identity language, and current-phase operational constraints.

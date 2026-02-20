@@ -22,7 +22,8 @@
 
 ### Identity and capabilities
 - Base user identity is unified (listener/supporter/fan baseline).
-- Artist and promoter are additive capabilities, not separate account trees.
+- Artist/Band is a Registrar-linked entity model (not just an additive user capability flag).
+- Promoter is additive capability scope on top of base user identity.
 - Promoters operate named **Production** identities for public promotional work.
 
 ### Discovery and scene model
@@ -73,4 +74,3 @@ See recent merged PRs and `docs/CHANGELOG.md` for code-level and endpoint-level 
 ## 5) Archive Intent
 
 This document serves as a formal archive of the current chat’s execution-critical decisions and operating constraints so future sessions can recover context without relying on volatile chat memory.
-
