@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Invite prefill read endpoint (slice 9):
+  - Added `POST /auth/invite-preview` to resolve invited member and Home Scene context before invite claim registration.
+  - Expanded auth invite tests for preview success + claimed-token rejection.
 - Transitional identity bridge field (slice 8):
   - Added `hasArtistBand` to user profile read surfaces (`GET /users/:id`, `GET /users/:id/profile`) derived from canonical `ArtistBandMember`.
   - Keeps `User.isArtist` intact while exposing canonical entity linkage for migration callers.

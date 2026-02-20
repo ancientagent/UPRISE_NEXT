@@ -50,6 +50,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Generates invite token + expiry for pending non-platform registrar members.
   - Queues invite-delivery payload rows for email delivery worker handoff.
 - Registrar invite claim bootstrap (slice 6):
+  - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
   - Claim marks registrar member row as `claimed` and links `claimedUserId`.
   - Home Scene defaults are prefilled from registrar scene context; GPS remains required for civic voting.

@@ -55,6 +55,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /registrar/artist/:entryId/dispatch-invites` queues pending non-platform member invites with tokenized claim payload.
   - `GET /registrar/artist/:entryId/invites` returns invite roster and status summary for submitter tracking.
 - Invite claim account bootstrap (slice 6):
+  - `POST /auth/invite-preview` provides prefill context (member + scene/community) for invited users before claim.
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
   - Claim flow sets Home Scene defaults from registrar scene context (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`).
   - Claimed accounts start with `gpsVerified = false` (GPS still required for voting validation).
@@ -120,6 +121,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/auth/register` | none | Create base user identity |
+| POST | `/auth/invite-preview` | none | Preview invited member + scene context prior to invite claim registration |
 | POST | `/auth/register-invite` | none | Create invited registrar-member account using invite token |
 | POST | `/auth/login` | none | Authenticate and return tokens |
 | GET | `/users` | required | List users (paginated) |

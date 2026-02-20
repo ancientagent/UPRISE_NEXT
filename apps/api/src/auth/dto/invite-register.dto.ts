@@ -9,3 +9,9 @@ export const RegisterFromInviteSchema = z.object({
 });
 
 export type RegisterFromInviteDto = z.infer<typeof RegisterFromInviteSchema>;
+
+export const InvitePreviewSchema = z.object({
+  inviteToken: z.string().uuid(),
+});
+
+export type InvitePreviewDto = z.infer<typeof InvitePreviewSchema>;
