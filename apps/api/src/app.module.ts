@@ -15,6 +15,7 @@ import { SignalsModule } from './signals/signals.module';
 import { FairPlayModule } from './fair-play/fair-play.module';
 import { AdminConfigModule } from './admin-config/admin-config.module';
 import { ArtistBandsModule } from './artist-bands/artist-bands.module';
+import { RegistrarModule } from './registrar/registrar.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ArtistBandsModule } from './artist-bands/artist-bands.module';
     FairPlayModule,
     AdminConfigModule,
     ArtistBandsModule,
+    RegistrarModule,
   ],
 })
 export class AppModule {}

@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar Artist/Band submission primitives (slice 2):
+  - Added `RegistrarEntry` Prisma model and additive migration `20260220141000_add_registrar_entries`.
+  - Added authenticated endpoint `POST /registrar/artist` for Home Scene-scoped Artist/Band registration submissions.
+  - Added registrar service unit tests: `apps/api/test/registrar.service.test.ts`.
 - Canonical Artist/Band identity foundation (slice 1):
   - Added Prisma models `ArtistBand` and `ArtistBandMember` plus additive migration `20260220130000_add_artist_bands_identity`.
   - Added authenticated read endpoints:
@@ -139,6 +143,7 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Registrar enforcement now validates artist registration submissions against Home Scene and city-tier scope in API service logic.
 - Identity implementation now uses canonical Artist/Band entity persistence as the primary model foundation while keeping `User.isArtist` transitional for compatibility.
 - Identity model correction (canon-alignment):
   - Corrected docs to reflect canonical Artist/Band as Registrar-linked entity model (not additive user capability flag).

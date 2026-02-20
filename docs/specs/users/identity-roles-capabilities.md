@@ -46,6 +46,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Read-only Artist/Band API surface (auth required):
   - `GET /artist-bands/:id`
   - `GET /artist-bands?userId=:id` (defaults to authenticated user when omitted)
+- Registrar submission primitive for Artist/Band identity onboarding:
+  - `POST /registrar/artist` creates a scene-scoped registrar entry (does not yet create ArtistBand row directly).
 
 ### Deferred (Not Implemented Yet)
 - Promoter registration flow and capability grants.
@@ -86,10 +88,14 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `ArtistBandMember`
   - User membership rows for Artist/Band management relationships
   - Unique membership per pair (`artistBandId`, `userId`)
+- `RegistrarEntry`
+  - Tracks Home Scene-scoped registration submissions for civic activation workflows
+  - Stores submission payload/state for registrar-mediated Artist/Band intake
 
 ### Migrations
 - `20260216004000_add_user_home_scene_and_track_engagement` (home-scene affinity and GPS-related user fields)
 - `20260220130000_add_artist_bands_identity` (adds `artist_bands` + `artist_band_members`; leaves `User.isArtist` intact)
+- `20260220141000_add_registrar_entries` (adds `registrar_entries` for Artist/Band registration submissions)
 
 ## API Design
 ### Endpoints
@@ -103,6 +109,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | POST | `/users/me/collection-display` | required | Set profile collection visibility toggle |
 | GET | `/artist-bands/:id` | required | Fetch canonical Artist/Band entity details + membership |
 | GET | `/artist-bands` | required | List Artist/Band entities managed by a user (`userId` query or self default) |
+| POST | `/registrar/artist` | required | Submit Home Scene-scoped Artist/Band registration entry |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.

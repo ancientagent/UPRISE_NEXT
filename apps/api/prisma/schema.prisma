@@ -52,6 +52,7 @@ model User {
   trackVotes         TrackVote[]
   createdArtistBands ArtistBand[]
   artistBandMembers  ArtistBandMember[]
+  registrarEntries   RegistrarEntry[]
 
   @@map("users")
 }
@@ -70,6 +71,7 @@ model ArtistBand {
   createdBy User      @relation(fields: [createdById], references: [id], onDelete: Restrict)
   homeScene Community? @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
   members   ArtistBandMember[]
+  registrarEntries RegistrarEntry[]
 
   @@index([homeSceneId])
   @@index([createdById])
@@ -122,8 +124,30 @@ model Community {
   rotationEntries RotationEntry[]
   trackVotes TrackVote[]
   artistBands ArtistBand[]
+  registrarEntries RegistrarEntry[]
 
   @@map("communities")
+}
+
+model RegistrarEntry {
+  id           String   @id @default(uuid())
+  type         String
+  status       String   @default("submitted")
+  sceneId      String
+  createdById  String
+  artistBandId String?
+  payload      Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  scene      Community  @relation(fields: [sceneId], references: [id], onDelete: Restrict)
+  createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
+
+  @@index([sceneId, type, status])
+  @@index([createdById, createdAt])
+  @@index([artistBandId])
+  @@map("registrar_entries")
 }
 
 model SectTag {

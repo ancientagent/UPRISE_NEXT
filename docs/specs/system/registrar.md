@@ -28,13 +28,16 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `ArtistBand.registrarEntryRef` stores registrar linkage reference for canonical handoff.
   - `ArtistBand` + `ArtistBandMember` provide canonical entity + membership graph.
   - Read-only retrieval endpoints exist (`GET /artist-bands/:id`, `GET /artist-bands`).
-- No dedicated Registrar API routes or persistence models exist yet.
-- Related primitives are present:
-  - Signal creation/actions (`/signals`, `/signals/:id/support`, etc.) can represent project-like propagation once a project signal exists.
+- Registrar write primitive (slice 2):
+  - `RegistrarEntry` persistence model added.
+  - `POST /registrar/artist` implemented for Home Scene-scoped Artist/Band registration submissions.
+  - Submission constraints enforced in service:
+    - city-tier Scene only,
+    - request Scene must match authenticated user's Home Scene.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
-- Registrar-gated create/update writes for Artist/Band entities (current slice is read-only retrieval).
+- Registrar-gated create/update writes for Artist/Band entities beyond submission intake.
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 
@@ -50,20 +53,22 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 
 ## Data Models & Migrations
 ### Target Models (Planned)
-- `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, timestamps)
 - `RegistrarCode` (for capability completion handoff flows)
 - Project linkage to `Signal` rows for follow/blast/support
 - Sect motion artifact and committed artist-catalog references
 
+### Prisma Models (Implemented)
+- `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
+
 ### Migrations
 - `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
-- full Registrar tables remain deferred.
+- `20260220141000_add_registrar_entries` adds `registrar_entries` for Home Scene-scoped registration submissions.
 
 ## API Design
-### Planned Endpoints (Not Implemented)
+### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/registrar/artist` | required | Initiate Artist/Band entity registration |
+| POST | `/registrar/artist` | required | Initiate Artist/Band entity registration (submission entry) |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
