@@ -5,6 +5,8 @@ import { RegistrarService } from './registrar.service';
 import {
   ArtistBandRegistrationSchema,
   type ArtistBandRegistrationDto,
+  DispatchArtistInviteSchema,
+  type DispatchArtistInviteDto,
 } from './dto/registrar.dto';
 
 @Controller('registrar')
@@ -28,6 +30,17 @@ export class RegistrarController {
     @Request() req: { user: { userId: string } },
   ) {
     const result = await this.registrarService.materializeArtistBandRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
+  @Post('artist/:entryId/dispatch-invites')
+  @ZodBody(DispatchArtistInviteSchema)
+  async dispatchArtistBandInvites(
+    @Param('entryId') entryId: string,
+    @Body() dto: DispatchArtistInviteDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.dispatchArtistBandInvites(req.user.userId, entryId, dto);
     return { success: true, data: result };
   }
 }

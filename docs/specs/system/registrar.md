@@ -45,11 +45,15 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submitter-only action (entry creator must match authenticated user).
   - Materializes `ArtistBand` + owner `ArtistBandMember` from submitted registrar entry payload.
   - Idempotent when entry is already linked to an `ArtistBand`.
+- Registrar invite dispatch primitive (slice 5):
+  - `POST /registrar/artist/:entryId/dispatch-invites` implemented.
+  - Generates invite token + expiry for pending non-platform registrar members.
+  - Queues invite-delivery payload rows for email delivery worker handoff.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
 - Registrar-gated create/update writes for Artist/Band entities beyond submission intake.
-- Outbound invite email dispatch integration for `pending_email` member rows.
+- Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Invite claim/password bootstrap flow for non-platform band members.
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
@@ -73,11 +77,13 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 ### Prisma Models (Implemented)
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
 - `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
+- `RegistrarInviteDelivery` (`registrarArtistMemberId`, `email`, `status`, `payload`, `dispatchedAt`, timestamps)
 
 ### Migrations
 - `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
 - `20260220141000_add_registrar_entries` adds `registrar_entries` for Home Scene-scoped registration submissions.
 - `20260220170000_add_registrar_artist_members` adds `registrar_artist_members` roster/invite persistence for registrar artist submissions.
+- `20260220183000_add_registrar_invite_delivery` adds invite token fields + `registrar_invite_deliveries` queue table.
 
 ## API Design
 ### Endpoints
@@ -85,6 +91,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 |--------|------|------|-------------|
 | POST | `/registrar/artist` | required | Initiate Artist/Band entity registration (submission entry) |
 | POST | `/registrar/artist/:entryId/materialize` | required | Materialize submitted registrar entry into canonical Artist/Band entity |
+| POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform registrar members |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |

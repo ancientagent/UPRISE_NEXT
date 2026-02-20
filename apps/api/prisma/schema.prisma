@@ -53,7 +53,8 @@ model User {
   createdArtistBands ArtistBand[]
   artistBandMembers  ArtistBandMember[]
   registrarEntries   RegistrarEntry[]
-  registrarArtistMemberships RegistrarArtistMember[]
+  registrarArtistMemberships RegistrarArtistMember[] @relation("RegistrarExistingUser")
+  registrarClaimedMemberships RegistrarArtistMember[] @relation("RegistrarClaimedUser")
 
   @@map("users")
 }
@@ -160,17 +161,40 @@ model RegistrarArtistMember {
   city            String
   instrument      String
   existingUserId  String?
+  claimedUserId   String?
   inviteStatus    String   @default("pending_email") // pending_email, existing_user, sent, failed
+  inviteToken     String?
+  inviteTokenExpiresAt DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
-  existingUser   User?          @relation(fields: [existingUserId], references: [id], onDelete: SetNull)
+  existingUser   User?          @relation("RegistrarExistingUser", fields: [existingUserId], references: [id], onDelete: SetNull)
+  claimedUser    User?          @relation("RegistrarClaimedUser", fields: [claimedUserId], references: [id], onDelete: SetNull)
+  deliveries     RegistrarInviteDelivery[]
 
   @@unique([registrarEntryId, email])
+  @@unique([inviteToken])
   @@index([email])
   @@index([existingUserId])
+  @@index([claimedUserId])
   @@map("registrar_artist_members")
+}
+
+model RegistrarInviteDelivery {
+  id                     String   @id @default(uuid())
+  registrarArtistMemberId String   @unique
+  email                  String
+  status                 String   @default("queued") // queued, sent, failed
+  payload                Json
+  dispatchedAt           DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  registrarArtistMember RegistrarArtistMember @relation(fields: [registrarArtistMemberId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@map("registrar_invite_deliveries")
 }
 
 model SectTag {

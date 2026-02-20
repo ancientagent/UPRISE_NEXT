@@ -1,6 +1,7 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { ArtistBandRegistrationDto } from './dto/registrar.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class RegistrarService {
@@ -223,5 +224,116 @@ export class RegistrarService {
       }
       throw error;
     }
+  }
+
+  async dispatchArtistBandInvites(
+    userId: string,
+    entryId: string,
+    links: { mobileAppUrl: string; webAppUrl: string },
+  ) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        createdById: true,
+        scene: {
+          select: {
+            city: true,
+            state: true,
+            musicCommunity: true,
+          },
+        },
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'artist_band_registration') {
+      throw new ForbiddenException('Registrar entry is not an artist/band registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can dispatch invites for this registration');
+    }
+
+    const members = await this.prisma.registrarArtistMember.findMany({
+      where: {
+        registrarEntryId: entry.id,
+        inviteStatus: 'pending_email',
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        city: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    if (members.length === 0) {
+      return {
+        registrarEntryId: entry.id,
+        queuedCount: 0,
+      };
+    }
+
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14); // 14 days
+    let queuedCount = 0;
+
+    for (const member of members) {
+      const token = randomUUID();
+      await this.prisma.$transaction(async (tx) => {
+        await tx.registrarArtistMember.update({
+          where: { id: member.id },
+          data: {
+            inviteToken: token,
+            inviteTokenExpiresAt: expiresAt,
+            inviteStatus: 'queued',
+          },
+        });
+
+        await tx.registrarInviteDelivery.upsert({
+          where: { registrarArtistMemberId: member.id },
+          update: {
+            email: member.email,
+            status: 'queued',
+            payload: {
+              inviteToken: token,
+              mobileAppUrl: links.mobileAppUrl,
+              webAppUrl: links.webAppUrl,
+              memberName: member.name,
+              memberCity: member.city,
+              sceneCity: entry.scene.city,
+              sceneState: entry.scene.state,
+              musicCommunity: entry.scene.musicCommunity,
+            },
+            dispatchedAt: null,
+          },
+          create: {
+            registrarArtistMemberId: member.id,
+            email: member.email,
+            status: 'queued',
+            payload: {
+              inviteToken: token,
+              mobileAppUrl: links.mobileAppUrl,
+              webAppUrl: links.webAppUrl,
+              memberName: member.name,
+              memberCity: member.city,
+              sceneCity: entry.scene.city,
+              sceneState: entry.scene.state,
+              musicCommunity: entry.scene.musicCommunity,
+            },
+          },
+        });
+      });
+
+      queuedCount += 1;
+    }
+
+    return {
+      registrarEntryId: entry.id,
+      queuedCount,
+    };
   }
 }

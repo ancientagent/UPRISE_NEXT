@@ -51,6 +51,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Requires GPS-verified submitter in Home Scene.
   - Captures proposed member roster (`name`, `email`, `city`, `instrument`) for registrar processing.
   - `POST /registrar/artist/:entryId/materialize` finalizes canonical `ArtistBand` + owner membership from submitter-owned registration entry.
+  - `POST /registrar/artist/:entryId/dispatch-invites` queues pending non-platform member invites with tokenized claim payload.
 
 ### Deferred (Not Implemented Yet)
 - Promoter registration flow and capability grants.
@@ -97,12 +98,16 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `RegistrarArtistMember`
   - Stores registrar-submitted artist/band member records and invite delivery state
   - Distinguishes existing platform users vs non-platform invitees (`inviteStatus`)
+- `RegistrarInviteDelivery`
+  - Stores queued invite delivery payloads for non-platform band members
+  - Delivery status state machine (`queued`, `sent`, `failed`)
 
 ### Migrations
 - `20260216004000_add_user_home_scene_and_track_engagement` (home-scene affinity and GPS-related user fields)
 - `20260220130000_add_artist_bands_identity` (adds `artist_bands` + `artist_band_members`; leaves `User.isArtist` intact)
 - `20260220141000_add_registrar_entries` (adds `registrar_entries` for Artist/Band registration submissions)
 - `20260220170000_add_registrar_artist_members` (adds `registrar_artist_members` for registration member roster + invite state)
+- `20260220183000_add_registrar_invite_delivery` (adds invite token fields + `registrar_invite_deliveries` queue persistence)
 
 ## API Design
 ### Endpoints
@@ -118,6 +123,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | GET | `/artist-bands` | required | List Artist/Band entities managed by a user (`userId` query or self default) |
 | POST | `/registrar/artist` | required | Submit Home Scene-scoped Artist/Band registration entry |
 | POST | `/registrar/artist/:entryId/materialize` | required | Materialize registration into canonical Artist/Band entity (submitter-owned) |
+| POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform members |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.

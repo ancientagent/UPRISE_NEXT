@@ -17,6 +17,11 @@ describe('RegistrarService', () => {
     },
     registrarArtistMember: {
       createMany: jest.fn(),
+      findMany: jest.fn(),
+      update: jest.fn(),
+    },
+    registrarInviteDelivery: {
+      upsert: jest.fn(),
     },
     artistBand: {
       create: jest.fn(),
@@ -280,5 +285,69 @@ describe('RegistrarService', () => {
     await expect(service.materializeArtistBandRegistration('u-1', 'reg-4')).rejects.toThrow(
       ForbiddenException,
     );
+  });
+
+  it('queues invite deliveries for pending members', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-5',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+      scene: {
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'punk',
+      },
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      { id: 'ram-1', email: 'sam@example.com', name: 'Sam Pulse', city: 'Austin' },
+    ]);
+    mockPrisma.registrarArtistMember.update.mockResolvedValue({
+      id: 'ram-1',
+      inviteStatus: 'queued',
+    });
+    mockPrisma.registrarInviteDelivery.upsert.mockResolvedValue({
+      id: 'rid-1',
+      status: 'queued',
+    });
+
+    const result = await service.dispatchArtistBandInvites('u-1', 'reg-5', {
+      mobileAppUrl: 'https://m.uprise.example/download',
+      webAppUrl: 'https://uprise.example/band',
+    });
+
+    expect(result.queuedCount).toBe(1);
+    expect(mockPrisma.registrarArtistMember.update).toHaveBeenCalled();
+    expect(mockPrisma.registrarInviteDelivery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        create: expect.objectContaining({
+          registrarArtistMemberId: 'ram-1',
+          email: 'sam@example.com',
+          status: 'queued',
+        }),
+      }),
+    );
+  });
+
+  it('returns zero when no pending members exist', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-6',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+      scene: {
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'punk',
+      },
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([]);
+
+    const result = await service.dispatchArtistBandInvites('u-1', 'reg-6', {
+      mobileAppUrl: 'https://m.uprise.example/download',
+      webAppUrl: 'https://uprise.example/band',
+    });
+
+    expect(result.queuedCount).toBe(0);
+    expect(mockPrisma.registrarArtistMember.update).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarInviteDelivery.upsert).not.toHaveBeenCalled();
   });
 });

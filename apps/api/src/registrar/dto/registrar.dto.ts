@@ -23,3 +23,10 @@ export const ArtistBandRegistrationSchema = z.object({
 });
 
 export type ArtistBandRegistrationDto = z.infer<typeof ArtistBandRegistrationSchema>;
+
+export const DispatchArtistInviteSchema = z.object({
+  mobileAppUrl: z.string().url(),
+  webAppUrl: z.string().url(),
+});
+
+export type DispatchArtistInviteDto = z.infer<typeof DispatchArtistInviteSchema>;

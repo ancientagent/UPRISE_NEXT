@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite dispatch queue primitives (slice 5):
+  - Added endpoint `POST /registrar/artist/:entryId/dispatch-invites`.
+  - Added migration `20260220183000_add_registrar_invite_delivery` for invite token fields + `registrar_invite_deliveries`.
+  - Dispatch flow now queues tokenized delivery payloads for pending non-platform members.
+  - Expanded registrar tests to cover invite queueing behavior.
 - Registrar artist registration materialization (slice 4):
   - Added `POST /registrar/artist/:entryId/materialize` for submitter-owned registrar entries.
   - Materialization now creates canonical `ArtistBand`, links owner membership, and marks registrar entry as `materialized`.
