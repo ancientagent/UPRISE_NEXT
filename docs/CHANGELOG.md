@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist registration materialization (slice 4):
+  - Added `POST /registrar/artist/:entryId/materialize` for submitter-owned registrar entries.
+  - Materialization now creates canonical `ArtistBand`, links owner membership, and marks registrar entry as `materialized`.
+  - Added idempotent materialization handling when entry is already linked.
+  - Expanded registrar service tests for materialize success/idempotency/authorization cases.
 - Registrar artist registration intake expansion (slice 3):
   - `POST /registrar/artist` now requires GPS-verified submitter account in Home Scene.
   - Added `RegistrarArtistMember` model + migration `20260220170000_add_registrar_artist_members`.

@@ -50,6 +50,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /registrar/artist` creates a scene-scoped registrar entry (does not yet create ArtistBand row directly).
   - Requires GPS-verified submitter in Home Scene.
   - Captures proposed member roster (`name`, `email`, `city`, `instrument`) for registrar processing.
+  - `POST /registrar/artist/:entryId/materialize` finalizes canonical `ArtistBand` + owner membership from submitter-owned registration entry.
 
 ### Deferred (Not Implemented Yet)
 - Promoter registration flow and capability grants.
@@ -116,6 +117,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | GET | `/artist-bands/:id` | required | Fetch canonical Artist/Band entity details + membership |
 | GET | `/artist-bands` | required | List Artist/Band entities managed by a user (`userId` query or self default) |
 | POST | `/registrar/artist` | required | Submit Home Scene-scoped Artist/Band registration entry |
+| POST | `/registrar/artist/:entryId/materialize` | required | Materialize registration into canonical Artist/Band entity (submitter-owned) |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.

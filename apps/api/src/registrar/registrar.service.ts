@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { ArtistBandRegistrationDto } from './dto/registrar.dto';
 
@@ -109,5 +109,119 @@ export class RegistrarService {
       existingMemberCount: existingUsers.length,
       pendingInviteCount: dto.members.length - existingUsers.length,
     };
+  }
+
+  async materializeArtistBandRegistration(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        artistBandId: true,
+        payload: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'artist_band_registration') {
+      throw new ForbiddenException('Registrar entry is not an artist/band registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can materialize this registration');
+    }
+
+    if (entry.artistBandId) {
+      const existing = await this.prisma.artistBand.findUnique({
+        where: { id: entry.artistBandId },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          entityType: true,
+          homeSceneId: true,
+          createdById: true,
+          registrarEntryRef: true,
+          createdAt: true,
+        },
+      });
+      if (!existing) {
+        throw new NotFoundException('Linked Artist/Band entity not found');
+      }
+      return {
+        registrarEntryId: entry.id,
+        status: entry.status,
+        artistBand: existing,
+        materialized: false,
+      };
+    }
+
+    const payload = (entry.payload ?? {}) as Record<string, unknown>;
+    const name = typeof payload.name === 'string' ? payload.name.trim() : '';
+    const slug = typeof payload.slug === 'string' ? payload.slug.trim() : '';
+    const entityType = payload.entityType === 'band' ? 'band' : payload.entityType === 'artist' ? 'artist' : '';
+
+    if (!name || !slug || !entityType) {
+      throw new ForbiddenException('Registrar payload is missing required Artist/Band fields');
+    }
+
+    try {
+      const created = await this.prisma.$transaction(async (tx) => {
+        const artistBand = await tx.artistBand.create({
+          data: {
+            name,
+            slug,
+            entityType,
+            homeSceneId: entry.sceneId,
+            createdById: userId,
+            registrarEntryRef: entry.id,
+          },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            entityType: true,
+            homeSceneId: true,
+            createdById: true,
+            registrarEntryRef: true,
+            createdAt: true,
+          },
+        });
+
+        await tx.artistBandMember.create({
+          data: {
+            artistBandId: artistBand.id,
+            userId,
+            role: 'owner',
+          },
+        });
+
+        await tx.registrarEntry.update({
+          where: { id: entry.id },
+          data: {
+            status: 'materialized',
+            artistBandId: artistBand.id,
+          },
+        });
+
+        return artistBand;
+      });
+
+      return {
+        registrarEntryId: entry.id,
+        status: 'materialized',
+        artistBand: created,
+        materialized: true,
+      };
+    } catch (error: any) {
+      if (error?.code === 'P2002') {
+        throw new ConflictException('Artist/Band slug is already in use');
+      }
+      throw error;
+    }
   }
 }

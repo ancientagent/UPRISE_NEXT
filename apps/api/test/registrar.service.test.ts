@@ -12,10 +12,20 @@ describe('RegistrarService', () => {
     },
     registrarEntry: {
       create: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
     },
     registrarArtistMember: {
       createMany: jest.fn(),
     },
+    artistBand: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+    },
+    artistBandMember: {
+      create: jest.fn(),
+    },
+    $transaction: jest.fn(),
   };
 
   let service: RegistrarService;
@@ -43,6 +53,9 @@ describe('RegistrarService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.$transaction.mockImplementation(async (callback: (tx: typeof mockPrisma) => unknown) =>
+      callback(mockPrisma as any),
+    );
     service = new RegistrarService(mockPrisma as any);
   });
 
@@ -167,5 +180,105 @@ describe('RegistrarService', () => {
     expect(result.memberCount).toBe(2);
     expect(result.existingMemberCount).toBe(1);
     expect(result.pendingInviteCount).toBe(1);
+  });
+
+  it('materializes submitted entry into ArtistBand + owner membership', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-2',
+      type: 'artist_band_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      artistBandId: null,
+      payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+    });
+    mockPrisma.artistBand.create.mockResolvedValue({
+      id: 'ab-1',
+      name: 'Static Signal',
+      slug: 'static-signal',
+      entityType: 'band',
+      homeSceneId: 'scene-1',
+      createdById: 'u-1',
+      registrarEntryRef: 'reg-2',
+      createdAt: new Date('2026-02-20T17:10:00.000Z'),
+    });
+    mockPrisma.artistBandMember.create.mockResolvedValue({
+      id: 'abm-1',
+      artistBandId: 'ab-1',
+      userId: 'u-1',
+      role: 'owner',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-2',
+      status: 'materialized',
+      artistBandId: 'ab-1',
+    });
+
+    const result = await service.materializeArtistBandRegistration('u-1', 'reg-2');
+
+    expect(result.materialized).toBe(true);
+    expect(result.artistBand.id).toBe('ab-1');
+    expect(mockPrisma.artistBandMember.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          artistBandId: 'ab-1',
+          userId: 'u-1',
+          role: 'owner',
+        }),
+      }),
+    );
+    expect(mockPrisma.registrarEntry.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'reg-2' },
+        data: expect.objectContaining({
+          status: 'materialized',
+          artistBandId: 'ab-1',
+        }),
+      }),
+    );
+  });
+
+  it('materialize is idempotent when artistBand already linked', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-3',
+      type: 'artist_band_registration',
+      status: 'materialized',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      artistBandId: 'ab-1',
+      payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+    });
+    mockPrisma.artistBand.findUnique.mockResolvedValue({
+      id: 'ab-1',
+      name: 'Static Signal',
+      slug: 'static-signal',
+      entityType: 'band',
+      homeSceneId: 'scene-1',
+      createdById: 'u-1',
+      registrarEntryRef: 'reg-3',
+      createdAt: new Date('2026-02-20T17:10:00.000Z'),
+    });
+
+    const result = await service.materializeArtistBandRegistration('u-1', 'reg-3');
+
+    expect(result.materialized).toBe(false);
+    expect(result.artistBand.id).toBe('ab-1');
+    expect(mockPrisma.artistBand.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects materialize from non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-4',
+      type: 'artist_band_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-2',
+      artistBandId: null,
+      payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+    });
+
+    await expect(service.materializeArtistBandRegistration('u-1', 'reg-4')).rejects.toThrow(
+      ForbiddenException,
+    );
   });
 });

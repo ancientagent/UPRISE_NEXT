@@ -40,6 +40,11 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
     - `name`, `email`, `city`, `instrument`.
   - `RegistrarArtistMember` rows persist member roster + invite state.
   - Non-platform members are persisted with `inviteStatus = pending_email` for delivery handoff.
+- Registrar materialization primitive (slice 4):
+  - `POST /registrar/artist/:entryId/materialize` implemented.
+  - Submitter-only action (entry creator must match authenticated user).
+  - Materializes `ArtistBand` + owner `ArtistBandMember` from submitted registrar entry payload.
+  - Idempotent when entry is already linked to an `ArtistBand`.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
@@ -79,6 +84,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/registrar/artist` | required | Initiate Artist/Band entity registration (submission entry) |
+| POST | `/registrar/artist/:entryId/materialize` | required | Materialize submitted registrar entry into canonical Artist/Band entity |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |

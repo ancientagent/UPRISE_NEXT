@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { RegistrarService } from './registrar.service';
@@ -20,5 +20,14 @@ export class RegistrarController {
   ) {
     const entry = await this.registrarService.submitArtistBandRegistration(req.user.userId, dto);
     return { success: true, data: entry };
+  }
+
+  @Post('artist/:entryId/materialize')
+  async materializeArtistBandRegistration(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.materializeArtistBandRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
   }
 }
