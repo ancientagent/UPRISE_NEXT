@@ -3,7 +3,7 @@
 **ID:** `USER-IDENTITY`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines identity and permission boundaries for UPRISE. The canonical rule is one user identity with additive capabilities; role/capability expansion must not split civic identity from participation.
@@ -11,7 +11,7 @@ Defines identity and permission boundaries for UPRISE. The canonical rule is one
 ## User Roles & Use Cases
 - **Listener (base user):** default account type; can participate in Home Scene and as Visitor elsewhere.
 - **Artist capability (additive):** enables contribution-side tooling without creating a second user account.
-- **Promoter capability (additive, V1 target):** enables event-side workflows.
+- **Promoter capability (additive, V1 target):** enables event and promotion workflows through named Production identities.
 - **Business capabilities (V2+):** merchant/venue style economic surfaces.
 - **Super Admin:** platform operations and moderation authority.
 - **Visitor state:** listener in a non-Home Scene with non-civic permissions only.
@@ -44,6 +44,16 @@ Defines identity and permission boundaries for UPRISE. The canonical rule is one
 - Promoter registration flow and capability grants.
 - Business profile role surfaces.
 - Capability grant audit log and admin role-management APIs.
+
+### Promoter Policy (Locked Direction)
+- Base user identity remains listener/supporter/fan.
+- Promoter is an additive capability, not a separate account tree.
+- Web account management stays unified across listener/artist/promoter capability holders.
+- Promoters operate named Production entities for public promotional actions.
+- Promoters can:
+  - create/manage events (via Print Shop flow),
+  - publish promotional messages publicly as production identity,
+  - manage promoter web profile.
 
 ## Non-Functional Requirements
 - Clarity: role semantics must remain unambiguous in docs and API contracts.

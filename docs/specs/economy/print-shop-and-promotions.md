@@ -3,14 +3,15 @@
 **ID:** `ECON-PRINTSHOP`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-22`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines the Promotions surface and the Print Shop issuance model. The Print Shop is infrastructure for limited‑run digital artifacts and Proof‑of‑Support, not a marketplace.
 
 ## User Roles & Use Cases
 - Artists and promoters purchase Runs to issue digital artifacts.
-- Businesses publish Offers in Promotions.
+- Promoters create events from Print Shop as the uniform event-creation entrypoint.
+- Businesses publish promotions via direct web form link without requiring account creation.
 - Listeners carry or redeem Offers explicitly.
 
 ## Functional Requirements
@@ -22,6 +23,8 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Proof-of-Support may mint artifacts and award Activity Points.
 - Offers propagate only by explicit user carry/redeem action.
 - Print Shop and promotions must never alter Fair Play, propagation thresholds, or civic authority.
+- For current MVP phase, purchasable print artifacts focus on event fliers for touring workflows.
+- Business promotion submissions are auto-published in current phase (no pre-publish moderation queue).
 
 ### Implemented Now
 - No Print Shop API/domain model yet.
@@ -34,6 +37,8 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Proof-of-Support verification and artifact minting.
 - Promotional pack targeting and billing integration.
 - Dedicated Promotions domain models (`Offer`, billing linkage, carry/redeem ledger) beyond read projection.
+- Limited flier minting variants are deferred (not required in current MVP phase).
+- Shirt creation flows are deferred until avatar-wearable framing is implemented; shirts may appear as non-actionable "coming soon" catalog entries.
 
 ## Non-Functional Requirements
 - No marketplace behavior, resale, or bidding.
@@ -66,6 +71,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/print-shop/runs` | required | Purchase/create issuance run |
+| POST | `/print-shop/events` | required | Create event via Print Shop flow |
 | POST | `/print-shop/runs/:id/mint` | required | Mint artifact within run capacity |
 | POST | `/offers` | required | Create offer signal |
 | POST | `/offers/:id/carry` | required | Carry offer into user context |
@@ -74,8 +80,10 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 
 ## Web UI / Client Behavior
 - Plot Promotions tab lists scene-scoped promotions/offers via `/communities/:id/promotions`.
-- Print Shop surfaces in Events for Run issuance.
+- Print Shop is web-first for creators and is the source of event creation + flier purchasing.
 - Promotional Pack setup requires explicit target scope selection (city/state/community).
+- Businesses can submit promotions from a public web link (no account requirement in current phase).
+- Business promotion submissions auto-publish for current phase and are handled by post-publish moderation policy.
 - Artifact collections are visible on profiles.
 
 ## Acceptance Tests / Test Plan

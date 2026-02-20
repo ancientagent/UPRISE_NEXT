@@ -3,7 +3,7 @@
 **ID:** `SOCIAL-MSG`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines scene communication surfaces and BLAST behavior. Public discourse is Scene-bound; private communication is group-scoped; BLAST remains a signal action, not a chat primitive.
@@ -18,8 +18,10 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 - Public communication is restricted to Scene-bound boards/threads.
 - Group communication is private to group membership.
 - Sect-level discourse occurs inside Scene social structures, not as separate authority layers.
+- Sect broadcast command (`/sectname`) sends a message to all members of the addressed sect.
 - One-way entity-to-follower messaging is supported for registered entities.
-- No user-to-user open DM surface outside approved group contexts.
+- User-to-user DM is allowed only when both users follow each other.
+- Artist accounts cannot receive direct DMs; artist messaging is public follower-facing broadcast only.
 - BLAST is an explicit signal propagation action and appears in S.E.E.D activity context.
 
 ### Implemented Now
@@ -34,6 +36,7 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 - Group membership + group messaging.
 - Sect thread/room surfaces.
 - One-way entity messaging timelines.
+- Mutual-follow DM channel rules and enforcement.
 
 ## Non-Functional Requirements
 - No algorithmic amplification, ranking, or recommendation in social communication.
@@ -72,6 +75,8 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 | POST | `/social/boards/:sceneId/posts` | required | Create scene post |
 | POST | `/social/groups` | required | Create group |
 | POST | `/social/groups/:id/messages` | required | Send group message |
+| POST | `/social/sects/:sectName/messages` | required | Broadcast message to sect members via `/sectname` |
+| POST | `/social/dm/:userId` | required | Send DM to mutual-follow user (non-artist targets only) |
 
 ## Web UI / Client Behavior
 - Current Plot shell includes a Social tab placeholder only.

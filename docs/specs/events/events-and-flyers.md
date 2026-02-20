@@ -3,18 +3,19 @@
 **ID:** `EVENTS-FLYERS`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-21`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines Scene-bound events, event discovery surfaces, and attendance flyer artifacts (materialized signals) without introducing recommendation behavior.
 
 ## User Roles & Use Cases
-- Promoters (registered capability) create and manage events.
+- Promoters (registered capability) create and manage events via Print Shop.
 - Artists create events for shows and touring stops.
 - Listeners discover local events, follow event-related entities, and collect attendance artifacts after verification.
 
 ## Functional Requirements
 - Events are Scene-bound objects with explicit locality context.
+- Event creation entrypoint is Print Shop for uniform creator workflow.
 - Event surfaces are descriptive and not algorithmically ranked.
 - Event follow/distribution occurs through explicit user actions.
 - Flyers are attendance artifacts minted from Proof-of-Support workflows.
@@ -29,7 +30,8 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
   - `Event` with core metadata, location coordinates, `communityId`, `createdById`.
 
 ### Deferred (Not Implemented Yet)
-- Event creation/update/delete endpoints.
+- Event creation endpoint inside Print Shop flow.
+- Event update/delete endpoints.
 - Promoter capability checks and registrar-gated creation flow.
 - Attendance proof verification pipeline.
 - Flyer minting and profile artifact rendering.
@@ -64,7 +66,7 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/events` | required | Create event |
+| POST | `/print-shop/events` | required | Create event from Print Shop flow |
 | PATCH | `/events/:id` | required | Update owned event |
 | POST | `/events/:id/proof` | required | Submit attendance/support proof |
 | POST | `/events/:id/flyers/mint` | required | Mint attendance artifact after verification |
@@ -73,6 +75,7 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 - Plot includes an Events tab shell.
 - Plot Events tab now uses `/communities/:id/events` and selected community anchor from Statistics.
 - Event detail presentation remains API-backed read-only.
+- Event writes originate in Print Shop (web flow), not standalone mobile event creation.
 - Flyer displays and redemption UI are deferred.
 
 ## Acceptance Tests / Test Plan

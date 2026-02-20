@@ -133,6 +133,12 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Documentation alignment pass (2026-02-20):
+  - Updated `SOCIAL-MSG` spec with locked messaging rules: `/sectname` broadcast pathway, mutual-follow DM constraint, and no DM-to-artist policy.
+  - Updated `ECON-PRINTSHOP` + `EVENTS-FLYERS` + `USER-IDENTITY` specs for Print Shop-first event creation, promoter Production identity language, and current-phase operational constraints.
+  - Updated `SYS-MODERATION` to reflect current-phase auto-publish intake note for business promotions (post-publish moderation).
+  - Fixed docs index drift by removing deleted canon filename reference from `docs/README.md`.
+  - Added master continuity archive: `docs/handoff/2026-02-20_master-context-handoff-and-chat-archive.md`.
 - Spec consistency cleanup:
   - `COMM-SCENEMAP` now marks `/communities/:id/statistics` and `/communities/:id/scene-map` as implemented endpoints with current response contract language.
 - Guidance/index sync for current policy:
