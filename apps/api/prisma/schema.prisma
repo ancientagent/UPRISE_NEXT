@@ -50,8 +50,45 @@ model User {
   collections        Collection[]
   trackEngagements   TrackEngagement[]
   trackVotes         TrackVote[]
+  createdArtistBands ArtistBand[]
+  artistBandMembers  ArtistBandMember[]
 
   @@map("users")
+}
+
+model ArtistBand {
+  id               String   @id @default(uuid())
+  name             String
+  slug             String   @unique
+  entityType       String   @default("artist") // artist, band
+  registrarEntryRef String?
+  homeSceneId      String?
+  createdById      String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  createdBy User      @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  homeScene Community? @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
+  members   ArtistBandMember[]
+
+  @@index([homeSceneId])
+  @@index([createdById])
+  @@map("artist_bands")
+}
+
+model ArtistBandMember {
+  id           String   @id @default(uuid())
+  artistBandId String
+  userId       String
+  role         String   @default("manager") // owner, manager, collaborator
+  createdAt    DateTime @default(now())
+
+  artistBand ArtistBand @relation(fields: [artistBandId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([artistBandId, userId])
+  @@index([userId])
+  @@map("artist_band_members")
 }
 
 model Community {
@@ -84,6 +121,7 @@ model Community {
   signals   Signal[]
   rotationEntries RotationEntry[]
   trackVotes TrackVote[]
+  artistBands ArtistBand[]
 
   @@map("communities")
 }

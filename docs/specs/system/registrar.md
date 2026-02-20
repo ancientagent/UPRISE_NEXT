@@ -24,13 +24,17 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Sect uprising motions are registrar-mediated when threshold criteria are met (45-minute committed artist playtime threshold + explicit support).
 
 ### Implemented Now
+- Registrar-link-ready Artist/Band identity foundation exists (slice 1):
+  - `ArtistBand.registrarEntryRef` stores registrar linkage reference for canonical handoff.
+  - `ArtistBand` + `ArtistBandMember` provide canonical entity + membership graph.
+  - Read-only retrieval endpoints exist (`GET /artist-bands/:id`, `GET /artist-bands`).
 - No dedicated Registrar API routes or persistence models exist yet.
 - Related primitives are present:
   - Signal creation/actions (`/signals`, `/signals/:id/support`, etc.) can represent project-like propagation once a project signal exists.
 
 ### Deferred (Not Implemented Yet)
-- Registrar domain model (`RegistrarEntry` or equivalent).
 - Role registration code issuance and verification workflows.
+- Registrar-gated create/update writes for Artist/Band entities (current slice is read-only retrieval).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 
@@ -52,7 +56,8 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Sect motion artifact and committed artist-catalog references
 
 ### Migrations
-- None yet.
+- `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
+- full Registrar tables remain deferred.
 
 ## API Design
 ### Planned Endpoints (Not Implemented)

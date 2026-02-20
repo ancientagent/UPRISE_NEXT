@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Canonical Artist/Band identity foundation (slice 1):
+  - Added Prisma models `ArtistBand` and `ArtistBandMember` plus additive migration `20260220130000_add_artist_bands_identity`.
+  - Added authenticated read endpoints:
+    - `GET /artist-bands/:id`
+    - `GET /artist-bands?userId=:id` (defaults to authenticated user when omitted)
+  - Added service unit tests: `apps/api/test/artist-bands.service.test.ts`.
 - User collection shelves and profile visibility:
   - Added typed collection shelf mapping for `ADD` (`singles`, `uprises`, `posters`, `fliers`, `merch_buttons`, `merch_patches`, `merch_shirts`).
   - Added profile-level collection display toggle (`User.collectionDisplayEnabled`) with endpoint `POST /users/me/collection-display`.
@@ -133,6 +139,7 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Identity implementation now uses canonical Artist/Band entity persistence as the primary model foundation while keeping `User.isArtist` transitional for compatibility.
 - Identity model correction (canon-alignment):
   - Corrected docs to reflect canonical Artist/Band as Registrar-linked entity model (not additive user capability flag).
   - Updated `USER-IDENTITY`, `SYS-REGISTRAR`, `users/README`, analytics wording, and master handoff archive references accordingly.

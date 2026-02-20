@@ -39,9 +39,15 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `User.gpsVerified`
   - `User.collectionDisplayEnabled`
   - home-scene fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`)
+- Canonical Artist/Band identity foundation (slice 1, additive/non-breaking):
+  - `ArtistBand` model added for registrar-linked music entities.
+  - `ArtistBandMember` model added for many-to-many User<->Artist/Band management.
+  - Transitional compatibility retained: `User.isArtist` unchanged for existing callers.
+- Read-only Artist/Band API surface (auth required):
+  - `GET /artist-bands/:id`
+  - `GET /artist-bands?userId=:id` (defaults to authenticated user when omitted)
 
 ### Deferred (Not Implemented Yet)
-- Canonical Artist/Band entity model + membership model.
 - Promoter registration flow and capability grants.
 - Business profile role surfaces.
 - Capability grant audit log and admin role-management APIs.
@@ -73,9 +79,17 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Verification fields (`gpsVerified`, `isVerified`)
   - Home-scene affinity fields
   - Transitional artist marker (`isArtist`) pending canonical Artist/Band linked-entity model implementation
+- `ArtistBand`
+  - Canonical artist/band identity entity
+  - Registrar linkage placeholder (`registrarEntryRef`) for registrar workflow handoff
+  - Scene scope linkage (`homeSceneId`) and creator linkage (`createdById`)
+- `ArtistBandMember`
+  - User membership rows for Artist/Band management relationships
+  - Unique membership per pair (`artistBandId`, `userId`)
 
 ### Migrations
 - `20260216004000_add_user_home_scene_and_track_engagement` (home-scene affinity and GPS-related user fields)
+- `20260220130000_add_artist_bands_identity` (adds `artist_bands` + `artist_band_members`; leaves `User.isArtist` intact)
 
 ## API Design
 ### Endpoints
@@ -87,6 +101,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | GET | `/users/:id` | required | Fetch a user profile |
 | GET | `/users/:id/profile` | required | Fetch user profile + collection shelves (respect visibility rules) |
 | POST | `/users/me/collection-display` | required | Set profile collection visibility toggle |
+| GET | `/artist-bands/:id` | required | Fetch canonical Artist/Band entity details + membership |
+| GET | `/artist-bands` | required | List Artist/Band entities managed by a user (`userId` query or self default) |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.
@@ -106,7 +122,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Home Scene + GPS flow controls voting eligibility without disabling non-civic participation.
 
 ## Future Work & Open Questions
-- Implement canonical Artist/Band entity persistence and membership graph.
+- Expand canonical Artist/Band implementation from read-only foundation to full registrar-gated create/update lifecycle.
+- Add registrar write flows so Artist/Band records are created only via Registrar submissions.
+- Plan controlled deprecation path for `User.isArtist` after caller migration.
 - Define Promoter capability registration and code exchange flow.
 - Define business capability model for Promotions/Print Shop workflows.
 
