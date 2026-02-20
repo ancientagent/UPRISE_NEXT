@@ -3,13 +3,13 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
 
 ## User Roles & Use Cases
-- Listener starts Artist/Band capability registration.
+- Listener starts Artist/Band entity registration.
 - Listener starts Promoter registration for event workflows.
 - Community participants formalize Project signals after discussion.
 - Sect participants file motion when uprising thresholds are met.
@@ -58,7 +58,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/registrar/artist` | required | Initiate artist capability registration |
+| POST | `/registrar/artist` | required | Initiate Artist/Band entity registration |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |

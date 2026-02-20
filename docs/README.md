@@ -39,8 +39,6 @@ These documents are the canonical foundation for building the platform:
 - `UPRISE_VOICE_MESSAGING_CANONICAL`
 - `Operational Getting Started`
 - `Expanded Getting Started`
-- `45c4d5ba-6438-48e2-bb13-2a929a0dd69c` (Getting Started Guide)
-  - **Note:** This guide is a verbatim markdown export from the DeepAgent-authored source.
 
 ## Multi-Agent Workflow
 - [`blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md`](./blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md) — Documentation + handoff strategy.

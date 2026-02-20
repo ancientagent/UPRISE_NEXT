@@ -3,7 +3,7 @@
 **ID:** `ENG-INSTRUMENTATION`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-02-20`
 
 **Purpose:** Exhaustive list of meaningful, measurable statistics that can be recorded for every **Home Scene (Citywide)**.
 
@@ -200,7 +200,7 @@
 
 ### C. Subscriptions (internal)
 - Discovery Pass penetration rate
-- Premium artist capability adoption rate
+- Premium Artist/Band tier adoption rate
 - Revenue per scene (internal only)
 
 ---

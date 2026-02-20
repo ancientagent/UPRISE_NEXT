@@ -3,7 +3,7 @@
 **ID:** `SYS-MODERATION`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-02-20`
 
 ## Overview & Purpose
 Defines quality checks, reporting, and moderation processes for content and users.
@@ -25,6 +25,7 @@ Defines quality checks, reporting, and moderation processes for content and user
 - Multiple reports trigger auto‑flag and temporary removal.
 - Admin review queue for flagged items.
 - Content standards prohibit hate, threats, illegal content, and unlicensed material.
+- Current phase lock: business promotion submissions are auto-published and handled via post-publish moderation (no pre-publish approval queue).
 
 ### Implemented Now
 - No dedicated moderation/report API routes exist yet.
