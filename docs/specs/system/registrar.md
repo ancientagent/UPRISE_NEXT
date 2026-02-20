@@ -49,12 +49,15 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `POST /registrar/artist/:entryId/dispatch-invites` implemented.
   - Generates invite token + expiry for pending non-platform registrar members.
   - Queues invite-delivery payload rows for email delivery worker handoff.
+- Registrar invite claim bootstrap (slice 6):
+  - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
+  - Claim marks registrar member row as `claimed` and links `claimedUserId`.
+  - Home Scene defaults are prefilled from registrar scene context; GPS remains required for civic voting.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
 - Registrar-gated create/update writes for Artist/Band entities beyond submission intake.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
-- Invite claim/password bootstrap flow for non-platform band members.
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 

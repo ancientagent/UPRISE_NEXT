@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite claim bootstrap (slice 6):
+  - Added `POST /auth/register-invite` for tokenized registrar-member account creation.
+  - Claim flow now creates invited users with Home Scene defaults from registrar scene context and `gpsVerified=false`.
+  - Claim marks registrar member invite as `claimed` and links `claimedUserId`.
+  - Added invite-registration service tests (`apps/api/test/auth.invite-registration.service.test.ts`).
 - Registrar invite dispatch queue primitives (slice 5):
   - Added endpoint `POST /registrar/artist/:entryId/dispatch-invites`.
   - Added migration `20260220183000_add_registrar_invite_delivery` for invite token fields + `registrar_invite_deliveries`.

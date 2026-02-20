@@ -52,6 +52,10 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Captures proposed member roster (`name`, `email`, `city`, `instrument`) for registrar processing.
   - `POST /registrar/artist/:entryId/materialize` finalizes canonical `ArtistBand` + owner membership from submitter-owned registration entry.
   - `POST /registrar/artist/:entryId/dispatch-invites` queues pending non-platform member invites with tokenized claim payload.
+- Invite claim account bootstrap (slice 6):
+  - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
+  - Claim flow sets Home Scene defaults from registrar scene context (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`).
+  - Claimed accounts start with `gpsVerified = false` (GPS still required for voting validation).
 
 ### Deferred (Not Implemented Yet)
 - Promoter registration flow and capability grants.
@@ -114,6 +118,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/auth/register` | none | Create base user identity |
+| POST | `/auth/register-invite` | none | Create invited registrar-member account using invite token |
 | POST | `/auth/login` | none | Authenticate and return tokens |
 | GET | `/users` | required | List users (paginated) |
 | GET | `/users/:id` | required | Fetch a user profile |
@@ -146,7 +151,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 ## Future Work & Open Questions
 - Expand canonical Artist/Band implementation from read-only foundation to full registrar-gated create/update lifecycle.
 - Add registrar write flows so Artist/Band records are created only via Registrar submissions.
-- Add delivery pipeline for `pending_email` member invites and account-claim completion flows.
+- Add outbound delivery provider pipeline for queued `pending_email`/`queued` member invites.
 - Plan controlled deprecation path for `User.isArtist` after caller migration.
 - Define Promoter capability registration and code exchange flow.
 - Define business capability model for Promotions/Print Shop workflows.

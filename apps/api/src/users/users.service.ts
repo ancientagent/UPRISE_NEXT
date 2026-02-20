@@ -7,7 +7,17 @@ import { COLLECTION_SHELVES } from '../common/constants/collection-shelves';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: { email: string; username: string; displayName: string; password: string }) {
+  async create(data: {
+    email: string;
+    username: string;
+    displayName: string;
+    password: string;
+    city?: string;
+    homeSceneCity?: string;
+    homeSceneState?: string;
+    homeSceneCommunity?: string;
+    gpsVerified?: boolean;
+  }) {
     return this.prisma.user.create({ data });
   }
 
