@@ -9,6 +9,17 @@ export const ArtistBandRegistrationSchema = z.object({
     .max(140)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   entityType: z.enum(['artist', 'band']),
+  members: z
+    .array(
+      z.object({
+        name: z.string().min(1).max(140),
+        email: z.string().email(),
+        city: z.string().min(1).max(120),
+        instrument: z.string().min(1).max(120),
+      }),
+    )
+    .min(1)
+    .max(24),
 });
 
 export type ArtistBandRegistrationDto = z.infer<typeof ArtistBandRegistrationSchema>;

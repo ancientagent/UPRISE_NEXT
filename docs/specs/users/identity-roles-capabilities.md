@@ -48,6 +48,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `GET /artist-bands?userId=:id` (defaults to authenticated user when omitted)
 - Registrar submission primitive for Artist/Band identity onboarding:
   - `POST /registrar/artist` creates a scene-scoped registrar entry (does not yet create ArtistBand row directly).
+  - Requires GPS-verified submitter in Home Scene.
+  - Captures proposed member roster (`name`, `email`, `city`, `instrument`) for registrar processing.
 
 ### Deferred (Not Implemented Yet)
 - Promoter registration flow and capability grants.
@@ -91,11 +93,15 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `RegistrarEntry`
   - Tracks Home Scene-scoped registration submissions for civic activation workflows
   - Stores submission payload/state for registrar-mediated Artist/Band intake
+- `RegistrarArtistMember`
+  - Stores registrar-submitted artist/band member records and invite delivery state
+  - Distinguishes existing platform users vs non-platform invitees (`inviteStatus`)
 
 ### Migrations
 - `20260216004000_add_user_home_scene_and_track_engagement` (home-scene affinity and GPS-related user fields)
 - `20260220130000_add_artist_bands_identity` (adds `artist_bands` + `artist_band_members`; leaves `User.isArtist` intact)
 - `20260220141000_add_registrar_entries` (adds `registrar_entries` for Artist/Band registration submissions)
+- `20260220170000_add_registrar_artist_members` (adds `registrar_artist_members` for registration member roster + invite state)
 
 ## API Design
 ### Endpoints
@@ -117,6 +123,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Error behavior:
   - `401` for invalid credentials / missing auth
   - `403` for forbidden actions when role/civic constraints apply (as new capability routes are added)
+  - `POST /registrar/artist` returns `403` when submitter is not GPS-verified or is outside Home Scene scope.
 
 ## Web UI / Client Behavior
 - Onboarding establishes Home Scene and then optional GPS verification for voting rights.
@@ -131,6 +138,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 ## Future Work & Open Questions
 - Expand canonical Artist/Band implementation from read-only foundation to full registrar-gated create/update lifecycle.
 - Add registrar write flows so Artist/Band records are created only via Registrar submissions.
+- Add delivery pipeline for `pending_email` member invites and account-claim completion flows.
 - Plan controlled deprecation path for `User.isArtist` after caller migration.
 - Define Promoter capability registration and code exchange flow.
 - Define business capability model for Promotions/Print Shop workflows.

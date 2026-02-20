@@ -53,6 +53,7 @@ model User {
   createdArtistBands ArtistBand[]
   artistBandMembers  ArtistBandMember[]
   registrarEntries   RegistrarEntry[]
+  registrarArtistMemberships RegistrarArtistMember[]
 
   @@map("users")
 }
@@ -143,11 +144,33 @@ model RegistrarEntry {
   scene      Community  @relation(fields: [sceneId], references: [id], onDelete: Restrict)
   createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
   artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
+  artistMembers RegistrarArtistMember[]
 
   @@index([sceneId, type, status])
   @@index([createdById, createdAt])
   @@index([artistBandId])
   @@map("registrar_entries")
+}
+
+model RegistrarArtistMember {
+  id              String   @id @default(uuid())
+  registrarEntryId String
+  name            String
+  email           String
+  city            String
+  instrument      String
+  existingUserId  String?
+  inviteStatus    String   @default("pending_email") // pending_email, existing_user, sent, failed
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
+  existingUser   User?          @relation(fields: [existingUserId], references: [id], onDelete: SetNull)
+
+  @@unique([registrarEntryId, email])
+  @@index([email])
+  @@index([existingUserId])
+  @@map("registrar_artist_members")
 }
 
 model SectTag {

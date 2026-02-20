@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist registration intake expansion (slice 3):
+  - `POST /registrar/artist` now requires GPS-verified submitter account in Home Scene.
+  - Added `RegistrarArtistMember` model + migration `20260220170000_add_registrar_artist_members`.
+  - Registrar submission now stores member roster (`name`, `email`, `city`, `instrument`) and invite status (`existing_user` / `pending_email`).
+  - Added service unit coverage for GPS enforcement + member invite persistence (`apps/api/test/registrar.service.test.ts`).
 - Registrar Artist/Band submission primitives (slice 2):
   - Added `RegistrarEntry` Prisma model and additive migration `20260220141000_add_registrar_entries`.
   - Added authenticated endpoint `POST /registrar/artist` for Home Scene-scoped Artist/Band registration submissions.

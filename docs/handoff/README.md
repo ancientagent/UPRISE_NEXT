@@ -26,6 +26,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)
+- [`2026-02-20_artist-band-identity-slice3-registrar-intake-members.md`](./2026-02-20_artist-band-identity-slice3-registrar-intake-members.md)
 
 ## Handoff Reports
 - [`handoff-phase-1.md`](./handoff-phase-1.md) — Phase 1 wrapper (links to legacy completion report).

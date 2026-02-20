@@ -34,10 +34,18 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submission constraints enforced in service:
     - city-tier Scene only,
     - request Scene must match authenticated user's Home Scene.
+- Registrar artist intake expansion (slice 3):
+  - `POST /registrar/artist` requires submitter `gpsVerified = true`.
+  - Registration payload now captures member roster:
+    - `name`, `email`, `city`, `instrument`.
+  - `RegistrarArtistMember` rows persist member roster + invite state.
+  - Non-platform members are persisted with `inviteStatus = pending_email` for delivery handoff.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
 - Registrar-gated create/update writes for Artist/Band entities beyond submission intake.
+- Outbound invite email dispatch integration for `pending_email` member rows.
+- Invite claim/password bootstrap flow for non-platform band members.
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 
@@ -59,10 +67,12 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 
 ### Prisma Models (Implemented)
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
+- `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
 
 ### Migrations
 - `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
 - `20260220141000_add_registrar_entries` adds `registrar_entries` for Home Scene-scoped registration submissions.
+- `20260220170000_add_registrar_artist_members` adds `registrar_artist_members` roster/invite persistence for registrar artist submissions.
 
 ## API Design
 ### Endpoints

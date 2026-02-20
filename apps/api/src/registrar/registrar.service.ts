@@ -22,6 +22,7 @@ export class RegistrarService {
         where: { id: userId },
         select: {
           id: true,
+          gpsVerified: true,
           homeSceneCity: true,
           homeSceneState: true,
           homeSceneCommunity: true,
@@ -37,6 +38,9 @@ export class RegistrarService {
     }
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+    if (!user.gpsVerified) {
+      throw new ForbiddenException('Registrar artist/band registration requires GPS-verified Home Scene account');
     }
 
     const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
@@ -77,6 +81,33 @@ export class RegistrarService {
       },
     });
 
-    return entry;
+    const memberEmails = dto.members.map((member) => member.email.toLowerCase());
+    const existingUsers = await this.prisma.user.findMany({
+      where: { email: { in: memberEmails } },
+      select: { id: true, email: true },
+    });
+    const existingUserByEmail = new Map(existingUsers.map((existing) => [existing.email.toLowerCase(), existing]));
+
+    await this.prisma.registrarArtistMember.createMany({
+      data: dto.members.map((member) => {
+        const existingUser = existingUserByEmail.get(member.email.toLowerCase());
+        return {
+          registrarEntryId: entry.id,
+          name: member.name,
+          email: member.email.toLowerCase(),
+          city: member.city,
+          instrument: member.instrument,
+          existingUserId: existingUser?.id ?? null,
+          inviteStatus: existingUser ? 'existing_user' : 'pending_email',
+        };
+      }),
+    });
+
+    return {
+      ...entry,
+      memberCount: dto.members.length,
+      existingMemberCount: existingUsers.length,
+      pendingInviteCount: dto.members.length - existingUsers.length,
+    };
   }
 }
