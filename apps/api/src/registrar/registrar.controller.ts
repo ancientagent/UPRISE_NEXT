@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { RegistrarService } from './registrar.service';
@@ -41,6 +41,15 @@ export class RegistrarController {
     @Request() req: { user: { userId: string } },
   ) {
     const result = await this.registrarService.dispatchArtistBandInvites(req.user.userId, entryId, dto);
+    return { success: true, data: result };
+  }
+
+  @Get('artist/:entryId/invites')
+  async getArtistBandInviteStatus(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.getArtistBandInviteStatus(req.user.userId, entryId);
     return { success: true, data: result };
   }
 }

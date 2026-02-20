@@ -52,6 +52,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Captures proposed member roster (`name`, `email`, `city`, `instrument`) for registrar processing.
   - `POST /registrar/artist/:entryId/materialize` finalizes canonical `ArtistBand` + owner membership from submitter-owned registration entry.
   - `POST /registrar/artist/:entryId/dispatch-invites` queues pending non-platform member invites with tokenized claim payload.
+  - `GET /registrar/artist/:entryId/invites` returns invite roster and status summary for submitter tracking.
 - Invite claim account bootstrap (slice 6):
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
   - Claim flow sets Home Scene defaults from registrar scene context (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`).
@@ -129,6 +130,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | POST | `/registrar/artist` | required | Submit Home Scene-scoped Artist/Band registration entry |
 | POST | `/registrar/artist/:entryId/materialize` | required | Materialize registration into canonical Artist/Band entity (submitter-owned) |
 | POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform members |
+| GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.

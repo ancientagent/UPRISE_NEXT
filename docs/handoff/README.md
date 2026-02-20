@@ -30,6 +30,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-20_artist-band-identity-slice4-materialize-entry.md`](./2026-02-20_artist-band-identity-slice4-materialize-entry.md)
 - [`2026-02-20_artist-band-identity-slice5-invite-dispatch-queue.md`](./2026-02-20_artist-band-identity-slice5-invite-dispatch-queue.md)
 - [`2026-02-20_artist-band-identity-slice6-invite-claim-bootstrap.md`](./2026-02-20_artist-band-identity-slice6-invite-claim-bootstrap.md)
+- [`2026-02-20_artist-band-identity-slice7-invite-status-read.md`](./2026-02-20_artist-band-identity-slice7-invite-status-read.md)
 
 ## Handoff Reports
 - [`handoff-phase-1.md`](./handoff-phase-1.md) — Phase 1 wrapper (links to legacy completion report).

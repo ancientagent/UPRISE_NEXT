@@ -336,4 +336,53 @@ export class RegistrarService {
       queuedCount,
     };
   }
+
+  async getArtistBandInviteStatus(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        createdById: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'artist_band_registration') {
+      throw new ForbiddenException('Registrar entry is not an artist/band registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read invite status for this registration');
+    }
+
+    const members = await this.prisma.registrarArtistMember.findMany({
+      where: { registrarEntryId: entry.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        city: true,
+        instrument: true,
+        inviteStatus: true,
+        existingUserId: true,
+        claimedUserId: true,
+        inviteTokenExpiresAt: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    const byStatus = members.reduce<Record<string, number>>((acc, member) => {
+      acc[member.inviteStatus] = (acc[member.inviteStatus] ?? 0) + 1;
+      return acc;
+    }, {});
+
+    return {
+      registrarEntryId: entry.id,
+      totalMembers: members.length,
+      countsByStatus: byStatus,
+      members,
+    };
+  }
 }

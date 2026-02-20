@@ -350,4 +350,42 @@ describe('RegistrarService', () => {
     expect(mockPrisma.registrarArtistMember.update).not.toHaveBeenCalled();
     expect(mockPrisma.registrarInviteDelivery.upsert).not.toHaveBeenCalled();
   });
+
+  it('returns invite status summary for submitter-owned entry', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-7',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      {
+        id: 'ram-1',
+        name: 'Sam Pulse',
+        email: 'sam@example.com',
+        city: 'Austin',
+        instrument: 'Drums',
+        inviteStatus: 'queued',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+      },
+      {
+        id: 'ram-2',
+        name: 'Alex Volt',
+        email: 'alex@example.com',
+        city: 'Austin',
+        instrument: 'Guitar',
+        inviteStatus: 'claimed',
+        existingUserId: null,
+        claimedUserId: 'u-2',
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+      },
+    ]);
+
+    const result = await service.getArtistBandInviteStatus('u-1', 'reg-7');
+
+    expect(result.totalMembers).toBe(2);
+    expect(result.countsByStatus.queued).toBe(1);
+    expect(result.countsByStatus.claimed).toBe(1);
+  });
 });

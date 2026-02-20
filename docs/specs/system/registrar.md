@@ -53,6 +53,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
   - Claim marks registrar member row as `claimed` and links `claimedUserId`.
   - Home Scene defaults are prefilled from registrar scene context; GPS remains required for civic voting.
+- Registrar invite tracking read surface (slice 7):
+  - `GET /registrar/artist/:entryId/invites` implemented.
+  - Submitter-only access.
+  - Returns roster rows plus invite status counts (`pending_email`, `queued`, `claimed`, etc.).
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
@@ -95,6 +99,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | POST | `/registrar/artist` | required | Initiate Artist/Band entity registration (submission entry) |
 | POST | `/registrar/artist/:entryId/materialize` | required | Materialize submitted registrar entry into canonical Artist/Band entity |
 | POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform registrar members |
+| GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |

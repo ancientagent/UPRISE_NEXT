@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite status read surface (slice 7):
+  - Added endpoint `GET /registrar/artist/:entryId/invites` for submitter-owned invite tracking.
+  - Returns member roster with status counts for registrar invite lifecycle visibility.
+  - Expanded registrar service tests for invite summary behavior.
 - Registrar invite claim bootstrap (slice 6):
   - Added `POST /auth/register-invite` for tokenized registrar-member account creation.
   - Claim flow now creates invited users with Home Scene defaults from registrar scene context and `gpsVerified=false`.
