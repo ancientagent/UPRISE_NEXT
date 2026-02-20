@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Transitional identity bridge field (slice 8):
+  - Added `hasArtistBand` to user profile read surfaces (`GET /users/:id`, `GET /users/:id/profile`) derived from canonical `ArtistBandMember`.
+  - Keeps `User.isArtist` intact while exposing canonical entity linkage for migration callers.
+  - Added users profile service test assertions for `hasArtistBand`.
 - Registrar invite status read surface (slice 7):
   - Added endpoint `GET /registrar/artist/:entryId/invites` for submitter-owned invite tracking.
   - Returns member roster with status counts for registrar invite lifecycle visibility.

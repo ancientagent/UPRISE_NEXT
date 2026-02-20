@@ -7,6 +7,9 @@ describe('UsersService.getProfileWithCollection', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
     },
+    artistBandMember: {
+      count: jest.fn(),
+    },
     collection: {
       findMany: jest.fn(),
     },
@@ -39,11 +42,13 @@ describe('UsersService.getProfileWithCollection', () => {
       collectionDisplayEnabled: false,
       createdAt: new Date(),
     });
+    mockPrisma.artistBandMember.count.mockResolvedValue(0);
 
     const result = await service.getProfileWithCollection('viewer', 'target');
 
     expect(result.canViewCollection).toBe(false);
     expect(result.collectionShelves).toEqual([]);
+    expect(result.user.hasArtistBand).toBe(false);
     expect(mockPrisma.collection.findMany).not.toHaveBeenCalled();
   });
 
@@ -61,6 +66,7 @@ describe('UsersService.getProfileWithCollection', () => {
       collectionDisplayEnabled: false,
       createdAt: new Date(),
     });
+    mockPrisma.artistBandMember.count.mockResolvedValue(1);
 
     mockPrisma.collection.findMany.mockResolvedValue([
       {
@@ -86,6 +92,7 @@ describe('UsersService.getProfileWithCollection', () => {
     const result = await service.getProfileWithCollection('target', 'target');
 
     expect(result.canViewCollection).toBe(true);
+    expect(result.user.hasArtistBand).toBe(true);
     expect(result.collectionShelves).toHaveLength(7);
     const singles = result.collectionShelves.find((s) => s.shelf === 'singles');
     expect(singles?.itemCount).toBe(1);

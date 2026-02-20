@@ -45,7 +45,13 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    const artistBandCount = await this.prisma.artistBandMember.count({
+      where: { userId: id },
+    });
+    return {
+      ...user,
+      hasArtistBand: artistBandCount > 0,
+    };
   }
 
   async setCollectionDisplay(userId: string, enabled: boolean) {
@@ -165,8 +171,15 @@ export class UsersService {
       });
     }
 
+    const artistBandCount = await this.prisma.artistBandMember.count({
+      where: { userId: targetUserId },
+    });
+
     return {
-      user,
+      user: {
+        ...user,
+        hasArtistBand: artistBandCount > 0,
+      },
       canViewCollection,
       collectionShelves,
     };

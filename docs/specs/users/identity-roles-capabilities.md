@@ -34,6 +34,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `GET /users/:id`
   - `GET /users/:id/profile`
   - `POST /users/me/collection-display`
+  - Transitional bridge: user read payloads now include `hasArtistBand` derived from canonical membership graph.
 - Schema fields currently present:
   - `User.isArtist` (temporary implementation flag; does not satisfy canonical Artist/Band linked-entity model)
   - `User.gpsVerified`
