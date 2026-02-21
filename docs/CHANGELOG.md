@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter QA lane shortcut (slice 39):
+  - Added root script `qa:registrar-promoter` to run docs lint, infra policy check, targeted registrar promoter tests, and API typecheck in one command.
+  - Intended for repeatable, low-friction per-slice validation on registrar promoter work.
 - Registrar promoter initiation requester-not-found guard test (slice 38):
   - Added service coverage for missing requester user on promoter registration submission (`NotFoundException`).
 - Prisma migration drift recovery playbook (slice 37):
