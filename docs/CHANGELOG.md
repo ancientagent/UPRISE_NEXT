@@ -261,6 +261,7 @@
   - Added Scene Map policy locks to `docs/specs/DECISIONS_REQUIRED.md` (aggregation windows, geo privacy floor, tier rollup continuity).
 
 ### Fixed
+- API test DB fallback now matches local Docker PostGIS defaults in `apps/api/test/setup.ts` (`uprise/uprise_dev_password@localhost:5432/uprise_dev`) to prevent false auth failures during full-suite runs.
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
 - Web-tier typecheck error in `apps/web/__tests__/web-tier-guard.test.ts`.
 - Socket.IO community event tests by wiring real namespace/handler setup.

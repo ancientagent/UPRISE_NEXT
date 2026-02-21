@@ -18,3 +18,4 @@
 - Uses non-destructive startup (`docker compose up -d postgres`).
 - Keeps container running after tests for faster repeated QA cycles.
 - If Docker Desktop WSL integration is disabled, `qa:db` fails fast with actionable guidance.
+- `apps/api/test/setup.ts` fallback `DATABASE_URL` was aligned to compose defaults to keep `pnpm run verify:full` consistent with the DB QA lane.
