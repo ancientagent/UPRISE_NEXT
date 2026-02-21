@@ -3,6 +3,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import type { ArtistBandRegistrationDto, PromoterRegistrationDto } from './dto/registrar.dto';
 import { randomUUID } from 'crypto';
 
+const normalizePromoterProductionName = (payload: Record<string, unknown>) => {
+  if (typeof payload.productionName !== 'string') {
+    return null;
+  }
+
+  const trimmed = payload.productionName.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
 @Injectable()
 export class RegistrarService {
   constructor(private readonly prisma: PrismaService) {}
@@ -115,17 +124,13 @@ export class RegistrarService {
       countsByStatus,
       entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
-        const normalizedProductionName =
-          typeof payload.productionName === 'string' && payload.productionName.trim().length > 0
-            ? payload.productionName.trim()
-            : null;
         return {
           id: entry.id,
           type: entry.type,
           status: entry.status,
           sceneId: entry.sceneId,
           payload: {
-            productionName: normalizedProductionName,
+            productionName: normalizePromoterProductionName(payload),
           },
           scene: entry.scene,
           createdAt: entry.createdAt,
@@ -171,17 +176,13 @@ export class RegistrarService {
     }
 
     const payload = (entry.payload ?? {}) as Record<string, unknown>;
-    const normalizedProductionName =
-      typeof payload.productionName === 'string' && payload.productionName.trim().length > 0
-        ? payload.productionName.trim()
-        : null;
     return {
       id: entry.id,
       type: entry.type,
       status: entry.status,
       sceneId: entry.sceneId,
       payload: {
-        productionName: normalizedProductionName,
+        productionName: normalizePromoterProductionName(payload),
       },
       scene: entry.scene,
       createdAt: entry.createdAt,
