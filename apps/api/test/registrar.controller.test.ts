@@ -204,4 +204,67 @@ describe('RegistrarController', () => {
     );
     expect(registrarService.listArtistBandRegistrations).toHaveBeenCalledWith('u-1');
   });
+
+  it('submits artist/band registration through registrar service', async () => {
+    const registrarService = {
+      submitArtistBandRegistration: jest.fn().mockResolvedValue({
+        id: 'reg-artist-2',
+        type: 'artist_band_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        createdById: 'u-1',
+        payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const dto = {
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      name: 'Static Signal',
+      slug: 'static-signal',
+      entityType: 'band' as const,
+      members: [
+        { name: 'Alex Volt', email: 'alex@example.com', city: 'Austin', instrument: 'Guitar' },
+        { name: 'Sam Pulse', email: 'sam@example.com', city: 'Austin', instrument: 'Drums' },
+      ],
+    };
+
+    const response = await controller.submitArtistBandRegistration(dto, { user: { userId: 'u-1' } });
+
+    expect(registrarService.submitArtistBandRegistration).toHaveBeenCalledWith('u-1', dto);
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'reg-artist-2',
+        type: 'artist_band_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        createdById: 'u-1',
+        payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+      },
+    });
+  });
+
+  it('propagates artist/band submit errors from registrar service', async () => {
+    const registrarService = {
+      submitArtistBandRegistration: jest.fn().mockRejectedValue(new ForbiddenException('GPS required')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const dto = {
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      name: 'Static Signal',
+      slug: 'static-signal',
+      entityType: 'band' as const,
+      members: [
+        { name: 'Alex Volt', email: 'alex@example.com', city: 'Austin', instrument: 'Guitar' },
+        { name: 'Sam Pulse', email: 'sam@example.com', city: 'Austin', instrument: 'Drums' },
+      ],
+    };
+
+    await expect(controller.submitArtistBandRegistration(dto, { user: { userId: 'u-1' } })).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(registrarService.submitArtistBandRegistration).toHaveBeenCalledWith('u-1', dto);
+  });
 });
