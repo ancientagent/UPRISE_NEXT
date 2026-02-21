@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- User profile linked-entity read resilience (slice 19):
+  - Profile page now degrades gracefully when `/artist-bands?userId=:id` fails.
+  - Core profile still renders; linked-entity panel shows non-blocking warning state.
 - User profile canonical artist/band linkage display (slice 18):
   - `/users/[id]` now reads `GET /artist-bands?userId=:id` and shows linked registrar-managed Artist/Band entities.
   - Added helper + unit test for entity type label formatting (`Artist` / `Band`).
