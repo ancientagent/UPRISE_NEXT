@@ -34,6 +34,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submission constraints enforced in service:
     - city-tier Scene only,
     - request Scene must match authenticated user's Home Scene.
+- Registrar promoter initiation primitive (slice 34):
+  - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
+  - Captures named production identity payload (`productionName`) for downstream capability processing.
+  - Submission remains initiation-only (no automatic capability grant).
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
   - Registration payload now captures member roster:
@@ -94,7 +98,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
-- Registrar-gated create/update writes for Artist/Band entities beyond submission intake.
+- Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.

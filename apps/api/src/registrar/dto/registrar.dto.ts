@@ -30,3 +30,10 @@ export const DispatchArtistInviteSchema = z.object({
 });
 
 export type DispatchArtistInviteDto = z.infer<typeof DispatchArtistInviteSchema>;
+
+export const PromoterRegistrationSchema = z.object({
+  sceneId: z.string().uuid(),
+  productionName: z.string().min(1).max(140),
+});
+
+export type PromoterRegistrationDto = z.infer<typeof PromoterRegistrationSchema>;

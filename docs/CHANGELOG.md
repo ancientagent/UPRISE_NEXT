@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter initiation primitive (slice 34):
+  - Added endpoint `POST /registrar/promoter` for Home Scene-scoped promoter registration submissions.
+  - Stores named production identity payload (`productionName`) in `RegistrarEntry` (`type: promoter_registration`).
+  - Added registrar service unit coverage for submit success + Home Scene boundary enforcement.
 - CI typecheck stabilization for API service callbacks:
   - Added explicit callback parameter typing in API services to satisfy strict CI `noImplicitAny` checks.
   - Affected files:

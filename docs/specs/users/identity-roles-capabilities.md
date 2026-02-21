@@ -56,6 +56,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /registrar/artist/:entryId/dispatch-invites` queues pending non-platform member invites with tokenized claim payload.
   - `POST /registrar/artist/:entryId/sync-members` links eligible registrar members into canonical `ArtistBandMember` rows.
   - `GET /registrar/artist/:entryId/invites` returns invite roster and status summary for submitter tracking.
+- Registrar submission primitive for Promoter capability onboarding:
+  - `POST /registrar/promoter` creates a scene-scoped promoter registration entry with named production identity payload.
+  - Entry is Home Scene-scoped and does not grant promoter capability by itself.
 - Invite claim account bootstrap (slice 6):
   - `POST /auth/invite-preview` provides prefill context (member + scene/community) for invited users before claim.
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
@@ -79,7 +82,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.
 
 ### Deferred (Not Implemented Yet)
-- Promoter registration flow and capability grants.
+- Promoter capability grants.
 - Business profile role surfaces.
 - Capability grant audit log and admin role-management APIs.
 

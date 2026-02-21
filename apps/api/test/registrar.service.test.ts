@@ -66,6 +66,72 @@ describe('RegistrarService', () => {
     service = new RegistrarService(mockPrisma as any);
   });
 
+  it('submits promoter registration for Home Scene with named production identity', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-1',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+    mockPrisma.registrarEntry.create.mockResolvedValue({
+      id: 'reg-promoter-1',
+      type: 'promoter_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { productionName: 'Southside Signal Co.' },
+      createdAt: new Date('2026-02-21T16:00:00.000Z'),
+    });
+
+    const result = await service.submitPromoterRegistration('u-1', {
+      sceneId: 'scene-1',
+      productionName: 'Southside Signal Co.',
+    });
+
+    expect(mockPrisma.registrarEntry.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: 'promoter_registration',
+          status: 'submitted',
+          sceneId: 'scene-1',
+          createdById: 'u-1',
+          payload: { productionName: 'Southside Signal Co.' },
+        }),
+      }),
+    );
+    expect(result.type).toBe('promoter_registration');
+  });
+
+  it('rejects promoter registration when requester is outside Home Scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-2',
+      city: 'Dallas',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+
+    await expect(
+      service.submitPromoterRegistration('u-1', {
+        sceneId: 'scene-2',
+        productionName: 'Southside Signal Co.',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
   it('throws when target scene does not exist', async () => {
     mockPrisma.community.findUnique.mockResolvedValue(null);
     mockPrisma.user.findUnique.mockResolvedValue({
