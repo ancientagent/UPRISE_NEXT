@@ -60,6 +60,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /registrar/promoter` creates a scene-scoped promoter registration entry with named production identity payload.
   - Entry is Home Scene-scoped and does not grant promoter capability by itself.
   - `GET /registrar/promoter/entries` lists submitter-owned promoter registration entries with scene context + submission payload summary.
+  - `GET /registrar/promoter/:entryId` reads submitter-owned promoter registration detail with scene context + submission payload summary.
 - Invite claim account bootstrap (slice 6):
   - `POST /auth/invite-preview` provides prefill context (member + scene/community) for invited users before claim.
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
@@ -159,6 +160,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | POST | `/registrar/artist/:entryId/sync-members` | required | Sync eligible registrar members into canonical Artist/Band membership graph |
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registration entries + scene context |
+| GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registration entry detail + scene context |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.

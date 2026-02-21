@@ -267,6 +267,68 @@ describe('RegistrarService', () => {
     });
   });
 
+  it('reads submitter-owned promoter registration detail', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-3',
+      type: 'promoter_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { productionName: 'Southside Signal Co.' },
+      createdAt: new Date('2026-02-21T19:00:00.000Z'),
+      updatedAt: new Date('2026-02-21T19:05:00.000Z'),
+      scene: {
+        id: 'scene-1',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'punk',
+        tier: 'city',
+      },
+    });
+
+    const result = await service.getPromoterRegistration('u-1', 'reg-promoter-3');
+
+    expect(mockPrisma.registrarEntry.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'reg-promoter-3' },
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'reg-promoter-3',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Southside Signal Co.' },
+      }),
+    );
+  });
+
+  it('rejects promoter detail read for non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-4',
+      type: 'promoter_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-9',
+      payload: { productionName: 'Southside Signal Co.' },
+      scene: null,
+    });
+
+    await expect(service.getPromoterRegistration('u-1', 'reg-promoter-4')).rejects.toThrow(
+      ForbiddenException,
+    );
+  });
+
+  it('throws when promoter detail entry does not exist', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.getPromoterRegistration('u-1', 'missing-promoter-entry')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
   it('throws when target scene does not exist', async () => {
     mockPrisma.community.findUnique.mockResolvedValue(null);
     mockPrisma.user.findUnique.mockResolvedValue({

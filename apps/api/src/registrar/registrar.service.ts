@@ -125,6 +125,56 @@ export class RegistrarService {
     };
   }
 
+  async getPromoterRegistration(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'promoter_registration') {
+      throw new ForbiddenException('Registrar entry is not a promoter registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read this promoter registration');
+    }
+
+    const payload = (entry.payload ?? {}) as Record<string, unknown>;
+    return {
+      id: entry.id,
+      type: entry.type,
+      status: entry.status,
+      sceneId: entry.sceneId,
+      payload: {
+        productionName: typeof payload.productionName === 'string' ? payload.productionName : null,
+      },
+      scene: entry.scene,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
+    };
+  }
+
   async listArtistBandRegistrations(userId: string) {
     const entries = await this.prisma.registrarEntry.findMany({
       where: {
