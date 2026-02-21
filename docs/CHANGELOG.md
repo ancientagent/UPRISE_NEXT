@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Agent tooling baseline durability notes:
+  - Added explicit session directive to treat `python3` as canonical and avoid assuming `python` alias.
+  - Added context-compaction tooling guardrails in `docs/solutions/SESSION_STANDING_DIRECTIVES.md`.
+  - Added tooling recovery notes in `docs/AGENT_STRATEGY_AND_HANDOFF.md`.
+  - Recorded skill pickup reminder: restart Codex after installing new skills.
 - Registrar web intake surface (slice 10):
   - Added Plot action `Open Registrar` in `apps/web/src/app/plot/page.tsx`.
   - Added `/registrar` page with explicit `Band / Artist Registration` action selection before form submission.

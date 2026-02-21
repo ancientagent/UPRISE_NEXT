@@ -54,3 +54,11 @@ Use this block at the start of each execution session.
 - Use medium/low intensity for routine edits.
 - Explicitly announce when changing intensity and why.
 
+11) Tooling baseline and context compaction guard
+- Assume `python3` as the canonical Python command. Do not assume `python` alias exists.
+- Prefer existing local tools first (`pnpm`, `rg`, `jq`, workspace scripts) before introducing new tooling.
+- If new skills/tooling are installed during session, record them in:
+  - `docs/CHANGELOG.md`
+  - a dated handoff note under `docs/handoff/`
+- After installing Codex skills, note that a Codex restart is required for skill pickup.
+- Keep tooling changes non-global and non-destructive; avoid admin/system-level install changes.
