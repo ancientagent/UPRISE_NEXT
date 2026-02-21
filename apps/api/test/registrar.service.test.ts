@@ -312,6 +312,40 @@ describe('RegistrarService', () => {
     });
   });
 
+  it('preserves reverse-chronological ordering from promoter list reads', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-promoter-new',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Newest' },
+        createdAt: new Date('2026-02-21T19:00:00.000Z'),
+        updatedAt: new Date('2026-02-21T19:00:00.000Z'),
+        scene: null,
+      },
+      {
+        id: 'reg-promoter-old',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Oldest' },
+        createdAt: new Date('2026-02-21T18:00:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:00:00.000Z'),
+        scene: null,
+      },
+    ]);
+
+    const result = await service.listPromoterRegistrations('u-1');
+
+    expect(result.entries.map((entry: any) => entry.id)).toEqual(['reg-promoter-new', 'reg-promoter-old']);
+    expect(mockPrisma.registrarEntry.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: { createdAt: 'desc' },
+      }),
+    );
+  });
+
   it('normalizes missing promoter payload field to null in list reads', async () => {
     mockPrisma.registrarEntry.findMany.mockResolvedValue([
       {
@@ -367,6 +401,13 @@ describe('RegistrarService', () => {
         status: 'submitted',
         sceneId: 'scene-1',
         payload: { productionName: 'Southside Signal Co.' },
+        scene: expect.objectContaining({
+          id: 'scene-1',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+          tier: 'city',
+        }),
       }),
     );
   });

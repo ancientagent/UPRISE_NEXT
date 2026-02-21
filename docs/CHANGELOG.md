@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter read-ordering and detail scene-context guard tests (slice 48):
+  - Added unit coverage for reverse-chronological ordering expectations on promoter list reads.
+  - Added detail-read assertion coverage for scene-context passthrough fields.
 - Registrar promoter QA lane web-typecheck parity (slice 47):
   - Updated `qa:registrar-promoter` to include `pnpm --filter web typecheck`.
   - Keeps consolidated registrar QA lane aligned with required per-slice validation gate.
