@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist QA lane command (slice 60):
+  - Added root script `qa:registrar-artist` to run docs lint, infra policy check, targeted registrar API tests, and API/web typechecks in one command.
+  - Keeps registrar artist-focused iteration aligned with required per-slice validation gate.
 - Registrar artist member-sync controller parity tests (slice 59):
   - Added controller test asserting `syncArtistBandMembers` delegates to service and returns wrapped success payload.
   - Added controller test asserting service-layer errors are propagated for member-sync actions.
