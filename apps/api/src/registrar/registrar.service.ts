@@ -207,8 +207,11 @@ export class RegistrarService {
       where: { email: { in: memberEmails } },
       select: { id: true, email: true },
     });
-    const existingUserByEmail = new Map(
-      existingUsers.map((existing: any) => [existing.email.toLowerCase(), existing] as const),
+    const existingUserByEmail = new Map<string, { id: string; email: string }>(
+      existingUsers.map((existing: { id: string; email: string }) => [
+        existing.email.toLowerCase(),
+        { id: existing.id, email: existing.email },
+      ]),
     );
 
     await this.prisma.registrarArtistMember.createMany({
