@@ -77,6 +77,54 @@ export class RegistrarService {
     });
   }
 
+  async listPromoterRegistrations(userId: string) {
+    const entries = await this.prisma.registrarEntry.findMany({
+      where: {
+        createdById: userId,
+        type: 'promoter_registration',
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      total: entries.length,
+      entries: entries.map((entry: any) => {
+        const payload = (entry.payload ?? {}) as Record<string, unknown>;
+        return {
+          id: entry.id,
+          type: entry.type,
+          status: entry.status,
+          sceneId: entry.sceneId,
+          payload: {
+            productionName: typeof payload.productionName === 'string' ? payload.productionName : null,
+          },
+          scene: entry.scene,
+          createdAt: entry.createdAt,
+          updatedAt: entry.updatedAt,
+        };
+      }),
+    };
+  }
+
   async listArtistBandRegistrations(userId: string) {
     const entries = await this.prisma.registrarEntry.findMany({
       where: {

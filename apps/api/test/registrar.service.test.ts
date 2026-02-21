@@ -213,6 +213,60 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
+  it('lists submitter-owned promoter registrations with scene context', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-promoter-2',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Southside Signal Co.' },
+        createdAt: new Date('2026-02-21T18:00:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:05:00.000Z'),
+        scene: {
+          id: 'scene-1',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+          tier: 'city',
+        },
+      },
+    ]);
+
+    const result = await service.listPromoterRegistrations('u-1');
+
+    expect(mockPrisma.registrarEntry.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          createdById: 'u-1',
+          type: 'promoter_registration',
+        }),
+      }),
+    );
+    expect(result.total).toBe(1);
+    expect(result.entries[0]).toEqual(
+      expect.objectContaining({
+        id: 'reg-promoter-2',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Southside Signal Co.' },
+      }),
+    );
+  });
+
+  it('returns empty list when submitter has no promoter registrations', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([]);
+
+    const result = await service.listPromoterRegistrations('u-1');
+
+    expect(result).toEqual({
+      total: 0,
+      entries: [],
+    });
+  });
+
   it('throws when target scene does not exist', async () => {
     mockPrisma.community.findUnique.mockResolvedValue(null);
     mockPrisma.user.findUnique.mockResolvedValue({

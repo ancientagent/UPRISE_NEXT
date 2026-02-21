@@ -38,6 +38,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
   - Captures named production identity payload (`productionName`) for downstream capability processing.
   - Submission remains initiation-only (no automatic capability grant).
+- Registrar promoter status list read surface (slice 42):
+  - `GET /registrar/promoter/entries` implemented.
+  - Returns submitter-owned promoter registrar entries in reverse-chronological order.
+  - Includes scene context and payload summary (`productionName`) for registration state tracking.
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
   - Registration payload now captures member roster:
@@ -141,6 +145,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 | GET | `/registrar/artist/entries` | required | List submitter-owned Artist/Band registrar entries + member/invite summary counts |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
+| GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registrar entries + scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
 

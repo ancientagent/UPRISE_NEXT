@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter registration status read API (slice 42):
+  - Added `GET /registrar/promoter/entries` (auth required, submitter-scoped).
+  - Returns reverse-chronological promoter registration entries with scene context and `productionName` payload summary.
+  - Added controller + service unit coverage for delegation, response shape, list results, and empty state.
 - Registrar promoter QA lane coverage update (slice 41):
   - `qa:registrar-promoter` now includes `registrar.dto.test.ts` alongside controller/service registrar suites.
   - Keeps the consolidated registrar promoter lane aligned with current validation surface.
