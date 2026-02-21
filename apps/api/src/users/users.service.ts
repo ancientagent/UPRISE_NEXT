@@ -175,6 +175,22 @@ export class UsersService {
     const artistBandCount = await this.prisma.artistBandMember.count({
       where: { userId: targetUserId },
     });
+    const managedArtistBands = await this.prisma.artistBand.findMany({
+      where: {
+        members: {
+          some: {
+            userId: targetUserId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        entityType: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
     return {
       user: {
@@ -184,6 +200,7 @@ export class UsersService {
       },
       canViewCollection,
       collectionShelves,
+      managedArtistBands,
     };
   }
 

@@ -164,6 +164,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
     - `isArtist` (legacy compatibility)
     - `isArtistTransitional` (explicit deprecation-prep alias)
   - canonical identity linkage remains `hasArtistBand`.
+  - `GET /users/:id/profile` also returns `managedArtistBands` summary list for canonical linked-entity rendering.
 - Error behavior:
   - `401` for invalid credentials / missing auth
   - `403` for forbidden actions when role/civic constraints apply (as new capability routes are added)

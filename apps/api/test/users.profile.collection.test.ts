@@ -7,6 +7,9 @@ describe('UsersService.getProfileWithCollection', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
     },
+    artistBand: {
+      findMany: jest.fn(),
+    },
     artistBandMember: {
       count: jest.fn(),
     },
@@ -19,6 +22,7 @@ describe('UsersService.getProfileWithCollection', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.artistBand.findMany.mockResolvedValue([]);
     service = new UsersService(mockPrisma as any);
   });
 
@@ -48,6 +52,7 @@ describe('UsersService.getProfileWithCollection', () => {
 
     expect(result.canViewCollection).toBe(false);
     expect(result.collectionShelves).toEqual([]);
+    expect(result.managedArtistBands).toEqual([]);
     expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(false);
     expect(mockPrisma.collection.findMany).not.toHaveBeenCalled();
@@ -68,6 +73,14 @@ describe('UsersService.getProfileWithCollection', () => {
       createdAt: new Date(),
     });
     mockPrisma.artistBandMember.count.mockResolvedValue(1);
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      {
+        id: 'ab-1',
+        name: 'Static Signal',
+        slug: 'static-signal',
+        entityType: 'band',
+      },
+    ]);
 
     mockPrisma.collection.findMany.mockResolvedValue([
       {
@@ -95,6 +108,14 @@ describe('UsersService.getProfileWithCollection', () => {
     expect(result.canViewCollection).toBe(true);
     expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(true);
+    expect(result.managedArtistBands).toEqual([
+      {
+        id: 'ab-1',
+        name: 'Static Signal',
+        slug: 'static-signal',
+        entityType: 'band',
+      },
+    ]);
     expect(result.collectionShelves).toHaveLength(7);
     const singles = result.collectionShelves.find((s) => s.shelf === 'singles');
     expect(singles?.itemCount).toBe(1);
@@ -116,6 +137,7 @@ describe('UsersService.getProfileWithCollection', () => {
       createdAt: new Date(),
     });
     mockPrisma.artistBandMember.count.mockResolvedValue(0);
+    mockPrisma.artistBand.findMany.mockResolvedValue([]);
 
     const result = await service.findById('target');
 

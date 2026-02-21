@@ -35,13 +35,12 @@ interface UserProfileData {
   };
   canViewCollection: boolean;
   collectionShelves: Shelf[];
-}
-
-interface ArtistBandSummary {
-  id: string;
-  name: string;
-  slug: string;
-  entityType: string;
+  managedArtistBands: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    entityType: string;
+  }>;
 }
 
 const shelfLabel: Record<string, string> = {
@@ -59,8 +58,6 @@ export default function UserProfilePage() {
   const router = useRouter();
   const { token, user: authUser } = useAuthStore();
   const [profile, setProfile] = useState<UserProfileData | null>(null);
-  const [artistBands, setArtistBands] = useState<ArtistBandSummary[]>([]);
-  const [artistBandsError, setArtistBandsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,22 +73,6 @@ export default function UserProfilePage() {
     try {
       const profileResponse = await api.get<UserProfileData>(`/users/${userId}/profile`, { token });
       setProfile(profileResponse.data ?? null);
-      setArtistBandsError(null);
-
-      try {
-        const artistBandsResponse = await api.get<ArtistBandSummary[]>(
-          `/artist-bands?userId=${encodeURIComponent(userId)}`,
-          { token },
-        );
-        setArtistBands(artistBandsResponse.data ?? []);
-      } catch (artistBandsLoadError) {
-        setArtistBands([]);
-        setArtistBandsError(
-          artistBandsLoadError instanceof Error
-            ? artistBandsLoadError.message
-            : 'Linked Artist/Band entities are unavailable right now.',
-        );
-      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load user profile.');
     } finally {
@@ -218,16 +199,11 @@ export default function UserProfilePage() {
           <p className="mt-1 text-sm text-black/60">
             Canonical registrar-linked entities managed by this user account.
           </p>
-          {artistBandsError && (
-            <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-              {artistBandsError}
-            </p>
-          )}
-          {artistBands.length === 0 ? (
+          {profile.managedArtistBands.length === 0 ? (
             <p className="mt-3 text-sm text-black/60">No linked Artist/Band entities.</p>
           ) : (
             <ul className="mt-4 space-y-2">
-              {artistBands.map((entity) => (
+              {profile.managedArtistBands.map((entity) => (
                 <li key={entity.id} className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2">
                   <p className="text-sm font-medium text-black">{entity.name}</p>
                   <p className="text-xs text-black/60">

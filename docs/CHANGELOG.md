@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- User profile managed-entity contract consolidation (slice 20):
+  - `GET /users/:id/profile` now includes `managedArtistBands` summary list.
+  - `/users/[id]` now renders linked entities from profile response directly (single-call profile contract).
+  - Added users profile service test coverage for `managedArtistBands`.
 - User profile linked-entity read resilience (slice 19):
   - Profile page now degrades gracefully when `/artist-bands?userId=:id` fails.
   - Core profile still renders; linked-entity panel shows non-blocking warning state.
