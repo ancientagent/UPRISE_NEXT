@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter controller error-path coverage (slice 49):
+  - Added controller tests asserting error passthrough for:
+    - promoter list read failures,
+    - promoter detail read failures.
 - Registrar promoter read-ordering and detail scene-context guard tests (slice 48):
   - Added unit coverage for reverse-chronological ordering expectations on promoter list reads.
   - Added detail-read assertion coverage for scene-context passthrough fields.
