@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Repo hygiene for autonomous artifact/noise handling (slice 24):
+  - Added `.gitignore` entries for `artifacts/` and generic `*:Zone.Identifier` files.
+  - Prevents generated report artifacts and Windows metadata files from repeatedly surfacing as untracked noise.
 - Registrar entry list canonical entity summary enrichment (slice 23):
   - `GET /registrar/artist/entries` now includes materialized `artistBand` summary when linked.
   - `/registrar` status panel now displays materialized entity name/slug when available.
