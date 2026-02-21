@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter initiation guardrail test expansion (slice 36):
+  - Added service coverage for promoter registration rejection cases:
+    - missing scene,
+    - non city-tier scene,
+    - requester without established Home Scene.
 - Registrar promoter route delegation test hardening (slice 35):
   - Added `apps/api/test/registrar.controller.test.ts` to assert `POST /registrar/promoter` controller delegation + response shape wrapper.
 - Registrar promoter initiation primitive (slice 34):

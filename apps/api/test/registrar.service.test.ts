@@ -132,6 +132,69 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
+  it('rejects promoter registration when scene is missing', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue(null);
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+
+    await expect(
+      service.submitPromoterRegistration('u-1', {
+        sceneId: 'missing-scene',
+        productionName: 'Southside Signal Co.',
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
+  it('rejects promoter registration for non city-tier scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-state',
+      city: null,
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'state',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+
+    await expect(
+      service.submitPromoterRegistration('u-1', {
+        sceneId: 'scene-state',
+        productionName: 'Southside Signal Co.',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects promoter registration when requester has no established Home Scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-1',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: null,
+      homeSceneState: null,
+      homeSceneCommunity: null,
+    });
+
+    await expect(
+      service.submitPromoterRegistration('u-1', {
+        sceneId: 'scene-1',
+        productionName: 'Southside Signal Co.',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
   it('throws when target scene does not exist', async () => {
     mockPrisma.community.findUnique.mockResolvedValue(null);
     mockPrisma.user.findUnique.mockResolvedValue({
