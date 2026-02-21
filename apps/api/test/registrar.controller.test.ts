@@ -41,6 +41,27 @@ describe('RegistrarController', () => {
     });
   });
 
+  it('propagates promoter submit errors from registrar service', async () => {
+    const registrarService = {
+      submitPromoterRegistration: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.submitPromoterRegistration(
+        {
+          sceneId: '11111111-1111-1111-1111-111111111111',
+          productionName: 'Southside Signal Co.',
+        },
+        { user: { userId: 'u-1' } },
+      ),
+    ).rejects.toThrow(ForbiddenException);
+    expect(registrarService.submitPromoterRegistration).toHaveBeenCalledWith('u-1', {
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      productionName: 'Southside Signal Co.',
+    });
+  });
+
   it('lists submitter promoter registrations through registrar service', async () => {
     const registrarService = {
       listPromoterRegistrations: jest.fn().mockResolvedValue({
