@@ -302,4 +302,39 @@ describe('RegistrarController', () => {
     ).rejects.toThrow(NotFoundException);
     expect(registrarService.materializeArtistBandRegistration).toHaveBeenCalledWith('u-1', 'missing-entry');
   });
+
+  it('reads artist/band invite status through registrar service', async () => {
+    const registrarService = {
+      getArtistBandInviteStatus: jest.fn().mockResolvedValue({
+        registrarEntryId: 'reg-artist-2',
+        totalMembers: 2,
+        counts: { pending_email: 1, claimed: 1 },
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.getArtistBandInviteStatus('reg-artist-2', { user: { userId: 'u-1' } });
+
+    expect(registrarService.getArtistBandInviteStatus).toHaveBeenCalledWith('u-1', 'reg-artist-2');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-artist-2',
+        totalMembers: 2,
+        counts: { pending_email: 1, claimed: 1 },
+      },
+    });
+  });
+
+  it('propagates artist/band invite status read errors from registrar service', async () => {
+    const registrarService = {
+      getArtistBandInviteStatus: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(controller.getArtistBandInviteStatus('reg-artist-2', { user: { userId: 'u-1' } })).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(registrarService.getArtistBandInviteStatus).toHaveBeenCalledWith('u-1', 'reg-artist-2');
+  });
 });
