@@ -86,6 +86,9 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar web sync eligibility guard (slice 22):
   - `Sync Eligible Members` action is enabled only when registrar entry has eligible linked members (`existing_user` + `claimed`).
   - Action remains explicit and submitter-driven.
+- Identity contract migration alignment (slice 26):
+  - User detail/profile read contracts no longer expose legacy `isArtist`.
+  - Transitional compatibility remains available via `isArtistTransitional` while registrar/canonical migration completes.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
@@ -93,7 +96,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
-- Final removal of legacy `User.isArtist` marker after compatibility migration closes.
+- Final removal of legacy `User.isArtist` persistence marker after compatibility migration closes.
 
 ## Non-Functional Requirements
 - Traceability: registrar actions must be auditable.

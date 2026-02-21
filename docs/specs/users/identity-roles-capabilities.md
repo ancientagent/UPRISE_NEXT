@@ -35,7 +35,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `GET /users/:id/profile`
   - `POST /users/me/collection-display`
   - Transitional bridge: user read payloads now include `hasArtistBand` derived from canonical membership graph.
-  - Transitional alias: `GET /users/:id` and `GET /users/:id/profile` include `isArtistTransitional` mirroring legacy `isArtist`.
+  - Transitional alias: `GET /users/:id` and `GET /users/:id/profile` include `isArtistTransitional` derived from legacy persistence flag `User.isArtist`.
 - Schema fields currently present:
   - `User.isArtist` (temporary implementation flag; does not satisfy canonical Artist/Band linked-entity model)
   - `User.gpsVerified`
@@ -44,7 +44,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Canonical Artist/Band identity foundation (slice 1, additive/non-breaking):
   - `ArtistBand` model added for registrar-linked music entities.
   - `ArtistBandMember` model added for many-to-many User<->Artist/Band management.
-  - Transitional compatibility retained: `User.isArtist` unchanged for existing callers.
+  - Transitional persistence compatibility retained: `User.isArtist` column remains unchanged while response contracts migrate.
 - Read-only Artist/Band API surface (auth required):
   - `GET /artist-bands/:id`
   - `GET /artist-bands?userId=:id` (defaults to authenticated user when omitted)
@@ -160,9 +160,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.
 - Protected routes require JWT bearer token.
 - Transitional read compatibility:
-  - user detail/profile responses expose both:
-    - `isArtist` (legacy compatibility)
-    - `isArtistTransitional` (explicit deprecation-prep alias)
+  - user detail/profile responses expose `isArtistTransitional` (explicit deprecation-prep alias).
+  - legacy `isArtist` has been removed from user detail/profile response contracts.
   - canonical identity linkage remains `hasArtistBand`.
   - `GET /users/:id` and `GET /users/:id/profile` return `managedArtistBands` summary list for canonical linked-entity rendering, including per-entity `membershipRole`.
 - Error behavior:

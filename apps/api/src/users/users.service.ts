@@ -69,9 +69,10 @@ export class UsersService {
       },
       orderBy: { createdAt: 'desc' },
     });
+    const { isArtist, ...userWithoutLegacyArtistFlag } = user;
     return {
-      ...user,
-      isArtistTransitional: user.isArtist,
+      ...userWithoutLegacyArtistFlag,
+      isArtistTransitional: isArtist,
       hasArtistBand: artistBandCount > 0,
       managedArtistBands: managedArtistBands.map((artistBand) => ({
         id: artistBand.id,
@@ -224,11 +225,12 @@ export class UsersService {
       },
       orderBy: { createdAt: 'desc' },
     });
+    const { isArtist, ...profileUserWithoutLegacyArtistFlag } = user;
 
     return {
       user: {
-        ...user,
-        isArtistTransitional: user.isArtist,
+        ...profileUserWithoutLegacyArtistFlag,
+        isArtistTransitional: isArtist,
         hasArtistBand: artistBandCount > 0,
       },
       canViewCollection,

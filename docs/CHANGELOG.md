@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- User detail/profile legacy contract step-down (slice 26):
+  - `GET /users/:id` and `GET /users/:id/profile` no longer return legacy `isArtist`.
+  - Transitional alias `isArtistTransitional` remains for compatibility while canonical migration completes.
+  - Added identity test updates and web profile typing alignment for the narrowed contract.
 - User detail managed-entity parity (slice 25):
   - `GET /users/:id` now includes `managedArtistBands` summary (with `membershipRole`) to match profile contract parity.
   - Added users service test assertions for user-detail managed-entity payload.

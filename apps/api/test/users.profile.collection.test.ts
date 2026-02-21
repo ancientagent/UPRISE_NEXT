@@ -151,7 +151,6 @@ describe('UsersService.getProfileWithCollection', () => {
 
     const result = await service.findById('target');
 
-    expect(result.isArtist).toBe(true);
     expect(result.isArtistTransitional).toBe(true);
     expect(result.hasArtistBand).toBe(false);
     expect(result.managedArtistBands).toEqual([
