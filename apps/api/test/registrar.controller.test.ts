@@ -1,4 +1,5 @@
 import { RegistrarController } from '../src/registrar/registrar.controller';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 
 describe('RegistrarController', () => {
   it('submits promoter registration through registrar service', async () => {
@@ -108,5 +109,29 @@ describe('RegistrarController', () => {
         payload: { productionName: 'Southside Signal Co.' },
       },
     });
+  });
+
+  it('propagates promoter list read errors from registrar service', async () => {
+    const registrarService = {
+      listPromoterRegistrations: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(controller.listMyPromoterRegistrations({ user: { userId: 'u-1' } })).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(registrarService.listPromoterRegistrations).toHaveBeenCalledWith('u-1');
+  });
+
+  it('propagates promoter detail read errors from registrar service', async () => {
+    const registrarService = {
+      getPromoterRegistration: jest.fn().mockRejectedValue(new NotFoundException('Registrar entry not found')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.getMyPromoterRegistration('missing-entry', { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(NotFoundException);
+    expect(registrarService.getPromoterRegistration).toHaveBeenCalledWith('u-1', 'missing-entry');
   });
 });
