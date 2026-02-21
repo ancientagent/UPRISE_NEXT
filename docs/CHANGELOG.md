@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- isArtist readiness guard allowlist tightening (slice 30):
+  - Removed `packages/types/src/user.ts` from strict-report approved legacy path set.
+  - Keeps strict guard aligned with current remaining transitional consumers only.
 - Artist/Band identity phased-plan refresh (slice 29):
   - Added evidence-based remaining-slices plan with migration ordering, risk controls, and rollback strategy:
     - `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
