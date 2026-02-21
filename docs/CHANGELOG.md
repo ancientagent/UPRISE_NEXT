@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter list aggregation + payload-normalization tests (slice 46):
+  - Added unit coverage for mixed-status `countsByStatus` aggregation in promoter list reads.
+  - Added unit coverage for `productionName` null-fallback when payload field is missing.
 - Registrar promoter status list summary counts (slice 45):
   - `GET /registrar/promoter/entries` now returns top-level `countsByStatus` across submitter-owned entries.
   - Added controller + service unit test updates for status-summary list behavior and empty-state shape.
