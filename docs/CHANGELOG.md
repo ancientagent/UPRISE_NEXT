@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter route delegation test hardening (slice 35):
+  - Added `apps/api/test/registrar.controller.test.ts` to assert `POST /registrar/promoter` controller delegation + response shape wrapper.
 - Registrar promoter initiation primitive (slice 34):
   - Added endpoint `POST /registrar/promoter` for Home Scene-scoped promoter registration submissions.
   - Stores named production identity payload (`productionName`) in `RegistrarEntry` (`type: promoter_registration`).
