@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist service guard-path hardening tests (slice 61):
+  - Added `NotFoundException` coverage for artist invite dispatch, invite-status read, and member-sync actions when registrar entry is missing.
+  - Added `ForbiddenException` coverage for the same actions when registrar entry type is not `artist_band_registration`.
 - Registrar artist QA lane command (slice 60):
   - Added root script `qa:registrar-artist` to run docs lint, infra policy check, targeted registrar API tests, and API/web typechecks in one command.
   - Keeps registrar artist-focused iteration aligned with required per-slice validation gate.
