@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 ### Added
+- Prisma migration drift recovery playbook (slice 37):
+  - Added `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md` with local reset/deploy path, non-disposable DB guardrails, and verification steps.
 - Registrar promoter initiation guardrail test expansion (slice 36):
   - Added service coverage for promoter registration rejection cases:
     - missing scene,
