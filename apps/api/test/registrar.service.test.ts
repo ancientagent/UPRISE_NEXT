@@ -269,6 +269,70 @@ describe('RegistrarService', () => {
     });
   });
 
+  it('aggregates promoter list counts across mixed statuses', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-promoter-10',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Southside Signal Co.' },
+        createdAt: new Date('2026-02-21T18:00:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:05:00.000Z'),
+        scene: null,
+      },
+      {
+        id: 'reg-promoter-11',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Riverlight Events' },
+        createdAt: new Date('2026-02-21T18:06:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:10:00.000Z'),
+        scene: null,
+      },
+      {
+        id: 'reg-promoter-12',
+        type: 'promoter_registration',
+        status: 'approved',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Afterhours Assembly' },
+        createdAt: new Date('2026-02-21T18:11:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:20:00.000Z'),
+        scene: null,
+      },
+    ]);
+
+    const result = await service.listPromoterRegistrations('u-1');
+
+    expect(result.total).toBe(3);
+    expect(result.countsByStatus).toEqual({
+      submitted: 2,
+      approved: 1,
+    });
+  });
+
+  it('normalizes missing promoter payload field to null in list reads', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-promoter-13',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: {},
+        createdAt: new Date('2026-02-21T18:21:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:22:00.000Z'),
+        scene: null,
+      },
+    ]);
+
+    const result = await service.listPromoterRegistrations('u-1');
+
+    expect(result.entries[0].payload).toEqual({
+      productionName: null,
+    });
+  });
+
   it('reads submitter-owned promoter registration detail', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-promoter-3',
