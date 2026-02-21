@@ -34,6 +34,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-20_artist-band-identity-slice8-user-read-bridge.md`](./2026-02-20_artist-band-identity-slice8-user-read-bridge.md)
 - [`2026-02-20_artist-band-identity-slice9-invite-preview.md`](./2026-02-20_artist-band-identity-slice9-invite-preview.md)
 - [`2026-02-20_identity-qa-mode-lane.md`](./2026-02-20_identity-qa-mode-lane.md)
+- [`2026-02-20_db-qa-runner-lane.md`](./2026-02-20_db-qa-runner-lane.md)
 
 ## Handoff Reports
 - [`handoff-phase-1.md`](./handoff-phase-1.md) — Phase 1 wrapper (links to legacy completion report).

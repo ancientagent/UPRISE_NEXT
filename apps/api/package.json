@@ -13,6 +13,7 @@
     "prisma:studio": "prisma studio",
     "test": "jest",
     "test:identity": "jest \"users.profile.collection.test.ts\" \"auth.invite-registration.service.test.ts\" \"registrar.service.test.ts\" \"artist-bands.service.test.ts\"",
+    "test:db": "jest \"communities.test.ts\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json"

@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- DB-backed QA lane:
+  - Added `pnpm run qa:db` (script: `scripts/qa-db.sh`) to auto-start local PostGIS via Docker Compose, run Prisma migrate deploy, and execute DB-dependent API tests.
+  - Added API command `pnpm --filter api test:db` targeting `communities.test.ts`.
 - QA mode command lane for identity/registrar:
   - Added root script `pnpm run qa:identity` to run docs lint, infra policy check, focused identity/registrar API tests, and API typecheck in one pass.
   - Added API script `pnpm --filter api test:identity` for focused registrar/auth/user identity test suites.
