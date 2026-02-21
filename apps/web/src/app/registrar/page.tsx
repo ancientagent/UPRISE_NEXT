@@ -54,6 +54,12 @@ type RegistrarArtistEntry = {
     musicCommunity: string;
     tier: 'city' | 'state' | 'national';
   };
+  artistBand: {
+    id: string;
+    name: string;
+    slug: string;
+    entityType: 'artist' | 'band';
+  } | null;
   memberCount: number;
   pendingInviteCount: number;
   queuedInviteCount: number;
@@ -555,6 +561,11 @@ export default function RegistrarPage() {
                     Entry {entry.id} • members {entry.memberCount} • pending {entry.pendingInviteCount} • queued{' '}
                     {entry.queuedInviteCount} • claimed {entry.claimedCount} • existing {entry.existingUserCount}
                   </p>
+                  {entry.artistBand && (
+                    <p className="mt-1 text-xs text-black/50">
+                      Materialized: {entry.artistBand.name} ({entry.artistBand.slug})
+                    </p>
+                  )}
 
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Button

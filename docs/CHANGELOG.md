@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar entry list canonical entity summary enrichment (slice 23):
+  - `GET /registrar/artist/entries` now includes materialized `artistBand` summary when linked.
+  - `/registrar` status panel now displays materialized entity name/slug when available.
 - Registrar web sync-eligibility guard (slice 22):
   - `Sync Eligible Members` now uses explicit eligibility count (`existing + claimed`) from registrar entry summaries.
   - Action is disabled when no eligible linked members exist.

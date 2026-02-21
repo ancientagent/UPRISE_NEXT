@@ -410,6 +410,12 @@ describe('RegistrarService', () => {
           musicCommunity: 'punk',
           tier: 'city',
         },
+        artistBand: {
+          id: 'ab-8',
+          name: 'Static Signal',
+          slug: 'static-signal',
+          entityType: 'band',
+        },
         _count: {
           artistMembers: 3,
         },
@@ -437,6 +443,12 @@ describe('RegistrarService', () => {
     expect(result.entries[0].pendingInviteCount).toBe(1);
     expect(result.entries[0].queuedInviteCount).toBe(1);
     expect(result.entries[0].claimedCount).toBe(0);
+    expect(result.entries[0].artistBand).toEqual({
+      id: 'ab-8',
+      name: 'Static Signal',
+      slug: 'static-signal',
+      entityType: 'band',
+    });
   });
 
   it('returns empty list when submitter has no artist/band registrar entries', async () => {

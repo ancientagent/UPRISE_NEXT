@@ -32,6 +32,14 @@ export class RegistrarService {
             tier: true,
           },
         },
+        artistBand: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            entityType: true,
+          },
+        },
         _count: {
           select: {
             artistMembers: true,
@@ -106,6 +114,7 @@ export class RegistrarService {
             entityType: payload.entityType === 'band' ? 'band' : payload.entityType === 'artist' ? 'artist' : null,
           },
           scene: entry.scene,
+          artistBand: entry.artistBand,
           memberCount: entry._count.artistMembers,
           pendingInviteCount: inviteCounts.pendingInviteCount,
           queuedInviteCount: inviteCounts.queuedInviteCount,
