@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist entry-list controller parity tests (slice 54):
+  - Added controller test asserting `listMyArtistBandRegistrations` delegates to service and returns wrapped success payload.
+  - Added controller test asserting service-layer errors are propagated for artist entry-list reads.
 - Registrar promoter submit controller error-path coverage (slice 53):
   - Added controller test asserting `submitPromoterRegistration` propagates service-layer `ForbiddenException`.
 - Registrar promoter whitespace-null normalization tests (slice 52):
