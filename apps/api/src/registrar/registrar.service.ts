@@ -7,6 +7,117 @@ import { randomUUID } from 'crypto';
 export class RegistrarService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async listArtistBandRegistrations(userId: string) {
+    const entries = await this.prisma.registrarEntry.findMany({
+      where: {
+        createdById: userId,
+        type: 'artist_band_registration',
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        artistBandId: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+        _count: {
+          select: {
+            artistMembers: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (entries.length === 0) {
+      return {
+        total: 0,
+        entries: [],
+      };
+    }
+
+    const members = await this.prisma.registrarArtistMember.findMany({
+      where: {
+        registrarEntryId: { in: entries.map((entry) => entry.id) },
+      },
+      select: {
+        registrarEntryId: true,
+        inviteStatus: true,
+      },
+    });
+
+    const countsByEntry = new Map<
+      string,
+      {
+        pendingInviteCount: number;
+        queuedInviteCount: number;
+        claimedCount: number;
+        existingUserCount: number;
+      }
+    >();
+
+    for (const member of members) {
+      const current = countsByEntry.get(member.registrarEntryId) ?? {
+        pendingInviteCount: 0,
+        queuedInviteCount: 0,
+        claimedCount: 0,
+        existingUserCount: 0,
+      };
+
+      if (member.inviteStatus === 'pending_email') current.pendingInviteCount += 1;
+      if (member.inviteStatus === 'queued') current.queuedInviteCount += 1;
+      if (member.inviteStatus === 'claimed') current.claimedCount += 1;
+      if (member.inviteStatus === 'existing_user') current.existingUserCount += 1;
+
+      countsByEntry.set(member.registrarEntryId, current);
+    }
+
+    return {
+      total: entries.length,
+      entries: entries.map((entry) => {
+        const payload = (entry.payload ?? {}) as Record<string, unknown>;
+        const inviteCounts = countsByEntry.get(entry.id) ?? {
+          pendingInviteCount: 0,
+          queuedInviteCount: 0,
+          claimedCount: 0,
+          existingUserCount: 0,
+        };
+        return {
+          id: entry.id,
+          type: entry.type,
+          status: entry.status,
+          sceneId: entry.sceneId,
+          artistBandId: entry.artistBandId,
+          payload: {
+            name: typeof payload.name === 'string' ? payload.name : null,
+            slug: typeof payload.slug === 'string' ? payload.slug : null,
+            entityType: payload.entityType === 'band' ? 'band' : payload.entityType === 'artist' ? 'artist' : null,
+          },
+          scene: entry.scene,
+          memberCount: entry._count.artistMembers,
+          pendingInviteCount: inviteCounts.pendingInviteCount,
+          queuedInviteCount: inviteCounts.queuedInviteCount,
+          claimedCount: inviteCounts.claimedCount,
+          existingUserCount: inviteCounts.existingUserCount,
+          createdAt: entry.createdAt,
+          updatedAt: entry.updatedAt,
+        };
+      }),
+    };
+  }
+
   async submitArtistBandRegistration(userId: string, dto: ArtistBandRegistrationDto) {
     const [scene, user] = await Promise.all([
       this.prisma.community.findUnique({

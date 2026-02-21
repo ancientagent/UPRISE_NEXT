@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar Artist/Band entry list read surface (slice 11):
+  - Added endpoint `GET /registrar/artist/entries` for submitter-owned registration tracking.
+  - Returns reverse-chronological entry list with scene context and per-entry member/invite summary counts.
+  - Added registrar service unit coverage for list behavior + empty-state handling.
 - Agent tooling baseline durability notes:
   - Added explicit session directive to treat `python3` as canonical and avoid assuming `python` alias.
   - Added context-compaction tooling guardrails in `docs/solutions/SESSION_STANDING_DIRECTIVES.md`.

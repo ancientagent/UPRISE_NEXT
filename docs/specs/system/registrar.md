@@ -58,6 +58,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/artist/:entryId/invites` implemented.
   - Submitter-only access.
   - Returns roster rows plus invite status counts (`pending_email`, `queued`, `claimed`, etc.).
+- Registrar registration status list read surface (slice 11):
+  - `GET /registrar/artist/entries` implemented.
+  - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
+  - Includes per-entry member + invite lifecycle summary counts for registrar follow-up actions.
 - Registrar web entrypoint + intake UI (slice 10):
   - Plot scene activity panel includes explicit `Open Registrar` action.
   - `/registrar` route now presents `Band / Artist Registration` option before form entry.
@@ -106,6 +110,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | POST | `/registrar/artist/:entryId/materialize` | required | Materialize submitted registrar entry into canonical Artist/Band entity |
 | POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform registrar members |
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
+| GET | `/registrar/artist/entries` | required | List submitter-owned Artist/Band registrar entries + member/invite summary counts |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |

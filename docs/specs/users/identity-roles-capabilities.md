@@ -51,6 +51,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /registrar/artist` creates a scene-scoped registrar entry (does not yet create ArtistBand row directly).
   - Requires GPS-verified submitter in Home Scene.
   - Captures proposed member roster (`name`, `email`, `city`, `instrument`) for registrar processing.
+  - `GET /registrar/artist/entries` lists submitter-owned Artist/Band registrar entries + invite/member summary counts.
   - `POST /registrar/artist/:entryId/materialize` finalizes canonical `ArtistBand` + owner membership from submitter-owned registration entry.
   - `POST /registrar/artist/:entryId/dispatch-invites` queues pending non-platform member invites with tokenized claim payload.
   - `GET /registrar/artist/:entryId/invites` returns invite roster and status summary for submitter tracking.
@@ -137,6 +138,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | GET | `/artist-bands/:id` | required | Fetch canonical Artist/Band entity details + membership |
 | GET | `/artist-bands` | required | List Artist/Band entities managed by a user (`userId` query or self default) |
 | POST | `/registrar/artist` | required | Submit Home Scene-scoped Artist/Band registration entry |
+| GET | `/registrar/artist/entries` | required | List submitter-owned Artist/Band registrar entries + invite/member summary counts |
 | POST | `/registrar/artist/:entryId/materialize` | required | Materialize registration into canonical Artist/Band entity (submitter-owned) |
 | POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform members |
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |

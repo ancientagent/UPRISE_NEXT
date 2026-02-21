@@ -24,6 +24,12 @@ export class RegistrarController {
     return { success: true, data: entry };
   }
 
+  @Get('artist/entries')
+  async listMyArtistBandRegistrations(@Request() req: { user: { userId: string } }) {
+    const result = await this.registrarService.listArtistBandRegistrations(req.user.userId);
+    return { success: true, data: result };
+  }
+
   @Post('artist/:entryId/materialize')
   async materializeArtistBandRegistration(
     @Param('entryId') entryId: string,

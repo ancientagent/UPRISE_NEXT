@@ -13,6 +13,7 @@ describe('RegistrarService', () => {
     registrarEntry: {
       create: jest.fn(),
       findUnique: jest.fn(),
+      findMany: jest.fn(),
       update: jest.fn(),
     },
     registrarArtistMember: {
@@ -387,5 +388,65 @@ describe('RegistrarService', () => {
     expect(result.totalMembers).toBe(2);
     expect(result.countsByStatus.queued).toBe(1);
     expect(result.countsByStatus.claimed).toBe(1);
+  });
+
+  it('lists submitter-owned artist/band registrar entries with member invite counts', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-8',
+        type: 'artist_band_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        artistBandId: null,
+        payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+        createdAt: new Date('2026-02-21T10:00:00.000Z'),
+        updatedAt: new Date('2026-02-21T10:05:00.000Z'),
+        scene: {
+          id: 'scene-1',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+          tier: 'city',
+        },
+        _count: {
+          artistMembers: 3,
+        },
+      },
+    ]);
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      { registrarEntryId: 'reg-8', inviteStatus: 'existing_user' },
+      { registrarEntryId: 'reg-8', inviteStatus: 'pending_email' },
+      { registrarEntryId: 'reg-8', inviteStatus: 'queued' },
+    ]);
+
+    const result = await service.listArtistBandRegistrations('u-1');
+
+    expect(mockPrisma.registrarEntry.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          createdById: 'u-1',
+          type: 'artist_band_registration',
+        }),
+      }),
+    );
+    expect(result.total).toBe(1);
+    expect(result.entries[0].memberCount).toBe(3);
+    expect(result.entries[0].existingUserCount).toBe(1);
+    expect(result.entries[0].pendingInviteCount).toBe(1);
+    expect(result.entries[0].queuedInviteCount).toBe(1);
+    expect(result.entries[0].claimedCount).toBe(0);
+  });
+
+  it('returns empty list when submitter has no artist/band registrar entries', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([]);
+
+    const result = await service.listArtistBandRegistrations('u-1');
+
+    expect(result).toEqual({
+      total: 0,
+      entries: [],
+    });
+    expect(mockPrisma.registrarArtistMember.findMany).not.toHaveBeenCalled();
   });
 });
