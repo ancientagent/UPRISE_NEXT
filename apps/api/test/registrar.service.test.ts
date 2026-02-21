@@ -821,6 +821,37 @@ describe('RegistrarService', () => {
     expect(mockPrisma.registrarInviteDelivery.upsert).not.toHaveBeenCalled();
   });
 
+  it('rejects invite dispatch when registrar entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(
+      service.dispatchArtistBandInvites('u-1', 'missing-entry', {
+        mobileAppUrl: 'https://m.uprise.example/download',
+        webAppUrl: 'https://uprise.example/band',
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
+  it('rejects invite dispatch for non artist/band registrar entry types', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-1',
+      type: 'promoter_registration',
+      createdById: 'u-1',
+      scene: {
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'punk',
+      },
+    });
+
+    await expect(
+      service.dispatchArtistBandInvites('u-1', 'reg-promoter-1', {
+        mobileAppUrl: 'https://m.uprise.example/download',
+        webAppUrl: 'https://uprise.example/band',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
   it('returns invite status summary for submitter-owned entry', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-7',
@@ -857,6 +888,22 @@ describe('RegistrarService', () => {
     expect(result.totalMembers).toBe(2);
     expect(result.countsByStatus.queued).toBe(1);
     expect(result.countsByStatus.claimed).toBe(1);
+  });
+
+  it('rejects invite status read when registrar entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.getArtistBandInviteStatus('u-1', 'missing-entry')).rejects.toThrow(NotFoundException);
+  });
+
+  it('rejects invite status read for non artist/band registrar entry types', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-2',
+      type: 'promoter_registration',
+      createdById: 'u-1',
+    });
+
+    await expect(service.getArtistBandInviteStatus('u-1', 'reg-promoter-2')).rejects.toThrow(ForbiddenException);
   });
 
   it('lists submitter-owned artist/band registrar entries with member invite counts', async () => {
@@ -971,6 +1018,23 @@ describe('RegistrarService', () => {
     });
 
     await expect(service.syncArtistBandMembers('u-1', 'reg-10')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects member sync when registrar entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.syncArtistBandMembers('u-1', 'missing-entry')).rejects.toThrow(NotFoundException);
+  });
+
+  it('rejects member sync for non artist/band registrar entry types', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-3',
+      type: 'promoter_registration',
+      createdById: 'u-1',
+      artistBandId: null,
+    });
+
+    await expect(service.syncArtistBandMembers('u-1', 'reg-promoter-3')).rejects.toThrow(ForbiddenException);
   });
 
   it('rejects member sync from non-submitting user', async () => {
