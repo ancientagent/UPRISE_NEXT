@@ -174,6 +174,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Plot provides explicit Registrar navigation (`Open Registrar`) for civic registration actions.
 - Registrar web flow supports explicit Artist/Band registration submission from listener identity.
 - Registrar web flow includes submitter-owned registration status tracking and explicit follow-up actions only.
+- User profile web surface displays canonical linked Artist/Band entities via existing `/artist-bands?userId=:id` read API.
 - Capability management UI beyond base listener flows is deferred.
 
 ## Acceptance Tests / Test Plan

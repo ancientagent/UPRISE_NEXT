@@ -28,6 +28,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-21_artist-band-identity-slice15-isartist-transitional-alias-and-readiness-report.md`](./2026-02-21_artist-band-identity-slice15-isartist-transitional-alias-and-readiness-report.md)
 - [`2026-02-21_artist-band-identity-slice16-isartist-deprecation-readiness-workflow.md`](./2026-02-21_artist-band-identity-slice16-isartist-deprecation-readiness-workflow.md)
 - [`2026-02-21_artist-band-identity-slice17-isartist-strict-consumer-guard.md`](./2026-02-21_artist-band-identity-slice17-isartist-strict-consumer-guard.md)
+- [`2026-02-21_artist-band-identity-slice18-user-profile-canonical-entity-read.md`](./2026-02-21_artist-band-identity-slice18-user-profile-canonical-entity-read.md)
 - [`2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md`](./2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md)
 - [`2026-02-22_plot_promotions_surface_wiring.md`](./2026-02-22_plot_promotions_surface_wiring.md)
 - [`2026-02-23_plot_home_scene_anchor_fallback.md`](./2026-02-23_plot_home_scene_anchor_fallback.md)

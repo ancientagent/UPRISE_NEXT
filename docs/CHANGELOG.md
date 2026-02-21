@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- User profile canonical artist/band linkage display (slice 18):
+  - `/users/[id]` now reads `GET /artist-bands?userId=:id` and shows linked registrar-managed Artist/Band entities.
+  - Added helper + unit test for entity type label formatting (`Artist` / `Band`).
 - isArtist strict consumer guard (slice 17):
   - Added strict mode to `scripts/is-artist-consumer-report.mjs` via `--fail-on-unapproved`.
   - Added `pnpm run report:isartist-consumers:strict`.
