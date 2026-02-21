@@ -58,7 +58,7 @@ export class ArtistBandsService {
       updatedAt: artistBand.updatedAt,
       createdBy: artistBand.createdBy,
       homeScene: artistBand.homeScene,
-      members: artistBand.members.map((member) => ({
+      members: artistBand.members.map((member: any) => ({
         userId: member.userId,
         role: member.role,
         createdAt: member.createdAt,

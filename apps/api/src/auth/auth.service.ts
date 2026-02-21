@@ -80,7 +80,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const user = await this.prisma.$transaction(async (tx) => {
+    const user = await this.prisma.$transaction(async (tx: any) => {
       const createdUser = await tx.user.create({
         data: {
           email: dto.email.toLowerCase(),

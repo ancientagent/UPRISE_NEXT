@@ -58,7 +58,7 @@ export class RegistrarService {
 
     const members = await this.prisma.registrarArtistMember.findMany({
       where: {
-        registrarEntryId: { in: entries.map((entry) => entry.id) },
+        registrarEntryId: { in: entries.map((entry: any) => entry.id) },
       },
       select: {
         registrarEntryId: true,
@@ -94,7 +94,7 @@ export class RegistrarService {
 
     return {
       total: entries.length,
-      entries: entries.map((entry) => {
+      entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
         const inviteCounts = countsByEntry.get(entry.id) ?? {
           pendingInviteCount: 0,
@@ -207,7 +207,9 @@ export class RegistrarService {
       where: { email: { in: memberEmails } },
       select: { id: true, email: true },
     });
-    const existingUserByEmail = new Map(existingUsers.map((existing) => [existing.email.toLowerCase(), existing]));
+    const existingUserByEmail = new Map(
+      existingUsers.map((existing: any) => [existing.email.toLowerCase(), existing] as const),
+    );
 
     await this.prisma.registrarArtistMember.createMany({
       data: dto.members.map((member) => {
@@ -291,7 +293,7 @@ export class RegistrarService {
     }
 
     try {
-      const created = await this.prisma.$transaction(async (tx) => {
+      const created = await this.prisma.$transaction(async (tx: any) => {
         const artistBand = await tx.artistBand.create({
           data: {
             name,
@@ -403,7 +405,7 @@ export class RegistrarService {
 
     for (const member of members) {
       const token = randomUUID();
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(async (tx: any) => {
         await tx.registrarArtistMember.update({
           where: { id: member.id },
           data: {
@@ -564,10 +566,10 @@ export class RegistrarService {
       orderBy: { createdAt: 'asc' },
     });
 
-    const byStatus = members.reduce<Record<string, number>>((acc, member) => {
+    const byStatus = members.reduce((acc: Record<string, number>, member: any) => {
       acc[member.inviteStatus] = (acc[member.inviteStatus] ?? 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     return {
       registrarEntryId: entry.id,

@@ -71,7 +71,7 @@ export class UsersService {
     return {
       ...user,
       hasArtistBand: artistBandCount > 0,
-      managedArtistBands: managedArtistBands.map((artistBand) => ({
+      managedArtistBands: managedArtistBands.map((artistBand: any) => ({
         id: artistBand.id,
         name: artistBand.name,
         slug: artistBand.slug,
@@ -228,7 +228,7 @@ export class UsersService {
       },
       canViewCollection,
       collectionShelves,
-      managedArtistBands: managedArtistBands.map((artistBand) => ({
+      managedArtistBands: managedArtistBands.map((artistBand: any) => ({
         id: artistBand.id,
         name: artistBand.name,
         slug: artistBand.slug,

@@ -7,6 +7,13 @@
 
 ## [Unreleased]
 ### Added
+- CI typecheck stabilization for API service callbacks:
+  - Added explicit callback parameter typing in API services to satisfy strict CI `noImplicitAny` checks.
+  - Affected files:
+    - `apps/api/src/artist-bands/artist-bands.service.ts`
+    - `apps/api/src/auth/auth.service.ts`
+    - `apps/api/src/registrar/registrar.service.ts`
+    - `apps/api/src/users/users.service.ts`
 - CI secrets-scan compatibility fix for DB QA runner:
   - Updated `scripts/qa-db.sh` to construct default `DATABASE_URL` from component vars (no inline credential URL literal).
   - Updated logging to print host/port only instead of full credential-bearing URL.
