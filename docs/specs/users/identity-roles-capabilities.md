@@ -162,6 +162,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Transitional read compatibility:
   - user detail/profile responses expose `isArtistTransitional` (explicit deprecation-prep alias).
   - legacy `isArtist` has been removed from user detail/profile response contracts.
+  - shared cross-app `User` type contract no longer includes `isArtist`.
   - canonical identity linkage remains `hasArtistBand`.
   - `GET /users/:id` and `GET /users/:id/profile` return `managedArtistBands` summary list for canonical linked-entity rendering, including per-entity `membershipRole`.
 - Error behavior:

@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Shared user type legacy-flag alignment (slice 28):
+  - Removed `isArtist` from `@uprise/types` `UserSchema` so shared app contracts no longer advertise the legacy field.
+  - Kept persistence + transitional API alias migration path unchanged.
 - isArtist contract-removal assertion hardening (slice 27):
   - Added explicit users-service assertions that `isArtist` is absent from both user detail and profile read payloads.
   - Keeps `isArtistTransitional` compatibility assertions in place during migration.

@@ -23,7 +23,6 @@ export const UserSchema = z.object({
   homeSceneTag: z.string().optional(),
   gpsVerified: z.boolean().default(false),
   isVerified: z.boolean().default(false),
-  isArtist: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
