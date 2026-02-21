@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Web transitional type cleanup + strict guard alignment (slice 31):
+  - Removed unused `isArtistTransitional` field from `/users/[id]` web profile type contract.
+  - Removed web profile page from strict `isArtist` approved path allowlist.
 - isArtist readiness guard allowlist tightening (slice 30):
   - Removed `packages/types/src/user.ts` from strict-report approved legacy path set.
   - Keeps strict guard aligned with current remaining transitional consumers only.

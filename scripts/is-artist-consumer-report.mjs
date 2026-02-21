@@ -17,7 +17,6 @@ const outputPath = outArg ? outArg.slice('--out='.length).trim() : '';
 const failOnUnapproved = args.includes('--fail-on-unapproved');
 const approvedLegacyPaths = new Set([
   'apps/api/src/users/users.service.ts',
-  'apps/web/src/app/users/[id]/page.tsx',
   'apps/api/test/users.profile.collection.test.ts',
 ]);
 
