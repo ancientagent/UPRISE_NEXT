@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Identity deprecation-prep bridge alias + readiness report (slice 15):
+  - Added `isArtistTransitional` alias on user read surfaces (`GET /users/:id`, `GET /users/:id/profile`) while keeping `isArtist` intact.
+  - Added `pnpm run report:isartist-consumers` (`scripts/is-artist-consumer-report.mjs`) to inventory in-repo `isArtist` call sites.
+  - Expanded user profile service test coverage for transitional alias parity.
 - Registrar web member-sync action (slice 14):
   - Added `Sync Eligible Members` action to `/registrar` status panel for materialized entries.
   - Action calls `POST /registrar/artist/:entryId/sync-members` and reports sync summary to submitter.

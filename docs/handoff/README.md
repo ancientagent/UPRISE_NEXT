@@ -25,6 +25,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-21_artist-band-identity-slice12-registrar-web-status-actions.md`](./2026-02-21_artist-band-identity-slice12-registrar-web-status-actions.md)
 - [`2026-02-21_artist-band-identity-slice13-member-sync-primitive.md`](./2026-02-21_artist-band-identity-slice13-member-sync-primitive.md)
 - [`2026-02-21_artist-band-identity-slice14-registrar-web-member-sync-action.md`](./2026-02-21_artist-band-identity-slice14-registrar-web-member-sync-action.md)
+- [`2026-02-21_artist-band-identity-slice15-isartist-transitional-alias-and-readiness-report.md`](./2026-02-21_artist-band-identity-slice15-isartist-transitional-alias-and-readiness-report.md)
 - [`2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md`](./2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md)
 - [`2026-02-22_plot_promotions_surface_wiring.md`](./2026-02-22_plot_promotions_surface_wiring.md)
 - [`2026-02-23_plot_home_scene_anchor_fallback.md`](./2026-02-23_plot_home_scene_anchor_fallback.md)

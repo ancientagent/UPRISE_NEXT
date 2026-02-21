@@ -48,6 +48,7 @@ describe('UsersService.getProfileWithCollection', () => {
 
     expect(result.canViewCollection).toBe(false);
     expect(result.collectionShelves).toEqual([]);
+    expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(false);
     expect(mockPrisma.collection.findMany).not.toHaveBeenCalled();
   });
@@ -92,10 +93,34 @@ describe('UsersService.getProfileWithCollection', () => {
     const result = await service.getProfileWithCollection('target', 'target');
 
     expect(result.canViewCollection).toBe(true);
+    expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(true);
     expect(result.collectionShelves).toHaveLength(7);
     const singles = result.collectionShelves.find((s) => s.shelf === 'singles');
     expect(singles?.itemCount).toBe(1);
     expect(singles?.items[0].signalId).toBe('signal-1');
+  });
+
+  it('findById returns transitional artist alias alongside canonical bridge', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'target',
+      username: 'target',
+      displayName: 'Target',
+      bio: null,
+      avatar: null,
+      coverImage: null,
+      isArtist: true,
+      city: 'Austin',
+      country: 'US',
+      collectionDisplayEnabled: true,
+      createdAt: new Date(),
+    });
+    mockPrisma.artistBandMember.count.mockResolvedValue(0);
+
+    const result = await service.findById('target');
+
+    expect(result.isArtist).toBe(true);
+    expect(result.isArtistTransitional).toBe(true);
+    expect(result.hasArtistBand).toBe(false);
   });
 });

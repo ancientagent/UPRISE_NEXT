@@ -35,6 +35,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `GET /users/:id/profile`
   - `POST /users/me/collection-display`
   - Transitional bridge: user read payloads now include `hasArtistBand` derived from canonical membership graph.
+  - Transitional alias: `GET /users/:id` and `GET /users/:id/profile` include `isArtistTransitional` mirroring legacy `isArtist`.
 - Schema fields currently present:
   - `User.isArtist` (temporary implementation flag; does not satisfy canonical Artist/Band linked-entity model)
   - `User.gpsVerified`
@@ -158,6 +159,11 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.
 - Protected routes require JWT bearer token.
+- Transitional read compatibility:
+  - user detail/profile responses expose both:
+    - `isArtist` (legacy compatibility)
+    - `isArtistTransitional` (explicit deprecation-prep alias)
+  - canonical identity linkage remains `hasArtistBand`.
 - Error behavior:
   - `401` for invalid credentials / missing auth
   - `403` for forbidden actions when role/civic constraints apply (as new capability routes are added)
@@ -181,6 +187,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Add registrar write flows so Artist/Band records are created only via Registrar submissions.
 - Add outbound delivery provider pipeline for queued `pending_email`/`queued` member invites.
 - Plan controlled deprecation path for `User.isArtist` after caller migration.
+- Use `pnpm run report:isartist-consumers` to inventory remaining in-repo `isArtist` call sites before removal slices.
 - Define Promoter capability registration and code exchange flow.
 - Define business capability model for Promotions/Print Shop workflows.
 

@@ -29,6 +29,7 @@ interface UserProfileData {
     city: string | null;
     country: string | null;
     isArtist: boolean;
+    isArtistTransitional?: boolean;
     collectionDisplayEnabled: boolean;
   };
   canViewCollection: boolean;

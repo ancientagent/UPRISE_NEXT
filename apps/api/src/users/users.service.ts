@@ -50,6 +50,7 @@ export class UsersService {
     });
     return {
       ...user,
+      isArtistTransitional: user.isArtist,
       hasArtistBand: artistBandCount > 0,
     };
   }
@@ -178,6 +179,7 @@ export class UsersService {
     return {
       user: {
         ...user,
+        isArtistTransitional: user.isArtist,
         hasArtistBand: artistBandCount > 0,
       },
       canViewCollection,
