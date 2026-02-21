@@ -65,6 +65,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-21_registrar-promoter-normalization-helper-consolidation-slice51.md`](./2026-02-21_registrar-promoter-normalization-helper-consolidation-slice51.md)
 - [`2026-02-21_registrar-promoter-submit-controller-error-path-test-slice53.md`](./2026-02-21_registrar-promoter-submit-controller-error-path-test-slice53.md)
 - [`2026-02-21_registrar-artist-entry-list-controller-parity-tests-slice54.md`](./2026-02-21_registrar-artist-entry-list-controller-parity-tests-slice54.md)
+- [`2026-02-21_registrar-artist-submit-controller-parity-tests-slice55.md`](./2026-02-21_registrar-artist-submit-controller-parity-tests-slice55.md)
 - [`2026-02-21_pr23-secrets-scan-fix-qa-db-url-pattern.md`](./2026-02-21_pr23-secrets-scan-fix-qa-db-url-pattern.md)
 - [`2026-02-21_pr23-ci-typecheck-fix-api-callback-typing.md`](./2026-02-21_pr23-ci-typecheck-fix-api-callback-typing.md)
 - [`2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md`](./2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md)
