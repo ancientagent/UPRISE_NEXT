@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter registration status detail read API (slice 43):
+  - Added `GET /registrar/promoter/:entryId` (auth required, submitter-scoped).
+  - Returns single promoter registration entry status with scene context and `productionName` payload summary.
+  - Added controller + service unit coverage for delegation, ownership guard, and not-found handling.
 - Registrar promoter registration status read API (slice 42):
   - Added `GET /registrar/promoter/entries` (auth required, submitter-scoped).
   - Returns reverse-chronological promoter registration entries with scene context and `productionName` payload summary.

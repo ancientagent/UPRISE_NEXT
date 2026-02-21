@@ -32,6 +32,15 @@ export class RegistrarController {
     return { success: true, data: result };
   }
 
+  @Get('promoter/:entryId')
+  async getMyPromoterRegistration(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.getPromoterRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
   @Post('artist')
   @ZodBody(ArtistBandRegistrationSchema)
   async submitArtistBandRegistration(

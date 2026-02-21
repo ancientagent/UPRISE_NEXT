@@ -77,4 +77,34 @@ describe('RegistrarController', () => {
       },
     });
   });
+
+  it('reads submitter promoter registration detail through registrar service', async () => {
+    const registrarService = {
+      getPromoterRegistration: jest.fn().mockResolvedValue({
+        id: 'reg-promoter-1',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: { productionName: 'Southside Signal Co.' },
+      }),
+    } as any;
+
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.getMyPromoterRegistration('reg-promoter-1', {
+      user: { userId: 'u-1' },
+    });
+
+    expect(registrarService.getPromoterRegistration).toHaveBeenCalledWith('u-1', 'reg-promoter-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'reg-promoter-1',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: { productionName: 'Southside Signal Co.' },
+      },
+    });
+  });
 });

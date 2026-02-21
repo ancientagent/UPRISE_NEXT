@@ -42,6 +42,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/promoter/entries` implemented.
   - Returns submitter-owned promoter registrar entries in reverse-chronological order.
   - Includes scene context and payload summary (`productionName`) for registration state tracking.
+- Registrar promoter status detail read surface (slice 43):
+  - `GET /registrar/promoter/:entryId` implemented.
+  - Submitter-only read for single promoter registrar entry status tracking.
+  - Returns scene context and payload summary (`productionName`) for the requested entry.
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
   - Registration payload now captures member roster:
@@ -146,6 +150,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | GET | `/registrar/artist/entries` | required | List submitter-owned Artist/Band registrar entries + member/invite summary counts |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registrar entries + scene context |
+| GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registrar entry detail + scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
 
