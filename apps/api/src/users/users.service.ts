@@ -48,10 +48,38 @@ export class UsersService {
     const artistBandCount = await this.prisma.artistBandMember.count({
       where: { userId: id },
     });
+    const managedArtistBands = await this.prisma.artistBand.findMany({
+      where: {
+        members: {
+          some: {
+            userId: id,
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        entityType: true,
+        members: {
+          where: { userId: id },
+          select: { role: true },
+          take: 1,
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
     return {
       ...user,
       isArtistTransitional: user.isArtist,
       hasArtistBand: artistBandCount > 0,
+      managedArtistBands: managedArtistBands.map((artistBand) => ({
+        id: artistBand.id,
+        name: artistBand.name,
+        slug: artistBand.slug,
+        entityType: artistBand.entityType,
+        membershipRole: artistBand.members[0]?.role ?? null,
+      })),
     };
   }
 

@@ -139,12 +139,29 @@ describe('UsersService.getProfileWithCollection', () => {
       createdAt: new Date(),
     });
     mockPrisma.artistBandMember.count.mockResolvedValue(0);
-    mockPrisma.artistBand.findMany.mockResolvedValue([]);
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      {
+        id: 'ab-9',
+        name: 'Signal Rise',
+        slug: 'signal-rise',
+        entityType: 'artist',
+        members: [{ role: 'owner' }],
+      },
+    ]);
 
     const result = await service.findById('target');
 
     expect(result.isArtist).toBe(true);
     expect(result.isArtistTransitional).toBe(true);
     expect(result.hasArtistBand).toBe(false);
+    expect(result.managedArtistBands).toEqual([
+      {
+        id: 'ab-9',
+        name: 'Signal Rise',
+        slug: 'signal-rise',
+        entityType: 'artist',
+        membershipRole: 'owner',
+      },
+    ]);
   });
 });

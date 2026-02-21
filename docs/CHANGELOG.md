@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- User detail managed-entity parity (slice 25):
+  - `GET /users/:id` now includes `managedArtistBands` summary (with `membershipRole`) to match profile contract parity.
+  - Added users service test assertions for user-detail managed-entity payload.
 - Repo hygiene for autonomous artifact/noise handling (slice 24):
   - Added `.gitignore` entries for `artifacts/` and generic `*:Zone.Identifier` files.
   - Prevents generated report artifacts and Windows metadata files from repeatedly surfacing as untracked noise.
