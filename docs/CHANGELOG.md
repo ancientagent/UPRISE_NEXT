@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter detail type-guard test hardening (slice 44):
+  - Added unit coverage ensuring `getPromoterRegistration` rejects non-promoter registrar entry types.
+  - Keeps submitter-scoped promoter detail read contract protected from cross-type entry access.
 - Registrar promoter registration status detail read API (slice 43):
   - Added `GET /registrar/promoter/:entryId` (auth required, submitter-scoped).
   - Returns single promoter registration entry status with scene context and `productionName` payload summary.

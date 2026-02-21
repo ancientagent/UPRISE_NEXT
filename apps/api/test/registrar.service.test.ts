@@ -321,6 +321,22 @@ describe('RegistrarService', () => {
     );
   });
 
+  it('rejects promoter detail read for non-promoter registrar entry type', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-artist-1',
+      type: 'artist_band_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { name: 'Static Signal' },
+      scene: null,
+    });
+
+    await expect(service.getPromoterRegistration('u-1', 'reg-artist-1')).rejects.toThrow(
+      ForbiddenException,
+    );
+  });
+
   it('throws when promoter detail entry does not exist', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
 
