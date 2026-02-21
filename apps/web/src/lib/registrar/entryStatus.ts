@@ -18,3 +18,10 @@ export function getRegistrarInviteLinks(params: {
     webAppUrl,
   };
 }
+
+export function getRegistrarSyncEligibleCount(params: {
+  existingUserCount?: number;
+  claimedCount?: number;
+}): number {
+  return (params.existingUserCount ?? 0) + (params.claimedCount ?? 0);
+}

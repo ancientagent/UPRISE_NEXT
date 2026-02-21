@@ -13,7 +13,11 @@ import {
   type RegistrarArtistMemberDraft,
   type RegistrarEntityType,
 } from '@/lib/registrar/artistRegistration';
-import { formatRegistrarEntryStatus, getRegistrarInviteLinks } from '@/lib/registrar/entryStatus';
+import {
+  formatRegistrarEntryStatus,
+  getRegistrarInviteLinks,
+  getRegistrarSyncEligibleCount,
+} from '@/lib/registrar/entryStatus';
 
 type HomeSceneResolution = {
   id: string;
@@ -535,6 +539,10 @@ export default function RegistrarPage() {
             {entries.map((entry) => {
               const inviteStatus = inviteStatusByEntryId[entry.id];
               const isBusy = busyEntryId === entry.id;
+              const syncEligibleCount = getRegistrarSyncEligibleCount({
+                existingUserCount: entry.existingUserCount,
+                claimedCount: entry.claimedCount,
+              });
 
               return (
                 <article key={entry.id} className="rounded-xl border border-black/15 p-4">
@@ -545,7 +553,7 @@ export default function RegistrarPage() {
                   </p>
                   <p className="mt-1 text-xs text-black/50">
                     Entry {entry.id} • members {entry.memberCount} • pending {entry.pendingInviteCount} • queued{' '}
-                    {entry.queuedInviteCount} • claimed {entry.claimedCount}
+                    {entry.queuedInviteCount} • claimed {entry.claimedCount} • existing {entry.existingUserCount}
                   </p>
 
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -564,9 +572,9 @@ export default function RegistrarPage() {
                       size="sm"
                       variant="outline"
                       onClick={() => handleSyncMembers(entry.id)}
-                      disabled={isBusy || !entry.artistBandId}
+                      disabled={isBusy || !entry.artistBandId || syncEligibleCount === 0}
                     >
-                      Sync Eligible Members
+                      Sync Eligible Members ({syncEligibleCount})
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => handleLoadInviteStatus(entry.id)} disabled={isBusy}>
                       Load Invite Status

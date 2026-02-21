@@ -82,6 +82,9 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
   - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.
   - Keeps membership linking user-driven (no automatic background sync).
+- Registrar web sync eligibility guard (slice 22):
+  - `Sync Eligible Members` action is enabled only when registrar entry has eligible linked members (`existing_user` + `claimed`).
+  - Action remains explicit and submitter-driven.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.

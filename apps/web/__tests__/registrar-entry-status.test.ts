@@ -1,4 +1,8 @@
-import { formatRegistrarEntryStatus, getRegistrarInviteLinks } from '../src/lib/registrar/entryStatus';
+import {
+  formatRegistrarEntryStatus,
+  getRegistrarInviteLinks,
+  getRegistrarSyncEligibleCount,
+} from '../src/lib/registrar/entryStatus';
 
 describe('registrar entry helpers', () => {
   it('formats registrar statuses', () => {
@@ -25,5 +29,11 @@ describe('registrar entry helpers', () => {
       mobileAppUrl: 'https://m.example/app',
       webAppUrl: 'https://web.example/band',
     });
+  });
+
+  it('computes sync-eligible member count from existing + claimed', () => {
+    expect(getRegistrarSyncEligibleCount({ existingUserCount: 2, claimedCount: 1 })).toBe(3);
+    expect(getRegistrarSyncEligibleCount({ existingUserCount: 0, claimedCount: 0 })).toBe(0);
+    expect(getRegistrarSyncEligibleCount({})).toBe(0);
   });
 });

@@ -32,6 +32,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-21_artist-band-identity-slice19-user-profile-linked-entity-read-resilience.md`](./2026-02-21_artist-band-identity-slice19-user-profile-linked-entity-read-resilience.md)
 - [`2026-02-21_artist-band-identity-slice20-profile-managed-entity-contract.md`](./2026-02-21_artist-band-identity-slice20-profile-managed-entity-contract.md)
 - [`2026-02-21_artist-band-identity-slice21-profile-managed-entity-role.md`](./2026-02-21_artist-band-identity-slice21-profile-managed-entity-role.md)
+- [`2026-02-21_artist-band-identity-slice22-registrar-sync-eligibility-guard.md`](./2026-02-21_artist-band-identity-slice22-registrar-sync-eligibility-guard.md)
 - [`2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md`](./2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md)
 - [`2026-02-22_plot_promotions_surface_wiring.md`](./2026-02-22_plot_promotions_surface_wiring.md)
 - [`2026-02-23_plot_home_scene_anchor_fallback.md`](./2026-02-23_plot_home_scene_anchor_fallback.md)

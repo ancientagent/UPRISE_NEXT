@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar web sync-eligibility guard (slice 22):
+  - `Sync Eligible Members` now uses explicit eligibility count (`existing + claimed`) from registrar entry summaries.
+  - Action is disabled when no eligible linked members exist.
+  - Added helper test coverage for sync-eligible count calculation.
 - User profile managed-entity role visibility (slice 21):
   - `managedArtistBands` profile contract now includes `membershipRole` from canonical membership rows.
   - `/users/[id]` linked-entity list now shows membership role when present.
