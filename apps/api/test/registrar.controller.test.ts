@@ -388,4 +388,39 @@ describe('RegistrarController', () => {
       { mobileAppUrl: 'https://m.uprise.app/download', webAppUrl: 'https://uprise.app/band' },
     );
   });
+
+  it('syncs artist/band members through registrar service', async () => {
+    const registrarService = {
+      syncArtistBandMembers: jest.fn().mockResolvedValue({
+        registrarEntryId: 'reg-artist-2',
+        syncedCount: 2,
+        alreadyLinkedCount: 1,
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.syncArtistBandMembers('reg-artist-2', { user: { userId: 'u-1' } });
+
+    expect(registrarService.syncArtistBandMembers).toHaveBeenCalledWith('u-1', 'reg-artist-2');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-artist-2',
+        syncedCount: 2,
+        alreadyLinkedCount: 1,
+      },
+    });
+  });
+
+  it('propagates artist/band member sync errors from registrar service', async () => {
+    const registrarService = {
+      syncArtistBandMembers: jest.fn().mockRejectedValue(new ForbiddenException('Only the submitter can sync members')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(controller.syncArtistBandMembers('reg-artist-2', { user: { userId: 'u-1' } })).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(registrarService.syncArtistBandMembers).toHaveBeenCalledWith('u-1', 'reg-artist-2');
+  });
 });
