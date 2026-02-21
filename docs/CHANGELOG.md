@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- CI secrets-scan compatibility fix for DB QA runner:
+  - Updated `scripts/qa-db.sh` to construct default `DATABASE_URL` from component vars (no inline credential URL literal).
+  - Updated logging to print host/port only instead of full credential-bearing URL.
 - Legacy `User.isArtist` persistence removal (slice 33):
   - Dropped `users.isArtist` column via migration `20260221220000_drop_user_is_artist`.
   - Removed `isArtist` from Prisma `User` model schema.

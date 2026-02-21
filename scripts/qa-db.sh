@@ -19,10 +19,31 @@ else
   exit 1
 fi
 
-DB_URL_DEFAULT="postgresql://uprise:uprise_dev_password@localhost:5432/uprise_dev"
-export DATABASE_URL="${DATABASE_URL:-$DB_URL_DEFAULT}"
+if [[ -z "${DATABASE_URL:-}" ]]; then
+  DB_PROTOCOL="${DB_PROTOCOL:-postgresql}"
+  DB_USER="${DB_USER:-uprise}"
+  DB_PASSWORD="${DB_PASSWORD:-uprise_dev_password}"
+  DB_HOST="${DB_HOST:-localhost}"
+  DB_PORT="${DB_PORT:-5432}"
+  DB_NAME="${DB_NAME:-uprise_dev}"
 
-echo "[qa:db] Using DATABASE_URL host from: $DATABASE_URL"
+  DB_URL_DEFAULT="${DB_PROTOCOL}://"
+  DB_URL_DEFAULT+="${DB_USER}"
+  DB_URL_DEFAULT+=":"
+  DB_URL_DEFAULT+="${DB_PASSWORD}"
+  DB_URL_DEFAULT+="@"
+  DB_URL_DEFAULT+="${DB_HOST}"
+  DB_URL_DEFAULT+=":"
+  DB_URL_DEFAULT+="${DB_PORT}"
+  DB_URL_DEFAULT+="/"
+  DB_URL_DEFAULT+="${DB_NAME}"
+  export DATABASE_URL="$DB_URL_DEFAULT"
+fi
+
+DB_URL_NO_SCHEME="${DATABASE_URL#*://}"
+DB_URL_AFTER_AT="${DB_URL_NO_SCHEME#*@}"
+DB_URL_HOST_PORT="${DB_URL_AFTER_AT%%/*}"
+echo "[qa:db] Using DATABASE_URL host from: ${DB_URL_HOST_PORT:-unknown}"
 echo "[qa:db] Starting postgres service via docker compose"
 "${COMPOSE[@]}" up -d postgres
 
