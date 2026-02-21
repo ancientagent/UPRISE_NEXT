@@ -44,6 +44,7 @@ describe('RegistrarController', () => {
     const registrarService = {
       listPromoterRegistrations: jest.fn().mockResolvedValue({
         total: 1,
+        countsByStatus: { submitted: 1 },
         entries: [
           {
             id: 'reg-promoter-1',
@@ -65,6 +66,7 @@ describe('RegistrarController', () => {
       success: true,
       data: {
         total: 1,
+        countsByStatus: { submitted: 1 },
         entries: [
           {
             id: 'reg-promoter-1',

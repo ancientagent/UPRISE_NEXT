@@ -245,6 +245,7 @@ describe('RegistrarService', () => {
       }),
     );
     expect(result.total).toBe(1);
+    expect(result.countsByStatus).toEqual({ submitted: 1 });
     expect(result.entries[0]).toEqual(
       expect.objectContaining({
         id: 'reg-promoter-2',
@@ -263,6 +264,7 @@ describe('RegistrarService', () => {
 
     expect(result).toEqual({
       total: 0,
+      countsByStatus: {},
       entries: [],
     });
   });

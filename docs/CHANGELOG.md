@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter status list summary counts (slice 45):
+  - `GET /registrar/promoter/entries` now returns top-level `countsByStatus` across submitter-owned entries.
+  - Added controller + service unit test updates for status-summary list behavior and empty-state shape.
 - Registrar promoter detail type-guard test hardening (slice 44):
   - Added unit coverage ensuring `getPromoterRegistration` rejects non-promoter registrar entry types.
   - Keeps submitter-scoped promoter detail read contract protected from cross-type entry access.
