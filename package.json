@@ -20,7 +20,7 @@
     "typecheck": "turbo run typecheck",
     "infra-policy-check": "tsx scripts/infra-policy-check.ts",
     "infra:check:web": "tsx scripts/infra-policy-check.ts",
-    "qa:identity": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test:identity && pnpm --filter api typecheck",
+    "qa:identity": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run report:isartist-consumers && pnpm --filter api test:identity && pnpm --filter api typecheck",
     "qa:db": "bash scripts/qa-db.sh",
     "verify": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run typecheck",
     "verify:full": "pnpm run verify && pnpm run test && pnpm run build",

@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- isArtist deprecation-readiness workflow hardening (slice 16):
+  - Enhanced `scripts/is-artist-consumer-report.mjs` with `--json` and `--out=<path>` modes.
+  - Updated `qa:identity` command to include `pnpm run report:isartist-consumers`.
+  - Added runbook `docs/solutions/USER_ISARTIST_DEPRECATION_READINESS.md`.
 - Identity deprecation-prep bridge alias + readiness report (slice 15):
   - Added `isArtistTransitional` alias on user read surfaces (`GET /users/:id`, `GET /users/:id/profile`) while keeping `isArtist` intact.
   - Added `pnpm run report:isartist-consumers` (`scripts/is-artist-consumer-report.mjs`) to inventory in-repo `isArtist` call sites.
