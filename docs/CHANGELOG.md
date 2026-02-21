@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist materialize controller parity tests (slice 56):
+  - Added controller test asserting `materializeArtistBandRegistration` delegates to service and returns wrapped success payload.
+  - Added controller test asserting service-layer errors are propagated for artist materialize requests.
 - Registrar artist submit controller parity tests (slice 55):
   - Added controller test asserting `submitArtistBandRegistration` delegates to service and returns wrapped success payload.
   - Added controller test asserting service-layer errors are propagated for artist submit requests.

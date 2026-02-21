@@ -267,4 +267,39 @@ describe('RegistrarController', () => {
     );
     expect(registrarService.submitArtistBandRegistration).toHaveBeenCalledWith('u-1', dto);
   });
+
+  it('materializes artist/band registration through registrar service', async () => {
+    const registrarService = {
+      materializeArtistBandRegistration: jest.fn().mockResolvedValue({
+        registrarEntryId: 'reg-artist-2',
+        artistBandId: 'artist-band-1',
+        created: true,
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.materializeArtistBandRegistration('reg-artist-2', { user: { userId: 'u-1' } });
+
+    expect(registrarService.materializeArtistBandRegistration).toHaveBeenCalledWith('u-1', 'reg-artist-2');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-artist-2',
+        artistBandId: 'artist-band-1',
+        created: true,
+      },
+    });
+  });
+
+  it('propagates artist/band materialize errors from registrar service', async () => {
+    const registrarService = {
+      materializeArtistBandRegistration: jest.fn().mockRejectedValue(new NotFoundException('Registrar entry not found')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.materializeArtistBandRegistration('missing-entry', { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(NotFoundException);
+    expect(registrarService.materializeArtistBandRegistration).toHaveBeenCalledWith('u-1', 'missing-entry');
+  });
 });
