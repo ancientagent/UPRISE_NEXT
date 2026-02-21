@@ -149,6 +149,24 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(NotFoundException);
   });
 
+  it('rejects promoter registration when requester user is missing', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-1',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue(null);
+
+    await expect(
+      service.submitPromoterRegistration('u-missing', {
+        sceneId: 'scene-1',
+        productionName: 'Southside Signal Co.',
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
   it('rejects promoter registration for non city-tier scene', async () => {
     mockPrisma.community.findUnique.mockResolvedValue({
       id: 'scene-state',
