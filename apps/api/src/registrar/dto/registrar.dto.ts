@@ -2,9 +2,10 @@ import { z } from 'zod';
 
 export const ArtistBandRegistrationSchema = z.object({
   sceneId: z.string().uuid(),
-  name: z.string().min(1).max(140),
+  name: z.string().trim().min(1).max(140),
   slug: z
     .string()
+    .trim()
     .min(2)
     .max(140)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
@@ -12,10 +13,10 @@ export const ArtistBandRegistrationSchema = z.object({
   members: z
     .array(
       z.object({
-        name: z.string().min(1).max(140),
-        email: z.string().email(),
-        city: z.string().min(1).max(120),
-        instrument: z.string().min(1).max(120),
+        name: z.string().trim().min(1).max(140),
+        email: z.string().trim().email(),
+        city: z.string().trim().min(1).max(120),
+        instrument: z.string().trim().min(1).max(120),
       }),
     )
     .min(1)
@@ -33,7 +34,7 @@ export type DispatchArtistInviteDto = z.infer<typeof DispatchArtistInviteSchema>
 
 export const PromoterRegistrationSchema = z.object({
   sceneId: z.string().uuid(),
-  productionName: z.string().min(1).max(140),
+  productionName: z.string().trim().min(1).max(140),
 });
 
 export type PromoterRegistrationDto = z.infer<typeof PromoterRegistrationSchema>;

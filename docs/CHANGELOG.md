@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar intake schema whitespace hardening (slice 40):
+  - `PromoterRegistrationSchema` now trims and rejects whitespace-only `productionName`.
+  - `ArtistBandRegistrationSchema` now trims core identity fields (`name`, `slug`, member `name/email/city/instrument`) and rejects whitespace-only required fields.
+  - Added `apps/api/test/registrar.dto.test.ts` coverage for trim + rejection behavior.
 - Registrar promoter QA lane shortcut (slice 39):
   - Added root script `qa:registrar-promoter` to run docs lint, infra policy check, targeted registrar promoter tests, and API typecheck in one command.
   - Intended for repeatable, low-friction per-slice validation on registrar promoter work.
