@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter QA lane web-typecheck parity (slice 47):
+  - Updated `qa:registrar-promoter` to include `pnpm --filter web typecheck`.
+  - Keeps consolidated registrar QA lane aligned with required per-slice validation gate.
 - Registrar promoter list aggregation + payload-normalization tests (slice 46):
   - Added unit coverage for mixed-status `countsByStatus` aggregation in promoter list reads.
   - Added unit coverage for `productionName` null-fallback when payload field is missing.

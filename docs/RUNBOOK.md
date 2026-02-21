@@ -256,7 +256,7 @@ pnpm --filter api typecheck
 # Run tests with verbose output
 pnpm --filter web test --verbose
 
-# Registrar promoter QA lane (docs + policy + targeted tests + API typecheck)
+# Registrar promoter QA lane (docs + policy + targeted tests + API/web typecheck)
 pnpm run qa:registrar-promoter
 
 # Run specific test file
