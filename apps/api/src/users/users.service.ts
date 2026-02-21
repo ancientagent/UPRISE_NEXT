@@ -188,6 +188,11 @@ export class UsersService {
         name: true,
         slug: true,
         entityType: true,
+        members: {
+          where: { userId: targetUserId },
+          select: { role: true },
+          take: 1,
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -200,7 +205,13 @@ export class UsersService {
       },
       canViewCollection,
       collectionShelves,
-      managedArtistBands,
+      managedArtistBands: managedArtistBands.map((artistBand) => ({
+        id: artistBand.id,
+        name: artistBand.name,
+        slug: artistBand.slug,
+        entityType: artistBand.entityType,
+        membershipRole: artistBand.members[0]?.role ?? null,
+      })),
     };
   }
 

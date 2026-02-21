@@ -40,6 +40,7 @@ interface UserProfileData {
     name: string;
     slug: string;
     entityType: string;
+    membershipRole: string | null;
   }>;
 }
 
@@ -208,6 +209,7 @@ export default function UserProfilePage() {
                   <p className="text-sm font-medium text-black">{entity.name}</p>
                   <p className="text-xs text-black/60">
                     {formatArtistBandEntityType(entity.entityType)} • {entity.slug}
+                    {entity.membershipRole ? ` • ${entity.membershipRole}` : ''}
                   </p>
                 </li>
               ))}

@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- User profile managed-entity role visibility (slice 21):
+  - `managedArtistBands` profile contract now includes `membershipRole` from canonical membership rows.
+  - `/users/[id]` linked-entity list now shows membership role when present.
 - User profile managed-entity contract consolidation (slice 20):
   - `GET /users/:id/profile` now includes `managedArtistBands` summary list.
   - `/users/[id]` now renders linked entities from profile response directly (single-call profile contract).

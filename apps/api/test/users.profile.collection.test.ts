@@ -79,6 +79,7 @@ describe('UsersService.getProfileWithCollection', () => {
         name: 'Static Signal',
         slug: 'static-signal',
         entityType: 'band',
+        members: [{ role: 'owner' }],
       },
     ]);
 
@@ -114,6 +115,7 @@ describe('UsersService.getProfileWithCollection', () => {
         name: 'Static Signal',
         slug: 'static-signal',
         entityType: 'band',
+        membershipRole: 'owner',
       },
     ]);
     expect(result.collectionShelves).toHaveLength(7);
