@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Legacy `User.isArtist` persistence removal (slice 33):
+  - Dropped `users.isArtist` column via migration `20260221220000_drop_user_is_artist`.
+  - Removed `isArtist` from Prisma `User` model schema.
+  - Regenerated Prisma client and kept strict `isArtist` readiness report at zero references.
 - User detail/profile transitional alias removal (slice 32):
   - Removed `isArtistTransitional` from `GET /users/:id` and `GET /users/:id/profile` response contracts.
   - Users service no longer reads `isArtist` for user detail/profile payload mapping.

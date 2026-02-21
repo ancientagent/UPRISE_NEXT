@@ -1,6 +1,6 @@
 # 2026-02-21 — Artist/Band Identity Remaining Phased Plan (Post Slice 28)
 
-## Evidence Snapshot (as of 2026-02-21, post slice 32)
+## Evidence Snapshot (as of 2026-02-21, post slice 33)
 - Strict readiness report: `pnpm run report:isartist-consumers:strict`
   - files with `isArtist` references: 0
   - unapproved legacy references: 0
@@ -8,13 +8,10 @@
 - Contract absence assertions added (slice 27).
 - Shared `@uprise/types` user schema no longer includes `isArtist` (slice 28).
 - Transitional alias removed from user detail/profile API contracts (slice 32).
-- Remaining legacy field location is persistence layer only (`apps/api/prisma/schema.prisma`).
+- Legacy persistence marker removed from schema via migration `20260221220000_drop_user_is_artist` (slice 33).
 
 ## Remaining Slices
-1. Slice 33 (destructive persistence step)
-- Drop `User.isArtist` from Prisma schema via explicit migration.
-- Remove all read/write code paths and fixtures using the field.
-- Regenerate Prisma client and run full verify gates.
+- Identity deprecation path complete for `User.isArtist` (no remaining slices in this track).
 
 ## Migration Strategy
 - Keep additive/contract-hardening slices before destructive removals.

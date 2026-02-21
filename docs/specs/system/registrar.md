@@ -89,6 +89,8 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Identity contract migration alignment (slice 26):
   - User detail/profile read contracts no longer expose legacy `isArtist`.
   - Transitional alias `isArtistTransitional` is also removed from user detail/profile read contracts.
+- Identity persistence cleanup alignment (slice 33):
+  - Legacy `User.isArtist` column removed from persistence schema after caller migration reached zero.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
@@ -96,7 +98,6 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
-- Final removal of legacy `User.isArtist` persistence marker after compatibility migration closes.
 
 ## Non-Functional Requirements
 - Traceability: registrar actions must be auditable.

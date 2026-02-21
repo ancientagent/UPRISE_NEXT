@@ -37,14 +37,13 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Transitional bridge: user read payloads now include `hasArtistBand` derived from canonical membership graph.
   - Legacy `isArtist` and `isArtistTransitional` are removed from user detail/profile response contracts.
 - Schema fields currently present:
-  - `User.isArtist` (temporary implementation flag; does not satisfy canonical Artist/Band linked-entity model)
   - `User.gpsVerified`
   - `User.collectionDisplayEnabled`
   - home-scene fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`)
 - Canonical Artist/Band identity foundation (slice 1, additive/non-breaking):
   - `ArtistBand` model added for registrar-linked music entities.
   - `ArtistBandMember` model added for many-to-many User<->Artist/Band management.
-  - Transitional persistence compatibility retained: `User.isArtist` column remains unchanged while response contracts migrate.
+  - Transitional legacy marker removed in slice 33 (`User.isArtist` dropped from persistence).
 - Read-only Artist/Band API surface (auth required):
   - `GET /artist-bands/:id`
   - `GET /artist-bands?userId=:id` (defaults to authenticated user when omitted)
@@ -110,7 +109,6 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Identity and auth fields (`email`, `username`, `displayName`, `password`)
   - Verification fields (`gpsVerified`, `isVerified`)
   - Home-scene affinity fields
-  - Transitional artist marker (`isArtist`) pending canonical Artist/Band linked-entity model implementation
 - `ArtistBand`
   - Canonical artist/band identity entity
   - Registrar linkage placeholder (`registrarEntryRef`) for registrar workflow handoff
@@ -134,6 +132,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `20260220141000_add_registrar_entries` (adds `registrar_entries` for Artist/Band registration submissions)
 - `20260220170000_add_registrar_artist_members` (adds `registrar_artist_members` for registration member roster + invite state)
 - `20260220183000_add_registrar_invite_delivery` (adds invite token fields + `registrar_invite_deliveries` queue persistence)
+- `20260221220000_drop_user_is_artist` (removes legacy `users.isArtist` transitional marker)
 
 ## API Design
 ### Endpoints
@@ -187,8 +186,6 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Expand canonical Artist/Band implementation from read-only foundation to full registrar-gated create/update lifecycle.
 - Add registrar write flows so Artist/Band records are created only via Registrar submissions.
 - Add outbound delivery provider pipeline for queued `pending_email`/`queued` member invites.
-- Plan controlled deprecation path for `User.isArtist` after caller migration.
-- Use `pnpm run report:isartist-consumers` to inventory remaining in-repo `isArtist` call sites before removal slices.
 - See phased execution note: `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
 - Define Promoter capability registration and code exchange flow.
 - Define business capability model for Promotions/Print Shop workflows.

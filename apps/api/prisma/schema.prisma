@@ -35,7 +35,6 @@ model User {
   collectionDisplayEnabled Boolean @default(false)
   gpsVerified         Boolean   @default(false)
   isVerified  Boolean   @default(false)
-  isArtist    Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
