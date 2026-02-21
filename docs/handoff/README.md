@@ -20,6 +20,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-19_scene_map_endpoint_and_plot_wiring.md`](./2026-02-19_scene_map_endpoint_and_plot_wiring.md)
 - [`2026-02-20_plot_seed_feed_wiring.md`](./2026-02-20_plot_seed_feed_wiring.md)
 - [`2026-02-21_plot_events_surface_wiring.md`](./2026-02-21_plot_events_surface_wiring.md)
+- [`2026-02-21_registrar-web-artist-band-intake-slice10.md`](./2026-02-21_registrar-web-artist-band-intake-slice10.md)
 - [`2026-02-22_plot_promotions_surface_wiring.md`](./2026-02-22_plot_promotions_surface_wiring.md)
 - [`2026-02-23_plot_home_scene_anchor_fallback.md`](./2026-02-23_plot_home_scene_anchor_fallback.md)
 - [`2026-02-23_drift_correction_placeholder_actions.md`](./2026-02-23_drift_correction_placeholder_actions.md)

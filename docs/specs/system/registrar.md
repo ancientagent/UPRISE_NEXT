@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-20`
+**Last Updated:** `2026-02-21`
 
 ## Overview & Purpose
 Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
@@ -58,6 +58,11 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/artist/:entryId/invites` implemented.
   - Submitter-only access.
   - Returns roster rows plus invite status counts (`pending_email`, `queued`, `claimed`, etc.).
+- Registrar web entrypoint + intake UI (slice 10):
+  - Plot scene activity panel includes explicit `Open Registrar` action.
+  - `/registrar` route now presents `Band / Artist Registration` option before form entry.
+  - Form captures `name`, `entityType`, and member roster (`name`, `email`, `city`, `instrument`).
+  - Client resolves Home Scene tuple to city-tier scene ID and enforces GPS-verified submit gate before API call.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
@@ -108,6 +113,8 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.
 - Users should be able to inspect registration state and required next actions.
+- Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
+- Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.
 
 ## Acceptance Tests / Test Plan
 - Registrar submissions are Scene-scoped and auditable.

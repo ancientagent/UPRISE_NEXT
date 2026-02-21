@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Registrar web intake surface (slice 10):
+  - Added Plot action `Open Registrar` in `apps/web/src/app/plot/page.tsx`.
+  - Added `/registrar` page with explicit `Band / Artist Registration` action selection before form submission.
+  - Added Artist/Band registrar form fields for entity identity + member roster (`name`, `email`, `city`, `instrument`).
+  - Form resolves Home Scene via `/communities/resolve-home` and blocks submit unless account is GPS-verified.
+  - Added web helper unit tests: `apps/web/__tests__/registrar-artist-registration.test.ts`.
 - DB-backed QA lane:
   - Added `pnpm run qa:db` (script: `scripts/qa-db.sh`) to auto-start local PostGIS via Docker Compose, run Prisma migrate deploy, and execute DB-dependent API tests.
   - Added API command `pnpm --filter api test:db` targeting `communities.test.ts`.

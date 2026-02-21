@@ -287,6 +287,11 @@ export default function PlotPage() {
               <p className="text-sm text-black/60">
                 This panel shows community activity summaries, registrar access, and scene map data.
               </p>
+              <div className="mt-3">
+                <Button size="sm" variant="outline" onClick={() => router.push('/registrar')}>
+                  Open Registrar
+                </Button>
+              </div>
               <p className="text-xs text-black/50 mt-2">
                 Current tier: <span className="capitalize">{selectedTier}</span>
                 {selectedCommunity && (

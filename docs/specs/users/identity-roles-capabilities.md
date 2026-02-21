@@ -3,7 +3,7 @@
 **ID:** `USER-IDENTITY`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-20`
+**Last Updated:** `2026-02-21`
 
 ## Overview & Purpose
 Defines identity and permission boundaries for UPRISE. Canon model: one base `User` identity, linked Artist/Band entities registered via the Registrar, and additive role capabilities where explicitly defined (for example Promoter).
@@ -59,6 +59,12 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
   - Claim flow sets Home Scene defaults from registrar scene context (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`).
   - Claimed accounts start with `gpsVerified = false` (GPS still required for voting validation).
+- Web registrar entry + Artist/Band action intake (slice 10):
+  - Plot now exposes Registrar entrypoint action (`Open Registrar`) from Home Scene civic surface.
+  - `/registrar` web route includes explicit `Band / Artist Registration` action selection.
+  - Registration form submits to `POST /registrar/artist` with required roster fields:
+    - `name`, `email`, `city`, `instrument`.
+  - Client flow resolves Home Scene ID from canonical tuple and blocks submit until `gpsVerified` is true.
 
 ### Deferred (Not Implemented Yet)
 - Promoter registration flow and capability grants.
@@ -145,6 +151,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 
 ## Web UI / Client Behavior
 - Onboarding establishes Home Scene and then optional GPS verification for voting rights.
+- Plot provides explicit Registrar navigation (`Open Registrar`) for civic registration actions.
+- Registrar web flow supports explicit Artist/Band registration submission from listener identity.
 - Capability management UI beyond base listener flows is deferred.
 
 ## Acceptance Tests / Test Plan
