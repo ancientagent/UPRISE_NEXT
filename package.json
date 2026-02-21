@@ -20,6 +20,7 @@
     "typecheck": "turbo run typecheck",
     "infra-policy-check": "tsx scripts/infra-policy-check.ts",
     "infra:check:web": "tsx scripts/infra-policy-check.ts",
+    "qa:identity": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test:identity && pnpm --filter api typecheck",
     "verify": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run typecheck",
     "verify:full": "pnpm run verify && pnpm run test && pnpm run build"
   },

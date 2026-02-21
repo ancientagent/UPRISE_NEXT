@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- QA mode command lane for identity/registrar:
+  - Added root script `pnpm run qa:identity` to run docs lint, infra policy check, focused identity/registrar API tests, and API typecheck in one pass.
+  - Added API script `pnpm --filter api test:identity` for focused registrar/auth/user identity test suites.
 - Invite prefill read endpoint (slice 9):
   - Added `POST /auth/invite-preview` to resolve invited member and Home Scene context before invite claim registration.
   - Expanded auth invite tests for preview success + claimed-token rejection.
