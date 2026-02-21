@@ -105,8 +105,14 @@ export class RegistrarService {
       orderBy: { createdAt: 'desc' },
     });
 
+    const countsByStatus = entries.reduce((acc: Record<string, number>, entry: any) => {
+      acc[entry.status] = (acc[entry.status] ?? 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
     return {
       total: entries.length,
+      countsByStatus,
       entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
         return {
