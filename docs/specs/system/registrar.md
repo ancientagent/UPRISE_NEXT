@@ -34,6 +34,14 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submission constraints enforced in service:
     - city-tier Scene only,
     - request Scene must match authenticated user's Home Scene.
+- Registrar promoter initiation primitive (slice 34):
+  - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
+  - Captures named production identity payload (`productionName`) for downstream capability processing.
+  - Submission remains initiation-only (no automatic capability grant).
+- Registrar promoter status list read surface (slice 42):
+  - `GET /registrar/promoter/entries` implemented.
+  - Returns submitter-owned promoter registrar entries in reverse-chronological order.
+  - Includes scene context and payload summary (`productionName`) for registration state tracking.
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
   - Registration payload now captures member roster:
@@ -94,7 +102,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
-- Registrar-gated create/update writes for Artist/Band entities beyond submission intake.
+- Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
@@ -137,6 +145,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 | GET | `/registrar/artist/entries` | required | List submitter-owned Artist/Band registrar entries + member/invite summary counts |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
+| GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registrar entries + scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
 

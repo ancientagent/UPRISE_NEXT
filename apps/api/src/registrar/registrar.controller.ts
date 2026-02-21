@@ -7,12 +7,30 @@ import {
   type ArtistBandRegistrationDto,
   DispatchArtistInviteSchema,
   type DispatchArtistInviteDto,
+  PromoterRegistrationSchema,
+  type PromoterRegistrationDto,
 } from './dto/registrar.dto';
 
 @Controller('registrar')
 @UseGuards(JwtAuthGuard)
 export class RegistrarController {
   constructor(private readonly registrarService: RegistrarService) {}
+
+  @Post('promoter')
+  @ZodBody(PromoterRegistrationSchema)
+  async submitPromoterRegistration(
+    @Body() dto: PromoterRegistrationDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const entry = await this.registrarService.submitPromoterRegistration(req.user.userId, dto);
+    return { success: true, data: entry };
+  }
+
+  @Get('promoter/entries')
+  async listMyPromoterRegistrations(@Request() req: { user: { userId: string } }) {
+    const result = await this.registrarService.listPromoterRegistrations(req.user.userId);
+    return { success: true, data: result };
+  }
 
   @Post('artist')
   @ZodBody(ArtistBandRegistrationSchema)

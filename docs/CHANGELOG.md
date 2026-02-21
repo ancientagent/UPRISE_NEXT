@@ -7,6 +7,35 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter registration status read API (slice 42):
+  - Added `GET /registrar/promoter/entries` (auth required, submitter-scoped).
+  - Returns reverse-chronological promoter registration entries with scene context and `productionName` payload summary.
+  - Added controller + service unit coverage for delegation, response shape, list results, and empty state.
+- Registrar promoter QA lane coverage update (slice 41):
+  - `qa:registrar-promoter` now includes `registrar.dto.test.ts` alongside controller/service registrar suites.
+  - Keeps the consolidated registrar promoter lane aligned with current validation surface.
+- Registrar intake schema whitespace hardening (slice 40):
+  - `PromoterRegistrationSchema` now trims and rejects whitespace-only `productionName`.
+  - `ArtistBandRegistrationSchema` now trims core identity fields (`name`, `slug`, member `name/email/city/instrument`) and rejects whitespace-only required fields.
+  - Added `apps/api/test/registrar.dto.test.ts` coverage for trim + rejection behavior.
+- Registrar promoter QA lane shortcut (slice 39):
+  - Added root script `qa:registrar-promoter` to run docs lint, infra policy check, targeted registrar promoter tests, and API typecheck in one command.
+  - Intended for repeatable, low-friction per-slice validation on registrar promoter work.
+- Registrar promoter initiation requester-not-found guard test (slice 38):
+  - Added service coverage for missing requester user on promoter registration submission (`NotFoundException`).
+- Prisma migration drift recovery playbook (slice 37):
+  - Added `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md` with local reset/deploy path, non-disposable DB guardrails, and verification steps.
+- Registrar promoter initiation guardrail test expansion (slice 36):
+  - Added service coverage for promoter registration rejection cases:
+    - missing scene,
+    - non city-tier scene,
+    - requester without established Home Scene.
+- Registrar promoter route delegation test hardening (slice 35):
+  - Added `apps/api/test/registrar.controller.test.ts` to assert `POST /registrar/promoter` controller delegation + response shape wrapper.
+- Registrar promoter initiation primitive (slice 34):
+  - Added endpoint `POST /registrar/promoter` for Home Scene-scoped promoter registration submissions.
+  - Stores named production identity payload (`productionName`) in `RegistrarEntry` (`type: promoter_registration`).
+  - Added registrar service unit coverage for submit success + Home Scene boundary enforcement.
 - CI typecheck stabilization for API service callbacks:
   - Added explicit callback parameter typing in API services to satisfy strict CI `noImplicitAny` checks.
   - Affected files:
