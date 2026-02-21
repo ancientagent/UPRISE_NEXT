@@ -7,6 +7,13 @@
 
 ## [Unreleased]
 ### Added
+- Registrar web status/action panel (slice 12):
+  - `/registrar` now loads submitter-owned entries from `GET /registrar/artist/entries`.
+  - Added explicit follow-up UI actions for existing registrar APIs:
+    - materialize entry,
+    - queue member invites,
+    - load invite status summary.
+  - Added web helper utilities/tests for registrar status formatting + invite link payload defaults.
 - Registrar Artist/Band entry list read surface (slice 11):
   - Added endpoint `GET /registrar/artist/entries` for submitter-owned registration tracking.
   - Returns reverse-chronological entry list with scene context and per-entry member/invite summary counts.

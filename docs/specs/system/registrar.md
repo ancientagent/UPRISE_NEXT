@@ -67,6 +67,13 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `/registrar` route now presents `Band / Artist Registration` option before form entry.
   - Form captures `name`, `entityType`, and member roster (`name`, `email`, `city`, `instrument`).
   - Client resolves Home Scene tuple to city-tier scene ID and enforces GPS-verified submit gate before API call.
+- Registrar web status/action panel (slice 12):
+  - `/registrar` now reads submitter-owned registration entries from `GET /registrar/artist/entries`.
+  - Exposes next-step actions for existing registrar APIs:
+    - materialize registration (`POST /registrar/artist/:entryId/materialize`),
+    - queue invites (`POST /registrar/artist/:entryId/dispatch-invites`),
+    - read invite summary (`GET /registrar/artist/:entryId/invites`).
+  - Displays per-entry invite lifecycle summary counts for submitter follow-up.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
@@ -120,6 +127,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Users should be able to inspect registration state and required next actions.
 - Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
 - Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.
+- Registrar web panel may only expose explicit, spec-authorized registrar follow-up actions (no auto-materialization/auto-dispatch).
 
 ## Acceptance Tests / Test Plan
 - Registrar submissions are Scene-scoped and auditable.

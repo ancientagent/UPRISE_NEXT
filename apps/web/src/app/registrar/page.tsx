@@ -13,6 +13,7 @@ import {
   type RegistrarArtistMemberDraft,
   type RegistrarEntityType,
 } from '@/lib/registrar/artistRegistration';
+import { formatRegistrarEntryStatus, getRegistrarInviteLinks } from '@/lib/registrar/entryStatus';
 
 type HomeSceneResolution = {
   id: string;
@@ -28,6 +29,45 @@ type RegistrationSubmitResult = {
   memberCount: number;
   pendingInviteCount: number;
   existingMemberCount: number;
+};
+
+type RegistrarArtistEntry = {
+  id: string;
+  type: string;
+  status: string;
+  sceneId: string;
+  artistBandId: string | null;
+  payload: {
+    name: string | null;
+    slug: string | null;
+    entityType: 'artist' | 'band' | null;
+  };
+  scene: {
+    id: string;
+    name: string;
+    city: string;
+    state: string;
+    musicCommunity: string;
+    tier: 'city' | 'state' | 'national';
+  };
+  memberCount: number;
+  pendingInviteCount: number;
+  queuedInviteCount: number;
+  claimedCount: number;
+  existingUserCount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RegistrarArtistEntriesResponse = {
+  total: number;
+  entries: RegistrarArtistEntry[];
+};
+
+type InviteStatusResponse = {
+  registrarEntryId: string;
+  totalMembers: number;
+  countsByStatus: Record<string, number>;
 };
 
 export default function RegistrarPage() {
@@ -46,10 +86,35 @@ export default function RegistrarPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<RegistrationSubmitResult | null>(null);
+  const [entries, setEntries] = useState<RegistrarArtistEntry[]>([]);
+  const [entriesLoading, setEntriesLoading] = useState(false);
+  const [entriesError, setEntriesError] = useState<string | null>(null);
+  const [busyEntryId, setBusyEntryId] = useState<string | null>(null);
+  const [entryMessageById, setEntryMessageById] = useState<Record<string, string>>({});
+  const [inviteStatusByEntryId, setInviteStatusByEntryId] = useState<Record<string, InviteStatusResponse>>({});
 
   const slugPreview = useMemo(() => normalizeArtistBandSlug(slugInput || name), [name, slugInput]);
 
   const gpsVerified = Boolean(user?.gpsVerified);
+
+  const loadEntries = async () => {
+    if (!token) {
+      setEntries([]);
+      return;
+    }
+
+    setEntriesLoading(true);
+    setEntriesError(null);
+    try {
+      const response = await api.get<RegistrarArtistEntriesResponse>('/registrar/artist/entries', { token });
+      setEntries(response.data?.entries ?? []);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unable to load registrar entries.';
+      setEntriesError(message);
+    } finally {
+      setEntriesLoading(false);
+    }
+  };
 
   useEffect(() => {
     async function resolveHomeScene() {
@@ -87,6 +152,10 @@ export default function RegistrarPage() {
 
     resolveHomeScene();
   }, [homeScene, token]);
+
+  useEffect(() => {
+    loadEntries();
+  }, [token]);
 
   const updateMember = (index: number, field: keyof RegistrarArtistMemberDraft, value: string) => {
     setMembers((current) =>
@@ -171,11 +240,87 @@ export default function RegistrarPage() {
       setSlugInput('');
       setEntityType('band');
       setMembers([createEmptyRegistrarArtistMember()]);
+      await loadEntries();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Registrar submission failed.';
       setSubmitError(message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const updateEntryMessage = (entryId: string, message: string) => {
+    setEntryMessageById((current) => ({
+      ...current,
+      [entryId]: message,
+    }));
+  };
+
+  const handleMaterialize = async (entryId: string) => {
+    if (!token) return;
+
+    setBusyEntryId(entryId);
+    updateEntryMessage(entryId, '');
+    try {
+      await api.post(`/registrar/artist/${entryId}/materialize`, {}, { token });
+      updateEntryMessage(entryId, 'Materialization complete.');
+      await loadEntries();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Materialize action failed.';
+      updateEntryMessage(entryId, message);
+    } finally {
+      setBusyEntryId(null);
+    }
+  };
+
+  const handleDispatchInvites = async (entryId: string) => {
+    if (!token) return;
+
+    const links = getRegistrarInviteLinks({
+      origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+      mobileAppUrl: process.env.NEXT_PUBLIC_MOBILE_APP_URL,
+      webAppUrl: process.env.NEXT_PUBLIC_WEB_APP_URL,
+    });
+
+    setBusyEntryId(entryId);
+    updateEntryMessage(entryId, '');
+    try {
+      const response = await api.post<{ queuedCount: number }>(
+        `/registrar/artist/${entryId}/dispatch-invites`,
+        links,
+        { token },
+      );
+      updateEntryMessage(entryId, `Queued invites: ${response.data?.queuedCount ?? 0}.`);
+      await loadEntries();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Invite dispatch failed.';
+      updateEntryMessage(entryId, message);
+    } finally {
+      setBusyEntryId(null);
+    }
+  };
+
+  const handleLoadInviteStatus = async (entryId: string) => {
+    if (!token) return;
+
+    setBusyEntryId(entryId);
+    updateEntryMessage(entryId, '');
+    try {
+      const response = await api.get<InviteStatusResponse>(`/registrar/artist/${entryId}/invites`, { token });
+      const inviteStatus = response.data;
+      if (!inviteStatus) {
+        throw new Error('Invite status response was empty.');
+      }
+      setInviteStatusByEntryId((current) => ({
+        ...current,
+        [entryId]: inviteStatus,
+      }));
+      updateEntryMessage(entryId, 'Invite status loaded.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Invite status load failed.';
+      updateEntryMessage(entryId, message);
+    } finally {
+      setBusyEntryId(null);
     }
   };
 
@@ -340,6 +485,81 @@ export default function RegistrarPage() {
             </form>
           </section>
         )}
+
+        <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-black">My Artist/Band Registrations</h2>
+              <p className="mt-1 text-sm text-black/60">Track registrar status and run next-step actions.</p>
+            </div>
+            <Button size="sm" variant="outline" onClick={loadEntries} disabled={entriesLoading}>
+              {entriesLoading ? 'Refreshing...' : 'Refresh'}
+            </Button>
+          </div>
+
+          {entriesError && (
+            <p className="mt-4 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{entriesError}</p>
+          )}
+
+          {!entriesError && entries.length === 0 && !entriesLoading && (
+            <p className="mt-4 text-sm text-black/60">No Artist/Band registrar entries yet.</p>
+          )}
+
+          <div className="mt-4 space-y-4">
+            {entries.map((entry) => {
+              const inviteStatus = inviteStatusByEntryId[entry.id];
+              const isBusy = busyEntryId === entry.id;
+
+              return (
+                <article key={entry.id} className="rounded-xl border border-black/15 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-black/50">{formatRegistrarEntryStatus(entry.status)}</p>
+                  <h3 className="mt-2 text-base font-semibold text-black">{entry.payload.name ?? 'Unnamed registration'}</h3>
+                  <p className="text-sm text-black/60">
+                    {entry.scene.city}, {entry.scene.state} • {entry.scene.musicCommunity}
+                  </p>
+                  <p className="mt-1 text-xs text-black/50">
+                    Entry {entry.id} • members {entry.memberCount} • pending {entry.pendingInviteCount} • queued{' '}
+                    {entry.queuedInviteCount} • claimed {entry.claimedCount}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleMaterialize(entry.id)}
+                      disabled={isBusy || Boolean(entry.artistBandId)}
+                    >
+                      {entry.artistBandId ? 'Already Materialized' : 'Materialize Entity'}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleDispatchInvites(entry.id)} disabled={isBusy}>
+                      Queue Member Invites
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleLoadInviteStatus(entry.id)} disabled={isBusy}>
+                      Load Invite Status
+                    </Button>
+                  </div>
+
+                  {entryMessageById[entry.id] && (
+                    <p className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2 text-xs text-black/70">
+                      {entryMessageById[entry.id]}
+                    </p>
+                  )}
+
+                  {inviteStatus && (
+                    <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+                      <p className="text-xs text-black/70">Invite Status Summary</p>
+                      <p className="mt-1 text-xs text-black/60">
+                        Total members: {inviteStatus.totalMembers} • queued: {inviteStatus.countsByStatus.queued ?? 0} •
+                        claimed: {inviteStatus.countsByStatus.claimed ?? 0} • pending:{' '}
+                        {inviteStatus.countsByStatus.pending_email ?? 0}
+                      </p>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </section>
       </div>
     </main>
   );
