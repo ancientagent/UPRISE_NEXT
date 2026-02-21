@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter QA lane coverage update (slice 41):
+  - `qa:registrar-promoter` now includes `registrar.dto.test.ts` alongside controller/service registrar suites.
+  - Keeps the consolidated registrar promoter lane aligned with current validation surface.
 - Registrar intake schema whitespace hardening (slice 40):
   - `PromoterRegistrationSchema` now trims and rejects whitespace-only `productionName`.
   - `ArtistBandRegistrationSchema` now trims core identity fields (`name`, `slug`, member `name/email/city/instrument`) and rejects whitespace-only required fields.
