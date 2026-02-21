@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- User detail/profile transitional alias removal (slice 32):
+  - Removed `isArtistTransitional` from `GET /users/:id` and `GET /users/:id/profile` response contracts.
+  - Users service no longer reads `isArtist` for user detail/profile payload mapping.
+  - Updated users-profile service tests to assert canonical bridge fields only.
+  - Strict readiness report now shows zero in-repo `isArtist*` code references.
 - Web transitional type cleanup + strict guard alignment (slice 31):
   - Removed unused `isArtistTransitional` field from `/users/[id]` web profile type contract.
   - Removed web profile page from strict `isArtist` approved path allowlist.

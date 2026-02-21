@@ -1,36 +1,17 @@
 # 2026-02-21 — Artist/Band Identity Remaining Phased Plan (Post Slice 28)
 
-## Evidence Snapshot (as of 2026-02-21)
+## Evidence Snapshot (as of 2026-02-21, post slice 32)
 - Strict readiness report: `pnpm run report:isartist-consumers:strict`
-  - files with `isArtist` references: 4
+  - files with `isArtist` references: 0
   - unapproved legacy references: 0
 - Legacy `isArtist` removed from user detail/profile response contracts (slice 26).
 - Contract absence assertions added (slice 27).
 - Shared `@uprise/types` user schema no longer includes `isArtist` (slice 28).
-- Remaining references are now concentrated in:
-  - `apps/api/src/users/users.service.ts` (transitional mapping from persistence field),
-  - `apps/api/test/users.profile.collection.test.ts` (fixtures/assertions),
-  - `apps/web/src/app/users/[id]/page.tsx` (`isArtistTransitional` optional field),
-  - `apps/api/prisma/schema.prisma` (persistence field).
+- Transitional alias removed from user detail/profile API contracts (slice 32).
+- Remaining legacy field location is persistence layer only (`apps/api/prisma/schema.prisma`).
 
 ## Remaining Slices
-1. Slice 29 (guard tightening, additive)
-- Narrow `report:isartist-consumers` approved path set to remove stale allowances that are no longer needed.
-- Keep strict mode green.
-
-2. Slice 30 (service transitional field isolation, additive)
-- Centralize `isArtistTransitional` projection in one mapper helper in users service.
-- Objective: make final field removal a single edit point.
-
-3. Slice 31 (web transitional field retirement prep, additive)
-- Remove unused `isArtistTransitional` surface from web profile contract type if not rendered.
-- Keep runtime behavior unchanged.
-
-4. Slice 32 (destructive API contract step)
-- Remove `isArtistTransitional` from `/users/:id` and `/users/:id/profile` responses after caller audit is zero.
-- Update targeted tests/spec/changelog/handoff.
-
-5. Slice 33 (destructive persistence step)
+1. Slice 33 (destructive persistence step)
 - Drop `User.isArtist` from Prisma schema via explicit migration.
 - Remove all read/write code paths and fixtures using the field.
 - Regenerate Prisma client and run full verify gates.
@@ -50,7 +31,6 @@
 
 ## Rollback Strategy
 - Slice 29-31 rollback: revert single commit (no data impact).
-- Slice 32 rollback: re-add response field mapping + tests (no DB rollback needed).
 - Slice 33 rollback options:
   - immediate: restore from pre-migration backup/snapshot,
   - forward-fix: add replacement column + compatibility mapper if restore not possible.

@@ -40,7 +40,6 @@ describe('UsersService.getProfileWithCollection', () => {
       bio: null,
       avatar: null,
       coverImage: null,
-      isArtist: false,
       city: 'Austin',
       country: 'US',
       collectionDisplayEnabled: false,
@@ -53,8 +52,6 @@ describe('UsersService.getProfileWithCollection', () => {
     expect(result.canViewCollection).toBe(false);
     expect(result.collectionShelves).toEqual([]);
     expect(result.managedArtistBands).toEqual([]);
-    expect(result.user).not.toHaveProperty('isArtist');
-    expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(false);
     expect(mockPrisma.collection.findMany).not.toHaveBeenCalled();
   });
@@ -67,7 +64,6 @@ describe('UsersService.getProfileWithCollection', () => {
       bio: null,
       avatar: null,
       coverImage: null,
-      isArtist: false,
       city: 'Austin',
       country: 'US',
       collectionDisplayEnabled: false,
@@ -108,8 +104,6 @@ describe('UsersService.getProfileWithCollection', () => {
     const result = await service.getProfileWithCollection('target', 'target');
 
     expect(result.canViewCollection).toBe(true);
-    expect(result.user).not.toHaveProperty('isArtist');
-    expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(true);
     expect(result.managedArtistBands).toEqual([
       {
@@ -126,7 +120,7 @@ describe('UsersService.getProfileWithCollection', () => {
     expect(singles?.items[0].signalId).toBe('signal-1');
   });
 
-  it('findById returns transitional artist alias alongside canonical bridge', async () => {
+  it('findById returns canonical artist-band bridge fields', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'target',
       username: 'target',
@@ -134,7 +128,6 @@ describe('UsersService.getProfileWithCollection', () => {
       bio: null,
       avatar: null,
       coverImage: null,
-      isArtist: true,
       city: 'Austin',
       country: 'US',
       collectionDisplayEnabled: true,
@@ -153,8 +146,6 @@ describe('UsersService.getProfileWithCollection', () => {
 
     const result = await service.findById('target');
 
-    expect(result).not.toHaveProperty('isArtist');
-    expect(result.isArtistTransitional).toBe(true);
     expect(result.hasArtistBand).toBe(false);
     expect(result.managedArtistBands).toEqual([
       {

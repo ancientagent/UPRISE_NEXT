@@ -35,7 +35,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `GET /users/:id/profile`
   - `POST /users/me/collection-display`
   - Transitional bridge: user read payloads now include `hasArtistBand` derived from canonical membership graph.
-  - Transitional alias: `GET /users/:id` and `GET /users/:id/profile` include `isArtistTransitional` derived from legacy persistence flag `User.isArtist`.
+  - Legacy `isArtist` and `isArtistTransitional` are removed from user detail/profile response contracts.
 - Schema fields currently present:
   - `User.isArtist` (temporary implementation flag; does not satisfy canonical Artist/Band linked-entity model)
   - `User.gpsVerified`
@@ -160,8 +160,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.
 - Protected routes require JWT bearer token.
 - Transitional read compatibility:
-  - user detail/profile responses expose `isArtistTransitional` (explicit deprecation-prep alias).
-  - legacy `isArtist` has been removed from user detail/profile response contracts.
+  - legacy `isArtist` and transitional alias `isArtistTransitional` are removed from user detail/profile response contracts.
   - shared cross-app `User` type contract no longer includes `isArtist`.
   - canonical identity linkage remains `hasArtistBand`.
   - `GET /users/:id` and `GET /users/:id/profile` return `managedArtistBands` summary list for canonical linked-entity rendering, including per-entity `membershipRole`.

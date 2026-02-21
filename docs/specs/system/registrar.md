@@ -88,7 +88,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Action remains explicit and submitter-driven.
 - Identity contract migration alignment (slice 26):
   - User detail/profile read contracts no longer expose legacy `isArtist`.
-  - Transitional compatibility remains available via `isArtistTransitional` while registrar/canonical migration completes.
+  - Transitional alias `isArtistTransitional` is also removed from user detail/profile read contracts.
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.

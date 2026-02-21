@@ -35,7 +35,6 @@ export class UsersService {
         bio: true,
         avatar: true,
         coverImage: true,
-        isArtist: true,
         city: true,
         country: true,
         collectionDisplayEnabled: true,
@@ -69,10 +68,8 @@ export class UsersService {
       },
       orderBy: { createdAt: 'desc' },
     });
-    const { isArtist, ...userWithoutLegacyArtistFlag } = user;
     return {
-      ...userWithoutLegacyArtistFlag,
-      isArtistTransitional: isArtist,
+      ...user,
       hasArtistBand: artistBandCount > 0,
       managedArtistBands: managedArtistBands.map((artistBand) => ({
         id: artistBand.id,
@@ -105,7 +102,6 @@ export class UsersService {
         bio: true,
         avatar: true,
         coverImage: true,
-        isArtist: true,
         city: true,
         country: true,
         collectionDisplayEnabled: true,
@@ -225,12 +221,9 @@ export class UsersService {
       },
       orderBy: { createdAt: 'desc' },
     });
-    const { isArtist, ...profileUserWithoutLegacyArtistFlag } = user;
-
     return {
       user: {
-        ...profileUserWithoutLegacyArtistFlag,
-        isArtistTransitional: isArtist,
+        ...user,
         hasArtistBand: artistBandCount > 0,
       },
       canViewCollection,
