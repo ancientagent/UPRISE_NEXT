@@ -190,6 +190,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Add outbound delivery provider pipeline for queued `pending_email`/`queued` member invites.
 - Plan controlled deprecation path for `User.isArtist` after caller migration.
 - Use `pnpm run report:isartist-consumers` to inventory remaining in-repo `isArtist` call sites before removal slices.
+- See phased execution note: `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
 - Define Promoter capability registration and code exchange flow.
 - Define business capability model for Promotions/Print Shop workflows.
 

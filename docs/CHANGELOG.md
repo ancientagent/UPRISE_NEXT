@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Artist/Band identity phased-plan refresh (slice 29):
+  - Added evidence-based remaining-slices plan with migration ordering, risk controls, and rollback strategy:
+    - `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
 - Shared user type legacy-flag alignment (slice 28):
   - Removed `isArtist` from `@uprise/types` `UserSchema` so shared app contracts no longer advertise the legacy field.
   - Kept persistence + transitional API alias migration path unchanged.
