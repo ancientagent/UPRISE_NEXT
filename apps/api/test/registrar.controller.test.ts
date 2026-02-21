@@ -155,4 +155,53 @@ describe('RegistrarController', () => {
     ).rejects.toThrow(NotFoundException);
     expect(registrarService.getPromoterRegistration).toHaveBeenCalledWith('u-1', 'missing-entry');
   });
+
+  it('lists submitter artist/band registrations through registrar service', async () => {
+    const registrarService = {
+      listArtistBandRegistrations: jest.fn().mockResolvedValue({
+        total: 1,
+        entries: [
+          {
+            id: 'reg-artist-1',
+            type: 'artist_band_registration',
+            status: 'submitted',
+            sceneId: '11111111-1111-1111-1111-111111111111',
+            payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+          },
+        ],
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.listMyArtistBandRegistrations({ user: { userId: 'u-1' } });
+
+    expect(registrarService.listArtistBandRegistrations).toHaveBeenCalledWith('u-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        total: 1,
+        entries: [
+          {
+            id: 'reg-artist-1',
+            type: 'artist_band_registration',
+            status: 'submitted',
+            sceneId: '11111111-1111-1111-1111-111111111111',
+            payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+          },
+        ],
+      },
+    });
+  });
+
+  it('propagates artist/band list read errors from registrar service', async () => {
+    const registrarService = {
+      listArtistBandRegistrations: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(controller.listMyArtistBandRegistrations({ user: { userId: 'u-1' } })).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(registrarService.listArtistBandRegistrations).toHaveBeenCalledWith('u-1');
+  });
 });
