@@ -54,6 +54,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `GET /registrar/artist/entries` lists submitter-owned Artist/Band registrar entries + invite/member summary counts.
   - `POST /registrar/artist/:entryId/materialize` finalizes canonical `ArtistBand` + owner membership from submitter-owned registration entry.
   - `POST /registrar/artist/:entryId/dispatch-invites` queues pending non-platform member invites with tokenized claim payload.
+  - `POST /registrar/artist/:entryId/sync-members` links eligible registrar members into canonical `ArtistBandMember` rows.
   - `GET /registrar/artist/:entryId/invites` returns invite roster and status summary for submitter tracking.
 - Invite claim account bootstrap (slice 6):
   - `POST /auth/invite-preview` provides prefill context (member + scene/community) for invited users before claim.
@@ -148,6 +149,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | GET | `/registrar/artist/entries` | required | List submitter-owned Artist/Band registrar entries + invite/member summary counts |
 | POST | `/registrar/artist/:entryId/materialize` | required | Materialize registration into canonical Artist/Band entity (submitter-owned) |
 | POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform members |
+| POST | `/registrar/artist/:entryId/sync-members` | required | Sync eligible registrar members into canonical Artist/Band membership graph |
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 
 ### Request/Response

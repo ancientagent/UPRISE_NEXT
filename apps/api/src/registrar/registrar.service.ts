@@ -448,6 +448,77 @@ export class RegistrarService {
     };
   }
 
+  async syncArtistBandMembers(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        createdById: true,
+        artistBandId: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'artist_band_registration') {
+      throw new ForbiddenException('Registrar entry is not an artist/band registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can sync members for this registration');
+    }
+    if (!entry.artistBandId) {
+      throw new ForbiddenException('Registration must be materialized before syncing members');
+    }
+
+    const members = await this.prisma.registrarArtistMember.findMany({
+      where: { registrarEntryId: entry.id },
+      select: {
+        existingUserId: true,
+        claimedUserId: true,
+        inviteStatus: true,
+      },
+    });
+
+    const memberUserIds = new Set<string>();
+    for (const member of members) {
+      if (member.inviteStatus === 'existing_user' && member.existingUserId) {
+        memberUserIds.add(member.existingUserId);
+      }
+      if (member.inviteStatus === 'claimed' && member.claimedUserId) {
+        memberUserIds.add(member.claimedUserId);
+      }
+    }
+
+    if (memberUserIds.size === 0) {
+      return {
+        registrarEntryId: entry.id,
+        artistBandId: entry.artistBandId,
+        eligibleMemberCount: 0,
+        createdMemberCount: 0,
+        skippedMemberCount: 0,
+      };
+    }
+
+    const created = await this.prisma.artistBandMember.createMany({
+      data: Array.from(memberUserIds).map((memberUserId) => ({
+        artistBandId: entry.artistBandId as string,
+        userId: memberUserId,
+        role: 'member',
+      })),
+      skipDuplicates: true,
+    });
+
+    return {
+      registrarEntryId: entry.id,
+      artistBandId: entry.artistBandId,
+      eligibleMemberCount: memberUserIds.size,
+      createdMemberCount: created.count,
+      skippedMemberCount: memberUserIds.size - created.count,
+    };
+  }
+
   async getArtistBandInviteStatus(userId: string, entryId: string) {
     const entry = await this.prisma.registrarEntry.findUnique({
       where: { id: entryId },

@@ -50,6 +50,15 @@ export class RegistrarController {
     return { success: true, data: result };
   }
 
+  @Post('artist/:entryId/sync-members')
+  async syncArtistBandMembers(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.syncArtistBandMembers(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
   @Get('artist/:entryId/invites')
   async getArtistBandInviteStatus(
     @Param('entryId') entryId: string,

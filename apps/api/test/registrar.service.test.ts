@@ -30,6 +30,7 @@ describe('RegistrarService', () => {
     },
     artistBandMember: {
       create: jest.fn(),
+      createMany: jest.fn(),
     },
     $transaction: jest.fn(),
   };
@@ -448,5 +449,58 @@ describe('RegistrarService', () => {
       entries: [],
     });
     expect(mockPrisma.registrarArtistMember.findMany).not.toHaveBeenCalled();
+  });
+
+  it('syncs claimed/existing registrar members into canonical artist-band memberships', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-9',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+      artistBandId: 'ab-9',
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      { existingUserId: 'u-2', claimedUserId: null, inviteStatus: 'existing_user' },
+      { existingUserId: null, claimedUserId: 'u-3', inviteStatus: 'claimed' },
+      { existingUserId: 'u-2', claimedUserId: null, inviteStatus: 'existing_user' },
+      { existingUserId: null, claimedUserId: null, inviteStatus: 'pending_email' },
+    ]);
+    mockPrisma.artistBandMember.createMany.mockResolvedValue({ count: 2 });
+
+    const result = await service.syncArtistBandMembers('u-1', 'reg-9');
+
+    expect(mockPrisma.artistBandMember.createMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.arrayContaining([
+          expect.objectContaining({ artistBandId: 'ab-9', userId: 'u-2', role: 'member' }),
+          expect.objectContaining({ artistBandId: 'ab-9', userId: 'u-3', role: 'member' }),
+        ]),
+        skipDuplicates: true,
+      }),
+    );
+    expect(result.eligibleMemberCount).toBe(2);
+    expect(result.createdMemberCount).toBe(2);
+    expect(result.skippedMemberCount).toBe(0);
+  });
+
+  it('rejects member sync before materialization', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-10',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+      artistBandId: null,
+    });
+
+    await expect(service.syncArtistBandMembers('u-1', 'reg-10')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects member sync from non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-11',
+      type: 'artist_band_registration',
+      createdById: 'u-9',
+      artistBandId: 'ab-11',
+    });
+
+    await expect(service.syncArtistBandMembers('u-1', 'reg-11')).rejects.toThrow(ForbiddenException);
   });
 });

@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar member-to-entity sync primitive (slice 13):
+  - Added endpoint `POST /registrar/artist/:entryId/sync-members` for submitter-owned, materialized registrations.
+  - Sync action idempotently links eligible registrar members (`existing_user`, `claimed`) into canonical `ArtistBandMember`.
+  - Added registrar service tests covering success, authorization, and pre-materialization guard cases.
 - Registrar web status/action panel (slice 12):
   - `/registrar` now loads submitter-owned entries from `GET /registrar/artist/entries`.
   - Added explicit follow-up UI actions for existing registrar APIs:
