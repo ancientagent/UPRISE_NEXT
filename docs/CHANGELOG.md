@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter submit controller error-path coverage (slice 53):
+  - Added controller test asserting `submitPromoterRegistration` propagates service-layer `ForbiddenException`.
 - Registrar promoter whitespace-null normalization tests (slice 52):
   - Added list/detail service coverage asserting whitespace-only `productionName` normalizes to `null`.
 - Registrar promoter normalization helper consolidation (slice 51):
