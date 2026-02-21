@@ -43,10 +43,12 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Returns submitter-owned promoter registrar entries in reverse-chronological order.
   - Includes scene context and payload summary (`productionName`) for registration state tracking.
   - Includes top-level status summary counts (`countsByStatus`) across returned entries.
+  - Read payload normalization trims `productionName`; blank/whitespace resolves to `null`.
 - Registrar promoter status detail read surface (slice 43):
   - `GET /registrar/promoter/:entryId` implemented.
   - Submitter-only read for single promoter registrar entry status tracking.
   - Returns scene context and payload summary (`productionName`) for the requested entry.
+  - Read payload normalization trims `productionName`; blank/whitespace resolves to `null`.
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
   - Registration payload now captures member roster:

@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter read payload normalization hardening (slice 50):
+  - Promoter list/detail read surfaces now normalize `productionName` by trimming surrounding whitespace.
+  - Blank/whitespace-only `productionName` payloads resolve to `null` in read responses.
+  - Added service test coverage for list/detail normalization behavior.
 - Registrar promoter read-ordering and detail scene-context guard tests (slice 48):
   - Added unit coverage for reverse-chronological ordering expectations on promoter list reads.
   - Added detail-read assertion coverage for scene-context passthrough fields.

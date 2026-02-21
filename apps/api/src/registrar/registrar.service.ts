@@ -115,13 +115,17 @@ export class RegistrarService {
       countsByStatus,
       entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
+        const normalizedProductionName =
+          typeof payload.productionName === 'string' && payload.productionName.trim().length > 0
+            ? payload.productionName.trim()
+            : null;
         return {
           id: entry.id,
           type: entry.type,
           status: entry.status,
           sceneId: entry.sceneId,
           payload: {
-            productionName: typeof payload.productionName === 'string' ? payload.productionName : null,
+            productionName: normalizedProductionName,
           },
           scene: entry.scene,
           createdAt: entry.createdAt,
@@ -167,13 +171,17 @@ export class RegistrarService {
     }
 
     const payload = (entry.payload ?? {}) as Record<string, unknown>;
+    const normalizedProductionName =
+      typeof payload.productionName === 'string' && payload.productionName.trim().length > 0
+        ? payload.productionName.trim()
+        : null;
     return {
       id: entry.id,
       type: entry.type,
       status: entry.status,
       sceneId: entry.sceneId,
       payload: {
-        productionName: typeof payload.productionName === 'string' ? payload.productionName : null,
+        productionName: normalizedProductionName,
       },
       scene: entry.scene,
       createdAt: entry.createdAt,

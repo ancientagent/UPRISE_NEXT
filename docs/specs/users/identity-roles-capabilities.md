@@ -59,8 +59,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Registrar submission primitive for Promoter capability onboarding:
   - `POST /registrar/promoter` creates a scene-scoped promoter registration entry with named production identity payload.
   - Entry is Home Scene-scoped and does not grant promoter capability by itself.
-  - `GET /registrar/promoter/entries` lists submitter-owned promoter registration entries with scene context + submission payload summary and top-level status summary counts.
-  - `GET /registrar/promoter/:entryId` reads submitter-owned promoter registration detail with scene context + submission payload summary.
+  - `GET /registrar/promoter/entries` lists submitter-owned promoter registration entries with scene context + submission payload summary and top-level status summary counts; `productionName` is trimmed and blank values normalize to `null`.
+  - `GET /registrar/promoter/:entryId` reads submitter-owned promoter registration detail with scene context + submission payload summary; `productionName` is trimmed and blank values normalize to `null`.
 - Invite claim account bootstrap (slice 6):
   - `POST /auth/invite-preview` provides prefill context (member + scene/community) for invited users before claim.
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
