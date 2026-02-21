@@ -29,6 +29,18 @@ pnpm run report:isartist-consumers -- --json
 pnpm run report:isartist-consumers -- --out=artifacts/isartist-consumers.json
 ```
 
+Strict guard mode (fails on unapproved legacy call sites):
+
+```bash
+pnpm run report:isartist-consumers:strict
+```
+
+`strict` mode currently allows legacy references only in:
+- `apps/api/src/users/users.service.ts`
+- `apps/web/src/app/users/[id]/page.tsx`
+- `packages/types/src/user.ts`
+- `apps/api/test/users.profile.collection.test.ts`
+
 ## Removal Gate Checklist
 Only start destructive removal slices when all are true:
 

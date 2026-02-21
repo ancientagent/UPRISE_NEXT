@@ -10,10 +10,17 @@ function run(cmd) {
 const includeExt = /\.(ts|tsx|js|jsx|mjs|cjs)$/;
 const excludePath = /(node_modules|dist|\.next|coverage|docs\/legacy)/;
 const selfPath = 'scripts/is-artist-consumer-report.mjs';
-const args = process.argv.slice(2);
+const args = process.argv.slice(2).filter((arg) => arg !== '--');
 const asJson = args.includes('--json');
 const outArg = args.find((arg) => arg.startsWith('--out='));
 const outputPath = outArg ? outArg.slice('--out='.length).trim() : '';
+const failOnUnapproved = args.includes('--fail-on-unapproved');
+const approvedLegacyPaths = new Set([
+  'apps/api/src/users/users.service.ts',
+  'apps/web/src/app/users/[id]/page.tsx',
+  'packages/types/src/user.ts',
+  'apps/api/test/users.profile.collection.test.ts',
+]);
 
 let files = [];
 try {
@@ -53,6 +60,7 @@ const report = {
   filesWithIsArtistReferences: uniqueFiles.size,
   totalIsArtistReferences: findings.length,
   linesWithIsArtistTransitionalMention: aliasMentions,
+  unapprovedLegacyReferences: findings.filter((finding) => !approvedLegacyPaths.has(finding.file)),
   findings,
 };
 
@@ -63,6 +71,9 @@ if (outputPath) {
 
 if (asJson) {
   console.log(JSON.stringify(report, null, 2));
+  if (failOnUnapproved && report.unapprovedLegacyReferences.length > 0) {
+    process.exit(2);
+  }
   process.exit(0);
 }
 
@@ -72,6 +83,7 @@ console.log(`Files scanned: ${report.filesScanned}`);
 console.log(`Files with isArtist references: ${report.filesWithIsArtistReferences}`);
 console.log(`Total isArtist line references: ${report.totalIsArtistReferences}`);
 console.log(`Lines already mentioning isArtistTransitional: ${aliasMentions}`);
+console.log(`Unapproved legacy references: ${report.unapprovedLegacyReferences.length}`);
 console.log('');
 
 if (report.totalIsArtistReferences === 0) {
@@ -81,4 +93,13 @@ if (report.totalIsArtistReferences === 0) {
 
 for (const finding of report.findings) {
   console.log(`${finding.file}:${finding.line} | ${finding.content}`);
+}
+
+if (failOnUnapproved && report.unapprovedLegacyReferences.length > 0) {
+  console.error('');
+  console.error('Unapproved legacy isArtist references detected:');
+  for (const finding of report.unapprovedLegacyReferences) {
+    console.error(`${finding.file}:${finding.line} | ${finding.content}`);
+  }
+  process.exit(2);
 }

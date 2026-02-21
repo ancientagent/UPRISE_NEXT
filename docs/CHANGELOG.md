@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- isArtist strict consumer guard (slice 17):
+  - Added strict mode to `scripts/is-artist-consumer-report.mjs` via `--fail-on-unapproved`.
+  - Added `pnpm run report:isartist-consumers:strict`.
+  - Updated `qa:identity` to run strict guard mode before targeted identity tests.
 - isArtist deprecation-readiness workflow hardening (slice 16):
   - Enhanced `scripts/is-artist-consumer-report.mjs` with `--json` and `--out=<path>` modes.
   - Updated `qa:identity` command to include `pnpm run report:isartist-consumers`.
