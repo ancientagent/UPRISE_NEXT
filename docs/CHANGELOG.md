@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- isArtist contract-removal assertion hardening (slice 27):
+  - Added explicit users-service assertions that `isArtist` is absent from both user detail and profile read payloads.
+  - Keeps `isArtistTransitional` compatibility assertions in place during migration.
 - User detail/profile legacy contract step-down (slice 26):
   - `GET /users/:id` and `GET /users/:id/profile` no longer return legacy `isArtist`.
   - Transitional alias `isArtistTransitional` remains for compatibility while canonical migration completes.

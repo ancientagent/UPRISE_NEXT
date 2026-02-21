@@ -53,6 +53,7 @@ describe('UsersService.getProfileWithCollection', () => {
     expect(result.canViewCollection).toBe(false);
     expect(result.collectionShelves).toEqual([]);
     expect(result.managedArtistBands).toEqual([]);
+    expect(result.user).not.toHaveProperty('isArtist');
     expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(false);
     expect(mockPrisma.collection.findMany).not.toHaveBeenCalled();
@@ -107,6 +108,7 @@ describe('UsersService.getProfileWithCollection', () => {
     const result = await service.getProfileWithCollection('target', 'target');
 
     expect(result.canViewCollection).toBe(true);
+    expect(result.user).not.toHaveProperty('isArtist');
     expect(result.user.isArtistTransitional).toBe(false);
     expect(result.user.hasArtistBand).toBe(true);
     expect(result.managedArtistBands).toEqual([
@@ -151,6 +153,7 @@ describe('UsersService.getProfileWithCollection', () => {
 
     const result = await service.findById('target');
 
+    expect(result).not.toHaveProperty('isArtist');
     expect(result.isArtistTransitional).toBe(true);
     expect(result.hasArtistBand).toBe(false);
     expect(result.managedArtistBands).toEqual([
