@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 ### Added
+- Registrar promoter whitespace-null normalization tests (slice 52):
+  - Added list/detail service coverage asserting whitespace-only `productionName` normalizes to `null`.
 - Registrar promoter read payload normalization hardening (slice 50):
   - Promoter list/detail read surfaces now normalize `productionName` by trimming surrounding whitespace.
   - Blank/whitespace-only `productionName` payloads resolve to `null` in read responses.
