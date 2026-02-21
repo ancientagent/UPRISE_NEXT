@@ -74,6 +74,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
     - queue member invites,
     - inspect invite status summary.
   - All actions remain API-backed and submitter-scoped.
+- Registrar web canonical membership sync action (slice 14):
+  - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
+  - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.
 
 ### Deferred (Not Implemented Yet)
 - Promoter registration flow and capability grants.

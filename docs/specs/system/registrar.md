@@ -78,6 +78,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
     - queue invites (`POST /registrar/artist/:entryId/dispatch-invites`),
     - read invite summary (`GET /registrar/artist/:entryId/invites`).
   - Displays per-entry invite lifecycle summary counts for submitter follow-up.
+- Registrar web canonical member-sync action (slice 14):
+  - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
+  - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.
+  - Keeps membership linking user-driven (no automatic background sync).
 
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.

@@ -324,6 +324,32 @@ export default function RegistrarPage() {
     }
   };
 
+  const handleSyncMembers = async (entryId: string) => {
+    if (!token) return;
+
+    setBusyEntryId(entryId);
+    updateEntryMessage(entryId, '');
+    try {
+      const response = await api.post<{
+        eligibleMemberCount: number;
+        createdMemberCount: number;
+        skippedMemberCount: number;
+      }>(`/registrar/artist/${entryId}/sync-members`, {}, { token });
+
+      const summary = response.data;
+      updateEntryMessage(
+        entryId,
+        `Synced members: ${summary?.createdMemberCount ?? 0}/${summary?.eligibleMemberCount ?? 0} (skipped ${summary?.skippedMemberCount ?? 0}).`,
+      );
+      await loadEntries();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Member sync failed.';
+      updateEntryMessage(entryId, message);
+    } finally {
+      setBusyEntryId(null);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-4xl space-y-6">
@@ -533,6 +559,14 @@ export default function RegistrarPage() {
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => handleDispatchInvites(entry.id)} disabled={isBusy}>
                       Queue Member Invites
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleSyncMembers(entry.id)}
+                      disabled={isBusy || !entry.artistBandId}
+                    >
+                      Sync Eligible Members
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => handleLoadInviteStatus(entry.id)} disabled={isBusy}>
                       Load Invite Status

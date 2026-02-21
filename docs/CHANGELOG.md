@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar web member-sync action (slice 14):
+  - Added `Sync Eligible Members` action to `/registrar` status panel for materialized entries.
+  - Action calls `POST /registrar/artist/:entryId/sync-members` and reports sync summary to submitter.
 - Registrar member-to-entity sync primitive (slice 13):
   - Added endpoint `POST /registrar/artist/:entryId/sync-members` for submitter-owned, materialized registrations.
   - Sync action idempotently links eligible registrar members (`existing_user`, `claimed`) into canonical `ArtistBandMember`.
