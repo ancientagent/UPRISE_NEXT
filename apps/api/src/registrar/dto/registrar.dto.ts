@@ -1,0 +1,32 @@
+import { z } from 'zod';
+
+export const ArtistBandRegistrationSchema = z.object({
+  sceneId: z.string().uuid(),
+  name: z.string().min(1).max(140),
+  slug: z
+    .string()
+    .min(2)
+    .max(140)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  entityType: z.enum(['artist', 'band']),
+  members: z
+    .array(
+      z.object({
+        name: z.string().min(1).max(140),
+        email: z.string().email(),
+        city: z.string().min(1).max(120),
+        instrument: z.string().min(1).max(120),
+      }),
+    )
+    .min(1)
+    .max(24),
+});
+
+export type ArtistBandRegistrationDto = z.infer<typeof ArtistBandRegistrationSchema>;
+
+export const DispatchArtistInviteSchema = z.object({
+  mobileAppUrl: z.string().url(),
+  webAppUrl: z.string().url(),
+});
+
+export type DispatchArtistInviteDto = z.infer<typeof DispatchArtistInviteSchema>;

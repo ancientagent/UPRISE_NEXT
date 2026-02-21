@@ -205,6 +205,12 @@ When an AI agent loses context:
 
 This restores 90%+ of required knowledge.
 
+## Tooling Recovery Notes (Session Durability)
+- Use `python3` for scripted helpers; do not assume `python` alias is present.
+- Keep package manager boundary: `pnpm` for `UPRISE_NEXT`, `yarn` only for legacy RN archive work.
+- If Codex skills are installed/updated mid-session, record the change in handoff + changelog and remind operator that Codex restart is required to load them.
+- Prefer workspace/local tools and scripts; avoid global/system installation changes.
+
 ---
 
 # 🔧 Additional Requirements for Code-Generating Agents

@@ -4,7 +4,8 @@
 // Set test environment variables
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-jwt-secret';
-process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://ubuntu:@localhost:5432/uprise_test';
+process.env.DATABASE_URL =
+  process.env.DATABASE_URL || 'postgresql://uprise:uprise_dev_password@localhost:5432/uprise_dev';
 
 // Mock console to reduce noise
 global.console = {

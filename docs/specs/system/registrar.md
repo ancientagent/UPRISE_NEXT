@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-20`
+**Last Updated:** `2026-02-21`
 
 ## Overview & Purpose
 Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
@@ -24,13 +24,78 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Sect uprising motions are registrar-mediated when threshold criteria are met (45-minute committed artist playtime threshold + explicit support).
 
 ### Implemented Now
-- No dedicated Registrar API routes or persistence models exist yet.
-- Related primitives are present:
-  - Signal creation/actions (`/signals`, `/signals/:id/support`, etc.) can represent project-like propagation once a project signal exists.
+- Registrar-link-ready Artist/Band identity foundation exists (slice 1):
+  - `ArtistBand.registrarEntryRef` stores registrar linkage reference for canonical handoff.
+  - `ArtistBand` + `ArtistBandMember` provide canonical entity + membership graph.
+  - Read-only retrieval endpoints exist (`GET /artist-bands/:id`, `GET /artist-bands`).
+- Registrar write primitive (slice 2):
+  - `RegistrarEntry` persistence model added.
+  - `POST /registrar/artist` implemented for Home Scene-scoped Artist/Band registration submissions.
+  - Submission constraints enforced in service:
+    - city-tier Scene only,
+    - request Scene must match authenticated user's Home Scene.
+- Registrar artist intake expansion (slice 3):
+  - `POST /registrar/artist` requires submitter `gpsVerified = true`.
+  - Registration payload now captures member roster:
+    - `name`, `email`, `city`, `instrument`.
+  - `RegistrarArtistMember` rows persist member roster + invite state.
+  - Non-platform members are persisted with `inviteStatus = pending_email` for delivery handoff.
+- Registrar materialization primitive (slice 4):
+  - `POST /registrar/artist/:entryId/materialize` implemented.
+  - Submitter-only action (entry creator must match authenticated user).
+  - Materializes `ArtistBand` + owner `ArtistBandMember` from submitted registrar entry payload.
+  - Idempotent when entry is already linked to an `ArtistBand`.
+- Registrar invite dispatch primitive (slice 5):
+  - `POST /registrar/artist/:entryId/dispatch-invites` implemented.
+  - Generates invite token + expiry for pending non-platform registrar members.
+  - Queues invite-delivery payload rows for email delivery worker handoff.
+- Registrar invite claim bootstrap (slice 6):
+  - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
+  - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
+  - Claim marks registrar member row as `claimed` and links `claimedUserId`.
+  - Home Scene defaults are prefilled from registrar scene context; GPS remains required for civic voting.
+- Registrar invite tracking read surface (slice 7):
+  - `GET /registrar/artist/:entryId/invites` implemented.
+  - Submitter-only access.
+  - Returns roster rows plus invite status counts (`pending_email`, `queued`, `claimed`, etc.).
+- Registrar registration status list read surface (slice 11):
+  - `GET /registrar/artist/entries` implemented.
+  - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
+  - Includes per-entry member + invite lifecycle summary counts for registrar follow-up actions.
+  - Includes materialized canonical Artist/Band summary (`id`, `name`, `slug`, `entityType`) when linked.
+- Registrar member sync primitive (slice 13):
+  - `POST /registrar/artist/:entryId/sync-members` implemented.
+  - Submitter-only action for materialized registrations.
+  - Idempotently links eligible registrar members (`existing_user` + `claimed`) into canonical `ArtistBandMember` rows.
+- Registrar web entrypoint + intake UI (slice 10):
+  - Plot scene activity panel includes explicit `Open Registrar` action.
+  - `/registrar` route now presents `Band / Artist Registration` option before form entry.
+  - Form captures `name`, `entityType`, and member roster (`name`, `email`, `city`, `instrument`).
+  - Client resolves Home Scene tuple to city-tier scene ID and enforces GPS-verified submit gate before API call.
+- Registrar web status/action panel (slice 12):
+  - `/registrar` now reads submitter-owned registration entries from `GET /registrar/artist/entries`.
+  - Exposes next-step actions for existing registrar APIs:
+    - materialize registration (`POST /registrar/artist/:entryId/materialize`),
+    - queue invites (`POST /registrar/artist/:entryId/dispatch-invites`),
+    - read invite summary (`GET /registrar/artist/:entryId/invites`).
+  - Displays per-entry invite lifecycle summary counts for submitter follow-up.
+- Registrar web canonical member-sync action (slice 14):
+  - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
+  - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.
+  - Keeps membership linking user-driven (no automatic background sync).
+- Registrar web sync eligibility guard (slice 22):
+  - `Sync Eligible Members` action is enabled only when registrar entry has eligible linked members (`existing_user` + `claimed`).
+  - Action remains explicit and submitter-driven.
+- Identity contract migration alignment (slice 26):
+  - User detail/profile read contracts no longer expose legacy `isArtist`.
+  - Transitional alias `isArtistTransitional` is also removed from user detail/profile read contracts.
+- Identity persistence cleanup alignment (slice 33):
+  - Legacy `User.isArtist` column removed from persistence schema after caller migration reached zero.
 
 ### Deferred (Not Implemented Yet)
-- Registrar domain model (`RegistrarEntry` or equivalent).
 - Role registration code issuance and verification workflows.
+- Registrar-gated create/update writes for Artist/Band entities beyond submission intake.
+- Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 
@@ -46,19 +111,31 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 
 ## Data Models & Migrations
 ### Target Models (Planned)
-- `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, timestamps)
 - `RegistrarCode` (for capability completion handoff flows)
 - Project linkage to `Signal` rows for follow/blast/support
 - Sect motion artifact and committed artist-catalog references
 
+### Prisma Models (Implemented)
+- `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
+- `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
+- `RegistrarInviteDelivery` (`registrarArtistMemberId`, `email`, `status`, `payload`, `dispatchedAt`, timestamps)
+
 ### Migrations
-- None yet.
+- `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
+- `20260220141000_add_registrar_entries` adds `registrar_entries` for Home Scene-scoped registration submissions.
+- `20260220170000_add_registrar_artist_members` adds `registrar_artist_members` roster/invite persistence for registrar artist submissions.
+- `20260220183000_add_registrar_invite_delivery` adds invite token fields + `registrar_invite_deliveries` queue table.
 
 ## API Design
-### Planned Endpoints (Not Implemented)
+### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/registrar/artist` | required | Initiate Artist/Band entity registration |
+| POST | `/registrar/artist` | required | Initiate Artist/Band entity registration (submission entry) |
+| POST | `/registrar/artist/:entryId/materialize` | required | Materialize submitted registrar entry into canonical Artist/Band entity |
+| POST | `/registrar/artist/:entryId/dispatch-invites` | required | Queue invite deliveries for pending non-platform registrar members |
+| POST | `/registrar/artist/:entryId/sync-members` | required | Sync eligible registrar members into canonical Artist/Band membership graph |
+| GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
+| GET | `/registrar/artist/entries` | required | List submitter-owned Artist/Band registrar entries + member/invite summary counts |
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
@@ -66,6 +143,9 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.
 - Users should be able to inspect registration state and required next actions.
+- Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
+- Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.
+- Registrar web panel may only expose explicit, spec-authorized registrar follow-up actions (no auto-materialization/auto-dispatch).
 
 ## Acceptance Tests / Test Plan
 - Registrar submissions are Scene-scoped and auditable.

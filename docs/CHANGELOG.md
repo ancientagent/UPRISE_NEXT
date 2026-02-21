@@ -7,6 +7,158 @@
 
 ## [Unreleased]
 ### Added
+- CI typecheck stabilization for API service callbacks:
+  - Added explicit callback parameter typing in API services to satisfy strict CI `noImplicitAny` checks.
+  - Affected files:
+    - `apps/api/src/artist-bands/artist-bands.service.ts`
+    - `apps/api/src/auth/auth.service.ts`
+    - `apps/api/src/registrar/registrar.service.ts`
+    - `apps/api/src/users/users.service.ts`
+- CI secrets-scan compatibility fix for DB QA runner:
+  - Updated `scripts/qa-db.sh` to construct default `DATABASE_URL` from component vars (no inline credential URL literal).
+  - Updated logging to print host/port only instead of full credential-bearing URL.
+- Legacy `User.isArtist` persistence removal (slice 33):
+  - Dropped `users.isArtist` column via migration `20260221220000_drop_user_is_artist`.
+  - Removed `isArtist` from Prisma `User` model schema.
+  - Regenerated Prisma client and kept strict `isArtist` readiness report at zero references.
+- User detail/profile transitional alias removal (slice 32):
+  - Removed `isArtistTransitional` from `GET /users/:id` and `GET /users/:id/profile` response contracts.
+  - Users service no longer reads `isArtist` for user detail/profile payload mapping.
+  - Updated users-profile service tests to assert canonical bridge fields only.
+  - Strict readiness report now shows zero in-repo `isArtist*` code references.
+- Web transitional type cleanup + strict guard alignment (slice 31):
+  - Removed unused `isArtistTransitional` field from `/users/[id]` web profile type contract.
+  - Removed web profile page from strict `isArtist` approved path allowlist.
+- isArtist readiness guard allowlist tightening (slice 30):
+  - Removed `packages/types/src/user.ts` from strict-report approved legacy path set.
+  - Keeps strict guard aligned with current remaining transitional consumers only.
+- Artist/Band identity phased-plan refresh (slice 29):
+  - Added evidence-based remaining-slices plan with migration ordering, risk controls, and rollback strategy:
+    - `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
+- Shared user type legacy-flag alignment (slice 28):
+  - Removed `isArtist` from `@uprise/types` `UserSchema` so shared app contracts no longer advertise the legacy field.
+  - Kept persistence + transitional API alias migration path unchanged.
+- isArtist contract-removal assertion hardening (slice 27):
+  - Added explicit users-service assertions that `isArtist` is absent from both user detail and profile read payloads.
+  - Keeps `isArtistTransitional` compatibility assertions in place during migration.
+- User detail/profile legacy contract step-down (slice 26):
+  - `GET /users/:id` and `GET /users/:id/profile` no longer return legacy `isArtist`.
+  - Transitional alias `isArtistTransitional` remains for compatibility while canonical migration completes.
+  - Added identity test updates and web profile typing alignment for the narrowed contract.
+- User detail managed-entity parity (slice 25):
+  - `GET /users/:id` now includes `managedArtistBands` summary (with `membershipRole`) to match profile contract parity.
+  - Added users service test assertions for user-detail managed-entity payload.
+- Repo hygiene for autonomous artifact/noise handling (slice 24):
+  - Added `.gitignore` entries for `artifacts/` and generic `*:Zone.Identifier` files.
+  - Prevents generated report artifacts and Windows metadata files from repeatedly surfacing as untracked noise.
+- Registrar entry list canonical entity summary enrichment (slice 23):
+  - `GET /registrar/artist/entries` now includes materialized `artistBand` summary when linked.
+  - `/registrar` status panel now displays materialized entity name/slug when available.
+- Registrar web sync-eligibility guard (slice 22):
+  - `Sync Eligible Members` now uses explicit eligibility count (`existing + claimed`) from registrar entry summaries.
+  - Action is disabled when no eligible linked members exist.
+  - Added helper test coverage for sync-eligible count calculation.
+- User profile managed-entity role visibility (slice 21):
+  - `managedArtistBands` profile contract now includes `membershipRole` from canonical membership rows.
+  - `/users/[id]` linked-entity list now shows membership role when present.
+- User profile managed-entity contract consolidation (slice 20):
+  - `GET /users/:id/profile` now includes `managedArtistBands` summary list.
+  - `/users/[id]` now renders linked entities from profile response directly (single-call profile contract).
+  - Added users profile service test coverage for `managedArtistBands`.
+- User profile linked-entity read resilience (slice 19):
+  - Profile page now degrades gracefully when `/artist-bands?userId=:id` fails.
+  - Core profile still renders; linked-entity panel shows non-blocking warning state.
+- User profile canonical artist/band linkage display (slice 18):
+  - `/users/[id]` now reads `GET /artist-bands?userId=:id` and shows linked registrar-managed Artist/Band entities.
+  - Added helper + unit test for entity type label formatting (`Artist` / `Band`).
+- isArtist strict consumer guard (slice 17):
+  - Added strict mode to `scripts/is-artist-consumer-report.mjs` via `--fail-on-unapproved`.
+  - Added `pnpm run report:isartist-consumers:strict`.
+  - Updated `qa:identity` to run strict guard mode before targeted identity tests.
+- isArtist deprecation-readiness workflow hardening (slice 16):
+  - Enhanced `scripts/is-artist-consumer-report.mjs` with `--json` and `--out=<path>` modes.
+  - Updated `qa:identity` command to include `pnpm run report:isartist-consumers`.
+  - Added runbook `docs/solutions/USER_ISARTIST_DEPRECATION_READINESS.md`.
+- Identity deprecation-prep bridge alias + readiness report (slice 15):
+  - Added `isArtistTransitional` alias on user read surfaces (`GET /users/:id`, `GET /users/:id/profile`) while keeping `isArtist` intact.
+  - Added `pnpm run report:isartist-consumers` (`scripts/is-artist-consumer-report.mjs`) to inventory in-repo `isArtist` call sites.
+  - Expanded user profile service test coverage for transitional alias parity.
+- Registrar web member-sync action (slice 14):
+  - Added `Sync Eligible Members` action to `/registrar` status panel for materialized entries.
+  - Action calls `POST /registrar/artist/:entryId/sync-members` and reports sync summary to submitter.
+- Registrar member-to-entity sync primitive (slice 13):
+  - Added endpoint `POST /registrar/artist/:entryId/sync-members` for submitter-owned, materialized registrations.
+  - Sync action idempotently links eligible registrar members (`existing_user`, `claimed`) into canonical `ArtistBandMember`.
+  - Added registrar service tests covering success, authorization, and pre-materialization guard cases.
+- Registrar web status/action panel (slice 12):
+  - `/registrar` now loads submitter-owned entries from `GET /registrar/artist/entries`.
+  - Added explicit follow-up UI actions for existing registrar APIs:
+    - materialize entry,
+    - queue member invites,
+    - load invite status summary.
+  - Added web helper utilities/tests for registrar status formatting + invite link payload defaults.
+- Registrar Artist/Band entry list read surface (slice 11):
+  - Added endpoint `GET /registrar/artist/entries` for submitter-owned registration tracking.
+  - Returns reverse-chronological entry list with scene context and per-entry member/invite summary counts.
+  - Added registrar service unit coverage for list behavior + empty-state handling.
+- Agent tooling baseline durability notes:
+  - Added explicit session directive to treat `python3` as canonical and avoid assuming `python` alias.
+  - Added context-compaction tooling guardrails in `docs/solutions/SESSION_STANDING_DIRECTIVES.md`.
+  - Added tooling recovery notes in `docs/AGENT_STRATEGY_AND_HANDOFF.md`.
+  - Recorded skill pickup reminder: restart Codex after installing new skills.
+- Registrar web intake surface (slice 10):
+  - Added Plot action `Open Registrar` in `apps/web/src/app/plot/page.tsx`.
+  - Added `/registrar` page with explicit `Band / Artist Registration` action selection before form submission.
+  - Added Artist/Band registrar form fields for entity identity + member roster (`name`, `email`, `city`, `instrument`).
+  - Form resolves Home Scene via `/communities/resolve-home` and blocks submit unless account is GPS-verified.
+  - Added web helper unit tests: `apps/web/__tests__/registrar-artist-registration.test.ts`.
+- DB-backed QA lane:
+  - Added `pnpm run qa:db` (script: `scripts/qa-db.sh`) to auto-start local PostGIS via Docker Compose, run Prisma migrate deploy, and execute DB-dependent API tests.
+  - Added API command `pnpm --filter api test:db` targeting `communities.test.ts`.
+- QA mode command lane for identity/registrar:
+  - Added root script `pnpm run qa:identity` to run docs lint, infra policy check, focused identity/registrar API tests, and API typecheck in one pass.
+  - Added API script `pnpm --filter api test:identity` for focused registrar/auth/user identity test suites.
+- Invite prefill read endpoint (slice 9):
+  - Added `POST /auth/invite-preview` to resolve invited member and Home Scene context before invite claim registration.
+  - Expanded auth invite tests for preview success + claimed-token rejection.
+- Transitional identity bridge field (slice 8):
+  - Added `hasArtistBand` to user profile read surfaces (`GET /users/:id`, `GET /users/:id/profile`) derived from canonical `ArtistBandMember`.
+  - Keeps `User.isArtist` intact while exposing canonical entity linkage for migration callers.
+  - Added users profile service test assertions for `hasArtistBand`.
+- Registrar invite status read surface (slice 7):
+  - Added endpoint `GET /registrar/artist/:entryId/invites` for submitter-owned invite tracking.
+  - Returns member roster with status counts for registrar invite lifecycle visibility.
+  - Expanded registrar service tests for invite summary behavior.
+- Registrar invite claim bootstrap (slice 6):
+  - Added `POST /auth/register-invite` for tokenized registrar-member account creation.
+  - Claim flow now creates invited users with Home Scene defaults from registrar scene context and `gpsVerified=false`.
+  - Claim marks registrar member invite as `claimed` and links `claimedUserId`.
+  - Added invite-registration service tests (`apps/api/test/auth.invite-registration.service.test.ts`).
+- Registrar invite dispatch queue primitives (slice 5):
+  - Added endpoint `POST /registrar/artist/:entryId/dispatch-invites`.
+  - Added migration `20260220183000_add_registrar_invite_delivery` for invite token fields + `registrar_invite_deliveries`.
+  - Dispatch flow now queues tokenized delivery payloads for pending non-platform members.
+  - Expanded registrar tests to cover invite queueing behavior.
+- Registrar artist registration materialization (slice 4):
+  - Added `POST /registrar/artist/:entryId/materialize` for submitter-owned registrar entries.
+  - Materialization now creates canonical `ArtistBand`, links owner membership, and marks registrar entry as `materialized`.
+  - Added idempotent materialization handling when entry is already linked.
+  - Expanded registrar service tests for materialize success/idempotency/authorization cases.
+- Registrar artist registration intake expansion (slice 3):
+  - `POST /registrar/artist` now requires GPS-verified submitter account in Home Scene.
+  - Added `RegistrarArtistMember` model + migration `20260220170000_add_registrar_artist_members`.
+  - Registrar submission now stores member roster (`name`, `email`, `city`, `instrument`) and invite status (`existing_user` / `pending_email`).
+  - Added service unit coverage for GPS enforcement + member invite persistence (`apps/api/test/registrar.service.test.ts`).
+- Registrar Artist/Band submission primitives (slice 2):
+  - Added `RegistrarEntry` Prisma model and additive migration `20260220141000_add_registrar_entries`.
+  - Added authenticated endpoint `POST /registrar/artist` for Home Scene-scoped Artist/Band registration submissions.
+  - Added registrar service unit tests: `apps/api/test/registrar.service.test.ts`.
+- Canonical Artist/Band identity foundation (slice 1):
+  - Added Prisma models `ArtistBand` and `ArtistBandMember` plus additive migration `20260220130000_add_artist_bands_identity`.
+  - Added authenticated read endpoints:
+    - `GET /artist-bands/:id`
+    - `GET /artist-bands?userId=:id` (defaults to authenticated user when omitted)
+  - Added service unit tests: `apps/api/test/artist-bands.service.test.ts`.
 - User collection shelves and profile visibility:
   - Added typed collection shelf mapping for `ADD` (`singles`, `uprises`, `posters`, `fliers`, `merch_buttons`, `merch_patches`, `merch_shirts`).
   - Added profile-level collection display toggle (`User.collectionDisplayEnabled`) with endpoint `POST /users/me/collection-display`.
@@ -133,6 +285,8 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+- Registrar enforcement now validates artist registration submissions against Home Scene and city-tier scope in API service logic.
+- Identity implementation now uses canonical Artist/Band entity persistence as the primary model foundation while keeping `User.isArtist` transitional for compatibility.
 - Identity model correction (canon-alignment):
   - Corrected docs to reflect canonical Artist/Band as Registrar-linked entity model (not additive user capability flag).
   - Updated `USER-IDENTITY`, `SYS-REGISTRAR`, `users/README`, analytics wording, and master handoff archive references accordingly.
@@ -212,6 +366,7 @@
   - Added Scene Map policy locks to `docs/specs/DECISIONS_REQUIRED.md` (aggregation windows, geo privacy floor, tier rollup continuity).
 
 ### Fixed
+- API test DB fallback now matches local Docker PostGIS defaults in `apps/api/test/setup.ts` (`uprise/uprise_dev_password@localhost:5432/uprise_dev`) to prevent false auth failures during full-suite runs.
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
 - Web-tier typecheck error in `apps/web/__tests__/web-tier-guard.test.ts`.
 - Socket.IO community event tests by wiring real namespace/handler setup.

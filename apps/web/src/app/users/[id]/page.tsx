@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
+import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
 
 interface ShelfItem {
   signalId: string;
@@ -28,11 +29,17 @@ interface UserProfileData {
     avatar: string | null;
     city: string | null;
     country: string | null;
-    isArtist: boolean;
     collectionDisplayEnabled: boolean;
   };
   canViewCollection: boolean;
   collectionShelves: Shelf[];
+  managedArtistBands: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    entityType: string;
+    membershipRole: string | null;
+  }>;
 }
 
 const shelfLabel: Record<string, string> = {
@@ -63,8 +70,8 @@ export default function UserProfilePage() {
     setError(null);
 
     try {
-      const response = await api.get<UserProfileData>(`/users/${userId}/profile`, { token });
-      setProfile(response.data ?? null);
+      const profileResponse = await api.get<UserProfileData>(`/users/${userId}/profile`, { token });
+      setProfile(profileResponse.data ?? null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load user profile.');
     } finally {
@@ -183,6 +190,28 @@ export default function UserProfilePage() {
                 </div>
               ))}
             </div>
+          )}
+        </section>
+
+        <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <h2 className="text-lg font-semibold text-black">Linked Artist/Band Entities</h2>
+          <p className="mt-1 text-sm text-black/60">
+            Canonical registrar-linked entities managed by this user account.
+          </p>
+          {profile.managedArtistBands.length === 0 ? (
+            <p className="mt-3 text-sm text-black/60">No linked Artist/Band entities.</p>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {profile.managedArtistBands.map((entity) => (
+                <li key={entity.id} className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2">
+                  <p className="text-sm font-medium text-black">{entity.name}</p>
+                  <p className="text-xs text-black/60">
+                    {formatArtistBandEntityType(entity.entityType)} • {entity.slug}
+                    {entity.membershipRole ? ` • ${entity.membershipRole}` : ''}
+                  </p>
+                </li>
+              ))}
+            </ul>
           )}
         </section>
       </div>

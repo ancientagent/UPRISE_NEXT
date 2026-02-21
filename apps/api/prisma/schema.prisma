@@ -35,7 +35,6 @@ model User {
   collectionDisplayEnabled Boolean @default(false)
   gpsVerified         Boolean   @default(false)
   isVerified  Boolean   @default(false)
-  isArtist    Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -50,8 +49,49 @@ model User {
   collections        Collection[]
   trackEngagements   TrackEngagement[]
   trackVotes         TrackVote[]
+  createdArtistBands ArtistBand[]
+  artistBandMembers  ArtistBandMember[]
+  registrarEntries   RegistrarEntry[]
+  registrarArtistMemberships RegistrarArtistMember[] @relation("RegistrarExistingUser")
+  registrarClaimedMemberships RegistrarArtistMember[] @relation("RegistrarClaimedUser")
 
   @@map("users")
+}
+
+model ArtistBand {
+  id               String   @id @default(uuid())
+  name             String
+  slug             String   @unique
+  entityType       String   @default("artist") // artist, band
+  registrarEntryRef String?
+  homeSceneId      String?
+  createdById      String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  createdBy User      @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  homeScene Community? @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
+  members   ArtistBandMember[]
+  registrarEntries RegistrarEntry[]
+
+  @@index([homeSceneId])
+  @@index([createdById])
+  @@map("artist_bands")
+}
+
+model ArtistBandMember {
+  id           String   @id @default(uuid())
+  artistBandId String
+  userId       String
+  role         String   @default("manager") // owner, manager, collaborator
+  createdAt    DateTime @default(now())
+
+  artistBand ArtistBand @relation(fields: [artistBandId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([artistBandId, userId])
+  @@index([userId])
+  @@map("artist_band_members")
 }
 
 model Community {
@@ -84,8 +124,76 @@ model Community {
   signals   Signal[]
   rotationEntries RotationEntry[]
   trackVotes TrackVote[]
+  artistBands ArtistBand[]
+  registrarEntries RegistrarEntry[]
 
   @@map("communities")
+}
+
+model RegistrarEntry {
+  id           String   @id @default(uuid())
+  type         String
+  status       String   @default("submitted")
+  sceneId      String
+  createdById  String
+  artistBandId String?
+  payload      Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  scene      Community  @relation(fields: [sceneId], references: [id], onDelete: Restrict)
+  createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
+  artistMembers RegistrarArtistMember[]
+
+  @@index([sceneId, type, status])
+  @@index([createdById, createdAt])
+  @@index([artistBandId])
+  @@map("registrar_entries")
+}
+
+model RegistrarArtistMember {
+  id              String   @id @default(uuid())
+  registrarEntryId String
+  name            String
+  email           String
+  city            String
+  instrument      String
+  existingUserId  String?
+  claimedUserId   String?
+  inviteStatus    String   @default("pending_email") // pending_email, existing_user, sent, failed
+  inviteToken     String?
+  inviteTokenExpiresAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
+  existingUser   User?          @relation("RegistrarExistingUser", fields: [existingUserId], references: [id], onDelete: SetNull)
+  claimedUser    User?          @relation("RegistrarClaimedUser", fields: [claimedUserId], references: [id], onDelete: SetNull)
+  deliveries     RegistrarInviteDelivery[]
+
+  @@unique([registrarEntryId, email])
+  @@unique([inviteToken])
+  @@index([email])
+  @@index([existingUserId])
+  @@index([claimedUserId])
+  @@map("registrar_artist_members")
+}
+
+model RegistrarInviteDelivery {
+  id                     String   @id @default(uuid())
+  registrarArtistMemberId String   @unique
+  email                  String
+  status                 String   @default("queued") // queued, sent, failed
+  payload                Json
+  dispatchedAt           DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  registrarArtistMember RegistrarArtistMember @relation(fields: [registrarArtistMemberId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@map("registrar_invite_deliveries")
 }
 
 model SectTag {

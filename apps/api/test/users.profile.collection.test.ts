@@ -7,6 +7,12 @@ describe('UsersService.getProfileWithCollection', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
     },
+    artistBand: {
+      findMany: jest.fn(),
+    },
+    artistBandMember: {
+      count: jest.fn(),
+    },
     collection: {
       findMany: jest.fn(),
     },
@@ -16,6 +22,7 @@ describe('UsersService.getProfileWithCollection', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.artistBand.findMany.mockResolvedValue([]);
     service = new UsersService(mockPrisma as any);
   });
 
@@ -33,17 +40,19 @@ describe('UsersService.getProfileWithCollection', () => {
       bio: null,
       avatar: null,
       coverImage: null,
-      isArtist: false,
       city: 'Austin',
       country: 'US',
       collectionDisplayEnabled: false,
       createdAt: new Date(),
     });
+    mockPrisma.artistBandMember.count.mockResolvedValue(0);
 
     const result = await service.getProfileWithCollection('viewer', 'target');
 
     expect(result.canViewCollection).toBe(false);
     expect(result.collectionShelves).toEqual([]);
+    expect(result.managedArtistBands).toEqual([]);
+    expect(result.user.hasArtistBand).toBe(false);
     expect(mockPrisma.collection.findMany).not.toHaveBeenCalled();
   });
 
@@ -55,12 +64,21 @@ describe('UsersService.getProfileWithCollection', () => {
       bio: null,
       avatar: null,
       coverImage: null,
-      isArtist: false,
       city: 'Austin',
       country: 'US',
       collectionDisplayEnabled: false,
       createdAt: new Date(),
     });
+    mockPrisma.artistBandMember.count.mockResolvedValue(1);
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      {
+        id: 'ab-1',
+        name: 'Static Signal',
+        slug: 'static-signal',
+        entityType: 'band',
+        members: [{ role: 'owner' }],
+      },
+    ]);
 
     mockPrisma.collection.findMany.mockResolvedValue([
       {
@@ -86,9 +104,57 @@ describe('UsersService.getProfileWithCollection', () => {
     const result = await service.getProfileWithCollection('target', 'target');
 
     expect(result.canViewCollection).toBe(true);
+    expect(result.user.hasArtistBand).toBe(true);
+    expect(result.managedArtistBands).toEqual([
+      {
+        id: 'ab-1',
+        name: 'Static Signal',
+        slug: 'static-signal',
+        entityType: 'band',
+        membershipRole: 'owner',
+      },
+    ]);
     expect(result.collectionShelves).toHaveLength(7);
     const singles = result.collectionShelves.find((s) => s.shelf === 'singles');
     expect(singles?.itemCount).toBe(1);
     expect(singles?.items[0].signalId).toBe('signal-1');
+  });
+
+  it('findById returns canonical artist-band bridge fields', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'target',
+      username: 'target',
+      displayName: 'Target',
+      bio: null,
+      avatar: null,
+      coverImage: null,
+      city: 'Austin',
+      country: 'US',
+      collectionDisplayEnabled: true,
+      createdAt: new Date(),
+    });
+    mockPrisma.artistBandMember.count.mockResolvedValue(0);
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      {
+        id: 'ab-9',
+        name: 'Signal Rise',
+        slug: 'signal-rise',
+        entityType: 'artist',
+        members: [{ role: 'owner' }],
+      },
+    ]);
+
+    const result = await service.findById('target');
+
+    expect(result.hasArtistBand).toBe(false);
+    expect(result.managedArtistBands).toEqual([
+      {
+        id: 'ab-9',
+        name: 'Signal Rise',
+        slug: 'signal-rise',
+        entityType: 'artist',
+        membershipRole: 'owner',
+      },
+    ]);
   });
 });

@@ -23,6 +23,8 @@ dist
 *.pem
 *.pdf
 *.pdf:Zone.Identifier
+*:Zone.Identifier
+artifacts/
 
 # Debug
 npm-debug.log*
