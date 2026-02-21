@@ -367,6 +367,27 @@ describe('RegistrarService', () => {
     });
   });
 
+  it('trims promoter payload productionName in list reads', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-promoter-14',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { productionName: '  Southside Signal Co.  ' },
+        createdAt: new Date('2026-02-21T18:23:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:24:00.000Z'),
+        scene: null,
+      },
+    ]);
+
+    const result = await service.listPromoterRegistrations('u-1');
+
+    expect(result.entries[0].payload).toEqual({
+      productionName: 'Southside Signal Co.',
+    });
+  });
+
   it('reads submitter-owned promoter registration detail', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-promoter-3',
@@ -410,6 +431,26 @@ describe('RegistrarService', () => {
         }),
       }),
     );
+  });
+
+  it('trims promoter payload productionName in detail reads', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-5',
+      type: 'promoter_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { productionName: '  Riverlight Events  ' },
+      createdAt: new Date('2026-02-21T19:10:00.000Z'),
+      updatedAt: new Date('2026-02-21T19:11:00.000Z'),
+      scene: null,
+    });
+
+    const result = await service.getPromoterRegistration('u-1', 'reg-promoter-5');
+
+    expect(result.payload).toEqual({
+      productionName: 'Riverlight Events',
+    });
   });
 
   it('rejects promoter detail read for non-submitting user', async () => {
