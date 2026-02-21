@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist member-sync controller parity tests (slice 59):
+  - Added controller test asserting `syncArtistBandMembers` delegates to service and returns wrapped success payload.
+  - Added controller test asserting service-layer errors are propagated for member-sync actions.
 - Registrar artist invite-dispatch controller parity tests (slice 58):
   - Added controller test asserting `dispatchArtistBandInvites` delegates to service and returns wrapped success payload.
   - Added controller test asserting service-layer errors are propagated for invite-dispatch actions.
