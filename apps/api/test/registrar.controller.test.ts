@@ -337,4 +337,55 @@ describe('RegistrarController', () => {
     );
     expect(registrarService.getArtistBandInviteStatus).toHaveBeenCalledWith('u-1', 'reg-artist-2');
   });
+
+  it('dispatches artist/band invites through registrar service', async () => {
+    const registrarService = {
+      dispatchArtistBandInvites: jest.fn().mockResolvedValue({
+        registrarEntryId: 'reg-artist-2',
+        dispatchedCount: 2,
+        skippedCount: 0,
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.dispatchArtistBandInvites(
+      'reg-artist-2',
+      { mobileAppUrl: 'https://m.uprise.app/download', webAppUrl: 'https://uprise.app/band' },
+      { user: { userId: 'u-1' } },
+    );
+
+    expect(registrarService.dispatchArtistBandInvites).toHaveBeenCalledWith(
+      'u-1',
+      'reg-artist-2',
+      { mobileAppUrl: 'https://m.uprise.app/download', webAppUrl: 'https://uprise.app/band' },
+    );
+    expect(response).toEqual({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-artist-2',
+        dispatchedCount: 2,
+        skippedCount: 0,
+      },
+    });
+  });
+
+  it('propagates artist/band invite dispatch errors from registrar service', async () => {
+    const registrarService = {
+      dispatchArtistBandInvites: jest.fn().mockRejectedValue(new NotFoundException('Registrar entry not found')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.dispatchArtistBandInvites(
+        'missing-entry',
+        { mobileAppUrl: 'https://m.uprise.app/download', webAppUrl: 'https://uprise.app/band' },
+        { user: { userId: 'u-1' } },
+      ),
+    ).rejects.toThrow(NotFoundException);
+    expect(registrarService.dispatchArtistBandInvites).toHaveBeenCalledWith(
+      'u-1',
+      'missing-entry',
+      { mobileAppUrl: 'https://m.uprise.app/download', webAppUrl: 'https://uprise.app/band' },
+    );
+  });
 });
