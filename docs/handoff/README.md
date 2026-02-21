@@ -61,6 +61,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-21_registrar-promoter-read-ordering-and-scene-context-tests-slice48.md`](./2026-02-21_registrar-promoter-read-ordering-and-scene-context-tests-slice48.md)
 - [`2026-02-21_registrar-promoter-read-payload-normalization-slice50.md`](./2026-02-21_registrar-promoter-read-payload-normalization-slice50.md)
 - [`2026-02-21_registrar-promoter-controller-error-path-tests-slice49.md`](./2026-02-21_registrar-promoter-controller-error-path-tests-slice49.md)
+- [`2026-02-21_registrar-promoter-whitespace-null-normalization-tests-slice52.md`](./2026-02-21_registrar-promoter-whitespace-null-normalization-tests-slice52.md)
 - [`2026-02-21_registrar-promoter-normalization-helper-consolidation-slice51.md`](./2026-02-21_registrar-promoter-normalization-helper-consolidation-slice51.md)
 - [`2026-02-21_pr23-secrets-scan-fix-qa-db-url-pattern.md`](./2026-02-21_pr23-secrets-scan-fix-qa-db-url-pattern.md)
 - [`2026-02-21_pr23-ci-typecheck-fix-api-callback-typing.md`](./2026-02-21_pr23-ci-typecheck-fix-api-callback-typing.md)
