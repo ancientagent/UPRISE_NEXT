@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist submitter-ownership guard tests (slice 62):
+  - Added `ForbiddenException` coverage for invite dispatch when requester is not the registrar entry submitter.
+  - Added `ForbiddenException` coverage for invite-status reads when requester is not the registrar entry submitter.
 - Registrar artist service guard-path hardening tests (slice 61):
   - Added `NotFoundException` coverage for artist invite dispatch, invite-status read, and member-sync actions when registrar entry is missing.
   - Added `ForbiddenException` coverage for the same actions when registrar entry type is not `artist_band_registration`.

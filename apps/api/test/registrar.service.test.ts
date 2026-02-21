@@ -852,6 +852,26 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
+  it('rejects invite dispatch from non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-6b',
+      type: 'artist_band_registration',
+      createdById: 'u-9',
+      scene: {
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'punk',
+      },
+    });
+
+    await expect(
+      service.dispatchArtistBandInvites('u-1', 'reg-6b', {
+        mobileAppUrl: 'https://m.uprise.example/download',
+        webAppUrl: 'https://uprise.example/band',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
   it('returns invite status summary for submitter-owned entry', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-7',
@@ -904,6 +924,16 @@ describe('RegistrarService', () => {
     });
 
     await expect(service.getArtistBandInviteStatus('u-1', 'reg-promoter-2')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects invite status read from non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-7b',
+      type: 'artist_band_registration',
+      createdById: 'u-9',
+    });
+
+    await expect(service.getArtistBandInviteStatus('u-1', 'reg-7b')).rejects.toThrow(ForbiddenException);
   });
 
   it('lists submitter-owned artist/band registrar entries with member invite counts', async () => {
