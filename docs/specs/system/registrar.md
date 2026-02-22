@@ -64,6 +64,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `POST /registrar/artist/:entryId/dispatch-invites` implemented.
   - Generates invite token + expiry for pending non-platform registrar members.
   - Queues invite-delivery payload rows for email delivery worker handoff.
+- Registrar invite delivery-state hardening (slice 64):
+  - Invite claim surfaces now accept only claimable invite lifecycle states (`queued`, `sent`) for token preview/claim flows.
+  - Internal registrar service method `finalizeQueuedInviteDelivery` added for worker/provider integration to mark queued deliveries as `sent` or `failed`.
+  - Finalization path updates both delivery queue row status and member invite lifecycle status in one transaction.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
@@ -111,6 +115,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Role registration code issuance and verification workflows.
 - Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
+- Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 

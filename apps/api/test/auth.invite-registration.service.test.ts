@@ -104,6 +104,44 @@ describe('AuthService.registerFromInvite', () => {
     expect(result.accessToken).toBe('jwt-token');
   });
 
+  it('allows claim when invite status is sent', async () => {
+    mockPrisma.registrarArtistMember.findUnique.mockResolvedValue({
+      id: 'ram-1b',
+      email: 'sam@example.com',
+      inviteStatus: 'sent',
+      inviteTokenExpiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      existingUserId: null,
+      claimedUserId: null,
+      registrarEntry: {
+        scene: {
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+        },
+      },
+    });
+    mockPrisma.user.create.mockResolvedValue({
+      id: 'u-100',
+      email: 'sam@example.com',
+      username: 'sampulse',
+    });
+    mockPrisma.registrarArtistMember.update.mockResolvedValue({
+      id: 'ram-1b',
+      claimedUserId: 'u-100',
+      inviteStatus: 'claimed',
+    });
+
+    const result = await service.registerFromInvite({
+      inviteToken: '22222222-2222-2222-2222-222222222222',
+      email: 'sam@example.com',
+      username: 'sampulse',
+      displayName: 'Sam Pulse',
+      password: 'password123',
+    });
+
+    expect(result.accessToken).toBe('jwt-token');
+  });
+
   it('rejects already claimed invite', async () => {
     mockPrisma.registrarArtistMember.findUnique.mockResolvedValue({
       id: 'ram-2',
@@ -130,6 +168,34 @@ describe('AuthService.registerFromInvite', () => {
         password: 'password123',
       }),
     ).rejects.toThrow(ConflictException);
+  });
+
+  it('rejects claim when invite delivery is not claimable', async () => {
+    mockPrisma.registrarArtistMember.findUnique.mockResolvedValue({
+      id: 'ram-2b',
+      email: 'sam@example.com',
+      inviteStatus: 'failed',
+      inviteTokenExpiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      existingUserId: null,
+      claimedUserId: null,
+      registrarEntry: {
+        scene: {
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+        },
+      },
+    });
+
+    await expect(
+      service.registerFromInvite({
+        inviteToken: '11111111-1111-1111-1111-111111111111',
+        email: 'sam@example.com',
+        username: 'sampulse',
+        displayName: 'Sam Pulse',
+        password: 'password123',
+      }),
+    ).rejects.toThrow(ForbiddenException);
   });
 
   it('previews valid invite context for prefill surfaces', async () => {
@@ -185,5 +251,32 @@ describe('AuthService.registerFromInvite', () => {
         inviteToken: '11111111-1111-1111-1111-111111111111',
       }),
     ).rejects.toThrow(ConflictException);
+  });
+
+  it('rejects preview when invite delivery is not claimable', async () => {
+    mockPrisma.registrarArtistMember.findUnique.mockResolvedValue({
+      id: 'ram-5',
+      name: 'Sam Pulse',
+      email: 'sam@example.com',
+      city: 'Austin',
+      instrument: 'Drums',
+      inviteStatus: 'failed',
+      inviteTokenExpiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      existingUserId: null,
+      claimedUserId: null,
+      registrarEntry: {
+        scene: {
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+        },
+      },
+    });
+
+    await expect(
+      service.previewInvite({
+        inviteToken: '11111111-1111-1111-1111-111111111111',
+      }),
+    ).rejects.toThrow(ForbiddenException);
   });
 });

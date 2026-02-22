@@ -23,6 +23,8 @@ describe('RegistrarService', () => {
     },
     registrarInviteDelivery: {
       upsert: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
     },
     artistBand: {
       create: jest.fn(),
@@ -870,6 +872,45 @@ describe('RegistrarService', () => {
         webAppUrl: 'https://uprise.example/band',
       }),
     ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('finalizes queued invite delivery as sent', async () => {
+    mockPrisma.registrarInviteDelivery.findUnique.mockResolvedValue({
+      id: 'rid-2',
+      registrarArtistMemberId: 'ram-2',
+      status: 'queued',
+    });
+    mockPrisma.registrarInviteDelivery.update.mockResolvedValue({
+      id: 'rid-2',
+      status: 'sent',
+    });
+    mockPrisma.registrarArtistMember.update.mockResolvedValue({
+      id: 'ram-2',
+      inviteStatus: 'sent',
+    });
+
+    const result = await service.finalizeQueuedInviteDelivery('ram-2', 'sent');
+
+    expect(mockPrisma.registrarInviteDelivery.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { registrarArtistMemberId: 'ram-2' },
+        data: expect.objectContaining({ status: 'sent' }),
+      }),
+    );
+    expect(mockPrisma.registrarArtistMember.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'ram-2' },
+        data: { inviteStatus: 'sent' },
+      }),
+    );
+    expect(result.registrarArtistMemberId).toBe('ram-2');
+    expect(result.deliveryStatus).toBe('sent');
+  });
+
+  it('rejects invite delivery finalization when delivery row is missing', async () => {
+    mockPrisma.registrarInviteDelivery.findUnique.mockResolvedValue(null);
+
+    await expect(service.finalizeQueuedInviteDelivery('ram-missing', 'sent')).rejects.toThrow(NotFoundException);
   });
 
   it('returns invite status summary for submitter-owned entry', async () => {

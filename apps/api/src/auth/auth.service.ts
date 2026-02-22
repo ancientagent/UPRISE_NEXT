@@ -7,6 +7,8 @@ import type { Login, Register, AuthTokens } from '@uprise/types';
 import { PrismaService } from '../prisma/prisma.service';
 import type { InvitePreviewDto, RegisterFromInviteDto } from './dto/invite-register.dto';
 
+const CLAIMABLE_REGISTRAR_INVITE_STATUSES = new Set(['queued', 'sent']);
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -73,6 +75,9 @@ export class AuthService {
     }
     if (invite.inviteTokenExpiresAt && invite.inviteTokenExpiresAt < new Date()) {
       throw new ForbiddenException('Invite token has expired');
+    }
+    if (!CLAIMABLE_REGISTRAR_INVITE_STATUSES.has(invite.inviteStatus)) {
+      throw new ForbiddenException('Invite token is not claimable');
     }
     if (invite.email.toLowerCase() !== dto.email.toLowerCase()) {
       throw new ForbiddenException('Invite token email mismatch');
@@ -147,6 +152,9 @@ export class AuthService {
     }
     if (invite.inviteTokenExpiresAt && invite.inviteTokenExpiresAt < new Date()) {
       throw new ForbiddenException('Invite token has expired');
+    }
+    if (!CLAIMABLE_REGISTRAR_INVITE_STATUSES.has(invite.inviteStatus)) {
+      throw new ForbiddenException('Invite token is not claimable');
     }
 
     return {

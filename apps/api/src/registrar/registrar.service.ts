@@ -645,6 +645,50 @@ export class RegistrarService {
     };
   }
 
+  async finalizeQueuedInviteDelivery(registrarArtistMemberId: string, status: 'sent' | 'failed') {
+    if (status !== 'sent' && status !== 'failed') {
+      throw new ForbiddenException('Invite delivery status must be sent or failed');
+    }
+
+    const delivery = await this.prisma.registrarInviteDelivery.findUnique({
+      where: { registrarArtistMemberId },
+      select: {
+        id: true,
+        registrarArtistMemberId: true,
+        status: true,
+      },
+    });
+
+    if (!delivery) {
+      throw new NotFoundException('Invite delivery not found');
+    }
+
+    const dispatchedAt = new Date();
+
+    await this.prisma.$transaction(async (tx: any) => {
+      await tx.registrarInviteDelivery.update({
+        where: { registrarArtistMemberId },
+        data: {
+          status,
+          dispatchedAt,
+        },
+      });
+
+      await tx.registrarArtistMember.update({
+        where: { id: registrarArtistMemberId },
+        data: {
+          inviteStatus: status,
+        },
+      });
+    });
+
+    return {
+      registrarArtistMemberId,
+      deliveryStatus: status,
+      dispatchedAt,
+    };
+  }
+
   async syncArtistBandMembers(userId: string, entryId: string) {
     const entry = await this.prisma.registrarEntry.findUnique({
       where: { id: entryId },

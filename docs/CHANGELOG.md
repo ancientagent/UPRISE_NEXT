@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Phase 2 roadmap kickoff + invite delivery-state hardening (slice 64):
+  - Added Phase 2 registrar artist roadmap with slices, migration posture, risk controls, and rollback strategy.
+  - Invite preview/claim now enforce claimable lifecycle states (`queued` or `sent`) to prevent invalid-state token claims.
+  - Added internal registrar invite-delivery finalization primitive for future worker/provider integration (`sent`/`failed` status sync).
+  - Expanded unit coverage for invite claimability guard paths and invite-delivery finalization behavior.
 - Phase 1 completion handoff (slice 63):
   - Added evidence-based Phase 1 API hardening completion report for registrar artist identity surface.
   - Captured merged slice chain, validation gate evidence, and Phase 2 entry boundary.

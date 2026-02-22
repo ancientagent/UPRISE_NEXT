@@ -66,6 +66,10 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
   - Claim flow sets Home Scene defaults from registrar scene context (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`).
   - Claimed accounts start with `gpsVerified = false` (GPS still required for voting validation).
+- Invite delivery-state hardening + worker seam (slice 64):
+  - Invite preview and invite-claim registration now require claimable invite states (`queued` or `sent`).
+  - Added internal registrar service primitive to finalize queued invite deliveries as `sent` or `failed` while syncing member invite status.
+  - Keeps invite-claim path compatible with future outbound delivery worker/provider integrations.
 - Web registrar entry + Artist/Band action intake (slice 10):
   - Plot now exposes Registrar entrypoint action (`Open Registrar`) from Home Scene civic surface.
   - `/registrar` web route includes explicit `Band / Artist Registration` action selection.
