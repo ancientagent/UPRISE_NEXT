@@ -75,6 +75,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-21_registrar-artist-owner-guard-tests-slice62.md`](./2026-02-21_registrar-artist-owner-guard-tests-slice62.md)
 - [`2026-02-22_phase1-api-hardening-completion.md`](./2026-02-22_phase1-api-hardening-completion.md)
 - [`2026-02-22_phase2-roadmap-and-slice64-invite-delivery-state.md`](./2026-02-22_phase2-roadmap-and-slice64-invite-delivery-state.md)
+- [`2026-02-22_phase2-qa-lane-slice65.md`](./2026-02-22_phase2-qa-lane-slice65.md)
 - [`2026-02-21_pr23-secrets-scan-fix-qa-db-url-pattern.md`](./2026-02-21_pr23-secrets-scan-fix-qa-db-url-pattern.md)
 - [`2026-02-21_pr23-ci-typecheck-fix-api-callback-typing.md`](./2026-02-21_pr23-ci-typecheck-fix-api-callback-typing.md)
 - [`2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md`](./2026-02-21_agent-tooling-baseline-and-skill-pickup-note.md)

@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 2 QA lane command (slice 65):
+  - Added root script `qa:phase2` for repeatable Phase 2 registrar invite-delivery validation.
+  - Command bundles docs lint, infra policy check, targeted API tests, and API/web typechecks.
 - Phase 2 roadmap kickoff + invite delivery-state hardening (slice 64):
   - Added Phase 2 registrar artist roadmap with slices, migration posture, risk controls, and rollback strategy.
   - Invite preview/claim now enforce claimable lifecycle states (`queued` or `sent`) to prevent invalid-state token claims.
