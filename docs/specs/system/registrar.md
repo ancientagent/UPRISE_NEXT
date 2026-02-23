@@ -97,6 +97,9 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Webhook outbound send now uses bounded request timeout via `AbortController`.
   - Timeout is configurable via `REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS` with default and minimum safety floor.
   - Timeout behavior remains fail-safe (`failed`) without mutating external contracts.
+- Registrar webhook timeout ceiling hardening (slice 84):
+  - Added maximum timeout ceiling for webhook outbound sends to prevent runaway long-lived requests from config mistakes.
+  - Timeout config is now bounded to minimum + maximum safety limits.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.

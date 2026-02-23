@@ -11,6 +11,7 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
   private readonly logger = new Logger(WebhookInviteDeliveryProvider.name);
   private static readonly DEFAULT_TIMEOUT_MS = 10_000;
   private static readonly MIN_TIMEOUT_MS = 1_000;
+  private static readonly MAX_TIMEOUT_MS = 60_000;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -95,6 +96,7 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
       return WebhookInviteDeliveryProvider.DEFAULT_TIMEOUT_MS;
     }
 
-    return Math.max(parsed, WebhookInviteDeliveryProvider.MIN_TIMEOUT_MS);
+    const clampedLower = Math.max(parsed, WebhookInviteDeliveryProvider.MIN_TIMEOUT_MS);
+    return Math.min(clampedLower, WebhookInviteDeliveryProvider.MAX_TIMEOUT_MS);
   }
 }

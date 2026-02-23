@@ -150,4 +150,19 @@ describe('WebhookInviteDeliveryProvider', () => {
     await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('sent');
     expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1000);
   });
+
+  it('clamps configured timeout to maximum safety ceiling', async () => {
+    mockConfigService.get.mockImplementation((key: string) => {
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL') return 'https://hooks.example/invite';
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS') return '120000';
+      return undefined;
+    });
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+    } as Response);
+
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('sent');
+    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 60000);
+  });
 });

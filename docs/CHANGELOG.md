@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar webhook timeout ceiling hardening (slice 84):
+  - Added maximum timeout safety ceiling for webhook outbound invite delivery.
+  - Added test coverage for timeout ceiling clamp behavior.
 - Registrar webhook timeout guard hardening (slice 83):
   - Added request timeout guard to webhook provider using `AbortController`.
   - Added configurable timeout env (`REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS`) with minimum safety floor.
