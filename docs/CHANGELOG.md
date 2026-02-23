@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 2 DB QA lane command (slice 69):
+  - Added root script `qa:phase2:db` to run docker-backed DB readiness lane plus registrar invite delivery integration test.
+  - Command composes existing `qa:db` setup/migration flow with targeted `registrar.invite-delivery.integration.test.ts`.
 - CI lint follow-up fix for registrar slices:
   - Removed unused variable pattern in `apps/api/src/registrar/registrar.service.ts` invite outcome mapping.
   - Removed unused import in `apps/api/test/registrar.invite-delivery-worker.test.ts`.
