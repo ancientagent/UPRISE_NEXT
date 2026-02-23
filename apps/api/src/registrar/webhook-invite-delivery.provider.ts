@@ -17,9 +17,11 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
     payload: InviteDeliveryPayload,
     context: InviteDeliveryContext,
   ): Promise<'sent' | 'failed'> {
-    const webhookUrl = this.configService.get<string>('REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL');
+    const webhookUrl = this.resolveWebhookUrl();
     if (!webhookUrl) {
-      this.logger.error('Missing REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL for webhook provider');
+      this.logger.error(
+        'Missing/invalid REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL for webhook provider',
+      );
       return 'failed';
     }
 
@@ -51,6 +53,23 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
         `Webhook invite delivery error: ${error instanceof Error ? error.message : String(error)}`,
       );
       return 'failed';
+    }
+  }
+
+  private resolveWebhookUrl(): string | null {
+    const rawWebhookUrl = this.configService.get<string>('REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL');
+    if (!rawWebhookUrl) {
+      return null;
+    }
+
+    try {
+      const parsed = new URL(rawWebhookUrl);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return null;
+      }
+      return parsed.toString();
+    } catch {
+      return null;
     }
   }
 }

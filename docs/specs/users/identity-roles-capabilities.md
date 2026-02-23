@@ -110,6 +110,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Delivery worker now passes provider-level correlation context (`deliveryId`, `registrarArtistMemberId`) with each outbound invite send attempt.
 - Registrar invite provider selection coverage hardening (slice 81):
   - Added explicit module-wiring selection coverage for provider mode defaults and fallback behavior.
+- Registrar webhook URL validation hardening (slice 82):
+  - Webhook outbound invite delivery now rejects malformed/unsupported endpoint URLs before transport attempts.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

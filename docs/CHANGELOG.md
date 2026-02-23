@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar webhook URL validation hardening (slice 82):
+  - Webhook invite provider now validates configured URL format and protocol (`http`/`https`) before outbound attempts.
+  - Added provider test coverage for malformed URL and unsupported protocol failure paths.
 - Registrar provider module-wiring selection coverage (slice 81):
   - Added `selectInviteDeliveryProvider(...)` helper for deterministic module provider resolution.
   - Added `registrar.module.provider-selection.test.ts` coverage for default, webhook, and unknown-value fallback cases.

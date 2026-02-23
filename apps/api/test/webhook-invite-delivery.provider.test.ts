@@ -43,6 +43,26 @@ describe('WebhookInviteDeliveryProvider', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('returns failed when webhook URL is malformed', async () => {
+    mockConfigService.get.mockImplementation((key: string) => {
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL') return 'not a url';
+      return undefined;
+    });
+
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('failed');
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('returns failed when webhook URL protocol is unsupported', async () => {
+    mockConfigService.get.mockImplementation((key: string) => {
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL') return 'ftp://hooks.example/invite';
+      return undefined;
+    });
+
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('failed');
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it('returns sent on successful webhook response', async () => {
     mockConfigService.get.mockImplementation((key: string) => {
       if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL') return 'https://hooks.example/invite';
