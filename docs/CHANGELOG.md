@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar outbound webhook invite provider option (slice 78):
+  - Added `WebhookInviteDeliveryProvider` for outbound invite delivery handoff via HTTP POST.
+  - Added env-driven provider selection (`REGISTRAR_INVITE_DELIVERY_PROVIDER`) with `noop` default and unknown-value fallback safety.
+  - Added provider unit coverage for success/failure/exception paths and selector coverage for provider resolution logic.
 - Phase 2 DB QA lane replay coverage wiring (slice 77):
   - Added dedicated replay integration spec file: `registrar.invite-delivery.replay.integration.test.ts`.
   - Updated `qa:phase2:db` to execute both DB invite lifecycle specs:

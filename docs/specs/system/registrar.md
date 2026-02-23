@@ -76,6 +76,13 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Worker loop handles success/failure/exception paths and continues processing on partial failures.
   - No scheduler/cron wiring; worker must be invoked explicitly via manual call or future automation lane.
   - No real email provider integration; delivery execution remains no-op until provider substitution.
+- Registrar invite outbound provider integration (slice 78):
+  - Invite delivery provider wiring now supports env-driven provider selection:
+    - `noop` (default),
+    - `webhook`.
+  - `webhook` provider posts invite payloads to `REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL` (optional bearer token via `REGISTRAR_INVITE_DELIVERY_WEBHOOK_TOKEN`).
+  - Worker + trigger lanes remain unchanged; they resolve delivery provider through the shared provider token.
+  - Unknown provider values safely fallback to `noop`.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
@@ -150,7 +157,6 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 ### Deferred (Not Implemented Yet)
 - Role registration code issuance and verification workflows.
 - Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
-- Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 

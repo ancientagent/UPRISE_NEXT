@@ -103,6 +103,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Registrar invite delivery finalize replay safety (slice 75):
   - Invite delivery finalization is now queued-only and replay-safe.
   - Already-finalized rows return current delivery state without re-mutating invite lifecycle state.
+- Registrar invite outbound delivery provider option (slice 78):
+  - Invite delivery provider selection is now env-driven with safe default fallback.
+  - `webhook` mode enables outbound delivery handoff to an external provider endpoint while preserving existing worker/trigger boundaries.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

@@ -93,6 +93,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-23_slice75-invite-finalize-replay-safety-hardening.md`](./2026-02-23_slice75-invite-finalize-replay-safety-hardening.md)
 - [`2026-02-23_slice76-invite-replay-finalize-db-integration-coverage.md`](./2026-02-23_slice76-invite-replay-finalize-db-integration-coverage.md)
 - [`2026-02-23_slice77-phase2-db-qa-lane-replay-spec-wiring.md`](./2026-02-23_slice77-phase2-db-qa-lane-replay-spec-wiring.md)
+- [`2026-02-23_slice78-outbound-webhook-invite-provider.md`](./2026-02-23_slice78-outbound-webhook-invite-provider.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)

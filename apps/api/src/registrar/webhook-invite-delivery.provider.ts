@@ -1,0 +1,47 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import type { InviteDeliveryPayload, InviteDeliveryProvider } from './invite-delivery.provider';
+
+@Injectable()
+export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
+  private readonly logger = new Logger(WebhookInviteDeliveryProvider.name);
+
+  constructor(private readonly configService: ConfigService) {}
+
+  async send(email: string, payload: InviteDeliveryPayload): Promise<'sent' | 'failed'> {
+    const webhookUrl = this.configService.get<string>('REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL');
+    if (!webhookUrl) {
+      this.logger.error('Missing REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL for webhook provider');
+      return 'failed';
+    }
+
+    const webhookToken = this.configService.get<string>('REGISTRAR_INVITE_DELIVERY_WEBHOOK_TOKEN');
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(webhookToken ? { Authorization: `Bearer ${webhookToken}` } : {}),
+        },
+        body: JSON.stringify({
+          type: 'registrar_invite_delivery',
+          email,
+          payload,
+        }),
+      });
+
+      if (!response.ok) {
+        this.logger.warn(`Webhook invite delivery failed: status=${response.status}`);
+        return 'failed';
+      }
+
+      return 'sent';
+    } catch (error) {
+      this.logger.error(
+        `Webhook invite delivery error: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      return 'failed';
+    }
+  }
+}
