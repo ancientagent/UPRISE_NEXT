@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { InviteDeliveryPayload, InviteDeliveryProvider } from './invite-delivery.provider';
+import type {
+  InviteDeliveryContext,
+  InviteDeliveryPayload,
+  InviteDeliveryProvider,
+} from './invite-delivery.provider';
 
 @Injectable()
 export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
@@ -8,7 +12,11 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async send(email: string, payload: InviteDeliveryPayload): Promise<'sent' | 'failed'> {
+  async send(
+    email: string,
+    payload: InviteDeliveryPayload,
+    context: InviteDeliveryContext,
+  ): Promise<'sent' | 'failed'> {
     const webhookUrl = this.configService.get<string>('REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL');
     if (!webhookUrl) {
       this.logger.error('Missing REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL for webhook provider');
@@ -28,6 +36,7 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
           type: 'registrar_invite_delivery',
           email,
           payload,
+          context,
         }),
       });
 

@@ -11,6 +11,15 @@ export interface InviteDeliveryPayload {
   musicCommunity: string;
 }
 
+export interface InviteDeliveryContext {
+  deliveryId: string;
+  registrarArtistMemberId: string;
+}
+
 export interface InviteDeliveryProvider {
-  send(email: string, payload: InviteDeliveryPayload): Promise<'sent' | 'failed'>;
+  send(
+    email: string,
+    payload: InviteDeliveryPayload,
+    context: InviteDeliveryContext,
+  ): Promise<'sent' | 'failed'>;
 }

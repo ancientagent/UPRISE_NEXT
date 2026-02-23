@@ -100,10 +100,12 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
       expect(mockInviteDeliveryProvider.send).toHaveBeenCalledWith(
         'artist1@example.com',
         queuedDeliveries[0].payload,
+        { deliveryId: 'delivery-1', registrarArtistMemberId: 'member-1' },
       );
       expect(mockInviteDeliveryProvider.send).toHaveBeenCalledWith(
         'artist2@example.com',
         queuedDeliveries[1].payload,
+        { deliveryId: 'delivery-2', registrarArtistMemberId: 'member-2' },
       );
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledTimes(2);
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'sent');

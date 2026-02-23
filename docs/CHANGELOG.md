@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite provider delivery-context propagation (slice 79):
+  - Extended provider contract to include per-delivery context (`deliveryId`, `registrarArtistMemberId`).
+  - Worker now passes context to provider send calls for external delivery correlation.
+  - Webhook provider now forwards context payload, with updated unit coverage.
 - Registrar outbound webhook invite provider option (slice 78):
   - Added `WebhookInviteDeliveryProvider` for outbound invite delivery handoff via HTTP POST.
   - Added env-driven provider selection (`REGISTRAR_INVITE_DELIVERY_PROVIDER`) with `noop` default and unknown-value fallback safety.

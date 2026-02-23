@@ -106,6 +106,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Registrar invite outbound delivery provider option (slice 78):
   - Invite delivery provider selection is now env-driven with safe default fallback.
   - `webhook` mode enables outbound delivery handoff to an external provider endpoint while preserving existing worker/trigger boundaries.
+- Registrar invite delivery provider context propagation (slice 79):
+  - Delivery worker now passes provider-level correlation context (`deliveryId`, `registrarArtistMemberId`) with each outbound invite send attempt.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

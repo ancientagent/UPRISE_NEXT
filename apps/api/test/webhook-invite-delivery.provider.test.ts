@@ -11,6 +11,10 @@ describe('WebhookInviteDeliveryProvider', () => {
     sceneState: 'TX',
     musicCommunity: 'punk',
   };
+  const context = {
+    deliveryId: 'delivery-1',
+    registrarArtistMemberId: 'member-1',
+  };
 
   const mockConfigService = {
     get: jest.fn(),
@@ -35,7 +39,7 @@ describe('WebhookInviteDeliveryProvider', () => {
       return undefined;
     });
 
-    await expect(provider.send('sam@example.com', payload)).resolves.toBe('failed');
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('failed');
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
@@ -50,7 +54,7 @@ describe('WebhookInviteDeliveryProvider', () => {
       status: 200,
     } as Response);
 
-    await expect(provider.send('sam@example.com', payload)).resolves.toBe('sent');
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('sent');
     expect(fetchSpy).toHaveBeenCalledWith(
       'https://hooks.example/invite',
       expect.objectContaining({
@@ -58,6 +62,12 @@ describe('WebhookInviteDeliveryProvider', () => {
         headers: expect.objectContaining({
           'Content-Type': 'application/json',
           Authorization: 'Bearer secret-token',
+        }),
+        body: JSON.stringify({
+          type: 'registrar_invite_delivery',
+          email: 'sam@example.com',
+          payload,
+          context,
         }),
       }),
     );
@@ -73,7 +83,7 @@ describe('WebhookInviteDeliveryProvider', () => {
       status: 500,
     } as Response);
 
-    await expect(provider.send('sam@example.com', payload)).resolves.toBe('failed');
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('failed');
   });
 
   it('returns failed when fetch throws', async () => {
@@ -83,6 +93,6 @@ describe('WebhookInviteDeliveryProvider', () => {
     });
     fetchSpy.mockRejectedValue(new Error('network down'));
 
-    await expect(provider.send('sam@example.com', payload)).resolves.toBe('failed');
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('failed');
   });
 });
