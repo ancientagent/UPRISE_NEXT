@@ -1124,6 +1124,13 @@ describe('RegistrarService', () => {
       }),
     );
     expect(result.total).toBe(1);
+    expect(result.inviteCountsByStatus).toEqual({
+      existing_user: 1,
+      pending_email: 1,
+      queued: 1,
+      sent: 1,
+      failed: 1,
+    });
     expect(result.entries[0].memberCount).toBe(3);
     expect(result.entries[0].existingUserCount).toBe(1);
     expect(result.entries[0].pendingInviteCount).toBe(1);
@@ -1146,6 +1153,7 @@ describe('RegistrarService', () => {
 
     expect(result).toEqual({
       total: 0,
+      inviteCountsByStatus: {},
       entries: [],
     });
     expect(mockPrisma.registrarArtistMember.findMany).not.toHaveBeenCalled();

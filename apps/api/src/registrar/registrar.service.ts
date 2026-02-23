@@ -235,6 +235,7 @@ export class RegistrarService {
     if (entries.length === 0) {
       return {
         total: 0,
+        inviteCountsByStatus: {},
         entries: [],
       };
     }
@@ -281,8 +282,14 @@ export class RegistrarService {
       countsByEntry.set(member.registrarEntryId, current);
     }
 
+    const inviteCountsByStatus = members.reduce((acc: Record<string, number>, member) => {
+      acc[member.inviteStatus] = (acc[member.inviteStatus] ?? 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
     return {
       total: entries.length,
+      inviteCountsByStatus,
       entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
         const inviteCounts = countsByEntry.get(entry.id) ?? {

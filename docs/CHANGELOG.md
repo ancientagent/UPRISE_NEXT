@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist entry-list top-level invite status summary (slice 71):
+  - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus` aggregated across submitter-owned registrar artist members.
+  - Empty-state responses now include `inviteCountsByStatus: {}` for stable shape parity.
+  - Added registrar service test coverage for populated + empty summary behavior.
 - Registrar artist entry-list invite outcome count enrichment (slice 70):
   - `GET /registrar/artist/entries` now returns per-entry `sentInviteCount` and `failedInviteCount`.
   - Existing invite lifecycle counts remain unchanged and backward compatible.
