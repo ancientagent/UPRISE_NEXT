@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite finalize replay-safety hardening (slice 75):
+  - `finalizeQueuedInviteDelivery` now finalizes only when delivery row remains `queued`.
+  - Added idempotent/already-finalized return semantics for non-queued rows.
+  - Added service test coverage for already-finalized and concurrent-race finalize paths.
 - Phase 2 QA lane coverage expansion (slice 74):
   - `qa:phase2` now includes invite-delivery worker and automated-trigger test suites.
   - Root QA command now validates both delivery processing seam and env-gated trigger behavior in the default phase lane.

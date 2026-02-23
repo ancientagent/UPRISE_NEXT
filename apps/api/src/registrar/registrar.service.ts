@@ -700,6 +700,7 @@ export class RegistrarService {
         id: true,
         registrarArtistMemberId: true,
         status: true,
+        dispatchedAt: true,
       },
     });
 
@@ -707,16 +708,43 @@ export class RegistrarService {
       throw new NotFoundException('Invite delivery not found');
     }
 
-    const dispatchedAt = new Date();
+    if (delivery.status !== 'queued') {
+      return {
+        registrarArtistMemberId,
+        deliveryStatus: delivery.status,
+        dispatchedAt: delivery.dispatchedAt,
+        alreadyFinalized: true,
+      };
+    }
 
-    await this.prisma.$transaction(async (tx: any) => {
-      await tx.registrarInviteDelivery.update({
-        where: { registrarArtistMemberId },
+    const dispatchedAt = new Date();
+    const finalizeResult = await this.prisma.$transaction(async (tx: any) => {
+      const updated = await tx.registrarInviteDelivery.updateMany({
+        where: {
+          registrarArtistMemberId,
+          status: 'queued',
+        },
         data: {
           status,
           dispatchedAt,
         },
       });
+
+      if (updated.count === 0) {
+        const current = await tx.registrarInviteDelivery.findUnique({
+          where: { registrarArtistMemberId },
+          select: {
+            status: true,
+            dispatchedAt: true,
+          },
+        });
+
+        return {
+          finalized: false,
+          deliveryStatus: current?.status ?? null,
+          dispatchedAt: current?.dispatchedAt ?? null,
+        };
+      }
 
       await tx.registrarArtistMember.update({
         where: { id: registrarArtistMemberId },
@@ -724,12 +752,19 @@ export class RegistrarService {
           inviteStatus: status,
         },
       });
+
+      return {
+        finalized: true,
+        deliveryStatus: status,
+        dispatchedAt,
+      };
     });
 
     return {
       registrarArtistMemberId,
-      deliveryStatus: status,
-      dispatchedAt,
+      deliveryStatus: finalizeResult.deliveryStatus,
+      dispatchedAt: finalizeResult.dispatchedAt,
+      alreadyFinalized: !finalizeResult.finalized,
     };
   }
 

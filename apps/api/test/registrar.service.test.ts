@@ -26,6 +26,7 @@ describe('RegistrarService', () => {
       findUnique: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
     artistBand: {
       create: jest.fn(),
@@ -880,10 +881,10 @@ describe('RegistrarService', () => {
       id: 'rid-2',
       registrarArtistMemberId: 'ram-2',
       status: 'queued',
+      dispatchedAt: null,
     });
-    mockPrisma.registrarInviteDelivery.update.mockResolvedValue({
-      id: 'rid-2',
-      status: 'sent',
+    mockPrisma.registrarInviteDelivery.updateMany.mockResolvedValue({
+      count: 1,
     });
     mockPrisma.registrarArtistMember.update.mockResolvedValue({
       id: 'ram-2',
@@ -892,9 +893,12 @@ describe('RegistrarService', () => {
 
     const result = await service.finalizeQueuedInviteDelivery('ram-2', 'sent');
 
-    expect(mockPrisma.registrarInviteDelivery.update).toHaveBeenCalledWith(
+    expect(mockPrisma.registrarInviteDelivery.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { registrarArtistMemberId: 'ram-2' },
+        where: {
+          registrarArtistMemberId: 'ram-2',
+          status: 'queued',
+        },
         data: expect.objectContaining({ status: 'sent' }),
       }),
     );
@@ -906,12 +910,59 @@ describe('RegistrarService', () => {
     );
     expect(result.registrarArtistMemberId).toBe('ram-2');
     expect(result.deliveryStatus).toBe('sent');
+    expect(result.alreadyFinalized).toBe(false);
   });
 
   it('rejects invite delivery finalization when delivery row is missing', async () => {
     mockPrisma.registrarInviteDelivery.findUnique.mockResolvedValue(null);
 
     await expect(service.finalizeQueuedInviteDelivery('ram-missing', 'sent')).rejects.toThrow(NotFoundException);
+  });
+
+  it('returns already-finalized response when delivery is no longer queued', async () => {
+    const dispatchedAt = new Date('2026-02-23T18:22:00.000Z');
+    mockPrisma.registrarInviteDelivery.findUnique.mockResolvedValue({
+      id: 'rid-2',
+      registrarArtistMemberId: 'ram-2',
+      status: 'sent',
+      dispatchedAt,
+    });
+
+    const result = await service.finalizeQueuedInviteDelivery('ram-2', 'sent');
+
+    expect(mockPrisma.registrarInviteDelivery.updateMany).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarArtistMember.update).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      registrarArtistMemberId: 'ram-2',
+      deliveryStatus: 'sent',
+      dispatchedAt,
+      alreadyFinalized: true,
+    });
+  });
+
+  it('returns already-finalized response when queued update loses race', async () => {
+    mockPrisma.registrarInviteDelivery.findUnique
+      .mockResolvedValueOnce({
+        id: 'rid-2',
+        registrarArtistMemberId: 'ram-2',
+        status: 'queued',
+        dispatchedAt: null,
+      })
+      .mockResolvedValueOnce({
+        status: 'failed',
+        dispatchedAt: new Date('2026-02-23T18:33:00.000Z'),
+      });
+
+    mockPrisma.registrarInviteDelivery.updateMany.mockResolvedValue({
+      count: 0,
+    });
+
+    const result = await service.finalizeQueuedInviteDelivery('ram-2', 'sent');
+
+    expect(mockPrisma.registrarArtistMember.update).not.toHaveBeenCalled();
+    expect(result.registrarArtistMemberId).toBe('ram-2');
+    expect(result.deliveryStatus).toBe('failed');
+    expect(result.alreadyFinalized).toBe(true);
   });
 
   it('returns invite status summary for submitter-owned entry', async () => {

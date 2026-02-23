@@ -114,6 +114,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Interval is configurable via `REGISTRAR_INVITE_DELIVERY_AUTORUN_INTERVAL_MS` with a minimum safety floor to avoid runaway loops.
   - Overlap guard prevents concurrent/replay overlap: while a prior tick is still running, subsequent ticks are skipped.
   - Delivery processing still delegates to `RegistrarInviteDeliveryWorkerService` and queued-only finalization flow.
+- Registrar invite delivery finalize replay-safety hardening (slice 75):
+  - `finalizeQueuedInviteDelivery` now mutates delivery/member status only when delivery row is still `queued` (atomic `updateMany` guard).
+  - If the row is already finalized (`sent`/`failed`), finalize returns current delivery state with `alreadyFinalized: true` and does not mutate state again.
+  - Concurrent finalize race path now returns existing finalized state instead of overwriting.
 - Registrar member sync primitive (slice 13):
   - `POST /registrar/artist/:entryId/sync-members` implemented.
   - Submitter-only action for materialized registrations.

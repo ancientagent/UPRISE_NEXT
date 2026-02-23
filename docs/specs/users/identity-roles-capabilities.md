@@ -100,6 +100,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Registrar invite delivery automated trigger lane (slice 73):
   - Internal API trigger service can now run queued invite deliveries on an env-gated interval.
   - Trigger remains default-off and uses overlap guard logic to avoid concurrent delivery runs.
+- Registrar invite delivery finalize replay safety (slice 75):
+  - Invite delivery finalization is now queued-only and replay-safe.
+  - Already-finalized rows return current delivery state without re-mutating invite lifecycle state.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.
