@@ -68,6 +68,14 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Invite claim surfaces now accept only claimable invite lifecycle states (`queued`, `sent`) for token preview/claim flows.
   - Internal registrar service method `finalizeQueuedInviteDelivery` added for worker/provider integration to mark queued deliveries as `sent` or `failed`.
   - Finalization path updates both delivery queue row status and member invite lifecycle status in one transaction.
+- Registrar invite delivery worker seam (slice 67):
+  - `InviteDeliveryProvider` interface defines pluggable invite delivery contract (`send(email, payload): Promise<'sent' | 'failed'>`).
+  - `NoopInviteDeliveryProvider` implementation provides deterministic no-op delivery returning `'sent'` (no external I/O).
+  - `RegistrarInviteDeliveryWorkerService` queries queued delivery rows, invokes provider, finalizes delivery status via `RegistrarService.finalizeQueuedInviteDelivery`.
+  - Worker service is wired for DI in `RegistrarModule` with provider interface for future real email provider substitution.
+  - Worker loop handles success/failure/exception paths and continues processing on partial failures.
+  - No scheduler/cron wiring; worker must be invoked explicitly via manual call or future automation lane.
+  - No real email provider integration; delivery execution remains no-op until provider substitution.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.

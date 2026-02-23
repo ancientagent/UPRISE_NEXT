@@ -7,6 +7,16 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite delivery worker seam (slice 67):
+  - Added `InviteDeliveryProvider` interface defining pluggable invite delivery contract (`send(email, payload): Promise<'sent' | 'failed'>`).
+  - Added `NoopInviteDeliveryProvider` implementation providing deterministic no-op delivery (returns `'sent'`, no external I/O).
+  - Added `RegistrarInviteDeliveryWorkerService` querying queued delivery rows, invoking provider, finalizing status via `RegistrarService.finalizeQueuedInviteDelivery`.
+  - Worker service wired for DI in `RegistrarModule` with provider interface for future real email provider substitution.
+  - Worker loop handles success/failure/exception paths and continues processing on partial failures.
+  - No scheduler/cron wiring; worker must be invoked explicitly via manual call or future automation lane.
+  - No real email provider integration; delivery execution remains no-op until provider substitution.
+  - Added `apps/api/test/registrar.invite-delivery-worker.test.ts` with comprehensive unit coverage for worker loop (no queued rows, success paths, failure paths, mixed results, exception handling, finalize failures).
+  - Updated `docs/specs/system/registrar.md` implemented-now section with worker seam details.
 - Registrar invite delivery outcome read surface (slice 66):
   - `GET /registrar/artist/:entryId/invites` response extended with per-member delivery outcome fields: `deliveryStatus`, `sentAt`, `failedAt`.
   - `deliveryStatus` reflects current `RegistrarInviteDelivery.status` (`queued`/`sent`/`failed`) or `null` when no delivery row exists.
