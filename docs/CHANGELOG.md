@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Phase 2 QA lane outbound-provider coverage expansion (slice 80):
+  - `qa:phase2` now includes outbound invite provider test suites:
+    - `webhook-invite-delivery.provider.test.ts`
+    - `invite-delivery-provider-selector.test.ts`
+  - Phase 2 default QA lane now validates provider-selection and webhook-send behavior alongside worker/trigger tests.
 - Registrar invite provider delivery-context propagation (slice 79):
   - Extended provider contract to include per-delivery context (`deliveryId`, `registrarArtistMemberId`).
   - Worker now passes context to provider send calls for external delivery correlation.
