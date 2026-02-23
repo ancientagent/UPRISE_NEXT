@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Phase 2 DB QA lane replay coverage wiring (slice 77):
+  - Added dedicated replay integration spec file: `registrar.invite-delivery.replay.integration.test.ts`.
+  - Updated `qa:phase2:db` to execute both DB invite lifecycle specs:
+    - `registrar.invite-delivery.integration.test.ts`
+    - `registrar.invite-delivery.replay.integration.test.ts`
 - Registrar invite replay finalize DB integration coverage (slice 76):
   - Extended DB-backed invite lifecycle integration tests with replay finalize assertion coverage.
   - Verifies repeated finalize attempts preserve first finalized state and do not overwrite member/delivery status.
