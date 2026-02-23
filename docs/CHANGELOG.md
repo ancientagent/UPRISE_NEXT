@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar provider module-wiring selection coverage (slice 81):
+  - Added `selectInviteDeliveryProvider(...)` helper for deterministic module provider resolution.
+  - Added `registrar.module.provider-selection.test.ts` coverage for default, webhook, and unknown-value fallback cases.
 - Phase 2 QA lane outbound-provider coverage expansion (slice 80):
   - `qa:phase2` now includes outbound invite provider test suites:
     - `webhook-invite-delivery.provider.test.ts`

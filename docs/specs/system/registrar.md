@@ -87,6 +87,9 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Worker now passes delivery context (`deliveryId`, `registrarArtistMemberId`) into provider `send(...)` calls.
   - Webhook provider forwards context alongside email and payload for external correlation/idempotency handling.
   - Additive internal interface change only; no public API contract change.
+- Registrar invite provider module-wiring selection coverage (slice 81):
+  - Module-level provider selection now routes through shared selector helper.
+  - Added explicit test coverage for default (`noop`), configured (`webhook`), and unknown-value fallback selection behavior.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.

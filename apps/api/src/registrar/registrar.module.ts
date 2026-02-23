@@ -7,7 +7,7 @@ import { RegistrarInviteDeliveryWorkerService } from './registrar-invite-deliver
 import { RegistrarInviteDeliveryTriggerService } from './registrar-invite-delivery-trigger.service';
 import { INVITE_DELIVERY_PROVIDER } from './invite-delivery.provider';
 import { WebhookInviteDeliveryProvider } from './webhook-invite-delivery.provider';
-import { resolveInviteDeliveryProviderKind } from './invite-delivery-provider-selector';
+import { selectInviteDeliveryProvider } from './invite-delivery-provider-selector';
 
 @Module({
   controllers: [RegistrarController],
@@ -23,13 +23,13 @@ import { resolveInviteDeliveryProviderKind } from './invite-delivery-provider-se
         noopProvider: NoopInviteDeliveryProvider,
         webhookProvider: WebhookInviteDeliveryProvider,
       ) => {
-        const providerKind = resolveInviteDeliveryProviderKind(
+        return selectInviteDeliveryProvider(
           configService.get<string>('REGISTRAR_INVITE_DELIVERY_PROVIDER'),
+          {
+            noop: noopProvider,
+            webhook: webhookProvider,
+          },
         );
-        if (providerKind === 'webhook') {
-          return webhookProvider;
-        }
-        return noopProvider;
       },
     },
     RegistrarInviteDeliveryWorkerService,
