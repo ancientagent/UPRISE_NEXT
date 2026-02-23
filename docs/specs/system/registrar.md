@@ -77,6 +77,12 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/artist/:entryId/invites` implemented.
   - Submitter-only access.
   - Returns roster rows plus invite status counts (`pending_email`, `queued`, `claimed`, etc.).
+- Registrar invite delivery outcome read surface (slice 66):
+  - `GET /registrar/artist/:entryId/invites` response extended with per-member delivery outcome fields.
+  - Each member row now includes `deliveryStatus` (`queued`/`sent`/`failed`/`null`), `sentAt` (timestamp when delivery finalized as `sent`, else `null`), and `failedAt` (timestamp when delivery finalized as `failed`, else `null`).
+  - Fields are derived from the existing `RegistrarInviteDelivery` row joined per member; no schema migration required.
+  - Raw `deliveries` array is not exposed; only the mapped outcome fields are returned.
+  - Additive/non-breaking: callers that do not consume the new fields are unaffected.
 - Registrar registration status list read surface (slice 11):
   - `GET /registrar/artist/entries` implemented.
   - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.

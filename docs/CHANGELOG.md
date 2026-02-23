@@ -7,6 +7,13 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite delivery outcome read surface (slice 66):
+  - `GET /registrar/artist/:entryId/invites` response extended with per-member delivery outcome fields: `deliveryStatus`, `sentAt`, `failedAt`.
+  - `deliveryStatus` reflects current `RegistrarInviteDelivery.status` (`queued`/`sent`/`failed`) or `null` when no delivery row exists.
+  - `sentAt` is the `dispatchedAt` timestamp when status is `sent`, else `null`; `failedAt` is the `dispatchedAt` timestamp when status is `failed`, else `null`.
+  - No schema migration; derived from existing `RegistrarInviteDelivery` join. Additive/non-breaking.
+  - Added 3 new service tests: delivery outcome field mapping (sent/failed/no-delivery), raw deliveries array omission from response shape.
+  - Updated `docs/specs/system/registrar.md` and `docs/specs/users/identity-roles-capabilities.md` implemented-now sections.
 - Phase 2 QA lane command (slice 65):
   - Added root script `qa:phase2` for repeatable Phase 2 registrar invite-delivery validation.
   - Command bundles docs lint, infra policy check, targeted API tests, and API/web typechecks.

@@ -792,6 +792,12 @@ export class RegistrarService {
         existingUserId: true,
         claimedUserId: true,
         inviteTokenExpiresAt: true,
+        deliveries: {
+          select: {
+            status: true,
+            dispatchedAt: true,
+          },
+        },
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -801,11 +807,25 @@ export class RegistrarService {
       return acc;
     }, {} as Record<string, number>);
 
+    const membersWithDelivery = members.map((member: any) => {
+      const delivery = member.deliveries?.[0] ?? null;
+      const deliveryStatus = delivery?.status ?? null;
+      const sentAt = delivery?.status === 'sent' ? delivery.dispatchedAt : null;
+      const failedAt = delivery?.status === 'failed' ? delivery.dispatchedAt : null;
+      const { deliveries: _deliveries, ...rest } = member;
+      return {
+        ...rest,
+        deliveryStatus,
+        sentAt,
+        failedAt,
+      };
+    });
+
     return {
       registrarEntryId: entry.id,
       totalMembers: members.length,
       countsByStatus: byStatus,
-      members,
+      members: membersWithDelivery,
     };
   }
 }

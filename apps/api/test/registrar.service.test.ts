@@ -930,6 +930,7 @@ describe('RegistrarService', () => {
         existingUserId: null,
         claimedUserId: null,
         inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [],
       },
       {
         id: 'ram-2',
@@ -941,6 +942,7 @@ describe('RegistrarService', () => {
         existingUserId: null,
         claimedUserId: 'u-2',
         inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [],
       },
     ]);
 
@@ -949,6 +951,102 @@ describe('RegistrarService', () => {
     expect(result.totalMembers).toBe(2);
     expect(result.countsByStatus.queued).toBe(1);
     expect(result.countsByStatus.claimed).toBe(1);
+  });
+
+  it('includes delivery outcome fields per member when delivery row exists', async () => {
+    const sentAt = new Date('2026-02-23T10:00:00.000Z');
+    const failedAt = new Date('2026-02-23T11:00:00.000Z');
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-7c',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      {
+        id: 'ram-3',
+        name: 'Sam Pulse',
+        email: 'sam@example.com',
+        city: 'Austin',
+        instrument: 'Drums',
+        inviteStatus: 'sent',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [{ status: 'sent', dispatchedAt: sentAt }],
+      },
+      {
+        id: 'ram-4',
+        name: 'Alex Volt',
+        email: 'alex@example.com',
+        city: 'Austin',
+        instrument: 'Guitar',
+        inviteStatus: 'failed',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [{ status: 'failed', dispatchedAt: failedAt }],
+      },
+      {
+        id: 'ram-5',
+        name: 'Jordan Key',
+        email: 'jordan@example.com',
+        city: 'Austin',
+        instrument: 'Bass',
+        inviteStatus: 'queued',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [],
+      },
+    ]);
+
+    const result = await service.getArtistBandInviteStatus('u-1', 'reg-7c');
+
+    expect(result.totalMembers).toBe(3);
+
+    const sam = result.members.find((m: any) => m.id === 'ram-3');
+    expect(sam.deliveryStatus).toBe('sent');
+    expect(sam.sentAt).toEqual(sentAt);
+    expect(sam.failedAt).toBeNull();
+
+    const alex = result.members.find((m: any) => m.id === 'ram-4');
+    expect(alex.deliveryStatus).toBe('failed');
+    expect(alex.sentAt).toBeNull();
+    expect(alex.failedAt).toEqual(failedAt);
+
+    const jordan = result.members.find((m: any) => m.id === 'ram-5');
+    expect(jordan.deliveryStatus).toBeNull();
+    expect(jordan.sentAt).toBeNull();
+    expect(jordan.failedAt).toBeNull();
+  });
+
+  it('omits raw deliveries array from member response shape', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-7d',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      {
+        id: 'ram-6',
+        name: 'Sam Pulse',
+        email: 'sam@example.com',
+        city: 'Austin',
+        instrument: 'Drums',
+        inviteStatus: 'queued',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: null,
+        deliveries: [{ status: 'queued', dispatchedAt: null }],
+      },
+    ]);
+
+    const result = await service.getArtistBandInviteStatus('u-1', 'reg-7d');
+
+    expect(result.members[0]).not.toHaveProperty('deliveries');
+    expect(result.members[0]).toHaveProperty('deliveryStatus');
+    expect(result.members[0]).toHaveProperty('sentAt');
+    expect(result.members[0]).toHaveProperty('failedAt');
   });
 
   it('rejects invite status read when registrar entry is missing', async () => {

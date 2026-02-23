@@ -70,6 +70,11 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Invite preview and invite-claim registration now require claimable invite states (`queued` or `sent`).
   - Added internal registrar service primitive to finalize queued invite deliveries as `sent` or `failed` while syncing member invite status.
   - Keeps invite-claim path compatible with future outbound delivery worker/provider integrations.
+- Invite delivery outcome read surface (slice 66):
+  - `GET /registrar/artist/:entryId/invites` response extended with per-member delivery outcome fields: `deliveryStatus`, `sentAt`, `failedAt`.
+  - `deliveryStatus` reflects the current `RegistrarInviteDelivery.status` (`queued`/`sent`/`failed`) or `null` when no delivery row exists.
+  - `sentAt` is the `dispatchedAt` timestamp when status is `sent`, else `null`; `failedAt` is the `dispatchedAt` timestamp when status is `failed`, else `null`.
+  - No schema migration; derived from existing `RegistrarInviteDelivery` join. Additive/non-breaking.
 - Web registrar entry + Artist/Band action intake (slice 10):
   - Plot now exposes Registrar entrypoint action (`Open Registrar`) from Home Scene civic surface.
   - `/registrar` web route includes explicit `Band / Artist Registration` action selection.
