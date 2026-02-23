@@ -94,6 +94,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Registrar entry-list top-level invite summary (slice 71):
   - `GET /registrar/artist/entries` now includes top-level `inviteCountsByStatus` aggregated across returned registrar artist members.
   - Empty-state responses include `inviteCountsByStatus: {}` for stable contract shape.
+- Registrar entry-list last dispatch timestamp (slice 72):
+  - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null invite delivery dispatch timestamp).
+  - `lastInviteDispatchAt` returns `null` when no invite delivery has been finalized for the entry.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

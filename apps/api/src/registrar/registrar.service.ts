@@ -250,6 +250,22 @@ export class RegistrarService {
       },
     });
 
+    const deliveries = await this.prisma.registrarInviteDelivery.findMany({
+      where: {
+        registrarArtistMember: {
+          registrarEntryId: { in: entries.map((entry: any) => entry.id) },
+        },
+      },
+      select: {
+        dispatchedAt: true,
+        registrarArtistMember: {
+          select: {
+            registrarEntryId: true,
+          },
+        },
+      },
+    });
+
     const countsByEntry = new Map<
       string,
       {
@@ -287,6 +303,16 @@ export class RegistrarService {
       return acc;
     }, {} as Record<string, number>);
 
+    const lastInviteDispatchByEntry = new Map<string, Date>();
+    for (const delivery of deliveries) {
+      if (!delivery.dispatchedAt) continue;
+      const entryId = delivery.registrarArtistMember.registrarEntryId;
+      const current = lastInviteDispatchByEntry.get(entryId);
+      if (!current || delivery.dispatchedAt > current) {
+        lastInviteDispatchByEntry.set(entryId, delivery.dispatchedAt);
+      }
+    }
+
     return {
       total: entries.length,
       inviteCountsByStatus,
@@ -320,6 +346,7 @@ export class RegistrarService {
           failedInviteCount: inviteCounts.failedInviteCount,
           claimedCount: inviteCounts.claimedCount,
           existingUserCount: inviteCounts.existingUserCount,
+          lastInviteDispatchAt: lastInviteDispatchByEntry.get(entry.id) ?? null,
           createdAt: entry.createdAt,
           updatedAt: entry.updatedAt,
         };

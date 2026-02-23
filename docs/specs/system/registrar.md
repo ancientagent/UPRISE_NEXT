@@ -104,6 +104,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus` aggregated across submitter-owned artist registration members.
   - Empty-state responses include `inviteCountsByStatus: {}` for stable shape parity.
   - Additive/non-breaking read-surface enrichment for lightweight registrar status dashboards.
+- Registrar registration status list last-dispatch timestamp (slice 72):
+  - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null `RegistrarInviteDelivery.dispatchedAt` for that registration).
+  - `lastInviteDispatchAt` is `null` when no invite dispatch has been finalized for the entry.
+  - Additive/non-breaking read-surface enrichment for submitter follow-up timing visibility.
 - Registrar member sync primitive (slice 13):
   - `POST /registrar/artist/:entryId/sync-members` implemented.
   - Submitter-only action for materialized registrations.

@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist entry-list last-dispatch timestamp enrichment (slice 72):
+  - `GET /registrar/artist/entries` now returns per-entry `lastInviteDispatchAt`.
+  - Value is derived from the latest non-null `RegistrarInviteDelivery.dispatchedAt` linked to each registration entry.
+  - Added registrar service tests covering max-timestamp selection and empty-state behavior.
 - Registrar artist entry-list top-level invite status summary (slice 71):
   - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus` aggregated across submitter-owned registrar artist members.
   - Empty-state responses now include `inviteCountsByStatus: {}` for stable shape parity.

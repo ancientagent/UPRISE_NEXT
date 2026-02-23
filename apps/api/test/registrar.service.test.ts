@@ -24,6 +24,7 @@ describe('RegistrarService', () => {
     registrarInviteDelivery: {
       upsert: jest.fn(),
       findUnique: jest.fn(),
+      findMany: jest.fn(),
       update: jest.fn(),
     },
     artistBand: {
@@ -1112,6 +1113,20 @@ describe('RegistrarService', () => {
       { registrarEntryId: 'reg-8', inviteStatus: 'sent' },
       { registrarEntryId: 'reg-8', inviteStatus: 'failed' },
     ]);
+    mockPrisma.registrarInviteDelivery.findMany.mockResolvedValue([
+      {
+        dispatchedAt: new Date('2026-02-23T10:30:00.000Z'),
+        registrarArtistMember: { registrarEntryId: 'reg-8' },
+      },
+      {
+        dispatchedAt: new Date('2026-02-23T12:45:00.000Z'),
+        registrarArtistMember: { registrarEntryId: 'reg-8' },
+      },
+      {
+        dispatchedAt: null,
+        registrarArtistMember: { registrarEntryId: 'reg-8' },
+      },
+    ]);
 
     const result = await service.listArtistBandRegistrations('u-1');
 
@@ -1138,6 +1153,7 @@ describe('RegistrarService', () => {
     expect(result.entries[0].sentInviteCount).toBe(1);
     expect(result.entries[0].failedInviteCount).toBe(1);
     expect(result.entries[0].claimedCount).toBe(0);
+    expect(result.entries[0].lastInviteDispatchAt).toEqual(new Date('2026-02-23T12:45:00.000Z'));
     expect(result.entries[0].artistBand).toEqual({
       id: 'ab-8',
       name: 'Static Signal',
@@ -1157,6 +1173,7 @@ describe('RegistrarService', () => {
       entries: [],
     });
     expect(mockPrisma.registrarArtistMember.findMany).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarInviteDelivery.findMany).not.toHaveBeenCalled();
   });
 
   it('syncs claimed/existing registrar members into canonical artist-band memberships', async () => {
