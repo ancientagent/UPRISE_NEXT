@@ -1109,6 +1109,8 @@ describe('RegistrarService', () => {
       { registrarEntryId: 'reg-8', inviteStatus: 'existing_user' },
       { registrarEntryId: 'reg-8', inviteStatus: 'pending_email' },
       { registrarEntryId: 'reg-8', inviteStatus: 'queued' },
+      { registrarEntryId: 'reg-8', inviteStatus: 'sent' },
+      { registrarEntryId: 'reg-8', inviteStatus: 'failed' },
     ]);
 
     const result = await service.listArtistBandRegistrations('u-1');
@@ -1126,6 +1128,8 @@ describe('RegistrarService', () => {
     expect(result.entries[0].existingUserCount).toBe(1);
     expect(result.entries[0].pendingInviteCount).toBe(1);
     expect(result.entries[0].queuedInviteCount).toBe(1);
+    expect(result.entries[0].sentInviteCount).toBe(1);
+    expect(result.entries[0].failedInviteCount).toBe(1);
     expect(result.entries[0].claimedCount).toBe(0);
     expect(result.entries[0].artistBand).toEqual({
       id: 'ab-8',

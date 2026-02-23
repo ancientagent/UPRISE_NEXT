@@ -96,6 +96,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
   - Includes per-entry member + invite lifecycle summary counts for registrar follow-up actions.
   - Includes materialized canonical Artist/Band summary (`id`, `name`, `slug`, `entityType`) when linked.
+- Registrar registration status list invite-outcome enrichment (slice 70):
+  - `GET /registrar/artist/entries` invite lifecycle summary now includes `sentInviteCount` and `failedInviteCount`.
+  - Keeps existing counts (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`) unchanged.
+  - Additive/non-breaking read-surface enrichment for submitter tracking.
 - Registrar member sync primitive (slice 13):
   - `POST /registrar/artist/:entryId/sync-members` implemented.
   - Submitter-only action for materialized registrations.

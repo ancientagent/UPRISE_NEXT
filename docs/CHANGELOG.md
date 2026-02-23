@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist entry-list invite outcome count enrichment (slice 70):
+  - `GET /registrar/artist/entries` now returns per-entry `sentInviteCount` and `failedInviteCount`.
+  - Existing invite lifecycle counts remain unchanged and backward compatible.
+  - Added registrar service coverage for mixed invite lifecycle statuses including `sent` and `failed`.
 - Phase 2 DB QA lane command (slice 69):
   - Added root script `qa:phase2:db` to run docker-backed DB readiness lane plus registrar invite delivery integration test.
   - Command composes existing `qa:db` setup/migration flow with targeted `registrar.invite-delivery.integration.test.ts`.

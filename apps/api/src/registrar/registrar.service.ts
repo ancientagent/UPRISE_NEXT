@@ -254,6 +254,8 @@ export class RegistrarService {
       {
         pendingInviteCount: number;
         queuedInviteCount: number;
+        sentInviteCount: number;
+        failedInviteCount: number;
         claimedCount: number;
         existingUserCount: number;
       }
@@ -263,12 +265,16 @@ export class RegistrarService {
       const current = countsByEntry.get(member.registrarEntryId) ?? {
         pendingInviteCount: 0,
         queuedInviteCount: 0,
+        sentInviteCount: 0,
+        failedInviteCount: 0,
         claimedCount: 0,
         existingUserCount: 0,
       };
 
       if (member.inviteStatus === 'pending_email') current.pendingInviteCount += 1;
       if (member.inviteStatus === 'queued') current.queuedInviteCount += 1;
+      if (member.inviteStatus === 'sent') current.sentInviteCount += 1;
+      if (member.inviteStatus === 'failed') current.failedInviteCount += 1;
       if (member.inviteStatus === 'claimed') current.claimedCount += 1;
       if (member.inviteStatus === 'existing_user') current.existingUserCount += 1;
 
@@ -282,6 +288,8 @@ export class RegistrarService {
         const inviteCounts = countsByEntry.get(entry.id) ?? {
           pendingInviteCount: 0,
           queuedInviteCount: 0,
+          sentInviteCount: 0,
+          failedInviteCount: 0,
           claimedCount: 0,
           existingUserCount: 0,
         };
@@ -301,6 +309,8 @@ export class RegistrarService {
           memberCount: entry._count.artistMembers,
           pendingInviteCount: inviteCounts.pendingInviteCount,
           queuedInviteCount: inviteCounts.queuedInviteCount,
+          sentInviteCount: inviteCounts.sentInviteCount,
+          failedInviteCount: inviteCounts.failedInviteCount,
           claimedCount: inviteCounts.claimedCount,
           existingUserCount: inviteCounts.existingUserCount,
           createdAt: entry.createdAt,
