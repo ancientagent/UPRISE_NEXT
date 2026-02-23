@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar webhook timeout guard hardening (slice 83):
+  - Added request timeout guard to webhook provider using `AbortController`.
+  - Added configurable timeout env (`REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS`) with minimum safety floor.
+  - Added provider tests for default timeout, configured timeout, and min-floor clamp behavior.
 - Registrar webhook URL validation hardening (slice 82):
   - Webhook invite provider now validates configured URL format and protocol (`http`/`https`) before outbound attempts.
   - Added provider test coverage for malformed URL and unsupported protocol failure paths.

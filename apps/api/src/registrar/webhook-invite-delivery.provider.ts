@@ -9,6 +9,8 @@ import type {
 @Injectable()
 export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
   private readonly logger = new Logger(WebhookInviteDeliveryProvider.name);
+  private static readonly DEFAULT_TIMEOUT_MS = 10_000;
+  private static readonly MIN_TIMEOUT_MS = 1_000;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -26,6 +28,11 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
     }
 
     const webhookToken = this.configService.get<string>('REGISTRAR_INVITE_DELIVERY_WEBHOOK_TOKEN');
+    const timeoutMs = this.resolveTimeoutMs();
+    const abortController = new AbortController();
+    const timeoutHandle = setTimeout(() => {
+      abortController.abort();
+    }, timeoutMs);
 
     try {
       const response = await fetch(webhookUrl, {
@@ -40,7 +47,10 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
           payload,
           context,
         }),
+        signal: abortController.signal,
       });
+
+      clearTimeout(timeoutHandle);
 
       if (!response.ok) {
         this.logger.warn(`Webhook invite delivery failed: status=${response.status}`);
@@ -49,6 +59,7 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
 
       return 'sent';
     } catch (error) {
+      clearTimeout(timeoutHandle);
       this.logger.error(
         `Webhook invite delivery error: ${error instanceof Error ? error.message : String(error)}`,
       );
@@ -71,5 +82,19 @@ export class WebhookInviteDeliveryProvider implements InviteDeliveryProvider {
     } catch {
       return null;
     }
+  }
+
+  private resolveTimeoutMs(): number {
+    const rawTimeout = this.configService.get<string>('REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS');
+    if (!rawTimeout) {
+      return WebhookInviteDeliveryProvider.DEFAULT_TIMEOUT_MS;
+    }
+
+    const parsed = Number.parseInt(rawTimeout, 10);
+    if (!Number.isFinite(parsed)) {
+      return WebhookInviteDeliveryProvider.DEFAULT_TIMEOUT_MS;
+    }
+
+    return Math.max(parsed, WebhookInviteDeliveryProvider.MIN_TIMEOUT_MS);
   }
 }

@@ -112,6 +112,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Added explicit module-wiring selection coverage for provider mode defaults and fallback behavior.
 - Registrar webhook URL validation hardening (slice 82):
   - Webhook outbound invite delivery now rejects malformed/unsupported endpoint URLs before transport attempts.
+- Registrar webhook timeout guard (slice 83):
+  - Webhook outbound invite delivery now runs with bounded timeout and minimum timeout floor safety.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

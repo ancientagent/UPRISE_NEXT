@@ -93,6 +93,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar webhook provider URL hardening (slice 82):
   - Webhook provider now validates `REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL` format and protocol (`http`/`https`) before send attempts.
   - Malformed or unsupported webhook URLs fail safely without outbound request attempts.
+- Registrar webhook provider timeout hardening (slice 83):
+  - Webhook outbound send now uses bounded request timeout via `AbortController`.
+  - Timeout is configurable via `REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS` with default and minimum safety floor.
+  - Timeout behavior remains fail-safe (`failed`) without mutating external contracts.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.

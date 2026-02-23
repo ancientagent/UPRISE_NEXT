@@ -22,15 +22,18 @@ describe('WebhookInviteDeliveryProvider', () => {
 
   let provider: WebhookInviteDeliveryProvider;
   let fetchSpy: jest.SpiedFunction<typeof fetch>;
+  let setTimeoutSpy: jest.SpiedFunction<typeof setTimeout>;
 
   beforeEach(() => {
     jest.clearAllMocks();
     provider = new WebhookInviteDeliveryProvider(mockConfigService as any);
     fetchSpy = jest.spyOn(global, 'fetch');
+    setTimeoutSpy = jest.spyOn(global, 'setTimeout');
   });
 
   afterEach(() => {
     fetchSpy.mockRestore();
+    setTimeoutSpy.mockRestore();
   });
 
   it('returns failed when webhook URL is missing', async () => {
@@ -79,6 +82,7 @@ describe('WebhookInviteDeliveryProvider', () => {
       'https://hooks.example/invite',
       expect.objectContaining({
         method: 'POST',
+        signal: expect.any(AbortSignal),
         headers: expect.objectContaining({
           'Content-Type': 'application/json',
           Authorization: 'Bearer secret-token',
@@ -91,6 +95,7 @@ describe('WebhookInviteDeliveryProvider', () => {
         }),
       }),
     );
+    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 10000);
   });
 
   it('returns failed when webhook response is non-2xx', async () => {
@@ -114,5 +119,35 @@ describe('WebhookInviteDeliveryProvider', () => {
     fetchSpy.mockRejectedValue(new Error('network down'));
 
     await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('failed');
+  });
+
+  it('uses configured timeout when provided', async () => {
+    mockConfigService.get.mockImplementation((key: string) => {
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL') return 'https://hooks.example/invite';
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS') return '2500';
+      return undefined;
+    });
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+    } as Response);
+
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('sent');
+    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 2500);
+  });
+
+  it('clamps configured timeout to minimum safety floor', async () => {
+    mockConfigService.get.mockImplementation((key: string) => {
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL') return 'https://hooks.example/invite';
+      if (key === 'REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS') return '100';
+      return undefined;
+    });
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      status: 200,
+    } as Response);
+
+    await expect(provider.send('sam@example.com', payload, context)).resolves.toBe('sent');
+    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1000);
   });
 });
