@@ -82,6 +82,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-22_plot_promotions_surface_wiring.md`](./2026-02-22_plot_promotions_surface_wiring.md)
 - [`2026-02-23_plot_home_scene_anchor_fallback.md`](./2026-02-23_plot_home_scene_anchor_fallback.md)
 - [`2026-02-23_drift_correction_placeholder_actions.md`](./2026-02-23_drift_correction_placeholder_actions.md)
+- [`2026-02-23_slice68-registrar-invite-delivery-db-integration.md`](./2026-02-23_slice68-registrar-invite-delivery-db-integration.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)

@@ -187,6 +187,11 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar submissions are Scene-scoped and auditable.
 - Duplicate submissions are idempotent or explicitly versioned by state.
 - Registrar outcomes never alter Fair Play ordering directly.
+- DB-backed integration coverage validates invite delivery lifecycle:
+  - submit artist registration with non-platform members,
+  - dispatch invite queue rows,
+  - finalize queued rows as `sent`/`failed`,
+  - read invite status surface with mapped delivery outcome fields.
 
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows.

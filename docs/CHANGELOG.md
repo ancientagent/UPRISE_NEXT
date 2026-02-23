@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite delivery DB integration coverage (slice 68):
+  - Added DB-backed test `apps/api/test/registrar.invite-delivery.integration.test.ts` for registrar invite lifecycle.
+  - Coverage validates submit -> dispatch -> finalize (`sent`/`failed`) -> invite status read with delivery outcome fields.
+  - Test includes explicit cleanup for registrar rows, scene, and submitter user to keep repeatable local DB runs.
 - Registrar invite delivery worker seam (slice 67):
   - Added `InviteDeliveryProvider` interface defining pluggable invite delivery contract (`send(email, payload): Promise<'sent' | 'failed'>`).
   - Added `NoopInviteDeliveryProvider` implementation providing deterministic no-op delivery (returns `'sent'`, no external I/O).
