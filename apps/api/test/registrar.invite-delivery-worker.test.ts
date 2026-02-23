@@ -1,5 +1,4 @@
 import { RegistrarInviteDeliveryWorkerService } from '../src/registrar/registrar-invite-delivery-worker.service';
-import { RegistrarService } from '../src/registrar/registrar.service';
 import type { InviteDeliveryProvider } from '../src/registrar/invite-delivery.provider';
 
 describe('RegistrarInviteDeliveryWorkerService', () => {

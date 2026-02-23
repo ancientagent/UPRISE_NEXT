@@ -812,7 +812,8 @@ export class RegistrarService {
       const deliveryStatus = delivery?.status ?? null;
       const sentAt = delivery?.status === 'sent' ? delivery.dispatchedAt : null;
       const failedAt = delivery?.status === 'failed' ? delivery.dispatchedAt : null;
-      const { deliveries: _deliveries, ...rest } = member;
+      const rest = { ...member };
+      delete rest.deliveries;
       return {
         ...rest,
         deliveryStatus,

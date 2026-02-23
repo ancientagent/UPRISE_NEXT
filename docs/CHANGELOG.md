@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- CI lint follow-up fix for registrar slices:
+  - Removed unused variable pattern in `apps/api/src/registrar/registrar.service.ts` invite outcome mapping.
+  - Removed unused import in `apps/api/test/registrar.invite-delivery-worker.test.ts`.
+  - Resolves CI `Lint Code` hard errors while leaving existing warning baseline unchanged.
 - Registrar invite delivery DB integration coverage (slice 68):
   - Added DB-backed test `apps/api/test/registrar.invite-delivery.integration.test.ts` for registrar invite lifecycle.
   - Coverage validates submit -> dispatch -> finalize (`sent`/`failed`) -> invite status read with delivery outcome fields.
