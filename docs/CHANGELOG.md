@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 2 invite-delivery closeout status note (slice 86):
+  - Documented current Phase 2 completion state and explicit DB-lane blocker condition.
+  - Added closeout handoff with exact validation command outcomes for handoff/merge readiness.
 - DB QA runner external-DB fallback support (slice 85):
   - `scripts/qa-db.sh` now supports environments without Docker Compose by using the existing `DATABASE_URL` target directly.
   - When Docker is unavailable, runner skips container orchestration and proceeds with migrate/test steps against configured DB host.
