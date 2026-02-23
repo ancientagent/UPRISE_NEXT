@@ -3,6 +3,7 @@ import { RegistrarController } from './registrar.controller';
 import { RegistrarService } from './registrar.service';
 import { NoopInviteDeliveryProvider } from './noop-invite-delivery.provider';
 import { RegistrarInviteDeliveryWorkerService } from './registrar-invite-delivery-worker.service';
+import { RegistrarInviteDeliveryTriggerService } from './registrar-invite-delivery-trigger.service';
 import { INVITE_DELIVERY_PROVIDER } from './invite-delivery.provider';
 
 @Module({
@@ -14,7 +15,8 @@ import { INVITE_DELIVERY_PROVIDER } from './invite-delivery.provider';
       useClass: NoopInviteDeliveryProvider,
     },
     RegistrarInviteDeliveryWorkerService,
+    RegistrarInviteDeliveryTriggerService,
   ],
-  exports: [RegistrarService, RegistrarInviteDeliveryWorkerService],
+  exports: [RegistrarService, RegistrarInviteDeliveryWorkerService, RegistrarInviteDeliveryTriggerService],
 })
 export class RegistrarModule {}

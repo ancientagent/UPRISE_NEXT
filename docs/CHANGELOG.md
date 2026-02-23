@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite delivery automated trigger lane (slice 73):
+  - Added internal `RegistrarInviteDeliveryTriggerService` for interval-based queued delivery execution.
+  - Trigger is env-gated (`REGISTRAR_INVITE_DELIVERY_AUTORUN_ENABLED`) and default-off.
+  - Added configurable interval (`REGISTRAR_INVITE_DELIVERY_AUTORUN_INTERVAL_MS`) with minimum safety floor.
+  - Added overlap guard to skip ticks while prior worker run is active (replay/concurrency safety).
+  - Added unit coverage for disabled mode, enabled polling, interval clamp, and overlap-skipping behavior.
 - Registrar artist entry-list last-dispatch timestamp enrichment (slice 72):
   - `GET /registrar/artist/entries` now returns per-entry `lastInviteDispatchAt`.
   - Value is derived from the latest non-null `RegistrarInviteDelivery.dispatchedAt` linked to each registration entry.

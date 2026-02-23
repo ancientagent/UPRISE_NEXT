@@ -97,6 +97,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Registrar entry-list last dispatch timestamp (slice 72):
   - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null invite delivery dispatch timestamp).
   - `lastInviteDispatchAt` returns `null` when no invite delivery has been finalized for the entry.
+- Registrar invite delivery automated trigger lane (slice 73):
+  - Internal API trigger service can now run queued invite deliveries on an env-gated interval.
+  - Trigger remains default-off and uses overlap guard logic to avoid concurrent delivery runs.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

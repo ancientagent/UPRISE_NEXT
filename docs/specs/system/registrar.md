@@ -108,6 +108,12 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null `RegistrarInviteDelivery.dispatchedAt` for that registration).
   - `lastInviteDispatchAt` is `null` when no invite dispatch has been finalized for the entry.
   - Additive/non-breaking read-surface enrichment for submitter follow-up timing visibility.
+- Registrar invite delivery automated trigger lane (slice 73):
+  - Internal trigger service now supports automated execution of queued invite delivery processing on an env-gated interval.
+  - Trigger is disabled by default and requires `REGISTRAR_INVITE_DELIVERY_AUTORUN_ENABLED` to be set truthy.
+  - Interval is configurable via `REGISTRAR_INVITE_DELIVERY_AUTORUN_INTERVAL_MS` with a minimum safety floor to avoid runaway loops.
+  - Overlap guard prevents concurrent/replay overlap: while a prior tick is still running, subsequent ticks are skipped.
+  - Delivery processing still delegates to `RegistrarInviteDeliveryWorkerService` and queued-only finalization flow.
 - Registrar member sync primitive (slice 13):
   - `POST /registrar/artist/:entryId/sync-members` implemented.
   - Submitter-only action for materialized registrations.
@@ -141,7 +147,6 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Role registration code issuance and verification workflows.
 - Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
-- Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 
