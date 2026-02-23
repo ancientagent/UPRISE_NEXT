@@ -254,6 +254,8 @@ export class RegistrarService {
       {
         pendingInviteCount: number;
         queuedInviteCount: number;
+        sentInviteCount: number;
+        failedInviteCount: number;
         claimedCount: number;
         existingUserCount: number;
       }
@@ -263,12 +265,16 @@ export class RegistrarService {
       const current = countsByEntry.get(member.registrarEntryId) ?? {
         pendingInviteCount: 0,
         queuedInviteCount: 0,
+        sentInviteCount: 0,
+        failedInviteCount: 0,
         claimedCount: 0,
         existingUserCount: 0,
       };
 
       if (member.inviteStatus === 'pending_email') current.pendingInviteCount += 1;
       if (member.inviteStatus === 'queued') current.queuedInviteCount += 1;
+      if (member.inviteStatus === 'sent') current.sentInviteCount += 1;
+      if (member.inviteStatus === 'failed') current.failedInviteCount += 1;
       if (member.inviteStatus === 'claimed') current.claimedCount += 1;
       if (member.inviteStatus === 'existing_user') current.existingUserCount += 1;
 
@@ -282,6 +288,8 @@ export class RegistrarService {
         const inviteCounts = countsByEntry.get(entry.id) ?? {
           pendingInviteCount: 0,
           queuedInviteCount: 0,
+          sentInviteCount: 0,
+          failedInviteCount: 0,
           claimedCount: 0,
           existingUserCount: 0,
         };
@@ -301,6 +309,8 @@ export class RegistrarService {
           memberCount: entry._count.artistMembers,
           pendingInviteCount: inviteCounts.pendingInviteCount,
           queuedInviteCount: inviteCounts.queuedInviteCount,
+          sentInviteCount: inviteCounts.sentInviteCount,
+          failedInviteCount: inviteCounts.failedInviteCount,
           claimedCount: inviteCounts.claimedCount,
           existingUserCount: inviteCounts.existingUserCount,
           createdAt: entry.createdAt,
@@ -645,6 +655,50 @@ export class RegistrarService {
     };
   }
 
+  async finalizeQueuedInviteDelivery(registrarArtistMemberId: string, status: 'sent' | 'failed') {
+    if (status !== 'sent' && status !== 'failed') {
+      throw new ForbiddenException('Invite delivery status must be sent or failed');
+    }
+
+    const delivery = await this.prisma.registrarInviteDelivery.findUnique({
+      where: { registrarArtistMemberId },
+      select: {
+        id: true,
+        registrarArtistMemberId: true,
+        status: true,
+      },
+    });
+
+    if (!delivery) {
+      throw new NotFoundException('Invite delivery not found');
+    }
+
+    const dispatchedAt = new Date();
+
+    await this.prisma.$transaction(async (tx: any) => {
+      await tx.registrarInviteDelivery.update({
+        where: { registrarArtistMemberId },
+        data: {
+          status,
+          dispatchedAt,
+        },
+      });
+
+      await tx.registrarArtistMember.update({
+        where: { id: registrarArtistMemberId },
+        data: {
+          inviteStatus: status,
+        },
+      });
+    });
+
+    return {
+      registrarArtistMemberId,
+      deliveryStatus: status,
+      dispatchedAt,
+    };
+  }
+
   async syncArtistBandMembers(userId: string, entryId: string) {
     const entry = await this.prisma.registrarEntry.findUnique({
       where: { id: entryId },
@@ -748,6 +802,12 @@ export class RegistrarService {
         existingUserId: true,
         claimedUserId: true,
         inviteTokenExpiresAt: true,
+        deliveries: {
+          select: {
+            status: true,
+            dispatchedAt: true,
+          },
+        },
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -757,11 +817,26 @@ export class RegistrarService {
       return acc;
     }, {} as Record<string, number>);
 
+    const membersWithDelivery = members.map((member: any) => {
+      const delivery = member.deliveries?.[0] ?? null;
+      const deliveryStatus = delivery?.status ?? null;
+      const sentAt = delivery?.status === 'sent' ? delivery.dispatchedAt : null;
+      const failedAt = delivery?.status === 'failed' ? delivery.dispatchedAt : null;
+      const rest = { ...member };
+      delete rest.deliveries;
+      return {
+        ...rest,
+        deliveryStatus,
+        sentAt,
+        failedAt,
+      };
+    });
+
     return {
       registrarEntryId: entry.id,
       totalMembers: members.length,
       countsByStatus: byStatus,
-      members,
+      members: membersWithDelivery,
     };
   }
 }

@@ -64,6 +64,18 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `POST /registrar/artist/:entryId/dispatch-invites` implemented.
   - Generates invite token + expiry for pending non-platform registrar members.
   - Queues invite-delivery payload rows for email delivery worker handoff.
+- Registrar invite delivery-state hardening (slice 64):
+  - Invite claim surfaces now accept only claimable invite lifecycle states (`queued`, `sent`) for token preview/claim flows.
+  - Internal registrar service method `finalizeQueuedInviteDelivery` added for worker/provider integration to mark queued deliveries as `sent` or `failed`.
+  - Finalization path updates both delivery queue row status and member invite lifecycle status in one transaction.
+- Registrar invite delivery worker seam (slice 67):
+  - `InviteDeliveryProvider` interface defines pluggable invite delivery contract (`send(email, payload): Promise<'sent' | 'failed'>`).
+  - `NoopInviteDeliveryProvider` implementation provides deterministic no-op delivery returning `'sent'` (no external I/O).
+  - `RegistrarInviteDeliveryWorkerService` queries queued delivery rows, invokes provider, finalizes delivery status via `RegistrarService.finalizeQueuedInviteDelivery`.
+  - Worker service is wired for DI in `RegistrarModule` with provider interface for future real email provider substitution.
+  - Worker loop handles success/failure/exception paths and continues processing on partial failures.
+  - No scheduler/cron wiring; worker must be invoked explicitly via manual call or future automation lane.
+  - No real email provider integration; delivery execution remains no-op until provider substitution.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
@@ -73,11 +85,21 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/artist/:entryId/invites` implemented.
   - Submitter-only access.
   - Returns roster rows plus invite status counts (`pending_email`, `queued`, `claimed`, etc.).
+- Registrar invite delivery outcome read surface (slice 66):
+  - `GET /registrar/artist/:entryId/invites` response extended with per-member delivery outcome fields.
+  - Each member row now includes `deliveryStatus` (`queued`/`sent`/`failed`/`null`), `sentAt` (timestamp when delivery finalized as `sent`, else `null`), and `failedAt` (timestamp when delivery finalized as `failed`, else `null`).
+  - Fields are derived from the existing `RegistrarInviteDelivery` row joined per member; no schema migration required.
+  - Raw `deliveries` array is not exposed; only the mapped outcome fields are returned.
+  - Additive/non-breaking: callers that do not consume the new fields are unaffected.
 - Registrar registration status list read surface (slice 11):
   - `GET /registrar/artist/entries` implemented.
   - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
   - Includes per-entry member + invite lifecycle summary counts for registrar follow-up actions.
   - Includes materialized canonical Artist/Band summary (`id`, `name`, `slug`, `entityType`) when linked.
+- Registrar registration status list invite-outcome enrichment (slice 70):
+  - `GET /registrar/artist/entries` invite lifecycle summary now includes `sentInviteCount` and `failedInviteCount`.
+  - Keeps existing counts (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`) unchanged.
+  - Additive/non-breaking read-surface enrichment for submitter tracking.
 - Registrar member sync primitive (slice 13):
   - `POST /registrar/artist/:entryId/sync-members` implemented.
   - Submitter-only action for materialized registrations.
@@ -111,6 +133,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Role registration code issuance and verification workflows.
 - Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
+- Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 
@@ -168,6 +191,11 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar submissions are Scene-scoped and auditable.
 - Duplicate submissions are idempotent or explicitly versioned by state.
 - Registrar outcomes never alter Fair Play ordering directly.
+- DB-backed integration coverage validates invite delivery lifecycle:
+  - submit artist registration with non-platform members,
+  - dispatch invite queue rows,
+  - finalize queued rows as `sent`/`failed`,
+  - read invite status surface with mapped delivery outcome fields.
 
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows.

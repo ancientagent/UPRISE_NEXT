@@ -23,6 +23,8 @@ describe('RegistrarService', () => {
     },
     registrarInviteDelivery: {
       upsert: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
     },
     artistBand: {
       create: jest.fn(),
@@ -872,6 +874,45 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
+  it('finalizes queued invite delivery as sent', async () => {
+    mockPrisma.registrarInviteDelivery.findUnique.mockResolvedValue({
+      id: 'rid-2',
+      registrarArtistMemberId: 'ram-2',
+      status: 'queued',
+    });
+    mockPrisma.registrarInviteDelivery.update.mockResolvedValue({
+      id: 'rid-2',
+      status: 'sent',
+    });
+    mockPrisma.registrarArtistMember.update.mockResolvedValue({
+      id: 'ram-2',
+      inviteStatus: 'sent',
+    });
+
+    const result = await service.finalizeQueuedInviteDelivery('ram-2', 'sent');
+
+    expect(mockPrisma.registrarInviteDelivery.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { registrarArtistMemberId: 'ram-2' },
+        data: expect.objectContaining({ status: 'sent' }),
+      }),
+    );
+    expect(mockPrisma.registrarArtistMember.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'ram-2' },
+        data: { inviteStatus: 'sent' },
+      }),
+    );
+    expect(result.registrarArtistMemberId).toBe('ram-2');
+    expect(result.deliveryStatus).toBe('sent');
+  });
+
+  it('rejects invite delivery finalization when delivery row is missing', async () => {
+    mockPrisma.registrarInviteDelivery.findUnique.mockResolvedValue(null);
+
+    await expect(service.finalizeQueuedInviteDelivery('ram-missing', 'sent')).rejects.toThrow(NotFoundException);
+  });
+
   it('returns invite status summary for submitter-owned entry', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-7',
@@ -889,6 +930,7 @@ describe('RegistrarService', () => {
         existingUserId: null,
         claimedUserId: null,
         inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [],
       },
       {
         id: 'ram-2',
@@ -900,6 +942,7 @@ describe('RegistrarService', () => {
         existingUserId: null,
         claimedUserId: 'u-2',
         inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [],
       },
     ]);
 
@@ -908,6 +951,102 @@ describe('RegistrarService', () => {
     expect(result.totalMembers).toBe(2);
     expect(result.countsByStatus.queued).toBe(1);
     expect(result.countsByStatus.claimed).toBe(1);
+  });
+
+  it('includes delivery outcome fields per member when delivery row exists', async () => {
+    const sentAt = new Date('2026-02-23T10:00:00.000Z');
+    const failedAt = new Date('2026-02-23T11:00:00.000Z');
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-7c',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      {
+        id: 'ram-3',
+        name: 'Sam Pulse',
+        email: 'sam@example.com',
+        city: 'Austin',
+        instrument: 'Drums',
+        inviteStatus: 'sent',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [{ status: 'sent', dispatchedAt: sentAt }],
+      },
+      {
+        id: 'ram-4',
+        name: 'Alex Volt',
+        email: 'alex@example.com',
+        city: 'Austin',
+        instrument: 'Guitar',
+        inviteStatus: 'failed',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [{ status: 'failed', dispatchedAt: failedAt }],
+      },
+      {
+        id: 'ram-5',
+        name: 'Jordan Key',
+        email: 'jordan@example.com',
+        city: 'Austin',
+        instrument: 'Bass',
+        inviteStatus: 'queued',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [],
+      },
+    ]);
+
+    const result = await service.getArtistBandInviteStatus('u-1', 'reg-7c');
+
+    expect(result.totalMembers).toBe(3);
+
+    const sam = result.members.find((m: any) => m.id === 'ram-3');
+    expect(sam.deliveryStatus).toBe('sent');
+    expect(sam.sentAt).toEqual(sentAt);
+    expect(sam.failedAt).toBeNull();
+
+    const alex = result.members.find((m: any) => m.id === 'ram-4');
+    expect(alex.deliveryStatus).toBe('failed');
+    expect(alex.sentAt).toBeNull();
+    expect(alex.failedAt).toEqual(failedAt);
+
+    const jordan = result.members.find((m: any) => m.id === 'ram-5');
+    expect(jordan.deliveryStatus).toBeNull();
+    expect(jordan.sentAt).toBeNull();
+    expect(jordan.failedAt).toBeNull();
+  });
+
+  it('omits raw deliveries array from member response shape', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-7d',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      {
+        id: 'ram-6',
+        name: 'Sam Pulse',
+        email: 'sam@example.com',
+        city: 'Austin',
+        instrument: 'Drums',
+        inviteStatus: 'queued',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: null,
+        deliveries: [{ status: 'queued', dispatchedAt: null }],
+      },
+    ]);
+
+    const result = await service.getArtistBandInviteStatus('u-1', 'reg-7d');
+
+    expect(result.members[0]).not.toHaveProperty('deliveries');
+    expect(result.members[0]).toHaveProperty('deliveryStatus');
+    expect(result.members[0]).toHaveProperty('sentAt');
+    expect(result.members[0]).toHaveProperty('failedAt');
   });
 
   it('rejects invite status read when registrar entry is missing', async () => {
@@ -970,6 +1109,8 @@ describe('RegistrarService', () => {
       { registrarEntryId: 'reg-8', inviteStatus: 'existing_user' },
       { registrarEntryId: 'reg-8', inviteStatus: 'pending_email' },
       { registrarEntryId: 'reg-8', inviteStatus: 'queued' },
+      { registrarEntryId: 'reg-8', inviteStatus: 'sent' },
+      { registrarEntryId: 'reg-8', inviteStatus: 'failed' },
     ]);
 
     const result = await service.listArtistBandRegistrations('u-1');
@@ -987,6 +1128,8 @@ describe('RegistrarService', () => {
     expect(result.entries[0].existingUserCount).toBe(1);
     expect(result.entries[0].pendingInviteCount).toBe(1);
     expect(result.entries[0].queuedInviteCount).toBe(1);
+    expect(result.entries[0].sentInviteCount).toBe(1);
+    expect(result.entries[0].failedInviteCount).toBe(1);
     expect(result.entries[0].claimedCount).toBe(0);
     expect(result.entries[0].artistBand).toEqual({
       id: 'ab-8',

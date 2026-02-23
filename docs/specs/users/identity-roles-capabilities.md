@@ -66,6 +66,15 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `POST /auth/register-invite` creates account from invite token for non-platform registrar members.
   - Claim flow sets Home Scene defaults from registrar scene context (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`).
   - Claimed accounts start with `gpsVerified = false` (GPS still required for voting validation).
+- Invite delivery-state hardening + worker seam (slice 64):
+  - Invite preview and invite-claim registration now require claimable invite states (`queued` or `sent`).
+  - Added internal registrar service primitive to finalize queued invite deliveries as `sent` or `failed` while syncing member invite status.
+  - Keeps invite-claim path compatible with future outbound delivery worker/provider integrations.
+- Invite delivery outcome read surface (slice 66):
+  - `GET /registrar/artist/:entryId/invites` response extended with per-member delivery outcome fields: `deliveryStatus`, `sentAt`, `failedAt`.
+  - `deliveryStatus` reflects the current `RegistrarInviteDelivery.status` (`queued`/`sent`/`failed`) or `null` when no delivery row exists.
+  - `sentAt` is the `dispatchedAt` timestamp when status is `sent`, else `null`; `failedAt` is the `dispatchedAt` timestamp when status is `failed`, else `null`.
+  - No schema migration; derived from existing `RegistrarInviteDelivery` join. Additive/non-breaking.
 - Web registrar entry + Artist/Band action intake (slice 10):
   - Plot now exposes Registrar entrypoint action (`Open Registrar`) from Home Scene civic surface.
   - `/registrar` web route includes explicit `Band / Artist Registration` action selection.
@@ -79,6 +88,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
     - queue member invites,
     - inspect invite status summary.
   - All actions remain API-backed and submitter-scoped.
+- Registrar entry-list invite outcome enrichment (slice 70):
+  - `GET /registrar/artist/entries` now includes `sentInviteCount` and `failedInviteCount` in per-entry invite lifecycle summaries.
+  - Existing invite summary counts remain unchanged (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`).
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

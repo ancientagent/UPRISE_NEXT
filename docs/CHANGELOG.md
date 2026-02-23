@@ -7,6 +7,46 @@
 
 ## [Unreleased]
 ### Added
+- Registrar artist entry-list invite outcome count enrichment (slice 70):
+  - `GET /registrar/artist/entries` now returns per-entry `sentInviteCount` and `failedInviteCount`.
+  - Existing invite lifecycle counts remain unchanged and backward compatible.
+  - Added registrar service coverage for mixed invite lifecycle statuses including `sent` and `failed`.
+- Phase 2 DB QA lane command (slice 69):
+  - Added root script `qa:phase2:db` to run docker-backed DB readiness lane plus registrar invite delivery integration test.
+  - Command composes existing `qa:db` setup/migration flow with targeted `registrar.invite-delivery.integration.test.ts`.
+- CI lint follow-up fix for registrar slices:
+  - Removed unused variable pattern in `apps/api/src/registrar/registrar.service.ts` invite outcome mapping.
+  - Removed unused import in `apps/api/test/registrar.invite-delivery-worker.test.ts`.
+  - Resolves CI `Lint Code` hard errors while leaving existing warning baseline unchanged.
+- Registrar invite delivery DB integration coverage (slice 68):
+  - Added DB-backed test `apps/api/test/registrar.invite-delivery.integration.test.ts` for registrar invite lifecycle.
+  - Coverage validates submit -> dispatch -> finalize (`sent`/`failed`) -> invite status read with delivery outcome fields.
+  - Test includes explicit cleanup for registrar rows, scene, and submitter user to keep repeatable local DB runs.
+- Registrar invite delivery worker seam (slice 67):
+  - Added `InviteDeliveryProvider` interface defining pluggable invite delivery contract (`send(email, payload): Promise<'sent' | 'failed'>`).
+  - Added `NoopInviteDeliveryProvider` implementation providing deterministic no-op delivery (returns `'sent'`, no external I/O).
+  - Added `RegistrarInviteDeliveryWorkerService` querying queued delivery rows, invoking provider, finalizing status via `RegistrarService.finalizeQueuedInviteDelivery`.
+  - Worker service wired for DI in `RegistrarModule` with provider interface for future real email provider substitution.
+  - Worker loop handles success/failure/exception paths and continues processing on partial failures.
+  - No scheduler/cron wiring; worker must be invoked explicitly via manual call or future automation lane.
+  - No real email provider integration; delivery execution remains no-op until provider substitution.
+  - Added `apps/api/test/registrar.invite-delivery-worker.test.ts` with comprehensive unit coverage for worker loop (no queued rows, success paths, failure paths, mixed results, exception handling, finalize failures).
+  - Updated `docs/specs/system/registrar.md` implemented-now section with worker seam details.
+- Registrar invite delivery outcome read surface (slice 66):
+  - `GET /registrar/artist/:entryId/invites` response extended with per-member delivery outcome fields: `deliveryStatus`, `sentAt`, `failedAt`.
+  - `deliveryStatus` reflects current `RegistrarInviteDelivery.status` (`queued`/`sent`/`failed`) or `null` when no delivery row exists.
+  - `sentAt` is the `dispatchedAt` timestamp when status is `sent`, else `null`; `failedAt` is the `dispatchedAt` timestamp when status is `failed`, else `null`.
+  - No schema migration; derived from existing `RegistrarInviteDelivery` join. Additive/non-breaking.
+  - Added 3 new service tests: delivery outcome field mapping (sent/failed/no-delivery), raw deliveries array omission from response shape.
+  - Updated `docs/specs/system/registrar.md` and `docs/specs/users/identity-roles-capabilities.md` implemented-now sections.
+- Phase 2 QA lane command (slice 65):
+  - Added root script `qa:phase2` for repeatable Phase 2 registrar invite-delivery validation.
+  - Command bundles docs lint, infra policy check, targeted API tests, and API/web typechecks.
+- Phase 2 roadmap kickoff + invite delivery-state hardening (slice 64):
+  - Added Phase 2 registrar artist roadmap with slices, migration posture, risk controls, and rollback strategy.
+  - Invite preview/claim now enforce claimable lifecycle states (`queued` or `sent`) to prevent invalid-state token claims.
+  - Added internal registrar invite-delivery finalization primitive for future worker/provider integration (`sent`/`failed` status sync).
+  - Expanded unit coverage for invite claimability guard paths and invite-delivery finalization behavior.
 - Phase 1 completion handoff (slice 63):
   - Added evidence-based Phase 1 API hardening completion report for registrar artist identity surface.
   - Captured merged slice chain, validation gate evidence, and Phase 2 entry boundary.
