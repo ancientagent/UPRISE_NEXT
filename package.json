@@ -24,7 +24,7 @@
     "qa:db": "bash scripts/qa-db.sh",
     "qa:registrar-promoter": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.dto.test.ts registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
     "qa:registrar-artist": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.dto.test.ts registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
-    "qa:phase2": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- auth.invite-registration.service.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+    "qa:phase2": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- auth.invite-registration.service.test.ts registrar.service.test.ts registrar.invite-delivery-worker.test.ts registrar.invite-delivery-trigger.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
     "qa:phase2:db": "pnpm run qa:db && pnpm --filter api test -- registrar.invite-delivery.integration.test.ts",
     "verify": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run typecheck",
     "verify:full": "pnpm run verify && pnpm run test && pnpm run build",

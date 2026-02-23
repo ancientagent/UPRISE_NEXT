@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 2 QA lane coverage expansion (slice 74):
+  - `qa:phase2` now includes invite-delivery worker and automated-trigger test suites.
+  - Root QA command now validates both delivery processing seam and env-gated trigger behavior in the default phase lane.
 - Registrar invite delivery automated trigger lane (slice 73):
   - Added internal `RegistrarInviteDeliveryTriggerService` for interval-based queued delivery execution.
   - Trigger is env-gated (`REGISTRAR_INVITE_DELIVERY_AUTORUN_ENABLED`) and default-off.
