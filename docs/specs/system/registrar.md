@@ -212,7 +212,8 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - submit artist registration with non-platform members,
   - dispatch invite queue rows,
   - finalize queued rows as `sent`/`failed`,
-  - read invite status surface with mapped delivery outcome fields.
+  - read invite status surface with mapped delivery outcome fields,
+  - replay finalize attempts preserve existing finalized delivery/member state (no status overwrite).
 
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows.

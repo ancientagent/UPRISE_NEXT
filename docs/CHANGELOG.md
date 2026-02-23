@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Registrar invite replay finalize DB integration coverage (slice 76):
+  - Extended DB-backed invite lifecycle integration tests with replay finalize assertion coverage.
+  - Verifies repeated finalize attempts preserve first finalized state and do not overwrite member/delivery status.
 - Registrar invite finalize replay-safety hardening (slice 75):
   - `finalizeQueuedInviteDelivery` now finalizes only when delivery row remains `queued`.
   - Added idempotent/already-finalized return semantics for non-queued rows.
