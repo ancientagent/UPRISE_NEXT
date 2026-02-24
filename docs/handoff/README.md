@@ -10,6 +10,9 @@ Working notes and completion reports that help future contributors quickly under
 - [`TEMPLATE_agent-handoff.md`](./TEMPLATE_agent-handoff.md)
 - [`TEMPLATE_handoff-phase.md`](./TEMPLATE_handoff-phase.md)
 
+## Coordination Control Plane
+- [`agent-control/README.md`](./agent-control/README.md) — Lane-based autonomous assignment/claim/report workflow.
+
 ## Agent Documents
 - [`agent-deepagent-build-handoff-2025-12-12.md`](./agent-deepagent-build-handoff-2025-12-12.md) — Build investigation + fixes handoff.
 - [`agent-codex-5.2-type-fixes-and-specs.md`](./agent-codex-5.2-type-fixes-and-specs.md) — Jest/tooling fixes + formal system specs.
@@ -87,6 +90,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-23_slice69-phase2-db-qa-lane.md`](./2026-02-23_slice69-phase2-db-qa-lane.md)
 - [`2026-02-23_slice70-registrar-entry-list-invite-outcome-counts.md`](./2026-02-23_slice70-registrar-entry-list-invite-outcome-counts.md)
 - [`2026-02-24_platform-mvp-roadmap-phase3-kickoff.md`](./2026-02-24_platform-mvp-roadmap-phase3-kickoff.md)
+- [`2026-02-24_slice89-autonomous-agent-control-plane.md`](./2026-02-24_slice89-autonomous-agent-control-plane.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)

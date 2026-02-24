@@ -7,6 +7,13 @@
 
 ## [Unreleased]
 ### Added
+- Autonomous lane agent control system (slice 89 infra):
+  - Added queue orchestration CLI `scripts/agent-control.mjs` with commands:
+    - `assign`, `claim`, `complete`, `block`, `requeue`, `ack`, `status`, `poll`, `init`.
+  - Added lane definitions and queue state files under `docs/handoff/agent-control/`.
+  - Added `pnpm run agent:queue` and `pnpm run agent:queue:test`.
+  - Added `scripts/agent-control.test.mjs` for task lifecycle coverage of assign/claim/complete/block/poll/ack flow.
+  - Updated `docs/AGENT_STRATEGY_AND_HANDOFF.md` and `docs/handoff/README.md` with control-plane usage references.
 - Platform-wide MVP roadmap + Phase 3 kickoff (slice 88):
   - Added unified MVP execution roadmap covering phases 0-7 across identity, registrar, communities, broadcast, discovery, social, events/economy, and launch hardening lanes.
   - Established Phase 3 kickoff queue and additive migration/rollback policy for upcoming capability-completion slices.
