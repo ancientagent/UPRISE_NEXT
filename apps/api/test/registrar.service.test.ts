@@ -242,6 +242,153 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
+  it('submits project registration for Home Scene signal activation flow', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-1',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+    mockPrisma.registrarEntry.create.mockResolvedValue({
+      id: 'reg-project-1',
+      type: 'project_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { projectName: 'All-Ages Venue Buildout' },
+      createdAt: new Date('2026-02-24T21:30:00.000Z'),
+    });
+
+    const result = await service.submitProjectRegistration('u-1', {
+      sceneId: 'scene-1',
+      projectName: 'All-Ages Venue Buildout',
+    });
+
+    expect(mockPrisma.registrarEntry.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: 'project_registration',
+          status: 'submitted',
+          sceneId: 'scene-1',
+          createdById: 'u-1',
+          payload: { projectName: 'All-Ages Venue Buildout' },
+        }),
+      }),
+    );
+    expect(result.type).toBe('project_registration');
+  });
+
+  it('rejects project registration when requester is outside Home Scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-2',
+      city: 'Dallas',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+
+    await expect(
+      service.submitProjectRegistration('u-1', {
+        sceneId: 'scene-2',
+        projectName: 'All-Ages Venue Buildout',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects project registration when scene is missing', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue(null);
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+
+    await expect(
+      service.submitProjectRegistration('u-1', {
+        sceneId: 'missing-scene',
+        projectName: 'All-Ages Venue Buildout',
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
+  it('rejects project registration when requester user is missing', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-1',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue(null);
+
+    await expect(
+      service.submitProjectRegistration('u-missing', {
+        sceneId: 'scene-1',
+        projectName: 'All-Ages Venue Buildout',
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
+  it('rejects project registration for non city-tier scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-state',
+      city: null,
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'state',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+    });
+
+    await expect(
+      service.submitProjectRegistration('u-1', {
+        sceneId: 'scene-state',
+        projectName: 'All-Ages Venue Buildout',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects project registration when requester has no established Home Scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-1',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      homeSceneCity: null,
+      homeSceneState: null,
+      homeSceneCommunity: null,
+    });
+
+    await expect(
+      service.submitProjectRegistration('u-1', {
+        sceneId: 'scene-1',
+        projectName: 'All-Ages Venue Buildout',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
   it('lists submitter-owned promoter registrations with scene context', async () => {
     mockPrisma.registrarEntry.findMany.mockResolvedValue([
       {

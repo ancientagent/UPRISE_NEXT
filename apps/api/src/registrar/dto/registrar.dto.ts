@@ -39,6 +39,13 @@ export const PromoterRegistrationSchema = z.object({
 
 export type PromoterRegistrationDto = z.infer<typeof PromoterRegistrationSchema>;
 
+export const ProjectRegistrationSchema = z.object({
+  sceneId: z.string().uuid(),
+  projectName: z.string().trim().min(1).max(140),
+});
+
+export type ProjectRegistrationDto = z.infer<typeof ProjectRegistrationSchema>;
+
 export const RegistrarCodeVerifySchema = z.object({
   code: z.string().trim().min(6).max(120),
 });
