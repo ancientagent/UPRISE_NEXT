@@ -12,9 +12,10 @@ function nowIso() {
 }
 
 function parseArgs(argv) {
-  if (argv.length === 0) return { command: 'help', options: {}, positionals: [] };
-  const command = argv[0];
-  const rest = argv.slice(1);
+  const normalized = argv[0] === '--' ? argv.slice(1) : argv;
+  if (normalized.length === 0) return { command: 'help', options: {}, positionals: [] };
+  const command = normalized[0];
+  const rest = normalized.slice(1);
   const options = {};
   const positionals = [];
 
