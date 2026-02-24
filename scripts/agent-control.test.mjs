@@ -62,6 +62,19 @@ function main() {
     '100',
   ]);
 
+  const queueAfterAssign = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  const assignedTask = queueAfterAssign.tasks.find((task) => task.id === 'T1');
+  assert.ok(assignedTask.directives, 'directives should be auto-attached on assign');
+  assert.equal(assignedTask.directives.version, '2026-02-24');
+  assert.ok(
+    assignedTask.directives.requiredReading.includes('docs/STRATEGY_CRITICAL_INFRA_NOTE.md'),
+    'required reading should include strategy critical infra note',
+  );
+  assert.ok(
+    assignedTask.directives.validationGate.includes('pnpm run docs:lint'),
+    'validation gate should include docs lint',
+  );
+
   const claimedOne = run([
     'claim',
     '--queue',

@@ -84,6 +84,10 @@ pnpm run agent:queue -- poll
 - Do not claim tasks outside your lane.
 - Do not edit paths outside lane scope.
 - Every task completion must include validation command outcomes in its report.
+- `assign` auto-attaches directive metadata to each task:
+  - required reading order,
+  - standing orders,
+  - validation gate checklist.
 
 ## Bridge Add-On
 - Scheduler/chat bridge tick:

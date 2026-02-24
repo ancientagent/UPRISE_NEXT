@@ -7,6 +7,14 @@
 
 ## [Unreleased]
 ### Added
+- Agent queue directive auto-attachment:
+  - `scripts/agent-control.mjs` now auto-attaches directive metadata on `assign`:
+    - required reading order,
+    - standing orders,
+    - validation gate checklist.
+  - `claim` now backfills default directives for legacy tasks missing directive metadata.
+  - Added directive coverage assertion in `scripts/agent-control.test.mjs`.
+  - Updated `docs/handoff/agent-control/README.md` with directive auto-attachment behavior.
 - Phase 3 parallel slice board + lane queue batch (98–102):
   - Added execution board `docs/handoff/2026-02-24_phase3-parallel-slice-board-98-102.md` with lane-owned scope, dependencies, and validation gates.
   - Initialized queue batch `/tmp/uprise_next_phase3_parallel_batch1.json` with 9 lane tasks across api/web/qa/docs/review.

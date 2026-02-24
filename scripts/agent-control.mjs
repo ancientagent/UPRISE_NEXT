@@ -4,8 +4,38 @@ import path from 'node:path';
 
 const DEFAULT_QUEUE_PATH = 'docs/handoff/agent-control/queue.json';
 const DEFAULT_LANES_PATH = 'docs/handoff/agent-control/lanes.json';
+const DIRECTIVES_VERSION = '2026-02-24';
 
 const STATUSES = new Set(['queued', 'in_progress', 'done', 'blocked', 'canceled']);
+
+const REQUIRED_READING_ORDER = [
+  'docs/STRATEGY_CRITICAL_INFRA_NOTE.md',
+  'docs/RUNBOOK.md',
+  'docs/FEATURE_DRIFT_GUARDRAILS.md',
+  'docs/architecture/UPRISE_OVERVIEW.md',
+  'docs/PROJECT_STRUCTURE.md',
+  'apps/web/WEB_TIER_BOUNDARY.md',
+  'docs/AGENT_STRATEGY_AND_HANDOFF.md',
+  'docs/README.md',
+  'docs/solutions/README.md',
+];
+
+const STANDING_ORDERS = [
+  'Canon/spec authority only; no feature drift.',
+  'Use pnpm only in UPRISE_NEXT.',
+  'Respect web-tier boundary; no server/data-tier imports in web.',
+  'Keep work PR-safe by slice; additive-first migrations.',
+  'Run required validation gates and report exact command output.',
+  'Update touched specs, docs/CHANGELOG.md, and add handoff note for meaningful changes.',
+  'Use lane scope only and do not edit outside allowed paths.',
+];
+
+const VALIDATION_GATE = [
+  'pnpm run docs:lint',
+  'pnpm run infra-policy-check',
+  'targeted tests for touched area',
+  'relevant typecheck/build',
+];
 
 function nowIso() {
   return new Date().toISOString();
@@ -190,6 +220,15 @@ function formatTaskLine(task) {
   return `${task.id} | ${task.lane} | ${task.status} | ${task.title} | updated=${updated}`;
 }
 
+function buildDefaultDirectives() {
+  return {
+    version: DIRECTIVES_VERSION,
+    requiredReading: [...REQUIRED_READING_ORDER],
+    standingOrders: [...STANDING_ORDERS],
+    validationGate: [...VALIDATION_GATE],
+  };
+}
+
 async function main() {
   const { command, options } = parseArgs(process.argv.slice(2));
   const queuePath = options.queue || DEFAULT_QUEUE_PATH;
@@ -284,6 +323,7 @@ async function main() {
           reportPath: null,
           notes: null,
         },
+        directives: buildDefaultDirectives(),
       });
 
       queue.updatedAt = assignedAt;
@@ -326,6 +366,9 @@ async function main() {
       claimedTask.claimedBy = agent;
       claimedTask.claimedAt = ts;
       claimedTask.updatedAt = ts;
+      if (!claimedTask.directives) {
+        claimedTask.directives = buildDefaultDirectives();
+      }
       if (branch) claimedTask.result.branch = branch;
       queue.updatedAt = ts;
       writeJson(queuePath, queue);
