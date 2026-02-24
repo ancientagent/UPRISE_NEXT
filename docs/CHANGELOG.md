@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Promoter capability transition persistence/read enrichment (slice 96):
+  - Added additive Prisma model/table `UserCapabilityGrant` via migration `20260224200000_add_user_capability_grants`.
+  - `POST /registrar/code/redeem` now upserts active user capability grants with registrar provenance (`sourceRegistrarEntryId`, `sourceRegistrarCodeId`).
+  - Promoter submitter read surfaces (`GET /registrar/promoter/entries`, `GET /registrar/promoter/:entryId`) now include `promoterCapability` transition summary fields.
+  - Added registrar service coverage for promoter capability summary mapping and redemption-to-grant persistence behavior.
+  - Updated identity/registrar specs with implemented state and model/migration references.
 - Registrar capability-code verify/redeem API primitives (slice 95):
   - Added `POST /registrar/code/verify` (auth required) for registrar capability-code eligibility checks before redemption.
   - Added `POST /registrar/code/redeem` (auth required) for authenticated code redemption.

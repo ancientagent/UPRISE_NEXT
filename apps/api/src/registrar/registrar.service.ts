@@ -214,27 +214,65 @@ export class RegistrarService {
 
     const redeemedAt = new Date();
 
-    const updated = await this.prisma.registrarCode.update({
-      where: { id: registrarCode.id },
-      data: {
-        status: REGISTRAR_CODE_REDEEMED_STATUS,
-        redeemedAt,
-      },
-      select: {
-        id: true,
-        registrarEntryId: true,
-        capability: true,
-        issuerType: true,
-        status: true,
-        expiresAt: true,
-        redeemedAt: true,
-        createdAt: true,
-      },
+    const { updatedCode, capabilityGrant } = await this.prisma.$transaction(async (tx: any) => {
+      const updated = await tx.registrarCode.update({
+        where: { id: registrarCode.id },
+        data: {
+          status: REGISTRAR_CODE_REDEEMED_STATUS,
+          redeemedAt,
+        },
+        select: {
+          id: true,
+          registrarEntryId: true,
+          capability: true,
+          issuerType: true,
+          status: true,
+          expiresAt: true,
+          redeemedAt: true,
+          createdAt: true,
+        },
+      });
+
+      const grant = await tx.userCapabilityGrant.upsert({
+        where: {
+          userId_capability: {
+            userId,
+            capability: PROMOTER_CAPABILITY_CODE,
+          },
+        },
+        update: {
+          status: 'active',
+          revokedAt: null,
+          sourceRegistrarEntryId: updated.registrarEntryId,
+          sourceRegistrarCodeId: updated.id,
+        },
+        create: {
+          userId,
+          capability: PROMOTER_CAPABILITY_CODE,
+          status: 'active',
+          sourceRegistrarEntryId: updated.registrarEntryId,
+          sourceRegistrarCodeId: updated.id,
+        },
+        select: {
+          id: true,
+          capability: true,
+          status: true,
+          grantedAt: true,
+          sourceRegistrarEntryId: true,
+          sourceRegistrarCodeId: true,
+        },
+      });
+
+      return {
+        updatedCode: updated,
+        capabilityGrant: grant,
+      };
     });
 
     return {
-      ...updated,
+      ...updatedCode,
       redeemedByUserId: userId,
+      capabilityGrant,
     };
   }
 
@@ -341,11 +379,82 @@ export class RegistrarService {
       return acc;
     }, {} as Record<string, number>);
 
+    const entryIds = entries.map((entry: any) => entry.id);
+    const [registrarCodes, capabilityGrants] = await Promise.all([
+      this.prisma.registrarCode.findMany({
+        where: {
+          registrarEntryId: { in: entryIds },
+          capability: PROMOTER_CAPABILITY_CODE,
+        },
+        select: {
+          registrarEntryId: true,
+          status: true,
+          createdAt: true,
+          redeemedAt: true,
+        },
+      }),
+      this.prisma.userCapabilityGrant.findMany({
+        where: {
+          userId,
+          capability: PROMOTER_CAPABILITY_CODE,
+          status: 'active',
+          sourceRegistrarEntryId: { in: entryIds },
+        },
+        select: {
+          sourceRegistrarEntryId: true,
+          grantedAt: true,
+        },
+      }),
+    ]);
+
+    const codeSummaryByEntry = new Map<
+      string,
+      {
+        codeIssuedCount: number;
+        latestCodeStatus: string | null;
+        latestCodeIssuedAt: Date | null;
+        latestCodeRedeemedAt: Date | null;
+      }
+    >();
+
+    for (const code of registrarCodes) {
+      const current = codeSummaryByEntry.get(code.registrarEntryId) ?? {
+        codeIssuedCount: 0,
+        latestCodeStatus: null,
+        latestCodeIssuedAt: null,
+        latestCodeRedeemedAt: null,
+      };
+
+      current.codeIssuedCount += 1;
+      if (!current.latestCodeIssuedAt || code.createdAt > current.latestCodeIssuedAt) {
+        current.latestCodeStatus = code.status;
+        current.latestCodeIssuedAt = code.createdAt;
+        current.latestCodeRedeemedAt = code.redeemedAt;
+      }
+
+      codeSummaryByEntry.set(code.registrarEntryId, current);
+    }
+
+    const grantByEntryId = new Map<string, { grantedAt: Date }>();
+    for (const grant of capabilityGrants) {
+      if (!grant.sourceRegistrarEntryId) {
+        continue;
+      }
+      grantByEntryId.set(grant.sourceRegistrarEntryId, { grantedAt: grant.grantedAt });
+    }
+
     return {
       total: entries.length,
       countsByStatus,
       entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
+        const codeSummary = codeSummaryByEntry.get(entry.id) ?? {
+          codeIssuedCount: 0,
+          latestCodeStatus: null,
+          latestCodeIssuedAt: null,
+          latestCodeRedeemedAt: null,
+        };
+        const grantSummary = grantByEntryId.get(entry.id) ?? null;
         return {
           id: entry.id,
           type: entry.type,
@@ -353,6 +462,14 @@ export class RegistrarService {
           sceneId: entry.sceneId,
           payload: {
             productionName: normalizePromoterProductionName(payload),
+          },
+          promoterCapability: {
+            codeIssuedCount: codeSummary.codeIssuedCount,
+            latestCodeStatus: codeSummary.latestCodeStatus,
+            latestCodeIssuedAt: codeSummary.latestCodeIssuedAt,
+            latestCodeRedeemedAt: codeSummary.latestCodeRedeemedAt,
+            granted: Boolean(grantSummary),
+            grantedAt: grantSummary?.grantedAt ?? null,
           },
           scene: entry.scene,
           createdAt: entry.createdAt,
@@ -397,6 +514,34 @@ export class RegistrarService {
       throw new ForbiddenException('Only the submitting user can read this promoter registration');
     }
 
+    const [registrarCodes, capabilityGrant] = await Promise.all([
+      this.prisma.registrarCode.findMany({
+        where: {
+          registrarEntryId: entry.id,
+          capability: PROMOTER_CAPABILITY_CODE,
+        },
+        select: {
+          status: true,
+          createdAt: true,
+          redeemedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.userCapabilityGrant.findFirst({
+        where: {
+          userId,
+          capability: PROMOTER_CAPABILITY_CODE,
+          status: 'active',
+          sourceRegistrarEntryId: entry.id,
+        },
+        select: {
+          grantedAt: true,
+        },
+      }),
+    ]);
+
+    const latestRegistrarCode = registrarCodes[0] ?? null;
+
     const payload = (entry.payload ?? {}) as Record<string, unknown>;
     return {
       id: entry.id,
@@ -405,6 +550,14 @@ export class RegistrarService {
       sceneId: entry.sceneId,
       payload: {
         productionName: normalizePromoterProductionName(payload),
+      },
+      promoterCapability: {
+        codeIssuedCount: registrarCodes.length,
+        latestCodeStatus: latestRegistrarCode?.status ?? null,
+        latestCodeIssuedAt: latestRegistrarCode?.createdAt ?? null,
+        latestCodeRedeemedAt: latestRegistrarCode?.redeemedAt ?? null,
+        granted: Boolean(capabilityGrant),
+        grantedAt: capabilityGrant?.grantedAt ?? null,
       },
       scene: entry.scene,
       createdAt: entry.createdAt,

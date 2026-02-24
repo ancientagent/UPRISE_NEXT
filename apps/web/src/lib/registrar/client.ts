@@ -95,6 +95,14 @@ export interface RegistrarPromoterEntry {
   payload: {
     productionName: string | null;
   };
+  promoterCapability: {
+    codeIssuedCount: number;
+    latestCodeStatus: string | null;
+    latestCodeIssuedAt: string | null;
+    latestCodeRedeemedAt: string | null;
+    granted: boolean;
+    grantedAt: string | null;
+  };
   scene: RegistrarSceneSummary;
   createdAt: string;
   updatedAt: string;

@@ -29,7 +29,13 @@ describe('RegistrarService', () => {
     registrarCode: {
       create: jest.fn(),
       findUnique: jest.fn(),
+      findMany: jest.fn(),
       update: jest.fn(),
+    },
+    userCapabilityGrant: {
+      findMany: jest.fn(),
+      findFirst: jest.fn(),
+      upsert: jest.fn(),
     },
     artistBand: {
       create: jest.fn(),
@@ -70,6 +76,17 @@ describe('RegistrarService', () => {
     mockPrisma.$transaction.mockImplementation(async (callback: (tx: typeof mockPrisma) => unknown) =>
       callback(mockPrisma as any),
     );
+    mockPrisma.registrarCode.findMany.mockResolvedValue([]);
+    mockPrisma.userCapabilityGrant.findMany.mockResolvedValue([]);
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue(null);
+    mockPrisma.userCapabilityGrant.upsert.mockResolvedValue({
+      id: 'grant-default',
+      capability: 'promoter_capability',
+      status: 'active',
+      grantedAt: new Date('2026-02-24T10:25:00.000Z'),
+      sourceRegistrarEntryId: 'reg-promoter-approved-1',
+      sourceRegistrarCodeId: 'rcode-default',
+    });
     service = new RegistrarService(mockPrisma as any);
   });
 
@@ -262,6 +279,52 @@ describe('RegistrarService', () => {
         payload: { productionName: 'Southside Signal Co.' },
       }),
     );
+  });
+
+  it('includes promoter capability transition summary in promoter list reads', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-promoter-2',
+        type: 'promoter_registration',
+        status: 'approved',
+        sceneId: 'scene-1',
+        payload: { productionName: 'Southside Signal Co.' },
+        createdAt: new Date('2026-02-21T18:00:00.000Z'),
+        updatedAt: new Date('2026-02-21T18:05:00.000Z'),
+        scene: null,
+      },
+    ]);
+    mockPrisma.registrarCode.findMany.mockResolvedValue([
+      {
+        registrarEntryId: 'reg-promoter-2',
+        status: 'issued',
+        createdAt: new Date('2026-02-24T10:00:00.000Z'),
+        redeemedAt: null,
+      },
+      {
+        registrarEntryId: 'reg-promoter-2',
+        status: 'redeemed',
+        createdAt: new Date('2026-02-24T11:00:00.000Z'),
+        redeemedAt: new Date('2026-02-24T12:00:00.000Z'),
+      },
+    ]);
+    mockPrisma.userCapabilityGrant.findMany.mockResolvedValue([
+      {
+        sourceRegistrarEntryId: 'reg-promoter-2',
+        grantedAt: new Date('2026-02-24T12:00:00.000Z'),
+      },
+    ]);
+
+    const result = await service.listPromoterRegistrations('u-1');
+
+    expect(result.entries[0].promoterCapability).toEqual({
+      codeIssuedCount: 2,
+      latestCodeStatus: 'redeemed',
+      latestCodeIssuedAt: new Date('2026-02-24T11:00:00.000Z'),
+      latestCodeRedeemedAt: new Date('2026-02-24T12:00:00.000Z'),
+      granted: true,
+      grantedAt: new Date('2026-02-24T12:00:00.000Z'),
+    });
   });
 
   it('returns empty list when submitter has no promoter registrations', async () => {
@@ -459,6 +522,41 @@ describe('RegistrarService', () => {
         }),
       }),
     );
+  });
+
+  it('includes promoter capability transition summary in promoter detail reads', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-3',
+      type: 'promoter_registration',
+      status: 'approved',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { productionName: 'Southside Signal Co.' },
+      createdAt: new Date('2026-02-21T19:00:00.000Z'),
+      updatedAt: new Date('2026-02-21T19:05:00.000Z'),
+      scene: null,
+    });
+    mockPrisma.registrarCode.findMany.mockResolvedValue([
+      {
+        status: 'issued',
+        createdAt: new Date('2026-02-24T11:00:00.000Z'),
+        redeemedAt: null,
+      },
+    ]);
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({
+      grantedAt: new Date('2026-02-24T12:00:00.000Z'),
+    });
+
+    const result = await service.getPromoterRegistration('u-1', 'reg-promoter-3');
+
+    expect(result.promoterCapability).toEqual({
+      codeIssuedCount: 1,
+      latestCodeStatus: 'issued',
+      latestCodeIssuedAt: new Date('2026-02-24T11:00:00.000Z'),
+      latestCodeRedeemedAt: null,
+      granted: true,
+      grantedAt: new Date('2026-02-24T12:00:00.000Z'),
+    });
   });
 
   it('trims promoter payload productionName in detail reads', async () => {
@@ -732,11 +830,31 @@ describe('RegistrarService', () => {
         }),
       }),
     );
+    expect(mockPrisma.userCapabilityGrant.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          userId_capability: {
+            userId: 'u-1',
+            capability: 'promoter_capability',
+          },
+        },
+        create: expect.objectContaining({
+          userId: 'u-1',
+          capability: 'promoter_capability',
+          sourceRegistrarEntryId: 'reg-promoter-approved-1',
+          sourceRegistrarCodeId: 'rcode-redeem-1',
+        }),
+      }),
+    );
     expect(result).toEqual(
       expect.objectContaining({
         id: 'rcode-redeem-1',
         status: 'redeemed',
         redeemedByUserId: 'u-1',
+        capabilityGrant: expect.objectContaining({
+          capability: 'promoter_capability',
+          status: 'active',
+        }),
       }),
     );
   });

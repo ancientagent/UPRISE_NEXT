@@ -99,6 +99,16 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
     - linked registrar entry status must be `approved`,
     - code must be in `issued` status and not expired/redeemed.
   - Additive API surface; no destructive migration.
+- Promoter capability transition state persistence/read enrichment (slice 96):
+  - `POST /registrar/code/redeem` now upserts additive `UserCapabilityGrant` rows for authenticated redeemers.
+  - Promoter submitter read surfaces now include `promoterCapability` transition summary:
+    - `codeIssuedCount`,
+    - `latestCodeStatus`,
+    - `latestCodeIssuedAt`,
+    - `latestCodeRedeemedAt`,
+    - `granted`,
+    - `grantedAt`.
+  - Capability grant provenance is linked to source registrar entry/code IDs for traceability.
 - Registrar registration status list read surface (slice 11):
   - `GET /registrar/artist/entries` implemented.
   - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
@@ -170,12 +180,14 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
 - `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
 - `RegistrarInviteDelivery` (`registrarArtistMemberId`, `email`, `status`, `payload`, `dispatchedAt`, timestamps)
+- `UserCapabilityGrant` (`userId`, `capability`, `status`, `sourceRegistrarEntryId?`, `sourceRegistrarCodeId?`, `grantedAt`, `revokedAt?`, timestamps)
 
 ### Migrations
 - `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
 - `20260220141000_add_registrar_entries` adds `registrar_entries` for Home Scene-scoped registration submissions.
 - `20260220170000_add_registrar_artist_members` adds `registrar_artist_members` roster/invite persistence for registrar artist submissions.
 - `20260220183000_add_registrar_invite_delivery` adds invite token fields + `registrar_invite_deliveries` queue table.
+- `20260224200000_add_user_capability_grants` adds additive `user_capability_grants` for capability transition tracking.
 
 ## API Design
 ### Endpoints

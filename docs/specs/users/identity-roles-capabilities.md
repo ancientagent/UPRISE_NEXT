@@ -82,6 +82,16 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
     - linked registrar entry type must be `promoter_registration`,
     - linked registrar entry status must be `approved`,
     - code must be active (`issued`) and not expired/redeemed.
+- Promoter capability transition persistence/read enrichment (slice 96):
+  - Code redemption now creates/updates additive `UserCapabilityGrant` records for the authenticated user.
+  - Promoter status read surfaces include `promoterCapability` summary fields:
+    - `codeIssuedCount`,
+    - `latestCodeStatus`,
+    - `latestCodeIssuedAt`,
+    - `latestCodeRedeemedAt`,
+    - `granted`,
+    - `grantedAt`.
+  - Capability grants remain additive to base user identity (no account-tree split).
 - Web registrar entry + Artist/Band action intake (slice 10):
   - Plot now exposes Registrar entrypoint action (`Open Registrar`) from Home Scene civic surface.
   - `/registrar` web route includes explicit `Band / Artist Registration` action selection.
@@ -103,7 +113,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.
 
 ### Deferred (Not Implemented Yet)
-- Promoter capability grants.
+- Promoter capability revocation/admin-management APIs.
 - Business profile role surfaces.
 - Capability grant audit log and admin role-management APIs.
 
@@ -154,6 +164,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `RegistrarInviteDelivery`
   - Stores queued invite delivery payloads for non-platform band members
   - Delivery status state machine (`queued`, `sent`, `failed`)
+- `UserCapabilityGrant`
+  - Stores additive capability grant state for user identities
+  - Includes registrar provenance pointers (`sourceRegistrarEntryId`, `sourceRegistrarCodeId`)
 
 ### Migrations
 - `20260216004000_add_user_home_scene_and_track_engagement` (home-scene affinity and GPS-related user fields)
@@ -162,6 +175,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `20260220170000_add_registrar_artist_members` (adds `registrar_artist_members` for registration member roster + invite state)
 - `20260220183000_add_registrar_invite_delivery` (adds invite token fields + `registrar_invite_deliveries` queue persistence)
 - `20260221220000_drop_user_is_artist` (removes legacy `users.isArtist` transitional marker)
+- `20260224200000_add_user_capability_grants` (adds additive `user_capability_grants` capability transition persistence)
 
 ## API Design
 ### Endpoints
