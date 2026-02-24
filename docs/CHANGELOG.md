@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Telegram bridge near-real-time long-poll loop (slice 92):
+  - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
+  - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.
+  - Updated `.github/workflows/agent-telegram-bridge.yml` with dispatch inputs for long-poll tuning and workflow concurrency control.
+  - Updated bridge runbook with low-latency operating guidance under GitHub Actions cron constraints.
 - Telegram bi-directional command bridge MVP (slice 91):
   - Added `scripts/agent-bridge-telegram.mjs` to process allowlisted Telegram commands and map them to queue operations.
   - Supported commands: `/status`, `/poll`, `/claimable`, `/assign`, `/ack`, `/requeue`.

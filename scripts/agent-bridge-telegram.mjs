@@ -5,6 +5,7 @@ import {
   buildHelpText,
   compactSummaryText,
   computeClaimableTasks,
+  parseNonNegativeInteger,
   parseBridgeCommand,
   parseTelegramList,
 } from './agent-bridge-telegram-lib.mjs';
@@ -76,6 +77,10 @@ function runAgentControl(command, args) {
 function toShortText(value, limit = 3500) {
   if (value.length <= limit) return value;
   return `${value.slice(0, limit - 20)}\n... [truncated]`;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function formatStatusResponse(summaryJson, lane = null) {
@@ -208,7 +213,13 @@ async function main() {
   const queuePath = options.queue || process.env.UPRISE_AGENT_QUEUE || DEFAULT_QUEUE_PATH;
   const lanesPath = options.lanes || DEFAULT_LANES_PATH;
   const assignedBy = options['assigned-by'] || 'telegram-bridge';
-  const limit = Number(options.limit ?? 25);
+  const limit = Math.max(parseNonNegativeInteger(options.limit, 25), 1);
+  const pollTimeoutSeconds = parseNonNegativeInteger(
+    options['poll-timeout-seconds'] ?? options['poll-timeout'],
+    0,
+  );
+  const maxRuntimeSeconds = parseNonNegativeInteger(options['max-runtime-seconds'], 0);
+  const idleSleepMs = parseNonNegativeInteger(options['idle-sleep-ms'], 250);
 
   const allowedUserIds = parseTelegramList(process.env.TELEGRAM_ALLOWED_USER_IDS || process.env.TELEGRAM_ALLOWED_USER_ID);
   if (allowedUserIds.length === 0) {
@@ -216,73 +227,90 @@ async function main() {
   }
   const allowedChatIds = parseTelegramList(process.env.TELEGRAM_ALLOWED_CHAT_IDS);
 
-  const updates = await telegramRequest(telegramToken, 'getUpdates', {
-    timeout: 0,
-    limit,
-    allowed_updates: ['message'],
-  });
-
-  const sorted = Array.isArray(updates)
-    ? [...updates].sort((a, b) => (a.update_id ?? 0) - (b.update_id ?? 0))
-    : [];
-
+  const startedAtMs = Date.now();
+  const maxRuntimeMs = maxRuntimeSeconds * 1000;
+  let updatesTotal = 0;
   let processed = 0;
   let ignored = 0;
   let unauthorized = 0;
   let errors = 0;
   let maxUpdateId = null;
+  let batches = 0;
+  let nextOffset = null;
 
-  for (const update of sorted) {
-    if (typeof update.update_id === 'number') {
-      maxUpdateId = Math.max(maxUpdateId ?? update.update_id, update.update_id);
-    }
-
-    const message = update?.message;
-    const text = message?.text;
-    if (!text || !text.startsWith('/')) {
-      ignored += 1;
-      continue;
-    }
-
-    const chatId = message?.chat?.id;
-    if (!isAuthorized(update, allowedUserIds, allowedChatIds)) {
-      unauthorized += 1;
-      await telegramRequest(telegramToken, 'sendMessage', {
-        chat_id: chatId,
-        text: 'Unauthorized sender/chat for agent bridge commands.',
-      });
-      continue;
-    }
-
-    const parsed = parseBridgeCommand(text);
-    try {
-      const responseText = await processCommand(parsed, { queuePath, lanesPath, assignedBy });
-      await telegramRequest(telegramToken, 'sendMessage', {
-        chat_id: chatId,
-        text: toShortText(responseText),
-        disable_web_page_preview: true,
-      });
-      processed += 1;
-    } catch (error) {
-      errors += 1;
-      await telegramRequest(telegramToken, 'sendMessage', {
-        chat_id: chatId,
-        text: toShortText(`Command failed: ${error.message}`),
-        disable_web_page_preview: true,
-      });
-    }
-  }
-
-  if (maxUpdateId !== null) {
-    await telegramRequest(telegramToken, 'getUpdates', {
-      offset: maxUpdateId + 1,
-      limit: 1,
-      timeout: 0,
+  while (true) {
+    const requestPayload = {
+      timeout: pollTimeoutSeconds,
+      limit,
       allowed_updates: ['message'],
-    });
+    };
+    if (nextOffset !== null) {
+      requestPayload.offset = nextOffset;
+    }
+
+    const updates = await telegramRequest(telegramToken, 'getUpdates', requestPayload);
+    const sorted = Array.isArray(updates)
+      ? [...updates].sort((a, b) => (a.update_id ?? 0) - (b.update_id ?? 0))
+      : [];
+    updatesTotal += sorted.length;
+    batches += 1;
+
+    for (const update of sorted) {
+      if (typeof update.update_id === 'number') {
+        maxUpdateId = Math.max(maxUpdateId ?? update.update_id, update.update_id);
+        nextOffset = update.update_id + 1;
+      }
+
+      const message = update?.message;
+      const text = message?.text;
+      if (!text || !text.startsWith('/')) {
+        ignored += 1;
+        continue;
+      }
+
+      const chatId = message?.chat?.id;
+      if (!isAuthorized(update, allowedUserIds, allowedChatIds)) {
+        unauthorized += 1;
+        await telegramRequest(telegramToken, 'sendMessage', {
+          chat_id: chatId,
+          text: 'Unauthorized sender/chat for agent bridge commands.',
+        });
+        continue;
+      }
+
+      const parsed = parseBridgeCommand(text);
+      try {
+        const responseText = await processCommand(parsed, { queuePath, lanesPath, assignedBy });
+        await telegramRequest(telegramToken, 'sendMessage', {
+          chat_id: chatId,
+          text: toShortText(responseText),
+          disable_web_page_preview: true,
+        });
+        processed += 1;
+      } catch (error) {
+        errors += 1;
+        await telegramRequest(telegramToken, 'sendMessage', {
+          chat_id: chatId,
+          text: toShortText(`Command failed: ${error.message}`),
+          disable_web_page_preview: true,
+        });
+      }
+    }
+
+    if (maxRuntimeMs <= 0 || Date.now() - startedAtMs >= maxRuntimeMs) {
+      break;
+    }
+    if (pollTimeoutSeconds <= 0) {
+      await sleep(idleSleepMs);
+    }
   }
 
-  console.log(`updates_total=${sorted.length}`);
+  const runtimeSeconds = Math.floor((Date.now() - startedAtMs) / 1000);
+  console.log(`batches=${batches}`);
+  console.log(`runtime_seconds=${runtimeSeconds}`);
+  console.log(`max_runtime_seconds=${maxRuntimeSeconds}`);
+  console.log(`poll_timeout_seconds=${pollTimeoutSeconds}`);
+  console.log(`updates_total=${updatesTotal}`);
   console.log(`processed=${processed}`);
   console.log(`ignored=${ignored}`);
   console.log(`unauthorized=${unauthorized}`);

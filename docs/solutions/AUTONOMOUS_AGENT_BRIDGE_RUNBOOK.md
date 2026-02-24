@@ -72,7 +72,9 @@ export TELEGRAM_ALLOWED_CHAT_IDS=<numeric-chat-id>   # optional
 pnpm run agent:telegram:tick -- \
   --queue /tmp/uprise_next_agent_queue.json \
   --lanes docs/handoff/agent-control/lanes.json \
-  --limit 25
+  --limit 25 \
+  --poll-timeout-seconds 25 \
+  --max-runtime-seconds 240
 ```
 
 Supported Telegram commands:
@@ -89,11 +91,22 @@ Security notes:
 - Optionally restrict chat IDs with `TELEGRAM_ALLOWED_CHAT_IDS`.
 - Bridge does not execute shell text from chat; it only maps known commands to `agent-control` subcommands.
 
+Latency notes:
+- GitHub Actions cron has a minimum 5-minute interval, so it cannot be scheduled every few seconds.
+- To reduce command-response delay, the bridge now supports long-poll loops per run:
+  - `--poll-timeout-seconds` controls Telegram `getUpdates` long-poll wait per request.
+  - `--max-runtime-seconds` keeps one run active and polling repeatedly.
+- Recommended baseline for CI: `poll_timeout_seconds=25`, `max_runtime_seconds=240`.
+
 ## Telegram Workflow
 - Workflow: `Agent Telegram Bridge`
 - Trigger:
   - schedule every 5 minutes
-  - manual `workflow_dispatch` with optional `queue_path` and `limit`
+  - manual `workflow_dispatch` with optional:
+    - `queue_path`
+    - `limit`
+    - `poll_timeout_seconds`
+    - `max_runtime_seconds`
 - Required repository secrets:
   - `TELEGRAM_BOT_TOKEN`
   - `TELEGRAM_ALLOWED_USER_IDS`

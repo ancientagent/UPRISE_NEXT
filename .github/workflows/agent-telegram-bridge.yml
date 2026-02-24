@@ -13,9 +13,21 @@ on:
         description: Max Telegram updates to process per tick
         required: false
         default: '25'
+      poll_timeout_seconds:
+        description: Telegram long-poll timeout seconds per request
+        required: false
+        default: '25'
+      max_runtime_seconds:
+        description: Max seconds to keep the bridge polling in one run
+        required: false
+        default: '240'
 
 permissions:
   contents: read
+
+concurrency:
+  group: agent-telegram-bridge
+  cancel-in-progress: false
 
 jobs:
   telegram-bridge-tick:
@@ -62,8 +74,20 @@ jobs:
             LIMIT="25"
           fi
 
+          POLL_TIMEOUT_SECONDS="${{ github.event.inputs.poll_timeout_seconds }}"
+          if [ -z "$POLL_TIMEOUT_SECONDS" ]; then
+            POLL_TIMEOUT_SECONDS="25"
+          fi
+
+          MAX_RUNTIME_SECONDS="${{ github.event.inputs.max_runtime_seconds }}"
+          if [ -z "$MAX_RUNTIME_SECONDS" ]; then
+            MAX_RUNTIME_SECONDS="240"
+          fi
+
           echo "queue_path=$QUEUE_PATH" >> $GITHUB_OUTPUT
           echo "limit=$LIMIT" >> $GITHUB_OUTPUT
+          echo "poll_timeout_seconds=$POLL_TIMEOUT_SECONDS" >> $GITHUB_OUTPUT
+          echo "max_runtime_seconds=$MAX_RUNTIME_SECONDS" >> $GITHUB_OUTPUT
 
       - name: Guard missing Telegram config
         id: guard
@@ -90,4 +114,6 @@ jobs:
             --queue "${{ steps.input.outputs.queue_path }}" \
             --lanes "docs/handoff/agent-control/lanes.json" \
             --limit "${{ steps.input.outputs.limit }}" \
+            --poll-timeout-seconds "${{ steps.input.outputs.poll_timeout_seconds }}" \
+            --max-runtime-seconds "${{ steps.input.outputs.max_runtime_seconds }}" \
             --assigned-by "telegram-bridge"
