@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Slice 090A pre-merge review checklist (P3-REV-002):
+  - Added `docs/handoff/2026-02-24_slice090A-premerge-review-checklist.md` to standardize go/hold criteria across API, web, and QA lane outputs.
+  - Captured explicit dependency gate that `P3-QA-090A` must be complete before merge.
+  - Documented additive-only and no-unauthorized-action checks for `P3-API-090A` and `P3-WEB-090A`.
 - Telegram bi-directional command bridge MVP (slice 91):
   - Added `scripts/agent-bridge-telegram.mjs` to process allowlisted Telegram commands and map them to queue operations.
   - Supported commands: `/status`, `/poll`, `/claimable`, `/assign`, `/ack`, `/requeue`.
