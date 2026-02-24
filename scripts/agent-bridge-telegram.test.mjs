@@ -4,6 +4,7 @@ import {
   buildHelpText,
   compactSummaryText,
   computeClaimableTasks,
+  parseNonNegativeInteger,
   parseBridgeCommand,
   parseTelegramList,
 } from './agent-bridge-telegram-lib.mjs';
@@ -12,6 +13,14 @@ function testParseTelegramList() {
   assert.deepEqual(parseTelegramList(''), []);
   assert.deepEqual(parseTelegramList('  '), []);
   assert.deepEqual(parseTelegramList('1,2, 3 '), ['1', '2', '3']);
+}
+
+function testParseNonNegativeInteger() {
+  assert.equal(parseNonNegativeInteger('25', 10), 25);
+  assert.equal(parseNonNegativeInteger('25.9', 10), 25);
+  assert.equal(parseNonNegativeInteger('0', 10), 0);
+  assert.equal(parseNonNegativeInteger('-1', 10), 10);
+  assert.equal(parseNonNegativeInteger('not-a-number', 10), 10);
 }
 
 function testParseBridgeCommand() {
@@ -88,6 +97,7 @@ function testHelpText() {
 
 function main() {
   testParseTelegramList();
+  testParseNonNegativeInteger();
   testParseBridgeCommand();
   testComputeClaimableTasks();
   testCompactSummaryText();

@@ -8,6 +8,12 @@ export function parseTelegramList(value) {
     .filter(Boolean);
 }
 
+export function parseNonNegativeInteger(value, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) return fallback;
+  return Math.floor(parsed);
+}
+
 function stripCommandPrefix(token) {
   if (!token.startsWith('/')) return null;
   return token.slice(1).split('@')[0].toLowerCase();
