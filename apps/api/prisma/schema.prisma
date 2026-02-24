@@ -145,11 +145,31 @@ model RegistrarEntry {
   createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
   artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
   artistMembers RegistrarArtistMember[]
+  codes      RegistrarCode[]
 
   @@index([sceneId, type, status])
   @@index([createdById, createdAt])
   @@index([artistBandId])
   @@map("registrar_entries")
+}
+
+model RegistrarCode {
+  id              String   @id @default(uuid())
+  registrarEntryId String
+  capability      String
+  codeHash        String   @unique
+  issuerType      String   @default("system")
+  status          String   @default("issued")
+  expiresAt       DateTime?
+  redeemedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
+
+  @@index([registrarEntryId, status])
+  @@index([capability, status])
+  @@map("registrar_codes")
 }
 
 model RegistrarArtistMember {

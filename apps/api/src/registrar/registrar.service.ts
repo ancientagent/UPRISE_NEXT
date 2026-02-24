@@ -1,7 +1,7 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { ArtistBandRegistrationDto, PromoterRegistrationDto } from './dto/registrar.dto';
-import { randomUUID } from 'crypto';
+import { createHash, randomBytes, randomUUID } from 'crypto';
 
 const normalizePromoterProductionName = (payload: Record<string, unknown>) => {
   if (typeof payload.productionName !== 'string') {
@@ -12,9 +12,96 @@ const normalizePromoterProductionName = (payload: Record<string, unknown>) => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+type RegistrarCodeIssuer = 'system';
+
+const PROMOTER_CAPABILITY_CODE = 'promoter_capability';
+const REGISTRAR_CODE_DEFAULT_STATUS = 'issued';
+const REGISTRAR_CODE_DEFAULT_ISSUER: RegistrarCodeIssuer = 'system';
+const REGISTRAR_CODE_ISSUER_BLOCK_MESSAGE =
+  'Registrar code issuance is restricted to trusted system registrar paths';
+const REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE =
+  'Registrar code issuance requires registrar entry status approved';
+const REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE =
+  'Registrar code issuance currently supports promoter registrations only';
+
+const buildRegistrarCodeValue = () => `PRC-${randomBytes(16).toString('hex').toUpperCase()}`;
+
+const hashRegistrarCode = (value: string) => createHash('sha256').update(value).digest('hex');
+
 @Injectable()
 export class RegistrarService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async issueRegistrarCodeForApprovedPromoterEntry(
+    registrarEntryId: string,
+    options?: { issuer?: RegistrarCodeIssuer; expiresAt?: Date | null },
+  ) {
+    const issuer = options?.issuer ?? REGISTRAR_CODE_DEFAULT_ISSUER;
+    if (issuer !== REGISTRAR_CODE_DEFAULT_ISSUER) {
+      throw new ForbiddenException(REGISTRAR_CODE_ISSUER_BLOCK_MESSAGE);
+    }
+
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: registrarEntryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+
+    if (entry.type !== 'promoter_registration') {
+      throw new ForbiddenException(REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE);
+    }
+
+    if (entry.status !== 'approved') {
+      throw new ForbiddenException(REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE);
+    }
+
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const code = buildRegistrarCodeValue();
+      const codeHash = hashRegistrarCode(code);
+
+      try {
+        const created = await this.prisma.registrarCode.create({
+          data: {
+            registrarEntryId: entry.id,
+            capability: PROMOTER_CAPABILITY_CODE,
+            codeHash,
+            issuerType: issuer,
+            status: REGISTRAR_CODE_DEFAULT_STATUS,
+            expiresAt: options?.expiresAt ?? null,
+          },
+          select: {
+            id: true,
+            registrarEntryId: true,
+            capability: true,
+            issuerType: true,
+            status: true,
+            expiresAt: true,
+            createdAt: true,
+          },
+        });
+
+        return {
+          ...created,
+          code,
+        };
+      } catch (error: any) {
+        const isUniqueHashConflict = error?.code === 'P2002' && String(error?.meta?.target ?? '').includes('codeHash');
+        if (!isUniqueHashConflict || attempt === maxAttempts - 1) {
+          throw error;
+        }
+      }
+    }
+
+    throw new ConflictException('Failed to issue registrar code');
+  }
 
   async submitPromoterRegistration(userId: string, dto: PromoterRegistrationDto) {
     const [scene, user] = await Promise.all([

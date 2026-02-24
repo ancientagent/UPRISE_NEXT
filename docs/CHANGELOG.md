@@ -7,6 +7,14 @@
 
 ## [Unreleased]
 ### Added
+- RegistrarCode persistence foundation (P3-API-090A):
+  - Added additive Prisma model/table `RegistrarCode` via migration `20260224101500_add_registrar_codes`.
+  - Added internal registrar service primitive `issueRegistrarCodeForApprovedPromoterEntry` (no controller route) with policy lock enforcement:
+    - issuer must be trusted system path (`issuer = system`),
+    - linked registrar entry must be `type = promoter_registration`,
+    - linked registrar entry must be `status = approved`.
+  - Added hashed code persistence (`codeHash`), issuer provenance (`issuerType`), capability marker (`promoter_capability`), and issuance status defaults for forward-compatible verification/redemption slices.
+  - Added registrar service unit coverage for issuance success + blocked paths (non-system issuer, missing entry, wrong entry type, non-approved status).
 - RegistrarCode issuance policy lock (P3-REV-001):
   - Locked `RegistrarCode` issuance authority to trusted system/API registrar paths only (no self-issuance).
   - Locked issuance precondition to `RegistrarEntry.status = approved`.
