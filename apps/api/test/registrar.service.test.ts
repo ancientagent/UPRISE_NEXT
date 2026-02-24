@@ -37,6 +37,10 @@ describe('RegistrarService', () => {
       findFirst: jest.fn(),
       upsert: jest.fn(),
     },
+    capabilityGrantAuditLog: {
+      create: jest.fn(),
+      findMany: jest.fn(),
+    },
     artistBand: {
       create: jest.fn(),
       findUnique: jest.fn(),
@@ -87,6 +91,7 @@ describe('RegistrarService', () => {
       sourceRegistrarEntryId: 'reg-promoter-approved-1',
       sourceRegistrarCodeId: 'rcode-default',
     });
+    mockPrisma.capabilityGrantAuditLog.findMany.mockResolvedValue([]);
     service = new RegistrarService(mockPrisma as any);
   });
 
@@ -639,12 +644,73 @@ describe('RegistrarService', () => {
     );
   });
 
+  it('lists promoter capability audit events for submitter-owned registration', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-3',
+      type: 'promoter_registration',
+      createdById: 'u-1',
+    });
+    mockPrisma.capabilityGrantAuditLog.findMany.mockResolvedValue([
+      {
+        id: 'audit-2',
+        action: 'capability_granted',
+        actorType: 'system',
+        targetUserId: 'u-1',
+        actorUserId: null,
+        registrarCodeId: 'rcode-1',
+        metadata: { grantStatus: 'active' },
+        createdAt: new Date('2026-02-24T12:00:00.000Z'),
+      },
+      {
+        id: 'audit-1',
+        action: 'code_redeemed',
+        actorType: 'user',
+        targetUserId: 'u-1',
+        actorUserId: 'u-1',
+        registrarCodeId: 'rcode-1',
+        metadata: null,
+        createdAt: new Date('2026-02-24T11:59:00.000Z'),
+      },
+    ]);
+
+    const result = await service.listPromoterCapabilityAudit('u-1', 'reg-promoter-3');
+
+    expect(result).toEqual({
+      registrarEntryId: 'reg-promoter-3',
+      total: 2,
+      events: expect.any(Array),
+    });
+    expect(mockPrisma.capabilityGrantAuditLog.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          registrarEntryId: 'reg-promoter-3',
+          capability: 'promoter_capability',
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+    );
+  });
+
+  it('rejects promoter capability audit read for non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-3',
+      type: 'promoter_registration',
+      createdById: 'u-9',
+    });
+
+    await expect(service.listPromoterCapabilityAudit('u-1', 'reg-promoter-3')).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.findMany).not.toHaveBeenCalled();
+  });
+
   it('issues registrar code for approved promoter registration with system issuer', async () => {
     const expiresAt = new Date('2026-03-10T00:00:00.000Z');
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-promoter-approved-1',
       type: 'promoter_registration',
       status: 'approved',
+      createdById: 'u-1',
     });
     mockPrisma.registrarCode.create.mockImplementation(async ({ data }: any) => ({
       id: 'rcode-1',
@@ -670,6 +736,16 @@ describe('RegistrarService', () => {
           status: 'issued',
           expiresAt,
           codeHash: expect.stringMatching(/^[a-f0-9]{64}$/),
+        }),
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          capability: 'promoter_capability',
+          action: 'code_issued',
+          actorType: 'system',
+          registrarEntryId: 'reg-promoter-approved-1',
         }),
       }),
     );
@@ -843,6 +919,28 @@ describe('RegistrarService', () => {
           capability: 'promoter_capability',
           sourceRegistrarEntryId: 'reg-promoter-approved-1',
           sourceRegistrarCodeId: 'rcode-redeem-1',
+        }),
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledTimes(2);
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'code_redeemed',
+          actorType: 'user',
+          targetUserId: 'u-1',
+          actorUserId: 'u-1',
+        }),
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'capability_granted',
+          actorType: 'system',
+          targetUserId: 'u-1',
         }),
       }),
     );

@@ -1,6 +1,10 @@
 import { api } from '@/lib/api';
 import type { ArtistBandRegistrationPayload } from '@/lib/registrar/artistRegistration';
-import { registrarArtistEndpoints, registrarCodeEndpoints } from '@/lib/registrar/contractInventory';
+import {
+  registrarArtistEndpoints,
+  registrarCodeEndpoints,
+  registrarPromoterEndpoints,
+} from '@/lib/registrar/contractInventory';
 
 export interface RegistrarSceneSummary {
   id: string;
@@ -112,6 +116,23 @@ export interface RegistrarPromoterEntriesResponse {
   total: number;
   countsByStatus: Record<string, number>;
   entries: RegistrarPromoterEntry[];
+}
+
+export interface RegistrarPromoterCapabilityAuditEvent {
+  id: string;
+  action: string;
+  actorType: string;
+  targetUserId: string | null;
+  actorUserId: string | null;
+  registrarCodeId: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export interface RegistrarPromoterCapabilityAuditResponse {
+  registrarEntryId: string;
+  total: number;
+  events: RegistrarPromoterCapabilityAuditEvent[];
 }
 
 export interface RegistrarCodeIssueRecord {
@@ -235,14 +256,28 @@ export async function syncArtistBandMembers(
 }
 
 export async function listPromoterRegistrations(token: string): Promise<RegistrarPromoterEntriesResponse> {
-  const response = await api.get<RegistrarPromoterEntriesResponse>('/registrar/promoter/entries', { token });
+  const response = await api.get<RegistrarPromoterEntriesResponse>(registrarPromoterEndpoints.listEntries(), { token });
   return response.data ?? { total: 0, countsByStatus: {}, entries: [] };
 }
 
 export async function getPromoterRegistration(entryId: string, token: string): Promise<RegistrarPromoterEntry> {
-  const response = await api.get<RegistrarPromoterEntry>(`/registrar/promoter/${entryId}`, { token });
+  const response = await api.get<RegistrarPromoterEntry>(registrarPromoterEndpoints.detail(entryId), { token });
   if (!response.data) {
     throw new Error('Promoter registration response was empty.');
+  }
+  return response.data;
+}
+
+export async function getPromoterCapabilityAudit(
+  entryId: string,
+  token: string,
+): Promise<RegistrarPromoterCapabilityAuditResponse> {
+  const response = await api.get<RegistrarPromoterCapabilityAuditResponse>(
+    registrarPromoterEndpoints.capabilityAudit(entryId),
+    { token },
+  );
+  if (!response.data) {
+    throw new Error('Promoter capability audit response was empty.');
   }
   return response.data;
 }

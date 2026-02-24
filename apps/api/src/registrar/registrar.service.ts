@@ -52,6 +52,7 @@ export class RegistrarService {
         id: true,
         type: true,
         status: true,
+        createdById: true,
       },
     });
 
@@ -73,24 +74,42 @@ export class RegistrarService {
       const codeHash = hashRegistrarCode(code);
 
       try {
-        const created = await this.prisma.registrarCode.create({
-          data: {
-            registrarEntryId: entry.id,
-            capability: PROMOTER_CAPABILITY_CODE,
-            codeHash,
-            issuerType: issuer,
-            status: REGISTRAR_CODE_DEFAULT_STATUS,
-            expiresAt: options?.expiresAt ?? null,
-          },
-          select: {
-            id: true,
-            registrarEntryId: true,
-            capability: true,
-            issuerType: true,
-            status: true,
-            expiresAt: true,
-            createdAt: true,
-          },
+        const created = await this.prisma.$transaction(async (tx: any) => {
+          const codeRecord = await tx.registrarCode.create({
+            data: {
+              registrarEntryId: entry.id,
+              capability: PROMOTER_CAPABILITY_CODE,
+              codeHash,
+              issuerType: issuer,
+              status: REGISTRAR_CODE_DEFAULT_STATUS,
+              expiresAt: options?.expiresAt ?? null,
+            },
+            select: {
+              id: true,
+              registrarEntryId: true,
+              capability: true,
+              issuerType: true,
+              status: true,
+              expiresAt: true,
+              createdAt: true,
+            },
+          });
+
+          await tx.capabilityGrantAuditLog.create({
+            data: {
+              capability: PROMOTER_CAPABILITY_CODE,
+              action: 'code_issued',
+              actorType: 'system',
+              targetUserId: entry.createdById,
+              registrarEntryId: entry.id,
+              registrarCodeId: codeRecord.id,
+              metadata: {
+                issuerType: issuer,
+              },
+            },
+          });
+
+          return codeRecord;
         });
 
         return {
@@ -260,6 +279,32 @@ export class RegistrarService {
           grantedAt: true,
           sourceRegistrarEntryId: true,
           sourceRegistrarCodeId: true,
+        },
+      });
+
+      await tx.capabilityGrantAuditLog.create({
+        data: {
+          capability: PROMOTER_CAPABILITY_CODE,
+          action: 'code_redeemed',
+          actorType: 'user',
+          targetUserId: userId,
+          actorUserId: userId,
+          registrarEntryId: updated.registrarEntryId,
+          registrarCodeId: updated.id,
+        },
+      });
+
+      await tx.capabilityGrantAuditLog.create({
+        data: {
+          capability: PROMOTER_CAPABILITY_CODE,
+          action: 'capability_granted',
+          actorType: 'system',
+          targetUserId: userId,
+          registrarEntryId: updated.registrarEntryId,
+          registrarCodeId: updated.id,
+          metadata: {
+            grantStatus: grant.status,
+          },
         },
       });
 
@@ -562,6 +607,51 @@ export class RegistrarService {
       scene: entry.scene,
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,
+    };
+  }
+
+  async listPromoterCapabilityAudit(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        createdById: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'promoter_registration') {
+      throw new ForbiddenException('Registrar entry is not a promoter registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read this promoter registration');
+    }
+
+    const events = await this.prisma.capabilityGrantAuditLog.findMany({
+      where: {
+        registrarEntryId: entry.id,
+        capability: PROMOTER_CAPABILITY_CODE,
+      },
+      select: {
+        id: true,
+        action: true,
+        actorType: true,
+        targetUserId: true,
+        actorUserId: true,
+        registrarCodeId: true,
+        metadata: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      registrarEntryId: entry.id,
+      total: events.length,
+      events,
     };
   }
 

@@ -7,6 +7,15 @@
 
 ## [Unreleased]
 ### Added
+- Capability grant audit persistence/read surface (slice 97):
+  - Added additive Prisma model/table `CapabilityGrantAuditLog` via migration `20260224213000_add_capability_grant_audit_logs`.
+  - Registrar capability transitions now emit audit events:
+    - `code_issued` during registrar code issuance,
+    - `code_redeemed` during user redemption,
+    - `capability_granted` after capability grant upsert.
+  - Added submitter-owned audit read endpoint: `GET /registrar/promoter/:entryId/capability-audit`.
+  - Added registrar service/controller unit coverage for audit write and read paths.
+  - Updated web registrar contract inventory + typed client with promoter capability-audit endpoint scaffolding (no new UI actions).
 - Promoter capability transition persistence/read enrichment (slice 96):
   - Added additive Prisma model/table `UserCapabilityGrant` via migration `20260224200000_add_user_capability_grants`.
   - `POST /registrar/code/redeem` now upserts active user capability grants with registrar provenance (`sourceRegistrarEntryId`, `sourceRegistrarCodeId`).

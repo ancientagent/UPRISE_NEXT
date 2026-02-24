@@ -45,6 +45,15 @@ export class RegistrarController {
     return { success: true, data: result };
   }
 
+  @Get('promoter/:entryId/capability-audit')
+  async getMyPromoterCapabilityAudit(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.listPromoterCapabilityAudit(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
   @Post('code/verify')
   @ZodBody(RegistrarCodeVerifySchema)
   async verifyRegistrarCode(@Body() dto: RegistrarCodeVerifyDto) {

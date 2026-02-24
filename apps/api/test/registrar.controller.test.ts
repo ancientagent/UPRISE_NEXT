@@ -132,6 +132,43 @@ describe('RegistrarController', () => {
     });
   });
 
+  it('reads promoter capability audit through registrar service', async () => {
+    const registrarService = {
+      listPromoterCapabilityAudit: jest.fn().mockResolvedValue({
+        registrarEntryId: 'reg-promoter-1',
+        total: 2,
+        events: [{ id: 'audit-2' }, { id: 'audit-1' }],
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.getMyPromoterCapabilityAudit('reg-promoter-1', {
+      user: { userId: 'u-1' },
+    });
+
+    expect(registrarService.listPromoterCapabilityAudit).toHaveBeenCalledWith('u-1', 'reg-promoter-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-promoter-1',
+        total: 2,
+        events: [{ id: 'audit-2' }, { id: 'audit-1' }],
+      },
+    });
+  });
+
+  it('propagates promoter capability audit read errors from registrar service', async () => {
+    const registrarService = {
+      listPromoterCapabilityAudit: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.getMyPromoterCapabilityAudit('reg-promoter-1', { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(ForbiddenException);
+    expect(registrarService.listPromoterCapabilityAudit).toHaveBeenCalledWith('u-1', 'reg-promoter-1');
+  });
+
   it('verifies registrar code through registrar service', async () => {
     const registrarService = {
       verifyRegistrarCode: jest.fn().mockResolvedValue({

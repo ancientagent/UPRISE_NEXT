@@ -55,6 +55,8 @@ model User {
   registrarArtistMemberships RegistrarArtistMember[] @relation("RegistrarExistingUser")
   registrarClaimedMemberships RegistrarArtistMember[] @relation("RegistrarClaimedUser")
   capabilityGrants  UserCapabilityGrant[]
+  capabilityAuditTargetEvents CapabilityGrantAuditLog[] @relation("CapabilityAuditTargetUser")
+  capabilityAuditActorEvents  CapabilityGrantAuditLog[] @relation("CapabilityAuditActorUser")
 
   @@map("users")
 }
@@ -148,6 +150,7 @@ model RegistrarEntry {
   artistMembers RegistrarArtistMember[]
   codes      RegistrarCode[]
   capabilityGrants UserCapabilityGrant[]
+  capabilityAuditEvents CapabilityGrantAuditLog[]
 
   @@index([sceneId, type, status])
   @@index([createdById, createdAt])
@@ -169,6 +172,7 @@ model RegistrarCode {
 
   registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
   capabilityGrants UserCapabilityGrant[]
+  capabilityAuditEvents CapabilityGrantAuditLog[]
 
   @@index([registrarEntryId, status])
   @@index([capability, status])
@@ -196,6 +200,29 @@ model UserCapabilityGrant {
   @@index([sourceRegistrarEntryId])
   @@index([sourceRegistrarCodeId])
   @@map("user_capability_grants")
+}
+
+model CapabilityGrantAuditLog {
+  id              String   @id @default(uuid())
+  capability      String
+  action          String
+  actorType       String   @default("system")
+  targetUserId    String?
+  actorUserId     String?
+  registrarEntryId String?
+  registrarCodeId String?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+
+  targetUser     User?          @relation("CapabilityAuditTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  actorUser      User?          @relation("CapabilityAuditActorUser", fields: [actorUserId], references: [id], onDelete: SetNull)
+  registrarEntry RegistrarEntry? @relation(fields: [registrarEntryId], references: [id], onDelete: SetNull)
+  registrarCode  RegistrarCode?  @relation(fields: [registrarCodeId], references: [id], onDelete: SetNull)
+
+  @@index([capability, action, createdAt])
+  @@index([registrarEntryId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@map("capability_grant_audit_logs")
 }
 
 model RegistrarArtistMember {

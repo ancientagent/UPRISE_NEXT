@@ -107,6 +107,15 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     notes: 'API exists; promoter detail read is not wired on web.',
   },
   {
+    id: 'registrar.promoter.entry.capability_audit',
+    method: 'GET',
+    pathTemplate: '/registrar/promoter/:entryId/capability-audit',
+    status: 'gap',
+    webConsumerPath: null,
+    gapKind: 'web_surface_missing',
+    notes: 'API exists; promoter capability audit read is not wired on web.',
+  },
+  {
     id: 'auth.invite.preview',
     method: 'POST',
     pathTemplate: '/auth/invite-preview',
@@ -215,6 +224,13 @@ export const registrarArtistEndpoints = {
 export const registrarCodeEndpoints = {
   verify: () => '/registrar/code/verify',
   redeem: () => '/registrar/code/redeem',
+} as const;
+
+export const registrarPromoterEndpoints = {
+  submit: () => '/registrar/promoter',
+  listEntries: () => '/registrar/promoter/entries',
+  detail: (entryId: string) => `/registrar/promoter/${requireEntryId(entryId)}`,
+  capabilityAudit: (entryId: string) => `/registrar/promoter/${requireEntryId(entryId)}/capability-audit`,
 } as const;
 
 export function getRegistrarWebGapContracts(): RegistrarWebEndpointContract[] {
