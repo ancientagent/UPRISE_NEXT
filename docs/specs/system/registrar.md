@@ -91,6 +91,14 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Fields are derived from the existing `RegistrarInviteDelivery` row joined per member; no schema migration required.
   - Raw `deliveries` array is not exposed; only the mapped outcome fields are returned.
   - Additive/non-breaking: callers that do not consume the new fields are unaffected.
+- Registrar capability-code verification/redemption primitives (slice 95):
+  - `POST /registrar/code/verify` implemented (auth required) for capability-code validation prior to redemption.
+  - `POST /registrar/code/redeem` implemented (auth required) to mark redeemable registrar codes as redeemed.
+  - Redemption is guarded by locked policy constraints:
+    - linked registrar entry type must be `promoter_registration`,
+    - linked registrar entry status must be `approved`,
+    - code must be in `issued` status and not expired/redeemed.
+  - Additive API surface; no destructive migration.
 - Registrar registration status list read surface (slice 11):
   - `GET /registrar/artist/entries` implemented.
   - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
@@ -182,6 +190,8 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registrar entries + scene context |
 | GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registrar entry detail + scene context |
+| POST | `/registrar/code/verify` | required | Verify registrar capability-code eligibility for redemption |
+| POST | `/registrar/code/redeem` | required | Redeem registrar capability-code for authenticated user |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
 

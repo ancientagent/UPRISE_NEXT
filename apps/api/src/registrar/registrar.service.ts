@@ -16,6 +16,7 @@ type RegistrarCodeIssuer = 'system';
 
 const PROMOTER_CAPABILITY_CODE = 'promoter_capability';
 const REGISTRAR_CODE_DEFAULT_STATUS = 'issued';
+const REGISTRAR_CODE_REDEEMED_STATUS = 'redeemed';
 const REGISTRAR_CODE_DEFAULT_ISSUER: RegistrarCodeIssuer = 'system';
 const REGISTRAR_CODE_ISSUER_BLOCK_MESSAGE =
   'Registrar code issuance is restricted to trusted system registrar paths';
@@ -23,6 +24,10 @@ const REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE =
   'Registrar code issuance requires registrar entry status approved';
 const REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE =
   'Registrar code issuance currently supports promoter registrations only';
+const REGISTRAR_CODE_NOT_FOUND_MESSAGE = 'Registrar code not found';
+const REGISTRAR_CODE_EXPIRED_MESSAGE = 'Registrar code has expired';
+const REGISTRAR_CODE_NOT_REDEEMABLE_MESSAGE = 'Registrar code is no longer redeemable';
+const REGISTRAR_CODE_ALREADY_REDEEMED_MESSAGE = 'Registrar code has already been redeemed';
 
 const buildRegistrarCodeValue = () => `PRC-${randomBytes(16).toString('hex').toUpperCase()}`;
 
@@ -101,6 +106,136 @@ export class RegistrarService {
     }
 
     throw new ConflictException('Failed to issue registrar code');
+  }
+
+  async verifyRegistrarCode(code: string) {
+    const normalizedCode = code.trim();
+    const codeHash = hashRegistrarCode(normalizedCode);
+    const registrarCode = await this.prisma.registrarCode.findUnique({
+      where: { codeHash },
+      select: {
+        id: true,
+        registrarEntryId: true,
+        capability: true,
+        issuerType: true,
+        status: true,
+        expiresAt: true,
+        redeemedAt: true,
+        createdAt: true,
+        registrarEntry: {
+          select: {
+            id: true,
+            type: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!registrarCode) {
+      throw new NotFoundException(REGISTRAR_CODE_NOT_FOUND_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.type !== 'promoter_registration') {
+      throw new ForbiddenException(REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.status !== 'approved') {
+      throw new ForbiddenException(REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE);
+    }
+
+    if (registrarCode.expiresAt && registrarCode.expiresAt.getTime() < Date.now()) {
+      throw new ForbiddenException(REGISTRAR_CODE_EXPIRED_MESSAGE);
+    }
+
+    if (registrarCode.status !== REGISTRAR_CODE_DEFAULT_STATUS || registrarCode.redeemedAt) {
+      throw new ForbiddenException(REGISTRAR_CODE_NOT_REDEEMABLE_MESSAGE);
+    }
+
+    return {
+      id: registrarCode.id,
+      registrarEntryId: registrarCode.registrarEntryId,
+      capability: registrarCode.capability,
+      issuerType: registrarCode.issuerType,
+      status: registrarCode.status,
+      expiresAt: registrarCode.expiresAt,
+      createdAt: registrarCode.createdAt,
+      redeemable: true,
+    };
+  }
+
+  async redeemRegistrarCodeForUser(userId: string, code: string) {
+    const normalizedCode = code.trim();
+    const codeHash = hashRegistrarCode(normalizedCode);
+    const registrarCode = await this.prisma.registrarCode.findUnique({
+      where: { codeHash },
+      select: {
+        id: true,
+        registrarEntryId: true,
+        capability: true,
+        issuerType: true,
+        status: true,
+        expiresAt: true,
+        redeemedAt: true,
+        createdAt: true,
+        registrarEntry: {
+          select: {
+            id: true,
+            type: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!registrarCode) {
+      throw new NotFoundException(REGISTRAR_CODE_NOT_FOUND_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.type !== 'promoter_registration') {
+      throw new ForbiddenException(REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.status !== 'approved') {
+      throw new ForbiddenException(REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE);
+    }
+
+    if (registrarCode.expiresAt && registrarCode.expiresAt.getTime() < Date.now()) {
+      throw new ForbiddenException(REGISTRAR_CODE_EXPIRED_MESSAGE);
+    }
+
+    if (registrarCode.redeemedAt || registrarCode.status === REGISTRAR_CODE_REDEEMED_STATUS) {
+      throw new ConflictException(REGISTRAR_CODE_ALREADY_REDEEMED_MESSAGE);
+    }
+
+    if (registrarCode.status !== REGISTRAR_CODE_DEFAULT_STATUS) {
+      throw new ForbiddenException(REGISTRAR_CODE_NOT_REDEEMABLE_MESSAGE);
+    }
+
+    const redeemedAt = new Date();
+
+    const updated = await this.prisma.registrarCode.update({
+      where: { id: registrarCode.id },
+      data: {
+        status: REGISTRAR_CODE_REDEEMED_STATUS,
+        redeemedAt,
+      },
+      select: {
+        id: true,
+        registrarEntryId: true,
+        capability: true,
+        issuerType: true,
+        status: true,
+        expiresAt: true,
+        redeemedAt: true,
+        createdAt: true,
+      },
+    });
+
+    return {
+      ...updated,
+      redeemedByUserId: userId,
+    };
   }
 
   async submitPromoterRegistration(userId: string, dto: PromoterRegistrationDto) {

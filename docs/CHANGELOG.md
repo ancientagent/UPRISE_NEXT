@@ -7,6 +7,15 @@
 
 ## [Unreleased]
 ### Added
+- Registrar capability-code verify/redeem API primitives (slice 95):
+  - Added `POST /registrar/code/verify` (auth required) for registrar capability-code eligibility checks before redemption.
+  - Added `POST /registrar/code/redeem` (auth required) for authenticated code redemption.
+  - Enforced redemption guards in service/controller path:
+    - linked entry must be `type = promoter_registration`,
+    - linked entry must be `status = approved`,
+    - code must be `issued`, non-expired, and not already redeemed.
+  - Added registrar unit coverage for verify/redeem success + guard paths and DTO/controller contract coverage.
+  - Updated web registrar contract inventory and typed client scaffolding with concrete verify/redeem endpoint paths (no new UI actions).
 - Telegram bridge near-real-time long-poll loop (slice 92):
   - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
   - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.

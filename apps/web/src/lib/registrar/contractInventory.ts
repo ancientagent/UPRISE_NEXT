@@ -154,20 +154,20 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
   {
     id: 'registrar.code.verify',
     method: 'POST',
-    pathTemplate: 'TBD_REGISTRAR_CODE_VERIFY_ENDPOINT',
+    pathTemplate: '/registrar/code/verify',
     status: 'gap',
     webConsumerPath: null,
-    gapKind: 'api_not_available',
-    notes: 'RegistrarCode verify endpoint path is not published yet; web keeps typed scaffolding only.',
+    gapKind: 'web_surface_missing',
+    notes: 'API exists; web registrar surface does not yet expose code verification flow.',
   },
   {
     id: 'registrar.code.redeem',
     method: 'POST',
-    pathTemplate: 'TBD_REGISTRAR_CODE_REDEEM_ENDPOINT',
+    pathTemplate: '/registrar/code/redeem',
     status: 'gap',
     webConsumerPath: null,
-    gapKind: 'api_not_available',
-    notes: 'RegistrarCode redeem endpoint path is not published yet; web keeps typed scaffolding only.',
+    gapKind: 'web_surface_missing',
+    notes: 'API exists; web registrar surface does not yet expose code redemption flow.',
   },
 ];
 
@@ -210,6 +210,11 @@ export const registrarArtistEndpoints = {
   dispatchInvites: (entryId: string) => `/registrar/artist/${requireEntryId(entryId)}/dispatch-invites`,
   syncMembers: (entryId: string) => `/registrar/artist/${requireEntryId(entryId)}/sync-members`,
   inviteStatus: (entryId: string) => `/registrar/artist/${requireEntryId(entryId)}/invites`,
+} as const;
+
+export const registrarCodeEndpoints = {
+  verify: () => '/registrar/code/verify',
+  redeem: () => '/registrar/code/redeem',
 } as const;
 
 export function getRegistrarWebGapContracts(): RegistrarWebEndpointContract[] {

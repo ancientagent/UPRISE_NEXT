@@ -75,6 +75,13 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `deliveryStatus` reflects the current `RegistrarInviteDelivery.status` (`queued`/`sent`/`failed`) or `null` when no delivery row exists.
   - `sentAt` is the `dispatchedAt` timestamp when status is `sent`, else `null`; `failedAt` is the `dispatchedAt` timestamp when status is `failed`, else `null`.
   - No schema migration; derived from existing `RegistrarInviteDelivery` join. Additive/non-breaking.
+- Registrar capability-code verification/redeem API primitives (slice 95):
+  - `POST /registrar/code/verify` validates registrar capability codes for authenticated users before redemption.
+  - `POST /registrar/code/redeem` redeems capability codes for authenticated users.
+  - Guards enforced on both flows:
+    - linked registrar entry type must be `promoter_registration`,
+    - linked registrar entry status must be `approved`,
+    - code must be active (`issued`) and not expired/redeemed.
 - Web registrar entry + Artist/Band action intake (slice 10):
   - Plot now exposes Registrar entrypoint action (`Open Registrar`) from Home Scene civic surface.
   - `/registrar` web route includes explicit `Band / Artist Registration` action selection.
@@ -178,6 +185,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registration entries + scene context |
 | GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registration entry detail + scene context |
+| POST | `/registrar/code/verify` | required | Verify registrar capability-code eligibility for redemption |
+| POST | `/registrar/code/redeem` | required | Redeem registrar capability-code for authenticated user |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.

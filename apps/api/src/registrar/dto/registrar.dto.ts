@@ -38,3 +38,15 @@ export const PromoterRegistrationSchema = z.object({
 });
 
 export type PromoterRegistrationDto = z.infer<typeof PromoterRegistrationSchema>;
+
+export const RegistrarCodeVerifySchema = z.object({
+  code: z.string().trim().min(6).max(120),
+});
+
+export type RegistrarCodeVerifyDto = z.infer<typeof RegistrarCodeVerifySchema>;
+
+export const RegistrarCodeRedeemSchema = z.object({
+  code: z.string().trim().min(6).max(120),
+});
+
+export type RegistrarCodeRedeemDto = z.infer<typeof RegistrarCodeRedeemSchema>;

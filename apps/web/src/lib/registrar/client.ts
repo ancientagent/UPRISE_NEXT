@@ -1,6 +1,6 @@
 import { api } from '@/lib/api';
 import type { ArtistBandRegistrationPayload } from '@/lib/registrar/artistRegistration';
-import { registrarArtistEndpoints } from '@/lib/registrar/contractInventory';
+import { registrarArtistEndpoints, registrarCodeEndpoints } from '@/lib/registrar/contractInventory';
 
 export interface RegistrarSceneSummary {
   id: string;
@@ -117,6 +117,17 @@ export interface RegistrarCodeIssueRecord {
   code: string;
 }
 
+export interface RegistrarCodeVerifyRecord {
+  id: string;
+  registrarEntryId: string;
+  capability: string;
+  issuerType: 'system';
+  status: 'issued' | string;
+  expiresAt: string | null;
+  createdAt: string;
+  redeemable: boolean;
+}
+
 export interface RegistrarCodeRedeemRecord {
   id: string;
   registrarEntryId: string;
@@ -129,16 +140,15 @@ export interface RegistrarCodeRedeemRecord {
 }
 
 export interface RegistrarCodeApiScaffold {
-  issueForApprovedPromoterEntryEndpoint: null;
-  redeemEndpoint: null;
-  verifyEndpoint: null;
+  issueForApprovedPromoterEntryEndpoint: string | null;
+  redeemEndpoint: string | null;
+  verifyEndpoint: string | null;
 }
 
-// Endpoint placeholders stay null until the API exposes registrar-code routes.
 export const REGISTRAR_CODE_API_SCAFFOLD: RegistrarCodeApiScaffold = {
   issueForApprovedPromoterEntryEndpoint: null,
-  redeemEndpoint: null,
-  verifyEndpoint: null,
+  redeemEndpoint: registrarCodeEndpoints.redeem(),
+  verifyEndpoint: registrarCodeEndpoints.verify(),
 };
 
 export async function submitArtistBandRegistration(
@@ -225,6 +235,22 @@ export async function getPromoterRegistration(entryId: string, token: string): P
   const response = await api.get<RegistrarPromoterEntry>(`/registrar/promoter/${entryId}`, { token });
   if (!response.data) {
     throw new Error('Promoter registration response was empty.');
+  }
+  return response.data;
+}
+
+export async function verifyRegistrarCode(code: string, token: string): Promise<RegistrarCodeVerifyRecord> {
+  const response = await api.post<RegistrarCodeVerifyRecord>(registrarCodeEndpoints.verify(), { code }, { token });
+  if (!response.data) {
+    throw new Error('Registrar code verify response was empty.');
+  }
+  return response.data;
+}
+
+export async function redeemRegistrarCode(code: string, token: string): Promise<RegistrarCodeRedeemRecord> {
+  const response = await api.post<RegistrarCodeRedeemRecord>(registrarCodeEndpoints.redeem(), { code }, { token });
+  if (!response.data) {
+    throw new Error('Registrar code redeem response was empty.');
   }
   return response.data;
 }

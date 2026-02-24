@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { RegistrarService } from '../src/registrar/registrar.service';
 
 describe('RegistrarService', () => {
@@ -28,6 +28,8 @@ describe('RegistrarService', () => {
     },
     registrarCode: {
       create: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
     },
     artistBand: {
       create: jest.fn(),
@@ -627,6 +629,158 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(ForbiddenException);
 
     expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('verifies a redeemable registrar code for approved promoter entry', async () => {
+    mockPrisma.registrarCode.findUnique.mockResolvedValue({
+      id: 'rcode-verify-1',
+      registrarEntryId: 'reg-promoter-approved-1',
+      capability: 'promoter_capability',
+      issuerType: 'system',
+      status: 'issued',
+      expiresAt: new Date('2026-03-10T00:00:00.000Z'),
+      redeemedAt: null,
+      createdAt: new Date('2026-02-24T10:20:00.000Z'),
+      registrarEntry: {
+        id: 'reg-promoter-approved-1',
+        type: 'promoter_registration',
+        status: 'approved',
+      },
+    });
+
+    const result = await service.verifyRegistrarCode('PRC-VALID-CODE');
+
+    expect(mockPrisma.registrarCode.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          codeHash: expect.stringMatching(/^[a-f0-9]{64}$/),
+        },
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'rcode-verify-1',
+        registrarEntryId: 'reg-promoter-approved-1',
+        capability: 'promoter_capability',
+        status: 'issued',
+        redeemable: true,
+      }),
+    );
+  });
+
+  it('rejects registrar code verification when code does not exist', async () => {
+    mockPrisma.registrarCode.findUnique.mockResolvedValue(null);
+
+    await expect(service.verifyRegistrarCode('PRC-NOT-FOUND')).rejects.toThrow(NotFoundException);
+  });
+
+  it('rejects registrar code verification when code is no longer redeemable', async () => {
+    mockPrisma.registrarCode.findUnique.mockResolvedValue({
+      id: 'rcode-verify-2',
+      registrarEntryId: 'reg-promoter-approved-1',
+      capability: 'promoter_capability',
+      issuerType: 'system',
+      status: 'redeemed',
+      expiresAt: null,
+      redeemedAt: new Date('2026-02-24T12:00:00.000Z'),
+      createdAt: new Date('2026-02-24T10:20:00.000Z'),
+      registrarEntry: {
+        id: 'reg-promoter-approved-1',
+        type: 'promoter_registration',
+        status: 'approved',
+      },
+    });
+
+    await expect(service.verifyRegistrarCode('PRC-REDEEMED')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('redeems registrar code for authenticated user', async () => {
+    mockPrisma.registrarCode.findUnique.mockResolvedValue({
+      id: 'rcode-redeem-1',
+      registrarEntryId: 'reg-promoter-approved-1',
+      capability: 'promoter_capability',
+      issuerType: 'system',
+      status: 'issued',
+      expiresAt: null,
+      redeemedAt: null,
+      createdAt: new Date('2026-02-24T10:20:00.000Z'),
+      registrarEntry: {
+        id: 'reg-promoter-approved-1',
+        type: 'promoter_registration',
+        status: 'approved',
+      },
+    });
+    mockPrisma.registrarCode.update.mockImplementation(async ({ data }: any) => ({
+      id: 'rcode-redeem-1',
+      registrarEntryId: 'reg-promoter-approved-1',
+      capability: 'promoter_capability',
+      issuerType: 'system',
+      status: data.status,
+      expiresAt: null,
+      redeemedAt: data.redeemedAt,
+      createdAt: new Date('2026-02-24T10:20:00.000Z'),
+    }));
+
+    const result = await service.redeemRegistrarCodeForUser('u-1', 'PRC-VALID-CODE');
+
+    expect(mockPrisma.registrarCode.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'rcode-redeem-1' },
+        data: expect.objectContaining({
+          status: 'redeemed',
+          redeemedAt: expect.any(Date),
+        }),
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'rcode-redeem-1',
+        status: 'redeemed',
+        redeemedByUserId: 'u-1',
+      }),
+    );
+  });
+
+  it('rejects registrar code redemption when code was already redeemed', async () => {
+    mockPrisma.registrarCode.findUnique.mockResolvedValue({
+      id: 'rcode-redeem-2',
+      registrarEntryId: 'reg-promoter-approved-1',
+      capability: 'promoter_capability',
+      issuerType: 'system',
+      status: 'redeemed',
+      expiresAt: null,
+      redeemedAt: new Date('2026-02-24T12:00:00.000Z'),
+      createdAt: new Date('2026-02-24T10:20:00.000Z'),
+      registrarEntry: {
+        id: 'reg-promoter-approved-1',
+        type: 'promoter_registration',
+        status: 'approved',
+      },
+    });
+
+    await expect(service.redeemRegistrarCodeForUser('u-1', 'PRC-REDEEMED')).rejects.toThrow(ConflictException);
+    expect(mockPrisma.registrarCode.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects registrar code redemption when code is expired', async () => {
+    mockPrisma.registrarCode.findUnique.mockResolvedValue({
+      id: 'rcode-redeem-3',
+      registrarEntryId: 'reg-promoter-approved-1',
+      capability: 'promoter_capability',
+      issuerType: 'system',
+      status: 'issued',
+      expiresAt: new Date('2026-01-01T00:00:00.000Z'),
+      redeemedAt: null,
+      createdAt: new Date('2025-12-20T00:00:00.000Z'),
+      registrarEntry: {
+        id: 'reg-promoter-approved-1',
+        type: 'promoter_registration',
+        status: 'approved',
+      },
+    });
+
+    await expect(service.redeemRegistrarCodeForUser('u-1', 'PRC-EXPIRED')).rejects.toThrow(ForbiddenException);
+    expect(mockPrisma.registrarCode.update).not.toHaveBeenCalled();
   });
 
   it('throws when target scene does not exist', async () => {

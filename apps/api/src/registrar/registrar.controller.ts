@@ -9,6 +9,10 @@ import {
   type DispatchArtistInviteDto,
   PromoterRegistrationSchema,
   type PromoterRegistrationDto,
+  RegistrarCodeRedeemSchema,
+  type RegistrarCodeRedeemDto,
+  RegistrarCodeVerifySchema,
+  type RegistrarCodeVerifyDto,
 } from './dto/registrar.dto';
 
 @Controller('registrar')
@@ -38,6 +42,23 @@ export class RegistrarController {
     @Request() req: { user: { userId: string } },
   ) {
     const result = await this.registrarService.getPromoterRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
+  @Post('code/verify')
+  @ZodBody(RegistrarCodeVerifySchema)
+  async verifyRegistrarCode(@Body() dto: RegistrarCodeVerifyDto) {
+    const result = await this.registrarService.verifyRegistrarCode(dto.code);
+    return { success: true, data: result };
+  }
+
+  @Post('code/redeem')
+  @ZodBody(RegistrarCodeRedeemSchema)
+  async redeemRegistrarCode(
+    @Body() dto: RegistrarCodeRedeemDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.redeemRegistrarCodeForUser(req.user.userId, dto.code);
     return { success: true, data: result };
   }
 
