@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Platform-wide MVP roadmap + Phase 3 kickoff (slice 88):
+  - Added unified MVP execution roadmap covering phases 0-7 across identity, registrar, communities, broadcast, discovery, social, events/economy, and launch hardening lanes.
+  - Established Phase 3 kickoff queue and additive migration/rollback policy for upcoming capability-completion slices.
+  - Added handoff artifact `docs/handoff/2026-02-24_platform-mvp-roadmap-phase3-kickoff.md` as execution baseline for parallel agent lanes.
 - Registrar artist entry-list invite outcome count enrichment (slice 70):
   - `GET /registrar/artist/entries` now returns per-entry `sentInviteCount` and `failedInviteCount`.
   - Existing invite lifecycle counts remain unchanged and backward compatible.
