@@ -28,6 +28,8 @@
     "qa:phase2:db": "pnpm run qa:db && pnpm --filter api test -- registrar.invite-delivery.integration.test.ts",
     "agent:queue": "node scripts/agent-control.mjs",
     "agent:queue:test": "node scripts/agent-control.test.mjs",
+    "agent:bridge:tick": "node scripts/agent-bridge-tick.mjs",
+    "agent:bridge:test": "node scripts/agent-bridge-tick.test.mjs",
     "verify": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run typecheck",
     "verify:full": "pnpm run verify && pnpm run test && pnpm run build",
     "report:isartist-consumers": "node scripts/is-artist-consumer-report.mjs",

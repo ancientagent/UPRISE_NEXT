@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Agent scheduler/chat bridge MVP (slice 90):
+  - Added `scripts/agent-bridge-tick.mjs` for queue snapshots, claimable task detection, stale in-progress detection, and review/blocked summaries.
+  - Added optional Telegram summary notification (`--notify-telegram`) using `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`.
+  - Added scheduled workflow `.github/workflows/agent-queue-bridge.yml` (15-minute cadence + manual dispatch inputs).
+  - Added `scripts/agent-bridge-tick.test.mjs` and package scripts `agent:bridge:tick`, `agent:bridge:test`.
+  - Added runbook `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` for local and CI operation.
 - RegistrarCode persistence foundation (P3-API-090A):
   - Added additive Prisma model/table `RegistrarCode` via migration `20260224101500_add_registrar_codes`.
   - Added internal registrar service primitive `issueRegistrarCodeForApprovedPromoterEntry` (no controller route) with policy lock enforcement:

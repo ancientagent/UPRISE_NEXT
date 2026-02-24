@@ -84,3 +84,9 @@ pnpm run agent:queue -- poll
 - Do not claim tasks outside your lane.
 - Do not edit paths outside lane scope.
 - Every task completion must include validation command outcomes in its report.
+
+## Bridge Add-On
+- Scheduler/chat bridge tick:
+  - `pnpm run agent:bridge:tick -- --queue /tmp/uprise_next_agent_queue.json`
+- Full runbook:
+  - `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`

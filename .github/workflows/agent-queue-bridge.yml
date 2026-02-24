@@ -1,0 +1,106 @@
+name: Agent Queue Bridge
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      queue_path:
+        description: Queue file path for bridge tick
+        required: false
+        default: docs/handoff/agent-control/queue.json
+      stale_minutes:
+        description: Stale in-progress threshold in minutes
+        required: false
+        default: '45'
+      notify_telegram:
+        description: Send summary to Telegram if secrets are set
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+jobs:
+  bridge-tick:
+    name: Agent Bridge Tick
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      NODE_VERSION: '22'
+      PNPM_VERSION: '9.0.0'
+      DEFAULT_QUEUE_PATH: docs/handoff/agent-control/queue.json
+      DEFAULT_STALE_MINUTES: '45'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve bridge inputs
+        id: input
+        shell: bash
+        run: |
+          QUEUE_PATH="${{ github.event.inputs.queue_path }}"
+          if [ -z "$QUEUE_PATH" ]; then
+            QUEUE_PATH="${DEFAULT_QUEUE_PATH}"
+          fi
+
+          STALE_MINUTES="${{ github.event.inputs.stale_minutes }}"
+          if [ -z "$STALE_MINUTES" ]; then
+            STALE_MINUTES="${DEFAULT_STALE_MINUTES}"
+          fi
+
+          NOTIFY_TELEGRAM="${{ github.event.inputs.notify_telegram }}"
+          if [ -z "$NOTIFY_TELEGRAM" ]; then
+            NOTIFY_TELEGRAM="false"
+          fi
+
+          echo "queue_path=$QUEUE_PATH" >> $GITHUB_OUTPUT
+          echo "stale_minutes=$STALE_MINUTES" >> $GITHUB_OUTPUT
+          echo "notify_telegram=$NOTIFY_TELEGRAM" >> $GITHUB_OUTPUT
+
+      - name: Run bridge tick
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          ARGS=(
+            --queue "${{ steps.input.outputs.queue_path }}"
+            --lanes "docs/handoff/agent-control/lanes.json"
+            --output-dir "scripts/reports/agent-bridge"
+            --stale-minutes "${{ steps.input.outputs.stale_minutes }}"
+            --label "github-actions"
+            --fail-on-blocked
+          )
+
+          if [ "${{ steps.input.outputs.notify_telegram }}" = "true" ]; then
+            ARGS+=(--notify-telegram)
+          fi
+
+          node scripts/agent-bridge-tick.mjs "${ARGS[@]}"
+
+      - name: Upload bridge reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-bridge-reports-${{ github.run_id }}
+          path: scripts/reports/agent-bridge
+          if-no-files-found: ignore

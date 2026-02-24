@@ -93,6 +93,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-24_registrarcode-issuance-authority-and-status-preconditions.md`](./2026-02-24_registrarcode-issuance-authority-and-status-preconditions.md)
 - [`2026-02-24_slice89-registrarcode-persistence-foundation.md`](./2026-02-24_slice89-registrarcode-persistence-foundation.md)
 - [`2026-02-24_slice89-autonomous-agent-control-plane.md`](./2026-02-24_slice89-autonomous-agent-control-plane.md)
+- [`2026-02-24_slice90-agent-bridge-scheduler-chat-mvp.md`](./2026-02-24_slice90-agent-bridge-scheduler-chat-mvp.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)
