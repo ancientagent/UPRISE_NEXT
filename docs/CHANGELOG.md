@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- RegistrarCode issuance policy lock (P3-REV-001):
+  - Locked `RegistrarCode` issuance authority to trusted system/API registrar paths only (no self-issuance).
+  - Locked issuance precondition to `RegistrarEntry.status = approved`.
+  - Recorded decision memo and synced lock language into `SYS-REGISTRAR` and `USER-IDENTITY` specs to unblock Phase 3 Slice 89.
 - Autonomous lane agent control system (slice 89 infra):
   - Added queue orchestration CLI `scripts/agent-control.mjs` with commands:
     - `assign`, `claim`, `complete`, `block`, `requeue`, `ack`, `status`, `poll`, `init`.

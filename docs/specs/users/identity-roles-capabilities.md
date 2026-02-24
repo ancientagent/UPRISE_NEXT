@@ -3,7 +3,7 @@
 **ID:** `USER-IDENTITY`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-21`
+**Last Updated:** `2026-02-24`
 
 ## Overview & Purpose
 Defines identity and permission boundaries for UPRISE. Canon model: one base `User` identity, linked Artist/Band entities registered via the Registrar, and additive role capabilities where explicitly defined (for example Promoter).
@@ -99,6 +99,11 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Promoter capability grants.
 - Business profile role surfaces.
 - Capability grant audit log and admin role-management APIs.
+
+### Policy Lock (2026-02-24, P3-REV-001)
+- Registrar capability-code issuance is system-only (trusted API-tier registrar paths); no self-issued user codes.
+- Capability-code issuance requires linked `RegistrarEntry.status = approved`.
+- Phase 3 kickoff lock applies this to promoter capability completion (`RegistrarEntry.type = promoter_registration`).
 
 ### Promoter Policy (Locked Direction)
 - Base user identity remains listener/supporter/fan.
@@ -206,7 +211,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Add registrar write flows so Artist/Band records are created only via Registrar submissions.
 - Add outbound delivery provider pipeline for queued `pending_email`/`queued` member invites.
 - See phased execution note: `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
-- Define Promoter capability registration and code exchange flow.
+- Define Promoter capability registration and code exchange flow details under locked issuance policy (`system-only` issuer authority + `approved` issuance precondition).
 - Define business capability model for Promotions/Print Shop workflows.
 
 ## References

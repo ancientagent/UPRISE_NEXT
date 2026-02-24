@@ -108,3 +108,9 @@
 ## Immediate Next Action
 - Proceed to Slice 89 (`RegistrarCode` foundation) after resolving one open policy ambiguity:
   - code issuer authority and status precondition for issuance.
+
+## Resolution Note (2026-02-24)
+- Ambiguity resolved in `docs/handoff/2026-02-24_registrarcode-issuance-authority-and-status-preconditions.md`.
+- Locked policy:
+  - issuer authority = system-only trusted registrar API path,
+  - issuance precondition = linked registrar entry status `approved` (promoter capability flow scope for Phase 3 kickoff).
