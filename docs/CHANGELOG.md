@@ -10,6 +10,7 @@
 - Autonomous lane agent control system (slice 89 infra):
   - Added queue orchestration CLI `scripts/agent-control.mjs` with commands:
     - `assign`, `claim`, `complete`, `block`, `requeue`, `ack`, `status`, `poll`, `init`.
+  - CLI argument parser now accepts pnpm delimiter form (`pnpm run agent:queue -- <command> ...`).
   - Added lane definitions and queue state files under `docs/handoff/agent-control/`.
   - Added `pnpm run agent:queue` and `pnpm run agent:queue:test`.
   - Added `scripts/agent-control.test.mjs` for task lifecycle coverage of assign/claim/complete/block/poll/ack flow.

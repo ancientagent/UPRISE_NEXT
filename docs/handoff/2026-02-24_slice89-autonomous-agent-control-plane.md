@@ -17,6 +17,7 @@
   - `init`, `assign`, `claim`, `complete`, `block`, `requeue`, `ack`, `status`, `poll`.
   - Dependency-aware claim selection (`dependsOn` must be `done`).
   - Queue lock file handling to reduce concurrent write races.
+  - Parser hardening to accept pnpm delimiter invocation (`pnpm run agent:queue -- status --json`).
 - Added queue assets:
   - `docs/handoff/agent-control/lanes.json`
   - `docs/handoff/agent-control/queue.json`
