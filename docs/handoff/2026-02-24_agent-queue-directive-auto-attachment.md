@@ -13,6 +13,7 @@
     - validation gate checklist.
   - `assign` now writes `task.directives` automatically.
   - `claim` backfills `task.directives` when absent (legacy tasks).
+  - Added `backfill-directives` command for one-shot queue-wide directive patching on existing tasks.
 - Updated `scripts/agent-control.test.mjs`:
   - Added assertions that assigned tasks include directive metadata.
 - Updated `docs/handoff/agent-control/README.md`:

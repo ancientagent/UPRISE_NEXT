@@ -13,6 +13,7 @@
     - standing orders,
     - validation gate checklist.
   - `claim` now backfills default directives for legacy tasks missing directive metadata.
+  - Added explicit queue command `backfill-directives` to patch existing tasks without requeue/claim churn.
   - Added directive coverage assertion in `scripts/agent-control.test.mjs`.
   - Updated `docs/handoff/agent-control/README.md` with directive auto-attachment behavior.
 - Phase 3 parallel slice board + lane queue batch (98–102):

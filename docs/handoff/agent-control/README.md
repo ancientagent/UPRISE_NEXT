@@ -19,6 +19,7 @@ pnpm run agent:queue -- <command> [flags]
 
 Main commands:
 - `init`: initialize queue + result directory.
+- `backfill-directives`: add default directive metadata to legacy tasks missing directives.
 - `assign`: add a queued task.
 - `claim`: lane agent claims the next dependency-ready task.
 - `complete`: lane agent marks task done + attaches result metadata.
@@ -88,6 +89,8 @@ pnpm run agent:queue -- poll
   - required reading order,
   - standing orders,
   - validation gate checklist.
+- For legacy queues created before this feature:
+  - run `pnpm run agent:queue -- backfill-directives --queue <QUEUE_PATH>` once.
 
 ## Bridge Add-On
 - Scheduler/chat bridge tick:

@@ -108,6 +108,7 @@ function printUsage() {
 
 Usage:
   node scripts/agent-control.mjs init [--queue PATH] [--lanes PATH] [--force]
+  node scripts/agent-control.mjs backfill-directives [--queue PATH]
   node scripts/agent-control.mjs assign --id ID --title TITLE --lane LANE [--phase PHASE] [--priority N] [--depends-on id1,id2] [--paths p1,p2]
   node scripts/agent-control.mjs claim --lane LANE --agent NAME [--branch BRANCH] [--json]
   node scripts/agent-control.mjs complete --id ID --agent NAME [--branch BRANCH] [--commit HASH] [--pr URL] [--report PATH] [--notes TEXT]
@@ -267,6 +268,28 @@ async function main() {
   }
 
   const { byId: lanesById } = loadLanes(lanesPath);
+
+  if (command === 'backfill-directives') {
+    let updatedCount = 0;
+    await withQueueLock(queuePath, async () => {
+      const queue = loadQueue(queuePath);
+      const ts = nowIso();
+      for (const task of queue.tasks) {
+        if (task.directives) continue;
+        task.directives = buildDefaultDirectives();
+        task.updatedAt = ts;
+        updatedCount += 1;
+      }
+
+      if (updatedCount > 0) {
+        queue.updatedAt = ts;
+        writeJson(queuePath, queue);
+      }
+    });
+
+    console.log(`Backfilled directives on ${updatedCount} task(s)`);
+    return;
+  }
 
   if (command === 'assign') {
     const id = options.id;

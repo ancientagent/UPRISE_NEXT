@@ -75,6 +75,16 @@ function main() {
     'validation gate should include docs lint',
   );
 
+  const queueWithoutDirectives = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  const t2Legacy = queueWithoutDirectives.tasks.find((task) => task.id === 'T2');
+  delete t2Legacy.directives;
+  fs.writeFileSync(queuePath, `${JSON.stringify(queueWithoutDirectives, null, 2)}\n`);
+
+  run(['backfill-directives', '--queue', queuePath, '--lanes', lanesPath]);
+  const queueAfterBackfill = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  const t2AfterBackfill = queueAfterBackfill.tasks.find((task) => task.id === 'T2');
+  assert.ok(t2AfterBackfill.directives, 'directives should be backfilled for legacy tasks');
+
   const claimedOne = run([
     'claim',
     '--queue',
