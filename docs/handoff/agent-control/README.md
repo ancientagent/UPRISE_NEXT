@@ -88,5 +88,7 @@ pnpm run agent:queue -- poll
 ## Bridge Add-On
 - Scheduler/chat bridge tick:
   - `pnpm run agent:bridge:tick -- --queue /tmp/uprise_next_agent_queue.json`
+- Telegram command bridge tick:
+  - `pnpm run agent:telegram:tick -- --queue /tmp/uprise_next_agent_queue.json`
 - Full runbook:
   - `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`

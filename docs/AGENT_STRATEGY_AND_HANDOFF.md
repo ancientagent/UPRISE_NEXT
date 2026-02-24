@@ -274,6 +274,8 @@ All new agents (DeepAgent, Claude-Code, Cursor, ChatGPT, etc.) MUST complete the
 - Scheduler/chat bridge add-on:
   - `scripts/agent-bridge-tick.mjs` provides queue snapshots, claimable lane detection, stale-task detection, and optional Telegram notification.
   - `.github/workflows/agent-queue-bridge.yml` runs scheduled bridge ticks (15-minute cadence) and uploads reports.
+  - `scripts/agent-bridge-telegram.mjs` provides command intake from Telegram and maps approved commands to queue operations.
+  - `.github/workflows/agent-telegram-bridge.yml` runs Telegram bridge ticks (5-minute cadence) with allowlisted sender/chat guards.
   - See `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`.
 
 4. **Understand your role**

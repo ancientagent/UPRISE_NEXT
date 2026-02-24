@@ -7,6 +7,12 @@
 
 ## [Unreleased]
 ### Added
+- Telegram bi-directional command bridge MVP (slice 91):
+  - Added `scripts/agent-bridge-telegram.mjs` to process allowlisted Telegram commands and map them to queue operations.
+  - Supported commands: `/status`, `/poll`, `/claimable`, `/assign`, `/ack`, `/requeue`.
+  - Added parser/util module `scripts/agent-bridge-telegram-lib.mjs` and tests `scripts/agent-bridge-telegram.test.mjs`.
+  - Added workflow `.github/workflows/agent-telegram-bridge.yml` (5-minute schedule + manual dispatch).
+  - Added package scripts `agent:telegram:tick` and `agent:telegram:test`.
 - Agent scheduler/chat bridge MVP (slice 90):
   - Added `scripts/agent-bridge-tick.mjs` for queue snapshots, claimable task detection, stale in-progress detection, and review/blocked summaries.
   - Added optional Telegram summary notification (`--notify-telegram`) using `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`.
