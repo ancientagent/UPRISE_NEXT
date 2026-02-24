@@ -258,6 +258,26 @@ All new agents (DeepAgent, Claude-Code, Cursor, ChatGPT, etc.) MUST complete the
    - [ ] Confirm the feature is explicitly defined.
    - If not defined → **STOP** and ask for human clarification.
 
+---
+
+## 🤖 Autonomous Lane Control Loop (V1)
+- Use `docs/handoff/agent-control/` as the machine-readable coordination layer.
+- Lanes are defined in `docs/handoff/agent-control/lanes.json`.
+- Task state is tracked in `docs/handoff/agent-control/queue.json`.
+- CLI entrypoint:
+  - `pnpm run agent:queue -- assign ...`
+  - `pnpm run agent:queue -- claim ...`
+  - `pnpm run agent:queue -- complete ...`
+  - `pnpm run agent:queue -- block ...`
+  - `pnpm run agent:queue -- poll`
+- Full workflow reference: `docs/handoff/agent-control/README.md`.
+- Scheduler/chat bridge add-on:
+  - `scripts/agent-bridge-tick.mjs` provides queue snapshots, claimable lane detection, stale-task detection, and optional Telegram notification.
+  - `.github/workflows/agent-queue-bridge.yml` runs scheduled bridge ticks (15-minute cadence) and uploads reports.
+  - `scripts/agent-bridge-telegram.mjs` provides command intake from Telegram and maps approved commands to queue operations.
+  - `.github/workflows/agent-telegram-bridge.yml` runs Telegram bridge ticks (5-minute cadence) with allowlisted sender/chat guards.
+  - See `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`.
+
 4. **Understand your role**
    - [ ] Are you building web, API, socket, worker, or docs?
    - [ ] Do you know which Phase (1 / 2 / 3) your task belongs to?

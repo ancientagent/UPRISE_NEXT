@@ -18,6 +18,17 @@ import {
   getRegistrarInviteLinks,
   getRegistrarSyncEligibleCount,
 } from '@/lib/registrar/entryStatus';
+import {
+  dispatchArtistBandInvites,
+  listArtistBandRegistrations,
+  loadArtistBandInviteStatus,
+  materializeArtistBandRegistration,
+  submitArtistBandRegistration,
+  syncArtistBandMembers,
+  type RegistrarArtistEntry,
+  type RegistrarArtistInviteStatusResponse,
+  type RegistrarArtistRegistrationResult,
+} from '@/lib/registrar/client';
 
 type HomeSceneResolution = {
   id: string;
@@ -26,58 +37,6 @@ type HomeSceneResolution = {
   state: string;
   musicCommunity: string;
   tier: 'city' | 'state' | 'national';
-};
-
-type RegistrationSubmitResult = {
-  id: string;
-  memberCount: number;
-  pendingInviteCount: number;
-  existingMemberCount: number;
-};
-
-type RegistrarArtistEntry = {
-  id: string;
-  type: string;
-  status: string;
-  sceneId: string;
-  artistBandId: string | null;
-  payload: {
-    name: string | null;
-    slug: string | null;
-    entityType: 'artist' | 'band' | null;
-  };
-  scene: {
-    id: string;
-    name: string;
-    city: string;
-    state: string;
-    musicCommunity: string;
-    tier: 'city' | 'state' | 'national';
-  };
-  artistBand: {
-    id: string;
-    name: string;
-    slug: string;
-    entityType: 'artist' | 'band';
-  } | null;
-  memberCount: number;
-  pendingInviteCount: number;
-  queuedInviteCount: number;
-  claimedCount: number;
-  existingUserCount: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type RegistrarArtistEntriesResponse = {
-  total: number;
-  entries: RegistrarArtistEntry[];
-};
-
-type InviteStatusResponse = {
-  registrarEntryId: string;
-  totalMembers: number;
-  countsByStatus: Record<string, number>;
 };
 
 export default function RegistrarPage() {
@@ -95,13 +54,15 @@ export default function RegistrarPage() {
   const [sceneLookupError, setSceneLookupError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState<RegistrationSubmitResult | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<RegistrarArtistRegistrationResult | null>(null);
   const [entries, setEntries] = useState<RegistrarArtistEntry[]>([]);
   const [entriesLoading, setEntriesLoading] = useState(false);
   const [entriesError, setEntriesError] = useState<string | null>(null);
   const [busyEntryId, setBusyEntryId] = useState<string | null>(null);
   const [entryMessageById, setEntryMessageById] = useState<Record<string, string>>({});
-  const [inviteStatusByEntryId, setInviteStatusByEntryId] = useState<Record<string, InviteStatusResponse>>({});
+  const [inviteStatusByEntryId, setInviteStatusByEntryId] = useState<Record<string, RegistrarArtistInviteStatusResponse>>(
+    {},
+  );
 
   const slugPreview = useMemo(() => normalizeArtistBandSlug(slugInput || name), [name, slugInput]);
 
@@ -116,8 +77,8 @@ export default function RegistrarPage() {
     setEntriesLoading(true);
     setEntriesError(null);
     try {
-      const response = await api.get<RegistrarArtistEntriesResponse>('/registrar/artist/entries', { token });
-      setEntries(response.data?.entries ?? []);
+      const response = await listArtistBandRegistrations(token);
+      setEntries(response.entries ?? []);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unable to load registrar entries.';
       setEntriesError(message);
@@ -241,11 +202,8 @@ export default function RegistrarPage() {
 
     setIsSubmitting(true);
     try {
-      const response = await api.post<RegistrationSubmitResult>('/registrar/artist', payload, { token });
-      if (!response.data) {
-        throw new Error('Registrar submission returned no data.');
-      }
-      setSubmitSuccess(response.data);
+      const response = await submitArtistBandRegistration(payload, token);
+      setSubmitSuccess(response);
       setName('');
       setSlugInput('');
       setEntityType('band');
@@ -272,7 +230,7 @@ export default function RegistrarPage() {
     setBusyEntryId(entryId);
     updateEntryMessage(entryId, '');
     try {
-      await api.post(`/registrar/artist/${entryId}/materialize`, {}, { token });
+      await materializeArtistBandRegistration(entryId, token);
       updateEntryMessage(entryId, 'Materialization complete.');
       await loadEntries();
     } catch (error: unknown) {
@@ -295,12 +253,8 @@ export default function RegistrarPage() {
     setBusyEntryId(entryId);
     updateEntryMessage(entryId, '');
     try {
-      const response = await api.post<{ queuedCount: number }>(
-        `/registrar/artist/${entryId}/dispatch-invites`,
-        links,
-        { token },
-      );
-      updateEntryMessage(entryId, `Queued invites: ${response.data?.queuedCount ?? 0}.`);
+      const response = await dispatchArtistBandInvites(entryId, links, token);
+      updateEntryMessage(entryId, `Queued invites: ${response.queuedCount ?? 0}.`);
       await loadEntries();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Invite dispatch failed.';
@@ -316,11 +270,7 @@ export default function RegistrarPage() {
     setBusyEntryId(entryId);
     updateEntryMessage(entryId, '');
     try {
-      const response = await api.get<InviteStatusResponse>(`/registrar/artist/${entryId}/invites`, { token });
-      const inviteStatus = response.data;
-      if (!inviteStatus) {
-        throw new Error('Invite status response was empty.');
-      }
+      const inviteStatus = await loadArtistBandInviteStatus(entryId, token);
       setInviteStatusByEntryId((current) => ({
         ...current,
         [entryId]: inviteStatus,
@@ -340,13 +290,7 @@ export default function RegistrarPage() {
     setBusyEntryId(entryId);
     updateEntryMessage(entryId, '');
     try {
-      const response = await api.post<{
-        eligibleMemberCount: number;
-        createdMemberCount: number;
-        skippedMemberCount: number;
-      }>(`/registrar/artist/${entryId}/sync-members`, {}, { token });
-
-      const summary = response.data;
+      const summary = await syncArtistBandMembers(entryId, token);
       updateEntryMessage(
         entryId,
         `Synced members: ${summary?.createdMemberCount ?? 0}/${summary?.eligibleMemberCount ?? 0} (skipped ${summary?.skippedMemberCount ?? 0}).`,

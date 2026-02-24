@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-21`
+**Last Updated:** `2026-02-24`
 
 ## Overview & Purpose
 Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
@@ -137,6 +137,11 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Dedicated project registration endpoint(s) and status lifecycle.
 - Sect motion lifecycle and approval state machine.
 
+### Policy Lock (2026-02-24, P3-REV-001)
+- `RegistrarCode` issuance authority is system-only (trusted API-tier registrar paths); no user self-issuance.
+- Issuance precondition is `RegistrarEntry.status = approved` for capability-code handoff flows.
+- Phase 3 kickoff scope applies this lock to promoter capability flow (`RegistrarEntry.type = promoter_registration`).
+
 ## Non-Functional Requirements
 - Traceability: registrar actions must be auditable.
 - Integrity: registrar records are append-oriented and cannot be silently mutated.
@@ -198,7 +203,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - read invite status surface with mapped delivery outcome fields.
 
 ## Future Work & Open Questions
-- Finalize schema for role registration code flows.
+- Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
 - Define who can submit and approve Sect uprising motions.
 - Lock registrar moderation/appeal behavior for rejected motions.
 

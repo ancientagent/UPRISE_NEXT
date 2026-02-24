@@ -26,6 +26,9 @@ describe('RegistrarService', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
     },
+    registrarCode: {
+      create: jest.fn(),
+    },
     artistBand: {
       create: jest.fn(),
       findUnique: jest.fn(),
@@ -534,6 +537,96 @@ describe('RegistrarService', () => {
     await expect(service.getPromoterRegistration('u-1', 'missing-promoter-entry')).rejects.toThrow(
       NotFoundException,
     );
+  });
+
+  it('issues registrar code for approved promoter registration with system issuer', async () => {
+    const expiresAt = new Date('2026-03-10T00:00:00.000Z');
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-1',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+    mockPrisma.registrarCode.create.mockImplementation(async ({ data }: any) => ({
+      id: 'rcode-1',
+      registrarEntryId: data.registrarEntryId,
+      capability: data.capability,
+      issuerType: data.issuerType,
+      status: data.status,
+      expiresAt: data.expiresAt,
+      createdAt: new Date('2026-02-24T10:20:00.000Z'),
+    }));
+
+    const result = await service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-approved-1', {
+      issuer: 'system',
+      expiresAt,
+    });
+
+    expect(mockPrisma.registrarCode.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          registrarEntryId: 'reg-promoter-approved-1',
+          capability: 'promoter_capability',
+          issuerType: 'system',
+          status: 'issued',
+          expiresAt,
+          codeHash: expect.stringMatching(/^[a-f0-9]{64}$/),
+        }),
+      }),
+    );
+    expect(result.registrarEntryId).toBe('reg-promoter-approved-1');
+    expect(result.capability).toBe('promoter_capability');
+    expect(result.issuerType).toBe('system');
+    expect(result.status).toBe('issued');
+    expect(result.code).toMatch(/^PRC-[A-F0-9]{32}$/);
+  });
+
+  it('rejects registrar code issuance when issuer is not system', async () => {
+    await expect(
+      service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-approved-1', {
+        issuer: 'manual' as any,
+      }),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.findUnique).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects registrar code issuance when registrar entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.issueRegistrarCodeForApprovedPromoterEntry('missing-entry')).rejects.toThrow(
+      NotFoundException,
+    );
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects registrar code issuance for non-promoter registrar entry types', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-artist-issuer-1',
+      type: 'artist_band_registration',
+      status: 'approved',
+    });
+
+    await expect(service.issueRegistrarCodeForApprovedPromoterEntry('reg-artist-issuer-1')).rejects.toThrow(
+      ForbiddenException,
+    );
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects registrar code issuance when promoter registrar entry is not approved', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-1',
+      type: 'promoter_registration',
+      status: 'submitted',
+    });
+
+    await expect(
+      service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-submitted-1'),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
   });
 
   it('throws when target scene does not exist', async () => {

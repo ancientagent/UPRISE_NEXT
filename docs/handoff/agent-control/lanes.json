@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "lanes": [
+    {
+      "id": "api-schema",
+      "description": "Prisma, API services/controllers, migrations, API tests",
+      "allowedPaths": [
+        "apps/api/**",
+        "apps/api/prisma/**",
+        "packages/types/**"
+      ]
+    },
+    {
+      "id": "web-contracts",
+      "description": "Web-tier implementation and shared contract adoption",
+      "allowedPaths": [
+        "apps/web/**",
+        "packages/types/**"
+      ]
+    },
+    {
+      "id": "qa-ci",
+      "description": "Validation lanes, CI/debug, test harnesses",
+      "allowedPaths": [
+        "apps/api/test/**",
+        "scripts/**",
+        ".github/workflows/**"
+      ]
+    },
+    {
+      "id": "docs-program",
+      "description": "Specs, changelog, handoff, roadmap updates",
+      "allowedPaths": [
+        "docs/**"
+      ]
+    },
+    {
+      "id": "review-risk",
+      "description": "Review findings, risk/rollback, drift enforcement",
+      "allowedPaths": [
+        "docs/**",
+        "scripts/**"
+      ]
+    }
+  ]
+}

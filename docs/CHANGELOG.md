@@ -7,6 +7,42 @@
 
 ## [Unreleased]
 ### Added
+- Telegram bi-directional command bridge MVP (slice 91):
+  - Added `scripts/agent-bridge-telegram.mjs` to process allowlisted Telegram commands and map them to queue operations.
+  - Supported commands: `/status`, `/poll`, `/claimable`, `/assign`, `/ack`, `/requeue`.
+  - Added parser/util module `scripts/agent-bridge-telegram-lib.mjs` and tests `scripts/agent-bridge-telegram.test.mjs`.
+  - Added workflow `.github/workflows/agent-telegram-bridge.yml` (5-minute schedule + manual dispatch).
+  - Added package scripts `agent:telegram:tick` and `agent:telegram:test`.
+- Agent scheduler/chat bridge MVP (slice 90):
+  - Added `scripts/agent-bridge-tick.mjs` for queue snapshots, claimable task detection, stale in-progress detection, and review/blocked summaries.
+  - Added optional Telegram summary notification (`--notify-telegram`) using `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`.
+  - Added scheduled workflow `.github/workflows/agent-queue-bridge.yml` (15-minute cadence + manual dispatch inputs).
+  - Added `scripts/agent-bridge-tick.test.mjs` and package scripts `agent:bridge:tick`, `agent:bridge:test`.
+  - Added runbook `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` for local and CI operation.
+- RegistrarCode persistence foundation (P3-API-090A):
+  - Added additive Prisma model/table `RegistrarCode` via migration `20260224101500_add_registrar_codes`.
+  - Added internal registrar service primitive `issueRegistrarCodeForApprovedPromoterEntry` (no controller route) with policy lock enforcement:
+    - issuer must be trusted system path (`issuer = system`),
+    - linked registrar entry must be `type = promoter_registration`,
+    - linked registrar entry must be `status = approved`.
+  - Added hashed code persistence (`codeHash`), issuer provenance (`issuerType`), capability marker (`promoter_capability`), and issuance status defaults for forward-compatible verification/redemption slices.
+  - Added registrar service unit coverage for issuance success + blocked paths (non-system issuer, missing entry, wrong entry type, non-approved status).
+- RegistrarCode issuance policy lock (P3-REV-001):
+  - Locked `RegistrarCode` issuance authority to trusted system/API registrar paths only (no self-issuance).
+  - Locked issuance precondition to `RegistrarEntry.status = approved`.
+  - Recorded decision memo and synced lock language into `SYS-REGISTRAR` and `USER-IDENTITY` specs to unblock Phase 3 Slice 89.
+- Autonomous lane agent control system (slice 89 infra):
+  - Added queue orchestration CLI `scripts/agent-control.mjs` with commands:
+    - `assign`, `claim`, `complete`, `block`, `requeue`, `ack`, `status`, `poll`, `init`.
+  - CLI argument parser now accepts pnpm delimiter form (`pnpm run agent:queue -- <command> ...`).
+  - Added lane definitions and queue state files under `docs/handoff/agent-control/`.
+  - Added `pnpm run agent:queue` and `pnpm run agent:queue:test`.
+  - Added `scripts/agent-control.test.mjs` for task lifecycle coverage of assign/claim/complete/block/poll/ack flow.
+  - Updated `docs/AGENT_STRATEGY_AND_HANDOFF.md` and `docs/handoff/README.md` with control-plane usage references.
+- Platform-wide MVP roadmap + Phase 3 kickoff (slice 88):
+  - Added unified MVP execution roadmap covering phases 0-7 across identity, registrar, communities, broadcast, discovery, social, events/economy, and launch hardening lanes.
+  - Established Phase 3 kickoff queue and additive migration/rollback policy for upcoming capability-completion slices.
+  - Added handoff artifact `docs/handoff/2026-02-24_platform-mvp-roadmap-phase3-kickoff.md` as execution baseline for parallel agent lanes.
 - Registrar artist entry-list invite outcome count enrichment (slice 70):
   - `GET /registrar/artist/entries` now returns per-entry `sentInviteCount` and `failedInviteCount`.
   - Existing invite lifecycle counts remain unchanged and backward compatible.
