@@ -7,6 +7,32 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 communities route-resolution guard (slice 107A):
+  - Added `apps/api/test/communities.routes.test.ts` with Fastify injection coverage for `GET /communities/nearby`.
+  - Asserts route resolves to `findNearby` handler and does not dispatch through `:id` lookup handler.
+- Phase 4 communities metrics/home-resolution controller hardening (slice 106A):
+  - Added `apps/api/test/communities.metrics.controller.test.ts` covering tier-scoped controller delegation for statistics/scene-map reads.
+  - Added validation-path assertions for invalid tier values and incomplete home-scene tuple on resolve-home route.
+- Phase 4 communities direct-events validation parity (slice 105A):
+  - Extended communities controller coverage to assert strict `includePast` parsing on `GET /communities/:id/events`.
+  - Added invalid-query rejection coverage for direct scene events route.
+- Phase 4 communities events-query boolean hardening (slice 104A):
+  - Replaced broad boolean coercion for `includePast` with strict string parsing (`true`/`false`) in `GetCommunityEventsSchema`.
+  - Added controller coverage ensuring `includePast=false` remains false and invalid boolean strings are rejected with validation errors.
+- Phase 4 communities active-endpoint controller hardening (slice 103A):
+  - Added `apps/api/test/communities.active.controller.test.ts` to cover active-scene controller delegation for feed/statistics/events/promotions.
+  - Added validation-path assertion for invalid active feed query handling (`BadRequestException`).
+- Phase 4 Plot shared community-anchor consistency (slice 102A):
+  - `StatisticsPanel` is now controlled by Plot page selected-community state instead of maintaining an independent local anchor.
+  - Statistics/scene-map and Top Songs panels now consume the same selected community context, reducing cross-panel scope drift.
+- Phase 4 Plot registrar status integration (slice 101A):
+  - Plot Scene Activity panel now loads submitter-owned Artist/Band registrar entry summary via `GET /registrar/artist/entries`.
+  - Panel shows registration totals, lifecycle summary, invite-state counts, and latest status while preserving explicit `Open Registrar` action.
+  - Added web helper coverage for registrar plot summary aggregation.
+- Phase 4 communities core stats fallback hardening (slice 100A):
+  - Plot `StatisticsPanel` now uses `GET /communities/active/statistics?tier=...` when no explicit community anchor is selected.
+  - Scene-map fetch in the same panel now anchors on either selected community or active-scene fallback id, improving no-anchor Plot continuity.
+  - Added web unit coverage for statistics endpoint and scene-map anchor resolution helpers.
 - Telegram bridge near-real-time long-poll loop (slice 92):
   - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
   - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.

@@ -14,6 +14,12 @@ import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
+import { listArtistBandRegistrations } from '@/lib/registrar/client';
+import {
+  formatRegistrarEntryStatus,
+  getRegistrarPlotSummary,
+  type RegistrarPlotSummary,
+} from '@/lib/registrar/entryStatus';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -45,6 +51,9 @@ export default function PlotPage() {
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
+  const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null);
+  const [registrarSummaryLoading, setRegistrarSummaryLoading] = useState(false);
+  const [registrarSummaryError, setRegistrarSummaryError] = useState<string | null>(null);
 
   const mapCenter = useMemo(() => {
     if (gpsCoords) {
@@ -135,6 +144,41 @@ export default function PlotPage() {
     resolveDefaultCommunity();
   }, [selectedCommunity, mapCenter, token, homeScene, tunedSceneId]);
 
+  useEffect(() => {
+    let canceled = false;
+
+    async function loadRegistrarSummary() {
+      if (!token) {
+        setRegistrarSummary(null);
+        setRegistrarSummaryError(null);
+        setRegistrarSummaryLoading(false);
+        return;
+      }
+
+      setRegistrarSummaryLoading(true);
+      setRegistrarSummaryError(null);
+      try {
+        const response = await listArtistBandRegistrations(token);
+        if (canceled) return;
+        setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []));
+      } catch {
+        if (canceled) return;
+        setRegistrarSummary(null);
+        setRegistrarSummaryError('Unable to load registrar status summary.');
+      } finally {
+        if (!canceled) {
+          setRegistrarSummaryLoading(false);
+        }
+      }
+    }
+
+    loadRegistrarSummary();
+
+    return () => {
+      canceled = true;
+    };
+  }, [token]);
+
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
   };
@@ -216,6 +260,7 @@ export default function PlotPage() {
             {activeTab === 'Statistics' ? (
               <StatisticsPanel
                 selectedTier={selectedTier}
+                selectedCommunity={selectedCommunity}
                 onCommunitySelect={handleCommunitySelect}
                 onCommunitiesUpdate={handleCommunitiesUpdate}
               />
@@ -285,8 +330,47 @@ export default function PlotPage() {
             <div className="rounded-2xl border border-black/10 bg-white p-6">
               <h3 className="font-semibold text-black mb-4">Scene Activity</h3>
               <p className="text-sm text-black/60">
-                This panel shows community activity summaries, registrar access, and scene map data.
+                Community activity summaries, registrar status, and scene map context for your current scope.
               </p>
+              {token ? (
+                <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                  {registrarSummaryLoading ? (
+                    <p className="text-xs text-black/60">Loading registrar status...</p>
+                  ) : registrarSummaryError ? (
+                    <p className="text-xs text-red-700">{registrarSummaryError}</p>
+                  ) : registrarSummary ? (
+                    <div className="space-y-1 text-xs text-black/65">
+                      <p>
+                        Artist/Band entries: <span className="font-medium text-black">{registrarSummary.totalEntries}</span>
+                      </p>
+                      <p>
+                        Submitted: <span className="font-medium text-black">{registrarSummary.submittedCount}</span> •
+                        Materialized: <span className="font-medium text-black"> {registrarSummary.materializedCount}</span>
+                      </p>
+                      <p>
+                        Invites — pending: <span className="font-medium text-black">{registrarSummary.pendingInviteCount}</span>,
+                        queued: <span className="font-medium text-black"> {registrarSummary.queuedInviteCount}</span>,
+                        sent: <span className="font-medium text-black"> {registrarSummary.sentInviteCount}</span>,
+                        failed: <span className="font-medium text-black"> {registrarSummary.failedInviteCount}</span>
+                      </p>
+                      {registrarSummary.latestStatus && (
+                        <p>
+                          Latest status:{' '}
+                          <span className="font-medium text-black">
+                            {formatRegistrarEntryStatus(registrarSummary.latestStatus)}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-black/60">No registrar entries yet.</p>
+                  )}
+                </div>
+              ) : (
+                <p className="mt-3 text-xs text-black/55">
+                  Sign in to view registrar registration status for your account.
+                </p>
+              )}
               <div className="mt-3">
                 <Button size="sm" variant="outline" onClick={() => router.push('/registrar')}>
                   Open Registrar

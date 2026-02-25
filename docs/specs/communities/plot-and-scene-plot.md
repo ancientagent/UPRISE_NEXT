@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-23`
+**Last Updated:** `2026-02-25`
 
 ## Overview & Purpose
 Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -54,9 +54,14 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - `GET /communities/active/events`
   - `GET /communities/active/promotions`
   - `GET /communities/active/statistics`
+- Statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor.
+- Plot Scene Activity panel now integrates registrar status read context:
+  - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,
+  - displays registration totals/status summary while retaining explicit `Open Registrar` navigation.
+- Plot Statistics and Top Songs surfaces now share a unified selected-community anchor in the page state to keep tier/context reads consistent across panels.
 
 ### Deferred Behavior (Not Implemented Yet)
-- Registrar module integration into Plot UI.
+- Advanced registrar lifecycle dashboard in Plot (beyond status summary + explicit registrar navigation).
 - Social tab message boards/listening rooms (V2).
 
 ## Non-Functional Requirements
