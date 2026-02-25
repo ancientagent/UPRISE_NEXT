@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 communities route-resolution guard (slice 107A):
+  - Added `apps/api/test/communities.routes.test.ts` with Fastify injection coverage for `GET /communities/nearby`.
+  - Asserts route resolves to `findNearby` handler and does not dispatch through `:id` lookup handler.
 - Phase 4 communities metrics/home-resolution controller hardening (slice 106A):
   - Added `apps/api/test/communities.metrics.controller.test.ts` covering tier-scoped controller delegation for statistics/scene-map reads.
   - Added validation-path assertions for invalid tier values and incomplete home-scene tuple on resolve-home route.
