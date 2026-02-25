@@ -106,6 +106,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-25_agent-queue-guardrails-and-directive-templates.md`](./2026-02-25_agent-queue-guardrails-and-directive-templates.md)
 - [`2026-02-25_P3-WEB-098A-project-contract-scaffolding.md`](./2026-02-25_P3-WEB-098A-project-contract-scaffolding.md)
 - [`2026-02-25_P3-QA-098A-project-sect-validation.md`](./2026-02-25_P3-QA-098A-project-sect-validation.md)
+- [`2026-02-25_P3-QA-095B-regression-95-97.md`](./2026-02-25_P3-QA-095B-regression-95-97.md)
 - [`2026-02-25_P3-DOC-098A-project-sect-doc-sync.md`](./2026-02-25_P3-DOC-098A-project-sect-doc-sync.md)
 - [`2026-02-25_P3-REV-098A-project-sect-risk-signoff.md`](./2026-02-25_P3-REV-098A-project-sect-risk-signoff.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)

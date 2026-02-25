@@ -18,6 +18,8 @@
   - Added web unit coverage for registrar project endpoint helper path.
 - Phase 3 QA lane report for project+sect batch (slice 98A/99A):
   - Added `docs/handoff/2026-02-25_P3-QA-098A-project-sect-validation.md` with exact command outputs and pass verdict.
+- Phase 3 regression QA report for capability batch (slice 95-97):
+  - Added `docs/handoff/2026-02-25_P3-QA-095B-regression-95-97.md` to resolve stale QA lane artifact gap with pass/fail verdict.
 - Agent queue spawn guardrails + directive templates:
   - `scripts/agent-control.mjs` now enforces controlled child-task assignment with `--parent-id` constraints, `allowSpawn` parent checks, max-depth/max-children limits, and required child metadata (`--depends-on`, `--planned-report`, `--rollback-note`).
   - Queue tasks now persist spawn metadata (`parentId`, `depth`, `children`, `spawnPolicy`, `planned`) for deterministic orchestration and rollback traceability.
