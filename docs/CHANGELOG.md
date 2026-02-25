@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 communities active-endpoint controller hardening (slice 103A):
+  - Added `apps/api/test/communities.active.controller.test.ts` to cover active-scene controller delegation for feed/statistics/events/promotions.
+  - Added validation-path assertion for invalid active feed query handling (`BadRequestException`).
 - Phase 4 Plot shared community-anchor consistency (slice 102A):
   - `StatisticsPanel` is now controlled by Plot page selected-community state instead of maintaining an independent local anchor.
   - Statistics/scene-map and Top Songs panels now consume the same selected community context, reducing cross-panel scope drift.
