@@ -14,6 +14,7 @@ import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
 import { getDiscoveryContext } from '@/lib/discovery/client';
+import { toDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
   findNearbyCommunities,
   getCommunityById,
@@ -72,11 +73,7 @@ export default function PlotPage() {
       if (!token) return;
       try {
         const response = await getDiscoveryContext(token);
-        setDiscoveryContext({
-          tunedSceneId: response?.tunedSceneId ?? null,
-          tunedScene: response?.tunedScene ?? null,
-          isVisitor: response?.isVisitor ?? null,
-        });
+        setDiscoveryContext(toDiscoveryContextPatch(response));
       } catch {
         // Keep local state if context fetch fails.
       }

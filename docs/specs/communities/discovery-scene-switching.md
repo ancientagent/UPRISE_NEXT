@@ -45,6 +45,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - read-only context chip shows Home Scene, Tuned Scene, and Visitor/Local status
   - no “Join Community” language or behavior
   - discovery route calls are consumed through typed web client wrappers (`apps/web/src/lib/discovery/client.ts`) to keep endpoint contracts centralized.
+- Discovery context store patching is centralized via `apps/web/src/lib/discovery/context.ts` for consistent tuned-scene fallback behavior across Discover and Plot.
 - Plot surface consumes persisted discovery context for default scene selection.
   - read-only context chip is rendered in Plot header for visibility of transport vs authority context
   - when no explicit scene is selected, Plot read surfaces resolve active scene as tuned scene first, then Home Scene fallback

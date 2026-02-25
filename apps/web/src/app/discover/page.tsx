@@ -15,6 +15,10 @@ import {
   type DiscoverItem,
   type TierScope,
 } from '@/lib/discovery/client';
+import {
+  mergeDiscoveryContextPatch,
+  toDiscoveryContextPatch,
+} from '@/lib/discovery/context';
 
 export default function DiscoverPage() {
   const { token } = useAuthStore();
@@ -44,11 +48,7 @@ export default function DiscoverPage() {
       if (!token) return;
       try {
         const response = await getDiscoveryContext(token);
-        setDiscoveryContext({
-          tunedSceneId: response?.tunedSceneId ?? null,
-          tunedScene: response?.tunedScene ?? null,
-          isVisitor: response?.isVisitor ?? null,
-        });
+        setDiscoveryContext(toDiscoveryContextPatch(response));
       } catch {
         // Keep persisted client context when fetch fails.
       }
@@ -110,11 +110,13 @@ export default function DiscoverPage() {
         musicCommunity: response.homeScene?.musicCommunity ?? item.musicCommunity ?? musicCommunity,
         tasteTag: homeScene?.tasteTag,
       });
-      setDiscoveryContext({
-        tunedSceneId: response.tunedSceneId ?? item.sceneId,
-        tunedScene: response.tunedScene ?? null,
-        isVisitor: response.isVisitor ?? null,
-      });
+      setDiscoveryContext(
+        mergeDiscoveryContextPatch(response, {
+          tunedSceneId: item.sceneId,
+          tunedScene: null,
+          isVisitor: null,
+        }),
+      );
 
       setItems((prev) =>
         prev.map((entry) =>
@@ -141,11 +143,13 @@ export default function DiscoverPage() {
     try {
       const response = await tuneDiscoverScene(item.sceneId, token);
       const context = await getDiscoveryContext(token);
-      setDiscoveryContext({
-        tunedSceneId: context?.tunedSceneId ?? response.tunedSceneId ?? item.sceneId,
-        tunedScene: context?.tunedScene ?? response.tunedScene ?? null,
-        isVisitor: context?.isVisitor ?? response.isVisitor ?? null,
-      });
+      setDiscoveryContext(
+        mergeDiscoveryContextPatch(context, {
+          tunedSceneId: response.tunedSceneId ?? item.sceneId,
+          tunedScene: response.tunedScene ?? null,
+          isVisitor: response.isVisitor ?? null,
+        }),
+      );
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Unable to tune to scene.';
       setError(message);

@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 discovery-context consistency helper lane (slice 110A):
+  - Added shared discovery-context patch helpers in `apps/web/src/lib/discovery/context.ts`.
+  - Updated Discover and Plot pages to use centralized context patch mapping/merge behavior.
+  - Added unit coverage in `apps/web/__tests__/discovery-context.test.ts`.
 - Phase 4 web contract wrapper consolidation (slice 109A):
   - Added typed discovery client wrappers in `apps/web/src/lib/discovery/client.ts`.
   - Added typed communities client wrappers in `apps/web/src/lib/communities/client.ts`.
