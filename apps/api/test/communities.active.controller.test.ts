@@ -102,6 +102,30 @@ describe('CommunitiesController - Active Scene Endpoints', () => {
     });
   });
 
+  it('parses includePast=false as false for active events query', async () => {
+    communitiesServiceMock.resolveActiveSceneId.mockResolvedValue('scene-3b');
+    communitiesServiceMock.getEvents.mockResolvedValue({
+      items: [],
+      limit: 15,
+      includePast: false,
+    });
+
+    const response = await controller.getActiveEvents(
+      { user: { userId: 'user-3b' } } as any,
+      { limit: '15', includePast: 'false' },
+    );
+
+    expect(communitiesServiceMock.getEvents).toHaveBeenCalledWith(
+      'scene-3b',
+      expect.objectContaining({ limit: 15, includePast: false }),
+    );
+    expect(response.meta).toEqual({
+      sceneId: 'scene-3b',
+      limit: 15,
+      includePast: false,
+    });
+  });
+
   it('delegates active promotions read through resolved active scene id', async () => {
     communitiesServiceMock.resolveActiveSceneId.mockResolvedValue('scene-4');
     communitiesServiceMock.getPromotions.mockResolvedValue({
@@ -136,5 +160,17 @@ describe('CommunitiesController - Active Scene Endpoints', () => {
 
     expect(communitiesServiceMock.resolveActiveSceneId).not.toHaveBeenCalled();
     expect(communitiesServiceMock.getFeed).not.toHaveBeenCalled();
+  });
+
+  it('returns bad request for invalid includePast query', async () => {
+    await expect(
+      controller.getActiveEvents(
+        { user: { userId: 'user-6' } } as any,
+        { limit: '20', includePast: 'not-boolean' },
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(communitiesServiceMock.resolveActiveSceneId).not.toHaveBeenCalled();
+    expect(communitiesServiceMock.getEvents).not.toHaveBeenCalled();
   });
 });

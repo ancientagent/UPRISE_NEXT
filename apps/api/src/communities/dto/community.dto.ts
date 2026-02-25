@@ -23,6 +23,15 @@ export const GpsCoordinatesSchema = z.object({
   lng: LongitudeSchema,
 });
 
+const QueryBooleanSchema = z.preprocess((value) => {
+  if (typeof value !== 'string') return value;
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true') return true;
+  if (normalized === 'false') return false;
+  return value;
+}, z.boolean());
+
 // Radius validation (in meters, max 50km)
 export const RadiusSchema = z
   .number()
@@ -102,7 +111,7 @@ export type GetCommunitySceneMapDto = z.infer<typeof GetCommunitySceneMapSchema>
  */
 export const GetCommunityEventsSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(20),
-  includePast: z.coerce.boolean().optional().default(false),
+  includePast: QueryBooleanSchema.optional().default(false),
 });
 
 export type GetCommunityEventsDto = z.infer<typeof GetCommunityEventsSchema>;

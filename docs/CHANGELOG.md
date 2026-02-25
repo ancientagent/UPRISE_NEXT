@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 communities events-query boolean hardening (slice 104A):
+  - Replaced broad boolean coercion for `includePast` with strict string parsing (`true`/`false`) in `GetCommunityEventsSchema`.
+  - Added controller coverage ensuring `includePast=false` remains false and invalid boolean strings are rejected with validation errors.
 - Phase 4 communities active-endpoint controller hardening (slice 103A):
   - Added `apps/api/test/communities.active.controller.test.ts` to cover active-scene controller delegation for feed/statistics/events/promotions.
   - Added validation-path assertion for invalid active feed query handling (`BadRequestException`).
