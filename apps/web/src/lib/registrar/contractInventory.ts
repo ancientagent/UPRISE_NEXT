@@ -130,8 +130,8 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     pathTemplate: '/registrar/project',
     status: 'gap',
     webConsumerPath: null,
-    gapKind: 'api_not_available',
-    notes: 'Spec-authorized endpoint remains deferred and unavailable for web wiring.',
+    gapKind: 'web_surface_missing',
+    notes: 'API exists; web registrar surface has typed client scaffolding but no user-facing action yet.',
   },
   {
     id: 'registrar.sect_motion.submit',
@@ -139,8 +139,8 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     pathTemplate: '/registrar/sect-motion',
     status: 'gap',
     webConsumerPath: null,
-    gapKind: 'api_not_available',
-    notes: 'Spec-authorized endpoint remains deferred and unavailable for web wiring.',
+    gapKind: 'web_surface_missing',
+    notes: 'API exists; web registrar surface has no user-facing sect-motion action.',
   },
   {
     id: 'registrar.code.issue',
@@ -212,6 +212,9 @@ export const registrarArtistEndpoints = {
   inviteStatus: (entryId: string) => `/registrar/artist/${requireEntryId(entryId)}/invites`,
 } as const;
 
+export const registrarProjectEndpoints = {
+  submit: () => '/registrar/project',
+} as const;
 export function getRegistrarWebGapContracts(): RegistrarWebEndpointContract[] {
   return REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter((contract) => contract.status === 'gap');
 }
