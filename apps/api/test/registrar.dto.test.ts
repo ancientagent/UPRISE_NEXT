@@ -2,6 +2,7 @@ import {
   ArtistBandRegistrationSchema,
   PromoterRegistrationSchema,
   ProjectRegistrationSchema,
+  SectMotionRegistrationSchema,
 } from '../src/registrar/dto/registrar.dto';
 
 describe('Registrar DTO schemas', () => {
@@ -39,6 +40,24 @@ describe('Registrar DTO schemas', () => {
     });
 
     expect(parsed.projectName).toBe('All-Ages Venue Buildout');
+  });
+
+  it('accepts sect motion registration payload with sceneId only', () => {
+    const parsed = SectMotionRegistrationSchema.parse({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+    });
+
+    expect(parsed).toEqual({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+    });
+  });
+
+  it('rejects invalid sect motion sceneId payload', () => {
+    const parsed = SectMotionRegistrationSchema.safeParse({
+      sceneId: 'not-a-uuid',
+    });
+
+    expect(parsed.success).toBe(false);
   });
 
   it('rejects whitespace-only artist/band member identity fields', () => {
