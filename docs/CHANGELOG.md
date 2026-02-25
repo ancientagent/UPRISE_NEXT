@@ -7,6 +7,14 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 web contract wrapper consolidation (slice 109A):
+  - Added typed discovery client wrappers in `apps/web/src/lib/discovery/client.ts`.
+  - Added typed communities client wrappers in `apps/web/src/lib/communities/client.ts`.
+  - Migrated Discover/Plot/Statistics surfaces to use centralized wrappers instead of inline endpoint strings.
+  - Added web tests for discovery/communities client endpoint mapping and response handling.
+- Phase 4 discovery controller parity lane (slice 108A):
+  - Added `apps/api/test/communities.discovery.controller.test.ts` for discovery endpoint delegation/validation coverage.
+  - Coverage includes invalid query/body paths for `GET /discover/scenes`, `POST /discover/tune`, and `POST /discover/set-home-scene`.
 - Phase 4 communities route-resolution guard (slice 107A):
   - Added `apps/api/test/communities.routes.test.ts` with Fastify injection coverage for `GET /communities/nearby`.
   - Asserts route resolves to `findNearby` handler and does not dispatch through `:id` lookup handler.

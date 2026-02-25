@@ -3,7 +3,7 @@
 **ID:** `COMM-DISCOVERY`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-02-25`
 
 ## Overview & Purpose
 Defines explicit, non-algorithmic discovery flows for changing listening context across Scenes and tiers. Discovery is user-initiated only and does not alter civic authority unless the user explicitly changes Home Scene.
@@ -44,6 +44,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - Home Scene action requires explicit confirmation copy
   - read-only context chip shows Home Scene, Tuned Scene, and Visitor/Local status
   - no “Join Community” language or behavior
+  - discovery route calls are consumed through typed web client wrappers (`apps/web/src/lib/discovery/client.ts`) to keep endpoint contracts centralized.
 - Plot surface consumes persisted discovery context for default scene selection.
   - read-only context chip is rendered in Plot header for visibility of transport vs authority context
   - when no explicit scene is selected, Plot read surfaces resolve active scene as tuned scene first, then Home Scene fallback

@@ -7,13 +7,18 @@ import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
-import { api } from '@/lib/api';
 import TierToggle from '@/components/plot/TierToggle';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
+import { getDiscoveryContext } from '@/lib/discovery/client';
+import {
+  findNearbyCommunities,
+  getCommunityById,
+  resolveHomeCommunity,
+} from '@/lib/communities/client';
 import { listArtistBandRegistrations } from '@/lib/registrar/client';
 import {
   formatRegistrarEntryStatus,
@@ -66,24 +71,11 @@ export default function PlotPage() {
     async function fetchDiscoveryContext() {
       if (!token) return;
       try {
-        const response = await api.get<{
-          tunedSceneId: string | null;
-          tunedScene: {
-            id: string;
-            name: string;
-            city: string | null;
-            state: string | null;
-            musicCommunity: string | null;
-            tier: string;
-            isActive: boolean;
-          } | null;
-          homeSceneId: string | null;
-          isVisitor: boolean;
-        }>('/discover/context', { token });
+        const response = await getDiscoveryContext(token);
         setDiscoveryContext({
-          tunedSceneId: response.data?.tunedSceneId ?? null,
-          tunedScene: response.data?.tunedScene ?? null,
-          isVisitor: response.data?.isVisitor ?? null,
+          tunedSceneId: response?.tunedSceneId ?? null,
+          tunedScene: response?.tunedScene ?? null,
+          isVisitor: response?.isVisitor ?? null,
         });
       } catch {
         // Keep local state if context fetch fails.
@@ -98,42 +90,42 @@ export default function PlotPage() {
 
       try {
         if (tunedSceneId) {
-          const tunedResponse = await api.get<CommunityWithDistance | null>(
-            `/communities/${tunedSceneId}`,
-            { token: token || undefined },
-          );
-          if (tunedResponse.data) {
-            setSelectedCommunity(tunedResponse.data);
+          const tunedResponse = await getCommunityById(tunedSceneId, token || undefined);
+          if (tunedResponse) {
+            setSelectedCommunity(tunedResponse);
             return;
           }
         }
 
         // Canon anchor: exact Home Scene tuple first.
         if (homeScene?.city && homeScene?.state && homeScene?.musicCommunity) {
-          const homeParams = new URLSearchParams({
-            city: homeScene.city,
-            state: homeScene.state,
-            musicCommunity: homeScene.musicCommunity,
-          });
-
-          const homeResponse = await api.get<CommunityWithDistance | null>(
-            `/communities/resolve-home?${homeParams.toString()}`,
-            { token: token || undefined },
+          const homeResponse = await resolveHomeCommunity(
+            {
+              city: homeScene.city,
+              state: homeScene.state,
+              musicCommunity: homeScene.musicCommunity,
+            },
+            token || undefined,
           );
 
-          if (homeResponse.data) {
-            setSelectedCommunity(homeResponse.data);
+          if (homeResponse) {
+            setSelectedCommunity(homeResponse);
             return;
           }
         }
 
         // Fallback: nearest community from GPS when available.
         if (mapCenter) {
-          const nearbyResponse = await api.get<CommunityWithDistance[]>(
-            `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=10000&limit=1`,
-            { token: token || undefined },
+          const nearbyResponse = await findNearbyCommunities(
+            {
+              lat: mapCenter.lat,
+              lng: mapCenter.lng,
+              radius: 10000,
+              limit: 1,
+            },
+            token || undefined,
           );
-          const closest = nearbyResponse.data?.[0];
+          const closest = nearbyResponse?.[0];
           if (closest) setSelectedCommunity(closest);
         }
       } catch {
