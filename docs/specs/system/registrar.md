@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-24`
+**Last Updated:** `2026-02-25`
 
 ## Overview & Purpose
 Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
@@ -154,13 +154,24 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Transitional alias `isArtistTransitional` is also removed from user detail/profile read contracts.
 - Identity persistence cleanup alignment (slice 33):
   - Legacy `User.isArtist` column removed from persistence schema after caller migration reached zero.
+- Registrar project submission primitive (slice 98A):
+  - `POST /registrar/project` implemented for Home Scene-scoped project registration submissions.
+  - Persists registrar entry baseline lifecycle (`type = project_registration`, `status = submitted`) with project name payload.
+  - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
+- Registrar sect-motion submission skeleton (slice 99A):
+  - `POST /registrar/sect-motion` implemented as additive skeleton submission primitive.
+  - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`) until motion artifact schema is canon-locked.
+  - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
+- Registrar project web contract scaffolding (slice 98A web lane):
+  - Web typed contract/client support added for `POST /registrar/project`.
+  - No new registrar UI action/CTA added; web surface remains action-gated per spec.
 
 ### Deferred (Not Implemented Yet)
 - Registrar-admin approval/issuance orchestration workflows for promoter capability codes.
 - Registrar-gated promoter capability revocation/admin-management flows.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
-- Dedicated project registration endpoint(s) and status lifecycle.
+- Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
 - Sect motion lifecycle and approval state machine.
 
 ### Policy Lock (2026-02-24, P3-REV-001)

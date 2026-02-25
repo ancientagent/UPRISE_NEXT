@@ -7,6 +7,17 @@
 
 ## [Unreleased]
 ### Added
+- Registrar sect-motion submission skeleton (slice 99A):
+  - Added `POST /registrar/sect-motion` (auth required) as additive registrar submission primitive.
+  - Added `SectMotionRegistrationSchema` (`sceneId` uuid) and controller/service path `submitSectMotionRegistration`.
+  - Persists `RegistrarEntry` baseline lifecycle (`type = sect_motion`, `status = submitted`) with Home Scene/city-tier guardrails.
+  - Added registrar DTO/controller/service unit coverage for success and guard/error paths.
+- Web registrar project contract scaffolding (slice 98A web lane):
+  - Added typed endpoint helper `registrarProjectEndpoints.submit()` and typed client `submitProjectRegistration(payload, token)`.
+  - Updated registrar contract inventory project/sect endpoint gap status to `web_surface_missing` (API exists, no web action yet).
+  - Added web unit coverage for registrar project endpoint helper path.
+- Phase 3 QA lane report for project+sect batch (slice 98A/99A):
+  - Added `docs/handoff/2026-02-25_P3-QA-098A-project-sect-validation.md` with exact command outputs and pass verdict.
 - Agent queue spawn guardrails + directive templates:
   - `scripts/agent-control.mjs` now enforces controlled child-task assignment with `--parent-id` constraints, `allowSpawn` parent checks, max-depth/max-children limits, and required child metadata (`--depends-on`, `--planned-report`, `--rollback-note`).
   - Queue tasks now persist spawn metadata (`parentId`, `depth`, `children`, `spawnPolicy`, `planned`) for deterministic orchestration and rollback traceability.
