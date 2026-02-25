@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 Plot shared community-anchor consistency (slice 102A):
+  - `StatisticsPanel` is now controlled by Plot page selected-community state instead of maintaining an independent local anchor.
+  - Statistics/scene-map and Top Songs panels now consume the same selected community context, reducing cross-panel scope drift.
 - Phase 4 Plot registrar status integration (slice 101A):
   - Plot Scene Activity panel now loads submitter-owned Artist/Band registrar entry summary via `GET /registrar/artist/entries`.
   - Panel shows registration totals, lifecycle summary, invite-state counts, and latest status while preserving explicit `Open Registrar` action.

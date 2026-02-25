@@ -260,6 +260,7 @@ export default function PlotPage() {
             {activeTab === 'Statistics' ? (
               <StatisticsPanel
                 selectedTier={selectedTier}
+                selectedCommunity={selectedCommunity}
                 onCommunitySelect={handleCommunitySelect}
                 onCommunitiesUpdate={handleCommunitiesUpdate}
               />

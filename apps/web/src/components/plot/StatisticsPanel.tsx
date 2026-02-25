@@ -59,12 +59,14 @@ interface CommunitySceneMapResponse {
 
 interface StatisticsPanelProps {
   selectedTier: TierScope;
+  selectedCommunity: CommunityWithDistance | null;
   onCommunitySelect?: (community: CommunityWithDistance) => void;
   onCommunitiesUpdate?: (communities: CommunityWithDistance[]) => void;
 }
 
 export default function StatisticsPanel({
   selectedTier,
+  selectedCommunity,
   onCommunitySelect,
   onCommunitiesUpdate,
 }: StatisticsPanelProps) {
@@ -72,7 +74,6 @@ export default function StatisticsPanel({
   const { token } = useAuthStore();
 
   const [communities, setCommunities] = useState<CommunityWithDistance[]>([]);
-  const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [statistics, setStatistics] = useState<CommunityStatisticsResponse | null>(null);
   const [sceneMap, setSceneMap] = useState<CommunitySceneMapResponse | null>(null);
   const [activeSceneId, setActiveSceneId] = useState<string | null>(null);
@@ -121,7 +122,6 @@ export default function StatisticsPanel({
             : false;
 
           if (!currentStillExists) {
-            setSelectedCommunity(nextCommunities[0]);
             onCommunitySelect?.(nextCommunities[0]);
           }
         }
@@ -191,7 +191,6 @@ export default function StatisticsPanel({
   }, [selectedCommunity, activeSceneId, selectedTier, token]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
-    setSelectedCommunity(community);
     onCommunitySelect?.(community);
   };
 

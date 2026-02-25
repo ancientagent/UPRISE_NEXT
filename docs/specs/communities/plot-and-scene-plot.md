@@ -58,6 +58,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Plot Scene Activity panel now integrates registrar status read context:
   - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,
   - displays registration totals/status summary while retaining explicit `Open Registrar` navigation.
+- Plot Statistics and Top Songs surfaces now share a unified selected-community anchor in the page state to keep tier/context reads consistent across panels.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Advanced registrar lifecycle dashboard in Plot (beyond status summary + explicit registrar navigation).
