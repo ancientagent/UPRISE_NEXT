@@ -46,6 +46,12 @@ export const ProjectRegistrationSchema = z.object({
 
 export type ProjectRegistrationDto = z.infer<typeof ProjectRegistrationSchema>;
 
+export const SectMotionRegistrationSchema = z.object({
+  sceneId: z.string().uuid(),
+});
+
+export type SectMotionRegistrationDto = z.infer<typeof SectMotionRegistrationSchema>;
+
 export const RegistrarCodeVerifySchema = z.object({
   code: z.string().trim().min(6).max(120),
 });
