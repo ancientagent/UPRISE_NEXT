@@ -33,6 +33,17 @@
   - Plot `StatisticsPanel` now uses `GET /communities/active/statistics?tier=...` when no explicit community anchor is selected.
   - Scene-map fetch in the same panel now anchors on either selected community or active-scene fallback id, improving no-anchor Plot continuity.
   - Added web unit coverage for statistics endpoint and scene-map anchor resolution helpers.
+- Registrar sect-motion submission skeleton (slice 99A):
+  - Added `POST /registrar/sect-motion` (auth required) as additive registrar submission primitive.
+  - Added `SectMotionRegistrationSchema` (`sceneId` uuid) and controller/service path `submitSectMotionRegistration`.
+  - Persists `RegistrarEntry` baseline lifecycle (`type = sect_motion`, `status = submitted`) with Home Scene/city-tier guardrails.
+  - Added registrar DTO/controller/service unit coverage for success and guard/error paths.
+- Web registrar project contract scaffolding (slice 98A web lane):
+  - Added typed endpoint helper `registrarProjectEndpoints.submit()` and typed client `submitProjectRegistration(payload, token)`.
+  - Updated registrar contract inventory project/sect endpoint gap status to `web_surface_missing` (API exists, no web action yet).
+  - Added web unit coverage for registrar project endpoint helper path.
+- Phase 3 QA lane report for project+sect batch (slice 98A/99A):
+  - Added `docs/handoff/2026-02-25_P3-QA-098A-project-sect-validation.md` with exact command outputs and pass verdict.
 - Telegram bridge near-real-time long-poll loop (slice 92):
   - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
   - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.
