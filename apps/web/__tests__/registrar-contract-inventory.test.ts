@@ -4,6 +4,7 @@ import {
   getRegistrarWebGapContracts,
   getRegistrarWebImplementedContracts,
   registrarArtistEndpoints,
+  registrarProjectEndpoints,
 } from '../src/lib/registrar/contractInventory';
 
 describe('registrar contract inventory', () => {
@@ -68,5 +69,11 @@ describe('registrar artist endpoint helpers', () => {
     expect(() => registrarArtistEndpoints.dispatchInvites('')).toThrow('Registrar entryId is required');
     expect(() => registrarArtistEndpoints.syncMembers('\n')).toThrow('Registrar entryId is required');
     expect(() => registrarArtistEndpoints.inviteStatus('\t')).toThrow('Registrar entryId is required');
+  });
+});
+
+describe('registrar project endpoint helpers', () => {
+  it('builds concrete registrar project endpoint path', () => {
+    expect(registrarProjectEndpoints.submit()).toBe('/registrar/project');
   });
 });

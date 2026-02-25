@@ -3,6 +3,7 @@ import type { ArtistBandRegistrationPayload } from '@/lib/registrar/artistRegist
 import {
   registrarArtistEndpoints,
   registrarCodeEndpoints,
+  registrarProjectEndpoints,
   registrarPromoterEndpoints,
 } from '@/lib/registrar/contractInventory';
 
@@ -54,6 +55,23 @@ export interface RegistrarArtistRegistrationResult {
   memberCount: number;
   pendingInviteCount: number;
   existingMemberCount: number;
+}
+
+export interface RegistrarProjectRegistrationPayload {
+  sceneId: string;
+  projectName: string;
+}
+
+export interface RegistrarProjectRegistrationResult {
+  id: string;
+  type: string;
+  status: string;
+  sceneId: string;
+  createdById: string;
+  payload: {
+    projectName: string | null;
+  };
+  createdAt: string;
 }
 
 export interface RegistrarArtistInviteStatusMember {
@@ -188,6 +206,21 @@ export async function submitArtistBandRegistration(
   if (!response.data) {
     throw new Error('Registrar submission returned no data.');
   }
+  return response.data;
+}
+
+export async function submitProjectRegistration(
+  payload: RegistrarProjectRegistrationPayload,
+  token: string,
+): Promise<RegistrarProjectRegistrationResult> {
+  const response = await api.post<RegistrarProjectRegistrationResult>(registrarProjectEndpoints.submit(), payload, {
+    token,
+  });
+
+  if (!response.data) {
+    throw new Error('Project registration response returned no data.');
+  }
+
   return response.data;
 }
 
