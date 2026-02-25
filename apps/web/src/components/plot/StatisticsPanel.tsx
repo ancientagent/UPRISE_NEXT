@@ -7,8 +7,11 @@ import { useAuthStore } from '@/store/auth';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import SceneMap, { type SceneMapPoint } from '@/components/plot/SceneMap';
 import { shouldFetchNearbyForTier } from '@/components/plot/tier-guard';
-
-type TierScope = 'city' | 'state' | 'national';
+import {
+  resolveSceneMapAnchorId,
+  resolveStatisticsEndpoint,
+  type TierScope,
+} from '@/components/plot/statistics-request';
 
 interface CommunityStatisticsResponse {
   community: {
@@ -72,6 +75,7 @@ export default function StatisticsPanel({
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [statistics, setStatistics] = useState<CommunityStatisticsResponse | null>(null);
   const [sceneMap, setSceneMap] = useState<CommunitySceneMapResponse | null>(null);
+  const [activeSceneId, setActiveSceneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -129,27 +133,33 @@ export default function StatisticsPanel({
     fetchNearbyCommunities();
   }, [selectedTier, mapCenter, cityRadiusMeters, token, selectedCommunity, onCommunitySelect, onCommunitiesUpdate]);
 
-  // Tier-scoped statistics anchored on selected city community.
+  // Tier-scoped statistics use explicit community anchor when selected, otherwise active-scene fallback.
   useEffect(() => {
     async function fetchStatistics() {
-      if (!selectedCommunity) {
-        setStatistics(null);
-        return;
-      }
-
       setLoading(true);
       setError(null);
 
       try {
+        const resolution = resolveStatisticsEndpoint(selectedCommunity?.id ?? null, selectedTier);
         const response = await api.get<CommunityStatisticsResponse>(
-          `/communities/${selectedCommunity.id}/statistics?tier=${selectedTier}`,
-          { token: token || undefined }
+          resolution.endpoint,
+          { token: token || undefined },
         );
 
         setStatistics(response.data ?? null);
+        if (resolution.source === 'anchored') {
+          setActiveSceneId(selectedCommunity?.id ?? null);
+        } else {
+          const fallbackSceneId =
+            (response as { meta?: { sceneId?: string } }).meta?.sceneId ??
+            response.data?.community?.id ??
+            null;
+          setActiveSceneId(fallbackSceneId);
+        }
       } catch {
         setError('Unable to load scene statistics');
         setStatistics(null);
+        setActiveSceneId(null);
       } finally {
         setLoading(false);
       }
@@ -160,15 +170,16 @@ export default function StatisticsPanel({
 
   useEffect(() => {
     async function fetchSceneMap() {
-      if (!selectedCommunity) {
+      const anchorId = resolveSceneMapAnchorId(selectedCommunity?.id ?? null, activeSceneId);
+      if (!anchorId) {
         setSceneMap(null);
         return;
       }
 
       try {
         const response = await api.get<CommunitySceneMapResponse>(
-          `/communities/${selectedCommunity.id}/scene-map?tier=${selectedTier}`,
-          { token: token || undefined }
+          `/communities/${anchorId}/scene-map?tier=${selectedTier}`,
+          { token: token || undefined },
         );
         setSceneMap(response.data ?? null);
       } catch {
@@ -177,7 +188,7 @@ export default function StatisticsPanel({
     }
 
     fetchSceneMap();
-  }, [selectedCommunity, selectedTier, token]);
+  }, [selectedCommunity, activeSceneId, selectedTier, token]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
@@ -203,7 +214,7 @@ export default function StatisticsPanel({
     );
   }
 
-  if (!selectedCommunity) {
+  if (!selectedCommunity && !activeSceneId) {
     return (
       <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
         <div className="text-center py-8">
@@ -275,7 +286,7 @@ export default function StatisticsPanel({
                 key={community.id}
                 onClick={() => handleCommunitySelect(community)}
                 className={`w-full text-left p-2 rounded-lg transition-colors ${
-                  selectedCommunity.id === community.id
+                  selectedCommunity?.id === community.id
                     ? 'border border-black bg-black/5'
                     : 'border border-transparent hover:bg-black/5'
                 }`}

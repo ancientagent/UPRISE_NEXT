@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-23`
+**Last Updated:** `2026-02-25`
 
 ## Overview & Purpose
 Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -54,6 +54,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - `GET /communities/active/events`
   - `GET /communities/active/promotions`
   - `GET /communities/active/statistics`
+- Statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Registrar module integration into Plot UI.

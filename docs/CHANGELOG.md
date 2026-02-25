@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 communities core stats fallback hardening (slice 100A):
+  - Plot `StatisticsPanel` now uses `GET /communities/active/statistics?tier=...` when no explicit community anchor is selected.
+  - Scene-map fetch in the same panel now anchors on either selected community or active-scene fallback id, improving no-anchor Plot continuity.
+  - Added web unit coverage for statistics endpoint and scene-map anchor resolution helpers.
 - Telegram bridge near-real-time long-poll loop (slice 92):
   - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
   - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.
