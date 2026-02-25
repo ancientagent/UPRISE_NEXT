@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar project + sect-motion submitter status read surfaces (slice 114A):
+  - Added `GET /registrar/project/entries` and `GET /registrar/project/:entryId` for submitter-owned project registration state tracking.
+  - Added `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` for submitter-owned sect-motion state tracking.
+  - Added registrar controller/service unit coverage for list/detail success + ownership/type/not-found guard paths.
 - Phase 4 communities route-resolution guard (slice 107A):
   - Added `apps/api/test/communities.routes.test.ts` with Fastify injection coverage for `GET /communities/nearby`.
   - Asserts route resolves to `findNearby` handler and does not dispatch through `:id` lookup handler.

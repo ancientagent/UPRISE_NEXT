@@ -156,6 +156,186 @@ describe('RegistrarController', () => {
     expect(registrarService.getPromoterRegistration).toHaveBeenCalledWith('u-1', 'missing-entry');
   });
 
+  it('lists submitter project registrations through registrar service', async () => {
+    const registrarService = {
+      listProjectRegistrations: jest.fn().mockResolvedValue({
+        total: 1,
+        countsByStatus: { submitted: 1 },
+        entries: [
+          {
+            id: 'reg-project-1',
+            type: 'project_registration',
+            status: 'submitted',
+            sceneId: '11111111-1111-1111-1111-111111111111',
+            payload: { projectName: 'All-Ages Venue Buildout' },
+          },
+        ],
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.listMyProjectRegistrations({ user: { userId: 'u-1' } });
+
+    expect(registrarService.listProjectRegistrations).toHaveBeenCalledWith('u-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        total: 1,
+        countsByStatus: { submitted: 1 },
+        entries: [
+          {
+            id: 'reg-project-1',
+            type: 'project_registration',
+            status: 'submitted',
+            sceneId: '11111111-1111-1111-1111-111111111111',
+            payload: { projectName: 'All-Ages Venue Buildout' },
+          },
+        ],
+      },
+    });
+  });
+
+  it('reads submitter project registration detail through registrar service', async () => {
+    const registrarService = {
+      getProjectRegistration: jest.fn().mockResolvedValue({
+        id: 'reg-project-1',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: { projectName: 'All-Ages Venue Buildout' },
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.getMyProjectRegistration('reg-project-1', { user: { userId: 'u-1' } });
+
+    expect(registrarService.getProjectRegistration).toHaveBeenCalledWith('u-1', 'reg-project-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'reg-project-1',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: { projectName: 'All-Ages Venue Buildout' },
+      },
+    });
+  });
+
+  it('propagates project list read errors from registrar service', async () => {
+    const registrarService = {
+      listProjectRegistrations: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(controller.listMyProjectRegistrations({ user: { userId: 'u-1' } })).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(registrarService.listProjectRegistrations).toHaveBeenCalledWith('u-1');
+  });
+
+  it('propagates project detail read errors from registrar service', async () => {
+    const registrarService = {
+      getProjectRegistration: jest.fn().mockRejectedValue(new NotFoundException('Registrar entry not found')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.getMyProjectRegistration('missing-project-entry', { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(NotFoundException);
+    expect(registrarService.getProjectRegistration).toHaveBeenCalledWith('u-1', 'missing-project-entry');
+  });
+
+  it('lists submitter sect motions through registrar service', async () => {
+    const registrarService = {
+      listSectMotionRegistrations: jest.fn().mockResolvedValue({
+        total: 1,
+        countsByStatus: { submitted: 1 },
+        entries: [
+          {
+            id: 'reg-sect-1',
+            type: 'sect_motion',
+            status: 'submitted',
+            sceneId: '11111111-1111-1111-1111-111111111111',
+            payload: {},
+          },
+        ],
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.listMySectMotionRegistrations({ user: { userId: 'u-1' } });
+
+    expect(registrarService.listSectMotionRegistrations).toHaveBeenCalledWith('u-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        total: 1,
+        countsByStatus: { submitted: 1 },
+        entries: [
+          {
+            id: 'reg-sect-1',
+            type: 'sect_motion',
+            status: 'submitted',
+            sceneId: '11111111-1111-1111-1111-111111111111',
+            payload: {},
+          },
+        ],
+      },
+    });
+  });
+
+  it('reads submitter sect-motion detail through registrar service', async () => {
+    const registrarService = {
+      getSectMotionRegistration: jest.fn().mockResolvedValue({
+        id: 'reg-sect-1',
+        type: 'sect_motion',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: {},
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.getMySectMotionRegistration('reg-sect-1', { user: { userId: 'u-1' } });
+
+    expect(registrarService.getSectMotionRegistration).toHaveBeenCalledWith('u-1', 'reg-sect-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'reg-sect-1',
+        type: 'sect_motion',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: {},
+      },
+    });
+  });
+
+  it('propagates sect-motion list read errors from registrar service', async () => {
+    const registrarService = {
+      listSectMotionRegistrations: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(controller.listMySectMotionRegistrations({ user: { userId: 'u-1' } })).rejects.toThrow(
+      ForbiddenException,
+    );
+    expect(registrarService.listSectMotionRegistrations).toHaveBeenCalledWith('u-1');
+  });
+
+  it('propagates sect-motion detail read errors from registrar service', async () => {
+    const registrarService = {
+      getSectMotionRegistration: jest.fn().mockRejectedValue(new NotFoundException('Registrar entry not found')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.getMySectMotionRegistration('missing-sect-entry', { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(NotFoundException);
+    expect(registrarService.getSectMotionRegistration).toHaveBeenCalledWith('u-1', 'missing-sect-entry');
+  });
+
   it('lists submitter artist/band registrations through registrar service', async () => {
     const registrarService = {
       listArtistBandRegistrations: jest.fn().mockResolvedValue({

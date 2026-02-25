@@ -96,6 +96,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-24_slice90-agent-bridge-scheduler-chat-mvp.md`](./2026-02-24_slice90-agent-bridge-scheduler-chat-mvp.md)
 - [`2026-02-24_slice91-telegram-command-bridge-mvp.md`](./2026-02-24_slice91-telegram-command-bridge-mvp.md)
 - [`2026-02-24_slice92-telegram-near-realtime-long-poll.md`](./2026-02-24_slice92-telegram-near-realtime-long-poll.md)
+- [`2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md`](./2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md)
 - [`2026-02-25_phase4-plot-active-statistics-fallback-slice100A.md`](./2026-02-25_phase4-plot-active-statistics-fallback-slice100A.md)
 - [`2026-02-25_phase4-plot-registrar-status-summary-slice101A.md`](./2026-02-25_phase4-plot-registrar-status-summary-slice101A.md)
 - [`2026-02-25_phase4-plot-shared-community-anchor-slice102A.md`](./2026-02-25_phase4-plot-shared-community-anchor-slice102A.md)
