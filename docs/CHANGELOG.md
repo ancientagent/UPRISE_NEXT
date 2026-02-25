@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 Plot registrar status integration (slice 101A):
+  - Plot Scene Activity panel now loads submitter-owned Artist/Band registrar entry summary via `GET /registrar/artist/entries`.
+  - Panel shows registration totals, lifecycle summary, invite-state counts, and latest status while preserving explicit `Open Registrar` action.
+  - Added web helper coverage for registrar plot summary aggregation.
 - Phase 4 communities core stats fallback hardening (slice 100A):
   - Plot `StatisticsPanel` now uses `GET /communities/active/statistics?tier=...` when no explicit community anchor is selected.
   - Scene-map fetch in the same panel now anchors on either selected community or active-scene fallback id, improving no-anchor Plot continuity.

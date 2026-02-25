@@ -55,9 +55,12 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - `GET /communities/active/promotions`
   - `GET /communities/active/statistics`
 - Statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor.
+- Plot Scene Activity panel now integrates registrar status read context:
+  - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,
+  - displays registration totals/status summary while retaining explicit `Open Registrar` navigation.
 
 ### Deferred Behavior (Not Implemented Yet)
-- Registrar module integration into Plot UI.
+- Advanced registrar lifecycle dashboard in Plot (beyond status summary + explicit registrar navigation).
 - Social tab message boards/listening rooms (V2).
 
 ## Non-Functional Requirements
