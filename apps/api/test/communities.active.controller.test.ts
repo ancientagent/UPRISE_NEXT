@@ -173,4 +173,37 @@ describe('CommunitiesController - Active Scene Endpoints', () => {
     expect(communitiesServiceMock.resolveActiveSceneId).not.toHaveBeenCalled();
     expect(communitiesServiceMock.getEvents).not.toHaveBeenCalled();
   });
+
+  it('parses includePast=false as false for direct scene events query', async () => {
+    communitiesServiceMock.getEvents.mockResolvedValue({
+      items: [{ id: 'event-direct-1' }],
+      limit: 20,
+      includePast: false,
+    });
+
+    const response = await controller.getEvents('scene-direct-1', {
+      limit: '20',
+      includePast: 'false',
+    });
+
+    expect(communitiesServiceMock.getEvents).toHaveBeenCalledWith(
+      'scene-direct-1',
+      expect.objectContaining({ limit: 20, includePast: false }),
+    );
+    expect(response.meta).toEqual({
+      limit: 20,
+      includePast: false,
+    });
+  });
+
+  it('returns bad request for invalid includePast in direct scene events query', async () => {
+    await expect(
+      controller.getEvents('scene-direct-2', {
+        limit: '20',
+        includePast: 'not-boolean',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(communitiesServiceMock.getEvents).not.toHaveBeenCalled();
+  });
 });

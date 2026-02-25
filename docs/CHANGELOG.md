@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 communities direct-events validation parity (slice 105A):
+  - Extended communities controller coverage to assert strict `includePast` parsing on `GET /communities/:id/events`.
+  - Added invalid-query rejection coverage for direct scene events route.
 - Phase 4 communities events-query boolean hardening (slice 104A):
   - Replaced broad boolean coercion for `includePast` with strict string parsing (`true`/`false`) in `GetCommunityEventsSchema`.
   - Added controller coverage ensuring `includePast=false` remains false and invalid boolean strings are rejected with validation errors.
