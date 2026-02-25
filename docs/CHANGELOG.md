@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 QA/docs/review closure for slices 108A–110A (slices 111A–113A):
+  - Added consolidated QA sweep report with exact command outputs (`docs/handoff/2026-02-25_phase4-qa-sweep-108A-110A-slice111A.md`).
+  - Added docs sync note for updated communities specs/changelog/handoff index (`docs/handoff/2026-02-25_phase4-doc-sync-108A-110A-slice112A.md`).
+  - Added review/risk signoff memo with rollback references (`docs/handoff/2026-02-25_phase4-review-risk-signoff-108A-110A-slice113A.md`).
 - Phase 4 discovery-context consistency helper lane (slice 110A):
   - Added shared discovery-context patch helpers in `apps/web/src/lib/discovery/context.ts`.
   - Updated Discover and Plot pages to use centralized context patch mapping/merge behavior.
