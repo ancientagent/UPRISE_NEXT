@@ -12,6 +12,7 @@ Working notes and completion reports that help future contributors quickly under
 
 ## Coordination Control Plane
 - [`agent-control/README.md`](./agent-control/README.md) — Lane-based autonomous assignment/claim/report workflow.
+- [`agent-control/AGENT_DIRECTIVES.md`](./agent-control/AGENT_DIRECTIVES.md) — Standardized 6-agent directive templates and spawn guardrails.
 
 ## Agent Documents
 - [`agent-deepagent-build-handoff-2025-12-12.md`](./agent-deepagent-build-handoff-2025-12-12.md) — Build investigation + fixes handoff.
@@ -99,8 +100,10 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-24_slice95-registrarcode-verify-redeem-api.md`](./2026-02-24_slice95-registrarcode-verify-redeem-api.md)
 - [`2026-02-24_slice96-promoter-capability-transition-persistence.md`](./2026-02-24_slice96-promoter-capability-transition-persistence.md)
 - [`2026-02-24_slice97-capability-grant-audit-surface.md`](./2026-02-24_slice97-capability-grant-audit-surface.md)
+- [`2026-02-24_slice95-97-risk-rollback-drift-review.md`](./2026-02-24_slice95-97-risk-rollback-drift-review.md)
 - [`2026-02-24_phase3-parallel-slice-board-98-102.md`](./2026-02-24_phase3-parallel-slice-board-98-102.md)
 - [`2026-02-24_agent-queue-directive-auto-attachment.md`](./2026-02-24_agent-queue-directive-auto-attachment.md)
+- [`2026-02-25_agent-queue-guardrails-and-directive-templates.md`](./2026-02-25_agent-queue-guardrails-and-directive-templates.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)

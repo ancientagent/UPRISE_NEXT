@@ -7,6 +7,15 @@
 
 ## [Unreleased]
 ### Added
+- Agent queue spawn guardrails + directive templates:
+  - `scripts/agent-control.mjs` now enforces controlled child-task assignment with `--parent-id` constraints, `allowSpawn` parent checks, max-depth/max-children limits, and required child metadata (`--depends-on`, `--planned-report`, `--rollback-note`).
+  - Queue tasks now persist spawn metadata (`parentId`, `depth`, `children`, `spawnPolicy`, `planned`) for deterministic orchestration and rollback traceability.
+  - Directive payloads now include lane role profiles + parallel guardrail policy blocks, and `backfill-directives` patches partially-missing legacy directive structures.
+  - Added `docs/handoff/agent-control/AGENT_DIRECTIVES.md` with standardized templates for the six-agent operating model.
+  - Added test coverage for guardrail enforcement paths in `scripts/agent-control.test.mjs`.
+- Slice review-risk memo for registrar capability batch (slices 95-97):
+  - Added `docs/handoff/2026-02-24_slice95-97-risk-rollback-drift-review.md` with severity-ranked risk findings, rollback sequencing, drift notes, and exact validation command outputs.
+  - Flags medium-priority redemption concurrency race risk in `redeemRegistrarCodeForUser` (pre-check + unguarded update pattern under concurrent requests).
 - Agent queue directive auto-attachment:
   - `scripts/agent-control.mjs` now auto-attaches directive metadata on `assign`:
     - required reading order,

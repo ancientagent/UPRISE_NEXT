@@ -9,6 +9,7 @@ Allow one orchestrator agent to assign tasks directly to lane agents, and let la
 - `lanes.json`: lane definitions and allowed path scopes.
 - `queue.json`: machine-readable task queue and state.
 - `results/`: optional per-task result artifacts linked from queue rows.
+- `AGENT_DIRECTIVES.md`: lane-specialized prompt templates and parallel guardrails.
 
 ## Command Interface
 Use the root command:
@@ -28,6 +29,12 @@ Main commands:
 - `ack`: orchestrator acknowledges review of done/blocked task.
 - `status`: list queue summary + tasks.
 - `poll`: show review-required, blocked, and in-progress tasks.
+
+`assign` supports queue guardrail metadata:
+- `--parent-id`: mark task as child of an existing task.
+- `--allow-spawn`: allow controlled child task creation from this task.
+- `--max-depth`, `--max-children`: override spawn limits for this task.
+- `--planned-report`, `--rollback-note`: required for child tasks.
 
 ## Orchestrator Workflow
 1. Add tasks with explicit lane, dependencies, and scope.
@@ -88,7 +95,14 @@ pnpm run agent:queue -- poll
 - `assign` auto-attaches directive metadata to each task:
   - required reading order,
   - standing orders,
-  - validation gate checklist.
+  - validation gate checklist,
+  - lane role profiles,
+  - parallel spawn guardrails.
+- Child task guardrails are enforced by queue tool:
+  - parent task must have `allowSpawn=true`,
+  - child must depend on parent via `--depends-on <PARENT_ID>`,
+  - child must include `--planned-report` and `--rollback-note`,
+  - default hard limits: `maxDepth=1`, `maxChildren=2`.
 - For legacy queues created before this feature:
   - run `pnpm run agent:queue -- backfill-directives --queue <QUEUE_PATH>` once.
 
