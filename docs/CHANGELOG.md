@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Phase 4 communities metrics/home-resolution controller hardening (slice 106A):
+  - Added `apps/api/test/communities.metrics.controller.test.ts` covering tier-scoped controller delegation for statistics/scene-map reads.
+  - Added validation-path assertions for invalid tier values and incomplete home-scene tuple on resolve-home route.
 - Phase 4 communities direct-events validation parity (slice 105A):
   - Extended communities controller coverage to assert strict `includePast` parsing on `GET /communities/:id/events`.
   - Added invalid-query rejection coverage for direct scene events route.

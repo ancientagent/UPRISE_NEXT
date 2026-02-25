@@ -102,6 +102,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-25_phase4-communities-active-controller-hardening-slice103A.md`](./2026-02-25_phase4-communities-active-controller-hardening-slice103A.md)
 - [`2026-02-25_phase4-communities-events-boolean-hardening-slice104A.md`](./2026-02-25_phase4-communities-events-boolean-hardening-slice104A.md)
 - [`2026-02-25_phase4-communities-direct-events-validation-parity-slice105A.md`](./2026-02-25_phase4-communities-direct-events-validation-parity-slice105A.md)
+- [`2026-02-25_phase4-communities-metrics-controller-hardening-slice106A.md`](./2026-02-25_phase4-communities-metrics-controller-hardening-slice106A.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)
