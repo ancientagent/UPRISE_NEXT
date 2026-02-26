@@ -51,3 +51,15 @@ export const SectMotionRegistrationSchema = z.object({
 });
 
 export type SectMotionRegistrationDto = z.infer<typeof SectMotionRegistrationSchema>;
+
+export const RegistrarCodeVerifySchema = z.object({
+  code: z.string().trim().min(6).max(120),
+});
+
+export type RegistrarCodeVerifyDto = z.infer<typeof RegistrarCodeVerifySchema>;
+
+export const RegistrarCodeRedeemSchema = z.object({
+  code: z.string().trim().min(6).max(120),
+});
+
+export type RegistrarCodeRedeemDto = z.infer<typeof RegistrarCodeRedeemSchema>;

@@ -2,6 +2,8 @@ import {
   ArtistBandRegistrationSchema,
   PromoterRegistrationSchema,
   ProjectRegistrationSchema,
+  RegistrarCodeRedeemSchema,
+  RegistrarCodeVerifySchema,
   SectMotionRegistrationSchema,
 } from '../src/registrar/dto/registrar.dto';
 
@@ -103,5 +105,21 @@ describe('Registrar DTO schemas', () => {
       city: 'Austin',
       instrument: 'Guitar',
     });
+  });
+
+  it('trims registrar code verify payload', () => {
+    const parsed = RegistrarCodeVerifySchema.parse({
+      code: '  PRC-ABCDEF1234  ',
+    });
+
+    expect(parsed.code).toBe('PRC-ABCDEF1234');
+  });
+
+  it('rejects empty registrar code redeem payload', () => {
+    const parsed = RegistrarCodeRedeemSchema.safeParse({
+      code: '    ',
+    });
+
+    expect(parsed.success).toBe(false);
   });
 });

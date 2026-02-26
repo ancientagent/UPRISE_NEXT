@@ -64,6 +64,54 @@
   - Added web unit coverage for registrar project endpoint helper path.
 - Phase 3 QA lane report for project+sect batch (slice 98A/99A):
   - Added `docs/handoff/2026-02-25_P3-QA-098A-project-sect-validation.md` with exact command outputs and pass verdict.
+- Phase 3 regression QA report for capability batch (slice 95-97):
+  - Added `docs/handoff/2026-02-25_P3-QA-095B-regression-95-97.md` to resolve stale QA lane artifact gap with pass/fail verdict.
+- Agent queue spawn guardrails + directive templates:
+  - `scripts/agent-control.mjs` now enforces controlled child-task assignment with `--parent-id` constraints, `allowSpawn` parent checks, max-depth/max-children limits, and required child metadata (`--depends-on`, `--planned-report`, `--rollback-note`).
+  - Queue tasks now persist spawn metadata (`parentId`, `depth`, `children`, `spawnPolicy`, `planned`) for deterministic orchestration and rollback traceability.
+  - Directive payloads now include lane role profiles + parallel guardrail policy blocks, and `backfill-directives` patches partially-missing legacy directive structures.
+  - Added `docs/handoff/agent-control/AGENT_DIRECTIVES.md` with standardized templates for the six-agent operating model.
+  - Added test coverage for guardrail enforcement paths in `scripts/agent-control.test.mjs`.
+- Slice review-risk memo for registrar capability batch (slices 95-97):
+  - Added `docs/handoff/2026-02-24_slice95-97-risk-rollback-drift-review.md` with severity-ranked risk findings, rollback sequencing, drift notes, and exact validation command outputs.
+  - Flags medium-priority redemption concurrency race risk in `redeemRegistrarCodeForUser` (pre-check + unguarded update pattern under concurrent requests).
+- Agent queue directive auto-attachment:
+  - `scripts/agent-control.mjs` now auto-attaches directive metadata on `assign`:
+    - required reading order,
+    - standing orders,
+    - validation gate checklist.
+  - `claim` now backfills default directives for legacy tasks missing directive metadata.
+  - Added explicit queue command `backfill-directives` to patch existing tasks without requeue/claim churn.
+  - Added directive coverage assertion in `scripts/agent-control.test.mjs`.
+  - Updated `docs/handoff/agent-control/README.md` with directive auto-attachment behavior.
+- Phase 3 parallel slice board + lane queue batch (98–102):
+  - Added execution board `docs/handoff/2026-02-24_phase3-parallel-slice-board-98-102.md` with lane-owned scope, dependencies, and validation gates.
+  - Initialized queue batch `/tmp/uprise_next_phase3_parallel_batch1.json` with 9 lane tasks across api/web/qa/docs/review.
+  - Established two-wave parallel execution order: immediate Wave 1 parallel claims + dependency-gated Wave 2 follow-through.
+- Capability grant audit persistence/read surface (slice 97):
+  - Added additive Prisma model/table `CapabilityGrantAuditLog` via migration `20260224213000_add_capability_grant_audit_logs`.
+  - Registrar capability transitions now emit audit events:
+    - `code_issued` during registrar code issuance,
+    - `code_redeemed` during user redemption,
+    - `capability_granted` after capability grant upsert.
+  - Added submitter-owned audit read endpoint: `GET /registrar/promoter/:entryId/capability-audit`.
+  - Added registrar service/controller unit coverage for audit write and read paths.
+  - Updated web registrar contract inventory + typed client with promoter capability-audit endpoint scaffolding (no new UI actions).
+- Promoter capability transition persistence/read enrichment (slice 96):
+  - Added additive Prisma model/table `UserCapabilityGrant` via migration `20260224200000_add_user_capability_grants`.
+  - `POST /registrar/code/redeem` now upserts active user capability grants with registrar provenance (`sourceRegistrarEntryId`, `sourceRegistrarCodeId`).
+  - Promoter submitter read surfaces (`GET /registrar/promoter/entries`, `GET /registrar/promoter/:entryId`) now include `promoterCapability` transition summary fields.
+  - Added registrar service coverage for promoter capability summary mapping and redemption-to-grant persistence behavior.
+  - Updated identity/registrar specs with implemented state and model/migration references.
+- Registrar capability-code verify/redeem API primitives (slice 95):
+  - Added `POST /registrar/code/verify` (auth required) for registrar capability-code eligibility checks before redemption.
+  - Added `POST /registrar/code/redeem` (auth required) for authenticated code redemption.
+  - Enforced redemption guards in service/controller path:
+    - linked entry must be `type = promoter_registration`,
+    - linked entry must be `status = approved`,
+    - code must be `issued`, non-expired, and not already redeemed.
+  - Added registrar unit coverage for verify/redeem success + guard paths and DTO/controller contract coverage.
+  - Updated web registrar contract inventory and typed client scaffolding with concrete verify/redeem endpoint paths (no new UI actions).
 - Telegram bridge near-real-time long-poll loop (slice 92):
   - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
   - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.

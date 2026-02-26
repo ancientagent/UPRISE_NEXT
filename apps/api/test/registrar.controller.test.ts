@@ -248,6 +248,121 @@ describe('RegistrarController', () => {
     });
   });
 
+  it('reads promoter capability audit through registrar service', async () => {
+    const registrarService = {
+      listPromoterCapabilityAudit: jest.fn().mockResolvedValue({
+        registrarEntryId: 'reg-promoter-1',
+        total: 2,
+        events: [{ id: 'audit-2' }, { id: 'audit-1' }],
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.getMyPromoterCapabilityAudit('reg-promoter-1', {
+      user: { userId: 'u-1' },
+    });
+
+    expect(registrarService.listPromoterCapabilityAudit).toHaveBeenCalledWith('u-1', 'reg-promoter-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-promoter-1',
+        total: 2,
+        events: [{ id: 'audit-2' }, { id: 'audit-1' }],
+      },
+    });
+  });
+
+  it('propagates promoter capability audit read errors from registrar service', async () => {
+    const registrarService = {
+      listPromoterCapabilityAudit: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.getMyPromoterCapabilityAudit('reg-promoter-1', { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(ForbiddenException);
+    expect(registrarService.listPromoterCapabilityAudit).toHaveBeenCalledWith('u-1', 'reg-promoter-1');
+  });
+
+  it('verifies registrar code through registrar service', async () => {
+    const registrarService = {
+      verifyRegistrarCode: jest.fn().mockResolvedValue({
+        id: 'rcode-1',
+        registrarEntryId: 'reg-promoter-1',
+        capability: 'promoter_capability',
+        status: 'issued',
+        redeemable: true,
+      }),
+    } as any;
+
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.verifyRegistrarCode({ code: 'PRC-VALID-CODE' });
+
+    expect(registrarService.verifyRegistrarCode).toHaveBeenCalledWith('PRC-VALID-CODE');
+    expect(response).toEqual({
+      success: true,
+      data: expect.objectContaining({
+        id: 'rcode-1',
+        registrarEntryId: 'reg-promoter-1',
+        status: 'issued',
+        redeemable: true,
+      }),
+    });
+  });
+
+  it('propagates registrar code verify errors from registrar service', async () => {
+    const registrarService = {
+      verifyRegistrarCode: jest.fn().mockRejectedValue(new NotFoundException('Registrar code not found')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(controller.verifyRegistrarCode({ code: 'PRC-MISSING' })).rejects.toThrow(NotFoundException);
+    expect(registrarService.verifyRegistrarCode).toHaveBeenCalledWith('PRC-MISSING');
+  });
+
+  it('redeems registrar code through registrar service', async () => {
+    const registrarService = {
+      redeemRegistrarCodeForUser: jest.fn().mockResolvedValue({
+        id: 'rcode-1',
+        registrarEntryId: 'reg-promoter-1',
+        capability: 'promoter_capability',
+        status: 'redeemed',
+        redeemedByUserId: 'u-1',
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.redeemRegistrarCode(
+      { code: 'PRC-VALID-CODE' },
+      { user: { userId: 'u-1' } },
+    );
+
+    expect(registrarService.redeemRegistrarCodeForUser).toHaveBeenCalledWith('u-1', 'PRC-VALID-CODE');
+    expect(response).toEqual({
+      success: true,
+      data: expect.objectContaining({
+        id: 'rcode-1',
+        registrarEntryId: 'reg-promoter-1',
+        status: 'redeemed',
+        redeemedByUserId: 'u-1',
+      }),
+    });
+  });
+
+  it('propagates registrar code redeem errors from registrar service', async () => {
+    const registrarService = {
+      redeemRegistrarCodeForUser: jest.fn().mockRejectedValue(new ForbiddenException('Registrar code has expired')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.redeemRegistrarCode({ code: 'PRC-EXPIRED' }, { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(ForbiddenException);
+    expect(registrarService.redeemRegistrarCodeForUser).toHaveBeenCalledWith('u-1', 'PRC-EXPIRED');
+  });
+
   it('propagates promoter list read errors from registrar service', async () => {
     const registrarService = {
       listPromoterRegistrations: jest.fn().mockRejectedValue(new ForbiddenException('No access')),

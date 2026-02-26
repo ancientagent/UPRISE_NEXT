@@ -22,6 +22,17 @@ function run(args, expectedCode = 0) {
   return result;
 }
 
+function runExpectFail(args, expectedMessage) {
+  const result = run(args, 1);
+  if (expectedMessage) {
+    assert.ok(
+      result.stderr.includes(expectedMessage),
+      `Expected stderr to include "${expectedMessage}" but got:\n${result.stderr}`,
+    );
+  }
+  return result;
+}
+
 function main() {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-control-test-'));
   const queuePath = path.join(tempDir, 'queue.json');
@@ -61,6 +72,236 @@ function main() {
     '--priority',
     '100',
   ]);
+
+  const queueAfterAssign = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  const assignedTask = queueAfterAssign.tasks.find((task) => task.id === 'T1');
+  assert.ok(assignedTask.directives, 'directives should be auto-attached on assign');
+  assert.equal(assignedTask.directives.version, '2026-02-25');
+  assert.ok(
+    assignedTask.directives.requiredReading.includes('docs/STRATEGY_CRITICAL_INFRA_NOTE.md'),
+    'required reading should include strategy critical infra note',
+  );
+  assert.ok(
+    assignedTask.directives.validationGate.includes('pnpm run docs:lint'),
+    'validation gate should include docs lint',
+  );
+  assert.ok(
+    assignedTask.directives.parallelGuardrails,
+    'directives should include parallel guardrails',
+  );
+  assert.ok(
+    assignedTask.directives.agentRoleProfiles['codex-orchestrator'],
+    'directives should include orchestrator role profile',
+  );
+
+  const queueWithoutDirectives = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  const t1Legacy = queueWithoutDirectives.tasks.find((task) => task.id === 'T1');
+  const t2Legacy = queueWithoutDirectives.tasks.find((task) => task.id === 'T2');
+  delete t1Legacy.directives.parallelGuardrails;
+  delete t1Legacy.directives.agentRoleProfiles;
+  delete t2Legacy.directives;
+  fs.writeFileSync(queuePath, `${JSON.stringify(queueWithoutDirectives, null, 2)}\n`);
+
+  run(['backfill-directives', '--queue', queuePath, '--lanes', lanesPath]);
+  const queueAfterBackfill = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  const t1AfterBackfill = queueAfterBackfill.tasks.find((task) => task.id === 'T1');
+  const t2AfterBackfill = queueAfterBackfill.tasks.find((task) => task.id === 'T2');
+  assert.ok(
+    t1AfterBackfill.directives.parallelGuardrails,
+    'backfill should patch missing directive guardrail blocks',
+  );
+  assert.ok(t2AfterBackfill.directives, 'directives should be backfilled for legacy tasks');
+
+  run([
+    'assign',
+    '--queue',
+    queuePath,
+    '--lanes',
+    lanesPath,
+    '--id',
+    'SP1',
+    '--title',
+    'Spawn parent',
+    '--lane',
+    'api-schema',
+    '--allow-spawn',
+    '--max-children',
+    '2',
+    '--max-depth',
+    '1',
+  ]);
+
+  runExpectFail(
+    [
+      'assign',
+      '--queue',
+      queuePath,
+      '--lanes',
+      lanesPath,
+      '--id',
+      'SP1-C0',
+      '--title',
+      'Child without parent dependency',
+      '--lane',
+      'docs-program',
+      '--parent-id',
+      'SP1',
+      '--planned-report',
+      'docs/handoff/reports/sp1-c0.md',
+      '--rollback-note',
+      'Revert child if needed',
+    ],
+    'must include --depends-on SP1',
+  );
+
+  runExpectFail(
+    [
+      'assign',
+      '--queue',
+      queuePath,
+      '--lanes',
+      lanesPath,
+      '--id',
+      'SP1-C0B',
+      '--title',
+      'Child missing report',
+      '--lane',
+      'docs-program',
+      '--parent-id',
+      'SP1',
+      '--depends-on',
+      'SP1',
+      '--rollback-note',
+      'Revert child if needed',
+    ],
+    'requires --planned-report',
+  );
+
+  run([
+    'assign',
+    '--queue',
+    queuePath,
+    '--lanes',
+    lanesPath,
+    '--id',
+    'SP1-C1',
+    '--title',
+    'First child',
+    '--lane',
+    'docs-program',
+    '--parent-id',
+    'SP1',
+    '--depends-on',
+    'SP1',
+    '--allow-spawn',
+    '--max-depth',
+    '1',
+    '--planned-report',
+    'docs/handoff/reports/sp1-c1.md',
+    '--rollback-note',
+    'Revert child if needed',
+  ]);
+
+  run([
+    'assign',
+    '--queue',
+    queuePath,
+    '--lanes',
+    lanesPath,
+    '--id',
+    'SP1-C2',
+    '--title',
+    'Second child',
+    '--lane',
+    'review-risk',
+    '--parent-id',
+    'SP1',
+    '--depends-on',
+    'SP1',
+    '--planned-report',
+    'docs/handoff/reports/sp1-c2.md',
+    '--rollback-note',
+    'Revert child if needed',
+  ]);
+
+  runExpectFail(
+    [
+      'assign',
+      '--queue',
+      queuePath,
+      '--lanes',
+      lanesPath,
+      '--id',
+      'SP1-C3',
+      '--title',
+      'Third child should fail',
+      '--lane',
+      'docs-program',
+      '--parent-id',
+      'SP1',
+      '--depends-on',
+      'SP1',
+      '--planned-report',
+      'docs/handoff/reports/sp1-c3.md',
+      '--rollback-note',
+      'Revert child if needed',
+    ],
+    'already has 2 children',
+  );
+
+  runExpectFail(
+    [
+      'assign',
+      '--queue',
+      queuePath,
+      '--lanes',
+      lanesPath,
+      '--id',
+      'SP1-C1-G1',
+      '--title',
+      'Grandchild should fail depth guard',
+      '--lane',
+      'docs-program',
+      '--parent-id',
+      'SP1-C1',
+      '--depends-on',
+      'SP1-C1',
+      '--planned-report',
+      'docs/handoff/reports/sp1-c1-g1.md',
+      '--rollback-note',
+      'Revert child if needed',
+    ],
+    'exceeds parent SP1-C1 max depth',
+  );
+
+  runExpectFail(
+    [
+      'assign',
+      '--queue',
+      queuePath,
+      '--lanes',
+      lanesPath,
+      '--id',
+      'SP-NON-ORCH',
+      '--title',
+      'Non orchestrator spawn',
+      '--lane',
+      'api-schema',
+      '--assigned-by',
+      'codex-api-1',
+      '--allow-spawn',
+    ],
+    'Only orchestrator identities can assign tasks with --allow-spawn',
+  );
+
+  const queueAfterGuardrailAssign = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  const spawnParent = queueAfterGuardrailAssign.tasks.find((task) => task.id === 'SP1');
+  const spawnChildOne = queueAfterGuardrailAssign.tasks.find((task) => task.id === 'SP1-C1');
+  assert.deepEqual(spawnParent.children, ['SP1-C1', 'SP1-C2']);
+  assert.equal(spawnChildOne.depth, 1);
+  assert.equal(spawnChildOne.parentId, 'SP1');
+  assert.equal(spawnChildOne.planned.reportPath, 'docs/handoff/reports/sp1-c1.md');
+  assert.equal(spawnChildOne.planned.rollbackNote, 'Revert child if needed');
 
   const claimedOne = run([
     'claim',
@@ -128,7 +369,7 @@ function main() {
   const polledJson = JSON.parse(polled.stdout);
   assert.equal(polledJson.needingReview.length, 2);
   assert.equal(polledJson.blocked.length, 1);
-  assert.equal(polledJson.summary.total, 2);
+  assert.equal(polledJson.summary.total, 5);
 
   run(['ack', '--queue', queuePath, '--lanes', lanesPath, '--id', 'T1']);
   run(['ack', '--queue', queuePath, '--lanes', lanesPath, '--id', 'T2']);

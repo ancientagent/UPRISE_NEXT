@@ -101,6 +101,32 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Fields are derived from the existing `RegistrarInviteDelivery` row joined per member; no schema migration required.
   - Raw `deliveries` array is not exposed; only the mapped outcome fields are returned.
   - Additive/non-breaking: callers that do not consume the new fields are unaffected.
+- Registrar capability-code verification/redemption primitives (slice 95):
+  - `POST /registrar/code/verify` implemented (auth required) for capability-code validation prior to redemption.
+  - `POST /registrar/code/redeem` implemented (auth required) to mark redeemable registrar codes as redeemed.
+  - Redemption is guarded by locked policy constraints:
+    - linked registrar entry type must be `promoter_registration`,
+    - linked registrar entry status must be `approved`,
+    - code must be in `issued` status and not expired/redeemed.
+  - Additive API surface; no destructive migration.
+- Promoter capability transition state persistence/read enrichment (slice 96):
+  - `POST /registrar/code/redeem` now upserts additive `UserCapabilityGrant` rows for authenticated redeemers.
+  - Promoter submitter read surfaces now include `promoterCapability` transition summary:
+    - `codeIssuedCount`,
+    - `latestCodeStatus`,
+    - `latestCodeIssuedAt`,
+    - `latestCodeRedeemedAt`,
+    - `granted`,
+    - `grantedAt`.
+  - Capability grant provenance is linked to source registrar entry/code IDs for traceability.
+- Capability grant audit persistence/read surface (slice 97):
+  - Capability issuance/redemption/grant transitions now persist audit events in `CapabilityGrantAuditLog`.
+  - Audit events are recorded for:
+    - `code_issued`,
+    - `code_redeemed`,
+    - `capability_granted`.
+  - Submitter-owned promoter audit read endpoint implemented:
+    - `GET /registrar/promoter/:entryId/capability-audit`.
 - Registrar registration status list read surface (slice 11):
   - `GET /registrar/artist/entries` implemented.
   - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
@@ -151,8 +177,8 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - No new registrar UI action/CTA added; web surface remains action-gated per spec.
 
 ### Deferred (Not Implemented Yet)
-- Role registration code issuance and verification workflows.
-- Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
+- Registrar-admin approval/issuance orchestration workflows for promoter capability codes.
+- Registrar-gated promoter capability revocation/admin-management flows.
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
@@ -183,12 +209,16 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
 - `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
 - `RegistrarInviteDelivery` (`registrarArtistMemberId`, `email`, `status`, `payload`, `dispatchedAt`, timestamps)
+- `UserCapabilityGrant` (`userId`, `capability`, `status`, `sourceRegistrarEntryId?`, `sourceRegistrarCodeId?`, `grantedAt`, `revokedAt?`, timestamps)
+- `CapabilityGrantAuditLog` (`capability`, `action`, `actorType`, `targetUserId?`, `actorUserId?`, `registrarEntryId?`, `registrarCodeId?`, `metadata?`, `createdAt`)
 
 ### Migrations
 - `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
 - `20260220141000_add_registrar_entries` adds `registrar_entries` for Home Scene-scoped registration submissions.
 - `20260220170000_add_registrar_artist_members` adds `registrar_artist_members` roster/invite persistence for registrar artist submissions.
 - `20260220183000_add_registrar_invite_delivery` adds invite token fields + `registrar_invite_deliveries` queue table.
+- `20260224200000_add_user_capability_grants` adds additive `user_capability_grants` for capability transition tracking.
+- `20260224213000_add_capability_grant_audit_logs` adds additive `capability_grant_audit_logs` for registrar capability traceability.
 
 ## API Design
 ### Endpoints
@@ -203,6 +233,9 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registrar entries + scene context |
 | GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registrar entry detail + scene context |
+| GET | `/registrar/promoter/:entryId/capability-audit` | required | Read submitter-owned promoter capability audit events |
+| POST | `/registrar/code/verify` | required | Verify registrar capability-code eligibility for redemption |
+| POST | `/registrar/code/redeem` | required | Redeem registrar capability-code for authenticated user |
 | GET | `/registrar/project/entries` | required | List submitter-owned project registrar entries + scene context |
 | GET | `/registrar/project/:entryId` | required | Read submitter-owned project registrar entry detail + scene context |
 | GET | `/registrar/sect-motion/entries` | required | List submitter-owned sect-motion registrar entries + scene context |

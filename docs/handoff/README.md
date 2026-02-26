@@ -12,6 +12,7 @@ Working notes and completion reports that help future contributors quickly under
 
 ## Coordination Control Plane
 - [`agent-control/README.md`](./agent-control/README.md) — Lane-based autonomous assignment/claim/report workflow.
+- [`agent-control/AGENT_DIRECTIVES.md`](./agent-control/AGENT_DIRECTIVES.md) — Standardized 6-agent directive templates and spawn guardrails.
 
 ## Agent Documents
 - [`agent-deepagent-build-handoff-2025-12-12.md`](./agent-deepagent-build-handoff-2025-12-12.md) — Build investigation + fixes handoff.
@@ -105,6 +106,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-25_agent-queue-guardrails-and-directive-templates.md`](./2026-02-25_agent-queue-guardrails-and-directive-templates.md)
 - [`2026-02-25_P3-WEB-098A-project-contract-scaffolding.md`](./2026-02-25_P3-WEB-098A-project-contract-scaffolding.md)
 - [`2026-02-25_P3-QA-098A-project-sect-validation.md`](./2026-02-25_P3-QA-098A-project-sect-validation.md)
+- [`2026-02-25_P3-QA-095B-regression-95-97.md`](./2026-02-25_P3-QA-095B-regression-95-97.md)
 - [`2026-02-25_P3-DOC-098A-project-sect-doc-sync.md`](./2026-02-25_P3-DOC-098A-project-sect-doc-sync.md)
 - [`2026-02-25_P3-REV-098A-project-sect-risk-signoff.md`](./2026-02-25_P3-REV-098A-project-sect-risk-signoff.md)
 - [`2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md`](./2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md)

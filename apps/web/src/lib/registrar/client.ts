@@ -1,6 +1,11 @@
 import { api } from '@/lib/api';
 import type { ArtistBandRegistrationPayload } from '@/lib/registrar/artistRegistration';
-import { registrarArtistEndpoints, registrarProjectEndpoints } from '@/lib/registrar/contractInventory';
+import {
+  registrarArtistEndpoints,
+  registrarCodeEndpoints,
+  registrarProjectEndpoints,
+  registrarPromoterEndpoints,
+} from '@/lib/registrar/contractInventory';
 
 export interface RegistrarSceneSummary {
   id: string;
@@ -112,6 +117,14 @@ export interface RegistrarPromoterEntry {
   payload: {
     productionName: string | null;
   };
+  promoterCapability: {
+    codeIssuedCount: number;
+    latestCodeStatus: string | null;
+    latestCodeIssuedAt: string | null;
+    latestCodeRedeemedAt: string | null;
+    granted: boolean;
+    grantedAt: string | null;
+  };
   scene: RegistrarSceneSummary;
   createdAt: string;
   updatedAt: string;
@@ -123,6 +136,23 @@ export interface RegistrarPromoterEntriesResponse {
   entries: RegistrarPromoterEntry[];
 }
 
+export interface RegistrarPromoterCapabilityAuditEvent {
+  id: string;
+  action: string;
+  actorType: string;
+  targetUserId: string | null;
+  actorUserId: string | null;
+  registrarCodeId: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export interface RegistrarPromoterCapabilityAuditResponse {
+  registrarEntryId: string;
+  total: number;
+  events: RegistrarPromoterCapabilityAuditEvent[];
+}
+
 export interface RegistrarCodeIssueRecord {
   id: string;
   registrarEntryId: string;
@@ -132,6 +162,17 @@ export interface RegistrarCodeIssueRecord {
   expiresAt: string | null;
   createdAt: string;
   code: string;
+}
+
+export interface RegistrarCodeVerifyRecord {
+  id: string;
+  registrarEntryId: string;
+  capability: string;
+  issuerType: 'system';
+  status: 'issued' | string;
+  expiresAt: string | null;
+  createdAt: string;
+  redeemable: boolean;
 }
 
 export interface RegistrarCodeRedeemRecord {
@@ -146,16 +187,15 @@ export interface RegistrarCodeRedeemRecord {
 }
 
 export interface RegistrarCodeApiScaffold {
-  issueForApprovedPromoterEntryEndpoint: null;
-  redeemEndpoint: null;
-  verifyEndpoint: null;
+  issueForApprovedPromoterEntryEndpoint: string | null;
+  redeemEndpoint: string | null;
+  verifyEndpoint: string | null;
 }
 
-// Endpoint placeholders stay null until the API exposes registrar-code routes.
 export const REGISTRAR_CODE_API_SCAFFOLD: RegistrarCodeApiScaffold = {
   issueForApprovedPromoterEntryEndpoint: null,
-  redeemEndpoint: null,
-  verifyEndpoint: null,
+  redeemEndpoint: registrarCodeEndpoints.redeem(),
+  verifyEndpoint: registrarCodeEndpoints.verify(),
 };
 
 export async function submitArtistBandRegistration(
@@ -249,14 +289,44 @@ export async function syncArtistBandMembers(
 }
 
 export async function listPromoterRegistrations(token: string): Promise<RegistrarPromoterEntriesResponse> {
-  const response = await api.get<RegistrarPromoterEntriesResponse>('/registrar/promoter/entries', { token });
+  const response = await api.get<RegistrarPromoterEntriesResponse>(registrarPromoterEndpoints.listEntries(), { token });
   return response.data ?? { total: 0, countsByStatus: {}, entries: [] };
 }
 
 export async function getPromoterRegistration(entryId: string, token: string): Promise<RegistrarPromoterEntry> {
-  const response = await api.get<RegistrarPromoterEntry>(`/registrar/promoter/${entryId}`, { token });
+  const response = await api.get<RegistrarPromoterEntry>(registrarPromoterEndpoints.detail(entryId), { token });
   if (!response.data) {
     throw new Error('Promoter registration response was empty.');
+  }
+  return response.data;
+}
+
+export async function getPromoterCapabilityAudit(
+  entryId: string,
+  token: string,
+): Promise<RegistrarPromoterCapabilityAuditResponse> {
+  const response = await api.get<RegistrarPromoterCapabilityAuditResponse>(
+    registrarPromoterEndpoints.capabilityAudit(entryId),
+    { token },
+  );
+  if (!response.data) {
+    throw new Error('Promoter capability audit response was empty.');
+  }
+  return response.data;
+}
+
+export async function verifyRegistrarCode(code: string, token: string): Promise<RegistrarCodeVerifyRecord> {
+  const response = await api.post<RegistrarCodeVerifyRecord>(registrarCodeEndpoints.verify(), { code }, { token });
+  if (!response.data) {
+    throw new Error('Registrar code verify response was empty.');
+  }
+  return response.data;
+}
+
+export async function redeemRegistrarCode(code: string, token: string): Promise<RegistrarCodeRedeemRecord> {
+  const response = await api.post<RegistrarCodeRedeemRecord>(registrarCodeEndpoints.redeem(), { code }, { token });
+  if (!response.data) {
+    throw new Error('Registrar code redeem response was empty.');
   }
   return response.data;
 }

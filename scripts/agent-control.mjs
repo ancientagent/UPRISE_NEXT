@@ -4,8 +4,82 @@ import path from 'node:path';
 
 const DEFAULT_QUEUE_PATH = 'docs/handoff/agent-control/queue.json';
 const DEFAULT_LANES_PATH = 'docs/handoff/agent-control/lanes.json';
+const DIRECTIVES_VERSION = '2026-02-25';
+const DEFAULT_MAX_SPAWN_DEPTH = 1;
+const DEFAULT_MAX_CHILDREN_PER_TASK = 2;
 
 const STATUSES = new Set(['queued', 'in_progress', 'done', 'blocked', 'canceled']);
+
+const REQUIRED_READING_ORDER = [
+  'docs/STRATEGY_CRITICAL_INFRA_NOTE.md',
+  'docs/RUNBOOK.md',
+  'docs/FEATURE_DRIFT_GUARDRAILS.md',
+  'docs/architecture/UPRISE_OVERVIEW.md',
+  'docs/PROJECT_STRUCTURE.md',
+  'apps/web/WEB_TIER_BOUNDARY.md',
+  'docs/AGENT_STRATEGY_AND_HANDOFF.md',
+  'docs/README.md',
+  'docs/solutions/README.md',
+];
+
+const STANDING_ORDERS = [
+  'Canon/spec authority only; no feature drift.',
+  'Use pnpm only in UPRISE_NEXT.',
+  'Respect web-tier boundary; no server/data-tier imports in web.',
+  'Keep work PR-safe by slice; additive-first migrations.',
+  'Run required validation gates and report exact command output.',
+  'Update touched specs, docs/CHANGELOG.md, and add handoff note for meaningful changes.',
+  'Use lane scope only and do not edit outside allowed paths.',
+];
+
+const VALIDATION_GATE = [
+  'pnpm run docs:lint',
+  'pnpm run infra-policy-check',
+  'targeted tests for touched area',
+  'relevant typecheck/build',
+];
+
+const AGENT_ROLE_PROFILES = {
+  'codex-orchestrator': {
+    lane: 'orchestrator',
+    responsibility: 'assign/dependency sequencing/review acknowledgements and controlled spawning',
+    spawnPolicy: 'may create child tasks when queue guardrails are satisfied',
+  },
+  'codex-api-1': {
+    lane: 'api-schema',
+    responsibility: 'API/schema/migration implementation and backend tests',
+    spawnPolicy: 'propose splits; spawn only when parent task explicitly enables allowSpawn',
+  },
+  'codex-web-1': {
+    lane: 'web-contracts',
+    responsibility: 'web contract/client scaffolding and web-tier-safe integrations',
+    spawnPolicy: 'propose splits; spawn only when parent task explicitly enables allowSpawn',
+  },
+  'codex-qa-1': {
+    lane: 'qa-ci',
+    responsibility: 'validation lanes, CI checks, and regression coverage',
+    spawnPolicy: 'propose splits; spawn only when parent task explicitly enables allowSpawn',
+  },
+  'codex-docs-1': {
+    lane: 'docs-program',
+    responsibility: 'spec/changelog/handoff updates and roadmap integrity',
+    spawnPolicy: 'propose splits; spawn only when parent task explicitly enables allowSpawn',
+  },
+  'codex-review-1': {
+    lane: 'review-risk',
+    responsibility: 'risk findings, rollback notes, drift enforcement, and sign-off',
+    spawnPolicy: 'propose splits; spawn only when parent task explicitly enables allowSpawn',
+  },
+};
+
+const PARALLEL_GUARDRAILS = {
+  orchestratorMaySpawn: true,
+  laneAgentsRequireAllowSpawn: true,
+  orchestratorOnlySpawnByDefault: true,
+  maxDepth: DEFAULT_MAX_SPAWN_DEPTH,
+  maxChildrenPerTask: DEFAULT_MAX_CHILDREN_PER_TASK,
+  requiredChildFields: ['id', 'lane', 'dependsOn', 'plannedReportPath', 'rollbackNote'],
+};
 
 function nowIso() {
   return new Date().toISOString();
@@ -57,6 +131,32 @@ function splitCsv(value) {
     .filter(Boolean);
 }
 
+function parseBoolean(value, fallback = false) {
+  if (value === true) return true;
+  if (value === false || value == null) return fallback;
+  if (typeof value !== 'string') return fallback;
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true' || normalized === '1' || normalized === 'yes') return true;
+  if (normalized === 'false' || normalized === '0' || normalized === 'no') return false;
+  return fallback;
+}
+
+function parsePositiveInt(value, fallback, label) {
+  if (value == null || value === true) return fallback;
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    throw new Error(`${label} must be a positive integer`);
+  }
+  return parsed;
+}
+
+function isOrchestratorIdentity(identity) {
+  if (typeof identity !== 'string' || identity.trim().length === 0) return false;
+  const normalized = identity.trim().toLowerCase();
+  return normalized === 'orchestrator' || normalized.startsWith('codex-orchestrator');
+}
+
 function compareTasks(a, b) {
   const aPriority = Number.isFinite(a.priority) ? a.priority : 0;
   const bPriority = Number.isFinite(b.priority) ? b.priority : 0;
@@ -78,7 +178,8 @@ function printUsage() {
 
 Usage:
   node scripts/agent-control.mjs init [--queue PATH] [--lanes PATH] [--force]
-  node scripts/agent-control.mjs assign --id ID --title TITLE --lane LANE [--phase PHASE] [--priority N] [--depends-on id1,id2] [--paths p1,p2]
+  node scripts/agent-control.mjs backfill-directives [--queue PATH]
+  node scripts/agent-control.mjs assign --id ID --title TITLE --lane LANE [--phase PHASE] [--priority N] [--depends-on id1,id2] [--paths p1,p2] [--parent-id ID] [--allow-spawn] [--max-depth N] [--max-children N] [--planned-report PATH] [--rollback-note TEXT]
   node scripts/agent-control.mjs claim --lane LANE --agent NAME [--branch BRANCH] [--json]
   node scripts/agent-control.mjs complete --id ID --agent NAME [--branch BRANCH] [--commit HASH] [--pr URL] [--report PATH] [--notes TEXT]
   node scripts/agent-control.mjs block --id ID --agent NAME --reason TEXT
@@ -190,6 +291,57 @@ function formatTaskLine(task) {
   return `${task.id} | ${task.lane} | ${task.status} | ${task.title} | updated=${updated}`;
 }
 
+function buildDefaultDirectives() {
+  return {
+    version: DIRECTIVES_VERSION,
+    requiredReading: [...REQUIRED_READING_ORDER],
+    standingOrders: [...STANDING_ORDERS],
+    validationGate: [...VALIDATION_GATE],
+    parallelGuardrails: {
+      ...PARALLEL_GUARDRAILS,
+      requiredChildFields: [...PARALLEL_GUARDRAILS.requiredChildFields],
+    },
+    agentRoleProfiles: AGENT_ROLE_PROFILES,
+  };
+}
+
+function ensureDirectiveShape(task) {
+  const defaults = buildDefaultDirectives();
+  let changed = false;
+
+  if (!task.directives || typeof task.directives !== 'object') {
+    task.directives = defaults;
+    return true;
+  }
+
+  if (!Array.isArray(task.directives.requiredReading)) {
+    task.directives.requiredReading = defaults.requiredReading;
+    changed = true;
+  }
+  if (!Array.isArray(task.directives.standingOrders)) {
+    task.directives.standingOrders = defaults.standingOrders;
+    changed = true;
+  }
+  if (!Array.isArray(task.directives.validationGate)) {
+    task.directives.validationGate = defaults.validationGate;
+    changed = true;
+  }
+  if (!task.directives.parallelGuardrails || typeof task.directives.parallelGuardrails !== 'object') {
+    task.directives.parallelGuardrails = defaults.parallelGuardrails;
+    changed = true;
+  }
+  if (!task.directives.agentRoleProfiles || typeof task.directives.agentRoleProfiles !== 'object') {
+    task.directives.agentRoleProfiles = defaults.agentRoleProfiles;
+    changed = true;
+  }
+  if (task.directives.version !== DIRECTIVES_VERSION) {
+    task.directives.version = DIRECTIVES_VERSION;
+    changed = true;
+  }
+
+  return changed;
+}
+
 async function main() {
   const { command, options } = parseArgs(process.argv.slice(2));
   const queuePath = options.queue || DEFAULT_QUEUE_PATH;
@@ -229,6 +381,28 @@ async function main() {
 
   const { byId: lanesById } = loadLanes(lanesPath);
 
+  if (command === 'backfill-directives') {
+    let updatedCount = 0;
+    await withQueueLock(queuePath, async () => {
+      const queue = loadQueue(queuePath);
+      const ts = nowIso();
+      for (const task of queue.tasks) {
+        if (ensureDirectiveShape(task)) {
+          task.updatedAt = ts;
+          updatedCount += 1;
+        }
+      }
+
+      if (updatedCount > 0) {
+        queue.updatedAt = ts;
+        writeJson(queuePath, queue);
+      }
+    });
+
+    console.log(`Backfilled directives on ${updatedCount} task(s)`);
+    return;
+  }
+
   if (command === 'assign') {
     const id = options.id;
     const title = options.title;
@@ -247,11 +421,79 @@ async function main() {
     const priority = Number(options.priority ?? 100);
     const phase = options.phase ?? 'phase3';
     const assignedBy = options['assigned-by'] ?? 'orchestrator';
+    const parentId = options['parent-id'] ?? null;
+    const allowSpawn = parseBoolean(options['allow-spawn'], false);
+    const maxDepth = parsePositiveInt(options['max-depth'], DEFAULT_MAX_SPAWN_DEPTH, '--max-depth');
+    const maxChildren = parsePositiveInt(
+      options['max-children'],
+      DEFAULT_MAX_CHILDREN_PER_TASK,
+      '--max-children',
+    );
+    const plannedReportPath = options['planned-report'] ?? null;
+    const rollbackNote = options['rollback-note'] ?? null;
+
+    if (allowSpawn && !isOrchestratorIdentity(assignedBy)) {
+      throw new Error('Only orchestrator identities can assign tasks with --allow-spawn');
+    }
 
     await withQueueLock(queuePath, async () => {
       const queue = loadQueue(queuePath);
       if (taskById(queue, id)) {
         throw new Error(`Task "${id}" already exists`);
+      }
+
+      let depth = 0;
+      if (parentId) {
+        const parent = taskById(queue, parentId);
+        if (!parent) {
+          throw new Error(`Parent task not found: ${parentId}`);
+        }
+
+        const parentPolicy = parent.spawnPolicy ?? {};
+        const parentAllowsSpawn = parseBoolean(parentPolicy.allowSpawn, false);
+        if (!parentAllowsSpawn) {
+          throw new Error(`Parent task ${parentId} does not allow child spawning`);
+        }
+
+        const parentDepth = Number.isInteger(parent.depth) ? parent.depth : 0;
+        const parentMaxDepth = parsePositiveInt(
+          parentPolicy.maxDepth,
+          DEFAULT_MAX_SPAWN_DEPTH,
+          `parent ${parentId} maxDepth`,
+        );
+        depth = parentDepth + 1;
+        if (depth > parentMaxDepth) {
+          throw new Error(
+            `Child task depth ${depth} exceeds parent ${parentId} max depth ${parentMaxDepth}`,
+          );
+        }
+
+        const children = Array.isArray(parent.children) ? parent.children : [];
+        const parentMaxChildren = parsePositiveInt(
+          parentPolicy.maxChildren,
+          DEFAULT_MAX_CHILDREN_PER_TASK,
+          `parent ${parentId} maxChildren`,
+        );
+        if (children.length >= parentMaxChildren) {
+          throw new Error(
+            `Parent task ${parentId} already has ${children.length} children (max ${parentMaxChildren})`,
+          );
+        }
+
+        if (dependsOn.length === 0 || !dependsOn.includes(parentId)) {
+          throw new Error(
+            `Child task ${id} must include --depends-on ${parentId} to preserve execution order`,
+          );
+        }
+        if (!plannedReportPath) {
+          throw new Error(`Child task ${id} requires --planned-report`);
+        }
+        if (!rollbackNote) {
+          throw new Error(`Child task ${id} requires --rollback-note`);
+        }
+
+        parent.children = [...children, id];
+        parent.updatedAt = assignedAt;
       }
 
       queue.tasks.push({
@@ -263,6 +505,19 @@ async function main() {
         dependsOn,
         allowedPaths: allowedPaths.length > 0 ? allowedPaths : lanesById.get(lane).allowedPaths ?? [],
         status: 'queued',
+        parentId,
+        depth,
+        children: [],
+        spawnPolicy: {
+          allowSpawn,
+          orchestratorOnly: true,
+          maxDepth,
+          maxChildren,
+        },
+        planned: {
+          reportPath: plannedReportPath,
+          rollbackNote,
+        },
         assignedBy,
         assignedAt,
         updatedAt: assignedAt,
@@ -284,6 +539,7 @@ async function main() {
           reportPath: null,
           notes: null,
         },
+        directives: buildDefaultDirectives(),
       });
 
       queue.updatedAt = assignedAt;
@@ -326,6 +582,9 @@ async function main() {
       claimedTask.claimedBy = agent;
       claimedTask.claimedAt = ts;
       claimedTask.updatedAt = ts;
+      if (ensureDirectiveShape(claimedTask)) {
+        claimedTask.updatedAt = ts;
+      }
       if (branch) claimedTask.result.branch = branch;
       queue.updatedAt = ts;
       writeJson(queuePath, queue);

@@ -75,6 +75,27 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - `deliveryStatus` reflects the current `RegistrarInviteDelivery.status` (`queued`/`sent`/`failed`) or `null` when no delivery row exists.
   - `sentAt` is the `dispatchedAt` timestamp when status is `sent`, else `null`; `failedAt` is the `dispatchedAt` timestamp when status is `failed`, else `null`.
   - No schema migration; derived from existing `RegistrarInviteDelivery` join. Additive/non-breaking.
+- Registrar capability-code verification/redeem API primitives (slice 95):
+  - `POST /registrar/code/verify` validates registrar capability codes for authenticated users before redemption.
+  - `POST /registrar/code/redeem` redeems capability codes for authenticated users.
+  - Guards enforced on both flows:
+    - linked registrar entry type must be `promoter_registration`,
+    - linked registrar entry status must be `approved`,
+    - code must be active (`issued`) and not expired/redeemed.
+- Promoter capability transition persistence/read enrichment (slice 96):
+  - Code redemption now creates/updates additive `UserCapabilityGrant` records for the authenticated user.
+  - Promoter status read surfaces include `promoterCapability` summary fields:
+    - `codeIssuedCount`,
+    - `latestCodeStatus`,
+    - `latestCodeIssuedAt`,
+    - `latestCodeRedeemedAt`,
+    - `granted`,
+    - `grantedAt`.
+  - Capability grants remain additive to base user identity (no account-tree split).
+- Capability grant audit persistence/read surface (slice 97):
+  - Capability transitions now persist audit events (`code_issued`, `code_redeemed`, `capability_granted`) in `CapabilityGrantAuditLog`.
+  - Submitter-owned promoter audit read surface implemented:
+    - `GET /registrar/promoter/:entryId/capability-audit`.
 - Web registrar entry + Artist/Band action intake (slice 10):
   - Plot now exposes Registrar entrypoint action (`Open Registrar`) from Home Scene civic surface.
   - `/registrar` web route includes explicit `Band / Artist Registration` action selection.
@@ -96,9 +117,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.
 
 ### Deferred (Not Implemented Yet)
-- Promoter capability grants.
+- Promoter capability revocation/admin-management APIs.
 - Business profile role surfaces.
-- Capability grant audit log and admin role-management APIs.
+- Admin role-management APIs.
 
 ### Policy Lock (2026-02-24, P3-REV-001)
 - Registrar capability-code issuance is system-only (trusted API-tier registrar paths); no self-issued user codes.
@@ -147,6 +168,12 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `RegistrarInviteDelivery`
   - Stores queued invite delivery payloads for non-platform band members
   - Delivery status state machine (`queued`, `sent`, `failed`)
+- `UserCapabilityGrant`
+  - Stores additive capability grant state for user identities
+  - Includes registrar provenance pointers (`sourceRegistrarEntryId`, `sourceRegistrarCodeId`)
+- `CapabilityGrantAuditLog`
+  - Stores append-oriented capability transition audit events
+  - Includes actor/target provenance and registrar linkage pointers
 
 ### Migrations
 - `20260216004000_add_user_home_scene_and_track_engagement` (home-scene affinity and GPS-related user fields)
@@ -155,6 +182,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - `20260220170000_add_registrar_artist_members` (adds `registrar_artist_members` for registration member roster + invite state)
 - `20260220183000_add_registrar_invite_delivery` (adds invite token fields + `registrar_invite_deliveries` queue persistence)
 - `20260221220000_drop_user_is_artist` (removes legacy `users.isArtist` transitional marker)
+- `20260224200000_add_user_capability_grants` (adds additive `user_capability_grants` capability transition persistence)
+- `20260224213000_add_capability_grant_audit_logs` (adds additive `capability_grant_audit_logs` traceability persistence)
 
 ## API Design
 ### Endpoints
@@ -178,6 +207,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 | GET | `/registrar/artist/:entryId/invites` | required | Read invite roster + status summary for submitter-owned registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registration entries + scene context |
 | GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registration entry detail + scene context |
+| GET | `/registrar/promoter/:entryId/capability-audit` | required | Read submitter-owned promoter capability audit events |
+| POST | `/registrar/code/verify` | required | Verify registrar capability-code eligibility for redemption |
+| POST | `/registrar/code/redeem` | required | Redeem registrar capability-code for authenticated user |
 
 ### Request/Response
 - `POST /auth/register` and `POST /auth/login` use shared schemas from `@uprise/types`.
