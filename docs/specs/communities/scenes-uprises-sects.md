@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-02-25`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -34,11 +34,14 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Community profile read surface is available in web at `apps/web/src/app/community/[id]/page.tsx` using:
   - `GET /communities/:id` for profile metadata
   - `GET /communities/:id/feed` for recent S.E.E.D activity projection
+- Registrar sect-motion submit skeleton exists:
+  - `POST /registrar/sect-motion` creates a Home Scene-scoped registrar entry (`type = sect_motion`, `status = submitted`).
+  - Current primitive enforces scene locality guardrails; threshold validation/approval remains deferred.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
 - Parent-scene routing and taxonomy inference for free-text sect names during onboarding.
-- Registrar motion objects, voting workflow, and automatic Sect-to-Uprise activation.
+- Registrar motion threshold validation, approval workflow, and automatic Sect-to-Uprise activation.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
 ## Non-Functional Requirements

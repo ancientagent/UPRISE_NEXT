@@ -62,6 +62,122 @@ describe('RegistrarController', () => {
     });
   });
 
+  it('submits project registration through registrar service', async () => {
+    const registrarService = {
+      submitProjectRegistration: jest.fn().mockResolvedValue({
+        id: 'reg-project-1',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        createdById: 'u-1',
+        payload: { projectName: 'All-Ages Venue Buildout' },
+      }),
+    } as any;
+
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.submitProjectRegistration(
+      {
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        projectName: 'All-Ages Venue Buildout',
+      },
+      { user: { userId: 'u-1' } },
+    );
+
+    expect(registrarService.submitProjectRegistration).toHaveBeenCalledWith('u-1', {
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      projectName: 'All-Ages Venue Buildout',
+    });
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'reg-project-1',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        createdById: 'u-1',
+        payload: { projectName: 'All-Ages Venue Buildout' },
+      },
+    });
+  });
+
+  it('propagates project submit errors from registrar service', async () => {
+    const registrarService = {
+      submitProjectRegistration: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.submitProjectRegistration(
+        {
+          sceneId: '11111111-1111-1111-1111-111111111111',
+          projectName: 'All-Ages Venue Buildout',
+        },
+        { user: { userId: 'u-1' } },
+      ),
+    ).rejects.toThrow(ForbiddenException);
+    expect(registrarService.submitProjectRegistration).toHaveBeenCalledWith('u-1', {
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      projectName: 'All-Ages Venue Buildout',
+    });
+  });
+
+  it('submits sect-motion registration through registrar service', async () => {
+    const registrarService = {
+      submitSectMotionRegistration: jest.fn().mockResolvedValue({
+        id: 'reg-sect-motion-1',
+        type: 'sect_motion',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        createdById: 'u-1',
+        payload: {},
+      }),
+    } as any;
+
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.submitSectMotionRegistration(
+      {
+        sceneId: '11111111-1111-1111-1111-111111111111',
+      },
+      { user: { userId: 'u-1' } },
+    );
+
+    expect(registrarService.submitSectMotionRegistration).toHaveBeenCalledWith('u-1', {
+      sceneId: '11111111-1111-1111-1111-111111111111',
+    });
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'reg-sect-motion-1',
+        type: 'sect_motion',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        createdById: 'u-1',
+        payload: {},
+      },
+    });
+  });
+
+  it('propagates sect-motion submit errors from registrar service', async () => {
+    const registrarService = {
+      submitSectMotionRegistration: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.submitSectMotionRegistration(
+        {
+          sceneId: '11111111-1111-1111-1111-111111111111',
+        },
+        { user: { userId: 'u-1' } },
+      ),
+    ).rejects.toThrow(ForbiddenException);
+    expect(registrarService.submitSectMotionRegistration).toHaveBeenCalledWith('u-1', {
+      sceneId: '11111111-1111-1111-1111-111111111111',
+    });
+  });
+
   it('lists submitter promoter registrations through registrar service', async () => {
     const registrarService = {
       listPromoterRegistrations: jest.fn().mockResolvedValue({
