@@ -236,7 +236,6 @@ export const registrarPromoterEndpoints = {
 export const registrarProjectEndpoints = {
   submit: () => '/registrar/project',
 } as const;
-
 export function getRegistrarWebGapContracts(): RegistrarWebEndpointContract[] {
   return REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter((contract) => contract.status === 'gap');
 }

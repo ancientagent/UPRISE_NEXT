@@ -7,6 +7,52 @@
 
 ## [Unreleased]
 ### Added
+- Registrar project + sect-motion submitter status read surfaces (slice 114A):
+  - Added `GET /registrar/project/entries` and `GET /registrar/project/:entryId` for submitter-owned project registration state tracking.
+  - Added `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` for submitter-owned sect-motion state tracking.
+  - Added registrar controller/service unit coverage for list/detail success + ownership/type/not-found guard paths.
+- Phase 4 QA/docs/review closure for slices 108A–110A (slices 111A–113A):
+  - Added consolidated QA sweep report with exact command outputs (`docs/handoff/2026-02-25_phase4-qa-sweep-108A-110A-slice111A.md`).
+  - Added docs sync note for updated communities specs/changelog/handoff index (`docs/handoff/2026-02-25_phase4-doc-sync-108A-110A-slice112A.md`).
+  - Added review/risk signoff memo with rollback references (`docs/handoff/2026-02-25_phase4-review-risk-signoff-108A-110A-slice113A.md`).
+- Phase 4 discovery-context consistency helper lane (slice 110A):
+  - Added shared discovery-context patch helpers in `apps/web/src/lib/discovery/context.ts`.
+  - Updated Discover and Plot pages to use centralized context patch mapping/merge behavior.
+  - Added unit coverage in `apps/web/__tests__/discovery-context.test.ts`.
+- Phase 4 web contract wrapper consolidation (slice 109A):
+  - Added typed discovery client wrappers in `apps/web/src/lib/discovery/client.ts`.
+  - Added typed communities client wrappers in `apps/web/src/lib/communities/client.ts`.
+  - Migrated Discover/Plot/Statistics surfaces to use centralized wrappers instead of inline endpoint strings.
+  - Added web tests for discovery/communities client endpoint mapping and response handling.
+- Phase 4 discovery controller parity lane (slice 108A):
+  - Added `apps/api/test/communities.discovery.controller.test.ts` for discovery endpoint delegation/validation coverage.
+  - Coverage includes invalid query/body paths for `GET /discover/scenes`, `POST /discover/tune`, and `POST /discover/set-home-scene`.
+- Phase 4 communities route-resolution guard (slice 107A):
+  - Added `apps/api/test/communities.routes.test.ts` with Fastify injection coverage for `GET /communities/nearby`.
+  - Asserts route resolves to `findNearby` handler and does not dispatch through `:id` lookup handler.
+- Phase 4 communities metrics/home-resolution controller hardening (slice 106A):
+  - Added `apps/api/test/communities.metrics.controller.test.ts` covering tier-scoped controller delegation for statistics/scene-map reads.
+  - Added validation-path assertions for invalid tier values and incomplete home-scene tuple on resolve-home route.
+- Phase 4 communities direct-events validation parity (slice 105A):
+  - Extended communities controller coverage to assert strict `includePast` parsing on `GET /communities/:id/events`.
+  - Added invalid-query rejection coverage for direct scene events route.
+- Phase 4 communities events-query boolean hardening (slice 104A):
+  - Replaced broad boolean coercion for `includePast` with strict string parsing (`true`/`false`) in `GetCommunityEventsSchema`.
+  - Added controller coverage ensuring `includePast=false` remains false and invalid boolean strings are rejected with validation errors.
+- Phase 4 communities active-endpoint controller hardening (slice 103A):
+  - Added `apps/api/test/communities.active.controller.test.ts` to cover active-scene controller delegation for feed/statistics/events/promotions.
+  - Added validation-path assertion for invalid active feed query handling (`BadRequestException`).
+- Phase 4 Plot shared community-anchor consistency (slice 102A):
+  - `StatisticsPanel` is now controlled by Plot page selected-community state instead of maintaining an independent local anchor.
+  - Statistics/scene-map and Top Songs panels now consume the same selected community context, reducing cross-panel scope drift.
+- Phase 4 Plot registrar status integration (slice 101A):
+  - Plot Scene Activity panel now loads submitter-owned Artist/Band registrar entry summary via `GET /registrar/artist/entries`.
+  - Panel shows registration totals, lifecycle summary, invite-state counts, and latest status while preserving explicit `Open Registrar` action.
+  - Added web helper coverage for registrar plot summary aggregation.
+- Phase 4 communities core stats fallback hardening (slice 100A):
+  - Plot `StatisticsPanel` now uses `GET /communities/active/statistics?tier=...` when no explicit community anchor is selected.
+  - Scene-map fetch in the same panel now anchors on either selected community or active-scene fallback id, improving no-anchor Plot continuity.
+  - Added web unit coverage for statistics endpoint and scene-map anchor resolution helpers.
 - Registrar sect-motion submission skeleton (slice 99A):
   - Added `POST /registrar/sect-motion` (auth required) as additive registrar submission primitive.
   - Added `SectMotionRegistrationSchema` (`sceneId` uuid) and controller/service path `submitSectMotionRegistration`.

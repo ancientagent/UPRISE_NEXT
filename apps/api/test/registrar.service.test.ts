@@ -992,6 +992,226 @@ describe('RegistrarService', () => {
     expect(mockPrisma.capabilityGrantAuditLog.findMany).not.toHaveBeenCalled();
   });
 
+  it('lists submitter-owned project registrations with scene context', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-project-1',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { projectName: 'All-Ages Venue Buildout' },
+        createdAt: new Date('2026-02-25T02:00:00.000Z'),
+        updatedAt: new Date('2026-02-25T02:10:00.000Z'),
+        scene: {
+          id: 'scene-1',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+          tier: 'city',
+        },
+      },
+    ]);
+
+    const result = await service.listProjectRegistrations('u-1');
+
+    expect(mockPrisma.registrarEntry.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          createdById: 'u-1',
+          type: 'project_registration',
+        }),
+      }),
+    );
+    expect(result.total).toBe(1);
+    expect(result.countsByStatus).toEqual({ submitted: 1 });
+    expect(result.entries[0]).toEqual(
+      expect.objectContaining({
+        id: 'reg-project-1',
+        type: 'project_registration',
+        status: 'submitted',
+        payload: { projectName: 'All-Ages Venue Buildout' },
+      }),
+    );
+  });
+
+  it('normalizes blank projectName to null in project list reads', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-project-2',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: { projectName: '   ' },
+        createdAt: new Date('2026-02-25T02:20:00.000Z'),
+        updatedAt: new Date('2026-02-25T02:30:00.000Z'),
+        scene: null,
+      },
+    ]);
+
+    const result = await service.listProjectRegistrations('u-1');
+    expect(result.entries[0].payload).toEqual({ projectName: null });
+  });
+
+  it('reads submitter-owned project registration detail', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-project-3',
+      type: 'project_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { projectName: '  All-Ages Venue Buildout  ' },
+      createdAt: new Date('2026-02-25T02:40:00.000Z'),
+      updatedAt: new Date('2026-02-25T02:41:00.000Z'),
+      scene: null,
+    });
+
+    const result = await service.getProjectRegistration('u-1', 'reg-project-3');
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'reg-project-3',
+        type: 'project_registration',
+        payload: { projectName: 'All-Ages Venue Buildout' },
+      }),
+    );
+  });
+
+  it('rejects project detail read for non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-project-4',
+      type: 'project_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-9',
+      payload: { projectName: 'All-Ages Venue Buildout' },
+      scene: null,
+    });
+
+    await expect(service.getProjectRegistration('u-1', 'reg-project-4')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects project detail read for non-project registrar entry type', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-99',
+      type: 'promoter_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { productionName: 'Southside Signal Co.' },
+      scene: null,
+    });
+
+    await expect(service.getProjectRegistration('u-1', 'reg-promoter-99')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('throws when project detail entry does not exist', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.getProjectRegistration('u-1', 'missing-project-entry')).rejects.toThrow(NotFoundException);
+  });
+
+  it('lists submitter-owned sect motions with scene context', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-sect-1',
+        type: 'sect_motion',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: {},
+        createdAt: new Date('2026-02-25T03:00:00.000Z'),
+        updatedAt: new Date('2026-02-25T03:01:00.000Z'),
+        scene: {
+          id: 'scene-1',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'punk',
+          tier: 'city',
+        },
+      },
+    ]);
+
+    const result = await service.listSectMotionRegistrations('u-1');
+
+    expect(mockPrisma.registrarEntry.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          createdById: 'u-1',
+          type: 'sect_motion',
+        }),
+      }),
+    );
+    expect(result.total).toBe(1);
+    expect(result.countsByStatus).toEqual({ submitted: 1 });
+    expect(result.entries[0]).toEqual(
+      expect.objectContaining({
+        id: 'reg-sect-1',
+        type: 'sect_motion',
+        status: 'submitted',
+        payload: {},
+      }),
+    );
+  });
+
+  it('reads submitter-owned sect motion detail', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-sect-2',
+      type: 'sect_motion',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: null,
+      createdAt: new Date('2026-02-25T03:10:00.000Z'),
+      updatedAt: new Date('2026-02-25T03:11:00.000Z'),
+      scene: null,
+    });
+
+    const result = await service.getSectMotionRegistration('u-1', 'reg-sect-2');
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'reg-sect-2',
+        type: 'sect_motion',
+        payload: {},
+      }),
+    );
+  });
+
+  it('rejects sect-motion detail read for non-submitting user', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-sect-3',
+      type: 'sect_motion',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-9',
+      payload: {},
+      scene: null,
+    });
+
+    await expect(service.getSectMotionRegistration('u-1', 'reg-sect-3')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects sect-motion detail read for non-sect-motion registrar entry type', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-project-9',
+      type: 'project_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: { projectName: 'All-Ages Venue Buildout' },
+      scene: null,
+    });
+
+    await expect(service.getSectMotionRegistration('u-1', 'reg-project-9')).rejects.toThrow(ForbiddenException);
+  });
+
+  it('throws when sect-motion detail entry does not exist', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.getSectMotionRegistration('u-1', 'missing-sect-entry')).rejects.toThrow(NotFoundException);
+  });
+
   it('issues registrar code for approved promoter registration with system issuer', async () => {
     const expiresAt = new Date('2026-03-10T00:00:00.000Z');
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
