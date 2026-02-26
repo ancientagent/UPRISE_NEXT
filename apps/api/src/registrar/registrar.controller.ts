@@ -9,6 +9,10 @@ import {
   type DispatchArtistInviteDto,
   PromoterRegistrationSchema,
   type PromoterRegistrationDto,
+  ProjectRegistrationSchema,
+  type ProjectRegistrationDto,
+  SectMotionRegistrationSchema,
+  type SectMotionRegistrationDto,
 } from './dto/registrar.dto';
 
 @Controller('registrar')
@@ -23,6 +27,26 @@ export class RegistrarController {
     @Request() req: { user: { userId: string } },
   ) {
     const entry = await this.registrarService.submitPromoterRegistration(req.user.userId, dto);
+    return { success: true, data: entry };
+  }
+
+  @Post('project')
+  @ZodBody(ProjectRegistrationSchema)
+  async submitProjectRegistration(
+    @Body() dto: ProjectRegistrationDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const entry = await this.registrarService.submitProjectRegistration(req.user.userId, dto);
+    return { success: true, data: entry };
+  }
+
+  @Post('sect-motion')
+  @ZodBody(SectMotionRegistrationSchema)
+  async submitSectMotionRegistration(
+    @Body() dto: SectMotionRegistrationDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const entry = await this.registrarService.submitSectMotionRegistration(req.user.userId, dto);
     return { success: true, data: entry };
   }
 

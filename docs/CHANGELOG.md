@@ -11,6 +11,22 @@
   - Added `GET /registrar/project/entries` and `GET /registrar/project/:entryId` for submitter-owned project registration state tracking.
   - Added `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` for submitter-owned sect-motion state tracking.
   - Added registrar controller/service unit coverage for list/detail success + ownership/type/not-found guard paths.
+- Phase 4 QA/docs/review closure for slices 108A–110A (slices 111A–113A):
+  - Added consolidated QA sweep report with exact command outputs (`docs/handoff/2026-02-25_phase4-qa-sweep-108A-110A-slice111A.md`).
+  - Added docs sync note for updated communities specs/changelog/handoff index (`docs/handoff/2026-02-25_phase4-doc-sync-108A-110A-slice112A.md`).
+  - Added review/risk signoff memo with rollback references (`docs/handoff/2026-02-25_phase4-review-risk-signoff-108A-110A-slice113A.md`).
+- Phase 4 discovery-context consistency helper lane (slice 110A):
+  - Added shared discovery-context patch helpers in `apps/web/src/lib/discovery/context.ts`.
+  - Updated Discover and Plot pages to use centralized context patch mapping/merge behavior.
+  - Added unit coverage in `apps/web/__tests__/discovery-context.test.ts`.
+- Phase 4 web contract wrapper consolidation (slice 109A):
+  - Added typed discovery client wrappers in `apps/web/src/lib/discovery/client.ts`.
+  - Added typed communities client wrappers in `apps/web/src/lib/communities/client.ts`.
+  - Migrated Discover/Plot/Statistics surfaces to use centralized wrappers instead of inline endpoint strings.
+  - Added web tests for discovery/communities client endpoint mapping and response handling.
+- Phase 4 discovery controller parity lane (slice 108A):
+  - Added `apps/api/test/communities.discovery.controller.test.ts` for discovery endpoint delegation/validation coverage.
+  - Coverage includes invalid query/body paths for `GET /discover/scenes`, `POST /discover/tune`, and `POST /discover/set-home-scene`.
 - Phase 4 communities route-resolution guard (slice 107A):
   - Added `apps/api/test/communities.routes.test.ts` with Fastify injection coverage for `GET /communities/nearby`.
   - Asserts route resolves to `findNearby` handler and does not dispatch through `:id` lookup handler.
@@ -37,6 +53,17 @@
   - Plot `StatisticsPanel` now uses `GET /communities/active/statistics?tier=...` when no explicit community anchor is selected.
   - Scene-map fetch in the same panel now anchors on either selected community or active-scene fallback id, improving no-anchor Plot continuity.
   - Added web unit coverage for statistics endpoint and scene-map anchor resolution helpers.
+- Registrar sect-motion submission skeleton (slice 99A):
+  - Added `POST /registrar/sect-motion` (auth required) as additive registrar submission primitive.
+  - Added `SectMotionRegistrationSchema` (`sceneId` uuid) and controller/service path `submitSectMotionRegistration`.
+  - Persists `RegistrarEntry` baseline lifecycle (`type = sect_motion`, `status = submitted`) with Home Scene/city-tier guardrails.
+  - Added registrar DTO/controller/service unit coverage for success and guard/error paths.
+- Web registrar project contract scaffolding (slice 98A web lane):
+  - Added typed endpoint helper `registrarProjectEndpoints.submit()` and typed client `submitProjectRegistration(payload, token)`.
+  - Updated registrar contract inventory project/sect endpoint gap status to `web_surface_missing` (API exists, no web action yet).
+  - Added web unit coverage for registrar project endpoint helper path.
+- Phase 3 QA lane report for project+sect batch (slice 98A/99A):
+  - Added `docs/handoff/2026-02-25_P3-QA-098A-project-sect-validation.md` with exact command outputs and pass verdict.
 - Telegram bridge near-real-time long-poll loop (slice 92):
   - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
   - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.

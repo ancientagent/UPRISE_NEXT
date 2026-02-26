@@ -38,3 +38,16 @@ export const PromoterRegistrationSchema = z.object({
 });
 
 export type PromoterRegistrationDto = z.infer<typeof PromoterRegistrationSchema>;
+
+export const ProjectRegistrationSchema = z.object({
+  sceneId: z.string().uuid(),
+  projectName: z.string().trim().min(1).max(140),
+});
+
+export type ProjectRegistrationDto = z.infer<typeof ProjectRegistrationSchema>;
+
+export const SectMotionRegistrationSchema = z.object({
+  sceneId: z.string().uuid(),
+});
+
+export type SectMotionRegistrationDto = z.infer<typeof SectMotionRegistrationSchema>;
