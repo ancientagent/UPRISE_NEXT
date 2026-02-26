@@ -1,61 +1,24 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { api } from '@/lib/api';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 import type { CommunityWithDistance } from '@/lib/types/community';
-import SceneMap, { type SceneMapPoint } from '@/components/plot/SceneMap';
+import SceneMap from '@/components/plot/SceneMap';
 import { shouldFetchNearbyForTier } from '@/components/plot/tier-guard';
+import {
+  findNearbyCommunities,
+  getActiveCommunityStatistics,
+  getCommunitySceneMap,
+  getCommunityStatistics,
+  type CommunitySceneMapResponse,
+  type CommunityStatisticsResponse,
+} from '@/lib/communities/client';
 import {
   resolveSceneMapAnchorId,
   resolveStatisticsEndpoint,
   type TierScope,
 } from '@/components/plot/statistics-request';
-
-interface CommunityStatisticsResponse {
-  community: {
-    id: string;
-    name: string;
-    city: string | null;
-    state: string | null;
-    musicCommunity: string | null;
-    tier: string;
-    isActive: boolean;
-  };
-  tierScope: TierScope;
-  rollupUnit: 'local_sect' | 'city' | 'state';
-  metrics: {
-    totalMembers: number;
-    activeSects: number;
-    eventsThisWeek: number;
-    activityScore: number;
-    activeTracks: number;
-    gpsVerifiedUsers: number;
-    votingEligibleUsers: number;
-    scopeCommunityCount: number;
-  };
-  topSongs: Array<{
-    trackId: string;
-    title: string;
-    artist: string;
-    duration: number;
-    playCount: number;
-    communityId: string | null;
-    communityName: string | null;
-  }>;
-  timeWindow: {
-    days: number;
-    asOf: string;
-  };
-}
-
-interface CommunitySceneMapResponse {
-  tierScope: TierScope;
-  rollupUnit: 'local_sect' | 'city' | 'state';
-  center: { lat: number; lng: number } | null;
-  points: SceneMapPoint[];
-}
 
 interface StatisticsPanelProps {
   selectedTier: TierScope;
@@ -107,12 +70,17 @@ export default function StatisticsPanel({
       }
 
       try {
-        const response = await api.get<CommunityWithDistance[]>(
-          `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=${cityRadiusMeters}&limit=50`,
-          { token: token || undefined }
+        const response = await findNearbyCommunities(
+          {
+            lat: mapCenter.lat,
+            lng: mapCenter.lng,
+            radius: cityRadiusMeters,
+            limit: 50,
+          },
+          token || undefined,
         );
 
-        const nextCommunities = response.data ?? [];
+        const nextCommunities = response ?? [];
         setCommunities(nextCommunities);
         onCommunitiesUpdate?.(nextCommunities);
 
@@ -141,19 +109,19 @@ export default function StatisticsPanel({
 
       try {
         const resolution = resolveStatisticsEndpoint(selectedCommunity?.id ?? null, selectedTier);
-        const response = await api.get<CommunityStatisticsResponse>(
-          resolution.endpoint,
-          { token: token || undefined },
-        );
+        if (resolution.source === 'anchored' && selectedCommunity?.id) {
+          const data = await getCommunityStatistics(selectedCommunity.id, selectedTier, token || undefined);
+          setStatistics(data);
+          setActiveSceneId(selectedCommunity.id);
+          return;
+        }
 
-        setStatistics(response.data ?? null);
+        const activeResult = await getActiveCommunityStatistics(selectedTier, token || undefined);
+        setStatistics(activeResult.data);
         if (resolution.source === 'anchored') {
           setActiveSceneId(selectedCommunity?.id ?? null);
         } else {
-          const fallbackSceneId =
-            (response as { meta?: { sceneId?: string } }).meta?.sceneId ??
-            response.data?.community?.id ??
-            null;
+          const fallbackSceneId = activeResult.sceneId ?? activeResult.data?.community?.id ?? null;
           setActiveSceneId(fallbackSceneId);
         }
       } catch {
@@ -177,11 +145,8 @@ export default function StatisticsPanel({
       }
 
       try {
-        const response = await api.get<CommunitySceneMapResponse>(
-          `/communities/${anchorId}/scene-map?tier=${selectedTier}`,
-          { token: token || undefined },
-        );
-        setSceneMap(response.data ?? null);
+        const response = await getCommunitySceneMap(anchorId, selectedTier, token || undefined);
+        setSceneMap(response);
       } catch {
         setSceneMap(null);
       }
