@@ -1,0 +1,82 @@
+name: uprise-orchestrator
+apiVersion: "0.0.5"
+description: Queue-driven orchestrator that processes slices sequentially and continues past blocked tasks
+presets:
+  tag: agent
+  default: uprise-executor
+entry: orchestrate
+
+inputs:
+  model:
+    type: model
+    description: LLM model to use
+  mode:
+    type: enum
+    enum: ["manual", "auto", "plan"]
+    default: "auto"
+  max_turns:
+    type: integer
+    default: 300
+    min: 1
+    max: 500
+  queue_path:
+    type: string
+    default: ".reliant/queue/mvp-slices.json"
+  runtime_task_path:
+    type: string
+    default: ".reliant/runtime/current-task.json"
+
+outputs:
+  message: "{{nodes.orchestrate.message}}"
+  response_text: "{{nodes.orchestrate.response_text}}"
+
+nodes:
+  - id: orchestrate
+    type: workflow
+    ref: builtin://agent
+    thread:
+      mode: inherit
+      inject:
+        role: user
+        content: |
+          You are the UPRISE overnight orchestrator.
+
+          Objective:
+          - Continuously process queue tasks from `{{inputs.queue_path}}`.
+          - For each queued task: claim -> execute one slice via `uprise-slice-loop` behavior -> complete or block.
+          - If blocked, record blocker reason and continue to next queued task.
+          - Stop only when queue has no queued tasks.
+
+          Required command interface:
+          - claim next task:
+            `node scripts/reliant-slice-queue.mjs claim --queue {{inputs.queue_path}} --runtime {{inputs.runtime_task_path}}`
+            Exit code 10 means no queued tasks remain; finish run with summary.
+          - check queue status:
+            `node scripts/reliant-slice-queue.mjs status --queue {{inputs.queue_path}}`
+          - complete current task:
+            `node scripts/reliant-slice-queue.mjs complete --queue {{inputs.queue_path}} --runtime {{inputs.runtime_task_path}} --report <handoff-path>`
+          - block current task:
+            `node scripts/reliant-slice-queue.mjs block --queue {{inputs.queue_path}} --runtime {{inputs.runtime_task_path}} --reason "<exact blocker>"`
+
+          Execution rules:
+          - Use canon/spec-first behavior only.
+          - No feature drift.
+          - One queue task at a time; do not run in parallel within this workflow.
+          - Run required validation gates per task before marking complete.
+          - Produce/update handoff note and changelog entry for each meaningful code task.
+          - If command/tooling failure is unrecoverable for current task, mark blocked and continue.
+
+          Final output format:
+          1) queue summary counts
+          2) completed task IDs
+          3) blocked task IDs + reasons
+          4) next recommended action
+    args:
+      mode: "{{inputs.mode}}"
+      model: "{{inputs.model}}"
+      max_turns: "{{inputs.max_turns}}"
+      spawn_presets: []
+      system_prompt: |
+        You are an autonomous orchestrator for UPRISE queue-driven slice delivery.
+        Operate deterministically and keep precise logs.
+        Never leave queue state ambiguous: each claimed task must be marked done or blocked.

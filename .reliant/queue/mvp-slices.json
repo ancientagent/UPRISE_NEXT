@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T00:00:00.000Z",
+  "tasks": [
+    {
+      "id": "SLICE-SETUP-001",
+      "title": "Replace with first real MVP slice",
+      "prompt": "Execute one MVP slice only: replace this prompt with exact scope, constraints, validation gates, and required docs updates.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    }
+  ]
+}

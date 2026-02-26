@@ -37,3 +37,4 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md` — local/dev Prisma migration drift and failed-history recovery
 - `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` — scheduler/chat bridge setup for queue-driven multi-agent autonomy
 - `docs/solutions/RELIANT_WORKFLOW_PILOT.md` — repo-local Reliant workflow pilot for slice plan→implement→verify→review execution
+- `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md` — queue-driven Reliant parent workflow for sequential slice execution with done/blocked continuation
