@@ -65,3 +65,16 @@
 - `pnpm --filter api test -- auth.invite-registration.service.test.ts registrar.service.test.ts` — passed (2 suites, 53 tests)
 - `pnpm --filter api typecheck` — passed
 - `pnpm --filter web typecheck` — passed
+
+## Phase 2 Status Update (2026-02-23)
+- Completed implementation slices in this lane now cover:
+  - invite delivery lifecycle/state guards,
+  - invite outcome read surfaces,
+  - worker + trigger execution lanes,
+  - replay/idempotency finalize hardening,
+  - outbound provider integration (`noop` + `webhook`) and timeout/URL hardening,
+  - expanded QA lanes and provider/selector coverage.
+- `qa:phase2` validation lane is green with provider/worker/trigger coverage.
+- Remaining blocker for final Phase 2 DB execution closure:
+  - `qa:phase2:db` still requires a reachable PostgreSQL target (`DATABASE_URL` host).
+  - In current WSL environment, Docker Compose is unavailable and `localhost:5432` is not reachable, so DB lane cannot pass yet.

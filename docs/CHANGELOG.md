@@ -153,6 +153,38 @@
   - Added unified MVP execution roadmap covering phases 0-7 across identity, registrar, communities, broadcast, discovery, social, events/economy, and launch hardening lanes.
   - Established Phase 3 kickoff queue and additive migration/rollback policy for upcoming capability-completion slices.
   - Added handoff artifact `docs/handoff/2026-02-24_platform-mvp-roadmap-phase3-kickoff.md` as execution baseline for parallel agent lanes.
+- Phase 2 invite-delivery closeout status note (slice 86):
+  - Added closeout handoff documenting validation outcomes and remaining DB-lane dependency notes.
+- DB QA runner external-DB fallback support (slice 85):
+  - `scripts/qa-db.sh` now supports environments without Docker Compose by using configured `DATABASE_URL` directly.
+- Registrar webhook timeout ceiling hardening (slice 84):
+  - Added timeout ceiling clamp and coverage for outbound webhook invite delivery.
+- Registrar webhook timeout guard hardening (slice 83):
+  - Added outbound request timeout guardrails with env-configured timeout and minimum safety floor.
+- Registrar webhook URL validation hardening (slice 82):
+  - Outbound webhook provider now validates URL format/protocol before dispatch attempts.
+- Registrar provider module-selection coverage (slice 81):
+  - Added deterministic provider selector coverage for noop/webhook/unknown config paths.
+- Phase 2 QA lane outbound-provider coverage expansion (slice 80):
+  - `qa:phase2` now includes webhook provider and provider-selector test suites.
+- Registrar invite provider delivery-context propagation (slice 79):
+  - Worker/provider send contract now carries delivery context (`deliveryId`, `registrarArtistMemberId`) for correlation.
+- Registrar outbound webhook invite provider option (slice 78):
+  - Added webhook invite delivery provider with env-based provider selection.
+- Phase 2 DB QA lane replay coverage wiring (slice 77):
+  - `qa:phase2:db` now runs both invite lifecycle and replay integration specs.
+- Registrar invite replay finalize DB integration coverage (slice 76):
+  - Added DB-backed replay-finalize assertions to guard against overwrite on repeated finalize attempts.
+- Registrar invite finalize replay-safety hardening (slice 75):
+  - `finalizeQueuedInviteDelivery` now finalizes only queued rows and returns current finalized state for replay attempts.
+- Phase 2 QA lane coverage expansion (slice 74):
+  - `qa:phase2` includes worker-trigger coverage for invite delivery automation paths.
+- Registrar invite delivery automated trigger lane (slice 73):
+  - Added env-gated automated trigger service with interval floor and overlap guard.
+- Registrar artist entry-list last-dispatch timestamp enrichment (slice 72):
+  - `GET /registrar/artist/entries` now returns per-entry `lastInviteDispatchAt`.
+- Registrar artist entry-list top-level invite status summary (slice 71):
+  - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus`.
 - Registrar artist entry-list invite outcome count enrichment (slice 70):
   - `GET /registrar/artist/entries` now returns per-entry `sentInviteCount` and `failedInviteCount`.
   - Existing invite lifecycle counts remain unchanged and backward compatible.

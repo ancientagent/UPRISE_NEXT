@@ -112,6 +112,31 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Registrar entry-list invite outcome enrichment (slice 70):
   - `GET /registrar/artist/entries` now includes `sentInviteCount` and `failedInviteCount` in per-entry invite lifecycle summaries.
   - Existing invite summary counts remain unchanged (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`).
+- Registrar entry-list top-level invite summary (slice 71):
+  - `GET /registrar/artist/entries` now includes top-level `inviteCountsByStatus` aggregated across returned registrar artist members.
+  - Empty-state responses include `inviteCountsByStatus: {}` for stable contract shape.
+- Registrar entry-list last dispatch timestamp (slice 72):
+  - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null invite delivery dispatch timestamp).
+  - `lastInviteDispatchAt` returns `null` when no invite delivery has been finalized for the entry.
+- Registrar invite delivery automated trigger lane (slice 73):
+  - Internal API trigger service can now run queued invite deliveries on an env-gated interval.
+  - Trigger remains default-off and uses overlap guard logic to avoid concurrent delivery runs.
+- Registrar invite delivery finalize replay safety (slice 75):
+  - Invite delivery finalization is now queued-only and replay-safe.
+  - Already-finalized rows return current delivery state without re-mutating invite lifecycle state.
+- Registrar invite outbound delivery provider option (slice 78):
+  - Invite delivery provider selection is now env-driven with safe default fallback.
+  - `webhook` mode enables outbound delivery handoff to an external provider endpoint while preserving existing worker/trigger boundaries.
+- Registrar invite delivery provider context propagation (slice 79):
+  - Delivery worker now passes provider-level correlation context (`deliveryId`, `registrarArtistMemberId`) with each outbound invite send attempt.
+- Registrar invite provider selection coverage hardening (slice 81):
+  - Added explicit module-wiring selection coverage for provider mode defaults and fallback behavior.
+- Registrar webhook URL validation hardening (slice 82):
+  - Webhook outbound invite delivery now rejects malformed/unsupported endpoint URLs before transport attempts.
+- Registrar webhook timeout guard (slice 83):
+  - Webhook outbound invite delivery now runs with bounded timeout and minimum timeout floor safety.
+- Registrar webhook timeout ceiling (slice 84):
+  - Webhook timeout config now enforces a maximum safety ceiling in addition to the existing minimum floor.
 - Registrar web canonical membership sync action (slice 14):
   - `/registrar` status panel includes explicit `Sync Eligible Members` action for materialized entries.
   - Calls `POST /registrar/artist/:entryId/sync-members` to attach eligible registrar members to canonical entity membership.

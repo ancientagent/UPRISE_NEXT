@@ -1060,6 +1060,7 @@ export class RegistrarService {
     if (entries.length === 0) {
       return {
         total: 0,
+        inviteCountsByStatus: {},
         entries: [],
       };
     }
@@ -1071,6 +1072,22 @@ export class RegistrarService {
       select: {
         registrarEntryId: true,
         inviteStatus: true,
+      },
+    });
+
+    const deliveries = await this.prisma.registrarInviteDelivery.findMany({
+      where: {
+        registrarArtistMember: {
+          registrarEntryId: { in: entries.map((entry: any) => entry.id) },
+        },
+      },
+      select: {
+        dispatchedAt: true,
+        registrarArtistMember: {
+          select: {
+            registrarEntryId: true,
+          },
+        },
       },
     });
 
@@ -1106,8 +1123,27 @@ export class RegistrarService {
       countsByEntry.set(member.registrarEntryId, current);
     }
 
+    const inviteCountsByStatus = members.reduce(
+      (acc: Record<string, number>, member: { inviteStatus: string }) => {
+        acc[member.inviteStatus] = (acc[member.inviteStatus] ?? 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    const lastInviteDispatchByEntry = new Map<string, Date>();
+    for (const delivery of deliveries) {
+      if (!delivery.dispatchedAt) continue;
+      const entryId = delivery.registrarArtistMember.registrarEntryId;
+      const current = lastInviteDispatchByEntry.get(entryId);
+      if (!current || delivery.dispatchedAt > current) {
+        lastInviteDispatchByEntry.set(entryId, delivery.dispatchedAt);
+      }
+    }
+
     return {
       total: entries.length,
+      inviteCountsByStatus,
       entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
         const inviteCounts = countsByEntry.get(entry.id) ?? {
@@ -1138,6 +1174,7 @@ export class RegistrarService {
           failedInviteCount: inviteCounts.failedInviteCount,
           claimedCount: inviteCounts.claimedCount,
           existingUserCount: inviteCounts.existingUserCount,
+          lastInviteDispatchAt: lastInviteDispatchByEntry.get(entry.id) ?? null,
           createdAt: entry.createdAt,
           updatedAt: entry.updatedAt,
         };
@@ -1491,6 +1528,7 @@ export class RegistrarService {
         id: true,
         registrarArtistMemberId: true,
         status: true,
+        dispatchedAt: true,
       },
     });
 
@@ -1498,16 +1536,43 @@ export class RegistrarService {
       throw new NotFoundException('Invite delivery not found');
     }
 
-    const dispatchedAt = new Date();
+    if (delivery.status !== 'queued') {
+      return {
+        registrarArtistMemberId,
+        deliveryStatus: delivery.status,
+        dispatchedAt: delivery.dispatchedAt,
+        alreadyFinalized: true,
+      };
+    }
 
-    await this.prisma.$transaction(async (tx: any) => {
-      await tx.registrarInviteDelivery.update({
-        where: { registrarArtistMemberId },
+    const dispatchedAt = new Date();
+    const finalizeResult = await this.prisma.$transaction(async (tx: any) => {
+      const updated = await tx.registrarInviteDelivery.updateMany({
+        where: {
+          registrarArtistMemberId,
+          status: 'queued',
+        },
         data: {
           status,
           dispatchedAt,
         },
       });
+
+      if (updated.count === 0) {
+        const current = await tx.registrarInviteDelivery.findUnique({
+          where: { registrarArtistMemberId },
+          select: {
+            status: true,
+            dispatchedAt: true,
+          },
+        });
+
+        return {
+          finalized: false,
+          deliveryStatus: current?.status ?? null,
+          dispatchedAt: current?.dispatchedAt ?? null,
+        };
+      }
 
       await tx.registrarArtistMember.update({
         where: { id: registrarArtistMemberId },
@@ -1515,12 +1580,19 @@ export class RegistrarService {
           inviteStatus: status,
         },
       });
+
+      return {
+        finalized: true,
+        deliveryStatus: status,
+        dispatchedAt,
+      };
     });
 
     return {
       registrarArtistMemberId,
-      deliveryStatus: status,
-      dispatchedAt,
+      deliveryStatus: finalizeResult.deliveryStatus,
+      dispatchedAt: finalizeResult.dispatchedAt,
+      alreadyFinalized: !finalizeResult.finalized,
     };
   }
 

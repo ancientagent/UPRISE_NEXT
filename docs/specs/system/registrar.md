@@ -136,6 +136,21 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - `GET /registrar/artist/entries` invite lifecycle summary now includes `sentInviteCount` and `failedInviteCount`.
   - Keeps existing counts (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`) unchanged.
   - Additive/non-breaking read-surface enrichment for submitter tracking.
+- Registrar registration status list top-level invite summary (slice 71):
+  - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus` aggregated across submitter-owned registrar artist members.
+  - Empty-state responses include `inviteCountsByStatus: {}` for stable shape parity.
+- Registrar registration status list last-dispatch timestamp (slice 72):
+  - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null `RegistrarInviteDelivery.dispatchedAt` for each registration entry).
+  - `lastInviteDispatchAt` is `null` when no invite dispatch has been finalized for the entry.
+- Registrar invite delivery automated trigger lane (slice 73):
+  - Internal trigger service supports env-gated interval execution of queued invite delivery processing.
+  - Trigger remains default-off and uses overlap guards to prevent concurrent worker runs.
+- Registrar invite finalize replay-safety hardening (slice 75):
+  - `finalizeQueuedInviteDelivery` now mutates delivery/member status only when the delivery row is still `queued`.
+  - Repeated finalize attempts return existing finalized state without overwriting.
+- Registrar outbound webhook invite provider option (slice 78):
+  - Added outbound webhook invite delivery provider path with provider selection via environment configuration.
+  - URL/timeout guardrails and provider-selection coverage are implemented.
 - Registrar member sync primitive (slice 13):
   - `POST /registrar/artist/:entryId/sync-members` implemented.
   - Submitter-only action for materialized registrations.

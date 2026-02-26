@@ -47,7 +47,10 @@ export class RegistrarInviteDeliveryWorkerService {
     for (const delivery of queuedDeliveries) {
       try {
         const payload = delivery.payload as unknown as InviteDeliveryPayload;
-        const status = await this.inviteDeliveryProvider.send(delivery.email, payload);
+        const status = await this.inviteDeliveryProvider.send(delivery.email, payload, {
+          deliveryId: delivery.id,
+          registrarArtistMemberId: delivery.registrarArtistMemberId,
+        });
 
         await this.registrarService.finalizeQueuedInviteDelivery(
           delivery.registrarArtistMemberId,
