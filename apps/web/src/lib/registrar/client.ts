@@ -74,6 +74,25 @@ export interface RegistrarProjectRegistrationResult {
   createdAt: string;
 }
 
+export interface RegistrarProjectEntry {
+  id: string;
+  type: string;
+  status: string;
+  sceneId: string;
+  payload: {
+    projectName: string | null;
+  };
+  scene: RegistrarSceneSummary | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RegistrarProjectEntriesResponse {
+  total: number;
+  countsByStatus: Record<string, number>;
+  entries: RegistrarProjectEntry[];
+}
+
 export interface RegistrarArtistInviteStatusMember {
   id: string;
   name: string;
@@ -221,6 +240,19 @@ export async function submitProjectRegistration(
     throw new Error('Project registration response returned no data.');
   }
 
+  return response.data;
+}
+
+export async function listProjectRegistrations(token: string): Promise<RegistrarProjectEntriesResponse> {
+  const response = await api.get<RegistrarProjectEntriesResponse>(registrarProjectEndpoints.listEntries(), { token });
+  return response.data ?? { total: 0, countsByStatus: {}, entries: [] };
+}
+
+export async function getProjectRegistration(entryId: string, token: string): Promise<RegistrarProjectEntry> {
+  const response = await api.get<RegistrarProjectEntry>(registrarProjectEndpoints.detail(entryId), { token });
+  if (!response.data) {
+    throw new Error('Project registration response was empty.');
+  }
   return response.data;
 }
 

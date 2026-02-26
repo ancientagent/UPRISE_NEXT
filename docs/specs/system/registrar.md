@@ -49,11 +49,13 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submitter-only read for single promoter registrar entry status tracking.
   - Returns scene context and payload summary (`productionName`) for the requested entry.
   - Read payload normalization trims `productionName`; blank/whitespace resolves to `null`.
-- Registrar project status read surfaces (slice 114A):
+- Registrar project status read surfaces (slice 114A/114B):
   - `GET /registrar/project/entries` implemented.
   - Submitter-only list read for project registrar entries (`type = project_registration`) with reverse-chronological ordering.
   - Includes top-level `countsByStatus` summary and per-entry scene context + normalized payload summary (`projectName`).
+  - List/detail read normalization is hardened to tolerate malformed/non-object payload shapes; `projectName` resolves to `null` when missing/blank/invalid shape.
   - `GET /registrar/project/:entryId` implemented for submitter-only detail read.
+  - Controller parity coverage verifies detail-read error propagation (`ForbiddenException`, `NotFoundException`) and normalized payload passthrough semantics.
 - Registrar sect-motion status read surfaces (slice 114A):
   - `GET /registrar/sect-motion/entries` implemented.
   - Submitter-only list read for sect-motion registrar entries (`type = sect_motion`) with reverse-chronological ordering.
@@ -189,6 +191,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
 - Registrar project web contract scaffolding (slice 98A web lane):
   - Web typed contract/client support added for `POST /registrar/project`.
+  - Web typed contract/client support added for `GET /registrar/project/entries` and `GET /registrar/project/:entryId`.
   - No new registrar UI action/CTA added; web surface remains action-gated per spec.
 
 ### Deferred (Not Implemented Yet)

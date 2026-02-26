@@ -453,6 +453,33 @@ describe('RegistrarController', () => {
     });
   });
 
+  it('passes through normalized null projectName from registrar service on project detail read', async () => {
+    const registrarService = {
+      getProjectRegistration: jest.fn().mockResolvedValue({
+        id: 'reg-project-2',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: { projectName: null },
+      }),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    const response = await controller.getMyProjectRegistration('reg-project-2', { user: { userId: 'u-1' } });
+
+    expect(registrarService.getProjectRegistration).toHaveBeenCalledWith('u-1', 'reg-project-2');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'reg-project-2',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        payload: { projectName: null },
+      },
+    });
+  });
+
   it('propagates project list read errors from registrar service', async () => {
     const registrarService = {
       listProjectRegistrations: jest.fn().mockRejectedValue(new ForbiddenException('No access')),
@@ -475,6 +502,20 @@ describe('RegistrarController', () => {
       controller.getMyProjectRegistration('missing-project-entry', { user: { userId: 'u-1' } }),
     ).rejects.toThrow(NotFoundException);
     expect(registrarService.getProjectRegistration).toHaveBeenCalledWith('u-1', 'missing-project-entry');
+  });
+
+  it('propagates project detail forbidden errors from registrar service', async () => {
+    const registrarService = {
+      getProjectRegistration: jest.fn().mockRejectedValue(
+        new ForbiddenException('Only the submitting user can read this project registration'),
+      ),
+    } as any;
+    const controller = new RegistrarController(registrarService);
+
+    await expect(
+      controller.getMyProjectRegistration('reg-project-forbidden', { user: { userId: 'u-1' } }),
+    ).rejects.toThrow(ForbiddenException);
+    expect(registrarService.getProjectRegistration).toHaveBeenCalledWith('u-1', 'reg-project-forbidden');
   });
 
   it('lists submitter sect motions through registrar service', async () => {

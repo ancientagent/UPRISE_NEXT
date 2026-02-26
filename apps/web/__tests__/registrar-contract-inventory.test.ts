@@ -35,6 +35,8 @@ describe('registrar contract inventory', () => {
       'auth.invite.preview',
       'auth.invite.register',
       'registrar.project.submit',
+      'registrar.project.entries.list',
+      'registrar.project.entry.detail',
       'registrar.sect_motion.submit',
       'registrar.code.issue',
       'registrar.code.verify',
@@ -73,7 +75,13 @@ describe('registrar artist endpoint helpers', () => {
 });
 
 describe('registrar project endpoint helpers', () => {
-  it('builds concrete registrar project endpoint path', () => {
+  it('builds concrete registrar project endpoint paths', () => {
     expect(registrarProjectEndpoints.submit()).toBe('/registrar/project');
+    expect(registrarProjectEndpoints.listEntries()).toBe('/registrar/project/entries');
+    expect(registrarProjectEndpoints.detail('entry-1')).toBe('/registrar/project/entry-1');
+  });
+
+  it('rejects empty entry id for project detail endpoint', () => {
+    expect(() => registrarProjectEndpoints.detail('')).toThrow('Registrar entryId is required');
   });
 });

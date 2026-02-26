@@ -143,6 +143,24 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     notes: 'API exists; web registrar surface has typed client scaffolding but no user-facing action yet.',
   },
   {
+    id: 'registrar.project.entries.list',
+    method: 'GET',
+    pathTemplate: '/registrar/project/entries',
+    status: 'gap',
+    webConsumerPath: null,
+    gapKind: 'web_surface_missing',
+    notes: 'API exists; web registrar surface has typed read client scaffolding but no user-facing action yet.',
+  },
+  {
+    id: 'registrar.project.entry.detail',
+    method: 'GET',
+    pathTemplate: '/registrar/project/:entryId',
+    status: 'gap',
+    webConsumerPath: null,
+    gapKind: 'web_surface_missing',
+    notes: 'API exists; web registrar surface has typed read client scaffolding but no user-facing action yet.',
+  },
+  {
     id: 'registrar.sect_motion.submit',
     method: 'POST',
     pathTemplate: '/registrar/sect-motion',
@@ -235,6 +253,8 @@ export const registrarPromoterEndpoints = {
 
 export const registrarProjectEndpoints = {
   submit: () => '/registrar/project',
+  listEntries: () => '/registrar/project/entries',
+  detail: (entryId: string) => `/registrar/project/${requireEntryId(entryId)}`,
 } as const;
 export function getRegistrarWebGapContracts(): RegistrarWebEndpointContract[] {
   return REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter((contract) => contract.status === 'gap');

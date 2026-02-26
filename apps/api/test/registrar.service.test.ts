@@ -1055,6 +1055,24 @@ describe('RegistrarService', () => {
     expect(result.entries[0].payload).toEqual({ projectName: null });
   });
 
+  it('normalizes malformed project payload to null projectName in project list reads', async () => {
+    mockPrisma.registrarEntry.findMany.mockResolvedValue([
+      {
+        id: 'reg-project-2b',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        payload: 'malformed-payload',
+        createdAt: new Date('2026-02-25T02:22:00.000Z'),
+        updatedAt: new Date('2026-02-25T02:23:00.000Z'),
+        scene: null,
+      },
+    ]);
+
+    const result = await service.listProjectRegistrations('u-1');
+    expect(result.entries[0].payload).toEqual({ projectName: null });
+  });
+
   it('reads submitter-owned project registration detail', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-project-3',
@@ -1075,6 +1093,30 @@ describe('RegistrarService', () => {
         id: 'reg-project-3',
         type: 'project_registration',
         payload: { projectName: 'All-Ages Venue Buildout' },
+      }),
+    );
+  });
+
+  it('normalizes malformed project payload to null projectName in project detail reads', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-project-3b',
+      type: 'project_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      payload: ['malformed-payload'],
+      createdAt: new Date('2026-02-25T02:42:00.000Z'),
+      updatedAt: new Date('2026-02-25T02:43:00.000Z'),
+      scene: null,
+    });
+
+    const result = await service.getProjectRegistration('u-1', 'reg-project-3b');
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'reg-project-3b',
+        type: 'project_registration',
+        payload: { projectName: null },
       }),
     );
   });

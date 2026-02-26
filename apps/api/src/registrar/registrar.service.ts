@@ -34,6 +34,22 @@ const normalizeRegistrarPayloadObject = (payload: unknown) => {
   return payload as Record<string, unknown>;
 };
 
+const mapProjectRegistrationRead = (entry: any) => {
+  const payload = normalizeRegistrarPayloadObject(entry.payload);
+  return {
+    id: entry.id,
+    type: entry.type,
+    status: entry.status,
+    sceneId: entry.sceneId,
+    payload: {
+      projectName: normalizeProjectName(payload),
+    },
+    scene: entry.scene,
+    createdAt: entry.createdAt,
+    updatedAt: entry.updatedAt,
+  };
+};
+
 type RegistrarCodeIssuer = 'system';
 
 const PROMOTER_CAPABILITY_CODE = 'promoter_capability';
@@ -851,21 +867,7 @@ export class RegistrarService {
     return {
       total: entries.length,
       countsByStatus,
-      entries: entries.map((entry: any) => {
-        const payload = (entry.payload ?? {}) as Record<string, unknown>;
-        return {
-          id: entry.id,
-          type: entry.type,
-          status: entry.status,
-          sceneId: entry.sceneId,
-          payload: {
-            projectName: normalizeProjectName(payload),
-          },
-          scene: entry.scene,
-          createdAt: entry.createdAt,
-          updatedAt: entry.updatedAt,
-        };
-      }),
+      entries: entries.map(mapProjectRegistrationRead),
     };
   }
 
@@ -904,19 +906,7 @@ export class RegistrarService {
       throw new ForbiddenException('Only the submitting user can read this project registration');
     }
 
-    const payload = (entry.payload ?? {}) as Record<string, unknown>;
-    return {
-      id: entry.id,
-      type: entry.type,
-      status: entry.status,
-      sceneId: entry.sceneId,
-      payload: {
-        projectName: normalizeProjectName(payload),
-      },
-      scene: entry.scene,
-      createdAt: entry.createdAt,
-      updatedAt: entry.updatedAt,
-    };
+    return mapProjectRegistrationRead(entry);
   }
 
   async listSectMotionRegistrations(userId: string) {

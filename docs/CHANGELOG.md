@@ -7,6 +7,28 @@
 
 ## [Unreleased]
 ### Added
+- Registrar project chain targeted gate replay (slice 122A):
+  - Re-ran docs, infra-policy, targeted registrar API tests, and API/web typechecks after batch completion; all checks passed.
+- Registrar project read batch risk-review signoff (slice 121A):
+  - Added review-risk memo with residual risk register and migration-free rollback guidance for slices 114B/116A/117A/118A/119A/120A.
+- Registrar project typed client contract-test hardening (slice 120A):
+  - Added web client tests for project detail empty-response error handling.
+  - Added web client tests for project list payload passthrough with counts + entries shape assertions.
+- Registrar project read normalization helper consolidation (slice 119A):
+  - Consolidated project list/detail read mapping into a shared API helper in `registrar.service.ts` with no contract changes.
+  - Preserved existing normalization semantics and targeted test coverage for malformed payload handling.
+- Registrar project read QA/docs consolidation (slice 118A):
+  - Replayed required verification gates after slices 114B, 116A, and 117A; all checks passed and were recorded in dated handoff.
+- Registrar project web read contract scaffolding (slice 117A):
+  - Added web contract inventory coverage and endpoint helpers for `GET /registrar/project/entries` and `GET /registrar/project/:entryId`.
+  - Added typed web client methods for project list/detail reads plus focused contract/client tests.
+- Registrar project read controller parity hardening (slice 116A):
+  - Added targeted registrar controller tests for project detail passthrough with normalized payload (`projectName: null`).
+  - Added targeted registrar controller tests for project detail forbidden-error propagation parity.
+- Registrar project status read hardening (slice 114B):
+  - Hardened `GET /registrar/project/entries` and `GET /registrar/project/:entryId` payload normalization to safely handle malformed/non-object payload shapes while preserving additive response contract.
+  - Added targeted service tests for malformed payload normalization parity on project list/detail reads.
+  - Added slice handoff note with exact required gate commands/results and rollback guidance.
 - Reliant repo-local workflow pilot for slice execution:
   - Added `.reliant/workflows/uprise-slice-loop.yaml` implementing plan -> implement -> verify -> review for a single slice.
   - Added `.reliant/presets/uprise_executor.yaml` with UPRISE guardrails (canon/spec first, pnpm-only, web-tier boundary, docs/handoff requirements).
