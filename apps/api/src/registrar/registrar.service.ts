@@ -1123,10 +1123,13 @@ export class RegistrarService {
       countsByEntry.set(member.registrarEntryId, current);
     }
 
-    const inviteCountsByStatus = members.reduce((acc: Record<string, number>, member) => {
-      acc[member.inviteStatus] = (acc[member.inviteStatus] ?? 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const inviteCountsByStatus = members.reduce(
+      (acc: Record<string, number>, member: { inviteStatus: string }) => {
+        acc[member.inviteStatus] = (acc[member.inviteStatus] ?? 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     const lastInviteDispatchByEntry = new Map<string, Date>();
     for (const delivery of deliveries) {
