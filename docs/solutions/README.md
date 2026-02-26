@@ -35,3 +35,4 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/WEB_TS6053_NEXT_TYPES.md` — `.next/types` TS6053 failures
 - `docs/solutions/NEXT_FONT_GOOGLE_FONTS_BUILD_FAIL.md` — `next/font` Google Fonts build failures
 - `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md` — local/dev Prisma migration drift and failed-history recovery
+- `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` — scheduler/chat bridge setup for queue-driven multi-agent autonomy

@@ -1,67 +1,35 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { api } from '@/lib/api';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 import type { CommunityWithDistance } from '@/lib/types/community';
-import SceneMap, { type SceneMapPoint } from '@/components/plot/SceneMap';
+import SceneMap from '@/components/plot/SceneMap';
 import { shouldFetchNearbyForTier } from '@/components/plot/tier-guard';
-
-type TierScope = 'city' | 'state' | 'national';
-
-interface CommunityStatisticsResponse {
-  community: {
-    id: string;
-    name: string;
-    city: string | null;
-    state: string | null;
-    musicCommunity: string | null;
-    tier: string;
-    isActive: boolean;
-  };
-  tierScope: TierScope;
-  rollupUnit: 'local_sect' | 'city' | 'state';
-  metrics: {
-    totalMembers: number;
-    activeSects: number;
-    eventsThisWeek: number;
-    activityScore: number;
-    activeTracks: number;
-    gpsVerifiedUsers: number;
-    votingEligibleUsers: number;
-    scopeCommunityCount: number;
-  };
-  topSongs: Array<{
-    trackId: string;
-    title: string;
-    artist: string;
-    duration: number;
-    playCount: number;
-    communityId: string | null;
-    communityName: string | null;
-  }>;
-  timeWindow: {
-    days: number;
-    asOf: string;
-  };
-}
-
-interface CommunitySceneMapResponse {
-  tierScope: TierScope;
-  rollupUnit: 'local_sect' | 'city' | 'state';
-  center: { lat: number; lng: number } | null;
-  points: SceneMapPoint[];
-}
+import {
+  findNearbyCommunities,
+  getActiveCommunityStatistics,
+  getCommunitySceneMap,
+  getCommunityStatistics,
+  type CommunitySceneMapResponse,
+  type CommunityStatisticsResponse,
+} from '@/lib/communities/client';
+import {
+  resolveSceneMapAnchorId,
+  resolveStatisticsEndpoint,
+  type TierScope,
+} from '@/components/plot/statistics-request';
 
 interface StatisticsPanelProps {
   selectedTier: TierScope;
+  selectedCommunity: CommunityWithDistance | null;
   onCommunitySelect?: (community: CommunityWithDistance) => void;
   onCommunitiesUpdate?: (communities: CommunityWithDistance[]) => void;
 }
 
 export default function StatisticsPanel({
   selectedTier,
+  selectedCommunity,
   onCommunitySelect,
   onCommunitiesUpdate,
 }: StatisticsPanelProps) {
@@ -69,9 +37,9 @@ export default function StatisticsPanel({
   const { token } = useAuthStore();
 
   const [communities, setCommunities] = useState<CommunityWithDistance[]>([]);
-  const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [statistics, setStatistics] = useState<CommunityStatisticsResponse | null>(null);
   const [sceneMap, setSceneMap] = useState<CommunitySceneMapResponse | null>(null);
+  const [activeSceneId, setActiveSceneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -102,12 +70,17 @@ export default function StatisticsPanel({
       }
 
       try {
-        const response = await api.get<CommunityWithDistance[]>(
-          `/communities/nearby?lat=${mapCenter.lat}&lng=${mapCenter.lng}&radius=${cityRadiusMeters}&limit=50`,
-          { token: token || undefined }
+        const response = await findNearbyCommunities(
+          {
+            lat: mapCenter.lat,
+            lng: mapCenter.lng,
+            radius: cityRadiusMeters,
+            limit: 50,
+          },
+          token || undefined,
         );
 
-        const nextCommunities = response.data ?? [];
+        const nextCommunities = response ?? [];
         setCommunities(nextCommunities);
         onCommunitiesUpdate?.(nextCommunities);
 
@@ -117,7 +90,6 @@ export default function StatisticsPanel({
             : false;
 
           if (!currentStillExists) {
-            setSelectedCommunity(nextCommunities[0]);
             onCommunitySelect?.(nextCommunities[0]);
           }
         }
@@ -129,27 +101,33 @@ export default function StatisticsPanel({
     fetchNearbyCommunities();
   }, [selectedTier, mapCenter, cityRadiusMeters, token, selectedCommunity, onCommunitySelect, onCommunitiesUpdate]);
 
-  // Tier-scoped statistics anchored on selected city community.
+  // Tier-scoped statistics use explicit community anchor when selected, otherwise active-scene fallback.
   useEffect(() => {
     async function fetchStatistics() {
-      if (!selectedCommunity) {
-        setStatistics(null);
-        return;
-      }
-
       setLoading(true);
       setError(null);
 
       try {
-        const response = await api.get<CommunityStatisticsResponse>(
-          `/communities/${selectedCommunity.id}/statistics?tier=${selectedTier}`,
-          { token: token || undefined }
-        );
+        const resolution = resolveStatisticsEndpoint(selectedCommunity?.id ?? null, selectedTier);
+        if (resolution.source === 'anchored' && selectedCommunity?.id) {
+          const data = await getCommunityStatistics(selectedCommunity.id, selectedTier, token || undefined);
+          setStatistics(data);
+          setActiveSceneId(selectedCommunity.id);
+          return;
+        }
 
-        setStatistics(response.data ?? null);
+        const activeResult = await getActiveCommunityStatistics(selectedTier, token || undefined);
+        setStatistics(activeResult.data);
+        if (resolution.source === 'anchored') {
+          setActiveSceneId(selectedCommunity?.id ?? null);
+        } else {
+          const fallbackSceneId = activeResult.sceneId ?? activeResult.data?.community?.id ?? null;
+          setActiveSceneId(fallbackSceneId);
+        }
       } catch {
         setError('Unable to load scene statistics');
         setStatistics(null);
+        setActiveSceneId(null);
       } finally {
         setLoading(false);
       }
@@ -160,27 +138,24 @@ export default function StatisticsPanel({
 
   useEffect(() => {
     async function fetchSceneMap() {
-      if (!selectedCommunity) {
+      const anchorId = resolveSceneMapAnchorId(selectedCommunity?.id ?? null, activeSceneId);
+      if (!anchorId) {
         setSceneMap(null);
         return;
       }
 
       try {
-        const response = await api.get<CommunitySceneMapResponse>(
-          `/communities/${selectedCommunity.id}/scene-map?tier=${selectedTier}`,
-          { token: token || undefined }
-        );
-        setSceneMap(response.data ?? null);
+        const response = await getCommunitySceneMap(anchorId, selectedTier, token || undefined);
+        setSceneMap(response);
       } catch {
         setSceneMap(null);
       }
     }
 
     fetchSceneMap();
-  }, [selectedCommunity, selectedTier, token]);
+  }, [selectedCommunity, activeSceneId, selectedTier, token]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
-    setSelectedCommunity(community);
     onCommunitySelect?.(community);
   };
 
@@ -203,7 +178,7 @@ export default function StatisticsPanel({
     );
   }
 
-  if (!selectedCommunity) {
+  if (!selectedCommunity && !activeSceneId) {
     return (
       <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
         <div className="text-center py-8">
@@ -275,7 +250,7 @@ export default function StatisticsPanel({
                 key={community.id}
                 onClick={() => handleCommunitySelect(community)}
                 className={`w-full text-left p-2 rounded-lg transition-colors ${
-                  selectedCommunity.id === community.id
+                  selectedCommunity?.id === community.id
                     ? 'border border-black bg-black/5'
                     : 'border border-transparent hover:bg-black/5'
                 }`}

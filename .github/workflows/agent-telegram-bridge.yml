@@ -1,0 +1,119 @@
+name: Agent Telegram Bridge
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      queue_path:
+        description: Queue file path for command operations
+        required: false
+        default: docs/handoff/agent-control/queue.json
+      limit:
+        description: Max Telegram updates to process per tick
+        required: false
+        default: '25'
+      poll_timeout_seconds:
+        description: Telegram long-poll timeout seconds per request
+        required: false
+        default: '25'
+      max_runtime_seconds:
+        description: Max seconds to keep the bridge polling in one run
+        required: false
+        default: '240'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-telegram-bridge
+  cancel-in-progress: false
+
+jobs:
+  telegram-bridge-tick:
+    name: Telegram Bridge Tick
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      NODE_VERSION: '22'
+      PNPM_VERSION: '9.0.0'
+      DEFAULT_QUEUE_PATH: docs/handoff/agent-control/queue.json
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve queue path
+        id: input
+        shell: bash
+        run: |
+          QUEUE_PATH="${{ github.event.inputs.queue_path }}"
+          if [ -z "$QUEUE_PATH" ]; then
+            QUEUE_PATH="${DEFAULT_QUEUE_PATH}"
+          fi
+
+          LIMIT="${{ github.event.inputs.limit }}"
+          if [ -z "$LIMIT" ]; then
+            LIMIT="25"
+          fi
+
+          POLL_TIMEOUT_SECONDS="${{ github.event.inputs.poll_timeout_seconds }}"
+          if [ -z "$POLL_TIMEOUT_SECONDS" ]; then
+            POLL_TIMEOUT_SECONDS="25"
+          fi
+
+          MAX_RUNTIME_SECONDS="${{ github.event.inputs.max_runtime_seconds }}"
+          if [ -z "$MAX_RUNTIME_SECONDS" ]; then
+            MAX_RUNTIME_SECONDS="240"
+          fi
+
+          echo "queue_path=$QUEUE_PATH" >> $GITHUB_OUTPUT
+          echo "limit=$LIMIT" >> $GITHUB_OUTPUT
+          echo "poll_timeout_seconds=$POLL_TIMEOUT_SECONDS" >> $GITHUB_OUTPUT
+          echo "max_runtime_seconds=$MAX_RUNTIME_SECONDS" >> $GITHUB_OUTPUT
+
+      - name: Guard missing Telegram config
+        id: guard
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ALLOWED_USER_IDS: ${{ secrets.TELEGRAM_ALLOWED_USER_IDS }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_ALLOWED_USER_IDS" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Telegram bridge skipped: missing TELEGRAM_BOT_TOKEN or TELEGRAM_ALLOWED_USER_IDS secret."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Telegram bridge tick
+        if: steps.guard.outputs.skip == 'false'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ALLOWED_USER_IDS: ${{ secrets.TELEGRAM_ALLOWED_USER_IDS }}
+          TELEGRAM_ALLOWED_CHAT_IDS: ${{ secrets.TELEGRAM_ALLOWED_CHAT_IDS }}
+        run: |
+          node scripts/agent-bridge-telegram.mjs \
+            --queue "${{ steps.input.outputs.queue_path }}" \
+            --lanes "docs/handoff/agent-control/lanes.json" \
+            --limit "${{ steps.input.outputs.limit }}" \
+            --poll-timeout-seconds "${{ steps.input.outputs.poll_timeout_seconds }}" \
+            --max-runtime-seconds "${{ steps.input.outputs.max_runtime_seconds }}" \
+            --assigned-by "telegram-bridge"

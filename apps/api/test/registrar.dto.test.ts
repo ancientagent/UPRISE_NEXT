@@ -1,6 +1,10 @@
 import {
   ArtistBandRegistrationSchema,
   PromoterRegistrationSchema,
+  ProjectRegistrationSchema,
+  RegistrarCodeRedeemSchema,
+  RegistrarCodeVerifySchema,
+  SectMotionRegistrationSchema,
 } from '../src/registrar/dto/registrar.dto';
 
 describe('Registrar DTO schemas', () => {
@@ -20,6 +24,42 @@ describe('Registrar DTO schemas', () => {
     });
 
     expect(parsed.productionName).toBe('Southside Signal Co.');
+  });
+
+  it('rejects whitespace-only project registration projectName', () => {
+    const parsed = ProjectRegistrationSchema.safeParse({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      projectName: '   ',
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it('trims project registration projectName before persistence handoff', () => {
+    const parsed = ProjectRegistrationSchema.parse({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      projectName: '  All-Ages Venue Buildout  ',
+    });
+
+    expect(parsed.projectName).toBe('All-Ages Venue Buildout');
+  });
+
+  it('accepts sect motion registration payload with sceneId only', () => {
+    const parsed = SectMotionRegistrationSchema.parse({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+    });
+
+    expect(parsed).toEqual({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+    });
+  });
+
+  it('rejects invalid sect motion sceneId payload', () => {
+    const parsed = SectMotionRegistrationSchema.safeParse({
+      sceneId: 'not-a-uuid',
+    });
+
+    expect(parsed.success).toBe(false);
   });
 
   it('rejects whitespace-only artist/band member identity fields', () => {
@@ -65,5 +105,21 @@ describe('Registrar DTO schemas', () => {
       city: 'Austin',
       instrument: 'Guitar',
     });
+  });
+
+  it('trims registrar code verify payload', () => {
+    const parsed = RegistrarCodeVerifySchema.parse({
+      code: '  PRC-ABCDEF1234  ',
+    });
+
+    expect(parsed.code).toBe('PRC-ABCDEF1234');
+  });
+
+  it('rejects empty registrar code redeem payload', () => {
+    const parsed = RegistrarCodeRedeemSchema.safeParse({
+      code: '    ',
+    });
+
+    expect(parsed.success).toBe(false);
   });
 });

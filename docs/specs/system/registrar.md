@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-21`
+**Last Updated:** `2026-02-25`
 
 ## Overview & Purpose
 Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
@@ -49,6 +49,16 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submitter-only read for single promoter registrar entry status tracking.
   - Returns scene context and payload summary (`productionName`) for the requested entry.
   - Read payload normalization trims `productionName`; blank/whitespace resolves to `null`.
+- Registrar project status read surfaces (slice 114A):
+  - `GET /registrar/project/entries` implemented.
+  - Submitter-only list read for project registrar entries (`type = project_registration`) with reverse-chronological ordering.
+  - Includes top-level `countsByStatus` summary and per-entry scene context + normalized payload summary (`projectName`).
+  - `GET /registrar/project/:entryId` implemented for submitter-only detail read.
+- Registrar sect-motion status read surfaces (slice 114A):
+  - `GET /registrar/sect-motion/entries` implemented.
+  - Submitter-only list read for sect-motion registrar entries (`type = sect_motion`) with reverse-chronological ordering.
+  - Includes top-level `countsByStatus` summary and per-entry scene context + normalized payload object.
+  - `GET /registrar/sect-motion/:entryId` implemented for submitter-only detail read.
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
   - Registration payload now captures member roster:
@@ -76,30 +86,6 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Worker loop handles success/failure/exception paths and continues processing on partial failures.
   - No scheduler/cron wiring; worker must be invoked explicitly via manual call or future automation lane.
   - No real email provider integration; delivery execution remains no-op until provider substitution.
-- Registrar invite outbound provider integration (slice 78):
-  - Invite delivery provider wiring now supports env-driven provider selection:
-    - `noop` (default),
-    - `webhook`.
-  - `webhook` provider posts invite payloads to `REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL` (optional bearer token via `REGISTRAR_INVITE_DELIVERY_WEBHOOK_TOKEN`).
-  - Worker + trigger lanes remain unchanged; they resolve delivery provider through the shared provider token.
-  - Unknown provider values safely fallback to `noop`.
-- Registrar invite provider delivery-context propagation (slice 79):
-  - Worker now passes delivery context (`deliveryId`, `registrarArtistMemberId`) into provider `send(...)` calls.
-  - Webhook provider forwards context alongside email and payload for external correlation/idempotency handling.
-  - Additive internal interface change only; no public API contract change.
-- Registrar invite provider module-wiring selection coverage (slice 81):
-  - Module-level provider selection now routes through shared selector helper.
-  - Added explicit test coverage for default (`noop`), configured (`webhook`), and unknown-value fallback selection behavior.
-- Registrar webhook provider URL hardening (slice 82):
-  - Webhook provider now validates `REGISTRAR_INVITE_DELIVERY_WEBHOOK_URL` format and protocol (`http`/`https`) before send attempts.
-  - Malformed or unsupported webhook URLs fail safely without outbound request attempts.
-- Registrar webhook provider timeout hardening (slice 83):
-  - Webhook outbound send now uses bounded request timeout via `AbortController`.
-  - Timeout is configurable via `REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS` with default and minimum safety floor.
-  - Timeout behavior remains fail-safe (`failed`) without mutating external contracts.
-- Registrar webhook timeout ceiling hardening (slice 84):
-  - Added maximum timeout ceiling for webhook outbound sends to prevent runaway long-lived requests from config mistakes.
-  - Timeout config is now bounded to minimum + maximum safety limits.
 - Registrar invite claim bootstrap (slice 6):
   - `POST /auth/invite-preview` implemented for invite prefill context lookup prior to claim.
   - `POST /auth/register-invite` implemented to claim invite tokens and create platform user accounts.
@@ -115,6 +101,32 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Fields are derived from the existing `RegistrarInviteDelivery` row joined per member; no schema migration required.
   - Raw `deliveries` array is not exposed; only the mapped outcome fields are returned.
   - Additive/non-breaking: callers that do not consume the new fields are unaffected.
+- Registrar capability-code verification/redemption primitives (slice 95):
+  - `POST /registrar/code/verify` implemented (auth required) for capability-code validation prior to redemption.
+  - `POST /registrar/code/redeem` implemented (auth required) to mark redeemable registrar codes as redeemed.
+  - Redemption is guarded by locked policy constraints:
+    - linked registrar entry type must be `promoter_registration`,
+    - linked registrar entry status must be `approved`,
+    - code must be in `issued` status and not expired/redeemed.
+  - Additive API surface; no destructive migration.
+- Promoter capability transition state persistence/read enrichment (slice 96):
+  - `POST /registrar/code/redeem` now upserts additive `UserCapabilityGrant` rows for authenticated redeemers.
+  - Promoter submitter read surfaces now include `promoterCapability` transition summary:
+    - `codeIssuedCount`,
+    - `latestCodeStatus`,
+    - `latestCodeIssuedAt`,
+    - `latestCodeRedeemedAt`,
+    - `granted`,
+    - `grantedAt`.
+  - Capability grant provenance is linked to source registrar entry/code IDs for traceability.
+- Capability grant audit persistence/read surface (slice 97):
+  - Capability issuance/redemption/grant transitions now persist audit events in `CapabilityGrantAuditLog`.
+  - Audit events are recorded for:
+    - `code_issued`,
+    - `code_redeemed`,
+    - `capability_granted`.
+  - Submitter-owned promoter audit read endpoint implemented:
+    - `GET /registrar/promoter/:entryId/capability-audit`.
 - Registrar registration status list read surface (slice 11):
   - `GET /registrar/artist/entries` implemented.
   - Returns submitter-owned Artist/Band registrar entries in reverse-chronological order.
@@ -125,23 +137,20 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Keeps existing counts (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`) unchanged.
   - Additive/non-breaking read-surface enrichment for submitter tracking.
 - Registrar registration status list top-level invite summary (slice 71):
-  - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus` aggregated across submitter-owned artist registration members.
+  - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus` aggregated across submitter-owned registrar artist members.
   - Empty-state responses include `inviteCountsByStatus: {}` for stable shape parity.
-  - Additive/non-breaking read-surface enrichment for lightweight registrar status dashboards.
 - Registrar registration status list last-dispatch timestamp (slice 72):
-  - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null `RegistrarInviteDelivery.dispatchedAt` for that registration).
+  - `GET /registrar/artist/entries` now includes per-entry `lastInviteDispatchAt` (latest non-null `RegistrarInviteDelivery.dispatchedAt` for each registration entry).
   - `lastInviteDispatchAt` is `null` when no invite dispatch has been finalized for the entry.
-  - Additive/non-breaking read-surface enrichment for submitter follow-up timing visibility.
 - Registrar invite delivery automated trigger lane (slice 73):
-  - Internal trigger service now supports automated execution of queued invite delivery processing on an env-gated interval.
-  - Trigger is disabled by default and requires `REGISTRAR_INVITE_DELIVERY_AUTORUN_ENABLED` to be set truthy.
-  - Interval is configurable via `REGISTRAR_INVITE_DELIVERY_AUTORUN_INTERVAL_MS` with a minimum safety floor to avoid runaway loops.
-  - Overlap guard prevents concurrent/replay overlap: while a prior tick is still running, subsequent ticks are skipped.
-  - Delivery processing still delegates to `RegistrarInviteDeliveryWorkerService` and queued-only finalization flow.
-- Registrar invite delivery finalize replay-safety hardening (slice 75):
-  - `finalizeQueuedInviteDelivery` now mutates delivery/member status only when delivery row is still `queued` (atomic `updateMany` guard).
-  - If the row is already finalized (`sent`/`failed`), finalize returns current delivery state with `alreadyFinalized: true` and does not mutate state again.
-  - Concurrent finalize race path now returns existing finalized state instead of overwriting.
+  - Internal trigger service supports env-gated interval execution of queued invite delivery processing.
+  - Trigger remains default-off and uses overlap guards to prevent concurrent worker runs.
+- Registrar invite finalize replay-safety hardening (slice 75):
+  - `finalizeQueuedInviteDelivery` now mutates delivery/member status only when the delivery row is still `queued`.
+  - Repeated finalize attempts return existing finalized state without overwriting.
+- Registrar outbound webhook invite provider option (slice 78):
+  - Added outbound webhook invite delivery provider path with provider selection via environment configuration.
+  - URL/timeout guardrails and provider-selection coverage are implemented.
 - Registrar member sync primitive (slice 13):
   - `POST /registrar/artist/:entryId/sync-members` implemented.
   - Submitter-only action for materialized registrations.
@@ -170,12 +179,30 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Transitional alias `isArtistTransitional` is also removed from user detail/profile read contracts.
 - Identity persistence cleanup alignment (slice 33):
   - Legacy `User.isArtist` column removed from persistence schema after caller migration reached zero.
+- Registrar project submission primitive (slice 98A):
+  - `POST /registrar/project` implemented for Home Scene-scoped project registration submissions.
+  - Persists registrar entry baseline lifecycle (`type = project_registration`, `status = submitted`) with project name payload.
+  - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
+- Registrar sect-motion submission skeleton (slice 99A):
+  - `POST /registrar/sect-motion` implemented as additive skeleton submission primitive.
+  - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`) until motion artifact schema is canon-locked.
+  - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
+- Registrar project web contract scaffolding (slice 98A web lane):
+  - Web typed contract/client support added for `POST /registrar/project`.
+  - No new registrar UI action/CTA added; web surface remains action-gated per spec.
 
 ### Deferred (Not Implemented Yet)
-- Role registration code issuance and verification workflows.
-- Registrar-gated create/update writes for Promoter capabilities beyond submission intake.
-- Dedicated project registration endpoint(s) and status lifecycle.
+- Registrar-admin approval/issuance orchestration workflows for promoter capability codes.
+- Registrar-gated promoter capability revocation/admin-management flows.
+- Outbound invite email sender worker/provider integration (dispatch rows are now queued).
+- Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
+- Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
 - Sect motion lifecycle and approval state machine.
+
+### Policy Lock (2026-02-24, P3-REV-001)
+- `RegistrarCode` issuance authority is system-only (trusted API-tier registrar paths); no user self-issuance.
+- Issuance precondition is `RegistrarEntry.status = approved` for capability-code handoff flows.
+- Phase 3 kickoff scope applies this lock to promoter capability flow (`RegistrarEntry.type = promoter_registration`).
 
 ## Non-Functional Requirements
 - Traceability: registrar actions must be auditable.
@@ -197,12 +224,16 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
 - `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
 - `RegistrarInviteDelivery` (`registrarArtistMemberId`, `email`, `status`, `payload`, `dispatchedAt`, timestamps)
+- `UserCapabilityGrant` (`userId`, `capability`, `status`, `sourceRegistrarEntryId?`, `sourceRegistrarCodeId?`, `grantedAt`, `revokedAt?`, timestamps)
+- `CapabilityGrantAuditLog` (`capability`, `action`, `actorType`, `targetUserId?`, `actorUserId?`, `registrarEntryId?`, `registrarCodeId?`, `metadata?`, `createdAt`)
 
 ### Migrations
 - `20260220130000_add_artist_bands_identity` introduces registrar-link-ready Artist/Band persistence (`registrarEntryRef` placeholder).
 - `20260220141000_add_registrar_entries` adds `registrar_entries` for Home Scene-scoped registration submissions.
 - `20260220170000_add_registrar_artist_members` adds `registrar_artist_members` roster/invite persistence for registrar artist submissions.
 - `20260220183000_add_registrar_invite_delivery` adds invite token fields + `registrar_invite_deliveries` queue table.
+- `20260224200000_add_user_capability_grants` adds additive `user_capability_grants` for capability transition tracking.
+- `20260224213000_add_capability_grant_audit_logs` adds additive `capability_grant_audit_logs` for registrar capability traceability.
 
 ## API Design
 ### Endpoints
@@ -217,6 +248,13 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registrar entries + scene context |
 | GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registrar entry detail + scene context |
+| GET | `/registrar/promoter/:entryId/capability-audit` | required | Read submitter-owned promoter capability audit events |
+| POST | `/registrar/code/verify` | required | Verify registrar capability-code eligibility for redemption |
+| POST | `/registrar/code/redeem` | required | Redeem registrar capability-code for authenticated user |
+| GET | `/registrar/project/entries` | required | List submitter-owned project registrar entries + scene context |
+| GET | `/registrar/project/:entryId` | required | Read submitter-owned project registrar entry detail + scene context |
+| GET | `/registrar/sect-motion/entries` | required | List submitter-owned sect-motion registrar entries + scene context |
+| GET | `/registrar/sect-motion/:entryId` | required | Read submitter-owned sect-motion registrar entry detail + scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
 
@@ -235,11 +273,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - submit artist registration with non-platform members,
   - dispatch invite queue rows,
   - finalize queued rows as `sent`/`failed`,
-  - read invite status surface with mapped delivery outcome fields,
-  - replay finalize attempts preserve existing finalized delivery/member state (no status overwrite).
+  - read invite status surface with mapped delivery outcome fields.
 
 ## Future Work & Open Questions
-- Finalize schema for role registration code flows.
+- Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
 - Define who can submit and approve Sect uprising motions.
 - Lock registrar moderation/appeal behavior for rejected motions.
 

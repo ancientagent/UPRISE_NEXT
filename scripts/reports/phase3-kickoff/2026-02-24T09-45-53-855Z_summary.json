@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-02-24T09:46:00.378Z",
+  "branch": "phase3-mvp-roadmap-slice88",
+  "commit": "c159172863e9d865faa218ff0135da6037245b61",
+  "task": "P3-QA-BOOT",
+  "lane": "qa-ci",
+  "checks": [
+    {
+      "id": "docs-lint",
+      "description": "Docs + canon lint",
+      "command": "pnpm run docs:lint",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-02-24T09:45:53.855Z",
+      "finishedAt": "2026-02-24T09:45:54.287Z",
+      "durationMs": 432,
+      "logPath": "scripts/reports/phase3-kickoff/2026-02-24T09-45-53-855Z_docs-lint.log"
+    },
+    {
+      "id": "infra-policy-check",
+      "description": "Web-tier boundary policy guard",
+      "command": "pnpm run infra-policy-check",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-02-24T09:45:54.288Z",
+      "finishedAt": "2026-02-24T09:45:54.634Z",
+      "durationMs": 346,
+      "logPath": "scripts/reports/phase3-kickoff/2026-02-24T09-45-53-855Z_infra-policy-check.log"
+    },
+    {
+      "id": "registrar-tests",
+      "description": "Targeted API registrar test suite",
+      "command": "pnpm --filter api test -- registrar.dto.test.ts registrar.controller.test.ts registrar.service.test.ts",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-02-24T09:45:54.634Z",
+      "finishedAt": "2026-02-24T09:45:56.688Z",
+      "durationMs": 2054,
+      "logPath": "scripts/reports/phase3-kickoff/2026-02-24T09-45-53-855Z_registrar-tests.log"
+    },
+    {
+      "id": "api-typecheck",
+      "description": "API workspace typecheck",
+      "command": "pnpm --filter api typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-02-24T09:45:56.688Z",
+      "finishedAt": "2026-02-24T09:45:58.152Z",
+      "durationMs": 1464,
+      "logPath": "scripts/reports/phase3-kickoff/2026-02-24T09-45-53-855Z_api-typecheck.log"
+    },
+    {
+      "id": "web-typecheck",
+      "description": "Web workspace typecheck",
+      "command": "pnpm --filter web typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "signal": null,
+      "startedAt": "2026-02-24T09:45:58.152Z",
+      "finishedAt": "2026-02-24T09:46:00.378Z",
+      "durationMs": 2226,
+      "logPath": "scripts/reports/phase3-kickoff/2026-02-24T09-45-53-855Z_web-typecheck.log"
+    }
+  ],
+  "totals": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0
+  }
+}

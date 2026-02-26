@@ -7,67 +7,184 @@
 
 ## [Unreleased]
 ### Added
+- Registrar project + sect-motion submitter status read surfaces (slice 114A):
+  - Added `GET /registrar/project/entries` and `GET /registrar/project/:entryId` for submitter-owned project registration state tracking.
+  - Added `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` for submitter-owned sect-motion state tracking.
+  - Added registrar controller/service unit coverage for list/detail success + ownership/type/not-found guard paths.
+- Phase 4 QA/docs/review closure for slices 108A–110A (slices 111A–113A):
+  - Added consolidated QA sweep report with exact command outputs (`docs/handoff/2026-02-25_phase4-qa-sweep-108A-110A-slice111A.md`).
+  - Added docs sync note for updated communities specs/changelog/handoff index (`docs/handoff/2026-02-25_phase4-doc-sync-108A-110A-slice112A.md`).
+  - Added review/risk signoff memo with rollback references (`docs/handoff/2026-02-25_phase4-review-risk-signoff-108A-110A-slice113A.md`).
+- Phase 4 discovery-context consistency helper lane (slice 110A):
+  - Added shared discovery-context patch helpers in `apps/web/src/lib/discovery/context.ts`.
+  - Updated Discover and Plot pages to use centralized context patch mapping/merge behavior.
+  - Added unit coverage in `apps/web/__tests__/discovery-context.test.ts`.
+- Phase 4 web contract wrapper consolidation (slice 109A):
+  - Added typed discovery client wrappers in `apps/web/src/lib/discovery/client.ts`.
+  - Added typed communities client wrappers in `apps/web/src/lib/communities/client.ts`.
+  - Migrated Discover/Plot/Statistics surfaces to use centralized wrappers instead of inline endpoint strings.
+  - Added web tests for discovery/communities client endpoint mapping and response handling.
+- Phase 4 discovery controller parity lane (slice 108A):
+  - Added `apps/api/test/communities.discovery.controller.test.ts` for discovery endpoint delegation/validation coverage.
+  - Coverage includes invalid query/body paths for `GET /discover/scenes`, `POST /discover/tune`, and `POST /discover/set-home-scene`.
+- Phase 4 communities route-resolution guard (slice 107A):
+  - Added `apps/api/test/communities.routes.test.ts` with Fastify injection coverage for `GET /communities/nearby`.
+  - Asserts route resolves to `findNearby` handler and does not dispatch through `:id` lookup handler.
+- Phase 4 communities metrics/home-resolution controller hardening (slice 106A):
+  - Added `apps/api/test/communities.metrics.controller.test.ts` covering tier-scoped controller delegation for statistics/scene-map reads.
+  - Added validation-path assertions for invalid tier values and incomplete home-scene tuple on resolve-home route.
+- Phase 4 communities direct-events validation parity (slice 105A):
+  - Extended communities controller coverage to assert strict `includePast` parsing on `GET /communities/:id/events`.
+  - Added invalid-query rejection coverage for direct scene events route.
+- Phase 4 communities events-query boolean hardening (slice 104A):
+  - Replaced broad boolean coercion for `includePast` with strict string parsing (`true`/`false`) in `GetCommunityEventsSchema`.
+  - Added controller coverage ensuring `includePast=false` remains false and invalid boolean strings are rejected with validation errors.
+- Phase 4 communities active-endpoint controller hardening (slice 103A):
+  - Added `apps/api/test/communities.active.controller.test.ts` to cover active-scene controller delegation for feed/statistics/events/promotions.
+  - Added validation-path assertion for invalid active feed query handling (`BadRequestException`).
+- Phase 4 Plot shared community-anchor consistency (slice 102A):
+  - `StatisticsPanel` is now controlled by Plot page selected-community state instead of maintaining an independent local anchor.
+  - Statistics/scene-map and Top Songs panels now consume the same selected community context, reducing cross-panel scope drift.
+- Phase 4 Plot registrar status integration (slice 101A):
+  - Plot Scene Activity panel now loads submitter-owned Artist/Band registrar entry summary via `GET /registrar/artist/entries`.
+  - Panel shows registration totals, lifecycle summary, invite-state counts, and latest status while preserving explicit `Open Registrar` action.
+  - Added web helper coverage for registrar plot summary aggregation.
+- Phase 4 communities core stats fallback hardening (slice 100A):
+  - Plot `StatisticsPanel` now uses `GET /communities/active/statistics?tier=...` when no explicit community anchor is selected.
+  - Scene-map fetch in the same panel now anchors on either selected community or active-scene fallback id, improving no-anchor Plot continuity.
+  - Added web unit coverage for statistics endpoint and scene-map anchor resolution helpers.
+- Registrar sect-motion submission skeleton (slice 99A):
+  - Added `POST /registrar/sect-motion` (auth required) as additive registrar submission primitive.
+  - Added `SectMotionRegistrationSchema` (`sceneId` uuid) and controller/service path `submitSectMotionRegistration`.
+  - Persists `RegistrarEntry` baseline lifecycle (`type = sect_motion`, `status = submitted`) with Home Scene/city-tier guardrails.
+  - Added registrar DTO/controller/service unit coverage for success and guard/error paths.
+- Web registrar project contract scaffolding (slice 98A web lane):
+  - Added typed endpoint helper `registrarProjectEndpoints.submit()` and typed client `submitProjectRegistration(payload, token)`.
+  - Updated registrar contract inventory project/sect endpoint gap status to `web_surface_missing` (API exists, no web action yet).
+  - Added web unit coverage for registrar project endpoint helper path.
+- Phase 3 QA lane report for project+sect batch (slice 98A/99A):
+  - Added `docs/handoff/2026-02-25_P3-QA-098A-project-sect-validation.md` with exact command outputs and pass verdict.
+- Phase 3 regression QA report for capability batch (slice 95-97):
+  - Added `docs/handoff/2026-02-25_P3-QA-095B-regression-95-97.md` to resolve stale QA lane artifact gap with pass/fail verdict.
+- Agent queue spawn guardrails + directive templates:
+  - `scripts/agent-control.mjs` now enforces controlled child-task assignment with `--parent-id` constraints, `allowSpawn` parent checks, max-depth/max-children limits, and required child metadata (`--depends-on`, `--planned-report`, `--rollback-note`).
+  - Queue tasks now persist spawn metadata (`parentId`, `depth`, `children`, `spawnPolicy`, `planned`) for deterministic orchestration and rollback traceability.
+  - Directive payloads now include lane role profiles + parallel guardrail policy blocks, and `backfill-directives` patches partially-missing legacy directive structures.
+  - Added `docs/handoff/agent-control/AGENT_DIRECTIVES.md` with standardized templates for the six-agent operating model.
+  - Added test coverage for guardrail enforcement paths in `scripts/agent-control.test.mjs`.
+- Slice review-risk memo for registrar capability batch (slices 95-97):
+  - Added `docs/handoff/2026-02-24_slice95-97-risk-rollback-drift-review.md` with severity-ranked risk findings, rollback sequencing, drift notes, and exact validation command outputs.
+  - Flags medium-priority redemption concurrency race risk in `redeemRegistrarCodeForUser` (pre-check + unguarded update pattern under concurrent requests).
+- Agent queue directive auto-attachment:
+  - `scripts/agent-control.mjs` now auto-attaches directive metadata on `assign`:
+    - required reading order,
+    - standing orders,
+    - validation gate checklist.
+  - `claim` now backfills default directives for legacy tasks missing directive metadata.
+  - Added explicit queue command `backfill-directives` to patch existing tasks without requeue/claim churn.
+  - Added directive coverage assertion in `scripts/agent-control.test.mjs`.
+  - Updated `docs/handoff/agent-control/README.md` with directive auto-attachment behavior.
+- Phase 3 parallel slice board + lane queue batch (98–102):
+  - Added execution board `docs/handoff/2026-02-24_phase3-parallel-slice-board-98-102.md` with lane-owned scope, dependencies, and validation gates.
+  - Initialized queue batch `/tmp/uprise_next_phase3_parallel_batch1.json` with 9 lane tasks across api/web/qa/docs/review.
+  - Established two-wave parallel execution order: immediate Wave 1 parallel claims + dependency-gated Wave 2 follow-through.
+- Capability grant audit persistence/read surface (slice 97):
+  - Added additive Prisma model/table `CapabilityGrantAuditLog` via migration `20260224213000_add_capability_grant_audit_logs`.
+  - Registrar capability transitions now emit audit events:
+    - `code_issued` during registrar code issuance,
+    - `code_redeemed` during user redemption,
+    - `capability_granted` after capability grant upsert.
+  - Added submitter-owned audit read endpoint: `GET /registrar/promoter/:entryId/capability-audit`.
+  - Added registrar service/controller unit coverage for audit write and read paths.
+  - Updated web registrar contract inventory + typed client with promoter capability-audit endpoint scaffolding (no new UI actions).
+- Promoter capability transition persistence/read enrichment (slice 96):
+  - Added additive Prisma model/table `UserCapabilityGrant` via migration `20260224200000_add_user_capability_grants`.
+  - `POST /registrar/code/redeem` now upserts active user capability grants with registrar provenance (`sourceRegistrarEntryId`, `sourceRegistrarCodeId`).
+  - Promoter submitter read surfaces (`GET /registrar/promoter/entries`, `GET /registrar/promoter/:entryId`) now include `promoterCapability` transition summary fields.
+  - Added registrar service coverage for promoter capability summary mapping and redemption-to-grant persistence behavior.
+  - Updated identity/registrar specs with implemented state and model/migration references.
+- Registrar capability-code verify/redeem API primitives (slice 95):
+  - Added `POST /registrar/code/verify` (auth required) for registrar capability-code eligibility checks before redemption.
+  - Added `POST /registrar/code/redeem` (auth required) for authenticated code redemption.
+  - Enforced redemption guards in service/controller path:
+    - linked entry must be `type = promoter_registration`,
+    - linked entry must be `status = approved`,
+    - code must be `issued`, non-expired, and not already redeemed.
+  - Added registrar unit coverage for verify/redeem success + guard paths and DTO/controller contract coverage.
+  - Updated web registrar contract inventory and typed client scaffolding with concrete verify/redeem endpoint paths (no new UI actions).
+- Telegram bridge near-real-time long-poll loop (slice 92):
+  - Extended `scripts/agent-bridge-telegram.mjs` to support bounded long-poll execution within a single run.
+  - Added runtime controls: `--poll-timeout-seconds`, `--max-runtime-seconds`, and guarded integer parsing.
+  - Updated `.github/workflows/agent-telegram-bridge.yml` with dispatch inputs for long-poll tuning and workflow concurrency control.
+  - Updated bridge runbook with low-latency operating guidance under GitHub Actions cron constraints.
+- Telegram bi-directional command bridge MVP (slice 91):
+  - Added `scripts/agent-bridge-telegram.mjs` to process allowlisted Telegram commands and map them to queue operations.
+  - Supported commands: `/status`, `/poll`, `/claimable`, `/assign`, `/ack`, `/requeue`.
+  - Added parser/util module `scripts/agent-bridge-telegram-lib.mjs` and tests `scripts/agent-bridge-telegram.test.mjs`.
+  - Added workflow `.github/workflows/agent-telegram-bridge.yml` (5-minute schedule + manual dispatch).
+  - Added package scripts `agent:telegram:tick` and `agent:telegram:test`.
+- Agent scheduler/chat bridge MVP (slice 90):
+  - Added `scripts/agent-bridge-tick.mjs` for queue snapshots, claimable task detection, stale in-progress detection, and review/blocked summaries.
+  - Added optional Telegram summary notification (`--notify-telegram`) using `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`.
+  - Added scheduled workflow `.github/workflows/agent-queue-bridge.yml` (15-minute cadence + manual dispatch inputs).
+  - Added `scripts/agent-bridge-tick.test.mjs` and package scripts `agent:bridge:tick`, `agent:bridge:test`.
+  - Added runbook `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` for local and CI operation.
+- RegistrarCode persistence foundation (P3-API-090A):
+  - Added additive Prisma model/table `RegistrarCode` via migration `20260224101500_add_registrar_codes`.
+  - Added internal registrar service primitive `issueRegistrarCodeForApprovedPromoterEntry` (no controller route) with policy lock enforcement:
+    - issuer must be trusted system path (`issuer = system`),
+    - linked registrar entry must be `type = promoter_registration`,
+    - linked registrar entry must be `status = approved`.
+  - Added hashed code persistence (`codeHash`), issuer provenance (`issuerType`), capability marker (`promoter_capability`), and issuance status defaults for forward-compatible verification/redemption slices.
+  - Added registrar service unit coverage for issuance success + blocked paths (non-system issuer, missing entry, wrong entry type, non-approved status).
+- RegistrarCode issuance policy lock (P3-REV-001):
+  - Locked `RegistrarCode` issuance authority to trusted system/API registrar paths only (no self-issuance).
+  - Locked issuance precondition to `RegistrarEntry.status = approved`.
+  - Recorded decision memo and synced lock language into `SYS-REGISTRAR` and `USER-IDENTITY` specs to unblock Phase 3 Slice 89.
+- Autonomous lane agent control system (slice 89 infra):
+  - Added queue orchestration CLI `scripts/agent-control.mjs` with commands:
+    - `assign`, `claim`, `complete`, `block`, `requeue`, `ack`, `status`, `poll`, `init`.
+  - CLI argument parser now accepts pnpm delimiter form (`pnpm run agent:queue -- <command> ...`).
+  - Added lane definitions and queue state files under `docs/handoff/agent-control/`.
+  - Added `pnpm run agent:queue` and `pnpm run agent:queue:test`.
+  - Added `scripts/agent-control.test.mjs` for task lifecycle coverage of assign/claim/complete/block/poll/ack flow.
+  - Updated `docs/AGENT_STRATEGY_AND_HANDOFF.md` and `docs/handoff/README.md` with control-plane usage references.
+- Platform-wide MVP roadmap + Phase 3 kickoff (slice 88):
+  - Added unified MVP execution roadmap covering phases 0-7 across identity, registrar, communities, broadcast, discovery, social, events/economy, and launch hardening lanes.
+  - Established Phase 3 kickoff queue and additive migration/rollback policy for upcoming capability-completion slices.
+  - Added handoff artifact `docs/handoff/2026-02-24_platform-mvp-roadmap-phase3-kickoff.md` as execution baseline for parallel agent lanes.
 - Phase 2 invite-delivery closeout status note (slice 86):
-  - Documented current Phase 2 completion state and explicit DB-lane blocker condition.
-  - Added closeout handoff with exact validation command outcomes for handoff/merge readiness.
+  - Added closeout handoff documenting validation outcomes and remaining DB-lane dependency notes.
 - DB QA runner external-DB fallback support (slice 85):
-  - `scripts/qa-db.sh` now supports environments without Docker Compose by using the existing `DATABASE_URL` target directly.
-  - When Docker is unavailable, runner skips container orchestration and proceeds with migrate/test steps against configured DB host.
+  - `scripts/qa-db.sh` now supports environments without Docker Compose by using configured `DATABASE_URL` directly.
 - Registrar webhook timeout ceiling hardening (slice 84):
-  - Added maximum timeout safety ceiling for webhook outbound invite delivery.
-  - Added test coverage for timeout ceiling clamp behavior.
+  - Added timeout ceiling clamp and coverage for outbound webhook invite delivery.
 - Registrar webhook timeout guard hardening (slice 83):
-  - Added request timeout guard to webhook provider using `AbortController`.
-  - Added configurable timeout env (`REGISTRAR_INVITE_DELIVERY_WEBHOOK_TIMEOUT_MS`) with minimum safety floor.
-  - Added provider tests for default timeout, configured timeout, and min-floor clamp behavior.
+  - Added outbound request timeout guardrails with env-configured timeout and minimum safety floor.
 - Registrar webhook URL validation hardening (slice 82):
-  - Webhook invite provider now validates configured URL format and protocol (`http`/`https`) before outbound attempts.
-  - Added provider test coverage for malformed URL and unsupported protocol failure paths.
-- Registrar provider module-wiring selection coverage (slice 81):
-  - Added `selectInviteDeliveryProvider(...)` helper for deterministic module provider resolution.
-  - Added `registrar.module.provider-selection.test.ts` coverage for default, webhook, and unknown-value fallback cases.
+  - Outbound webhook provider now validates URL format/protocol before dispatch attempts.
+- Registrar provider module-selection coverage (slice 81):
+  - Added deterministic provider selector coverage for noop/webhook/unknown config paths.
 - Phase 2 QA lane outbound-provider coverage expansion (slice 80):
-  - `qa:phase2` now includes outbound invite provider test suites:
-    - `webhook-invite-delivery.provider.test.ts`
-    - `invite-delivery-provider-selector.test.ts`
-  - Phase 2 default QA lane now validates provider-selection and webhook-send behavior alongside worker/trigger tests.
+  - `qa:phase2` now includes webhook provider and provider-selector test suites.
 - Registrar invite provider delivery-context propagation (slice 79):
-  - Extended provider contract to include per-delivery context (`deliveryId`, `registrarArtistMemberId`).
-  - Worker now passes context to provider send calls for external delivery correlation.
-  - Webhook provider now forwards context payload, with updated unit coverage.
+  - Worker/provider send contract now carries delivery context (`deliveryId`, `registrarArtistMemberId`) for correlation.
 - Registrar outbound webhook invite provider option (slice 78):
-  - Added `WebhookInviteDeliveryProvider` for outbound invite delivery handoff via HTTP POST.
-  - Added env-driven provider selection (`REGISTRAR_INVITE_DELIVERY_PROVIDER`) with `noop` default and unknown-value fallback safety.
-  - Added provider unit coverage for success/failure/exception paths and selector coverage for provider resolution logic.
+  - Added webhook invite delivery provider with env-based provider selection.
 - Phase 2 DB QA lane replay coverage wiring (slice 77):
-  - Added dedicated replay integration spec file: `registrar.invite-delivery.replay.integration.test.ts`.
-  - Updated `qa:phase2:db` to execute both DB invite lifecycle specs:
-    - `registrar.invite-delivery.integration.test.ts`
-    - `registrar.invite-delivery.replay.integration.test.ts`
+  - `qa:phase2:db` now runs both invite lifecycle and replay integration specs.
 - Registrar invite replay finalize DB integration coverage (slice 76):
-  - Extended DB-backed invite lifecycle integration tests with replay finalize assertion coverage.
-  - Verifies repeated finalize attempts preserve first finalized state and do not overwrite member/delivery status.
+  - Added DB-backed replay-finalize assertions to guard against overwrite on repeated finalize attempts.
 - Registrar invite finalize replay-safety hardening (slice 75):
-  - `finalizeQueuedInviteDelivery` now finalizes only when delivery row remains `queued`.
-  - Added idempotent/already-finalized return semantics for non-queued rows.
-  - Added service test coverage for already-finalized and concurrent-race finalize paths.
+  - `finalizeQueuedInviteDelivery` now finalizes only queued rows and returns current finalized state for replay attempts.
 - Phase 2 QA lane coverage expansion (slice 74):
-  - `qa:phase2` now includes invite-delivery worker and automated-trigger test suites.
-  - Root QA command now validates both delivery processing seam and env-gated trigger behavior in the default phase lane.
+  - `qa:phase2` includes worker-trigger coverage for invite delivery automation paths.
 - Registrar invite delivery automated trigger lane (slice 73):
-  - Added internal `RegistrarInviteDeliveryTriggerService` for interval-based queued delivery execution.
-  - Trigger is env-gated (`REGISTRAR_INVITE_DELIVERY_AUTORUN_ENABLED`) and default-off.
-  - Added configurable interval (`REGISTRAR_INVITE_DELIVERY_AUTORUN_INTERVAL_MS`) with minimum safety floor.
-  - Added overlap guard to skip ticks while prior worker run is active (replay/concurrency safety).
-  - Added unit coverage for disabled mode, enabled polling, interval clamp, and overlap-skipping behavior.
+  - Added env-gated automated trigger service with interval floor and overlap guard.
 - Registrar artist entry-list last-dispatch timestamp enrichment (slice 72):
   - `GET /registrar/artist/entries` now returns per-entry `lastInviteDispatchAt`.
-  - Value is derived from the latest non-null `RegistrarInviteDelivery.dispatchedAt` linked to each registration entry.
-  - Added registrar service tests covering max-timestamp selection and empty-state behavior.
 - Registrar artist entry-list top-level invite status summary (slice 71):
-  - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus` aggregated across submitter-owned registrar artist members.
-  - Empty-state responses now include `inviteCountsByStatus: {}` for stable shape parity.
-  - Added registrar service test coverage for populated + empty summary behavior.
+  - `GET /registrar/artist/entries` now returns top-level `inviteCountsByStatus`.
 - Registrar artist entry-list invite outcome count enrichment (slice 70):
   - `GET /registrar/artist/entries` now returns per-entry `sentInviteCount` and `failedInviteCount`.
   - Existing invite lifecycle counts remain unchanged and backward compatible.

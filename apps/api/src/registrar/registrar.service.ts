@@ -1,7 +1,12 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { ArtistBandRegistrationDto, PromoterRegistrationDto } from './dto/registrar.dto';
-import { randomUUID } from 'crypto';
+import type {
+  ArtistBandRegistrationDto,
+  PromoterRegistrationDto,
+  ProjectRegistrationDto,
+  SectMotionRegistrationDto,
+} from './dto/registrar.dto';
+import { createHash, randomBytes, randomUUID } from 'crypto';
 
 const normalizePromoterProductionName = (payload: Record<string, unknown>) => {
   if (typeof payload.productionName !== 'string') {
@@ -12,9 +17,331 @@ const normalizePromoterProductionName = (payload: Record<string, unknown>) => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+const normalizeProjectName = (payload: Record<string, unknown>) => {
+  if (typeof payload.projectName !== 'string') {
+    return null;
+  }
+
+  const trimmed = payload.projectName.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
+const normalizeRegistrarPayloadObject = (payload: unknown) => {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return {};
+  }
+
+  return payload as Record<string, unknown>;
+};
+
+type RegistrarCodeIssuer = 'system';
+
+const PROMOTER_CAPABILITY_CODE = 'promoter_capability';
+const REGISTRAR_CODE_DEFAULT_STATUS = 'issued';
+const REGISTRAR_CODE_REDEEMED_STATUS = 'redeemed';
+const REGISTRAR_CODE_DEFAULT_ISSUER: RegistrarCodeIssuer = 'system';
+const REGISTRAR_CODE_ISSUER_BLOCK_MESSAGE =
+  'Registrar code issuance is restricted to trusted system registrar paths';
+const REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE =
+  'Registrar code issuance requires registrar entry status approved';
+const REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE =
+  'Registrar code issuance currently supports promoter registrations only';
+const REGISTRAR_CODE_NOT_FOUND_MESSAGE = 'Registrar code not found';
+const REGISTRAR_CODE_EXPIRED_MESSAGE = 'Registrar code has expired';
+const REGISTRAR_CODE_NOT_REDEEMABLE_MESSAGE = 'Registrar code is no longer redeemable';
+const REGISTRAR_CODE_ALREADY_REDEEMED_MESSAGE = 'Registrar code has already been redeemed';
+
+const buildRegistrarCodeValue = () => `PRC-${randomBytes(16).toString('hex').toUpperCase()}`;
+
+const hashRegistrarCode = (value: string) => createHash('sha256').update(value).digest('hex');
+
 @Injectable()
 export class RegistrarService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async issueRegistrarCodeForApprovedPromoterEntry(
+    registrarEntryId: string,
+    options?: { issuer?: RegistrarCodeIssuer; expiresAt?: Date | null },
+  ) {
+    const issuer = options?.issuer ?? REGISTRAR_CODE_DEFAULT_ISSUER;
+    if (issuer !== REGISTRAR_CODE_DEFAULT_ISSUER) {
+      throw new ForbiddenException(REGISTRAR_CODE_ISSUER_BLOCK_MESSAGE);
+    }
+
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: registrarEntryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        createdById: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+
+    if (entry.type !== 'promoter_registration') {
+      throw new ForbiddenException(REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE);
+    }
+
+    if (entry.status !== 'approved') {
+      throw new ForbiddenException(REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE);
+    }
+
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const code = buildRegistrarCodeValue();
+      const codeHash = hashRegistrarCode(code);
+
+      try {
+        const created = await this.prisma.$transaction(async (tx: any) => {
+          const codeRecord = await tx.registrarCode.create({
+            data: {
+              registrarEntryId: entry.id,
+              capability: PROMOTER_CAPABILITY_CODE,
+              codeHash,
+              issuerType: issuer,
+              status: REGISTRAR_CODE_DEFAULT_STATUS,
+              expiresAt: options?.expiresAt ?? null,
+            },
+            select: {
+              id: true,
+              registrarEntryId: true,
+              capability: true,
+              issuerType: true,
+              status: true,
+              expiresAt: true,
+              createdAt: true,
+            },
+          });
+
+          await tx.capabilityGrantAuditLog.create({
+            data: {
+              capability: PROMOTER_CAPABILITY_CODE,
+              action: 'code_issued',
+              actorType: 'system',
+              targetUserId: entry.createdById,
+              registrarEntryId: entry.id,
+              registrarCodeId: codeRecord.id,
+              metadata: {
+                issuerType: issuer,
+              },
+            },
+          });
+
+          return codeRecord;
+        });
+
+        return {
+          ...created,
+          code,
+        };
+      } catch (error: any) {
+        const isUniqueHashConflict = error?.code === 'P2002' && String(error?.meta?.target ?? '').includes('codeHash');
+        if (!isUniqueHashConflict || attempt === maxAttempts - 1) {
+          throw error;
+        }
+      }
+    }
+
+    throw new ConflictException('Failed to issue registrar code');
+  }
+
+  async verifyRegistrarCode(code: string) {
+    const normalizedCode = code.trim();
+    const codeHash = hashRegistrarCode(normalizedCode);
+    const registrarCode = await this.prisma.registrarCode.findUnique({
+      where: { codeHash },
+      select: {
+        id: true,
+        registrarEntryId: true,
+        capability: true,
+        issuerType: true,
+        status: true,
+        expiresAt: true,
+        redeemedAt: true,
+        createdAt: true,
+        registrarEntry: {
+          select: {
+            id: true,
+            type: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!registrarCode) {
+      throw new NotFoundException(REGISTRAR_CODE_NOT_FOUND_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.type !== 'promoter_registration') {
+      throw new ForbiddenException(REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.status !== 'approved') {
+      throw new ForbiddenException(REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE);
+    }
+
+    if (registrarCode.expiresAt && registrarCode.expiresAt.getTime() < Date.now()) {
+      throw new ForbiddenException(REGISTRAR_CODE_EXPIRED_MESSAGE);
+    }
+
+    if (registrarCode.status !== REGISTRAR_CODE_DEFAULT_STATUS || registrarCode.redeemedAt) {
+      throw new ForbiddenException(REGISTRAR_CODE_NOT_REDEEMABLE_MESSAGE);
+    }
+
+    return {
+      id: registrarCode.id,
+      registrarEntryId: registrarCode.registrarEntryId,
+      capability: registrarCode.capability,
+      issuerType: registrarCode.issuerType,
+      status: registrarCode.status,
+      expiresAt: registrarCode.expiresAt,
+      createdAt: registrarCode.createdAt,
+      redeemable: true,
+    };
+  }
+
+  async redeemRegistrarCodeForUser(userId: string, code: string) {
+    const normalizedCode = code.trim();
+    const codeHash = hashRegistrarCode(normalizedCode);
+    const registrarCode = await this.prisma.registrarCode.findUnique({
+      where: { codeHash },
+      select: {
+        id: true,
+        registrarEntryId: true,
+        capability: true,
+        issuerType: true,
+        status: true,
+        expiresAt: true,
+        redeemedAt: true,
+        createdAt: true,
+        registrarEntry: {
+          select: {
+            id: true,
+            type: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!registrarCode) {
+      throw new NotFoundException(REGISTRAR_CODE_NOT_FOUND_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.type !== 'promoter_registration') {
+      throw new ForbiddenException(REGISTRAR_CODE_PROMOTER_ONLY_MESSAGE);
+    }
+
+    if (registrarCode.registrarEntry.status !== 'approved') {
+      throw new ForbiddenException(REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE);
+    }
+
+    if (registrarCode.expiresAt && registrarCode.expiresAt.getTime() < Date.now()) {
+      throw new ForbiddenException(REGISTRAR_CODE_EXPIRED_MESSAGE);
+    }
+
+    if (registrarCode.redeemedAt || registrarCode.status === REGISTRAR_CODE_REDEEMED_STATUS) {
+      throw new ConflictException(REGISTRAR_CODE_ALREADY_REDEEMED_MESSAGE);
+    }
+
+    if (registrarCode.status !== REGISTRAR_CODE_DEFAULT_STATUS) {
+      throw new ForbiddenException(REGISTRAR_CODE_NOT_REDEEMABLE_MESSAGE);
+    }
+
+    const redeemedAt = new Date();
+
+    const { updatedCode, capabilityGrant } = await this.prisma.$transaction(async (tx: any) => {
+      const updated = await tx.registrarCode.update({
+        where: { id: registrarCode.id },
+        data: {
+          status: REGISTRAR_CODE_REDEEMED_STATUS,
+          redeemedAt,
+        },
+        select: {
+          id: true,
+          registrarEntryId: true,
+          capability: true,
+          issuerType: true,
+          status: true,
+          expiresAt: true,
+          redeemedAt: true,
+          createdAt: true,
+        },
+      });
+
+      const grant = await tx.userCapabilityGrant.upsert({
+        where: {
+          userId_capability: {
+            userId,
+            capability: PROMOTER_CAPABILITY_CODE,
+          },
+        },
+        update: {
+          status: 'active',
+          revokedAt: null,
+          sourceRegistrarEntryId: updated.registrarEntryId,
+          sourceRegistrarCodeId: updated.id,
+        },
+        create: {
+          userId,
+          capability: PROMOTER_CAPABILITY_CODE,
+          status: 'active',
+          sourceRegistrarEntryId: updated.registrarEntryId,
+          sourceRegistrarCodeId: updated.id,
+        },
+        select: {
+          id: true,
+          capability: true,
+          status: true,
+          grantedAt: true,
+          sourceRegistrarEntryId: true,
+          sourceRegistrarCodeId: true,
+        },
+      });
+
+      await tx.capabilityGrantAuditLog.create({
+        data: {
+          capability: PROMOTER_CAPABILITY_CODE,
+          action: 'code_redeemed',
+          actorType: 'user',
+          targetUserId: userId,
+          actorUserId: userId,
+          registrarEntryId: updated.registrarEntryId,
+          registrarCodeId: updated.id,
+        },
+      });
+
+      await tx.capabilityGrantAuditLog.create({
+        data: {
+          capability: PROMOTER_CAPABILITY_CODE,
+          action: 'capability_granted',
+          actorType: 'system',
+          targetUserId: userId,
+          registrarEntryId: updated.registrarEntryId,
+          registrarCodeId: updated.id,
+          metadata: {
+            grantStatus: grant.status,
+          },
+        },
+      });
+
+      return {
+        updatedCode: updated,
+        capabilityGrant: grant,
+      };
+    });
+
+    return {
+      ...updatedCode,
+      redeemedByUserId: userId,
+      capabilityGrant,
+    };
+  }
 
   async submitPromoterRegistration(userId: string, dto: PromoterRegistrationDto) {
     const [scene, user] = await Promise.all([
@@ -86,6 +413,144 @@ export class RegistrarService {
     });
   }
 
+  async submitProjectRegistration(userId: string, dto: ProjectRegistrationDto) {
+    const [scene, user] = await Promise.all([
+      this.prisma.community.findUnique({
+        where: { id: dto.sceneId },
+        select: {
+          id: true,
+          city: true,
+          state: true,
+          musicCommunity: true,
+          tier: true,
+        },
+      }),
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          homeSceneCity: true,
+          homeSceneState: true,
+          homeSceneCommunity: true,
+        },
+      }),
+    ]);
+
+    if (!scene) {
+      throw new NotFoundException('Scene not found');
+    }
+    if (scene.tier !== 'city') {
+      throw new ForbiddenException('Registrar submissions are restricted to city-tier Home Scenes');
+    }
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
+    const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
+    const homeCommunity = (user.homeSceneCommunity ?? '').trim().toLowerCase();
+    const sceneCity = (scene.city ?? '').trim().toLowerCase();
+    const sceneState = (scene.state ?? '').trim().toLowerCase();
+    const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
+
+    if (!homeCity || !homeState || !homeCommunity) {
+      throw new ForbiddenException('Registrar access requires an established Home Scene');
+    }
+
+    if (homeCity !== sceneCity || homeState !== sceneState || homeCommunity !== sceneCommunity) {
+      throw new ForbiddenException('Registrar submissions are limited to your Home Scene');
+    }
+
+    return this.prisma.registrarEntry.create({
+      data: {
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: scene.id,
+        createdById: user.id,
+        payload: {
+          projectName: dto.projectName.trim(),
+        },
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        payload: true,
+        createdAt: true,
+      },
+    });
+  }
+
+  async submitSectMotionRegistration(userId: string, dto: SectMotionRegistrationDto) {
+    const [scene, user] = await Promise.all([
+      this.prisma.community.findUnique({
+        where: { id: dto.sceneId },
+        select: {
+          id: true,
+          city: true,
+          state: true,
+          musicCommunity: true,
+          tier: true,
+        },
+      }),
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          homeSceneCity: true,
+          homeSceneState: true,
+          homeSceneCommunity: true,
+        },
+      }),
+    ]);
+
+    if (!scene) {
+      throw new NotFoundException('Scene not found');
+    }
+    if (scene.tier !== 'city') {
+      throw new ForbiddenException('Registrar submissions are restricted to city-tier Home Scenes');
+    }
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
+    const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
+    const homeCommunity = (user.homeSceneCommunity ?? '').trim().toLowerCase();
+    const sceneCity = (scene.city ?? '').trim().toLowerCase();
+    const sceneState = (scene.state ?? '').trim().toLowerCase();
+    const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
+
+    if (!homeCity || !homeState || !homeCommunity) {
+      throw new ForbiddenException('Registrar access requires an established Home Scene');
+    }
+
+    if (homeCity !== sceneCity || homeState !== sceneState || homeCommunity !== sceneCommunity) {
+      throw new ForbiddenException('Registrar submissions are limited to your Home Scene');
+    }
+
+    return this.prisma.registrarEntry.create({
+      data: {
+        type: 'sect_motion',
+        status: 'submitted',
+        sceneId: scene.id,
+        createdById: user.id,
+        payload: {},
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        payload: true,
+        createdAt: true,
+      },
+    });
+  }
+
   async listPromoterRegistrations(userId: string) {
     const entries = await this.prisma.registrarEntry.findMany({
       where: {
@@ -119,11 +584,82 @@ export class RegistrarService {
       return acc;
     }, {} as Record<string, number>);
 
+    const entryIds = entries.map((entry: any) => entry.id);
+    const [registrarCodes, capabilityGrants] = await Promise.all([
+      this.prisma.registrarCode.findMany({
+        where: {
+          registrarEntryId: { in: entryIds },
+          capability: PROMOTER_CAPABILITY_CODE,
+        },
+        select: {
+          registrarEntryId: true,
+          status: true,
+          createdAt: true,
+          redeemedAt: true,
+        },
+      }),
+      this.prisma.userCapabilityGrant.findMany({
+        where: {
+          userId,
+          capability: PROMOTER_CAPABILITY_CODE,
+          status: 'active',
+          sourceRegistrarEntryId: { in: entryIds },
+        },
+        select: {
+          sourceRegistrarEntryId: true,
+          grantedAt: true,
+        },
+      }),
+    ]);
+
+    const codeSummaryByEntry = new Map<
+      string,
+      {
+        codeIssuedCount: number;
+        latestCodeStatus: string | null;
+        latestCodeIssuedAt: Date | null;
+        latestCodeRedeemedAt: Date | null;
+      }
+    >();
+
+    for (const code of registrarCodes) {
+      const current = codeSummaryByEntry.get(code.registrarEntryId) ?? {
+        codeIssuedCount: 0,
+        latestCodeStatus: null,
+        latestCodeIssuedAt: null,
+        latestCodeRedeemedAt: null,
+      };
+
+      current.codeIssuedCount += 1;
+      if (!current.latestCodeIssuedAt || code.createdAt > current.latestCodeIssuedAt) {
+        current.latestCodeStatus = code.status;
+        current.latestCodeIssuedAt = code.createdAt;
+        current.latestCodeRedeemedAt = code.redeemedAt;
+      }
+
+      codeSummaryByEntry.set(code.registrarEntryId, current);
+    }
+
+    const grantByEntryId = new Map<string, { grantedAt: Date }>();
+    for (const grant of capabilityGrants) {
+      if (!grant.sourceRegistrarEntryId) {
+        continue;
+      }
+      grantByEntryId.set(grant.sourceRegistrarEntryId, { grantedAt: grant.grantedAt });
+    }
+
     return {
       total: entries.length,
       countsByStatus,
       entries: entries.map((entry: any) => {
         const payload = (entry.payload ?? {}) as Record<string, unknown>;
+        const codeSummary = codeSummaryByEntry.get(entry.id) ?? {
+          codeIssuedCount: 0,
+          latestCodeStatus: null,
+          latestCodeIssuedAt: null,
+          latestCodeRedeemedAt: null,
+        };
+        const grantSummary = grantByEntryId.get(entry.id) ?? null;
         return {
           id: entry.id,
           type: entry.type,
@@ -131,6 +667,14 @@ export class RegistrarService {
           sceneId: entry.sceneId,
           payload: {
             productionName: normalizePromoterProductionName(payload),
+          },
+          promoterCapability: {
+            codeIssuedCount: codeSummary.codeIssuedCount,
+            latestCodeStatus: codeSummary.latestCodeStatus,
+            latestCodeIssuedAt: codeSummary.latestCodeIssuedAt,
+            latestCodeRedeemedAt: codeSummary.latestCodeRedeemedAt,
+            granted: Boolean(grantSummary),
+            grantedAt: grantSummary?.grantedAt ?? null,
           },
           scene: entry.scene,
           createdAt: entry.createdAt,
@@ -175,6 +719,34 @@ export class RegistrarService {
       throw new ForbiddenException('Only the submitting user can read this promoter registration');
     }
 
+    const [registrarCodes, capabilityGrant] = await Promise.all([
+      this.prisma.registrarCode.findMany({
+        where: {
+          registrarEntryId: entry.id,
+          capability: PROMOTER_CAPABILITY_CODE,
+        },
+        select: {
+          status: true,
+          createdAt: true,
+          redeemedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.userCapabilityGrant.findFirst({
+        where: {
+          userId,
+          capability: PROMOTER_CAPABILITY_CODE,
+          status: 'active',
+          sourceRegistrarEntryId: entry.id,
+        },
+        select: {
+          grantedAt: true,
+        },
+      }),
+    ]);
+
+    const latestRegistrarCode = registrarCodes[0] ?? null;
+
     const payload = (entry.payload ?? {}) as Record<string, unknown>;
     return {
       id: entry.id,
@@ -184,6 +756,259 @@ export class RegistrarService {
       payload: {
         productionName: normalizePromoterProductionName(payload),
       },
+      promoterCapability: {
+        codeIssuedCount: registrarCodes.length,
+        latestCodeStatus: latestRegistrarCode?.status ?? null,
+        latestCodeIssuedAt: latestRegistrarCode?.createdAt ?? null,
+        latestCodeRedeemedAt: latestRegistrarCode?.redeemedAt ?? null,
+        granted: Boolean(capabilityGrant),
+        grantedAt: capabilityGrant?.grantedAt ?? null,
+      },
+      scene: entry.scene,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
+    };
+  }
+
+  async listPromoterCapabilityAudit(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        createdById: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'promoter_registration') {
+      throw new ForbiddenException('Registrar entry is not a promoter registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read this promoter registration');
+    }
+
+    const events = await this.prisma.capabilityGrantAuditLog.findMany({
+      where: {
+        registrarEntryId: entry.id,
+        capability: PROMOTER_CAPABILITY_CODE,
+      },
+      select: {
+        id: true,
+        action: true,
+        actorType: true,
+        targetUserId: true,
+        actorUserId: true,
+        registrarCodeId: true,
+        metadata: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return {
+      registrarEntryId: entry.id,
+      total: events.length,
+      events,
+    };
+  }
+
+  async listProjectRegistrations(userId: string) {
+    const entries = await this.prisma.registrarEntry.findMany({
+      where: {
+        createdById: userId,
+        type: 'project_registration',
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const countsByStatus = entries.reduce((acc: Record<string, number>, entry: any) => {
+      acc[entry.status] = (acc[entry.status] ?? 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      total: entries.length,
+      countsByStatus,
+      entries: entries.map((entry: any) => {
+        const payload = (entry.payload ?? {}) as Record<string, unknown>;
+        return {
+          id: entry.id,
+          type: entry.type,
+          status: entry.status,
+          sceneId: entry.sceneId,
+          payload: {
+            projectName: normalizeProjectName(payload),
+          },
+          scene: entry.scene,
+          createdAt: entry.createdAt,
+          updatedAt: entry.updatedAt,
+        };
+      }),
+    };
+  }
+
+  async getProjectRegistration(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'project_registration') {
+      throw new ForbiddenException('Registrar entry is not a project registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read this project registration');
+    }
+
+    const payload = (entry.payload ?? {}) as Record<string, unknown>;
+    return {
+      id: entry.id,
+      type: entry.type,
+      status: entry.status,
+      sceneId: entry.sceneId,
+      payload: {
+        projectName: normalizeProjectName(payload),
+      },
+      scene: entry.scene,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
+    };
+  }
+
+  async listSectMotionRegistrations(userId: string) {
+    const entries = await this.prisma.registrarEntry.findMany({
+      where: {
+        createdById: userId,
+        type: 'sect_motion',
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const countsByStatus = entries.reduce((acc: Record<string, number>, entry: any) => {
+      acc[entry.status] = (acc[entry.status] ?? 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      total: entries.length,
+      countsByStatus,
+      entries: entries.map((entry: any) => ({
+        id: entry.id,
+        type: entry.type,
+        status: entry.status,
+        sceneId: entry.sceneId,
+        payload: normalizeRegistrarPayloadObject(entry.payload),
+        scene: entry.scene,
+        createdAt: entry.createdAt,
+        updatedAt: entry.updatedAt,
+      })),
+    };
+  }
+
+  async getSectMotionRegistration(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'sect_motion') {
+      throw new ForbiddenException('Registrar entry is not a sect motion');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read this sect motion');
+    }
+
+    return {
+      id: entry.id,
+      type: entry.type,
+      status: entry.status,
+      sceneId: entry.sceneId,
+      payload: normalizeRegistrarPayloadObject(entry.payload),
       scene: entry.scene,
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,

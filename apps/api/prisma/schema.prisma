@@ -54,6 +54,9 @@ model User {
   registrarEntries   RegistrarEntry[]
   registrarArtistMemberships RegistrarArtistMember[] @relation("RegistrarExistingUser")
   registrarClaimedMemberships RegistrarArtistMember[] @relation("RegistrarClaimedUser")
+  capabilityGrants  UserCapabilityGrant[]
+  capabilityAuditTargetEvents CapabilityGrantAuditLog[] @relation("CapabilityAuditTargetUser")
+  capabilityAuditActorEvents  CapabilityGrantAuditLog[] @relation("CapabilityAuditActorUser")
 
   @@map("users")
 }
@@ -145,11 +148,81 @@ model RegistrarEntry {
   createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
   artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
   artistMembers RegistrarArtistMember[]
+  codes      RegistrarCode[]
+  capabilityGrants UserCapabilityGrant[]
+  capabilityAuditEvents CapabilityGrantAuditLog[]
 
   @@index([sceneId, type, status])
   @@index([createdById, createdAt])
   @@index([artistBandId])
   @@map("registrar_entries")
+}
+
+model RegistrarCode {
+  id              String   @id @default(uuid())
+  registrarEntryId String
+  capability      String
+  codeHash        String   @unique
+  issuerType      String   @default("system")
+  status          String   @default("issued")
+  expiresAt       DateTime?
+  redeemedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
+  capabilityGrants UserCapabilityGrant[]
+  capabilityAuditEvents CapabilityGrantAuditLog[]
+
+  @@index([registrarEntryId, status])
+  @@index([capability, status])
+  @@map("registrar_codes")
+}
+
+model UserCapabilityGrant {
+  id                    String   @id @default(uuid())
+  userId                String
+  capability            String
+  status                String   @default("active") // active, revoked
+  sourceRegistrarEntryId String?
+  sourceRegistrarCodeId String?
+  grantedAt             DateTime @default(now())
+  revokedAt             DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceRegistrarEntry RegistrarEntry? @relation(fields: [sourceRegistrarEntryId], references: [id], onDelete: SetNull)
+  sourceRegistrarCode  RegistrarCode?  @relation(fields: [sourceRegistrarCodeId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, capability])
+  @@index([capability, status])
+  @@index([sourceRegistrarEntryId])
+  @@index([sourceRegistrarCodeId])
+  @@map("user_capability_grants")
+}
+
+model CapabilityGrantAuditLog {
+  id              String   @id @default(uuid())
+  capability      String
+  action          String
+  actorType       String   @default("system")
+  targetUserId    String?
+  actorUserId     String?
+  registrarEntryId String?
+  registrarCodeId String?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+
+  targetUser     User?          @relation("CapabilityAuditTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  actorUser      User?          @relation("CapabilityAuditActorUser", fields: [actorUserId], references: [id], onDelete: SetNull)
+  registrarEntry RegistrarEntry? @relation(fields: [registrarEntryId], references: [id], onDelete: SetNull)
+  registrarCode  RegistrarCode?  @relation(fields: [registrarCodeId], references: [id], onDelete: SetNull)
+
+  @@index([capability, action, createdAt])
+  @@index([registrarEntryId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@map("capability_grant_audit_logs")
 }
 
 model RegistrarArtistMember {

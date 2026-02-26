@@ -10,6 +10,10 @@ Working notes and completion reports that help future contributors quickly under
 - [`TEMPLATE_agent-handoff.md`](./TEMPLATE_agent-handoff.md)
 - [`TEMPLATE_handoff-phase.md`](./TEMPLATE_handoff-phase.md)
 
+## Coordination Control Plane
+- [`agent-control/README.md`](./agent-control/README.md) — Lane-based autonomous assignment/claim/report workflow.
+- [`agent-control/AGENT_DIRECTIVES.md`](./agent-control/AGENT_DIRECTIVES.md) — Standardized 6-agent directive templates and spawn guardrails.
+
 ## Agent Documents
 - [`agent-deepagent-build-handoff-2025-12-12.md`](./agent-deepagent-build-handoff-2025-12-12.md) — Build investigation + fixes handoff.
 - [`agent-codex-5.2-type-fixes-and-specs.md`](./agent-codex-5.2-type-fixes-and-specs.md) — Jest/tooling fixes + formal system specs.
@@ -102,6 +106,40 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-23_slice84-webhook-timeout-ceiling-hardening.md`](./2026-02-23_slice84-webhook-timeout-ceiling-hardening.md)
 - [`2026-02-23_slice85-db-qa-runner-external-db-fallback.md`](./2026-02-23_slice85-db-qa-runner-external-db-fallback.md)
 - [`2026-02-23_phase2-invite-delivery-closeout-status.md`](./2026-02-23_phase2-invite-delivery-closeout-status.md)
+- [`2026-02-24_platform-mvp-roadmap-phase3-kickoff.md`](./2026-02-24_platform-mvp-roadmap-phase3-kickoff.md)
+- [`2026-02-24_registrarcode-issuance-authority-and-status-preconditions.md`](./2026-02-24_registrarcode-issuance-authority-and-status-preconditions.md)
+- [`2026-02-24_slice89-registrarcode-persistence-foundation.md`](./2026-02-24_slice89-registrarcode-persistence-foundation.md)
+- [`2026-02-24_slice89-autonomous-agent-control-plane.md`](./2026-02-24_slice89-autonomous-agent-control-plane.md)
+- [`2026-02-24_slice90-agent-bridge-scheduler-chat-mvp.md`](./2026-02-24_slice90-agent-bridge-scheduler-chat-mvp.md)
+- [`2026-02-24_slice91-telegram-command-bridge-mvp.md`](./2026-02-24_slice91-telegram-command-bridge-mvp.md)
+- [`2026-02-24_slice92-telegram-near-realtime-long-poll.md`](./2026-02-24_slice92-telegram-near-realtime-long-poll.md)
+- [`2026-02-24_slice95-registrarcode-verify-redeem-api.md`](./2026-02-24_slice95-registrarcode-verify-redeem-api.md)
+- [`2026-02-24_slice96-promoter-capability-transition-persistence.md`](./2026-02-24_slice96-promoter-capability-transition-persistence.md)
+- [`2026-02-24_slice97-capability-grant-audit-surface.md`](./2026-02-24_slice97-capability-grant-audit-surface.md)
+- [`2026-02-24_slice95-97-risk-rollback-drift-review.md`](./2026-02-24_slice95-97-risk-rollback-drift-review.md)
+- [`2026-02-24_phase3-parallel-slice-board-98-102.md`](./2026-02-24_phase3-parallel-slice-board-98-102.md)
+- [`2026-02-24_agent-queue-directive-auto-attachment.md`](./2026-02-24_agent-queue-directive-auto-attachment.md)
+- [`2026-02-25_agent-queue-guardrails-and-directive-templates.md`](./2026-02-25_agent-queue-guardrails-and-directive-templates.md)
+- [`2026-02-25_P3-WEB-098A-project-contract-scaffolding.md`](./2026-02-25_P3-WEB-098A-project-contract-scaffolding.md)
+- [`2026-02-25_P3-QA-098A-project-sect-validation.md`](./2026-02-25_P3-QA-098A-project-sect-validation.md)
+- [`2026-02-25_P3-QA-095B-regression-95-97.md`](./2026-02-25_P3-QA-095B-regression-95-97.md)
+- [`2026-02-25_P3-DOC-098A-project-sect-doc-sync.md`](./2026-02-25_P3-DOC-098A-project-sect-doc-sync.md)
+- [`2026-02-25_P3-REV-098A-project-sect-risk-signoff.md`](./2026-02-25_P3-REV-098A-project-sect-risk-signoff.md)
+- [`2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md`](./2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md)
+- [`2026-02-25_phase4-plot-active-statistics-fallback-slice100A.md`](./2026-02-25_phase4-plot-active-statistics-fallback-slice100A.md)
+- [`2026-02-25_phase4-plot-registrar-status-summary-slice101A.md`](./2026-02-25_phase4-plot-registrar-status-summary-slice101A.md)
+- [`2026-02-25_phase4-plot-shared-community-anchor-slice102A.md`](./2026-02-25_phase4-plot-shared-community-anchor-slice102A.md)
+- [`2026-02-25_phase4-communities-active-controller-hardening-slice103A.md`](./2026-02-25_phase4-communities-active-controller-hardening-slice103A.md)
+- [`2026-02-25_phase4-communities-events-boolean-hardening-slice104A.md`](./2026-02-25_phase4-communities-events-boolean-hardening-slice104A.md)
+- [`2026-02-25_phase4-communities-direct-events-validation-parity-slice105A.md`](./2026-02-25_phase4-communities-direct-events-validation-parity-slice105A.md)
+- [`2026-02-25_phase4-communities-metrics-controller-hardening-slice106A.md`](./2026-02-25_phase4-communities-metrics-controller-hardening-slice106A.md)
+- [`2026-02-25_phase4-communities-route-resolution-guard-slice107A.md`](./2026-02-25_phase4-communities-route-resolution-guard-slice107A.md)
+- [`2026-02-25_phase4-discovery-controller-parity-slice108A.md`](./2026-02-25_phase4-discovery-controller-parity-slice108A.md)
+- [`2026-02-25_phase4-web-communities-discovery-clients-slice109A.md`](./2026-02-25_phase4-web-communities-discovery-clients-slice109A.md)
+- [`2026-02-25_phase4-discovery-context-consistency-slice110A.md`](./2026-02-25_phase4-discovery-context-consistency-slice110A.md)
+- [`2026-02-25_phase4-qa-sweep-108A-110A-slice111A.md`](./2026-02-25_phase4-qa-sweep-108A-110A-slice111A.md)
+- [`2026-02-25_phase4-doc-sync-108A-110A-slice112A.md`](./2026-02-25_phase4-doc-sync-108A-110A-slice112A.md)
+- [`2026-02-25_phase4-review-risk-signoff-108A-110A-slice113A.md`](./2026-02-25_phase4-review-risk-signoff-108A-110A-slice113A.md)
 - [`2026-02-20_master-context-handoff-and-chat-archive.md`](./2026-02-20_master-context-handoff-and-chat-archive.md)
 - [`2026-02-20_artist-band-identity-slice1.md`](./2026-02-20_artist-band-identity-slice1.md)
 - [`2026-02-20_artist-band-identity-slice2-registrar-primitives.md`](./2026-02-20_artist-band-identity-slice2-registrar-primitives.md)

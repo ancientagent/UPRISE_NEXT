@@ -9,6 +9,14 @@ import {
   type DispatchArtistInviteDto,
   PromoterRegistrationSchema,
   type PromoterRegistrationDto,
+  ProjectRegistrationSchema,
+  type ProjectRegistrationDto,
+  SectMotionRegistrationSchema,
+  type SectMotionRegistrationDto,
+  RegistrarCodeRedeemSchema,
+  type RegistrarCodeRedeemDto,
+  RegistrarCodeVerifySchema,
+  type RegistrarCodeVerifyDto,
 } from './dto/registrar.dto';
 
 @Controller('registrar')
@@ -26,6 +34,26 @@ export class RegistrarController {
     return { success: true, data: entry };
   }
 
+  @Post('project')
+  @ZodBody(ProjectRegistrationSchema)
+  async submitProjectRegistration(
+    @Body() dto: ProjectRegistrationDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const entry = await this.registrarService.submitProjectRegistration(req.user.userId, dto);
+    return { success: true, data: entry };
+  }
+
+  @Post('sect-motion')
+  @ZodBody(SectMotionRegistrationSchema)
+  async submitSectMotionRegistration(
+    @Body() dto: SectMotionRegistrationDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const entry = await this.registrarService.submitSectMotionRegistration(req.user.userId, dto);
+    return { success: true, data: entry };
+  }
+
   @Get('promoter/entries')
   async listMyPromoterRegistrations(@Request() req: { user: { userId: string } }) {
     const result = await this.registrarService.listPromoterRegistrations(req.user.userId);
@@ -38,6 +66,62 @@ export class RegistrarController {
     @Request() req: { user: { userId: string } },
   ) {
     const result = await this.registrarService.getPromoterRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
+  @Get('promoter/:entryId/capability-audit')
+  async getMyPromoterCapabilityAudit(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.listPromoterCapabilityAudit(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
+  @Post('code/verify')
+  @ZodBody(RegistrarCodeVerifySchema)
+  async verifyRegistrarCode(@Body() dto: RegistrarCodeVerifyDto) {
+    const result = await this.registrarService.verifyRegistrarCode(dto.code);
+    return { success: true, data: result };
+  }
+
+  @Post('code/redeem')
+  @ZodBody(RegistrarCodeRedeemSchema)
+  async redeemRegistrarCode(
+    @Body() dto: RegistrarCodeRedeemDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.redeemRegistrarCodeForUser(req.user.userId, dto.code);
+    return { success: true, data: result };
+  }
+
+  @Get('project/entries')
+  async listMyProjectRegistrations(@Request() req: { user: { userId: string } }) {
+    const result = await this.registrarService.listProjectRegistrations(req.user.userId);
+    return { success: true, data: result };
+  }
+
+  @Get('project/:entryId')
+  async getMyProjectRegistration(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.getProjectRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
+  @Get('sect-motion/entries')
+  async listMySectMotionRegistrations(@Request() req: { user: { userId: string } }) {
+    const result = await this.registrarService.listSectMotionRegistrations(req.user.userId);
+    return { success: true, data: result };
+  }
+
+  @Get('sect-motion/:entryId')
+  async getMySectMotionRegistration(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.getSectMotionRegistration(req.user.userId, entryId);
     return { success: true, data: result };
   }
 
