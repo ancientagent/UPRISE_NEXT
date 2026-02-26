@@ -59,6 +59,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,
   - displays registration totals/status summary while retaining explicit `Open Registrar` navigation.
 - Plot Statistics and Top Songs surfaces now share a unified selected-community anchor in the page state to keep tier/context reads consistent across panels.
+- Plot and statistics read endpoints now flow through typed web client wrappers (`apps/web/src/lib/communities/client.ts`, `apps/web/src/lib/discovery/client.ts`) for centralized route contract management.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Advanced registrar lifecycle dashboard in Plot (beyond status summary + explicit registrar navigation).

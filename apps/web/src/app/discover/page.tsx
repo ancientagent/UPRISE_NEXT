@@ -3,36 +3,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
-import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
-
-type TierScope = 'city' | 'state' | 'national';
-
-type DiscoverCitySceneItem = {
-  entryType: 'city_scene';
-  sceneId: string;
-  name: string;
-  city: string | null;
-  state: string | null;
-  musicCommunity: string | null;
-  memberCount: number;
-  isActive: boolean;
-  isHomeScene: boolean;
-};
-
-type DiscoverStateRollupItem = {
-  entryType: 'state_rollup';
-  state: string;
-  musicCommunity: string;
-  citySceneCount: number;
-  totalMembers: number;
-  representativeSceneId: string | null;
-  isHomeSceneState: boolean;
-};
-
-type DiscoverItem = DiscoverCitySceneItem | DiscoverStateRollupItem;
+import {
+  getDiscoveryContext,
+  listDiscoverScenes,
+  setDiscoverHomeScene,
+  tuneDiscoverScene,
+  type DiscoverCitySceneItem,
+  type DiscoverItem,
+  type TierScope,
+} from '@/lib/discovery/client';
+import {
+  mergeDiscoveryContextPatch,
+  toDiscoveryContextPatch,
+} from '@/lib/discovery/context';
 
 export default function DiscoverPage() {
   const { token } = useAuthStore();
@@ -61,25 +47,8 @@ export default function DiscoverPage() {
     async function fetchContext() {
       if (!token) return;
       try {
-        const response = await api.get<{
-          tunedSceneId: string | null;
-          tunedScene: {
-            id: string;
-            name: string;
-            city: string | null;
-            state: string | null;
-            musicCommunity: string | null;
-            tier: string;
-            isActive: boolean;
-          } | null;
-          homeSceneId: string | null;
-          isVisitor: boolean;
-        }>('/discover/context', { token });
-        setDiscoveryContext({
-          tunedSceneId: response.data?.tunedSceneId ?? null,
-          tunedScene: response.data?.tunedScene ?? null,
-          isVisitor: response.data?.isVisitor ?? null,
-        });
+        const response = await getDiscoveryContext(token);
+        setDiscoveryContext(toDiscoveryContextPatch(response));
       } catch {
         // Keep persisted client context when fetch fails.
       }
@@ -92,22 +61,20 @@ export default function DiscoverPage() {
     async function fetchScenes() {
       if (!token || !canSearch) return;
 
-      const params = new URLSearchParams({
-        tier,
-        musicCommunity: musicCommunity.trim(),
-      });
-
-      if (stateFilter.trim()) params.set('state', stateFilter.trim());
-      if (tier === 'city' && cityFilter.trim()) params.set('city', cityFilter.trim());
-
       setLoading(true);
       setError(null);
 
       try {
-        const response = await api.get<DiscoverItem[]>(`/discover/scenes?${params.toString()}`, {
+        const response = await listDiscoverScenes(
+          {
+            tier,
+            musicCommunity,
+            state: stateFilter,
+            city: cityFilter,
+          },
           token,
-        });
-        setItems(response.data ?? []);
+        );
+        setItems(response);
       } catch (e) {
         const message = e instanceof Error ? e.message : 'Unable to load discovery scenes.';
         setError(message);
@@ -135,36 +102,21 @@ export default function DiscoverPage() {
     setError(null);
 
     try {
-      const response = await api.post<{
-        tunedScene: {
-          id: string;
-          name: string;
-          city: string | null;
-          state: string | null;
-          musicCommunity: string | null;
-          tier: string;
-          isActive: boolean;
-        };
-        isVisitor: boolean;
-        homeScene: {
-          city: string | null;
-          state: string | null;
-          musicCommunity: string | null;
-        };
-        tunedSceneId: string;
-      }>('/discover/set-home-scene', { sceneId: item.sceneId }, { token });
+      const response = await setDiscoverHomeScene(item.sceneId, token);
 
       setHomeScene({
-        city: response.data?.homeScene?.city ?? item.city ?? '',
-        state: response.data?.homeScene?.state ?? item.state ?? '',
-        musicCommunity: response.data?.homeScene?.musicCommunity ?? item.musicCommunity ?? musicCommunity,
+        city: response.homeScene?.city ?? item.city ?? '',
+        state: response.homeScene?.state ?? item.state ?? '',
+        musicCommunity: response.homeScene?.musicCommunity ?? item.musicCommunity ?? musicCommunity,
         tasteTag: homeScene?.tasteTag,
       });
-      setDiscoveryContext({
-        tunedSceneId: response.data?.tunedSceneId ?? item.sceneId,
-        tunedScene: response.data?.tunedScene ?? null,
-        isVisitor: response.data?.isVisitor ?? null,
-      });
+      setDiscoveryContext(
+        mergeDiscoveryContextPatch(response, {
+          tunedSceneId: item.sceneId,
+          tunedScene: null,
+          isVisitor: null,
+        }),
+      );
 
       setItems((prev) =>
         prev.map((entry) =>
@@ -189,30 +141,15 @@ export default function DiscoverPage() {
     setTuningSceneId(item.sceneId);
     setError(null);
     try {
-      const response = await api.post<{ tunedSceneId: string; isVisitor: boolean }>(
-        '/discover/tune',
-        { sceneId: item.sceneId },
-        { token }
+      const response = await tuneDiscoverScene(item.sceneId, token);
+      const context = await getDiscoveryContext(token);
+      setDiscoveryContext(
+        mergeDiscoveryContextPatch(context, {
+          tunedSceneId: response.tunedSceneId ?? item.sceneId,
+          tunedScene: response.tunedScene ?? null,
+          isVisitor: response.isVisitor ?? null,
+        }),
       );
-      const context = await api.get<{
-        tunedSceneId: string | null;
-        tunedScene: {
-          id: string;
-          name: string;
-          city: string | null;
-          state: string | null;
-          musicCommunity: string | null;
-          tier: string;
-          isActive: boolean;
-        } | null;
-        homeSceneId: string | null;
-        isVisitor: boolean;
-      }>('/discover/context', { token });
-      setDiscoveryContext({
-        tunedSceneId: context.data?.tunedSceneId ?? response.data?.tunedSceneId ?? item.sceneId,
-        tunedScene: context.data?.tunedScene ?? null,
-        isVisitor: context.data?.isVisitor ?? response.data?.isVisitor ?? null,
-      });
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Unable to tune to scene.';
       setError(message);
