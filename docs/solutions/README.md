@@ -36,3 +36,4 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/NEXT_FONT_GOOGLE_FONTS_BUILD_FAIL.md` — `next/font` Google Fonts build failures
 - `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md` — local/dev Prisma migration drift and failed-history recovery
 - `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` — scheduler/chat bridge setup for queue-driven multi-agent autonomy
+- `docs/solutions/RELIANT_WORKFLOW_PILOT.md` — repo-local Reliant workflow pilot for slice plan→implement→verify→review execution

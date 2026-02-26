@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Reliant repo-local workflow pilot for slice execution:
+  - Added `.reliant/workflows/uprise-slice-loop.yaml` implementing plan -> implement -> verify -> review for a single slice.
+  - Added `.reliant/presets/uprise_executor.yaml` with UPRISE guardrails (canon/spec first, pnpm-only, web-tier boundary, docs/handoff requirements).
+  - Added `docs/solutions/RELIANT_WORKFLOW_PILOT.md` runbook for operator usage and validation contract.
+  - Updated `docs/solutions/README.md` index with the Reliant pilot playbook.
 - Registrar project + sect-motion submitter status read surfaces (slice 114A):
   - Added `GET /registrar/project/entries` and `GET /registrar/project/:entryId` for submitter-owned project registration state tracking.
   - Added `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` for submitter-owned sect-motion state tracking.

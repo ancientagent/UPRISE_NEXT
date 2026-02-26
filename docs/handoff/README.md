@@ -20,6 +20,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`agent-codex-canon-governance-and-protection-2026-02-14.md`](./agent-codex-canon-governance-and-protection-2026-02-14.md) — Canon alignment, CI guardrails, branch protection, and open PR context.
 
 ## Recent Execution Notes (2026-02)
+- [`2026-02-26_reliant-workflow-pilot-bootstrap.md`](./2026-02-26_reliant-workflow-pilot-bootstrap.md)
 - [`2026-02-19_community_statistics_endpoint_and_plot_wiring.md`](./2026-02-19_community_statistics_endpoint_and_plot_wiring.md)
 - [`2026-02-19_scene_map_endpoint_and_plot_wiring.md`](./2026-02-19_scene_map_endpoint_and_plot_wiring.md)
 - [`2026-02-20_plot_seed_feed_wiring.md`](./2026-02-20_plot_seed_feed_wiring.md)

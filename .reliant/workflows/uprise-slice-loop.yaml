@@ -1,0 +1,114 @@
+name: uprise-slice-loop
+apiVersion: "0.0.5"
+description: Plan -> implement -> verify -> review loop for one UPRISE slice
+presets:
+  tag: agent
+  default: uprise-executor
+entry: plan
+
+inputs:
+  model:
+    type: model
+    description: LLM model to use
+  mode:
+    type: enum
+    enum: ["manual", "auto", "plan"]
+    default: "auto"
+  verify_command:
+    type: string
+    default: "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck"
+  max_turns:
+    type: integer
+    default: 150
+    min: 1
+    max: 500
+
+outputs:
+  verify_exit_code: "{{nodes.verify.exit_code}}"
+  success: "{{nodes.verify.exit_code == 0}}"
+
+nodes:
+  - id: plan
+    type: workflow
+    ref: builtin://agent
+    thread:
+      mode: inherit
+      inject:
+        role: user
+        content: |
+          Create a strict implementation plan for exactly one slice.
+          Enforce:
+          - Canon/spec authority only
+          - No feature drift
+          - Additive/non-breaking first
+          - Explicit risks + rollback
+          Output: scope, out-of-scope, step list.
+    args:
+      mode: plan
+      model: "{{inputs.model}}"
+      max_turns: 40
+      spawn_presets: []
+
+  - id: implement
+    type: workflow
+    ref: builtin://agent
+    thread:
+      mode: inherit
+      inject:
+        role: user
+        content: |
+          Execute the planned slice implementation now.
+          Requirements:
+          - stay within scope
+          - update docs and handoff as required
+          - do not bypass validation gate
+    args:
+      mode: "{{inputs.mode}}"
+      model: "{{inputs.model}}"
+      max_turns: "{{inputs.max_turns}}"
+      spawn_presets: []
+
+  - id: verify
+    type: run
+    command: "{{inputs.verify_command}}"
+
+  - id: review
+    type: workflow
+    ref: builtin://agent
+    presets:
+      default: code_reviewer
+    thread:
+      mode: fork
+      inject:
+        role: user
+        content: |
+          Review the just-completed slice with a bug/risk-first mindset.
+          Output:
+          1) findings by severity
+          2) residual risks/testing gaps
+          3) merge recommendation
+    args:
+      mode: "{{inputs.mode}}"
+      model: "{{inputs.model}}"
+      max_turns: 60
+      spawn_presets: []
+
+  - id: completion
+    type: save_message
+    args:
+      role: assistant
+      content: |
+        {{nodes.verify.exit_code == 0 ?
+          'Slice complete: validation passed. Review output available.' :
+          'Slice blocked: validation failed. Inspect verify step output and fix before merge.'
+        }}
+
+edges:
+  - from: plan
+    default: implement
+  - from: implement
+    default: verify
+  - from: verify
+    default: review
+  - from: review
+    default: completion

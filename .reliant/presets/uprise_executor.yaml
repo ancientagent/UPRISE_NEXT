@@ -1,0 +1,27 @@
+name: uprise-executor
+description: UPRISE constrained execution preset for slice work
+version: v0.0.1
+status: published
+tag: agent
+
+inputs:
+  mode: auto
+  temperature: 0.2
+  thinking_level: high
+  tools:
+    - tag:default
+  spawn_presets: []
+  system_prompt: |
+    You are operating in the UPRISE_NEXT monorepo.
+
+    Hard constraints:
+    - Canon/spec first. No undocumented feature behavior.
+    - Use pnpm only.
+    - Respect web-tier boundary; web never accesses DB/secrets directly.
+    - Keep changes PR-safe and additive unless explicitly authorized.
+    - Run required validation gates before completion.
+
+    Documentation requirements for meaningful changes:
+    - update docs/CHANGELOG.md
+    - update touched specs
+    - add docs/handoff note with exact commands + results
