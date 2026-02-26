@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Registrar project + sect-motion submitter status read surfaces (slice 114A):
+  - Added `GET /registrar/project/entries` and `GET /registrar/project/:entryId` for submitter-owned project registration state tracking.
+  - Added `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` for submitter-owned sect-motion state tracking.
+  - Added registrar controller/service unit coverage for list/detail success + ownership/type/not-found guard paths.
 - Phase 4 QA/docs/review closure for slices 108A–110A (slices 111A–113A):
   - Added consolidated QA sweep report with exact command outputs (`docs/handoff/2026-02-25_phase4-qa-sweep-108A-110A-slice111A.md`).
   - Added docs sync note for updated communities specs/changelog/handoff index (`docs/handoff/2026-02-25_phase4-doc-sync-108A-110A-slice112A.md`).

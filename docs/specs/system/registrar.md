@@ -49,6 +49,16 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submitter-only read for single promoter registrar entry status tracking.
   - Returns scene context and payload summary (`productionName`) for the requested entry.
   - Read payload normalization trims `productionName`; blank/whitespace resolves to `null`.
+- Registrar project status read surfaces (slice 114A):
+  - `GET /registrar/project/entries` implemented.
+  - Submitter-only list read for project registrar entries (`type = project_registration`) with reverse-chronological ordering.
+  - Includes top-level `countsByStatus` summary and per-entry scene context + normalized payload summary (`projectName`).
+  - `GET /registrar/project/:entryId` implemented for submitter-only detail read.
+- Registrar sect-motion status read surfaces (slice 114A):
+  - `GET /registrar/sect-motion/entries` implemented.
+  - Submitter-only list read for sect-motion registrar entries (`type = sect_motion`) with reverse-chronological ordering.
+  - Includes top-level `countsByStatus` summary and per-entry scene context + normalized payload object.
+  - `GET /registrar/sect-motion/:entryId` implemented for submitter-only detail read.
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
   - Registration payload now captures member roster:
@@ -193,6 +203,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 | POST | `/registrar/promoter` | required | Initiate promoter registration |
 | GET | `/registrar/promoter/entries` | required | List submitter-owned promoter registrar entries + scene context |
 | GET | `/registrar/promoter/:entryId` | required | Read submitter-owned promoter registrar entry detail + scene context |
+| GET | `/registrar/project/entries` | required | List submitter-owned project registrar entries + scene context |
+| GET | `/registrar/project/:entryId` | required | Read submitter-owned project registrar entry detail + scene context |
+| GET | `/registrar/sect-motion/entries` | required | List submitter-owned sect-motion registrar entries + scene context |
+| GET | `/registrar/sect-motion/:entryId` | required | Read submitter-owned sect-motion registrar entry detail + scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
 

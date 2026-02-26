@@ -107,6 +107,7 @@ Working notes and completion reports that help future contributors quickly under
 - [`2026-02-25_P3-QA-098A-project-sect-validation.md`](./2026-02-25_P3-QA-098A-project-sect-validation.md)
 - [`2026-02-25_P3-DOC-098A-project-sect-doc-sync.md`](./2026-02-25_P3-DOC-098A-project-sect-doc-sync.md)
 - [`2026-02-25_P3-REV-098A-project-sect-risk-signoff.md`](./2026-02-25_P3-REV-098A-project-sect-risk-signoff.md)
+- [`2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md`](./2026-02-25_phase3-registrar-project-sect-status-reads-slice114A.md)
 - [`2026-02-25_phase4-plot-active-statistics-fallback-slice100A.md`](./2026-02-25_phase4-plot-active-statistics-fallback-slice100A.md)
 - [`2026-02-25_phase4-plot-registrar-status-summary-slice101A.md`](./2026-02-25_phase4-plot-registrar-status-summary-slice101A.md)
 - [`2026-02-25_phase4-plot-shared-community-anchor-slice102A.md`](./2026-02-25_phase4-plot-shared-community-anchor-slice102A.md)

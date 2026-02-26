@@ -65,6 +65,36 @@ export class RegistrarController {
     return { success: true, data: result };
   }
 
+  @Get('project/entries')
+  async listMyProjectRegistrations(@Request() req: { user: { userId: string } }) {
+    const result = await this.registrarService.listProjectRegistrations(req.user.userId);
+    return { success: true, data: result };
+  }
+
+  @Get('project/:entryId')
+  async getMyProjectRegistration(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.getProjectRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
+  @Get('sect-motion/entries')
+  async listMySectMotionRegistrations(@Request() req: { user: { userId: string } }) {
+    const result = await this.registrarService.listSectMotionRegistrations(req.user.userId);
+    return { success: true, data: result };
+  }
+
+  @Get('sect-motion/:entryId')
+  async getMySectMotionRegistration(
+    @Param('entryId') entryId: string,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.registrarService.getSectMotionRegistration(req.user.userId, entryId);
+    return { success: true, data: result };
+  }
+
   @Post('artist')
   @ZodBody(ArtistBandRegistrationSchema)
   async submitArtistBandRegistration(

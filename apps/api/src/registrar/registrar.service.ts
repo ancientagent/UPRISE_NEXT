@@ -17,6 +17,22 @@ const normalizePromoterProductionName = (payload: Record<string, unknown>) => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+const normalizeProjectName = (payload: Record<string, unknown>) => {
+  if (typeof payload.projectName !== 'string') {
+    return null;
+  }
+
+  const trimmed = payload.projectName.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
+const normalizeRegistrarPayloadObject = (payload: unknown) => {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return {};
+  }
+  return payload as Record<string, unknown>;
+};
+
 type RegistrarCodeIssuer = 'system';
 
 const PROMOTER_CAPABILITY_CODE = 'promoter_capability';
@@ -414,6 +430,206 @@ export class RegistrarService {
       payload: {
         productionName: normalizePromoterProductionName(payload),
       },
+      scene: entry.scene,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
+    };
+  }
+
+  async listProjectRegistrations(userId: string) {
+    const entries = await this.prisma.registrarEntry.findMany({
+      where: {
+        createdById: userId,
+        type: 'project_registration',
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const countsByStatus = entries.reduce((acc: Record<string, number>, entry: any) => {
+      acc[entry.status] = (acc[entry.status] ?? 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      total: entries.length,
+      countsByStatus,
+      entries: entries.map((entry: any) => {
+        const payload = (entry.payload ?? {}) as Record<string, unknown>;
+        return {
+          id: entry.id,
+          type: entry.type,
+          status: entry.status,
+          sceneId: entry.sceneId,
+          payload: {
+            projectName: normalizeProjectName(payload),
+          },
+          scene: entry.scene,
+          createdAt: entry.createdAt,
+          updatedAt: entry.updatedAt,
+        };
+      }),
+    };
+  }
+
+  async getProjectRegistration(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'project_registration') {
+      throw new ForbiddenException('Registrar entry is not a project registration');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read this project registration');
+    }
+
+    const payload = (entry.payload ?? {}) as Record<string, unknown>;
+    return {
+      id: entry.id,
+      type: entry.type,
+      status: entry.status,
+      sceneId: entry.sceneId,
+      payload: {
+        projectName: normalizeProjectName(payload),
+      },
+      scene: entry.scene,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
+    };
+  }
+
+  async listSectMotionRegistrations(userId: string) {
+    const entries = await this.prisma.registrarEntry.findMany({
+      where: {
+        createdById: userId,
+        type: 'sect_motion',
+      },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const countsByStatus = entries.reduce((acc: Record<string, number>, entry: any) => {
+      acc[entry.status] = (acc[entry.status] ?? 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      total: entries.length,
+      countsByStatus,
+      entries: entries.map((entry: any) => ({
+        id: entry.id,
+        type: entry.type,
+        status: entry.status,
+        sceneId: entry.sceneId,
+        payload: normalizeRegistrarPayloadObject(entry.payload),
+        scene: entry.scene,
+        createdAt: entry.createdAt,
+        updatedAt: entry.updatedAt,
+      })),
+    };
+  }
+
+  async getSectMotionRegistration(userId: string, entryId: string) {
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: entryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        sceneId: true,
+        createdById: true,
+        payload: true,
+        createdAt: true,
+        updatedAt: true,
+        scene: {
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        },
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+    if (entry.type !== 'sect_motion') {
+      throw new ForbiddenException('Registrar entry is not a sect motion');
+    }
+    if (entry.createdById !== userId) {
+      throw new ForbiddenException('Only the submitting user can read this sect motion');
+    }
+
+    return {
+      id: entry.id,
+      type: entry.type,
+      status: entry.status,
+      sceneId: entry.sceneId,
+      payload: normalizeRegistrarPayloadObject(entry.payload),
       scene: entry.scene,
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,
