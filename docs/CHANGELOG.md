@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` as a one-page whole-platform MVP coverage map (done/partial/missing by surface) for founder alignment and execution rebalancing.
 - Added `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` as the founder-review UX alignment baseline (canon/spec-confirmed behavior, ambiguity checkpoints, and demo/sample process before UX implementation).
 - Lane A admin-batch15 queue execution (`SLICE-ADMIN-431A`):
   - Closed out admin negative-path parity by making helper guard class+message assertions deterministic from single rejection execution paths.

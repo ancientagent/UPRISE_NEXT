@@ -41,3 +41,4 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — deterministic rollback checkpoints, compare-first flow, and safe revert patterns for multi-agent throughput runs
 - `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md` — spec-locked execution roadmap from current registrar-heavy throughput to full MVP launch readiness
 - `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` — canon/spec-anchored UX alignment report and demo/sample process before UX implementation
+- `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` — one-page whole-platform MVP coverage map (done/partial/missing) to prevent registrar-only execution bias
