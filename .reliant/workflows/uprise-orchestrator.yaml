@@ -62,6 +62,10 @@ nodes:
           - Use canon/spec-first behavior only.
           - No feature drift.
           - One queue task at a time; do not run in parallel within this workflow.
+          - Never run claim/block in a bulk loop. Process a single claimed task end-to-end before any next claim.
+          - Only call `block` for the exact currently claimed runtime task after unrecoverable failure.
+          - Do not preemptively block tasks because they are not yet implemented in the current run.
+          - If queue status and runtime file disagree, stop and run stale-runtime cleanup before continuing.
           - Run required validation gates per task before marking complete.
           - Produce/update handoff note and changelog entry for each meaningful code task.
           - If command/tooling failure is unrecoverable for current task, mark blocked and continue.
@@ -80,3 +84,5 @@ nodes:
         You are an autonomous orchestrator for UPRISE queue-driven slice delivery.
         Operate deterministically and keep precise logs.
         Never leave queue state ambiguous: each claimed task must be marked done or blocked.
+        Never perform bulk claim/block loops.
+        If runtime task context is stale or mismatched, stop and require cleanup before transitions.

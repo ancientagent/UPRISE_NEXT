@@ -49,9 +49,11 @@ describe('RegistrarInviteDeliveryTriggerService', () => {
       return undefined;
     });
     mockWorkerService.processQueuedDeliveries.mockResolvedValue({
+      queued: 1,
       processed: 1,
-      succeeded: 1,
+      sent: 1,
       failed: 0,
+      elapsed: 5,
     });
 
     const setIntervalSpy = jest.spyOn(global, 'setInterval');
@@ -85,9 +87,17 @@ describe('RegistrarInviteDeliveryTriggerService', () => {
       return undefined;
     });
 
-    let resolveWorker: ((value: { processed: number; succeeded: number; failed: number }) => void) | null =
+    let resolveWorker:
+      | ((value: { queued: number; processed: number; sent: number; failed: number; elapsed: number }) => void)
+      | null =
       null;
-    const activePromise = new Promise<{ processed: number; succeeded: number; failed: number }>((resolve) => {
+    const activePromise = new Promise<{
+      queued: number;
+      processed: number;
+      sent: number;
+      failed: number;
+      elapsed: number;
+    }>((resolve) => {
       resolveWorker = resolve;
     });
     mockWorkerService.processQueuedDeliveries.mockReturnValue(activePromise);
@@ -102,7 +112,7 @@ describe('RegistrarInviteDeliveryTriggerService', () => {
     await Promise.resolve();
     expect(mockWorkerService.processQueuedDeliveries).toHaveBeenCalledTimes(1);
 
-    resolveWorker?.({ processed: 0, succeeded: 0, failed: 0 });
+    resolveWorker?.({ queued: 0, processed: 0, sent: 0, failed: 0, elapsed: 1 });
     await Promise.resolve();
 
     jest.advanceTimersByTime(5000);

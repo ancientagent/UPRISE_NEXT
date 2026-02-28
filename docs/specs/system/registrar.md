@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-25`
+**Last Updated:** `2026-02-27`
 
 ## Overview & Purpose
 Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
@@ -190,9 +190,27 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`) until motion artifact schema is canon-locked.
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
 - Registrar project web contract scaffolding (slice 98A web lane):
-  - Web typed contract/client support added for `POST /registrar/project`.
-  - Web typed contract/client support added for `GET /registrar/project/entries` and `GET /registrar/project/:entryId`.
+  - API surfaces are implemented and web typed contract/client support is available for:
+    - `POST /registrar/project`,
+    - `GET /registrar/project/entries`,
+    - `GET /registrar/project/:entryId`.
   - No new registrar UI action/CTA added; web surface remains action-gated per spec.
+- Registrar sect-motion web read contract scaffolding (slice 123A web lane):
+  - API surfaces are implemented and web typed contract/client support is available for:
+    - `GET /registrar/sect-motion/entries`,
+    - `GET /registrar/sect-motion/:entryId`.
+  - Web endpoint inventory tracks these as API-implemented/web-action-gated gaps.
+- Registrar docs consistency pass (slice 152A):
+  - Implemented-now wording is normalized for completed batch3/batch4 read-contract work so API-implemented surfaces and web action-gated status remain explicitly distinguished.
+- Registrar batch9 implemented-now/deferred consistency pass (slice 274A):
+  - Batch9 Lane E QA/review slices (270A-273A) are documentation/validation only and do not add new registrar runtime behavior.
+  - Implemented-now and deferred boundaries remain unchanged from previously completed registrar API/web contract slices.
+- Registrar batch11 implemented-now/deferred wording sync (slice 334A):
+  - Batch11 Lane E QA/review slices (330A-333A) are documentation/validation only and do not add new registrar runtime behavior.
+  - Implemented-now and deferred boundaries remain unchanged from previously completed registrar API/web contract slices.
+- Registrar batch12 implemented-now/deferred wording sync (slice 364A):
+  - Batch12 Lane E QA/review slices (360A-363A) are documentation/validation only and do not add new registrar runtime behavior.
+  - Implemented-now and deferred boundaries remain unchanged from previously completed registrar API/web contract slices.
 
 ### Deferred (Not Implemented Yet)
 - Registrar-admin approval/issuance orchestration workflows for promoter capability codes.

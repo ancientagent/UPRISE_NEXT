@@ -5,6 +5,7 @@ import {
   registrarCodeEndpoints,
   registrarProjectEndpoints,
   registrarPromoterEndpoints,
+  registrarSectMotionEndpoints,
 } from '@/lib/registrar/contractInventory';
 
 export interface RegistrarSceneSummary {
@@ -16,10 +17,14 @@ export interface RegistrarSceneSummary {
   tier: 'city' | 'state' | 'national';
 }
 
+type RegistrarEntryStatus = 'submitted' | 'approved' | 'rejected' | 'materialized' | string;
+type RegistrarInviteMemberStatus = 'pending_email' | 'queued' | 'sent' | 'failed' | 'claimed' | 'existing_user';
+type RegistrarInviteDeliveryStatus = 'queued' | 'sent' | 'failed';
+
 export interface RegistrarArtistEntry {
   id: string;
-  type: string;
-  status: string;
+  type: 'artist_band_registration';
+  status: RegistrarEntryStatus;
   sceneId: string;
   artistBandId: string | null;
   payload: {
@@ -50,22 +55,23 @@ export interface RegistrarArtistEntriesResponse {
   entries: RegistrarArtistEntry[];
 }
 
-export interface RegistrarArtistRegistrationResult {
+export interface RegistrarArtistRegistrationResponse {
   id: string;
   memberCount: number;
   pendingInviteCount: number;
   existingMemberCount: number;
 }
+export type RegistrarArtistRegistrationResult = RegistrarArtistRegistrationResponse;
 
 export interface RegistrarProjectRegistrationPayload {
   sceneId: string;
   projectName: string;
 }
 
-export interface RegistrarProjectRegistrationResult {
+export interface RegistrarProjectRegistrationResponse {
   id: string;
-  type: string;
-  status: string;
+  type: 'project_registration';
+  status: RegistrarEntryStatus;
   sceneId: string;
   createdById: string;
   payload: {
@@ -73,11 +79,12 @@ export interface RegistrarProjectRegistrationResult {
   };
   createdAt: string;
 }
+export type RegistrarProjectRegistrationResult = RegistrarProjectRegistrationResponse;
 
 export interface RegistrarProjectEntry {
   id: string;
-  type: string;
-  status: string;
+  type: 'project_registration';
+  status: RegistrarEntryStatus;
   sceneId: string;
   payload: {
     projectName: string | null;
@@ -93,17 +100,34 @@ export interface RegistrarProjectEntriesResponse {
   entries: RegistrarProjectEntry[];
 }
 
+export interface RegistrarSectMotionEntry {
+  id: string;
+  type: 'sect_motion';
+  status: RegistrarEntryStatus;
+  sceneId: string;
+  payload: Record<string, unknown>;
+  scene: RegistrarSceneSummary | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RegistrarSectMotionEntriesResponse {
+  total: number;
+  countsByStatus: Record<string, number>;
+  entries: RegistrarSectMotionEntry[];
+}
+
 export interface RegistrarArtistInviteStatusMember {
   id: string;
   name: string;
   email: string;
   city: string;
   instrument: string;
-  inviteStatus: string;
+  inviteStatus: RegistrarInviteMemberStatus;
   existingUserId: string | null;
   claimedUserId: string | null;
   inviteTokenExpiresAt: string | null;
-  deliveryStatus: 'queued' | 'sent' | 'failed' | null;
+  deliveryStatus: RegistrarInviteDeliveryStatus | null;
   sentAt: string | null;
   failedAt: string | null;
 }
@@ -111,27 +135,29 @@ export interface RegistrarArtistInviteStatusMember {
 export interface RegistrarArtistInviteStatusResponse {
   registrarEntryId: string;
   totalMembers: number;
-  countsByStatus: Record<string, number>;
+  countsByStatus: Partial<Record<RegistrarInviteMemberStatus, number>>;
   members: RegistrarArtistInviteStatusMember[];
 }
 
-export interface RegistrarArtistDispatchInvitesResult {
+export interface RegistrarArtistDispatchInvitesResponse {
   registrarEntryId: string;
   queuedCount: number;
 }
+export type RegistrarArtistDispatchInvitesResult = RegistrarArtistDispatchInvitesResponse;
 
-export interface RegistrarArtistSyncMembersResult {
+export interface RegistrarArtistSyncMembersResponse {
   registrarEntryId: string;
   artistBandId: string;
   eligibleMemberCount: number;
   createdMemberCount: number;
   skippedMemberCount: number;
 }
+export type RegistrarArtistSyncMembersResult = RegistrarArtistSyncMembersResponse;
 
 export interface RegistrarPromoterEntry {
   id: string;
-  type: string;
-  status: string;
+  type: 'promoter_registration';
+  status: RegistrarEntryStatus;
   sceneId: string;
   payload: {
     productionName: string | null;
@@ -144,7 +170,7 @@ export interface RegistrarPromoterEntry {
     granted: boolean;
     grantedAt: string | null;
   };
-  scene: RegistrarSceneSummary;
+  scene: RegistrarSceneSummary | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -172,7 +198,7 @@ export interface RegistrarPromoterCapabilityAuditResponse {
   events: RegistrarPromoterCapabilityAuditEvent[];
 }
 
-export interface RegistrarCodeIssueRecord {
+export interface RegistrarCodeIssueResponse {
   id: string;
   registrarEntryId: string;
   capability: string;
@@ -182,8 +208,9 @@ export interface RegistrarCodeIssueRecord {
   createdAt: string;
   code: string;
 }
+export type RegistrarCodeIssueRecord = RegistrarCodeIssueResponse;
 
-export interface RegistrarCodeVerifyRecord {
+export interface RegistrarCodeVerifyResponse {
   id: string;
   registrarEntryId: string;
   capability: string;
@@ -193,8 +220,9 @@ export interface RegistrarCodeVerifyRecord {
   createdAt: string;
   redeemable: boolean;
 }
+export type RegistrarCodeVerifyRecord = RegistrarCodeVerifyResponse;
 
-export interface RegistrarCodeRedeemRecord {
+export interface RegistrarCodeRedeemResponse {
   id: string;
   registrarEntryId: string;
   capability: string;
@@ -204,6 +232,7 @@ export interface RegistrarCodeRedeemRecord {
   redeemedAt: string | null;
   createdAt: string;
 }
+export type RegistrarCodeRedeemRecord = RegistrarCodeRedeemResponse;
 
 export interface RegistrarCodeApiScaffold {
   issueForApprovedPromoterEntryEndpoint: string | null;
@@ -220,8 +249,10 @@ export const REGISTRAR_CODE_API_SCAFFOLD: RegistrarCodeApiScaffold = {
 export async function submitArtistBandRegistration(
   payload: ArtistBandRegistrationPayload,
   token: string,
-): Promise<RegistrarArtistRegistrationResult> {
-  const response = await api.post<RegistrarArtistRegistrationResult>(registrarArtistEndpoints.submit(), payload, { token });
+): Promise<RegistrarArtistRegistrationResponse> {
+  const response = await api.post<RegistrarArtistRegistrationResponse>(registrarArtistEndpoints.submit(), payload, {
+    token,
+  });
   if (!response.data) {
     throw new Error('Registrar submission returned no data.');
   }
@@ -231,8 +262,8 @@ export async function submitArtistBandRegistration(
 export async function submitProjectRegistration(
   payload: RegistrarProjectRegistrationPayload,
   token: string,
-): Promise<RegistrarProjectRegistrationResult> {
-  const response = await api.post<RegistrarProjectRegistrationResult>(registrarProjectEndpoints.submit(), payload, {
+): Promise<RegistrarProjectRegistrationResponse> {
+  const response = await api.post<RegistrarProjectRegistrationResponse>(registrarProjectEndpoints.submit(), payload, {
     token,
   });
 
@@ -256,6 +287,21 @@ export async function getProjectRegistration(entryId: string, token: string): Pr
   return response.data;
 }
 
+export async function listSectMotionRegistrations(token: string): Promise<RegistrarSectMotionEntriesResponse> {
+  const response = await api.get<RegistrarSectMotionEntriesResponse>(registrarSectMotionEndpoints.listEntries(), {
+    token,
+  });
+  return response.data ?? { total: 0, countsByStatus: {}, entries: [] };
+}
+
+export async function getSectMotionRegistration(entryId: string, token: string): Promise<RegistrarSectMotionEntry> {
+  const response = await api.get<RegistrarSectMotionEntry>(registrarSectMotionEndpoints.detail(entryId), { token });
+  if (!response.data) {
+    throw new Error('Sect-motion registration response was empty.');
+  }
+  return response.data;
+}
+
 export async function listArtistBandRegistrations(token: string): Promise<RegistrarArtistEntriesResponse> {
   const response = await api.get<RegistrarArtistEntriesResponse>(registrarArtistEndpoints.listEntries(), { token });
   return response.data ?? { total: 0, entries: [] };
@@ -270,7 +316,7 @@ export async function dispatchArtistBandInvites(
   links: { mobileAppUrl: string; webAppUrl: string },
   token: string,
 ): Promise<RegistrarArtistDispatchInvitesResult> {
-  const response = await api.post<RegistrarArtistDispatchInvitesResult>(
+  const response = await api.post<RegistrarArtistDispatchInvitesResponse>(
     registrarArtistEndpoints.dispatchInvites(entryId),
     links,
     { token },
@@ -303,7 +349,7 @@ export async function syncArtistBandMembers(
   entryId: string,
   token: string,
 ): Promise<RegistrarArtistSyncMembersResult> {
-  const response = await api.post<RegistrarArtistSyncMembersResult>(
+  const response = await api.post<RegistrarArtistSyncMembersResponse>(
     registrarArtistEndpoints.syncMembers(entryId),
     {},
     { token },
@@ -347,16 +393,16 @@ export async function getPromoterCapabilityAudit(
   return response.data;
 }
 
-export async function verifyRegistrarCode(code: string, token: string): Promise<RegistrarCodeVerifyRecord> {
-  const response = await api.post<RegistrarCodeVerifyRecord>(registrarCodeEndpoints.verify(), { code }, { token });
+export async function verifyRegistrarCode(code: string, token: string): Promise<RegistrarCodeVerifyResponse> {
+  const response = await api.post<RegistrarCodeVerifyResponse>(registrarCodeEndpoints.verify(), { code }, { token });
   if (!response.data) {
     throw new Error('Registrar code verify response was empty.');
   }
   return response.data;
 }
 
-export async function redeemRegistrarCode(code: string, token: string): Promise<RegistrarCodeRedeemRecord> {
-  const response = await api.post<RegistrarCodeRedeemRecord>(registrarCodeEndpoints.redeem(), { code }, { token });
+export async function redeemRegistrarCode(code: string, token: string): Promise<RegistrarCodeRedeemResponse> {
+  const response = await api.post<RegistrarCodeRedeemResponse>(registrarCodeEndpoints.redeem(), { code }, { token });
   if (!response.data) {
     throw new Error('Registrar code redeem response was empty.');
   }

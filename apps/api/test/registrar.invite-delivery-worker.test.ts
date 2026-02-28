@@ -33,11 +33,13 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
 
       const result = await service.processQueuedDeliveries();
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
+        queued: 0,
         processed: 0,
-        succeeded: 0,
+        sent: 0,
         failed: 0,
       });
+      expect(result.elapsed).toEqual(expect.any(Number));
       expect(mockPrisma.registrarInviteDelivery.findMany).toHaveBeenCalledWith({
         where: { status: 'queued' },
         select: {
@@ -91,11 +93,13 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
 
       const result = await service.processQueuedDeliveries();
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
+        queued: 2,
         processed: 2,
-        succeeded: 2,
+        sent: 2,
         failed: 0,
       });
+      expect(result.elapsed).toEqual(expect.any(Number));
       expect(mockInviteDeliveryProvider.send).toHaveBeenCalledTimes(2);
       expect(mockInviteDeliveryProvider.send).toHaveBeenCalledWith(
         'artist1@example.com',
@@ -136,11 +140,13 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
 
       const result = await service.processQueuedDeliveries();
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
+        queued: 1,
         processed: 1,
-        succeeded: 0,
+        sent: 0,
         failed: 1,
       });
+      expect(result.elapsed).toEqual(expect.any(Number));
       expect(mockInviteDeliveryProvider.send).toHaveBeenCalledTimes(1);
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'failed');
     });
@@ -186,11 +192,13 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
 
       const result = await service.processQueuedDeliveries();
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
+        queued: 2,
         processed: 2,
-        succeeded: 1,
+        sent: 1,
         failed: 1,
       });
+      expect(result.elapsed).toEqual(expect.any(Number));
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'sent');
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-2', 'failed');
     });
@@ -221,11 +229,13 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
 
       const result = await service.processQueuedDeliveries();
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
+        queued: 1,
         processed: 1,
-        succeeded: 0,
+        sent: 0,
         failed: 1,
       });
+      expect(result.elapsed).toEqual(expect.any(Number));
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'failed');
     });
 
@@ -270,11 +280,13 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
 
       const result = await service.processQueuedDeliveries();
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
+        queued: 2,
         processed: 2,
-        succeeded: 1,
+        sent: 1,
         failed: 1,
       });
+      expect(result.elapsed).toEqual(expect.any(Number));
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledTimes(2);
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'failed');
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-2', 'sent');
@@ -309,11 +321,52 @@ describe('RegistrarInviteDeliveryWorkerService', () => {
 
       const result = await service.processQueuedDeliveries();
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
+        queued: 1,
         processed: 1,
-        succeeded: 0,
+        sent: 0,
         failed: 1,
       });
+      expect(result.elapsed).toEqual(expect.any(Number));
+      expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'failed');
+    });
+
+    it('attempts failed fallback finalize when sent finalize throws', async () => {
+      const queuedDeliveries = [
+        {
+          id: 'delivery-1',
+          registrarArtistMemberId: 'member-1',
+          email: 'artist@example.com',
+          payload: {
+            inviteToken: 'token-1',
+            mobileAppUrl: 'https://mobile.app/invite/token-1',
+            webAppUrl: 'https://web.app/invite/token-1',
+            memberName: 'Artist',
+            memberCity: 'Austin',
+            sceneCity: 'Austin',
+            sceneState: 'TX',
+            musicCommunity: 'indie',
+          },
+        },
+      ];
+
+      mockPrisma.registrarInviteDelivery.findMany.mockResolvedValue(queuedDeliveries);
+      (mockInviteDeliveryProvider.send as jest.Mock).mockResolvedValue('sent');
+      mockRegistrarService.finalizeQueuedInviteDelivery.mockRejectedValue(
+        new Error('Finalize conflict'),
+      );
+
+      const result = await service.processQueuedDeliveries();
+
+      expect(result).toMatchObject({
+        queued: 1,
+        processed: 1,
+        sent: 0,
+        failed: 1,
+      });
+      expect(result.elapsed).toEqual(expect.any(Number));
+      expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledTimes(2);
+      expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'sent');
       expect(mockRegistrarService.finalizeQueuedInviteDelivery).toHaveBeenCalledWith('member-1', 'failed');
     });
   });

@@ -30,6 +30,7 @@ describe('RegistrarService', () => {
     },
     registrarCode: {
       create: jest.fn(),
+      findFirst: jest.fn(),
       findUnique: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),
@@ -38,6 +39,7 @@ describe('RegistrarService', () => {
       findMany: jest.fn(),
       findFirst: jest.fn(),
       upsert: jest.fn(),
+      update: jest.fn(),
     },
     capabilityGrantAuditLog: {
       create: jest.fn(),
@@ -82,6 +84,7 @@ describe('RegistrarService', () => {
     mockPrisma.$transaction.mockImplementation(async (callback: (tx: typeof mockPrisma) => unknown) =>
       callback(mockPrisma as any),
     );
+    mockPrisma.registrarCode.findFirst.mockResolvedValue(null);
     mockPrisma.registrarCode.findMany.mockResolvedValue([]);
     mockPrisma.userCapabilityGrant.findMany.mockResolvedValue([]);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue(null);
@@ -93,6 +96,15 @@ describe('RegistrarService', () => {
       sourceRegistrarEntryId: 'reg-promoter-approved-1',
       sourceRegistrarCodeId: 'rcode-default',
     });
+    mockPrisma.userCapabilityGrant.update.mockImplementation(async ({ where, data }: any) => ({
+      id: where.id,
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: data.status,
+      revokedAt: data.revokedAt,
+      sourceRegistrarEntryId: 'reg-promoter-approved-1',
+      sourceRegistrarCodeId: 'rcode-default',
+    }));
     mockPrisma.capabilityGrantAuditLog.findMany.mockResolvedValue([]);
     service = new RegistrarService(mockPrisma as any);
   });
@@ -1297,7 +1309,15 @@ describe('RegistrarService', () => {
           capability: 'promoter_capability',
           action: 'code_issued',
           actorType: 'system',
+          actorUserId: null,
           registrarEntryId: 'reg-promoter-approved-1',
+          metadata: expect.objectContaining({
+            transitionFromStatus: null,
+            transitionToStatus: null,
+            issuerType: 'system',
+            sourceRegistrarEntryId: 'reg-promoter-approved-1',
+            sourceRegistrarCodeId: 'rcode-1',
+          }),
         }),
       }),
     );
@@ -1306,6 +1326,927 @@ describe('RegistrarService', () => {
     expect(result.issuerType).toBe('system');
     expect(result.status).toBe('issued');
     expect(result.code).toMatch(/^PRC-[A-F0-9]{32}$/);
+  });
+
+  it('issues promoter capability code through system-only seam for approved promoter entry', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-system-seam',
+      type: 'promoter_registration',
+      status: 'approved',
+      createdById: 'u-seam',
+    });
+    mockPrisma.registrarCode.create.mockImplementation(async ({ data }: any) => ({
+      id: 'rcode-system-seam-1',
+      registrarEntryId: data.registrarEntryId,
+      capability: data.capability,
+      issuerType: data.issuerType,
+      status: data.status,
+      expiresAt: data.expiresAt,
+      createdAt: new Date('2026-02-27T21:50:00.000Z'),
+    }));
+
+    const result = await service.issueSystemPromoterCapabilityCodeForApprovedEntry(
+      'reg-promoter-approved-system-seam',
+      {
+        expiresAt: null,
+      },
+    );
+
+    expect(mockPrisma.registrarCode.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          registrarEntryId: 'reg-promoter-approved-system-seam',
+          issuerType: 'system',
+          capability: 'promoter_capability',
+          status: 'issued',
+        }),
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'code_issued',
+          actorType: 'system',
+          actorUserId: null,
+          metadata: expect.objectContaining({
+            transitionFromStatus: null,
+            transitionToStatus: null,
+            issuerType: 'system',
+            sourceRegistrarEntryId: 'reg-promoter-approved-system-seam',
+            sourceRegistrarCodeId: 'rcode-system-seam-1',
+          }),
+        }),
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        registrarEntryId: 'reg-promoter-approved-system-seam',
+        issuerType: 'system',
+        capability: 'promoter_capability',
+        status: 'issued',
+        code: expect.stringMatching(/^PRC-[A-F0-9]{32}$/),
+      }),
+    );
+  });
+
+  it('rejects system-only issuance seam when registrar entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(
+      service.issueSystemPromoterCapabilityCodeForApprovedEntry('missing-system-seam-entry'),
+    ).rejects.toThrow(NotFoundException);
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects system-only issuance seam for non-promoter registrar entry types', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-system-seam-project-1',
+      type: 'project_registration',
+      status: 'approved',
+      createdById: 'u-1',
+    });
+
+    await expect(
+      service.issueSystemPromoterCapabilityCodeForApprovedEntry('reg-system-seam-project-1'),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects system-only issuance seam when promoter entry is not approved', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-system-seam-promoter-submitted-1',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-1',
+    });
+
+    await expect(
+      service.issueSystemPromoterCapabilityCodeForApprovedEntry('reg-system-seam-promoter-submitted-1'),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('emits deterministic audit ordering for approve-then-issue lifecycle helper', async () => {
+    mockPrisma.registrarEntry.findUnique
+      .mockResolvedValueOnce({
+        id: 'reg-promoter-lifecycle-order-1',
+        type: 'promoter_registration',
+        status: 'submitted',
+      })
+      .mockResolvedValueOnce({
+        id: 'reg-promoter-lifecycle-order-1',
+        type: 'promoter_registration',
+        status: 'approved',
+        createdById: 'u-1',
+      });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-lifecycle-order-1',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-27T23:40:00.000Z'),
+    });
+    mockPrisma.registrarCode.create.mockImplementation(async ({ data }: any) => ({
+      id: 'rcode-lifecycle-order-1',
+      registrarEntryId: data.registrarEntryId,
+      capability: data.capability,
+      issuerType: data.issuerType,
+      status: data.status,
+      expiresAt: data.expiresAt,
+      createdAt: new Date('2026-02-27T23:40:02.000Z'),
+    }));
+
+    const result = await service.approvePromoterEntryAndIssueCapabilityCode('reg-promoter-lifecycle-order-1', {
+      reason: 'Verified promoter identity',
+      expiresAt: null,
+      actorType: 'system',
+    });
+
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'registration_approved',
+          registrarEntryId: 'reg-promoter-lifecycle-order-1',
+        }),
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'code_issued',
+          actorType: 'system',
+          actorUserId: null,
+          targetUserId: 'u-1',
+          registrarEntryId: 'reg-promoter-lifecycle-order-1',
+        }),
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        registrarEntryId: 'reg-promoter-lifecycle-order-1',
+        status: 'issued',
+        capability: 'promoter_capability',
+      }),
+    );
+  });
+
+  it('emits consistent system actor metadata on both approve and reject audit events', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-audit-consistency',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-audit-consistency',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-submitted-audit-consistency',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-28T02:50:00.000Z'),
+    });
+
+    await service.applyPromoterApprovalTransition('reg-promoter-submitted-audit-consistency', 'approved');
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'registration_approved',
+          actorType: 'system',
+          actorUserId: null,
+          targetUserId: 'u-audit-consistency',
+        }),
+      }),
+    );
+
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-audit-consistency-2',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-audit-consistency-2',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-submitted-audit-consistency-2',
+      type: 'promoter_registration',
+      status: 'rejected',
+      updatedAt: new Date('2026-02-28T02:50:30.000Z'),
+    });
+
+    await service.applyPromoterApprovalTransition('reg-promoter-submitted-audit-consistency-2', 'rejected');
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'registration_rejected',
+          actorType: 'system',
+          actorUserId: null,
+          targetUserId: 'u-audit-consistency-2',
+        }),
+      }),
+    );
+  });
+
+  it('rejects approve-then-issue lifecycle helper when actor context is not system', async () => {
+    await expect(
+      service.approvePromoterEntryAndIssueCapabilityCode('reg-promoter-lifecycle-actor-guard', {
+        actorType: 'manual' as any,
+      }),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.findUnique).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects approve-then-issue lifecycle helper when decision entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValueOnce(null);
+
+    await expect(
+      service.approvePromoterEntryAndIssueCapabilityCode('missing-lifecycle-entry', {
+        actorType: 'system',
+      }),
+    ).rejects.toThrow(NotFoundException);
+
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects approve-then-issue lifecycle helper when decision entry type is non-promoter', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValueOnce({
+      id: 'reg-project-lifecycle-non-promoter',
+      type: 'project_registration',
+      status: 'submitted',
+      createdById: 'u-1',
+    });
+
+    await expect(
+      service.approvePromoterEntryAndIssueCapabilityCode('reg-project-lifecycle-non-promoter', {
+        actorType: 'system',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects approve-then-issue lifecycle helper when issuance-phase entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique
+      .mockResolvedValueOnce({
+        id: 'reg-promoter-lifecycle-issuance-missing',
+        type: 'promoter_registration',
+        status: 'submitted',
+        createdById: 'u-1',
+      })
+      .mockResolvedValueOnce(null);
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-lifecycle-issuance-missing',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-28T02:35:00.000Z'),
+    });
+
+    await expect(
+      service.approvePromoterEntryAndIssueCapabilityCode('reg-promoter-lifecycle-issuance-missing', {
+        actorType: 'system',
+      }),
+    ).rejects.toThrow(NotFoundException);
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects approve-then-issue lifecycle helper when issuance phase sees invalid approved-state precondition', async () => {
+    mockPrisma.registrarEntry.findUnique
+      .mockResolvedValueOnce({
+        id: 'reg-promoter-lifecycle-invalid-state',
+        type: 'promoter_registration',
+        status: 'submitted',
+      })
+      .mockResolvedValueOnce({
+        id: 'reg-promoter-lifecycle-invalid-state',
+        type: 'promoter_registration',
+        status: 'rejected',
+        createdById: 'u-1',
+      });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-lifecycle-invalid-state',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-27T23:44:00.000Z'),
+    });
+
+    await expect(
+      service.approvePromoterEntryAndIssueCapabilityCode('reg-promoter-lifecycle-invalid-state', {
+        actorType: 'system',
+      }),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('applies promoter approval transition from submitted to approved', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-1',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-submitted-1',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-27T21:45:00.000Z'),
+    });
+
+    const result = await service.applyPromoterApprovalTransition('reg-promoter-submitted-1', 'approved');
+
+    expect(mockPrisma.registrarEntry.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'reg-promoter-submitted-1' },
+        data: { status: 'approved' },
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          capability: 'promoter_capability',
+          action: 'registration_approved',
+          actorType: 'system',
+          actorUserId: null,
+          targetUserId: 'u-1',
+          registrarEntryId: 'reg-promoter-submitted-1',
+          metadata: {
+            transitionFromStatus: 'submitted',
+            transitionToStatus: 'approved',
+            decisionReason: null,
+            issuerType: null,
+            sourceRegistrarEntryId: null,
+            sourceRegistrarCodeId: null,
+          },
+        }),
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'reg-promoter-submitted-1',
+        type: 'promoter_registration',
+        status: 'approved',
+      }),
+    );
+  });
+
+  it('applies promoter approval transition from submitted to rejected', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-2',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-2',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-submitted-2',
+      type: 'promoter_registration',
+      status: 'rejected',
+      updatedAt: new Date('2026-02-27T21:46:00.000Z'),
+    });
+
+    const result = await service.applyPromoterApprovalTransition('reg-promoter-submitted-2', 'rejected', {
+      reason: '  Incomplete promoter verification evidence  ',
+    });
+
+    expect(mockPrisma.registrarEntry.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'reg-promoter-submitted-2' },
+        data: { status: 'rejected' },
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: 'registration_rejected',
+          actorType: 'system',
+          actorUserId: null,
+          targetUserId: 'u-2',
+          registrarEntryId: 'reg-promoter-submitted-2',
+          metadata: {
+            transitionFromStatus: 'submitted',
+            transitionToStatus: 'rejected',
+            decisionReason: 'Incomplete promoter verification evidence',
+            issuerType: null,
+            sourceRegistrarEntryId: null,
+            sourceRegistrarCodeId: null,
+          },
+        }),
+      }),
+    );
+    expect(result.status).toBe('rejected');
+  });
+
+  it('rejects promoter approval transition when registrar entry is not submitted', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-guard',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+
+    await expect(
+      service.applyPromoterApprovalTransition('reg-promoter-approved-guard', 'rejected'),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+    expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter approval transition when actor context is not system', async () => {
+    await expect(
+      service.applyPromoterApprovalTransition('reg-promoter-submitted-actor-guard', 'approved', {
+        actorType: 'manual' as any,
+      }),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.findUnique).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+  });
+
+  it.each(['approved', 'rejected', 'materialized'] as const)(
+    'rejects promoter approval transition matrix from %s to approved',
+    async (fromStatus) => {
+      mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+        id: `reg-promoter-${fromStatus}-guard`,
+        type: 'promoter_registration',
+        status: fromStatus,
+      });
+
+      if (fromStatus === 'approved') {
+        await expect(
+          service.applyPromoterApprovalTransition(`reg-promoter-${fromStatus}-guard`, 'approved'),
+        ).rejects.toThrow(ConflictException);
+      } else {
+        await expect(
+          service.applyPromoterApprovalTransition(`reg-promoter-${fromStatus}-guard`, 'approved'),
+        ).rejects.toThrow(ForbiddenException);
+      }
+
+      expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+      expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
+    },
+  );
+
+  it('rejects promoter approval transition when registrar entry has unknown lifecycle status', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-unknown-status',
+      type: 'promoter_registration',
+      status: 'queued_review',
+      createdById: 'u-unknown',
+    });
+
+    await expect(
+      service.applyPromoterApprovalTransition('reg-promoter-unknown-status', 'approved'),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+    expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter approval transition from submitted to unsupported target status literal', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-invalid-target',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-invalid-target',
+    });
+
+    await expect(
+      service.applyPromoterApprovalTransition(
+        'reg-promoter-submitted-invalid-target',
+        'materialized' as unknown as 'approved',
+      ),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+  });
+
+  it.each(['approved', 'rejected', 'materialized'] as const)(
+    'rejects promoter approval transition matrix from %s to rejected',
+    async (fromStatus) => {
+      mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+        id: `reg-promoter-${fromStatus}-to-rejected-guard`,
+        type: 'promoter_registration',
+        status: fromStatus,
+      });
+
+      if (fromStatus === 'rejected') {
+        await expect(
+          service.applyPromoterApprovalTransition(`reg-promoter-${fromStatus}-to-rejected-guard`, 'rejected'),
+        ).rejects.toThrow(ConflictException);
+      } else {
+        await expect(
+          service.applyPromoterApprovalTransition(`reg-promoter-${fromStatus}-to-rejected-guard`, 'rejected'),
+        ).rejects.toThrow(ForbiddenException);
+      }
+
+      expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+      expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
+    },
+  );
+
+  it('normalizes approval/rejection reason payload to bounded stable metadata shape', async () => {
+    const longReason = ` ${'x'.repeat(320)} `;
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-reason-bound',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-reason',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-submitted-reason-bound',
+      type: 'promoter_registration',
+      status: 'rejected',
+      updatedAt: new Date('2026-02-27T23:39:00.000Z'),
+    });
+
+    await service.applyPromoterApprovalTransition('reg-promoter-submitted-reason-bound', 'rejected', {
+      reason: longReason,
+    });
+
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({
+            decisionReason: 'x'.repeat(280),
+          }),
+        }),
+      }),
+    );
+  });
+
+  it.each([
+    { label: 'empty string', reason: '', expected: null },
+    { label: 'whitespace-only string', reason: '   ', expected: null },
+    { label: 'undefined reason', reason: undefined, expected: null },
+    { label: 'null reason', reason: null, expected: null },
+    { label: 'non-string reason', reason: 123 as any, expected: null },
+    { label: 'trimmed reason', reason: '  docs complete  ', expected: 'docs complete' },
+  ])('normalizes decision reason edge case: $label', async ({ reason, expected }) => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-edge-reason',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-edge',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-submitted-edge-reason',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-28T02:31:00.000Z'),
+    });
+
+    await service.applyPromoterApprovalTransition('reg-promoter-submitted-edge-reason', 'approved', {
+      reason: reason as any,
+    });
+
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({
+            decisionReason: expected,
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('preserves decision reason at exact max length without truncation', async () => {
+    const exactReason = 'a'.repeat(280);
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-exact-max-reason',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-exact-max',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-exact-max-reason',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-28T02:48:00.000Z'),
+    });
+
+    await service.applyPromoterApprovalTransition('reg-promoter-exact-max-reason', 'approved', {
+      reason: exactReason,
+    });
+
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({
+            decisionReason: exactReason,
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('truncates decision reason at max length plus one boundary', async () => {
+    const overBoundaryReason = 'b'.repeat(281);
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-over-max-reason',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-over-max',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-over-max-reason',
+      type: 'promoter_registration',
+      status: 'rejected',
+      updatedAt: new Date('2026-02-28T02:49:00.000Z'),
+    });
+
+    await service.applyPromoterApprovalTransition('reg-promoter-over-max-reason', 'rejected', {
+      reason: overBoundaryReason,
+    });
+
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({
+            decisionReason: 'b'.repeat(280),
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('rejects promoter approval transition for non-promoter registrar entry types', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-project-transition-1',
+      type: 'project_registration',
+      status: 'submitted',
+    });
+
+    await expect(service.applyPromoterApprovalTransition('reg-project-transition-1', 'approved')).rejects.toThrow(
+      ForbiddenException,
+    );
+
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter approval transition when registrar entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.applyPromoterApprovalTransition('missing-promoter-entry', 'approved')).rejects.toThrow(
+      NotFoundException,
+    );
+
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+  });
+
+  it('revokes active promoter capability grant with append-only audit log emission', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-revoke-1',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({
+      id: 'grant-promoter-active-1',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'active',
+      sourceRegistrarEntryId: 'reg-promoter-approved-revoke-1',
+      sourceRegistrarCodeId: 'rcode-redeem-1',
+    });
+    mockPrisma.userCapabilityGrant.update.mockResolvedValue({
+      id: 'grant-promoter-active-1',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'revoked',
+      revokedAt: new Date('2026-02-27T21:55:00.000Z'),
+      sourceRegistrarEntryId: 'reg-promoter-approved-revoke-1',
+      sourceRegistrarCodeId: 'rcode-redeem-1',
+    });
+
+    const result = await service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-1');
+
+    expect(mockPrisma.userCapabilityGrant.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          userId: 'u-1',
+          capability: 'promoter_capability',
+        }),
+      }),
+    );
+    expect(mockPrisma.userCapabilityGrant.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'grant-promoter-active-1' },
+        data: expect.objectContaining({
+          status: 'revoked',
+          revokedAt: expect.any(Date),
+        }),
+      }),
+    );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          capability: 'promoter_capability',
+          action: 'capability_revoked',
+          actorType: 'system',
+          actorUserId: null,
+          targetUserId: 'u-1',
+          registrarEntryId: 'reg-promoter-approved-revoke-1',
+          metadata: {
+            transitionFromStatus: 'active',
+            transitionToStatus: 'revoked',
+            decisionReason: null,
+            issuerType: null,
+            sourceRegistrarEntryId: 'reg-promoter-approved-revoke-1',
+            sourceRegistrarCodeId: 'rcode-redeem-1',
+          },
+        }),
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'grant-promoter-active-1',
+        status: 'revoked',
+      }),
+    );
+  });
+
+  it('revokes active promoter capability grant when registrar entry status is rejected', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-rejected-revoke-1',
+      type: 'promoter_registration',
+      status: 'rejected',
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({
+      id: 'grant-promoter-active-rejected-1',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'active',
+      sourceRegistrarEntryId: 'reg-promoter-rejected-revoke-1',
+      sourceRegistrarCodeId: 'rcode-redeem-2',
+    });
+    mockPrisma.userCapabilityGrant.update.mockResolvedValue({
+      id: 'grant-promoter-active-rejected-1',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'revoked',
+      revokedAt: new Date('2026-02-27T22:00:00.000Z'),
+      sourceRegistrarEntryId: 'reg-promoter-rejected-revoke-1',
+      sourceRegistrarCodeId: 'rcode-redeem-2',
+    });
+
+    const result = await service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-rejected-revoke-1');
+
+    expect(mockPrisma.userCapabilityGrant.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'grant-promoter-active-rejected-1' },
+      }),
+    );
+    expect(result.status).toBe('revoked');
+  });
+
+  it('rejects promoter capability revocation for non-promoter registrar entry types', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-project-revoke-1',
+      type: 'project_registration',
+      status: 'approved',
+    });
+
+    await expect(service.revokePromoterCapabilityGrantForUser('u-1', 'reg-project-revoke-1')).rejects.toThrow(
+      ForbiddenException,
+    );
+
+    expect(mockPrisma.userCapabilityGrant.findFirst).not.toHaveBeenCalled();
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter capability revocation when no active grant exists', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-revoke-missing',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-missing'),
+    ).rejects.toThrow(NotFoundException);
+
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter capability revocation when grant state is non-active', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-revoke-inactive',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({
+      id: 'grant-promoter-inactive',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'revoked',
+      revokedAt: new Date('2026-02-28T02:33:00.000Z'),
+      sourceRegistrarEntryId: 'reg-promoter-approved-revoke-inactive',
+      sourceRegistrarCodeId: 'rcode-redeem-inactive',
+    });
+
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-inactive'),
+    ).rejects.toThrow(ConflictException);
+
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
+    expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter capability revocation when grant has revokedAt timestamp', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-revoke-stale',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({
+      id: 'grant-promoter-stale',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'active',
+      revokedAt: new Date('2026-02-28T02:34:00.000Z'),
+      sourceRegistrarEntryId: 'reg-promoter-approved-revoke-stale',
+      sourceRegistrarCodeId: 'rcode-redeem-stale',
+    });
+
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-stale'),
+    ).rejects.toThrow(ConflictException);
+
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter capability revocation when active grant-link entry differs from target entry', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-revoke-target',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({
+      id: 'grant-promoter-active-mismatch',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'active',
+      sourceRegistrarEntryId: 'reg-promoter-approved-revoke-other',
+      sourceRegistrarCodeId: 'rcode-redeem-other',
+    });
+
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-target'),
+    ).rejects.toThrow(ConflictException);
+
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
+    expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter capability revocation when active grant has null source entry linkage', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-approved-revoke-null-link',
+      type: 'promoter_registration',
+      status: 'approved',
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({
+      id: 'grant-promoter-null-link',
+      userId: 'u-1',
+      capability: 'promoter_capability',
+      status: 'active',
+      revokedAt: null,
+      sourceRegistrarEntryId: null,
+      sourceRegistrarCodeId: null,
+    });
+
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-null-link'),
+    ).rejects.toThrow(ConflictException);
+
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
+    expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter capability revocation when actor context is not system', async () => {
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-actor-guard', {
+        actorType: 'manual' as any,
+      }),
+    ).rejects.toThrow(ForbiddenException);
+
+    expect(mockPrisma.registrarEntry.findUnique).not.toHaveBeenCalled();
+    expect(mockPrisma.userCapabilityGrant.findFirst).not.toHaveBeenCalled();
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects promoter capability revocation when registrar entry is missing', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue(null);
+
+    await expect(service.revokePromoterCapabilityGrantForUser('u-1', 'missing-revoke-entry')).rejects.toThrow(
+      NotFoundException,
+    );
+
+    expect(mockPrisma.userCapabilityGrant.findFirst).not.toHaveBeenCalled();
+    expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
   });
 
   it('rejects registrar code issuance when issuer is not system', async () => {
@@ -1357,6 +2298,117 @@ describe('RegistrarService', () => {
     expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
   });
 
+  it('rejects registrar code issuance replay when an active issued code already exists', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-active-code-1',
+      type: 'promoter_registration',
+      status: 'approved',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarCode.findFirst.mockResolvedValue({
+      id: 'rcode-active-existing-1',
+    });
+
+    await expect(
+      service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-active-code-1', {
+        issuer: 'system',
+      }),
+    ).rejects.toThrow(ConflictException);
+
+    expect(mockPrisma.registrarCode.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          registrarEntryId: 'reg-promoter-active-code-1',
+          capability: 'promoter_capability',
+          status: 'issued',
+          redeemedAt: null,
+        }),
+      }),
+    );
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects registrar code issuance when duplicate active code appears during transactional race window', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-race-window-1',
+      type: 'promoter_registration',
+      status: 'approved',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarCode.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ id: 'rcode-race-window-existing-1' });
+
+    await expect(
+      service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-race-window-1', {
+        issuer: 'system',
+      }),
+    ).rejects.toThrow(ConflictException);
+
+    expect(mockPrisma.registrarCode.findFirst).toHaveBeenCalledTimes(2);
+    expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('retries registrar code issuance on transient codeHash uniqueness conflict and succeeds', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-retry-unique-1',
+      type: 'promoter_registration',
+      status: 'approved',
+      createdById: 'u-1',
+    });
+    const uniqueErr: any = new Error('unique conflict');
+    uniqueErr.code = 'P2002';
+    uniqueErr.meta = { target: ['codeHash'] };
+
+    mockPrisma.registrarCode.findFirst.mockResolvedValue(null);
+    mockPrisma.registrarCode.create
+      .mockRejectedValueOnce(uniqueErr)
+      .mockResolvedValueOnce({
+        id: 'rcode-retry-unique-1',
+        registrarEntryId: 'reg-promoter-retry-unique-1',
+        capability: 'promoter_capability',
+        issuerType: 'system',
+        status: 'issued',
+        expiresAt: null,
+        createdAt: new Date('2026-02-28T02:47:00.000Z'),
+      });
+
+    const result = await service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-retry-unique-1', {
+      issuer: 'system',
+    });
+
+    expect(mockPrisma.registrarCode.create).toHaveBeenCalledTimes(2);
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'rcode-retry-unique-1',
+        status: 'issued',
+      }),
+    );
+  });
+
+  it('fails registrar code issuance after exhausting uniqueness retry attempts', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-retry-unique-fail',
+      type: 'promoter_registration',
+      status: 'approved',
+      createdById: 'u-1',
+    });
+    const uniqueErr: any = new Error('unique conflict');
+    uniqueErr.code = 'P2002';
+    uniqueErr.meta = { target: ['codeHash'] };
+
+    mockPrisma.registrarCode.findFirst.mockResolvedValue(null);
+    mockPrisma.registrarCode.create.mockRejectedValue(uniqueErr);
+
+    await expect(
+      service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-retry-unique-fail', {
+        issuer: 'system',
+      }),
+    ).rejects.toBe(uniqueErr);
+
+    expect(mockPrisma.registrarCode.create).toHaveBeenCalledTimes(3);
+  });
+
   it('verifies a redeemable registrar code for approved promoter entry', async () => {
     mockPrisma.registrarCode.findUnique.mockResolvedValue({
       id: 'rcode-verify-1',
@@ -1388,10 +2440,14 @@ describe('RegistrarService', () => {
         id: 'rcode-verify-1',
         registrarEntryId: 'reg-promoter-approved-1',
         capability: 'promoter_capability',
+        issuerType: 'system',
         status: 'issued',
+        expiresAt: new Date('2026-03-10T00:00:00.000Z'),
+        createdAt: new Date('2026-02-24T10:20:00.000Z'),
         redeemable: true,
       }),
     );
+    expect(result).not.toHaveProperty('redeemedAt');
   });
 
   it('rejects registrar code verification when code does not exist', async () => {
@@ -1499,7 +2555,11 @@ describe('RegistrarService', () => {
     expect(result).toEqual(
       expect.objectContaining({
         id: 'rcode-redeem-1',
+        registrarEntryId: 'reg-promoter-approved-1',
+        capability: 'promoter_capability',
+        issuerType: 'system',
         status: 'redeemed',
+        redeemedAt: expect.any(Date),
         redeemedByUserId: 'u-1',
         capabilityGrant: expect.objectContaining({
           capability: 'promoter_capability',
@@ -2083,6 +3143,36 @@ describe('RegistrarService', () => {
     expect(jordan.deliveryStatus).toBeNull();
     expect(jordan.sentAt).toBeNull();
     expect(jordan.failedAt).toBeNull();
+  });
+
+  it('maps queued delivery rows to queued deliveryStatus without sent/failed timestamps', async () => {
+    const queuedAt = new Date('2026-02-23T09:00:00.000Z');
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-7q',
+      type: 'artist_band_registration',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarArtistMember.findMany.mockResolvedValue([
+      {
+        id: 'ram-q1',
+        name: 'Kai North',
+        email: 'kai@example.com',
+        city: 'Austin',
+        instrument: 'Keys',
+        inviteStatus: 'queued',
+        existingUserId: null,
+        claimedUserId: null,
+        inviteTokenExpiresAt: new Date('2026-03-06T00:00:00.000Z'),
+        deliveries: [{ status: 'queued', dispatchedAt: queuedAt }],
+      },
+    ]);
+
+    const result = await service.getArtistBandInviteStatus('u-1', 'reg-7q');
+    const kai = result.members[0];
+
+    expect(kai.deliveryStatus).toBe('queued');
+    expect(kai.sentAt).toBeNull();
+    expect(kai.failedAt).toBeNull();
   });
 
   it('omits raw deliveries array from member response shape', async () => {

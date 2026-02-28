@@ -11,6 +11,7 @@ export interface RegistrarWebEndpointContract {
   status: RegistrarContractStatus;
   webConsumerPath: string | null;
   gapKind: RegistrarGapKind | null;
+  deferredAdminLifecycle?: 'action_gated';
   notes: string;
 }
 
@@ -23,6 +24,13 @@ export interface RegistrarWebFieldGap {
 }
 
 const APP_REGISTRAR_PAGE = 'apps/web/src/app/registrar/page.tsx';
+const ACTION_GATED_API_AVAILABLE_NOTE = 'API available; web surface remains action-gated.';
+const ACTION_GATED_API_READ_IMPLEMENTED_NOTE =
+  'API read path implemented; web surface remains action-gated with typed client scaffolding only.';
+const ACTION_GATED_ADMIN_READ_NOTE =
+  'API available; deferred admin-lifecycle read surface remains action-gated on web.';
+const ACTION_GATED_ADMIN_AUDIT_NOTE =
+  'API available; deferred admin-lifecycle audit read surface remains action-gated on web.';
 
 export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointContract[] = [
   {
@@ -86,7 +94,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; web registrar surface does not yet expose promoter registration.',
+    notes: ACTION_GATED_API_AVAILABLE_NOTE,
   },
   {
     id: 'registrar.promoter.entries.list',
@@ -95,7 +103,8 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; submitter-owned promoter status list is not wired on web.',
+    deferredAdminLifecycle: 'action_gated',
+    notes: ACTION_GATED_ADMIN_READ_NOTE,
   },
   {
     id: 'registrar.promoter.entry.detail',
@@ -104,7 +113,8 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; promoter detail read is not wired on web.',
+    deferredAdminLifecycle: 'action_gated',
+    notes: ACTION_GATED_ADMIN_READ_NOTE,
   },
   {
     id: 'registrar.promoter.entry.capability_audit',
@@ -113,7 +123,8 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; promoter capability audit read is not wired on web.',
+    deferredAdminLifecycle: 'action_gated',
+    notes: ACTION_GATED_ADMIN_AUDIT_NOTE,
   },
   {
     id: 'auth.invite.preview',
@@ -122,7 +133,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'Invite claim preview exists in API; no web claim flow uses it yet.',
+    notes: ACTION_GATED_API_AVAILABLE_NOTE,
   },
   {
     id: 'auth.invite.register',
@@ -131,7 +142,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'Invite-token registration exists in API; no web claim flow uses it yet.',
+    notes: ACTION_GATED_API_AVAILABLE_NOTE,
   },
   {
     id: 'registrar.project.submit',
@@ -140,7 +151,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; web registrar surface has typed client scaffolding but no user-facing action yet.',
+    notes: ACTION_GATED_API_AVAILABLE_NOTE,
   },
   {
     id: 'registrar.project.entries.list',
@@ -149,7 +160,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; web registrar surface has typed read client scaffolding but no user-facing action yet.',
+    notes: ACTION_GATED_API_READ_IMPLEMENTED_NOTE,
   },
   {
     id: 'registrar.project.entry.detail',
@@ -158,7 +169,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; web registrar surface has typed read client scaffolding but no user-facing action yet.',
+    notes: ACTION_GATED_API_READ_IMPLEMENTED_NOTE,
   },
   {
     id: 'registrar.sect_motion.submit',
@@ -167,7 +178,25 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; web registrar surface has no user-facing sect-motion action.',
+    notes: ACTION_GATED_API_AVAILABLE_NOTE,
+  },
+  {
+    id: 'registrar.sect_motion.entries.list',
+    method: 'GET',
+    pathTemplate: '/registrar/sect-motion/entries',
+    status: 'gap',
+    webConsumerPath: null,
+    gapKind: 'web_surface_missing',
+    notes: ACTION_GATED_API_READ_IMPLEMENTED_NOTE,
+  },
+  {
+    id: 'registrar.sect_motion.entry.detail',
+    method: 'GET',
+    pathTemplate: '/registrar/sect-motion/:entryId',
+    status: 'gap',
+    webConsumerPath: null,
+    gapKind: 'web_surface_missing',
+    notes: ACTION_GATED_API_READ_IMPLEMENTED_NOTE,
   },
   {
     id: 'registrar.code.issue',
@@ -185,7 +214,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; web registrar surface does not yet expose code verification flow.',
+    notes: ACTION_GATED_API_AVAILABLE_NOTE,
   },
   {
     id: 'registrar.code.redeem',
@@ -194,7 +223,7 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     status: 'gap',
     webConsumerPath: null,
     gapKind: 'web_surface_missing',
-    notes: 'API exists; web registrar surface does not yet expose code redemption flow.',
+    notes: ACTION_GATED_API_AVAILABLE_NOTE,
   },
 ];
 
@@ -230,6 +259,15 @@ function requireEntryId(entryId: string): string {
   return normalized;
 }
 
+function createRegistrarReadScopedEndpoints(scope: string) {
+  const basePath = `/registrar/${scope}`;
+  return {
+    submit: () => basePath,
+    listEntries: () => `${basePath}/entries`,
+    detailPath: (entryId: string) => `${basePath}/${requireEntryId(entryId)}`,
+  } as const;
+}
+
 export const registrarArtistEndpoints = {
   submit: () => '/registrar/artist',
   listEntries: () => '/registrar/artist/entries',
@@ -244,17 +282,26 @@ export const registrarCodeEndpoints = {
   redeem: () => '/registrar/code/redeem',
 } as const;
 
+const promoterScopedEndpoints = createRegistrarReadScopedEndpoints('promoter');
 export const registrarPromoterEndpoints = {
-  submit: () => '/registrar/promoter',
-  listEntries: () => '/registrar/promoter/entries',
-  detail: (entryId: string) => `/registrar/promoter/${requireEntryId(entryId)}`,
+  submit: promoterScopedEndpoints.submit,
+  listEntries: promoterScopedEndpoints.listEntries,
+  detail: promoterScopedEndpoints.detailPath,
   capabilityAudit: (entryId: string) => `/registrar/promoter/${requireEntryId(entryId)}/capability-audit`,
 } as const;
 
+const projectScopedEndpoints = createRegistrarReadScopedEndpoints('project');
 export const registrarProjectEndpoints = {
-  submit: () => '/registrar/project',
-  listEntries: () => '/registrar/project/entries',
-  detail: (entryId: string) => `/registrar/project/${requireEntryId(entryId)}`,
+  submit: projectScopedEndpoints.submit,
+  listEntries: projectScopedEndpoints.listEntries,
+  detail: projectScopedEndpoints.detailPath,
+} as const;
+
+const sectMotionScopedEndpoints = createRegistrarReadScopedEndpoints('sect-motion');
+export const registrarSectMotionEndpoints = {
+  submit: sectMotionScopedEndpoints.submit,
+  listEntries: sectMotionScopedEndpoints.listEntries,
+  detail: sectMotionScopedEndpoints.detailPath,
 } as const;
 export function getRegistrarWebGapContracts(): RegistrarWebEndpointContract[] {
   return REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter((contract) => contract.status === 'gap');

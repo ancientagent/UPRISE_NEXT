@@ -18,7 +18,14 @@ export class RegistrarInviteDeliveryWorkerService {
     private readonly inviteDeliveryProvider: InviteDeliveryProvider,
   ) {}
 
-  async processQueuedDeliveries(): Promise<{ processed: number; succeeded: number; failed: number }> {
+  async processQueuedDeliveries(): Promise<{
+    queued: number;
+    processed: number;
+    sent: number;
+    failed: number;
+    elapsed: number;
+  }> {
+    const startedAt = Date.now();
     const queuedDeliveries = await this.prisma.registrarInviteDelivery.findMany({
       where: {
         status: 'queued',
@@ -36,15 +43,27 @@ export class RegistrarInviteDeliveryWorkerService {
 
     if (queuedDeliveries.length === 0) {
       this.logger.log('No queued invite deliveries found');
-      return { processed: 0, succeeded: 0, failed: 0 };
+      return { queued: 0, processed: 0, sent: 0, failed: 0, elapsed: Date.now() - startedAt };
     }
 
     this.logger.log(`Processing ${queuedDeliveries.length} queued invite deliveries`);
 
-    let succeeded = 0;
+    let sent = 0;
     let failed = 0;
+    const finalizedMembers = new Set<string>();
 
     for (const delivery of queuedDeliveries) {
+      const markFinalizedOnce = async (status: 'sent' | 'failed'): Promise<void> => {
+        if (finalizedMembers.has(delivery.registrarArtistMemberId)) {
+          this.logger.warn(
+            `Skipping duplicate finalize attempt for ${delivery.email} (${delivery.registrarArtistMemberId})`,
+          );
+          return;
+        }
+        await this.registrarService.finalizeQueuedInviteDelivery(delivery.registrarArtistMemberId, status);
+        finalizedMembers.add(delivery.registrarArtistMemberId);
+      };
+
       try {
         const payload = delivery.payload as unknown as InviteDeliveryPayload;
         const status = await this.inviteDeliveryProvider.send(delivery.email, payload, {
@@ -52,13 +71,10 @@ export class RegistrarInviteDeliveryWorkerService {
           registrarArtistMemberId: delivery.registrarArtistMemberId,
         });
 
-        await this.registrarService.finalizeQueuedInviteDelivery(
-          delivery.registrarArtistMemberId,
-          status,
-        );
+        await markFinalizedOnce(status);
 
         if (status === 'sent') {
-          succeeded += 1;
+          sent += 1;
           this.logger.log(`Successfully sent invite to ${delivery.email}`);
         } else {
           failed += 1;
@@ -72,10 +88,7 @@ export class RegistrarInviteDeliveryWorkerService {
         );
 
         try {
-          await this.registrarService.finalizeQueuedInviteDelivery(
-            delivery.registrarArtistMemberId,
-            'failed',
-          );
+          await markFinalizedOnce('failed');
         } catch (finalizeError) {
           this.logger.error(
             `Failed to finalize delivery status for ${delivery.email}: ${finalizeError instanceof Error ? finalizeError.message : String(finalizeError)}`,
@@ -86,9 +99,15 @@ export class RegistrarInviteDeliveryWorkerService {
     }
 
     this.logger.log(
-      `Processed ${queuedDeliveries.length} deliveries: ${succeeded} succeeded, ${failed} failed`,
+      `Processed ${queuedDeliveries.length} deliveries: sent=${sent} failed=${failed}`,
     );
 
-    return { processed: queuedDeliveries.length, succeeded, failed };
+    return {
+      queued: queuedDeliveries.length,
+      processed: queuedDeliveries.length,
+      sent,
+      failed,
+      elapsed: Date.now() - startedAt,
+    };
   }
 }

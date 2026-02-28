@@ -73,7 +73,7 @@ export class RegistrarInviteDeliveryTriggerService implements OnModuleInit, OnMo
     try {
       const result = await this.workerService.processQueuedDeliveries();
       this.logger.log(
-        `Invite delivery trigger tick complete: processed=${result.processed} succeeded=${result.succeeded} failed=${result.failed}`,
+        `Invite delivery trigger tick complete: queued=${result.queued} processed=${result.processed} sent=${result.sent} failed=${result.failed} elapsed=${result.elapsed}`,
       );
     } catch (error) {
       this.logger.error(

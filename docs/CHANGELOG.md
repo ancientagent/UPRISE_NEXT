@@ -7,6 +7,425 @@
 
 ## [Unreleased]
 ### Added
+- Fixed queue summary drift at source by syncing persisted `summary` on every queue state write in `scripts/reliant-slice-queue.mjs`; repaired existing queue files and verified no drift on batch12 lanes (`docs/handoff/2026-02-28_queue-summary-drift-investigation-and-fix.md`).
+- Lane A admin-batch12 queue execution (`SLICE-ADMIN-341A`):
+  - Extended admin lifecycle negative-path parity coverage across approve/reject/issue/revoke internals with deterministic forbidden/not-found/state checks.
+  - Preserved existing API/service behavior with tests-only hardening (no new public behavior).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-341a-admin-lifecycle-parity-matrix-pack-3.md`.
+- Lane A admin-batch12 queue execution (`SLICE-ADMIN-340A`):
+  - Reinforced revocation invariants with regression coverage for null source-linkage and invalid-state guard handling.
+  - Kept service/controller behavior bounded to existing policy constraints (no new public behavior).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-340a-revocation-invariants-regression-pack-3.md`.
+- Action-gated contract note consistency pack 3 complete (slice `SLICE-WEBADMIN-347A`): added api_not_available wording guard and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-347A.md` with exact verify output.
+- Lane A admin-batch12 queue execution (`SLICE-ADMIN-339A`):
+  - Strengthened lifecycle audit emission parity with targeted actor-metadata consistency checks across approve/reject/issue internals.
+  - Added focused assertions for stable `actorType`/`actorUserId`/target-user parity without behavior drift.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-339a-lifecycle-audit-emission-parity-pack-3.md`.
+- Invite summary shape stability pack 3 complete (slice `SLICE-WEBADMIN-346A`): added pending_email/failed counter shape assertions and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-346A.md` with exact verify output.
+- Lane A admin-batch12 queue execution (`SLICE-ADMIN-338A`):
+  - Extended approval/rejection reason edge-case coverage with explicit max-length boundary assertions (280 preserved, 281 truncated).
+  - Preserved reason contract semantics and API shape while tightening normalization regressions.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-338a-approval-rejection-reason-contract-edge-cases-pack-3.md`.
+- Project/sect nullable mapping assertions pack 3 complete (slice `SLICE-WEBADMIN-345A`): added mixed null/non-null mapping parity checks and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-345A.md` with exact verify output.
+- Inventory metadata note normalization pack 3 complete (slice `SLICE-WEBADMIN-344A`): enforced canonical action-gated note variants and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-344A.md` with exact verify output.
+- Lane A admin-batch12 queue execution (`SLICE-ADMIN-337A`):
+  - Expanded code-issuance replay/race matrix coverage with transient uniqueness-retry success and retry-exhaustion failure paths.
+  - Kept behavior scope unchanged while hardening service-level race assertions for approved-entry issuance internals.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-337a-code-issuance-replay-race-matrix-pack-3.md`.
+- Registrar client auth error consistency pack 3 complete (slice `SLICE-WEBADMIN-343A`): added token-expired propagation checks and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-343A.md` with exact verify output.
+- Lane C batch12 task complete (SLICE-INVITE-353A): Invite deferred-boundary docs pass 3; report docs/handoff/2026-02-27_slice-353A-invite-deferred-boundary-docs-pass-3.md.
+- Recovered and completed blocked batch11 task `SLICE-AUTO-327A` after clearing prior TS2339 blocker; published `docs/handoff/2026-02-28_SLICE-AUTO-327A_RECOVERY.md`.
+- Lane A admin-batch12 queue execution (`SLICE-ADMIN-336A`):
+  - Expanded admin transition-guard regression coverage for unknown-state and unsupported-target edge cases with deterministic forbidden behavior.
+  - Preserved existing internals/API surface; tests-only hardening for state-edge parity.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-336a-admin-transition-guard-coverage-pack-3.md`.
+- Lane C batch12 task complete (SLICE-INVITE-352A): Invite chronology assertions pack 3; report docs/handoff/2026-02-27_slice-352A-invite-chronology-assertions-pack-3.md.
+- Lane C batch12 task complete (SLICE-INVITE-351A): Provider terminal-outcome parser pack 3; report docs/handoff/2026-02-27_slice-351A-provider-terminal-outcome-parser-pack-3.md.
+- Lane C batch12 task complete (SLICE-INVITE-350A): Fallback failure boundary pack 3; report docs/handoff/2026-02-27_slice-350A-fallback-failure-boundary-pack-3.md.
+- Capability-audit sparse payload assertions pack 3 complete (slice `SLICE-WEBADMIN-342A`): added additive nested metadata sparse-payload checks and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-342A.md` with exact verify output.
+- Lane C batch12 task complete (SLICE-INVITE-349A): Queued-to-sent invariant pack 3; report docs/handoff/2026-02-27_slice-349A-queued-to-sent-invariant-pack-3.md.
+- Lane C batch12 task complete (SLICE-INVITE-348A): Finalize missing-record guard pack 3; report docs/handoff/2026-02-27_slice-348A-finalize-missing-record-guard-pack-3.md.
+- Lane A admin-batch11 queue execution (`SLICE-ADMIN-311A`):
+  - Expanded admin lifecycle regression parity coverage for forbidden/not-found/invalid-state paths across current internal helpers.
+  - Added focused tests for approve+issue orchestration and revocation entry-missing guard parity without surface changes.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-311a-admin-regression-parity-pack-2.md`.
+- Lane A admin-batch11 queue execution (`SLICE-ADMIN-310A`):
+  - Tightened revocation state guards with deterministic conflict handling for impossible/non-revocable grant states.
+  - Added focused service/controller-adjacent regression tests for stale/inactive revocation-state rejection paths.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-310a-revocation-state-guard-regression-hardening.md`.
+- Automation runbook copy-safe command pass 2 complete (slice `SLICE-AUTO-329A`): hardened failure-appendix command blocks to copy-safe fenced single-line forms in `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md`; published `docs/handoff/2026-02-28_SLICE-AUTO-329A.md`.
+- Runtime file integrity diagnostics pack 2 complete (slice `SLICE-AUTO-328A`): added runtime `sizeBytes` + parse-error classification diagnostics in queue status and published `docs/handoff/2026-02-28_SLICE-AUTO-328A.md`.
+- Lane A admin-batch11 queue execution (`SLICE-ADMIN-309A`):
+  - Enforced actor metadata consistency across decision/issuance/revocation audit events via shared system actor context fields.
+  - Added targeted assertions for consistent `actorType`/`actorUserId`/target-user emission behavior.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-309a-lifecycle-audit-actor-metadata-consistency.md`.
+- Action-gated inventory note consistency pack 2 complete (slice `SLICE-WEBADMIN-317A`): added implemented-vs-gap wording guard and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-317A.md` with exact verify output.
+- Invite summary read shape stability pack 2 complete (slice `SLICE-WEBADMIN-316A`): added claimed/existing-user outcome counter assertions and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-316A.md` with exact verify output.
+- Claim refusal diagnostics normalization pack 2 complete (slice `SLICE-AUTO-326A`): added structured refusal codes for runtime/in-progress refusal scenarios and published `docs/handoff/2026-02-28_SLICE-AUTO-326A.md`.
+- Project/sect detail nullable contract assertions pack 2 complete (slice `SLICE-WEBADMIN-315A`): extended nullable parity checks and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-315A.md` with exact verify output.
+- Lane A admin-batch11 queue execution (`SLICE-ADMIN-308A`):
+  - Expanded approval/rejection reason normalization edge-case matrix (empty/whitespace/null/undefined/non-string/trimmed cases) with stable nullability guarantees.
+  - Preserved API shape while tightening service/controller-adjacent regression coverage.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-308a-approval-payload-normalization-edge-case-matrix.md`.
+- Contract inventory metadata normalization pack 2 complete (slice `SLICE-WEBADMIN-314A`): normalized deferred-admin audit note duplication and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-314A.md` with exact verify output.
+- Queue summary drift sanity hook pack 2 complete (slice `SLICE-AUTO-325A`): extended `summarySanity` with normalized snapshots + drift severity diagnostics and published `docs/handoff/2026-02-28_SLICE-AUTO-325A.md`.
+- Lane A admin-batch11 queue execution (`SLICE-ADMIN-307A`):
+  - Added transactional duplicate-claim guard parity for code issuance to close active-code race windows on approved entries.
+  - Added focused service coverage for transactional race rejection while preserving system-only issuance path.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-307a-code-issuance-duplicate-claim-guard-parity.md`.
+- Registrar client auth error-path parity pack 2 complete (slice `SLICE-WEBADMIN-313A`): added focused Forbidden propagation tests and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-313A.md` with exact verify output.
+- Supervisor lane ownership diagnostics pack 2 complete (slice `SLICE-AUTO-324A`): added `ownershipHealth` state/hint diagnostics in supervisor output and published `docs/handoff/2026-02-28_SLICE-AUTO-324A.md`.
+- Lane C batch11 task complete (SLICE-INVITE-323A): Invite deferred-boundary docs consistency pass 2; report docs/handoff/2026-02-27_slice-323A-invite-deferred-boundary-docs-consistency-pass-2.md.
+- Lane C batch11 task complete (SLICE-INVITE-322A): Invite chronology read-model assertions pack 2; report docs/handoff/2026-02-27_slice-322A-invite-chronology-read-model-assertions-pack-2.md.
+- Lane A admin-batch11 queue execution (`SLICE-ADMIN-306A`):
+  - Tightened admin decision transition-table strictness with deterministic invalid-state handling across submitted/approved/rejected states.
+  - Added targeted service regression assertions for already-applied and disallowed transition paths.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-306a-admin-decision-transition-table-strictness-hardening.md`.
+- Lane C batch11 task complete (SLICE-INVITE-321A): Provider response strict parser pack 2; report docs/handoff/2026-02-27_slice-321A-provider-response-strict-parser-pack-2.md.
+- Capability-audit sparse event shape parity pack 2 complete (slice `SLICE-WEBADMIN-312A`): added queue-lag sparse event/additive metadata assertions and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-312A.md` with exact verify output.
+- Lane C batch11 task complete (SLICE-INVITE-320A): Fallback failure mapping boundary pass 2; report docs/handoff/2026-02-27_slice-320A-fallback-failure-mapping-boundary-pass-2.md.
+- Lane C batch11 task complete (SLICE-INVITE-319A): Queued-to-sent invariant enforcement pack 2; report docs/handoff/2026-02-27_slice-319A-queued-to-sent-invariant-enforcement-pack-2.md.
+- Lane C batch11 task complete (SLICE-INVITE-318A): Invite finalize missing-record guard parity pack 2; report docs/handoff/2026-02-27_slice-318A-invite-finalize-missing-record-guard-parity-pack-2.md.
+- Seeded `batch12` lane queues (`SLICE-ADMIN-336A`..`SLICE-QAREV-365A`) for continuous post-batch11 throughput; see `docs/handoff/2026-02-27_batch12-real-mvp-throughput-seeding.md`.
+- Lane A admin-reserve queue execution (`SLICE-ADMIN-281A`):
+  - Expanded regression matrix coverage for registrar admin lifecycle internals across approval/rejection/issuance/revocation helpers.
+  - Added forbidden/not-found/invalid-state path assertions for approve-then-issue orchestration and related guardrails.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-281a-admin-lifecycle-regression-matrix-expansion-pack.md`.
+- Lane A admin-reserve queue execution (`SLICE-ADMIN-280A`):
+  - Hardened revocation internals with explicit capability grant-link consistency checks against target registrar entry.
+  - Extended append-only revocation audit traceability to carry source code-link metadata and added mismatch-path tests.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-280a-revocation-grant-link-consistency-hardening.md`.
+- Automation runbook command-copy hardening complete (slice `SLICE-AUTO-299A`): normalized operational command blocks in `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md` for copy-safe single-line execution; published `docs/handoff/2026-02-27_SLICE-AUTO-299A.md`.
+- Lane A admin-reserve queue execution (`SLICE-ADMIN-279A`):
+  - Added internal approve+issue lifecycle helper to enforce deterministic audit event ordering for decision-before-issuance flows.
+  - Added focused service assertion for ordered `registration_approved` then `code_issued` emissions.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-279a-admin-lifecycle-audit-event-ordering-guarantees.md`.
+- Runtime file integrity checksum diagnostics complete (slice `SLICE-AUTO-298A`): added optional `--runtime-checksum` status diagnostics with SHA-256 output and published `docs/handoff/2026-02-27_SLICE-AUTO-298A.md`.
+- Registrar web contract/action-gated notes consistency sweep complete (slice `SLICE-WEBADMIN-287A`): added action-gated note boundary guard tests and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-287A.md` with exact verify output.
+- Seeded `batch11` lane queues (`SLICE-ADMIN-306A`..`SLICE-QAREV-335A`) for uninterrupted post-reserve throughput; see `docs/handoff/2026-02-27_batch11-real-mvp-throughput-seeding.md`.
+- Lane A admin-reserve queue execution (`SLICE-ADMIN-278A`):
+  - Normalized admin approval/rejection reason metadata to bounded stable shape (`trim`, empty->`null`, max-length cap) without contract drift.
+  - Added targeted service/controller-adjacent assertions for deterministic nullability and reason normalization behavior.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-278a-approval-rejection-reason-payload-normalization.md`.
+- Invite summary shape assertions complete (slice `SLICE-WEBADMIN-286A`): added top-level/per-entry shape stability checks and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-286A.md` with exact verify output.
+- Supervisor loop backoff+jitter guardrails complete (slice `SLICE-AUTO-297A`): added deterministic `--interval-jitter-ms` support to watch loop pacing and published `docs/handoff/2026-02-27_SLICE-AUTO-297A.md`.
+- Project/sect detail read nullable-field parity tests complete (slice `SLICE-WEBADMIN-285A`): added focused nullable parity assertions and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-285A.md` with exact verify output.
+- Claim refusal messaging standardization complete (slice `SLICE-AUTO-296A`): added stable claim refusal codes (`in_progress_active`, `no_queued_tasks`) and published `docs/handoff/2026-02-27_SLICE-AUTO-296A.md`.
+- Contract inventory endpoint metadata dedupe pass complete (slice `SLICE-WEBADMIN-284A`): normalized action-gated metadata notes + guard tests and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-284A.md` with exact verify output.
+- Lane A admin-reserve queue execution (`SLICE-ADMIN-277A`):
+  - Added replay-safe issuance uniqueness guard that blocks issuing a second active promoter capability code for the same registrar entry.
+  - Added targeted service coverage for active-code replay rejection while preserving system-only issuance constraints.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-277a-registrar-code-issuance-uniqueness-replay-safety-checks.md`.
+- Queue summary recompute sanity check hook complete (slice `SLICE-AUTO-295A`): added `summarySanity` drift diagnostics in queue status and published `docs/handoff/2026-02-27_SLICE-AUTO-295A.md`.
+- Lane C invite-reserve backlog execution complete (`SLICE-INVITE-288A` through `SLICE-INVITE-293A`):
+  - Executed runtime-first lane loop and completed all six invite-reserve slices with per-slice verify command execution.
+  - Captured dated handoffs with exact command outputs:
+    - `docs/handoff/2026-02-27_slice-288A-invite-finalize-not-found-guard-and-diagnostics-parity.md`
+    - `docs/handoff/2026-02-27_slice-289A-invite-queued-sent-transition-invariant-checks.md`
+    - `docs/handoff/2026-02-27_slice-290A-invite-sent-failed-fallback-handling-boundaries.md`
+    - `docs/handoff/2026-02-27_slice-291A-invite-provider-response-parser-strictness-pass.md`
+    - `docs/handoff/2026-02-27_slice-292A-invite-read-model-chronology-assertions-expansion.md`
+    - `docs/handoff/2026-02-27_slice-293A-invite-integration-docs-deferred-boundary-reinforcement.md`
+  - Queue `.reliant/queue/mvp-lane-c-invite-reserve.json` is now `queued=0`, `in_progress=0`, `done=6`, `blocked=0`.
+- Registrar client auth-error propagation consistency pass complete (slice `SLICE-WEBADMIN-283A`): added focused Unauthorized propagation tests and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-283A.md` with exact verify output.
+- Supervisor lane-runtime ownership map diagnostics complete (slice `SLICE-AUTO-294A`): added runtime ownership mapping output in supervisor status and published `docs/handoff/2026-02-27_SLICE-AUTO-294A.md`.
+- Lane A admin-reserve queue execution (`SLICE-ADMIN-276A`):
+  - Hardened promoter admin decision internals with explicit system-only actor-context guardrails and deterministic forbidden handling.
+  - Added targeted service tests covering non-system actor rejection for approval and revocation helpers.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-276a-promoter-admin-decision-actor-context-guardrails.md`.
+- Promoter capability-audit empty-state contract parity complete (slice `SLICE-WEBADMIN-282A`): added empty/sparse audit payload tests and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-282A.md` with exact verify output.
+- Lane A admin-next queue execution (`SLICE-ADMIN-251A`):
+  - Tightened registrar admin lifecycle API-layer type contracts for status literals and audit metadata structures.
+  - Preserved behavior and surface area while improving compile-time guarantees for approval/issuance/revocation internals.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-251a-registrar-admin-lifecycle-type-safety-cleanup.md`.
+- Lane A admin-next queue execution (`SLICE-ADMIN-250A`):
+  - Expanded registrar admin lifecycle transition-matrix service tests for promoter approval/revocation helper paths (valid + invalid states).
+  - Added explicit matrix coverage for non-submitted approval transitions and rejected-entry revocation continuation path.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-250a-registrar-status-transition-matrix-test-expansion-admin-lifecycle.md`.
+- Lane A admin-next queue execution (`SLICE-ADMIN-249A`):
+  - Added internal promoter capability revocation helper with append-only audit behavior and no destructive mutation shortcuts.
+  - Added targeted service tests for revocation success + non-promoter/no-active-grant guards.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-249a-promoter-capability-revocation-policy-helper-service-only.md`.
+- Lane A admin-next queue execution (`SLICE-ADMIN-248A`):
+  - Hardened registrar approval/issuance audit-log metadata to deterministic additive-only shapes.
+  - Added targeted service assertions for approval transition + code issuance audit metadata parity and preserved existing routes/UI.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-248a-capability-audit-log-emission-parity-for-approval-and-issuance.md`.
+- Lane A admin-next queue execution (`SLICE-ADMIN-247A`):
+  - Added an internal system-only promoter capability code issuance seam for approved promoter entries.
+  - Hardened issuance audit metadata provenance to include entry/code linkage fields and added targeted service tests.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-247a-system-only-registrar-code-issuance-seam-for-approved-promoter-entries.md`.
+- Batch10 real-MVP reserve slice queues seeded (30 slices across 5 lanes):
+  - Added `.reliant/queue/mvp-slices-batch10-real-mvp-reserve.json` with 30 queued reserve slices (`SLICE-ADMIN-276A` through `SLICE-QAREV-305A`).
+  - Added per-lane reserve queues:
+    - `.reliant/queue/mvp-lane-a-api-admin-reserve.json`
+    - `.reliant/queue/mvp-lane-b-web-contract-reserve.json`
+    - `.reliant/queue/mvp-lane-c-invite-reserve.json`
+    - `.reliant/queue/mvp-lane-d-automation-reserve.json`
+    - `.reliant/queue/mvp-lane-e-qarev-reserve.json`
+  - Queue validation confirmed all reserve lanes start clean (`queued=6`, `in_progress=0`, `done=0`, `blocked=0`) and are claim-ready.
+- Lane A admin-next queue execution (`SLICE-ADMIN-246A`):
+  - Added service-only promoter approval transition policy helper (`submitted -> approved|rejected`) with explicit guard semantics and targeted registrar service coverage.
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-27_slice-admin-246a-promoter-approval-transition-policy-helper-service-only.md`.
+- Automation runbook failure-mode appendix refresh complete (slice `SLICE-AUTO-269A`): documented stale runtime, duplicate in-progress, malformed runtime JSON, and race-retry deterministic fixes in `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md`; published `docs/handoff/2026-02-27_SLICE-AUTO-269A.md`.
+- Claim/complete race retry policy tightening complete (slice `SLICE-AUTO-268A`): added `--retry-ms` one-shot retry handling for queue transitions with deterministic post-retry diagnostics; published `docs/handoff/2026-02-27_SLICE-AUTO-268A.md`.
+- Queue status drift detector for supervisor flows complete (slice `SLICE-AUTO-267A`): added summary/runtime drift checks with deterministic diagnostics + `--fail-on-drift`, and published `docs/handoff/2026-02-27_SLICE-AUTO-267A.md`.
+- Runtime stale-lock recovery utility extension complete (slice `SLICE-AUTO-266A`): added `--dry-run` diagnostics path (`dryRun`, `wouldClear`, `runtimeState`) and published `docs/handoff/2026-02-27_SLICE-AUTO-266A.md`.
+- Scheduler telemetry payload consistency complete (slice `SLICE-AUTO-265A`): standardized invite automation telemetry to `{queued, processed, sent, failed, elapsed}` across worker/trigger flows and published `docs/handoff/2026-02-27_SLICE-AUTO-265A.md`.
+- Invite scheduler finalize ownership lock hardening complete (slice `SLICE-AUTO-264A`): prevented duplicate finalize attempts per member within a single worker tick and published `docs/handoff/2026-02-27_SLICE-AUTO-264A.md` with exact verify output.
+- Lane C invite-next backlog execution complete (`SLICE-INVITE-258A` through `SLICE-INVITE-263A`):
+  - Executed runtime-first lane loop and completed all six invite-next slices with per-slice verify command execution.
+  - Captured dated handoffs with exact command outputs:
+    - `docs/handoff/2026-02-27_slice-258A-invite-delivery-provider-adapter-contract-hardening.md`
+    - `docs/handoff/2026-02-27_slice-259A-queued-invite-replay-idempotency-safeguards.md`
+    - `docs/handoff/2026-02-27_slice-260A-invite-delivery-failure-taxonomy-mapping.md`
+    - `docs/handoff/2026-02-27_slice-261A-invite-payload-schema-version-guard-checks.md`
+    - `docs/handoff/2026-02-27_slice-262A-invite-delivery-state-read-model-parity-tests.md`
+    - `docs/handoff/2026-02-27_slice-263A-invite-integration-runbook-spec-implemented-now-sync.md`
+  - Queue `.reliant/queue/mvp-lane-c-invite-next.json` is now `queued=0`, `in_progress=0`, `done=6`, `blocked=0`.
+- Registrar client helper dedupe for admin/read endpoint map complete (slice `SLICE-WEBADMIN-257A`): reduced endpoint helper duplication without signature drift and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-257A.md` with exact verify output.
+- Registrar project/sect read inventory consistency pass complete (slice `SLICE-WEBADMIN-256A`): aligned action-gated metadata wording/path alignment tests and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-256A.md` with exact verify output.
+- Registrar invite read contract nullability normalization complete (slice `SLICE-WEBADMIN-255A`): added queued/claimed nullable mapping assertions and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-255A.md` with exact verify output.
+- Registrar code verify/redeem client error-path parity complete (slice `SLICE-WEBADMIN-254A`): added negative-path propagation and response-shape parity tests; published `docs/handoff/2026-02-27_SLICE-WEBADMIN-254A.md` with exact verify output.
+- Registrar contract inventory deferred admin-surface metadata pass complete (slice `SLICE-WEBADMIN-253A`): tagged action-gated promoter admin-lifecycle read surfaces and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-253A.md` with exact verify output.
+- Registrar capability-audit client shape assertions hardening complete (slice `SLICE-WEBADMIN-252A`): strengthened event ordering/nullability/additive-field tests and published `docs/handoff/2026-02-27_SLICE-WEBADMIN-252A.md` with exact verify output.
+- Timestamped next-action diagnostics (slice `SLICE-AUTO-230A`):
+  - Added `generatedAt` to `next` command responses for deterministic orchestration log correlation.
+- Next-action command for orchestrator control (slice `SLICE-AUTO-229A`):
+  - Added `next` command returning `execute_in_progress|claim_next|no_queued_tasks` for deterministic loop control.
+- Batch9 real-MVP slice queues seeded (30 slices across 5 lanes):
+  - Added `.reliant/queue/mvp-slices-batch9-real-mvp.json` with 30 queued slices (`SLICE-ADMIN-246A` through `SLICE-QAREV-275A`) scoped to registrar deferred-MVP execution lanes.
+  - Added per-lane queue files for parallel execution:
+    - `.reliant/queue/mvp-lane-a-api-admin-next.json`
+    - `.reliant/queue/mvp-lane-b-web-admin-next.json`
+    - `.reliant/queue/mvp-lane-c-invite-next.json`
+    - `.reliant/queue/mvp-lane-d-automation-next.json`
+    - `.reliant/queue/mvp-lane-e-qarev-next.json`
+  - All five new queues validate with `node scripts/reliant-slice-queue.mjs status` and start in clean `queued` state (`in_progress=0`, `blocked=0`).
+- Queue invariant hardening for ownership (slice `SLICE-AUTO-228A`):
+  - Validation now rejects queue files with more than one `in_progress` task.
+- Missing-report task ID diagnostics in status (slice `SLICE-AUTO-227A`):
+  - Added `reportCoverage.doneWithoutReportTaskIds` for explicit done-without-report visibility.
+- Transition result timestamp diagnostics (slice `SLICE-AUTO-226A`):
+  - Added `updatedAt` in `complete`/`block` command outputs for deterministic mutation-time logging.
+- Claim source provenance in runtime payload (slice `SLICE-AUTO-225A`):
+  - Added `sourceQueue` passthrough field to `claim` output for better diagnostics traceability.
+- Queue validate status-count diagnostics (slice `SLICE-AUTO-224A`):
+  - Added `statusCounts` to `validate` output for preflight queue distribution visibility.
+- Claim-readiness signal in queue status (slice `SLICE-AUTO-223A`):
+  - Added `ownership.canClaim` to `status` output for deterministic claim gating.
+- Runtime health classification in queue status (slice `SLICE-AUTO-222A`):
+  - Added normalized `runtime.health` diagnostics (`ok|missing|invalid|mismatch`) to `status` output for deterministic automation handling.
+- Queue status ownership diagnostics expansion (slice `SLICE-AUTO-221A`):
+  - Added `blockedTaskIds` and `nextQueuedTaskId` fields to `status` ownership metadata for orchestration visibility.
+- Atomic queue/runtime JSON writes (slice `SLICE-AUTO-220A`):
+  - Updated `writeJson` in `scripts/reliant-slice-queue.mjs` to write temp file + rename for atomic persistence.
+  - Reduces risk of partial queue/runtime file writes on interruption.
+- Queue status runtime-diagnostics hardening (slice `SLICE-AUTO-219A`):
+  - Extended `status` output in `scripts/reliant-slice-queue.mjs` with runtime path/existence/validity/task ownership diagnostics.
+  - Added queue tooling tests for runtime/queue mismatch visibility in status output.
+  - Added runbook usage for runtime-aware status checks.
+- Lane A queue execution (SLICE-API-185A):
+  - Completed Registrar API read-path parity hardening pack 15 with exact verify command pass and dated handoff report.
+- Lane A queue execution (SLICE-API-184A):
+  - Completed Registrar API read-path parity hardening pack 14 with exact verify command pass and dated handoff report.
+- Lane A queue execution (SLICE-API-183A):
+  - Completed Registrar API read-path parity hardening pack 13 with exact verify command pass and dated handoff report.
+- Lane C code/invite backlog execution complete (`SLICE-CODEINV-201A` through `SLICE-CODEINV-215A`):
+  - Completed all 15 lane-C parity slices with the required verify command (`docs:lint`, `infra-policy-check`, targeted API/web registrar tests, API/web typechecks) passing per slice.
+  - Explicit completed slice IDs: `SLICE-CODEINV-202A`, `SLICE-CODEINV-203A`, `SLICE-CODEINV-204A`, `SLICE-CODEINV-205A`, `SLICE-CODEINV-206A`, `SLICE-CODEINV-207A`, `SLICE-CODEINV-208A`, `SLICE-CODEINV-209A`, `SLICE-CODEINV-210A`, `SLICE-CODEINV-211A`, `SLICE-CODEINV-212A`, `SLICE-CODEINV-213A`, `SLICE-CODEINV-214A`.
+  - Published dated handoff reports at `docs/handoff/2026-02-27_slice-201A-...md` through `docs/handoff/2026-02-27_slice-215A-...md`.
+  - Queue `.reliant/queue/mvp-lane-c-code-invite-backlog.json` now has `queued=0`, `in_progress=0`, `done=15`.
+- Lane A queue execution (SLICE-API-182A):
+  - Completed Registrar API read-path parity hardening pack 12 with exact verify command pass and dated handoff report.
+- Lane A queue execution (SLICE-API-181A):
+  - Completed Registrar API read-path parity hardening pack 11 with exact verify command pass and dated handoff report.
+- Queue transition timestamp determinism hardening (slice `SLICE-AUTO-218A`):
+  - Updated `scripts/reliant-slice-queue.mjs` so `complete` uses one timestamp for both `finishedAt` and `updatedAt`.
+  - Updated `scripts/reliant-slice-queue.mjs` so `block` uses one timestamp for both `blockedAt` and `updatedAt`.
+  - Added queue tooling tests asserting timestamp parity for both transitions.
+- Lane A queue execution (SLICE-API-180A):
+  - Completed Registrar API read-path parity hardening pack 10 with exact verify command pass and dated handoff report.
+- Lane A queue execution (SLICE-API-179A):
+  - Completed Registrar API read-path parity hardening pack 9 with exact verify command pass and dated handoff report.
+- Lane A queue execution (SLICE-API-178A):
+  - Completed Registrar API read-path parity hardening pack 8 with exact verify command pass and dated handoff report.
+- Lane A queue execution (SLICE-API-177A):
+  - Completed Registrar API read-path parity hardening pack 7 with exact verify command pass and dated handoff report.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-200A`): published docs/handoff/2026-02-27_SLICE-WEB-200A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-199A`): published docs/handoff/2026-02-27_SLICE-WEB-199A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-198A`): published docs/handoff/2026-02-27_SLICE-WEB-198A.md with exact verify command output.
+- Lane A queue execution (SLICE-API-176A):
+  - Completed Registrar API read-path parity hardening pack 6 with exact verify command pass and dated handoff report.
+- Runtime-file shape validation for queue transitions (slice `SLICE-AUTO-217A`):
+  - Added runtime shape checks in `scripts/reliant-slice-queue.mjs` so `claim`/`complete`/`block` fail fast when runtime JSON is malformed or missing `taskId`.
+  - Added targeted queue tooling test coverage for malformed runtime diagnostics.
+  - Extended runbook stale-runtime guidance with explicit invalid-runtime recovery behavior.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-197A`): published docs/handoff/2026-02-27_SLICE-WEB-197A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-196A`): published docs/handoff/2026-02-27_SLICE-WEB-196A.md with exact verify command output.
+- Lane A queue execution (SLICE-API-175A):
+  - Completed Registrar API read-path parity hardening pack 5 with exact verify command pass and dated handoff report.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-195A`): published docs/handoff/2026-02-27_SLICE-WEB-195A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-194A`): published docs/handoff/2026-02-27_SLICE-WEB-194A.md with exact verify command output.
+- Lane A queue execution (SLICE-API-174A):
+  - Completed Registrar API read-path parity hardening pack 4 with exact verify command pass and dated handoff report.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-193A`): published docs/handoff/2026-02-27_SLICE-WEB-193A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-192A`): published docs/handoff/2026-02-27_SLICE-WEB-192A.md with exact verify command output.
+- Lane A queue execution (SLICE-API-173A):
+  - Completed Registrar API read-path parity hardening pack 3 with exact verify command pass and dated handoff report.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-191A`): published docs/handoff/2026-02-27_SLICE-WEB-191A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-190A`): published docs/handoff/2026-02-27_SLICE-WEB-190A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-189A`): published docs/handoff/2026-02-27_SLICE-WEB-189A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-188A`): published docs/handoff/2026-02-27_SLICE-WEB-188A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-187A`): published docs/handoff/2026-02-27_SLICE-WEB-187A.md with exact verify command output.
+- Lane B registrar web contract/client validation cycle completed (slice `SLICE-WEB-187A`): published docs/handoff/2026-02-27_SLICE-WEB-187A.md with exact verify command output.
+- Lane A queue execution (SLICE-API-172A):
+  - Completed Registrar API read-path parity hardening pack 2 with exact verify command pass and dated handoff report.
+- Lane A queue execution (SLICE-API-171A):
+  - Completed Registrar API read-path parity hardening pack 1 with exact verify command pass and dated handoff report.
+- Registrar web contract/client test hardening pack 1 (slice `SLICE-WEB-186A`):
+  - Added null-data error-path assertions for project/sect-motion/promoter detail reads and promoter capability-audit reads in `apps/web/__tests__/registrar-client.test.ts`.
+  - Added response-shape assertions for populated list reads and nullable capability-audit event fields.
+  - Added contract-inventory assertions ensuring registrar read scaffolds remain explicit `web_surface_missing` gaps with stable GET/path templates.
+- Queue claim determinism hardening for lane/runtime ownership (slice `SLICE-AUTO-216A`):
+  - Updated `scripts/reliant-slice-queue.mjs` `claim` flow to stop advancing when an `in_progress` task already exists.
+  - Added fast-fail diagnostics for multiple `in_progress` tasks and queue/runtime task ownership mismatches.
+  - Extended queue tooling tests and runbook semantics guidance for deterministic claim behavior.
+- Lane E QA/docs consolidation cycle 1 complete (slice `SLICE-QAREV-231A`):
+  - Ran required consolidated validation gates (`docs:lint`, `infra-policy-check`, targeted API/web registrar tests, API/web typechecks) with passing results.
+  - Published dated handoff with exact command output and risk/rollback notes: `docs/handoff/2026-02-27_SLICE-QAREV-231A.md`.
+- Lane supervisor for no-babysitting queue operations:
+  - Added `scripts/reliant-supervisor.mjs` to monitor all five backlog lanes, auto-repair stale runtime mismatches, resolve multi-`in_progress` drift, and optionally auto-claim idle queued work.
+  - Added npm scripts:
+    - `pnpm run reliant:supervisor`
+    - `pnpm run reliant:supervisor:watch`
+  - Supervisor writes machine-readable health snapshots to `.reliant/runtime/supervisor-status.json`.
+- Parallel backlog seed for high-throughput lane execution (slice prep):
+  - Added `scripts/reliant-slice-backlog-seed.mjs` and npm command `pnpm run reliant:seed:backlog`.
+  - Seeded five lane-specific backlog queue files with 75 queued slices total (15 per lane):
+    - `.reliant/queue/mvp-lane-a-api-core-backlog.json`
+    - `.reliant/queue/mvp-lane-b-web-contract-backlog.json`
+    - `.reliant/queue/mvp-lane-c-code-invite-backlog.json`
+    - `.reliant/queue/mvp-lane-d-automation-backlog.json`
+    - `.reliant/queue/mvp-lane-e-qa-doc-review-backlog.json`
+- Risk/rollback memo for queue tooling + registrar contract batch (slice 154A):
+  - Published risk-first review memo for completed batch5 queue-tooling + registrar-contract slices with severity-ordered findings, residual risks/testing gaps, and rollback notes.
+  - Confirmed review-gate checks (`docs:lint`, `infra-policy-check`, API/web typecheck) pass for this review slice.
+- Consolidated targeted gate replay for queue tooling + registrar read contracts (slice 153A):
+  - Replayed full consolidated gates for registrar API controller/service tests, registrar web client/contract tests, and API/web typechecks.
+  - Recorded exact command outputs in dated handoff for batch verification traceability.
+- Registrar spec/changelog consistency pass after batch3+batch4 (slice 152A):
+  - Added docs-only consistency note in `docs/specs/system/registrar.md` to keep implemented-now wording aligned with completed batch3/batch4 read-contract outcomes.
+  - Synced changelog references for the completed batch-level QA/review trail.
+- Risk/rollback review memo for registrar code+invite+contract batch (slice 146A):
+  - Published risk-first review memo for completed registrar code/invite/contract slices with severity-ordered findings, residual testing gaps, and rollback guidance.
+  - Confirmed review-gate checks (`docs:lint`, `infra-policy-check`, API/web typecheck) pass for the reviewed batch state.
+- QA/docs consolidation for registrar code+invite+contract batch (slice 145A):
+  - Replayed consolidated validation gates for registrar API controller/service tests, registrar web client/contract tests, and API/web typechecks.
+  - Recorded exact command outputs in dated handoff to close batch-level QA/docs traceability.
+- Risk/rollback review memo for promoter/code contract batch (slice 138A):
+  - Published risk-first review memo covering completed promoter/code contract slices with severity-ordered findings, residual testing gaps, and migration-free rollback guidance.
+  - Confirmed required review-gate checks (`docs:lint`, `infra-policy-check`, API/web typecheck) pass for the reviewed batch state.
+- Registrar implemented-now spec consistency pass (slice 143A):
+  - Normalized `docs/specs/system/registrar.md` wording to consistently describe API-implemented project/sect-motion surfaces with web typed scaffolding and action-gated UI status.
+  - Updated registrar spec `Last Updated` metadata to reflect the consistency pass.
+- QA/docs consolidation for promoter/code contract batch (slice 137A):
+  - Replayed consolidated gates for registrar controller/service API tests, registrar web contract/client tests, and API/web typechecks.
+  - Recorded exact command outputs in dated handoff for batch-level QA traceability.
+- Queue transition task-id guard option (slice 164A):
+  - Added optional `--task-id` guard to `complete` and `block` in `scripts/reliant-slice-queue.mjs`.
+  - Guard now fails fast on runtime-task mismatch to prevent accidental wrong-task transitions.
+  - Updated queue tooling tests and runbook usage guidance.
+- Queue stale-runtime diagnostics hardening (slice 163A):
+  - Improved `complete`/`block` failure diagnostics in `scripts/reliant-slice-queue.mjs` for missing runtime files and runtime/queue task mismatches.
+  - Added actionable hints with in-progress task visibility to reduce recovery time after stale runtime transitions.
+- Queue file schema validation hardening (slice 157A):
+  - Expanded `scripts/reliant-slice-queue.mjs` queue validation for required task fields, valid statuses, and duplicate ID detection.
+  - Added `validate` command and `pnpm run reliant:queue:validate` preflight shortcut.
+  - Extended queue tooling tests to cover explicit validation failure paths.
+- Runtime stale-state cleanup utility script (slice 156A):
+  - Added `scripts/reliant-runtime-clean.mjs` to safely clear stale runtime task files and emit explicit JSON diagnostics.
+  - Added `pnpm run reliant:runtime:clean -- --runtime <path>` shortcut and runbook usage guidance.
+- Orchestrator prompt hardening to prevent bulk block loops (slice 155A):
+  - Tightened `.reliant/workflows/uprise-orchestrator.yaml` with explicit anti-loop rules: single claim lifecycle, no preemptive blocking, and stale-runtime stop/cleanup behavior.
+  - Extended `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md` with required anti-loop guardrails and deterministic stale-runtime cleanup steps.
+- Queue status/reporting consistency for in-progress ownership (slice 148A):
+  - Queue `status` output now includes explicit in-progress ownership metadata (`inProgressTaskIds`, `multipleInProgress`).
+  - Added done-task report coverage summary (`doneWithReport`, `doneMissingReport`) for handoff visibility.
+  - Claim transition now writes a single consistent timestamp for `startedAt`/`updatedAt` and runtime `claimedAt`.
+- Queue script idempotency guards for complete/block transitions (slice 147A):
+  - Added state-transition guards so `complete`/`block` require `in_progress` status (except explicit idempotent re-complete / re-block paths).
+  - Added queue tooling test script (`scripts/reliant-slice-queue.test.mjs`) and npm command (`pnpm run reliant:queue:test`) covering stale-runtime and idempotency safety.
+- Invite delivery outcome web contract test hardening (slice 142A):
+  - Added invite-status web client tests asserting delivery outcome field passthrough (`deliveryStatus`, `sentAt`, `failedAt`).
+  - Added invite-status empty-response error-path assertion for consistent client behavior.
+- Invite status read API test hardening for delivery outcome fields (slice 141A):
+  - Tightened controller invite-status passthrough assertions to include `countsByStatus` and member delivery outcome fields.
+  - Added service coverage for queued delivery-row mapping (`deliveryStatus=queued`, `sentAt/failedAt=null`).
+- Registrar code web client fallback/error-path hardening (slice 140A):
+  - Added empty-response error-path tests for code verify and code redeem web client calls.
+  - Strengthened contract expectations for existing verify/redeem scaffolding without UI action additions.
+- Registrar code verify/redeem API response-shape parity tests (slice 139A):
+  - Expanded controller/service test assertions for verify/redeem response-shape parity (`capability`, `issuerType`, timestamps, status transitions).
+  - Added explicit verify-read guard assertion that `redeemedAt` is not exposed on verify response payload.
+- Registrar code web client/contract test hardening (slice 135A):
+  - Added web client tests for registrar code verify/redeem request mapping and typed payload passthrough.
+  - Preserved unresolved issue endpoint contract status while tightening verify/redeem scaffolding coverage.
+- Registrar web contract inventory alignment for implemented read APIs (slice 127A):
+  - Added explicit test coverage that currently implemented registrar read API surfaces are represented in contract inventory metadata.
+  - Keeps inventory alignment test-enforced without UI implementation status flips.
+- Promoter web typed client test hardening (slice 126A):
+  - Added stronger promoter detail shape assertions, including `promoterCapability` fields.
+  - Added stronger capability-audit event shape assertions for stable contract expectations.
+- Registrar client fallback behavior consistency tests (slice 151A):
+  - Added null/undefined fallback assertions for project/sect/promoter list read clients.
+  - Added sect-motion detail empty-response error assertion to align detail-read error behavior across registrar clients.
+- Registrar contract inventory dedupe + path-template guard tests (slice 144A):
+  - Expanded entry-id guard coverage to assert whitespace trimming and whitespace-only rejection for project and sect-motion endpoint builders.
+  - Reinforced path-template helper guard expectations without behavior/UI changes.
+- Registrar contract inventory metadata hygiene pass (slice 136A):
+  - Added contract-inventory metadata coherence tests enforcing `implemented` vs `gap` field invariants (`webConsumerPath`, `gapKind`).
+  - Tightened test-enforced guardrails for API-implemented but web-action-gated endpoint metadata.
+- Promoter typed client test hardening for read paths (slice 132A):
+  - Added empty-data error assertions for promoter detail and capability-audit client reads.
+  - Added stable promoter list payload shape passthrough assertions for populated responses.
+- Promoter web read contract scaffolding alignment (slice 131A):
+  - Added web client test coverage for promoter read methods (`listPromoterRegistrations`, `getPromoterRegistration`, `getPromoterCapabilityAudit`).
+  - Verified endpoint helper/client parity for existing promoter read APIs with no UI action changes.
+- Sect-motion controller parity tests for list/detail propagation (slice 125A):
+  - Added targeted sect-motion list-read passthrough parity coverage for counts-by-status and entry ordering.
+  - Preserved forbidden/not-found propagation and detail payload passthrough coverage on existing read endpoints.
+- Registrar web contract inventory notes normalization (slice 167A):
+  - Normalized registrar contract inventory notes to consistent “API available + web status” phrasing for gap endpoints.
+  - Clarified implemented-vs-gap wording without changing endpoint metadata or behavior.
+- Registrar controller read-path negative-case matrix completion (slice 166A):
+  - Added not-found propagation coverage for promoter/project/sect-motion/artist list read controller routes.
+  - Preserved existing forbidden/not-found parity coverage for detail and capability audit read paths.
+- Registrar read DTO/type naming consistency cleanup (slice 165A):
+  - Standardized registrar web client naming around `*Response` interfaces for read/command payloads.
+  - Kept backward-compatible `*Result`/`*Record` type aliases to avoid consumer breakage.
+- Registrar contract inventory helper coverage expansion (slice 159A):
+  - Added promoter endpoint-helper coverage for entry-id scoped builders (`detail`, `capabilityAudit`) in registrar contract inventory tests.
+  - Added guard tests asserting empty entry-id rejection for promoter entry-scoped endpoint helpers.
+- Registrar invite read/client typed parity follow-up (slice 158A):
+  - Aligned web client invite-status typing with API semantics for member invite status and delivery status fields.
+  - Tightened invite `countsByStatus` typing to a partial record of known invite status values.
+- Registrar controller read-path parity matrix completion (slice 150A):
+  - Added controller test coverage for registrar code verify forbidden-error propagation.
+  - Added controller test coverage for artist/band invite-status not-found propagation.
+- Registrar read response typing cleanup in web client contracts (slice 149A):
+  - Tightened registrar read response types in `apps/web/src/lib/registrar/client.ts` to use endpoint-aligned literal entry `type` values.
+  - Aligned read status typing and promoter scene nullability without endpoint or behavior changes.
+- Promoter controller parity hardening for detail/audit reads (slice 134A):
+  - Added registrar controller tests for promoter detail forbidden-error propagation.
+  - Added registrar controller tests for promoter capability-audit not-found propagation.
+- Promoter API read mapping helper consolidation (slice 133A):
+  - Consolidated promoter list/detail read mapping in `registrar.service.ts` into shared helper paths with no endpoint or contract changes.
+  - Preserved promoter capability summary and payload normalization semantics while reducing mapper duplication.
+- Sect-motion API read mapping helper consolidation (slice 124A):
+  - Consolidated sect-motion list/detail read mapping into a shared registrar service helper with no contract changes.
+- Registrar sect-motion web read contract scaffolding (slice 123A):
+  - Added web contract inventory coverage + endpoint helpers for `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId`.
+  - Added typed web client methods and focused tests for sect-motion list/detail read scaffolding.
 - Registrar project chain targeted gate replay (slice 122A):
   - Re-ran docs, infra-policy, targeted registrar API tests, and API/web typechecks after batch completion; all checks passed.
 - Registrar project read batch risk-review signoff (slice 121A):
@@ -758,3 +1177,87 @@
 
 ### Notes
 - CI should include a job to append merged PR titles grouped by date and labels to this file.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-232A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-232A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-233A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-233A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-234A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-234A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-235A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-235A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-236A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-236A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-237A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-237A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-238A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-238A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-239A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-239A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-240A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-240A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-241A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-241A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-242A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-242A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-243A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-243A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-244A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-244A.md`.
+
+- Lane E QA/docs consolidation complete (SLICE-QAREV-245A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-245A.md`.
+
+- Lane E next QA replay complete (SLICE-QAREV-270A): consolidated gate output captured in `docs/handoff/2026-02-27_SLICE-QAREV-270A.md`.
+- Lane E next risk/rollback memo complete (SLICE-QAREV-271A): severity-ordered findings and rollback guidance documented in `docs/handoff/2026-02-27_SLICE-QAREV-271A.md`.
+- Lane E next QA replay complete (SLICE-QAREV-272A): consolidated lane C/D gate output and deferred-boundary notes documented in `docs/handoff/2026-02-27_SLICE-QAREV-272A.md`.
+- Lane E next risk/rollback memo complete (SLICE-QAREV-273A): severity-ordered C/D findings and deterministic rollback notes documented in `docs/handoff/2026-02-27_SLICE-QAREV-273A.md`.
+- Lane E registrar spec consistency pass complete (SLICE-QAREV-274A): implemented-now/deferred wording synced post-batch9 in `docs/specs/system/registrar.md` with handoff in `docs/handoff/2026-02-27_SLICE-QAREV-274A.md`.
+- Lane E batch9 closeout replay complete (SLICE-QAREV-275A): final targeted registrar API/web gate replay and follow-up backlog notes documented in `docs/handoff/2026-02-27_SLICE-QAREV-275A.md`.
+
+- Lane E reserve slice complete (SLICE-QAREV-300A): replay + handoff in `docs/handoff/2026-02-27_SLICE-QAREV-300A.md`.
+
+- Lane E reserve slice complete (SLICE-QAREV-301A): replay + handoff in `docs/handoff/2026-02-27_SLICE-QAREV-301A.md`.
+
+- Lane E reserve slice complete (SLICE-QAREV-302A): replay + handoff in `docs/handoff/2026-02-27_SLICE-QAREV-302A.md`.
+
+- Lane E reserve slice complete (SLICE-QAREV-303A): replay + handoff in `docs/handoff/2026-02-27_SLICE-QAREV-303A.md`.
+
+- Lane E reserve slice complete (SLICE-QAREV-304A): replay + handoff in `docs/handoff/2026-02-27_SLICE-QAREV-304A.md`.
+
+- Lane E reserve slice complete (SLICE-QAREV-305A): replay + handoff in `docs/handoff/2026-02-27_SLICE-QAREV-305A.md`.
+
+- Lane E batch11 QA replay complete (SLICE-QAREV-330A): exact gate output in `docs/handoff/2026-02-28_SLICE-QAREV-330A.md`.
+
+- Lane E batch11 risk memo complete (SLICE-QAREV-331A): A/B severity-ordered findings in `docs/handoff/2026-02-28_SLICE-QAREV-331A.md`.
+
+- Lane E batch11 QA replay complete (SLICE-QAREV-332A): C/D gate outcomes and exact output in `docs/handoff/2026-02-28_SLICE-QAREV-332A.md`.
+
+- Lane E batch11 risk memo complete (SLICE-QAREV-333A): C/D severity-ordered findings in `docs/handoff/2026-02-28_SLICE-QAREV-333A.md`.
+
+- Lane E batch11 registrar wording sync complete (SLICE-QAREV-334A): docs-only consistency pass recorded in `docs/handoff/2026-02-28_SLICE-QAREV-334A.md`.
+
+- Lane E batch11 closeout complete (SLICE-QAREV-335A): final replay + follow-up backlog notes in `docs/handoff/2026-02-28_SLICE-QAREV-335A.md`.
+
+- Lane E batch12 slice complete (SLICE-QAREV-360A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-360A.md`.
+
+- Lane E batch12 slice complete (SLICE-QAREV-361A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-361A.md`.
+
+- Lane E batch12 slice complete (SLICE-QAREV-362A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-362A.md`.
+
+- Lane E batch12 slice complete (SLICE-QAREV-363A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-363A.md`.
+
+- Lane E batch12 slice complete (SLICE-QAREV-364A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-364A.md`.
+
+
+- Lane E batch12 slice complete (SLICE-QAREV-365A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-365A.md`.
+
+- Lane D batch12 slice complete (SLICE-AUTO-354A): supervisor ownership diagnostics now include operator recovery cues in status output; verify output in `docs/handoff/2026-02-28_SLICE-AUTO-354A.md`.
+
+- Lane D batch12 slice complete (SLICE-AUTO-355A): queue status summary drift diagnostics now emit deterministic `driftKeys` and refined severity classes; see `docs/handoff/2026-02-28_SLICE-AUTO-355A.md`.
+
+- Lane D batch12 slice complete (SLICE-AUTO-356A): claim now returns structured refusal code `runtime_invalid_payload` for invalid active-runtime payloads; see `docs/handoff/2026-02-28_SLICE-AUTO-356A.md`.
+
+- Lane D batch12 slice complete (SLICE-AUTO-357A): supervisor jitter now supports deterministic seeded offsets (`--jitter-seed`) and surfaces seed in status interval diagnostics; see `docs/handoff/2026-02-28_SLICE-AUTO-357A.md`.
+
+- Lane D batch12 slice complete (SLICE-AUTO-358A): runtime `status` diagnostics now emit checksum for invalid payloads and finer `parseErrorKind` taxonomy for malformed/stale runtime triage; see `docs/handoff/2026-02-28_SLICE-AUTO-358A.md`.
+
+- Lane D batch12 slice complete (SLICE-AUTO-359A): runbook command blocks hardened to copy-safe quoted-variable patterns (no shell placeholder splitting/redirection pitfalls); see `docs/handoff/2026-02-28_SLICE-AUTO-359A.md`.

@@ -50,12 +50,87 @@ const mapProjectRegistrationRead = (entry: any) => {
   };
 };
 
-type RegistrarCodeIssuer = 'system';
+const mapSectMotionRegistrationRead = (entry: any) => ({
+  id: entry.id,
+  type: entry.type,
+  status: entry.status,
+  sceneId: entry.sceneId,
+  payload: normalizeRegistrarPayloadObject(entry.payload),
+  scene: entry.scene,
+  createdAt: entry.createdAt,
+  updatedAt: entry.updatedAt,
+});
 
-const PROMOTER_CAPABILITY_CODE = 'promoter_capability';
-const REGISTRAR_CODE_DEFAULT_STATUS = 'issued';
-const REGISTRAR_CODE_REDEEMED_STATUS = 'redeemed';
+type PromoterCapabilityReadSummary = {
+  codeIssuedCount: number;
+  latestCodeStatus: string | null;
+  latestCodeIssuedAt: Date | null;
+  latestCodeRedeemedAt: Date | null;
+  granted: boolean;
+  grantedAt: Date | null;
+};
+
+const mapPromoterRegistrationRead = (entry: any, promoterCapability: PromoterCapabilityReadSummary) => {
+  const payload = (entry.payload ?? {}) as Record<string, unknown>;
+
+  return {
+    id: entry.id,
+    type: entry.type,
+    status: entry.status,
+    sceneId: entry.sceneId,
+    payload: {
+      productionName: normalizePromoterProductionName(payload),
+    },
+    promoterCapability,
+    scene: entry.scene,
+    createdAt: entry.createdAt,
+    updatedAt: entry.updatedAt,
+  };
+};
+
+const mapPromoterCapabilitySummary = (
+  codeSummary: {
+    codeIssuedCount: number;
+    latestCodeStatus: string | null;
+    latestCodeIssuedAt: Date | null;
+    latestCodeRedeemedAt: Date | null;
+  } | null,
+  grantedAt: Date | null,
+): PromoterCapabilityReadSummary => ({
+  codeIssuedCount: codeSummary?.codeIssuedCount ?? 0,
+  latestCodeStatus: codeSummary?.latestCodeStatus ?? null,
+  latestCodeIssuedAt: codeSummary?.latestCodeIssuedAt ?? null,
+  latestCodeRedeemedAt: codeSummary?.latestCodeRedeemedAt ?? null,
+  granted: Boolean(grantedAt),
+  grantedAt: grantedAt ?? null,
+});
+
+type RegistrarCodeIssuer = 'system';
+type RegistrarAdminActorType = 'system';
+type PromoterApprovalTargetStatus = 'approved' | 'rejected';
+type RegistrarLifecycleStatus = 'submitted' | 'approved' | 'rejected' | 'materialized';
+type CapabilityGrantLifecycleStatus = 'active' | 'revoked';
+type RegistrarAuditTransitionStatus = RegistrarLifecycleStatus | CapabilityGrantLifecycleStatus;
+type RegistrarCapabilityAuditMetadata = {
+  transitionFromStatus: RegistrarAuditTransitionStatus | null;
+  transitionToStatus: RegistrarAuditTransitionStatus | null;
+  decisionReason: string | null;
+  issuerType: RegistrarCodeIssuer | null;
+  sourceRegistrarEntryId: string | null;
+  sourceRegistrarCodeId: string | null;
+};
+
+const PROMOTER_CAPABILITY_CODE = 'promoter_capability' as const;
+const REGISTRAR_CODE_DEFAULT_STATUS = 'issued' as const;
+const REGISTRAR_CODE_REDEEMED_STATUS = 'redeemed' as const;
 const REGISTRAR_CODE_DEFAULT_ISSUER: RegistrarCodeIssuer = 'system';
+const PROMOTER_APPROVAL_TRANSITION_SOURCE_STATUS = 'submitted' as const;
+type PromoterApprovalSourceStatus = typeof PROMOTER_APPROVAL_TRANSITION_SOURCE_STATUS;
+const PROMOTER_APPROVAL_TRANSITION_ONLY_MESSAGE =
+  'Promoter approval transitions require registrar entry status submitted';
+const PROMOTER_APPROVAL_PROMOTER_ONLY_MESSAGE =
+  'Promoter approval transitions currently support promoter registrations only';
+const REGISTRAR_ADMIN_SYSTEM_ONLY_MESSAGE = 'Registrar admin transitions are restricted to trusted system paths';
 const REGISTRAR_CODE_ISSUER_BLOCK_MESSAGE =
   'Registrar code issuance is restricted to trusted system registrar paths';
 const REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE =
@@ -66,14 +141,158 @@ const REGISTRAR_CODE_NOT_FOUND_MESSAGE = 'Registrar code not found';
 const REGISTRAR_CODE_EXPIRED_MESSAGE = 'Registrar code has expired';
 const REGISTRAR_CODE_NOT_REDEEMABLE_MESSAGE = 'Registrar code is no longer redeemable';
 const REGISTRAR_CODE_ALREADY_REDEEMED_MESSAGE = 'Registrar code has already been redeemed';
+const REGISTRAR_CODE_ACTIVE_ALREADY_EXISTS_MESSAGE =
+  'Registrar entry already has an active capability code; replay issuance is blocked';
+const REGISTRAR_REVOKE_GRANT_LINK_MISMATCH_MESSAGE =
+  'Active promoter capability grant linkage does not match target registrar entry';
+const REGISTRAR_REVOKE_GRANT_STATE_INVALID_MESSAGE =
+  'Promoter capability grant is not in an active revocable state';
+const REGISTRAR_ADMIN_DECISION_STATE_ALREADY_APPLIED_MESSAGE =
+  'Registrar admin decision target status already applied';
+const REGISTRAR_ADMIN_DECISION_INVALID_TRANSITION_MESSAGE =
+  'Registrar admin decision transition is not allowed for current status';
+const REGISTRAR_ADMIN_REASON_MAX_LENGTH = 280;
 
 const buildRegistrarCodeValue = () => `PRC-${randomBytes(16).toString('hex').toUpperCase()}`;
 
 const hashRegistrarCode = (value: string) => createHash('sha256').update(value).digest('hex');
+const buildRegistrarApprovalTransitionAuditMetadata = (
+  fromStatus: PromoterApprovalSourceStatus,
+  toStatus: PromoterApprovalTargetStatus,
+  decisionReason: string | null,
+): RegistrarCapabilityAuditMetadata => ({
+  transitionFromStatus: fromStatus,
+  transitionToStatus: toStatus,
+  decisionReason,
+  issuerType: null,
+  sourceRegistrarEntryId: null,
+  sourceRegistrarCodeId: null,
+});
+
+const buildRegistrarCodeIssuedAuditMetadata = (
+  issuerType: RegistrarCodeIssuer,
+  sourceRegistrarEntryId: string,
+  sourceRegistrarCodeId: string,
+): RegistrarCapabilityAuditMetadata => ({
+  transitionFromStatus: null,
+  transitionToStatus: null,
+  decisionReason: null,
+  issuerType,
+  sourceRegistrarEntryId,
+  sourceRegistrarCodeId,
+});
+const buildRegistrarCapabilityRevokedAuditMetadata = (
+  sourceRegistrarEntryId: string,
+  sourceRegistrarCodeId: string | null,
+): RegistrarCapabilityAuditMetadata => ({
+  transitionFromStatus: 'active',
+  transitionToStatus: 'revoked',
+  decisionReason: null,
+  issuerType: null,
+  sourceRegistrarEntryId,
+  sourceRegistrarCodeId,
+});
+const normalizeRegistrarAdminDecisionReason = (value: string | null | undefined) => {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  return trimmed.slice(0, REGISTRAR_ADMIN_REASON_MAX_LENGTH);
+};
+const buildSystemAuditActorContext = () => ({
+  actorType: 'system' as const,
+  actorUserId: null as string | null,
+});
+
+const PROMOTER_ADMIN_DECISION_TRANSITIONS: Record<
+  PromoterApprovalSourceStatus | PromoterApprovalTargetStatus,
+  readonly PromoterApprovalTargetStatus[]
+> = {
+  submitted: ['approved', 'rejected'],
+  approved: [],
+  rejected: [],
+};
 
 @Injectable()
 export class RegistrarService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async applyPromoterApprovalTransition(
+    registrarEntryId: string,
+    nextStatus: PromoterApprovalTargetStatus,
+    options?: { actorType?: RegistrarAdminActorType; reason?: string | null },
+  ) {
+    const actorType = options?.actorType ?? 'system';
+    const normalizedReason = normalizeRegistrarAdminDecisionReason(options?.reason);
+    if (actorType !== 'system') {
+      throw new ForbiddenException(REGISTRAR_ADMIN_SYSTEM_ONLY_MESSAGE);
+    }
+
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: registrarEntryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        createdById: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+
+    if (entry.type !== 'promoter_registration') {
+      throw new ForbiddenException(PROMOTER_APPROVAL_PROMOTER_ONLY_MESSAGE);
+    }
+
+    if (entry.status === nextStatus) {
+      throw new ConflictException(REGISTRAR_ADMIN_DECISION_STATE_ALREADY_APPLIED_MESSAGE);
+    }
+
+    const allowedTargets = PROMOTER_ADMIN_DECISION_TRANSITIONS[entry.status as keyof typeof PROMOTER_ADMIN_DECISION_TRANSITIONS];
+    if (!Array.isArray(allowedTargets)) {
+      throw new ForbiddenException(REGISTRAR_ADMIN_DECISION_INVALID_TRANSITION_MESSAGE);
+    }
+    if (!allowedTargets.includes(nextStatus)) {
+      if (entry.status === PROMOTER_APPROVAL_TRANSITION_SOURCE_STATUS) {
+        throw new ForbiddenException(PROMOTER_APPROVAL_TRANSITION_ONLY_MESSAGE);
+      }
+      throw new ForbiddenException(REGISTRAR_ADMIN_DECISION_INVALID_TRANSITION_MESSAGE);
+    }
+    const fromStatus: PromoterApprovalSourceStatus = PROMOTER_APPROVAL_TRANSITION_SOURCE_STATUS;
+
+    return this.prisma.$transaction(async (tx: any) => {
+      const updated = await tx.registrarEntry.update({
+        where: { id: entry.id },
+        data: { status: nextStatus },
+        select: {
+          id: true,
+          type: true,
+          status: true,
+          updatedAt: true,
+        },
+      });
+
+      await tx.capabilityGrantAuditLog.create({
+        data: {
+          capability: PROMOTER_CAPABILITY_CODE,
+          action: nextStatus === 'approved' ? 'registration_approved' : 'registration_rejected',
+          ...buildSystemAuditActorContext(),
+          targetUserId: entry.createdById ?? null,
+          registrarEntryId: entry.id,
+          metadata: buildRegistrarApprovalTransitionAuditMetadata(fromStatus, nextStatus, normalizedReason),
+        },
+      });
+
+      return updated;
+    });
+  }
 
   async issueRegistrarCodeForApprovedPromoterEntry(
     registrarEntryId: string,
@@ -106,6 +325,24 @@ export class RegistrarService {
       throw new ForbiddenException(REGISTRAR_CODE_APPROVED_REQUIRED_MESSAGE);
     }
 
+    const existingActiveCode = await this.prisma.registrarCode.findFirst({
+      where: {
+        registrarEntryId: entry.id,
+        capability: PROMOTER_CAPABILITY_CODE,
+        status: REGISTRAR_CODE_DEFAULT_STATUS,
+        redeemedAt: null,
+        OR: [
+          { expiresAt: null },
+          { expiresAt: { gt: new Date() } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (existingActiveCode) {
+      throw new ConflictException(REGISTRAR_CODE_ACTIVE_ALREADY_EXISTS_MESSAGE);
+    }
+
     const maxAttempts = 3;
     for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
       const code = buildRegistrarCodeValue();
@@ -113,6 +350,20 @@ export class RegistrarService {
 
       try {
         const created = await this.prisma.$transaction(async (tx: any) => {
+          const existingActiveCodeInTx = await tx.registrarCode.findFirst({
+            where: {
+              registrarEntryId: entry.id,
+              capability: PROMOTER_CAPABILITY_CODE,
+              status: REGISTRAR_CODE_DEFAULT_STATUS,
+              redeemedAt: null,
+              OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+            },
+            select: { id: true },
+          });
+          if (existingActiveCodeInTx) {
+            throw new ConflictException(REGISTRAR_CODE_ACTIVE_ALREADY_EXISTS_MESSAGE);
+          }
+
           const codeRecord = await tx.registrarCode.create({
             data: {
               registrarEntryId: entry.id,
@@ -137,13 +388,11 @@ export class RegistrarService {
             data: {
               capability: PROMOTER_CAPABILITY_CODE,
               action: 'code_issued',
-              actorType: 'system',
+              ...buildSystemAuditActorContext(),
               targetUserId: entry.createdById,
               registrarEntryId: entry.id,
               registrarCodeId: codeRecord.id,
-              metadata: {
-                issuerType: issuer,
-              },
+              metadata: buildRegistrarCodeIssuedAuditMetadata(issuer, entry.id, codeRecord.id),
             },
           });
 
@@ -163,6 +412,118 @@ export class RegistrarService {
     }
 
     throw new ConflictException('Failed to issue registrar code');
+  }
+
+  async issueSystemPromoterCapabilityCodeForApprovedEntry(
+    registrarEntryId: string,
+    options?: { expiresAt?: Date | null },
+  ) {
+    return this.issueRegistrarCodeForApprovedPromoterEntry(registrarEntryId, {
+      issuer: REGISTRAR_CODE_DEFAULT_ISSUER,
+      expiresAt: options?.expiresAt ?? null,
+    });
+  }
+
+  async approvePromoterEntryAndIssueCapabilityCode(
+    registrarEntryId: string,
+    options?: { reason?: string | null; expiresAt?: Date | null; actorType?: RegistrarAdminActorType },
+  ) {
+    await this.applyPromoterApprovalTransition(registrarEntryId, 'approved', {
+      actorType: options?.actorType ?? 'system',
+      reason: options?.reason ?? null,
+    });
+
+    return this.issueSystemPromoterCapabilityCodeForApprovedEntry(registrarEntryId, {
+      expiresAt: options?.expiresAt ?? null,
+    });
+  }
+
+  async revokePromoterCapabilityGrantForUser(
+    userId: string,
+    registrarEntryId: string,
+    options?: { actorType?: RegistrarAdminActorType },
+  ) {
+    const actorType = options?.actorType ?? 'system';
+    if (actorType !== 'system') {
+      throw new ForbiddenException(REGISTRAR_ADMIN_SYSTEM_ONLY_MESSAGE);
+    }
+
+    const entry = await this.prisma.registrarEntry.findUnique({
+      where: { id: registrarEntryId },
+      select: {
+        id: true,
+        type: true,
+        status: true,
+      },
+    });
+
+    if (!entry) {
+      throw new NotFoundException('Registrar entry not found');
+    }
+
+    if (entry.type !== 'promoter_registration') {
+      throw new ForbiddenException(PROMOTER_APPROVAL_PROMOTER_ONLY_MESSAGE);
+    }
+
+    const activeGrant = await this.prisma.userCapabilityGrant.findFirst({
+      where: {
+        userId,
+        capability: PROMOTER_CAPABILITY_CODE,
+      },
+      select: {
+        id: true,
+        userId: true,
+        capability: true,
+        status: true,
+        revokedAt: true,
+        sourceRegistrarEntryId: true,
+        sourceRegistrarCodeId: true,
+      },
+    });
+
+    if (!activeGrant) {
+      throw new NotFoundException('Active promoter capability grant not found');
+    }
+
+    if (activeGrant.sourceRegistrarEntryId !== entry.id) {
+      throw new ConflictException(REGISTRAR_REVOKE_GRANT_LINK_MISMATCH_MESSAGE);
+    }
+    if (activeGrant.status !== 'active' || activeGrant.revokedAt) {
+      throw new ConflictException(REGISTRAR_REVOKE_GRANT_STATE_INVALID_MESSAGE);
+    }
+
+    return this.prisma.$transaction(async (tx: any) => {
+      const revokedAt = new Date();
+      const revokedGrant = await tx.userCapabilityGrant.update({
+        where: { id: activeGrant.id },
+        data: {
+          status: 'revoked',
+          revokedAt,
+        },
+        select: {
+          id: true,
+          userId: true,
+          capability: true,
+          status: true,
+          revokedAt: true,
+          sourceRegistrarEntryId: true,
+          sourceRegistrarCodeId: true,
+        },
+      });
+
+      await tx.capabilityGrantAuditLog.create({
+        data: {
+          capability: PROMOTER_CAPABILITY_CODE,
+          action: 'capability_revoked',
+          ...buildSystemAuditActorContext(),
+          targetUserId: userId,
+          registrarEntryId: entry.id,
+          metadata: buildRegistrarCapabilityRevokedAuditMetadata(entry.id, activeGrant.sourceRegistrarCodeId ?? null),
+        },
+      });
+
+      return revokedGrant;
+    });
   }
 
   async verifyRegistrarCode(code: string) {
@@ -668,34 +1029,12 @@ export class RegistrarService {
       total: entries.length,
       countsByStatus,
       entries: entries.map((entry: any) => {
-        const payload = (entry.payload ?? {}) as Record<string, unknown>;
-        const codeSummary = codeSummaryByEntry.get(entry.id) ?? {
-          codeIssuedCount: 0,
-          latestCodeStatus: null,
-          latestCodeIssuedAt: null,
-          latestCodeRedeemedAt: null,
-        };
+        const codeSummary = codeSummaryByEntry.get(entry.id) ?? null;
         const grantSummary = grantByEntryId.get(entry.id) ?? null;
-        return {
-          id: entry.id,
-          type: entry.type,
-          status: entry.status,
-          sceneId: entry.sceneId,
-          payload: {
-            productionName: normalizePromoterProductionName(payload),
-          },
-          promoterCapability: {
-            codeIssuedCount: codeSummary.codeIssuedCount,
-            latestCodeStatus: codeSummary.latestCodeStatus,
-            latestCodeIssuedAt: codeSummary.latestCodeIssuedAt,
-            latestCodeRedeemedAt: codeSummary.latestCodeRedeemedAt,
-            granted: Boolean(grantSummary),
-            grantedAt: grantSummary?.grantedAt ?? null,
-          },
-          scene: entry.scene,
-          createdAt: entry.createdAt,
-          updatedAt: entry.updatedAt,
-        };
+        return mapPromoterRegistrationRead(
+          entry,
+          mapPromoterCapabilitySummary(codeSummary, grantSummary?.grantedAt ?? null),
+        );
       }),
     };
   }
@@ -762,28 +1101,18 @@ export class RegistrarService {
     ]);
 
     const latestRegistrarCode = registrarCodes[0] ?? null;
-
-    const payload = (entry.payload ?? {}) as Record<string, unknown>;
-    return {
-      id: entry.id,
-      type: entry.type,
-      status: entry.status,
-      sceneId: entry.sceneId,
-      payload: {
-        productionName: normalizePromoterProductionName(payload),
-      },
-      promoterCapability: {
-        codeIssuedCount: registrarCodes.length,
-        latestCodeStatus: latestRegistrarCode?.status ?? null,
-        latestCodeIssuedAt: latestRegistrarCode?.createdAt ?? null,
-        latestCodeRedeemedAt: latestRegistrarCode?.redeemedAt ?? null,
-        granted: Boolean(capabilityGrant),
-        grantedAt: capabilityGrant?.grantedAt ?? null,
-      },
-      scene: entry.scene,
-      createdAt: entry.createdAt,
-      updatedAt: entry.updatedAt,
-    };
+    return mapPromoterRegistrationRead(
+      entry,
+      mapPromoterCapabilitySummary(
+        {
+          codeIssuedCount: registrarCodes.length,
+          latestCodeStatus: latestRegistrarCode?.status ?? null,
+          latestCodeIssuedAt: latestRegistrarCode?.createdAt ?? null,
+          latestCodeRedeemedAt: latestRegistrarCode?.redeemedAt ?? null,
+        },
+        capabilityGrant?.grantedAt ?? null,
+      ),
+    );
   }
 
   async listPromoterCapabilityAudit(userId: string, entryId: string) {
@@ -945,16 +1274,7 @@ export class RegistrarService {
     return {
       total: entries.length,
       countsByStatus,
-      entries: entries.map((entry: any) => ({
-        id: entry.id,
-        type: entry.type,
-        status: entry.status,
-        sceneId: entry.sceneId,
-        payload: normalizeRegistrarPayloadObject(entry.payload),
-        scene: entry.scene,
-        createdAt: entry.createdAt,
-        updatedAt: entry.updatedAt,
-      })),
+      entries: entries.map(mapSectMotionRegistrationRead),
     };
   }
 
@@ -993,16 +1313,7 @@ export class RegistrarService {
       throw new ForbiddenException('Only the submitting user can read this sect motion');
     }
 
-    return {
-      id: entry.id,
-      type: entry.type,
-      status: entry.status,
-      sceneId: entry.sceneId,
-      payload: normalizeRegistrarPayloadObject(entry.payload),
-      scene: entry.scene,
-      createdAt: entry.createdAt,
-      updatedAt: entry.updatedAt,
-    };
+    return mapSectMotionRegistrationRead(entry);
   }
 
   async listArtistBandRegistrations(userId: string) {
