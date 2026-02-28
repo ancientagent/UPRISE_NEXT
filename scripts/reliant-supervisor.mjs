@@ -35,6 +35,7 @@ const VALID_TASK_STATUSES = new Set(['queued', 'in_progress', 'done', 'blocked']
 const MIN_INTERVAL_MS = 500;
 const MAX_INTERVAL_MS = 60_000;
 const MAX_JITTER_MS = 5_000;
+const MAX_JITTER_SEED = 1_000_000;
 
 function getArg(flag, fallback = null) {
   const idx = process.argv.indexOf(flag);
@@ -143,15 +144,18 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
   const hints = [];
   const operatorCues = [];
   let state = 'healthy';
+  let severity = 'none';
   const queuePath = lane?.queue ?? runtimeOwnership.runtimePath;
   const runtimePath = lane?.runtime ?? runtimeOwnership.runtimePath;
 
   if (inProgressCount === 0 && runtimeOwnership.exists) {
     state = 'stale_runtime_without_owner';
+    severity = 'medium';
     hints.push('clear_runtime');
     operatorCues.push(`node scripts/reliant-runtime-clean.mjs --runtime ${runtimePath}`);
   } else if (inProgressCount > 0 && !runtimeOwnership.exists) {
     state = 'missing_runtime_for_owner';
+    severity = 'high';
     hints.push('recreate_runtime');
     operatorCues.push(
       `node scripts/reliant-slice-queue.mjs status --queue ${queuePath} --runtime ${runtimePath}`,
@@ -159,6 +163,7 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
     );
   } else if (runtimeOwnership.exists && !runtimeOwnership.valid) {
     state = 'invalid_runtime_payload';
+    severity = 'high';
     hints.push('runtime_clean_then_reclaim');
     operatorCues.push(
       `node scripts/reliant-runtime-clean.mjs --runtime ${runtimePath}`,
@@ -166,6 +171,7 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
     );
   } else if (runtimeOwnership.exists && inProgressCount > 0 && !runtimeOwnership.matchesInProgress) {
     state = 'runtime_owner_mismatch';
+    severity = 'critical';
     hints.push('runtime_clean_then_reclaim');
     operatorCues.push(
       `node scripts/reliant-slice-queue.mjs status --queue ${queuePath} --runtime ${runtimePath}`,
@@ -174,7 +180,7 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
     );
   }
 
-  return { state, hints, operatorCues };
+  return { state, severity, requiresIntervention: severity !== 'none', hints, operatorCues };
 }
 
 function choosePrimaryInProgress(tasks) {
@@ -316,22 +322,69 @@ function clampIntervalConfig(intervalMs, jitterMs) {
   };
 }
 
+function clampJitterSeed(seed) {
+  const value = Number.isFinite(seed) ? Math.floor(seed) : 0;
+  return Math.min(MAX_JITTER_SEED, Math.max(0, value));
+}
+
+function collectHealthGateFailures(report) {
+  const failures = [];
+  const inProgressCount = Number(report?.summary?.in_progress ?? 0);
+
+  if (inProgressCount > 1) {
+    failures.push({
+      lane: report.lane,
+      code: 'multiple_in_progress',
+      message: `queue has ${inProgressCount} in_progress tasks`,
+      inProgressCount,
+    });
+  }
+
+  if (report?.ownershipHealth?.state === 'stale_runtime_without_owner') {
+    failures.push({
+      lane: report.lane,
+      code: 'stale_runtime_without_matching_in_progress',
+      message: 'runtime exists with no matching in_progress task',
+      runtimePath: report.runtime,
+    });
+  }
+
+  const summaryMismatchDrifts = Array.isArray(report?.drifts)
+    ? report.drifts.filter((drift) => drift.startsWith('summary-mismatch:'))
+    : [];
+  if (summaryMismatchDrifts.length > 0) {
+    failures.push({
+      lane: report.lane,
+      code: 'summary_drift',
+      message: 'queue.summary drift detected',
+      drifts: summaryMismatchDrifts,
+    });
+  }
+
+  return failures;
+}
+
 async function main() {
   const watch = hasFlag('--watch');
   const failOnDrift = hasFlag('--fail-on-drift');
-  const autoClaim = !hasFlag('--no-claim');
-  const repair = !hasFlag('--no-repair');
+  const healthCheck = hasFlag('--health-check');
+  const autoClaim = healthCheck ? false : !hasFlag('--no-claim');
+  const repair = healthCheck ? false : !hasFlag('--no-repair');
   const rawIntervalMs = Number(getArg('--interval-ms', '5000'));
   const rawIntervalJitterMs = Number(getArg('--interval-jitter-ms', '0'));
   const rawJitterSeed = Number(getArg('--jitter-seed', String(process.pid % 997)));
   const { intervalMs, intervalJitterMs } = clampIntervalConfig(rawIntervalMs, rawIntervalJitterMs);
-  const jitterSeed = Number.isFinite(rawJitterSeed) ? Math.max(0, Math.floor(rawJitterSeed)) : 0;
+  const jitterSeed = clampJitterSeed(rawJitterSeed);
   const statusOut = getArg('--status-out', '.reliant/runtime/supervisor-status.json');
   const lanesJson = getArg('--lanes-json', null);
   const lanes = lanesJson ? readJson(lanesJson) : DEFAULT_LANES;
   if (!Array.isArray(lanes)) {
     throw new Error('lanes config must be an array');
   }
+  if (healthCheck && watch) {
+    console.error('[supervisor] --health-check is one-shot; ignoring --watch');
+  }
+  const effectiveWatch = watch && !healthCheck;
 
   let cycleNumber = 0;
   while (true) {
@@ -348,6 +401,7 @@ async function main() {
     };
 
     let driftCount = 0;
+    const healthGateFailures = [];
     for (const lane of lanes) {
       const report = {
         lane: lane.name,
@@ -357,6 +411,9 @@ async function main() {
       repairLane(lane, { autoClaim, repair }, report);
       cycle.lanes.push(report);
       driftCount += report.drifts?.length ?? 0;
+      if (healthCheck) {
+        healthGateFailures.push(...collectHealthGateFailures(report));
+      }
 
       const s = report.summary || { queued: '?', in_progress: '?', done: '?', blocked: '?' };
       console.log(
@@ -370,13 +427,31 @@ async function main() {
         for (const drift of report.drifts) console.error(`[supervisor] ${lane.name} drift=${drift}`);
       }
     }
+    if (healthCheck) {
+      cycle.healthCheck = {
+        enabled: true,
+        passed: healthGateFailures.length === 0,
+        failureCount: healthGateFailures.length,
+        failures: healthGateFailures,
+      };
+    }
 
     writeJson(statusOut, cycle);
+    if (healthCheck) {
+      if (healthGateFailures.length > 0) {
+        for (const failure of healthGateFailures) {
+          console.error(`[supervisor] health-gate-failed lane=${failure.lane} code=${failure.code} ${failure.message}`);
+        }
+        process.exit(6);
+      }
+      console.log('[supervisor] health-gate-passed');
+      return;
+    }
     if (failOnDrift && driftCount > 0) {
       console.error(`[supervisor] drift-detected count=${driftCount}`);
       process.exit(4);
     }
-    if (!watch) return;
+    if (!effectiveWatch) return;
     const sleepFor = boundedJitter(intervalMs, intervalJitterMs, cycleNumber, jitterSeed);
     cycleNumber += 1;
     await sleep(sleepFor);

@@ -7,9 +7,9 @@
   ],
   "summary": {
     "total": 6,
-    "queued": 6,
+    "queued": 0,
     "in_progress": 0,
-    "done": 0,
+    "done": 6,
     "blocked": 0
   },
   "tasks": [
@@ -18,54 +18,72 @@
       "title": "Capability-audit sparse payload assertions pack 4",
       "prompt": "Execute one MVP slice only: strengthen web typed client assertions for capability-audit sparse payloads/additive fields with no UI action expansion.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-02-28T04:51:29.350Z",
-      "lane": "lane-b-web-contract-batch13"
+      "status": "done",
+      "updatedAt": "2026-02-28T05:12:06.875Z",
+      "lane": "lane-b-web-contract-batch13",
+      "startedAt": "2026-02-28T05:11:35.961Z",
+      "finishedAt": "2026-02-28T05:12:06.875Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-372A.md"
     },
     {
       "id": "SLICE-WEBADMIN-373A",
       "title": "Registrar client auth error consistency pack 4",
       "prompt": "Execute one MVP slice only: normalize web registrar client auth-error propagation checks across existing read/verify/redeem methods with focused tests only.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-02-28T04:51:29.350Z",
-      "lane": "lane-b-web-contract-batch13"
+      "status": "done",
+      "updatedAt": "2026-02-28T05:12:49.084Z",
+      "lane": "lane-b-web-contract-batch13",
+      "startedAt": "2026-02-28T05:12:07.138Z",
+      "finishedAt": "2026-02-28T05:12:49.084Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-373A.md"
     },
     {
       "id": "SLICE-WEBADMIN-374A",
       "title": "Inventory metadata note normalization pack 4",
       "prompt": "Execute one MVP slice only: continue contract inventory metadata note normalization/dedupe with test enforcement only; no implementation-status flips.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-02-28T04:51:29.350Z",
-      "lane": "lane-b-web-contract-batch13"
+      "status": "done",
+      "updatedAt": "2026-02-28T05:13:22.805Z",
+      "lane": "lane-b-web-contract-batch13",
+      "startedAt": "2026-02-28T05:12:49.305Z",
+      "finishedAt": "2026-02-28T05:13:22.805Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-374A.md"
     },
     {
       "id": "SLICE-WEBADMIN-375A",
       "title": "Project/sect nullable mapping assertions pack 4",
       "prompt": "Execute one MVP slice only: extend nullable mapping assertions for project/sect detail client methods while preserving signatures and action-gated boundaries.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-02-28T04:51:29.350Z",
-      "lane": "lane-b-web-contract-batch13"
+      "status": "done",
+      "updatedAt": "2026-02-28T05:13:55.429Z",
+      "lane": "lane-b-web-contract-batch13",
+      "startedAt": "2026-02-28T05:13:23.063Z",
+      "finishedAt": "2026-02-28T05:13:55.429Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-375A.md"
     },
     {
       "id": "SLICE-WEBADMIN-376A",
       "title": "Invite summary shape stability pack 4",
       "prompt": "Execute one MVP slice only: harden invite summary top-level/per-entry shape stability assertions aligned to current API responses only.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-02-28T04:51:29.350Z",
-      "lane": "lane-b-web-contract-batch13"
+      "status": "done",
+      "updatedAt": "2026-02-28T05:14:37.636Z",
+      "lane": "lane-b-web-contract-batch13",
+      "startedAt": "2026-02-28T05:13:55.656Z",
+      "finishedAt": "2026-02-28T05:14:37.636Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-376A.md"
     },
     {
       "id": "SLICE-WEBADMIN-377A",
       "title": "Action-gated contract note consistency pack 4",
       "prompt": "Execute one MVP slice only: sweep action-gated web contract notes for consistency with registrar implemented/deferred wording; tests/docs only.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-02-28T04:51:29.350Z",
-      "lane": "lane-b-web-contract-batch13"
+      "status": "done",
+      "updatedAt": "2026-02-28T05:15:19.183Z",
+      "lane": "lane-b-web-contract-batch13",
+      "startedAt": "2026-02-28T05:14:37.847Z",
+      "finishedAt": "2026-02-28T05:15:19.183Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-377A.md"
     }
   ]
 }

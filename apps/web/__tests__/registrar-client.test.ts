@@ -490,6 +490,53 @@ describe('registrar sect-motion read client scaffolding', () => {
     expect(sect.scene).toBeNull();
   });
 
+  it('keeps project/sect nullable mapping parity when project scene is null and sect scene is present', async () => {
+    mockedApiGet.mockResolvedValueOnce({
+      success: true,
+      data: {
+        id: 'reg-project-5',
+        type: 'project_registration',
+        status: 'submitted',
+        sceneId: 'scene-5',
+        payload: { projectName: 'Signal Bloom' },
+        scene: null,
+        createdAt: '2026-02-28T05:00:00.000Z',
+        updatedAt: '2026-02-28T05:10:00.000Z',
+      },
+    });
+    const project = await getProjectRegistration('reg-project-5', 'token-5');
+
+    mockedApiGet.mockResolvedValueOnce({
+      success: true,
+      data: {
+        id: 'reg-sect-5',
+        type: 'sect_motion',
+        status: 'submitted',
+        sceneId: 'scene-5',
+        payload: {
+          notes: null,
+          reason: 'schedule_alignment',
+        },
+        scene: {
+          id: 'scene-5',
+          name: 'Central Pulse',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Electronic',
+          tier: 'city',
+        },
+        createdAt: '2026-02-28T05:12:00.000Z',
+        updatedAt: '2026-02-28T05:18:00.000Z',
+      },
+    });
+    const sect = await getSectMotionRegistration('reg-sect-5', 'token-5');
+
+    expect(project.payload).toEqual({ projectName: 'Signal Bloom' });
+    expect(project.scene).toBeNull();
+    expect(sect.payload).toEqual(expect.objectContaining({ notes: null, reason: 'schedule_alignment' }));
+    expect(sect.scene).toEqual(expect.objectContaining({ id: 'scene-5', tier: 'city' }));
+  });
+
   it('throws when sect-motion detail response has no data payload', async () => {
     mockedApiGet.mockResolvedValueOnce({ success: true, data: undefined });
 
@@ -817,6 +864,47 @@ describe('registrar promoter read client scaffolding', () => {
           reason: 'manual_review',
           tags: ['ops', 'priority'],
           extra: expect.objectContaining({ source: 'console' }),
+        }),
+      }),
+    );
+  });
+
+  it('preserves sparse capability-audit payloads when additive metadata contains nullable arrays', async () => {
+    mockedApiGet.mockResolvedValueOnce({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-promoter-sparse-meta-2',
+        total: 2,
+        events: [
+          {
+            id: 'audit-sparse-meta-2',
+            action: 'code_issued',
+            actorType: 'system',
+            targetUserId: 'u-402',
+            actorUserId: null,
+            registrarCodeId: 'rcode-402',
+            metadata: {
+              tags: [],
+              notes: null,
+              context: { issuerType: 'system' },
+            },
+            createdAt: '2026-02-28T04:00:00.000Z',
+          },
+        ],
+      },
+    });
+
+    const response = await getPromoterCapabilityAudit('reg-promoter-sparse-meta-2', 'token-402');
+
+    expect(response.total).toBe(2);
+    expect(response.events).toHaveLength(1);
+    expect(response.events[0]).toEqual(
+      expect.objectContaining({
+        id: 'audit-sparse-meta-2',
+        metadata: expect.objectContaining({
+          tags: [],
+          notes: null,
+          context: expect.objectContaining({ issuerType: 'system' }),
         }),
       }),
     );
@@ -1188,6 +1276,58 @@ describe('registrar invite-status read client scaffolding', () => {
     );
   });
 
+  it('preserves invite summary shape when counts include queued/sent/failed mix', async () => {
+    mockedApiGet.mockResolvedValueOnce({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-artist-shape-3',
+        totalMembers: 3,
+        countsByStatus: { queued: 1, sent: 1, failed: 1 },
+        members: [
+          {
+            id: 'ram-m1',
+            name: 'Ari',
+            email: 'ari@example.com',
+            city: 'Austin',
+            instrument: 'Synth',
+            inviteStatus: 'queued',
+            existingUserId: null,
+            claimedUserId: null,
+            inviteTokenExpiresAt: null,
+            deliveryStatus: 'queued',
+            sentAt: null,
+            failedAt: null,
+          },
+          {
+            id: 'ram-m2',
+            name: 'Rin',
+            email: 'rin@example.com',
+            city: 'Austin',
+            instrument: 'Voice',
+            inviteStatus: 'sent',
+            existingUserId: null,
+            claimedUserId: null,
+            inviteTokenExpiresAt: '2026-03-08T00:00:00.000Z',
+            deliveryStatus: 'sent',
+            sentAt: '2026-02-28T04:30:00.000Z',
+            failedAt: null,
+          },
+        ],
+      },
+    });
+
+    const response = await loadArtistBandInviteStatus('reg-artist-shape-3', 'token-shape-3');
+
+    expect(Object.keys(response).sort()).toEqual(['countsByStatus', 'members', 'registrarEntryId', 'totalMembers']);
+    expect(response.countsByStatus).toEqual({ queued: 1, sent: 1, failed: 1 });
+    expect(response.members[0]).toEqual(
+      expect.objectContaining({ inviteStatus: 'queued', deliveryStatus: 'queued', sentAt: null, failedAt: null }),
+    );
+    expect(response.members[1]).toEqual(
+      expect.objectContaining({ inviteStatus: 'sent', deliveryStatus: 'sent', sentAt: expect.any(String) }),
+    );
+  });
+
   it('throws when invite-status response has no data payload', async () => {
     mockedApiGet.mockResolvedValueOnce({ success: true, data: undefined });
 
@@ -1272,5 +1412,22 @@ describe('registrar client auth-error propagation consistency', () => {
 
     mockedApiPost.mockRejectedValueOnce(new Error('Token expired'));
     await expect(redeemRegistrarCode('PRC-1', 'expired-token')).rejects.toThrow('Token expired');
+  });
+
+  it('propagates invalid-token auth errors consistently across list/detail and code methods', async () => {
+    mockedApiGet.mockRejectedValueOnce(new Error('Invalid token'));
+    await expect(listProjectRegistrations('invalid-token')).rejects.toThrow('Invalid token');
+
+    mockedApiGet.mockRejectedValueOnce(new Error('Invalid token'));
+    await expect(getProjectRegistration('reg-project-1', 'invalid-token')).rejects.toThrow('Invalid token');
+
+    mockedApiGet.mockRejectedValueOnce(new Error('Invalid token'));
+    await expect(getPromoterCapabilityAudit('reg-promoter-1', 'invalid-token')).rejects.toThrow('Invalid token');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Invalid token'));
+    await expect(verifyRegistrarCode('PRC-1', 'invalid-token')).rejects.toThrow('Invalid token');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Invalid token'));
+    await expect(redeemRegistrarCode('PRC-1', 'invalid-token')).rejects.toThrow('Invalid token');
   });
 });

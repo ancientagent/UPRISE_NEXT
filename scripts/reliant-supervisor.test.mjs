@@ -55,7 +55,7 @@ function main() {
       '--interval-jitter-ms',
       '99999',
       '--jitter-seed',
-      '0',
+      '999999999',
       '--lanes-json',
       lanesPath,
       '--status-out',
@@ -66,12 +66,14 @@ function main() {
   const status = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
   assert.equal(status.intervalConfig.intervalMs, 500);
   assert.equal(status.intervalConfig.intervalJitterMs, 5000);
-  assert.equal(status.intervalConfig.jitterSeed, 0);
+  assert.equal(status.intervalConfig.jitterSeed, 1000000);
   assert.equal(status.lanes.length, 1);
   assert.equal(status.lanes[0].runtimeOwnership.exists, true);
   assert.equal(status.lanes[0].runtimeOwnership.runtimeTaskId, 'B');
   assert.equal(status.lanes[0].runtimeOwnership.matchesInProgress, true);
   assert.equal(status.lanes[0].ownershipHealth.state, 'healthy');
+  assert.equal(status.lanes[0].ownershipHealth.severity, 'none');
+  assert.equal(status.lanes[0].ownershipHealth.requiresIntervention, false);
   assert.deepEqual(status.lanes[0].ownershipHealth.hints, []);
   assert.deepEqual(status.lanes[0].ownershipHealth.operatorCues, []);
   assert.ok(status.lanes[0].drifts.some((d) => d.startsWith('summary-mismatch:total')));
@@ -91,6 +93,8 @@ function main() {
   run(['--no-claim', '--no-repair', '--lanes-json', lanesPath, '--status-out', statusOut], 0);
   const staleStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
   assert.equal(staleStatus.lanes[0].ownershipHealth.state, 'stale_runtime_without_owner');
+  assert.equal(staleStatus.lanes[0].ownershipHealth.severity, 'medium');
+  assert.equal(staleStatus.lanes[0].ownershipHealth.requiresIntervention, true);
   assert.ok(
     staleStatus.lanes[0].ownershipHealth.operatorCues.some(
       (cue) => cue === `node scripts/reliant-runtime-clean.mjs --runtime ${runtimePath}`,
@@ -104,6 +108,90 @@ function main() {
   );
   assert.equal(failResult.status, 4);
   assert.match(failResult.stderr, /drift-detected count=/);
+
+  // Health check should pass on clean summary/runtime ownership.
+  const cleanQueuePath = path.join(tempDir, 'clean-queue.json');
+  const cleanRuntimePath = path.join(tempDir, 'clean-runtime.json');
+  const cleanLanesPath = path.join(tempDir, 'clean-lanes.json');
+  fs.writeFileSync(
+    cleanQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 1, queued: 1, in_progress: 0, done: 0, blocked: 0 },
+        tasks: [{ id: 'Q1', title: 'Q1', prompt: 'Q1', status: 'queued' }],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(cleanLanesPath, JSON.stringify([{ name: 'clean-lane', queue: cleanQueuePath, runtime: cleanRuntimePath }], null, 2));
+  const healthPass = run(['--health-check', '--lanes-json', cleanLanesPath, '--status-out', statusOut], 0);
+  assert.match(healthPass.stdout, /health-gate-passed/);
+  const healthPassStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
+  assert.equal(healthPassStatus.healthCheck.passed, true);
+  assert.equal(healthPassStatus.healthCheck.failureCount, 0);
+
+  // Health check should fail on summary drift.
+  const driftQueuePath = path.join(tempDir, 'drift-queue.json');
+  const driftLanesPath = path.join(tempDir, 'drift-lanes.json');
+  fs.writeFileSync(
+    driftQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 2, queued: 2, in_progress: 0, done: 0, blocked: 0 },
+        tasks: [{ id: 'D1', title: 'D1', prompt: 'D1', status: 'queued' }],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(driftLanesPath, JSON.stringify([{ name: 'drift-lane', queue: driftQueuePath, runtime: cleanRuntimePath }], null, 2));
+  const healthDrift = spawnSync(
+    process.execPath,
+    [scriptPath, '--health-check', '--lanes-json', driftLanesPath, '--status-out', statusOut],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(healthDrift.status, 6);
+  assert.match(healthDrift.stderr, /code=summary_drift/);
+
+  // Health check should fail on stale runtime without matching in_progress.
+  fs.writeFileSync(cleanRuntimePath, JSON.stringify({ taskId: 'STALE' }, null, 2));
+  const healthStale = spawnSync(
+    process.execPath,
+    [scriptPath, '--health-check', '--lanes-json', cleanLanesPath, '--status-out', statusOut],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(healthStale.status, 6);
+  assert.match(healthStale.stderr, /code=stale_runtime_without_matching_in_progress/);
+
+  // Health check should fail on multiple in_progress ownership.
+  const multiQueuePath = path.join(tempDir, 'multi-queue.json');
+  const multiLanesPath = path.join(tempDir, 'multi-lanes.json');
+  fs.writeFileSync(
+    multiQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 2, queued: 0, in_progress: 2, done: 0, blocked: 0 },
+        tasks: [
+          { id: 'M1', title: 'M1', prompt: 'M1', status: 'in_progress' },
+          { id: 'M2', title: 'M2', prompt: 'M2', status: 'in_progress' },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(multiLanesPath, JSON.stringify([{ name: 'multi-lane', queue: multiQueuePath, runtime: cleanRuntimePath }], null, 2));
+  const healthMulti = spawnSync(
+    process.execPath,
+    [scriptPath, '--health-check', '--lanes-json', multiLanesPath, '--status-out', statusOut],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(healthMulti.status, 6);
+  assert.match(healthMulti.stderr, /code=multiple_in_progress/);
 
   // Bounded jitter should produce deterministic bounded values.
   const jitterProbe = spawnSync(

@@ -128,7 +128,7 @@ function claimTask(queuePath, runtimePath, retryMs = 0, retryAttempted = false) 
   const queue = readJson(queuePath);
   ensureQueueShape(queue);
   const emitClaimRefusal = (refusalCode, message, exitCode, extra = {}) => {
-    process.stdout.write(JSON.stringify({ claimed: false, refusalCode, message, ...extra }));
+    process.stdout.write(JSON.stringify({ claimed: false, refusalCode, resultCode: refusalCode, message, ...extra }));
     process.exit(exitCode);
   };
 
@@ -184,6 +184,7 @@ function claimTask(queuePath, runtimePath, retryMs = 0, retryAttempted = false) 
       JSON.stringify({
         claimed: false,
         refusalCode: 'in_progress_active',
+        resultCode: 'in_progress_active',
         message: 'task already in progress',
         task: {
           taskId: activeTask.id,
@@ -199,7 +200,14 @@ function claimTask(queuePath, runtimePath, retryMs = 0, retryAttempted = false) 
 
   const task = queue.tasks.find((t) => t.status === 'queued');
   if (!task) {
-    process.stdout.write(JSON.stringify({ claimed: false, refusalCode: 'no_queued_tasks', message: 'no queued tasks' }));
+    process.stdout.write(
+      JSON.stringify({
+        claimed: false,
+        refusalCode: 'no_queued_tasks',
+        resultCode: 'no_queued_tasks',
+        message: 'no queued tasks',
+      }),
+    );
     process.exit(10);
   }
 
@@ -219,7 +227,7 @@ function claimTask(queuePath, runtimePath, retryMs = 0, retryAttempted = false) 
     claimedAt,
   };
   writeJson(runtimePath, runtime);
-  process.stdout.write(JSON.stringify({ claimed: true, task: runtime }));
+  process.stdout.write(JSON.stringify({ claimed: true, resultCode: 'claimed_new_task', task: runtime }));
 }
 
 function completeTask(queuePath, runtimePath, reportPath, taskIdGuard, retryMs = 0, retryAttempted = false) {
@@ -397,6 +405,8 @@ function inspectRuntime(runtimePath, inProgressTaskIds, includeChecksum = false)
     matchesInProgress: false,
     health: 'unknown',
     checksumSha256: null,
+    checksumAlgorithm: null,
+    checksumMode: includeChecksum ? 'explicit' : 'none',
     sizeBytes: null,
     parseErrorKind: null,
   };
@@ -411,6 +421,7 @@ function inspectRuntime(runtimePath, inProgressTaskIds, includeChecksum = false)
     runtimeInfo.sizeBytes = Buffer.byteLength(raw, 'utf8');
     if (includeChecksum) {
       runtimeInfo.checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
+      runtimeInfo.checksumAlgorithm = 'sha256';
     }
     const runtime = JSON.parse(raw);
     ensureRuntimeShape(runtime, runtimePath);
@@ -427,6 +438,8 @@ function inspectRuntime(runtimePath, inProgressTaskIds, includeChecksum = false)
       try {
         const raw = fs.readFileSync(runtimePath, 'utf8');
         runtimeInfo.checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
+        runtimeInfo.checksumAlgorithm = 'sha256';
+        runtimeInfo.checksumMode = 'invalid_runtime_auto';
       } catch {
         // Preserve invalid diagnostics even if checksum read fails.
       }
@@ -503,6 +516,12 @@ function status(queuePath, runtimePath, includeRuntimeChecksum = false) {
     }
   }
   const driftKeys = summaryDrift.map((entry) => entry.split(':', 1)[0]).filter(Boolean);
+  const driftDeltas = driftKeys.reduce((acc, key) => {
+    const declared = persistedSnapshot ? Number(persistedSnapshot[key] ?? 0) : 0;
+    const actual = Number(actualSnapshot[key] ?? 0);
+    acc[key] = { declared, actual, delta: actual - declared };
+    return acc;
+  }, {});
   const hasOwnershipSensitiveDrift = driftKeys.includes('in_progress');
   const hasGlobalCountDrift = driftKeys.includes('total');
   const severity =
@@ -525,6 +544,7 @@ function status(queuePath, runtimePath, includeRuntimeChecksum = false) {
           severity,
           driftCount: summaryDrift.length,
           driftKeys,
+          driftDeltas,
           drift: summaryDrift,
           persisted: persistedSnapshot,
           actual: actualSnapshot,

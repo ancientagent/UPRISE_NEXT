@@ -211,6 +211,9 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar batch12 implemented-now/deferred wording sync (slice 364A):
   - Batch12 Lane E QA/review slices (360A-363A) are documentation/validation only and do not add new registrar runtime behavior.
   - Implemented-now and deferred boundaries remain unchanged from previously completed registrar API/web contract slices.
+- Registrar batch13 implemented-now/deferred wording sync (slice 394A):
+  - Batch13 Lane E QA/review slices (390A-393A) are documentation/validation only and do not add new registrar runtime behavior.
+  - Implemented-now and deferred boundaries remain unchanged from previously completed registrar API/web contract slices.
 
 ### Deferred (Not Implemented Yet)
 - Registrar-admin approval/issuance orchestration workflows for promoter capability codes.

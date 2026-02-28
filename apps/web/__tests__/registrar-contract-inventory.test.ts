@@ -244,6 +244,29 @@ describe('registrar contract inventory', () => {
       expect(contract.notes.toLowerCase()).toContain('not published');
     }
   });
+
+  it('keeps action-gated note strings free from leading/trailing whitespace drift', () => {
+    const actionGatedNotes = REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter((contract) =>
+      contract.notes.toLowerCase().includes('action-gated'),
+    ).map((contract) => contract.notes);
+    expect(actionGatedNotes.length).toBeGreaterThan(0);
+    for (const note of actionGatedNotes) {
+      expect(note).toBe(note.trim());
+      expect(note.includes('  ')).toBe(false);
+    }
+  });
+
+  it('keeps web-surface gap notes explicitly scoped to web-surface wording', () => {
+    const webSurfaceGaps = REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter(
+      (contract) => contract.status === 'gap' && contract.gapKind === 'web_surface_missing',
+    );
+    expect(webSurfaceGaps.length).toBeGreaterThan(0);
+    for (const contract of webSurfaceGaps) {
+      const note = contract.notes.toLowerCase();
+      expect(note).toContain('surface');
+      expect(note).toContain('web');
+    }
+  });
 });
 
 describe('registrar artist endpoint helpers', () => {

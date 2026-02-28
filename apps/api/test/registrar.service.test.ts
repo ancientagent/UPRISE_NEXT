@@ -1425,6 +1425,9 @@ describe('RegistrarService', () => {
     await expect(
       service.issueSystemPromoterCapabilityCodeForApprovedEntry('reg-system-seam-promoter-submitted-1'),
     ).rejects.toThrow(ForbiddenException);
+    await expect(
+      service.issueSystemPromoterCapabilityCodeForApprovedEntry('reg-system-seam-promoter-submitted-1'),
+    ).rejects.toThrow('Registrar code issuance requires registrar entry status approved');
 
     expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
   });
@@ -1638,6 +1641,11 @@ describe('RegistrarService', () => {
         actorType: 'system',
       }),
     ).rejects.toThrow(ForbiddenException);
+    await expect(
+      service.approvePromoterEntryAndIssueCapabilityCode('reg-promoter-lifecycle-invalid-state', {
+        actorType: 'system',
+      }),
+    ).rejects.toThrow('Registrar code issuance requires registrar entry status approved');
 
     expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
   });
@@ -1805,6 +1813,19 @@ describe('RegistrarService', () => {
     expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
   });
 
+  it('returns deterministic invalid-transition message for unknown lifecycle status edge', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-unknown-status-deterministic',
+      type: 'promoter_registration',
+      status: 'queued_review',
+      createdById: 'u-unknown',
+    });
+
+    await expect(
+      service.applyPromoterApprovalTransition('reg-promoter-unknown-status-deterministic', 'approved'),
+    ).rejects.toThrow('Registrar admin decision transition is not allowed for current status');
+  });
+
   it('rejects promoter approval transition from submitted to unsupported target status literal', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-promoter-submitted-invalid-target',
@@ -1821,6 +1842,22 @@ describe('RegistrarService', () => {
     ).rejects.toThrow(ForbiddenException);
 
     expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
+  });
+
+  it('returns deterministic submitted-only guard message for unsupported submitted target edge', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-submitted-invalid-target-message',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-invalid-target-message',
+    });
+
+    await expect(
+      service.applyPromoterApprovalTransition(
+        'reg-promoter-submitted-invalid-target-message',
+        'materialized' as unknown as 'approved',
+      ),
+    ).rejects.toThrow('Promoter approval transitions require registrar entry status submitted');
   });
 
   it.each(['approved', 'rejected', 'materialized'] as const)(
@@ -1880,10 +1917,12 @@ describe('RegistrarService', () => {
   it.each([
     { label: 'empty string', reason: '', expected: null },
     { label: 'whitespace-only string', reason: '   ', expected: null },
+    { label: 'tab/newline-only string', reason: '\n\t  \n', expected: null },
     { label: 'undefined reason', reason: undefined, expected: null },
     { label: 'null reason', reason: null, expected: null },
     { label: 'non-string reason', reason: 123 as any, expected: null },
     { label: 'trimmed reason', reason: '  docs complete  ', expected: 'docs complete' },
+    { label: 'trimmed multiline reason', reason: ' \n  queued evidence complete \t ', expected: 'queued evidence complete' },
   ])('normalizes decision reason edge case: $label', async ({ reason, expected }) => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-promoter-submitted-edge-reason',
@@ -1973,6 +2012,36 @@ describe('RegistrarService', () => {
     );
   });
 
+  it('trims before truncating when decision reason exceeds max length with outer whitespace', async () => {
+    const trimmedCore = 'c'.repeat(281);
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-over-max-trimmed-boundary',
+      type: 'promoter_registration',
+      status: 'submitted',
+      createdById: 'u-over-max-trimmed',
+    });
+    mockPrisma.registrarEntry.update.mockResolvedValue({
+      id: 'reg-promoter-over-max-trimmed-boundary',
+      type: 'promoter_registration',
+      status: 'approved',
+      updatedAt: new Date('2026-02-28T05:14:00.000Z'),
+    });
+
+    await service.applyPromoterApprovalTransition('reg-promoter-over-max-trimmed-boundary', 'approved', {
+      reason: `   ${trimmedCore}   `,
+    });
+
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({
+            decisionReason: 'c'.repeat(280),
+          }),
+        }),
+      }),
+    );
+  });
+
   it('rejects promoter approval transition for non-promoter registrar entry types', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-project-transition-1',
@@ -1992,6 +2061,9 @@ describe('RegistrarService', () => {
 
     await expect(service.applyPromoterApprovalTransition('missing-promoter-entry', 'approved')).rejects.toThrow(
       NotFoundException,
+    );
+    await expect(service.applyPromoterApprovalTransition('missing-promoter-entry', 'approved')).rejects.toThrow(
+      'Registrar entry not found',
     );
 
     expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
@@ -2099,6 +2171,26 @@ describe('RegistrarService', () => {
         where: { id: 'grant-promoter-active-rejected-1' },
       }),
     );
+    expect(mockPrisma.capabilityGrantAuditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          capability: 'promoter_capability',
+          action: 'capability_revoked',
+          actorType: 'system',
+          actorUserId: null,
+          targetUserId: 'u-1',
+          registrarEntryId: 'reg-promoter-rejected-revoke-1',
+          metadata: {
+            transitionFromStatus: 'active',
+            transitionToStatus: 'revoked',
+            decisionReason: null,
+            issuerType: null,
+            sourceRegistrarEntryId: 'reg-promoter-rejected-revoke-1',
+            sourceRegistrarCodeId: 'rcode-redeem-2',
+          },
+        }),
+      }),
+    );
     expect(result.status).toBe('revoked');
   });
 
@@ -2151,6 +2243,9 @@ describe('RegistrarService', () => {
     await expect(
       service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-inactive'),
     ).rejects.toThrow(ConflictException);
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-inactive'),
+    ).rejects.toThrow('Promoter capability grant is not in an active revocable state');
 
     expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
     expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
@@ -2175,6 +2270,9 @@ describe('RegistrarService', () => {
     await expect(
       service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-stale'),
     ).rejects.toThrow(ConflictException);
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-stale'),
+    ).rejects.toThrow('Promoter capability grant is not in an active revocable state');
 
     expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
   });
@@ -2197,6 +2295,9 @@ describe('RegistrarService', () => {
     await expect(
       service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-target'),
     ).rejects.toThrow(ConflictException);
+    await expect(
+      service.revokePromoterCapabilityGrantForUser('u-1', 'reg-promoter-approved-revoke-target'),
+    ).rejects.toThrow('Active promoter capability grant linkage does not match target registrar entry');
 
     expect(mockPrisma.userCapabilityGrant.update).not.toHaveBeenCalled();
     expect(mockPrisma.capabilityGrantAuditLog.create).not.toHaveBeenCalled();
@@ -2328,6 +2429,24 @@ describe('RegistrarService', () => {
     expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
   });
 
+  it('returns deterministic replay-block message when an active issued code already exists', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-active-code-message-1',
+      type: 'promoter_registration',
+      status: 'approved',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarCode.findFirst.mockResolvedValue({
+      id: 'rcode-active-existing-message-1',
+    });
+
+    await expect(
+      service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-active-code-message-1', {
+        issuer: 'system',
+      }),
+    ).rejects.toThrow('Registrar entry already has an active capability code; replay issuance is blocked');
+  });
+
   it('rejects registrar code issuance when duplicate active code appears during transactional race window', async () => {
     mockPrisma.registrarEntry.findUnique.mockResolvedValue({
       id: 'reg-promoter-race-window-1',
@@ -2347,6 +2466,24 @@ describe('RegistrarService', () => {
 
     expect(mockPrisma.registrarCode.findFirst).toHaveBeenCalledTimes(2);
     expect(mockPrisma.registrarCode.create).not.toHaveBeenCalled();
+  });
+
+  it('returns deterministic replay-block message for transactional race-window duplicate detection', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-promoter-race-window-message-1',
+      type: 'promoter_registration',
+      status: 'approved',
+      createdById: 'u-1',
+    });
+    mockPrisma.registrarCode.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ id: 'rcode-race-window-existing-message-1' });
+
+    await expect(
+      service.issueRegistrarCodeForApprovedPromoterEntry('reg-promoter-race-window-message-1', {
+        issuer: 'system',
+      }),
+    ).rejects.toThrow('Registrar entry already has an active capability code; replay issuance is blocked');
   });
 
   it('retries registrar code issuance on transient codeHash uniqueness conflict and succeeds', async () => {

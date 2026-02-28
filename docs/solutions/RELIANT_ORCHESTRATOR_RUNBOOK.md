@@ -39,6 +39,19 @@ Optional runtime-aware diagnostics:
 node scripts/reliant-slice-queue.mjs status --queue .reliant/queue/mvp-slices.json --runtime .reliant/runtime/current-task.json
 ```
 
+Deterministic supervisor health gate (no claim/repair side effects):
+```bash
+LANES_JSON=".reliant/runtime/lanes.json"
+STATUS_OUT=".reliant/runtime/supervisor-status.json"
+node scripts/reliant-supervisor.mjs --health-check --lanes-json "$LANES_JSON" --status-out "$STATUS_OUT"
+```
+- Exit `0`: healthy for required checks.
+- Exit `6`: health gate failed on one or more lanes.
+- Gate failure conditions:
+  - multiple `in_progress` tasks in a queue
+  - stale runtime file with no matching `in_progress` task
+  - summary drift (`queue.summary` vs actual task counts)
+
 Validate queue shape before execution:
 ```bash
 node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/mvp-slices.json
@@ -46,11 +59,15 @@ node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/mvp-slices.
 
 Manual claim/complete/block:
 ```bash
-node scripts/reliant-slice-queue.mjs claim --queue .reliant/queue/mvp-slices.json --runtime .reliant/runtime/current-task.json
-node scripts/reliant-slice-queue.mjs complete --queue .reliant/queue/mvp-slices.json --runtime .reliant/runtime/current-task.json --report docs/handoff/<note>.md
-node scripts/reliant-slice-queue.mjs block --queue .reliant/queue/mvp-slices.json --runtime .reliant/runtime/current-task.json --reason "<blocker>"
+QUEUE_PATH=".reliant/queue/mvp-slices.json"
+RUNTIME_PATH=".reliant/runtime/current-task.json"
+REPORT_PATH="docs/handoff/$(date +%F)_SLICE-EXAMPLE-001.md"
+BLOCKER_REASON="exact blocker text"
+node scripts/reliant-slice-queue.mjs claim --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH"
+node scripts/reliant-slice-queue.mjs complete --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH" --report "$REPORT_PATH"
+node scripts/reliant-slice-queue.mjs block --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH" --reason "$BLOCKER_REASON"
 ```
-- Optional guardrail: append `--task-id <expected-task-id>` to `complete`/`block` to prevent wrong-task transitions.
+- Optional guardrail: append `--task-id "$TASK_ID"` to `complete`/`block` to prevent wrong-task transitions.
 
 ## Reliant Run Steps
 1. Open project in Reliant.
@@ -101,13 +118,6 @@ node scripts/reliant-slice-queue.mjs claim --queue "$QUEUE_PATH" --runtime "$RUN
 4. If claim fails due to transition guard, resolve task state intentionally (done/blocked/queued) before retrying.
 
 If `claim`/`complete`/`block` reports `invalid runtime file` (for example missing `taskId`), treat it as stale runtime and run cleanup + single re-claim.
-
-
-## Rollback Checkpoints (Required in Throughput Runs)
-- Before major multi-lane cutovers, create checkpoint commits/tags.
-- Use compare-first rollback flow from .
-- Default to non-destructive rollback ( to checkpoint or ).
-- Use destructive reset only with explicit in-thread approval.
 
 ## Constraints
 - Additive/non-breaking first.

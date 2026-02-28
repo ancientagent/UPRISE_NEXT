@@ -42,6 +42,7 @@ function main() {
 
   const claimResult = run(['claim', '--queue', queuePath, '--runtime', runtimePath]);
   const claimJson = JSON.parse(claimResult.stdout);
+  assert.equal(claimJson.resultCode, 'claimed_new_task');
   assert.equal(claimJson.task.sourceQueue, null);
   const guardMismatch = run(['complete', '--queue', queuePath, '--runtime', runtimePath, '--task-id', 'WRONG-ID'], 4);
   assert.match(guardMismatch.stderr, /task-id guard mismatch/);
@@ -116,6 +117,8 @@ function main() {
   assert.equal(statusJson.runtime.matchesInProgress, false);
   assert.equal(statusJson.runtime.health, 'mismatch');
   assert.equal(statusJson.runtime.checksumSha256, null);
+  assert.equal(statusJson.runtime.checksumAlgorithm, null);
+  assert.equal(statusJson.runtime.checksumMode, 'none');
   assert.equal(typeof statusJson.runtime.sizeBytes, 'number');
   assert.equal(statusJson.runtime.parseErrorKind, null);
   assert.equal(statusJson.ownership.canClaim, false);
@@ -152,6 +155,7 @@ function main() {
   const alreadyInProgressClaimJson = JSON.parse(alreadyInProgressClaim.stdout);
   assert.equal(alreadyInProgressClaimJson.claimed, false);
   assert.equal(alreadyInProgressClaimJson.refusalCode, 'in_progress_active');
+  assert.equal(alreadyInProgressClaimJson.resultCode, 'in_progress_active');
   assert.equal(alreadyInProgressClaimJson.task.taskId, 'IP1');
 
   const mismatchClaim = run(
@@ -160,6 +164,7 @@ function main() {
   );
   const mismatchClaimJson = JSON.parse(mismatchClaim.stdout);
   assert.equal(mismatchClaimJson.refusalCode, 'runtime_mismatch_for_in_progress');
+  assert.equal(mismatchClaimJson.resultCode, 'runtime_mismatch_for_in_progress');
   assert.equal(mismatchClaimJson.inProgressTaskId, 'IP1');
   assert.equal(mismatchClaimJson.runtimeTaskId, 'T1');
   const mismatchClaimWithRetry = run(
@@ -196,6 +201,7 @@ function main() {
   );
   const missingRuntimeForInProgressJson = JSON.parse(missingRuntimeForInProgress.stdout);
   assert.equal(missingRuntimeForInProgressJson.refusalCode, 'runtime_missing_for_in_progress');
+  assert.equal(missingRuntimeForInProgressJson.resultCode, 'runtime_missing_for_in_progress');
 
   const invalidRuntimeStatus = run(
     ['status', '--queue', alreadyInProgressQueuePath, '--runtime', runtimePath],
@@ -205,6 +211,8 @@ function main() {
   assert.equal(invalidRuntimeStatusJson.runtime.health, 'invalid');
   assert.equal(invalidRuntimeStatusJson.runtime.parseErrorKind, 'runtime_shape_missing_task_id');
   assert.equal(typeof invalidRuntimeStatusJson.runtime.checksumSha256, 'string');
+  assert.equal(invalidRuntimeStatusJson.runtime.checksumAlgorithm, 'sha256');
+  assert.equal(invalidRuntimeStatusJson.runtime.checksumMode, 'invalid_runtime_auto');
   assert.equal(invalidRuntimeStatusJson.runtime.checksumSha256.length, 64);
 
   const invalidQueuePath = path.join(tempDir, 'invalid-queue.json');
@@ -262,6 +270,7 @@ function main() {
   const noQueuedClaim = run(['claim', '--queue', finishedQueuePath], 10);
   const noQueuedClaimJson = JSON.parse(noQueuedClaim.stdout);
   assert.equal(noQueuedClaimJson.refusalCode, 'no_queued_tasks');
+  assert.equal(noQueuedClaimJson.resultCode, 'no_queued_tasks');
 
   const persistedSummaryQueuePath = path.join(tempDir, 'persisted-summary-queue.json');
   fs.writeFileSync(
@@ -285,6 +294,8 @@ function main() {
   assert.equal(persistedStatusJson.summarySanity.actual.total, 1);
   assert.equal(persistedStatusJson.summarySanity.driftCount, 2);
   assert.deepEqual(persistedStatusJson.summarySanity.driftKeys, ['total', 'queued']);
+  assert.deepEqual(persistedStatusJson.summarySanity.driftDeltas.total, { declared: 2, actual: 1, delta: -1 });
+  assert.deepEqual(persistedStatusJson.summarySanity.driftDeltas.queued, { declared: 2, actual: 1, delta: -1 });
 
   const statusWithChecksum = run(
     ['status', '--queue', staleQueuePath, '--runtime', staleRuntimePath, '--runtime-checksum'],
@@ -292,6 +303,8 @@ function main() {
   );
   const statusWithChecksumJson = JSON.parse(statusWithChecksum.stdout);
   assert.equal(typeof statusWithChecksumJson.runtime.checksumSha256, 'string');
+  assert.equal(statusWithChecksumJson.runtime.checksumAlgorithm, 'sha256');
+  assert.equal(statusWithChecksumJson.runtime.checksumMode, 'explicit');
   assert.equal(statusWithChecksumJson.runtime.checksumSha256.length, 64);
 }
 
