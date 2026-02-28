@@ -7,6 +7,55 @@
 
 ## [Unreleased]
 ### Added
+- R1 spec-linked MVP web flow map added: `docs/solutions/MVP_FLOW_MAP_R1.md` mapping onboarding -> plot -> registrar -> core actions with implemented/deferred/dependency status and founder-decision flags.
+- R1 queue/runtime hygiene pass (Lane A):
+  - Audited all `.reliant/queue/*.json` and `.reliant/runtime/*.json` for deterministic hygiene issues only.
+  - Cleared stale `current-task*.json` runtime files with no matching `in_progress` queue tasks using `pnpm run reliant:runtime:clean`.
+  - Confirmed zero queue summary drift across all queue files; no queue summary rewrites required.
+  - Recorded exact command outputs in `docs/handoff/2026-02-28_r1-lane-a-queue-runtime-hygiene.md`.
+- R1 queue topology consolidation planning completed:
+  - Added `docs/solutions/RELIANT_QUEUE_TOPOLOGY_R1.md` with evidence-based classification of active/historical/duplicate queue files, recommended canonical active queue set, archive candidates (no deletion), and naming convention guardrails.
+  - Added command transcript handoff `docs/handoff/2026-02-28_r1-lane-c-queue-topology.md` including exact inventory outputs and founder escalation points.
+- Added spec-locked MVP execution roadmap for the remainder of project delivery:
+  - `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md`
+  - Defines phased closure path (R1-R5), lane model, stop-and-ask ambiguity gates, verification standard, and batch checkpoint cadence.
+  - Indexed in `docs/solutions/README.md` for agent/operator discovery.
+- Lane A admin-batch13 queue execution (`SLICE-ADMIN-371A`):
+  - Extended admin lifecycle negative-path parity matrix with deterministic message assertions for system-only issuance seam and approve+issue invalid-state checks.
+  - Preserved existing internal/public behavior (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-371a-admin-lifecycle-parity-matrix-pack-4.md`.
+- Lane A admin-batch13 queue execution (`SLICE-ADMIN-370A`):
+  - Reinforced revocation invariant regression coverage with deterministic error-message assertions for non-revocable and linkage-mismatch invalid states.
+  - Preserved existing behavior and API surface (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-370a-revocation-invariants-regression-pack-4.md`.
+- Lane A admin-batch13 queue execution (`SLICE-ADMIN-369A`):
+  - Strengthened lifecycle audit emission parity coverage with explicit rejected-entry revocation audit metadata/actor-field assertions.
+  - Preserved existing internals and behavior (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-369a-lifecycle-audit-emission-parity-pack-4.md`.
+- Action-gated contract note consistency pack 4 complete (slice `SLICE-WEBADMIN-377A`): added web-surface scope wording guard and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-377A.md` with exact verify output.
+- Lane A admin-batch13 queue execution (`SLICE-ADMIN-368A`):
+  - Extended approval/rejection reason edge-case normalization coverage for tab/newline whitespace and trim-before-truncate boundary behavior.
+  - Preserved existing API contract semantics (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-368a-approval-reason-edge-case-normalization-pack-4.md`.
+- Invite summary shape stability pack 4 complete (slice `SLICE-WEBADMIN-376A`): added queued/sent/failed mixed counter mapping assertions and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-376A.md` with exact verify output.
+- Project/sect nullable mapping assertions pack 4 complete (slice `SLICE-WEBADMIN-375A`): added inverse scene-nullability parity checks and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-375A.md` with exact verify output.
+- Lane A admin-batch13 queue execution (`SLICE-ADMIN-367A`):
+  - Hardened issuance replay/race matrix coverage with deterministic replay-block message assertions for pre-check and transaction race-window paths.
+  - Kept behavior scope unchanged (tests-only contract hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-367a-code-issuance-replay-race-matrix-pack-4.md`.
+- Inventory metadata note normalization pack 4 complete (slice `SLICE-WEBADMIN-374A`): added whitespace-drift guard for action-gated notes and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-374A.md` with exact verify output.
+- Registrar client auth error consistency pack 4 complete (slice `SLICE-WEBADMIN-373A`): added invalid-token propagation parity checks and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-373A.md` with exact verify output.
+- Lane A admin-batch13 queue execution (`SLICE-ADMIN-366A`):
+  - Extended admin transition-guard edge coverage with deterministic error-message assertions for unknown/unsupported/missing-entry paths.
+  - Preserved existing behavior and API surface (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-366a-admin-transition-guard-coverage-pack-4.md`.
+- Lane C batch13 task complete (SLICE-INVITE-383A): Invite deferred-boundary docs pass 4; report docs/handoff/2026-02-27_slice-383A-invite-deferred-boundary-docs-pass-4.md.
+- Lane C batch13 task complete (SLICE-INVITE-382A): Invite chronology assertions pack 4; report docs/handoff/2026-02-27_slice-382A-invite-chronology-assertions-pack-4.md.
+- Lane C batch13 task complete (SLICE-INVITE-381A): Provider terminal-outcome parser pack 4; report docs/handoff/2026-02-27_slice-381A-provider-terminal-outcome-parser-pack-4.md.
+- Capability-audit sparse payload assertions pack 4 complete (slice `SLICE-WEBADMIN-372A`): added nullable-array metadata sparse-payload checks and published `docs/handoff/2026-02-28_SLICE-WEBADMIN-372A.md` with exact verify output.
+- Lane C batch13 task complete (SLICE-INVITE-380A): Fallback failure boundary pack 4; report docs/handoff/2026-02-27_slice-380A-fallback-failure-boundary-pack-4.md.
+- Lane C batch13 task complete (SLICE-INVITE-379A): Queued-to-sent invariant pack 4; report docs/handoff/2026-02-27_slice-379A-queued-to-sent-invariant-pack-4.md.
+- Lane C batch13 task complete (SLICE-INVITE-378A): Finalize missing-record guard pack 4; report docs/handoff/2026-02-27_slice-378A-finalize-missing-record-guard-pack-4.md.
 - Added rollback governance documentation for multi-agent throughput runs:
   - `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md`
   - Runbook policy update in `docs/RUNBOOK.md`
@@ -1265,3 +1314,31 @@
 - Lane D batch12 slice complete (SLICE-AUTO-358A): runtime `status` diagnostics now emit checksum for invalid payloads and finer `parseErrorKind` taxonomy for malformed/stale runtime triage; see `docs/handoff/2026-02-28_SLICE-AUTO-358A.md`.
 
 - Lane D batch12 slice complete (SLICE-AUTO-359A): runbook command blocks hardened to copy-safe quoted-variable patterns (no shell placeholder splitting/redirection pitfalls); see `docs/handoff/2026-02-28_SLICE-AUTO-359A.md`.
+
+- Lane E batch13 slice complete (SLICE-QAREV-390A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-390A.md`.
+
+- Lane E batch13 slice complete (SLICE-QAREV-391A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-391A.md`.
+
+- Lane D batch13 slice complete (SLICE-AUTO-384A): supervisor ownership health now emits explicit `severity` and `requiresIntervention` cues for stale/runtime mismatch triage; see `docs/handoff/2026-02-28_SLICE-AUTO-384A.md`.
+
+- Lane E batch13 slice complete (SLICE-QAREV-392A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-392A.md`.
+
+- Lane E batch13 slice complete (SLICE-QAREV-393A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-393A.md`.
+
+- Lane E batch13 slice complete (SLICE-QAREV-394A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-394A.md`.
+
+- Lane E batch13 slice complete (SLICE-QAREV-395A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-395A.md`.
+
+- Lane D batch13 slice complete (SLICE-AUTO-385A): summary drift diagnostics now include deterministic per-key `driftDeltas` payloads (`declared/actual/delta`) for queue sanity triage; see `docs/handoff/2026-02-28_SLICE-AUTO-385A.md`.
+
+- Lane D batch13 slice complete (SLICE-AUTO-386A): claim responses now include normalized `resultCode` across success/refusal states while preserving existing refusal and exit semantics; see `docs/handoff/2026-02-28_SLICE-AUTO-386A.md`.
+
+- Lane D batch13 slice complete (SLICE-AUTO-387A): supervisor jitter seed is now explicitly clamped to a bounded range for contention-safe deterministic offsets; see `docs/handoff/2026-02-28_SLICE-AUTO-387A.md`.
+
+- Lane D batch13 slice complete (SLICE-AUTO-388A): runtime integrity diagnostics now include checksum metadata (`checksumAlgorithm`, `checksumMode`) for clearer malformed/stale runtime triage; see `docs/handoff/2026-02-28_SLICE-AUTO-388A.md`.
+
+- Lane D batch13 slice complete (SLICE-AUTO-389A): remaining runbook command blocks converted to copy-safe quoted variable patterns; malformed duplicate rollback fragment removed; see `docs/handoff/2026-02-28_SLICE-AUTO-389A.md`.
+
+- R1 Lane E docs baseline: added founder decision register + QA baseline checklists with founder-decision-required posture and verified docs/policy/typecheck gates.
+
+- R1 Lane D supervisor health gate: added deterministic `reliant-supervisor --health-check` (exit 6 on multiple in-progress, stale runtime without matching in-progress, or summary drift), with focused supervisor tests and runbook usage docs in `docs/handoff/2026-02-28_r1-lane-d-supervisor-health-gate.md`.
