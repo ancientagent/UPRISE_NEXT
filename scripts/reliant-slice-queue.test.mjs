@@ -48,6 +48,7 @@ function main() {
   assert.match(guardMismatch.stderr, /task-id guard mismatch/);
   const completeResult = run(['complete', '--queue', queuePath, '--runtime', runtimePath, '--report', 'docs/handoff/test.md']);
   const completeJson = JSON.parse(completeResult.stdout);
+  assert.equal(completeJson.resultCode, 'completed');
   assert.equal(typeof completeJson.updatedAt, 'string');
   const completedQueueJson = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
   assert.equal(completedQueueJson.tasks[0].finishedAt, completedQueueJson.tasks[0].updatedAt);
@@ -57,6 +58,7 @@ function main() {
     0,
   );
   const completeAgainJson = JSON.parse(completeAgain.stdout);
+  assert.equal(completeAgainJson.resultCode, 'complete_idempotent');
   assert.equal(completeAgainJson.idempotent, true);
   assert.equal(typeof completeAgainJson.updatedAt, 'string');
 
@@ -79,6 +81,7 @@ function main() {
   fs.writeFileSync(blockRuntimePath, `${JSON.stringify({ taskId: 'B1' }, null, 2)}\n`);
   const blockResult = run(['block', '--queue', blockQueuePath, '--runtime', blockRuntimePath, '--reason', 'test-block']);
   const blockJson = JSON.parse(blockResult.stdout);
+  assert.equal(blockJson.resultCode, 'blocked');
   assert.equal(typeof blockJson.updatedAt, 'string');
   const blockedQueueJson = JSON.parse(fs.readFileSync(blockQueuePath, 'utf8'));
   assert.equal(blockedQueueJson.tasks[0].blockedAt, blockedQueueJson.tasks[0].updatedAt);
@@ -111,6 +114,7 @@ function main() {
   assert.equal(statusJson.summarySanity.persisted, null);
   assert.equal(statusJson.summarySanity.actual.total, 2);
   assert.equal(statusJson.summarySanity.driftCount, 0);
+  assert.equal(statusJson.summarySanity.driftFingerprint, 'none');
   assert.equal(statusJson.runtime.exists, true);
   assert.equal(statusJson.runtime.valid, true);
   assert.equal(statusJson.runtime.taskId, 'A');
@@ -119,6 +123,7 @@ function main() {
   assert.equal(statusJson.runtime.checksumSha256, null);
   assert.equal(statusJson.runtime.checksumAlgorithm, null);
   assert.equal(statusJson.runtime.checksumMode, 'none');
+  assert.equal(statusJson.runtime.checksumPresent, false);
   assert.equal(typeof statusJson.runtime.sizeBytes, 'number');
   assert.equal(statusJson.runtime.parseErrorKind, null);
   assert.equal(statusJson.ownership.canClaim, false);
@@ -213,6 +218,7 @@ function main() {
   assert.equal(typeof invalidRuntimeStatusJson.runtime.checksumSha256, 'string');
   assert.equal(invalidRuntimeStatusJson.runtime.checksumAlgorithm, 'sha256');
   assert.equal(invalidRuntimeStatusJson.runtime.checksumMode, 'invalid_runtime_auto');
+  assert.equal(invalidRuntimeStatusJson.runtime.checksumPresent, true);
   assert.equal(invalidRuntimeStatusJson.runtime.checksumSha256.length, 64);
 
   const invalidQueuePath = path.join(tempDir, 'invalid-queue.json');
@@ -296,6 +302,10 @@ function main() {
   assert.deepEqual(persistedStatusJson.summarySanity.driftKeys, ['total', 'queued']);
   assert.deepEqual(persistedStatusJson.summarySanity.driftDeltas.total, { declared: 2, actual: 1, delta: -1 });
   assert.deepEqual(persistedStatusJson.summarySanity.driftDeltas.queued, { declared: 2, actual: 1, delta: -1 });
+  assert.equal(
+    persistedStatusJson.summarySanity.driftFingerprint,
+    'total:declared=2:actual=1|queued:declared=2:actual=1',
+  );
 
   const statusWithChecksum = run(
     ['status', '--queue', staleQueuePath, '--runtime', staleRuntimePath, '--runtime-checksum'],
@@ -305,6 +315,7 @@ function main() {
   assert.equal(typeof statusWithChecksumJson.runtime.checksumSha256, 'string');
   assert.equal(statusWithChecksumJson.runtime.checksumAlgorithm, 'sha256');
   assert.equal(statusWithChecksumJson.runtime.checksumMode, 'explicit');
+  assert.equal(statusWithChecksumJson.runtime.checksumPresent, true);
   assert.equal(statusWithChecksumJson.runtime.checksumSha256.length, 64);
 }
 

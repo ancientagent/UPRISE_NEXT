@@ -145,17 +145,20 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
   const operatorCues = [];
   let state = 'healthy';
   let severity = 'none';
+  let failureCode = null;
   const queuePath = lane?.queue ?? runtimeOwnership.runtimePath;
   const runtimePath = lane?.runtime ?? runtimeOwnership.runtimePath;
 
   if (inProgressCount === 0 && runtimeOwnership.exists) {
     state = 'stale_runtime_without_owner';
     severity = 'medium';
+    failureCode = 'stale_runtime';
     hints.push('clear_runtime');
     operatorCues.push(`node scripts/reliant-runtime-clean.mjs --runtime ${runtimePath}`);
   } else if (inProgressCount > 0 && !runtimeOwnership.exists) {
     state = 'missing_runtime_for_owner';
     severity = 'high';
+    failureCode = 'missing_runtime';
     hints.push('recreate_runtime');
     operatorCues.push(
       `node scripts/reliant-slice-queue.mjs status --queue ${queuePath} --runtime ${runtimePath}`,
@@ -164,6 +167,7 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
   } else if (runtimeOwnership.exists && !runtimeOwnership.valid) {
     state = 'invalid_runtime_payload';
     severity = 'high';
+    failureCode = 'invalid_runtime_payload';
     hints.push('runtime_clean_then_reclaim');
     operatorCues.push(
       `node scripts/reliant-runtime-clean.mjs --runtime ${runtimePath}`,
@@ -172,6 +176,7 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
   } else if (runtimeOwnership.exists && inProgressCount > 0 && !runtimeOwnership.matchesInProgress) {
     state = 'runtime_owner_mismatch';
     severity = 'critical';
+    failureCode = 'runtime_owner_mismatch';
     hints.push('runtime_clean_then_reclaim');
     operatorCues.push(
       `node scripts/reliant-slice-queue.mjs status --queue ${queuePath} --runtime ${runtimePath}`,
@@ -180,7 +185,7 @@ function classifyOwnership(runtimeOwnership, inProgressCount, lane = null) {
     );
   }
 
-  return { state, severity, requiresIntervention: severity !== 'none', hints, operatorCues };
+  return { state, severity, failureCode, requiresIntervention: severity !== 'none', hints, operatorCues };
 }
 
 function choosePrimaryInProgress(tasks) {
@@ -396,6 +401,7 @@ async function main() {
         intervalMs,
         intervalJitterMs,
         jitterSeed,
+        jitterCycleLength: intervalJitterMs > 0 ? intervalJitterMs + 1 : 1,
       },
       lanes: [],
     };

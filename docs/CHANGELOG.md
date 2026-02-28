@@ -7,6 +7,42 @@
 
 ## [Unreleased]
 ### Added
+- Lane B batch14 task complete (SLICE-WEBADMIN-407A): added docs/tests parity assertions that lock MVP flow-map implemented/deferred registrar boundaries to contract inventory statuses; report docs/handoff/2026-02-28_SLICE-WEBADMIN-407A.md.
+- Lane B batch14 task complete (SLICE-WEBADMIN-406A): hardened invite summary top-level/per-entry shape stability assertions for empty-member response models; report docs/handoff/2026-02-28_SLICE-WEBADMIN-406A.md.
+- Lane A admin-batch14 queue execution (`SLICE-ADMIN-401A`):
+  - Expanded admin lifecycle helper negative-path parity with deterministic guard-message assertions for system-only actor and decision-phase missing/non-promoter paths.
+  - Preserved existing behavior and public contract (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-401a-registrar-admin-parity-closeout-pack-5.md`.
+- Lane B batch14 task complete (SLICE-WEBADMIN-405A): extended project/sect nullable mapping parity assertions across list-response web client contracts; report docs/handoff/2026-02-28_SLICE-WEBADMIN-405A.md.
+- Lane A admin-batch14 queue execution (`SLICE-ADMIN-400A`):
+  - Reinforced revocation invariants with deterministic invalid-state message parity for missing active grant and null-linkage mismatch paths.
+  - Preserved existing behavior and route/service contracts (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-400a-registrar-revocation-invariants-regression-pack-5.md`.
+- Lane B batch14 task complete (SLICE-WEBADMIN-404A): added deferred admin-lifecycle action-gated note/metadata parity assertions for registrar contract inventory; report docs/handoff/2026-02-28_SLICE-WEBADMIN-404A.md.
+- Lane B batch14 task complete (SLICE-WEBADMIN-403A): extended registrar client auth/error propagation parity assertions for submit/list/materialize/dispatch/sync methods; report docs/handoff/2026-02-28_SLICE-WEBADMIN-403A.md.
+- Lane A admin-batch14 queue execution (`SLICE-ADMIN-399A`):
+  - Strengthened lifecycle audit metadata parity checks for approval/rejection decision events, including deterministic null issuance-linkage fields.
+  - Preserved existing behavior and internals (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-399a-registrar-lifecycle-audit-parity-pack-5.md`.
+- Lane A admin-batch14 queue execution (`SLICE-ADMIN-398A`):
+  - Tightened approval/rejection metadata normalization edge coverage for numeric-string trimming and internal-whitespace preservation.
+  - Preserved existing response contracts and behavior (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-398a-registrar-approval-metadata-normalization-pack-5.md`.
+- Lane B batch14 task complete (SLICE-WEBADMIN-402A): locked MVP onboarding->plot->registrar route dependency assertions in web contract inventory/tests; report docs/handoff/2026-02-28_SLICE-WEBADMIN-402A.md.
+- Lane A admin-batch14 queue execution (`SLICE-ADMIN-397A`):
+  - Hardened registrar code issuance replay/duplicate safeguard parity with deterministic guard-message assertions for issuer/type/status preconditions.
+  - Preserved existing behavior and contract (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-397a-registrar-code-issuance-replay-safeguards-pack-5.md`.
+- Lane A admin-batch14 queue execution (`SLICE-ADMIN-396A`):
+  - Extended registrar transition-guard matrix parity with deterministic forbidden/not-found message assertions across existing lifecycle guard paths.
+  - Preserved existing behavior and public contract (tests-only hardening).
+  - Recorded exact verify output and completion report in `docs/handoff/2026-02-28_slice-admin-396a-registrar-transition-guard-matrix-pack-5.md`.
+- Lane C batch14 task complete (SLICE-INVITE-413A): Invite docs deferred-boundary pass 5; report docs/handoff/2026-02-28_slice-413A-invite-docs-deferred-boundary-pass-5.md.
+- Lane C batch14 task complete (SLICE-INVITE-412A): Invite chronology read-model assertions pack 5; report docs/handoff/2026-02-28_slice-412A-invite-chronology-read-model-assertions-pack-5.md.
+- Lane C batch14 task complete (SLICE-INVITE-411A): Invite provider outcome parser pack 5; report docs/handoff/2026-02-28_slice-411A-invite-provider-outcome-parser-pack-5.md.
+- Lane C batch14 task complete (SLICE-INVITE-410A): Invite failure boundary mapping pack 5; report docs/handoff/2026-02-28_slice-410A-invite-failure-boundary-mapping-pack-5.md.
+- Lane C batch14 task complete (SLICE-INVITE-409A): Invite queued-to-sent invariant pack 5; report docs/handoff/2026-02-28_slice-409A-invite-queued-to-sent-invariant-pack-5.md.
+- Lane C batch14 task complete (SLICE-INVITE-408A): Invite finalize missing-record guard pack 5; report docs/handoff/2026-02-28_slice-408A-invite-finalize-missing-record-guard-pack-5.md.
 - R1 spec-linked MVP web flow map added: `docs/solutions/MVP_FLOW_MAP_R1.md` mapping onboarding -> plot -> registrar -> core actions with implemented/deferred/dependency status and founder-decision flags.
 - R1 queue/runtime hygiene pass (Lane A):
   - Audited all `.reliant/queue/*.json` and `.reliant/runtime/*.json` for deterministic hygiene issues only.
@@ -1342,3 +1378,27 @@
 - R1 Lane E docs baseline: added founder decision register + QA baseline checklists with founder-decision-required posture and verified docs/policy/typecheck gates.
 
 - R1 Lane D supervisor health gate: added deterministic `reliant-supervisor --health-check` (exit 6 on multiple in-progress, stale runtime without matching in-progress, or summary drift), with focused supervisor tests and runbook usage docs in `docs/handoff/2026-02-28_r1-lane-d-supervisor-health-gate.md`.
+
+- Lane D batch14 slice complete (SLICE-AUTO-414A): supervisor ownership diagnostics now include deterministic `failureCode` values for stale/missing/invalid/mismatch runtime states; see `docs/handoff/2026-02-28_SLICE-AUTO-414A.md`.
+
+- Lane E batch14 slice complete (SLICE-QAREV-420A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-420A.md`.
+
+- Lane E batch14 slice complete (SLICE-QAREV-421A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-421A.md`.
+
+- Lane E batch14 slice complete (SLICE-QAREV-422A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-422A.md`.
+
+- Lane D batch14 slice complete (SLICE-AUTO-415A): summary drift status now includes deterministic `driftFingerprint` for fast queue sanity diffing; see `docs/handoff/2026-02-28_SLICE-AUTO-415A.md`.
+
+- Lane E batch14 slice complete (SLICE-QAREV-423A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-423A.md`.
+
+- Lane E batch14 slice complete (SLICE-QAREV-424A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-424A.md`.
+
+- Lane E batch14 slice complete (SLICE-QAREV-425A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-425A.md`.
+
+- Lane D batch14 slice complete (SLICE-AUTO-416A): queue transition responses now include normalized `resultCode` values for `complete`/idempotent complete/`block`; see `docs/handoff/2026-02-28_SLICE-AUTO-416A.md`.
+
+- Lane D batch14 slice complete (SLICE-AUTO-417A): supervisor interval diagnostics now include deterministic `jitterCycleLength` for parallel-loop contention analysis; see `docs/handoff/2026-02-28_SLICE-AUTO-417A.md`.
+
+- Lane D batch14 slice complete (SLICE-AUTO-418A): runtime status diagnostics now include deterministic `checksumPresent` metadata across explicit/auto checksum modes; see `docs/handoff/2026-02-28_SLICE-AUTO-418A.md`.
+
+- Lane D batch14 slice complete (SLICE-AUTO-419A): runbook manual transition examples now define `TASK_ID` and use guarded `--task-id` copy-safe commands by default; see `docs/handoff/2026-02-28_SLICE-AUTO-419A.md`.

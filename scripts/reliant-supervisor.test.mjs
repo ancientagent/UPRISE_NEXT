@@ -67,12 +67,14 @@ function main() {
   assert.equal(status.intervalConfig.intervalMs, 500);
   assert.equal(status.intervalConfig.intervalJitterMs, 5000);
   assert.equal(status.intervalConfig.jitterSeed, 1000000);
+  assert.equal(status.intervalConfig.jitterCycleLength, 5001);
   assert.equal(status.lanes.length, 1);
   assert.equal(status.lanes[0].runtimeOwnership.exists, true);
   assert.equal(status.lanes[0].runtimeOwnership.runtimeTaskId, 'B');
   assert.equal(status.lanes[0].runtimeOwnership.matchesInProgress, true);
   assert.equal(status.lanes[0].ownershipHealth.state, 'healthy');
   assert.equal(status.lanes[0].ownershipHealth.severity, 'none');
+  assert.equal(status.lanes[0].ownershipHealth.failureCode, null);
   assert.equal(status.lanes[0].ownershipHealth.requiresIntervention, false);
   assert.deepEqual(status.lanes[0].ownershipHealth.hints, []);
   assert.deepEqual(status.lanes[0].ownershipHealth.operatorCues, []);
@@ -94,6 +96,7 @@ function main() {
   const staleStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
   assert.equal(staleStatus.lanes[0].ownershipHealth.state, 'stale_runtime_without_owner');
   assert.equal(staleStatus.lanes[0].ownershipHealth.severity, 'medium');
+  assert.equal(staleStatus.lanes[0].ownershipHealth.failureCode, 'stale_runtime');
   assert.equal(staleStatus.lanes[0].ownershipHealth.requiresIntervention, true);
   assert.ok(
     staleStatus.lanes[0].ownershipHealth.operatorCues.some(

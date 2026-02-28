@@ -1,4 +1,5 @@
 import {
+  MVP_FLOW_ROUTE_CONTRACTS,
   REGISTRAR_WEB_ENDPOINT_CONTRACTS,
   REGISTRAR_WEB_FIELD_GAPS,
   getRegistrarWebGapContracts,
@@ -10,6 +11,44 @@ import {
 } from '../src/lib/registrar/contractInventory';
 
 describe('registrar contract inventory', () => {
+  it('keeps MVP flow route contract ids unique', () => {
+    const ids = MVP_FLOW_ROUTE_CONTRACTS.map((contract) => contract.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('locks onboarding -> plot -> registrar dependency routes for MVP flow map R1', () => {
+    const byId = new Map(MVP_FLOW_ROUTE_CONTRACTS.map((contract) => [contract.id, contract]));
+
+    expect(byId.get('onboarding_home_scene')).toEqual({
+      id: 'onboarding_home_scene',
+      webRoute: '/onboarding',
+      apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/communities/resolve-home'],
+      notes: 'Home Scene resolution and GPS eligibility feed Plot and Registrar dependencies.',
+    });
+    expect(byId.get('plot_scene_dashboard')).toEqual({
+      id: 'plot_scene_dashboard',
+      webRoute: '/plot',
+      apiDependencies: ['/communities/resolve-home'],
+      notes: 'Plot route depends on resolved Home Scene context before scene-scoped reads.',
+    });
+    expect(byId.get('registrar_scene_actions')).toEqual({
+      id: 'registrar_scene_actions',
+      webRoute: '/registrar',
+      apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/registrar/artist'],
+      notes: 'Registrar submit flow depends on scene-scoped onboarding + GPS eligibility context.',
+    });
+  });
+
+  it('keeps MVP flow route dependencies non-empty and rooted to API paths', () => {
+    expect(MVP_FLOW_ROUTE_CONTRACTS.length).toBe(3);
+    for (const contract of MVP_FLOW_ROUTE_CONTRACTS) {
+      expect(contract.apiDependencies.length).toBeGreaterThan(0);
+      for (const path of contract.apiDependencies) {
+        expect(path.startsWith('/')).toBe(true);
+      }
+    }
+  });
+
   it('keeps endpoint ids unique', () => {
     const ids = REGISTRAR_WEB_ENDPOINT_CONTRACTS.map((contract) => contract.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -265,6 +304,67 @@ describe('registrar contract inventory', () => {
       const note = contract.notes.toLowerCase();
       expect(note).toContain('surface');
       expect(note).toContain('web');
+    }
+  });
+
+  it('keeps deferred-admin lifecycle metadata and note wording in strict parity', () => {
+    const deferredAdminContracts = REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter(
+      (contract) => contract.deferredAdminLifecycle === 'action_gated',
+    );
+    expect(deferredAdminContracts.length).toBeGreaterThan(0);
+
+    for (const contract of deferredAdminContracts) {
+      expect(contract.status).toBe('gap');
+      expect(contract.gapKind).toBe('web_surface_missing');
+      expect(contract.notes.toLowerCase()).toContain('deferred admin-lifecycle');
+      expect(contract.notes.toLowerCase()).toContain('action-gated');
+    }
+
+    const nonDeferred = REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter(
+      (contract) => contract.deferredAdminLifecycle !== 'action_gated',
+    );
+    for (const contract of nonDeferred) {
+      expect(contract.notes.toLowerCase().includes('deferred admin-lifecycle')).toBe(false);
+    }
+  });
+
+  it('keeps MVP flow map implemented/deferred registrar boundaries aligned with inventory status', () => {
+    const byId = new Map(REGISTRAR_WEB_ENDPOINT_CONTRACTS.map((contract) => [contract.id, contract]));
+    const implementedNow = [
+      'registrar.artist.submit',
+      'registrar.artist.entries.list',
+      'registrar.artist.entry.invites',
+    ];
+    const deferredActionGated = [
+      'registrar.promoter.submit',
+      'registrar.promoter.entries.list',
+      'registrar.promoter.entry.detail',
+      'registrar.promoter.entry.capability_audit',
+      'registrar.project.submit',
+      'registrar.sect_motion.submit',
+      'registrar.code.verify',
+      'registrar.code.redeem',
+    ];
+
+    for (const id of implementedNow) {
+      expect(byId.get(id)).toEqual(
+        expect.objectContaining({
+          id,
+          status: 'implemented',
+          gapKind: null,
+        }),
+      );
+    }
+
+    for (const id of deferredActionGated) {
+      expect(byId.get(id)).toEqual(
+        expect.objectContaining({
+          id,
+          status: 'gap',
+          gapKind: 'web_surface_missing',
+        }),
+      );
+      expect(byId.get(id)?.notes.toLowerCase()).toContain('action-gated');
     }
   });
 });

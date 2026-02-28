@@ -1,15 +1,21 @@
 import { api } from '../src/lib/api';
 import {
+  dispatchArtistBandInvites,
   getPromoterCapabilityAudit,
   getPromoterRegistration,
+  listArtistBandRegistrations,
   getSectMotionRegistration,
   REGISTRAR_CODE_API_SCAFFOLD,
   getProjectRegistration,
+  materializeArtistBandRegistration,
   listPromoterRegistrations,
   listSectMotionRegistrations,
   listProjectRegistrations,
   loadArtistBandInviteStatus,
   redeemRegistrarCode,
+  submitArtistBandRegistration,
+  submitProjectRegistration,
+  syncArtistBandMembers,
   verifyRegistrarCode,
 } from '../src/lib/registrar/client';
 
@@ -535,6 +541,65 @@ describe('registrar sect-motion read client scaffolding', () => {
     expect(project.scene).toBeNull();
     expect(sect.payload).toEqual(expect.objectContaining({ notes: null, reason: 'schedule_alignment' }));
     expect(sect.scene).toEqual(expect.objectContaining({ id: 'scene-5', tier: 'city' }));
+  });
+
+  it('keeps project/sect nullable mapping parity across list responses', async () => {
+    mockedApiGet.mockResolvedValueOnce({
+      success: true,
+      data: {
+        total: 1,
+        countsByStatus: { submitted: 1 },
+        entries: [
+          {
+            id: 'reg-project-6',
+            type: 'project_registration',
+            status: 'submitted',
+            sceneId: 'scene-6',
+            payload: { projectName: null },
+            scene: null,
+            createdAt: '2026-02-28T06:00:00.000Z',
+            updatedAt: '2026-02-28T06:05:00.000Z',
+          },
+        ],
+      },
+    });
+    const projects = await listProjectRegistrations('token-6');
+
+    mockedApiGet.mockResolvedValueOnce({
+      success: true,
+      data: {
+        total: 1,
+        countsByStatus: { submitted: 1 },
+        entries: [
+          {
+            id: 'reg-sect-6',
+            type: 'sect_motion',
+            status: 'submitted',
+            sceneId: 'scene-6',
+            payload: { notes: null, reason: 'community_update' },
+            scene: null,
+            createdAt: '2026-02-28T06:06:00.000Z',
+            updatedAt: '2026-02-28T06:08:00.000Z',
+          },
+        ],
+      },
+    });
+    const sects = await listSectMotionRegistrations('token-6');
+
+    expect(projects.countsByStatus).toEqual({ submitted: 1 });
+    expect(projects.entries[0]).toEqual(
+      expect.objectContaining({
+        payload: { projectName: null },
+        scene: null,
+      }),
+    );
+    expect(sects.countsByStatus).toEqual({ submitted: 1 });
+    expect(sects.entries[0]).toEqual(
+      expect.objectContaining({
+        payload: expect.objectContaining({ notes: null, reason: 'community_update' }),
+        scene: null,
+      }),
+    );
   });
 
   it('throws when sect-motion detail response has no data payload', async () => {
@@ -1328,6 +1393,26 @@ describe('registrar invite-status read client scaffolding', () => {
     );
   });
 
+  it('preserves invite summary top-level shape when member rows are empty', async () => {
+    mockedApiGet.mockResolvedValueOnce({
+      success: true,
+      data: {
+        registrarEntryId: 'reg-artist-empty',
+        totalMembers: 0,
+        countsByStatus: {},
+        members: [],
+      },
+    });
+
+    const response = await loadArtistBandInviteStatus('reg-artist-empty', 'token-empty');
+
+    expect(Object.keys(response).sort()).toEqual(['countsByStatus', 'members', 'registrarEntryId', 'totalMembers']);
+    expect(response.registrarEntryId).toBe('reg-artist-empty');
+    expect(response.totalMembers).toBe(0);
+    expect(response.countsByStatus).toEqual({});
+    expect(response.members).toEqual([]);
+  });
+
   it('throws when invite-status response has no data payload', async () => {
     mockedApiGet.mockResolvedValueOnce({ success: true, data: undefined });
 
@@ -1429,5 +1514,95 @@ describe('registrar client auth-error propagation consistency', () => {
 
     mockedApiPost.mockRejectedValueOnce(new Error('Invalid token'));
     await expect(redeemRegistrarCode('PRC-1', 'invalid-token')).rejects.toThrow('Invalid token');
+  });
+
+  it('propagates Unauthorized errors for submit/list/materialize/dispatch/sync methods', async () => {
+    mockedApiGet.mockRejectedValueOnce(new Error('Unauthorized'));
+    await expect(listArtistBandRegistrations('bad-token')).rejects.toThrow('Unauthorized');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Unauthorized'));
+    await expect(
+      submitArtistBandRegistration(
+        {
+          sceneId: 'scene-1',
+          name: 'Night Transit',
+          slug: 'night-transit',
+          entityType: 'band',
+          members: [],
+        },
+        'bad-token',
+      ),
+    ).rejects.toThrow('Unauthorized');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Unauthorized'));
+    await expect(
+      submitProjectRegistration(
+        {
+          sceneId: 'scene-1',
+          projectName: 'Night Transit Sessions',
+        },
+        'bad-token',
+      ),
+    ).rejects.toThrow('Unauthorized');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Unauthorized'));
+    await expect(materializeArtistBandRegistration('reg-artist-1', 'bad-token')).rejects.toThrow('Unauthorized');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Unauthorized'));
+    await expect(
+      dispatchArtistBandInvites(
+        'reg-artist-1',
+        { mobileAppUrl: 'uprise://invite', webAppUrl: 'https://app.uprise.local/invite' },
+        'bad-token',
+      ),
+    ).rejects.toThrow('Unauthorized');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Unauthorized'));
+    await expect(syncArtistBandMembers('reg-artist-1', 'bad-token')).rejects.toThrow('Unauthorized');
+  });
+
+  it('propagates Forbidden errors for submit/list/materialize/dispatch/sync methods', async () => {
+    mockedApiGet.mockRejectedValueOnce(new Error('Forbidden'));
+    await expect(listArtistBandRegistrations('forbidden-token')).rejects.toThrow('Forbidden');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Forbidden'));
+    await expect(
+      submitArtistBandRegistration(
+        {
+          sceneId: 'scene-1',
+          name: 'Night Transit',
+          slug: 'night-transit',
+          entityType: 'band',
+          members: [],
+        },
+        'forbidden-token',
+      ),
+    ).rejects.toThrow('Forbidden');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Forbidden'));
+    await expect(
+      submitProjectRegistration(
+        {
+          sceneId: 'scene-1',
+          projectName: 'Night Transit Sessions',
+        },
+        'forbidden-token',
+      ),
+    ).rejects.toThrow('Forbidden');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Forbidden'));
+    await expect(materializeArtistBandRegistration('reg-artist-1', 'forbidden-token')).rejects.toThrow('Forbidden');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Forbidden'));
+    await expect(
+      dispatchArtistBandInvites(
+        'reg-artist-1',
+        { mobileAppUrl: 'uprise://invite', webAppUrl: 'https://app.uprise.local/invite' },
+        'forbidden-token',
+      ),
+    ).rejects.toThrow('Forbidden');
+
+    mockedApiPost.mockRejectedValueOnce(new Error('Forbidden'));
+    await expect(syncArtistBandMembers('reg-artist-1', 'forbidden-token')).rejects.toThrow('Forbidden');
   });
 });

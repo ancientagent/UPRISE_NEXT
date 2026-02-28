@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T05:34:18.767Z",
+  "lane": "lane-b-web-contract-batch14",
+  "sourceFiles": [
+    "mvp-slices-batch14-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-WEBADMIN-402A",
+      "title": "MVP flow map route contract assertions pack 1",
+      "prompt": "Execute one MVP slice only: align web typed client contract assertions to MVP flow map routes (onboarding/plot/registrar dependencies) with no UI CTA expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:37:45.044Z",
+      "lane": "lane-b-web-contract-batch14",
+      "startedAt": "2026-02-28T05:36:00.718Z",
+      "finishedAt": "2026-02-28T05:37:45.044Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-402A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-403A",
+      "title": "Registrar client auth/error parity pack 5",
+      "prompt": "Execute one MVP slice only: normalize auth/error propagation assertions across existing registrar web client methods; tests-only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:39:08.320Z",
+      "lane": "lane-b-web-contract-batch14",
+      "startedAt": "2026-02-28T05:37:50.028Z",
+      "finishedAt": "2026-02-28T05:39:08.320Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-403A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-404A",
+      "title": "Contract inventory action-gated notes pack 5",
+      "prompt": "Execute one MVP slice only: continue inventory note consistency for implemented-vs-action-gated registrar surfaces; tests/docs only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:39:56.573Z",
+      "lane": "lane-b-web-contract-batch14",
+      "startedAt": "2026-02-28T05:39:11.484Z",
+      "finishedAt": "2026-02-28T05:39:56.573Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-404A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-405A",
+      "title": "Project/sect nullable mapping assertions pack 5",
+      "prompt": "Execute one MVP slice only: extend project/sect nullable mapping parity assertions for existing web client read contracts.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:40:52.332Z",
+      "lane": "lane-b-web-contract-batch14",
+      "startedAt": "2026-02-28T05:39:59.525Z",
+      "finishedAt": "2026-02-28T05:40:52.332Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-405A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-406A",
+      "title": "Invite summary shape stability pack 5",
+      "prompt": "Execute one MVP slice only: harden invite summary top-level/per-entry shape stability assertions for existing response models only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:41:44.997Z",
+      "lane": "lane-b-web-contract-batch14",
+      "startedAt": "2026-02-28T05:40:58.940Z",
+      "finishedAt": "2026-02-28T05:41:44.997Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-406A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-407A",
+      "title": "MVP flow docs-web parity pass",
+      "prompt": "Execute one MVP slice only: docs/tests consistency pass to ensure web contract inventory language matches MVP flow map implemented/deferred boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:42:41.221Z",
+      "lane": "lane-b-web-contract-batch14",
+      "startedAt": "2026-02-28T05:41:48.137Z",
+      "finishedAt": "2026-02-28T05:42:41.221Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-WEBADMIN-407A.md"
+    }
+  ]
+}

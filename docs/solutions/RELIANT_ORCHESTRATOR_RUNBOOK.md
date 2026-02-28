@@ -61,11 +61,12 @@ Manual claim/complete/block:
 ```bash
 QUEUE_PATH=".reliant/queue/mvp-slices.json"
 RUNTIME_PATH=".reliant/runtime/current-task.json"
+TASK_ID="SLICE-EXAMPLE-001"
 REPORT_PATH="docs/handoff/$(date +%F)_SLICE-EXAMPLE-001.md"
 BLOCKER_REASON="exact blocker text"
 node scripts/reliant-slice-queue.mjs claim --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH"
-node scripts/reliant-slice-queue.mjs complete --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH" --report "$REPORT_PATH"
-node scripts/reliant-slice-queue.mjs block --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH" --reason "$BLOCKER_REASON"
+node scripts/reliant-slice-queue.mjs complete --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH" --task-id "$TASK_ID" --report "$REPORT_PATH"
+node scripts/reliant-slice-queue.mjs block --queue "$QUEUE_PATH" --runtime "$RUNTIME_PATH" --task-id "$TASK_ID" --reason "$BLOCKER_REASON"
 ```
 - Optional guardrail: append `--task-id "$TASK_ID"` to `complete`/`block` to prevent wrong-task transitions.
 

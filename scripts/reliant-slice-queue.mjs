@@ -280,7 +280,13 @@ function completeTask(queuePath, runtimePath, reportPath, taskIdGuard, retryMs =
       writeJson(queuePath, queue);
     }
     process.stdout.write(
-      JSON.stringify({ completed: true, taskId: runtime.taskId, updatedAt: task.updatedAt ?? null, idempotent: true }),
+      JSON.stringify({
+        completed: true,
+        resultCode: 'complete_idempotent',
+        taskId: runtime.taskId,
+        updatedAt: task.updatedAt ?? null,
+        idempotent: true,
+      }),
     );
     return;
   }
@@ -309,7 +315,7 @@ function completeTask(queuePath, runtimePath, reportPath, taskIdGuard, retryMs =
   syncQueueSummary(queue);
   writeJson(queuePath, queue);
 
-  process.stdout.write(JSON.stringify({ completed: true, taskId: runtime.taskId, updatedAt: task.updatedAt }));
+  process.stdout.write(JSON.stringify({ completed: true, resultCode: 'completed', taskId: runtime.taskId, updatedAt: task.updatedAt }));
 }
 
 function blockTask(queuePath, runtimePath, reason, taskIdGuard, retryMs = 0, retryAttempted = false) {
@@ -392,7 +398,13 @@ function blockTask(queuePath, runtimePath, reason, taskIdGuard, retryMs = 0, ret
   writeJson(queuePath, queue);
 
   process.stdout.write(
-    JSON.stringify({ blocked: true, taskId: runtime.taskId, reason: task.blockerReason, updatedAt: task.updatedAt }),
+    JSON.stringify({
+      blocked: true,
+      resultCode: 'blocked',
+      taskId: runtime.taskId,
+      reason: task.blockerReason,
+      updatedAt: task.updatedAt,
+    }),
   );
 }
 
@@ -407,6 +419,7 @@ function inspectRuntime(runtimePath, inProgressTaskIds, includeChecksum = false)
     checksumSha256: null,
     checksumAlgorithm: null,
     checksumMode: includeChecksum ? 'explicit' : 'none',
+    checksumPresent: false,
     sizeBytes: null,
     parseErrorKind: null,
   };
@@ -422,6 +435,7 @@ function inspectRuntime(runtimePath, inProgressTaskIds, includeChecksum = false)
     if (includeChecksum) {
       runtimeInfo.checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
       runtimeInfo.checksumAlgorithm = 'sha256';
+      runtimeInfo.checksumPresent = true;
     }
     const runtime = JSON.parse(raw);
     ensureRuntimeShape(runtime, runtimePath);
@@ -440,6 +454,7 @@ function inspectRuntime(runtimePath, inProgressTaskIds, includeChecksum = false)
         runtimeInfo.checksumSha256 = crypto.createHash('sha256').update(raw).digest('hex');
         runtimeInfo.checksumAlgorithm = 'sha256';
         runtimeInfo.checksumMode = 'invalid_runtime_auto';
+        runtimeInfo.checksumPresent = true;
       } catch {
         // Preserve invalid diagnostics even if checksum read fails.
       }
@@ -522,6 +537,7 @@ function status(queuePath, runtimePath, includeRuntimeChecksum = false) {
     acc[key] = { declared, actual, delta: actual - declared };
     return acc;
   }, {});
+  const driftFingerprint = summaryDrift.length === 0 ? 'none' : summaryDrift.join('|');
   const hasOwnershipSensitiveDrift = driftKeys.includes('in_progress');
   const hasGlobalCountDrift = driftKeys.includes('total');
   const severity =
@@ -545,6 +561,7 @@ function status(queuePath, runtimePath, includeRuntimeChecksum = false) {
           driftCount: summaryDrift.length,
           driftKeys,
           driftDeltas,
+          driftFingerprint,
           drift: summaryDrift,
           persisted: persistedSnapshot,
           actual: actualSnapshot,

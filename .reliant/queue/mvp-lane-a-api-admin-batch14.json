@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T05:34:18.767Z",
+  "lane": "lane-a-api-admin-batch14",
+  "sourceFiles": [
+    "mvp-slices-batch14-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-ADMIN-396A",
+      "title": "Registrar transition guard matrix pack 5",
+      "prompt": "Execute one MVP slice only: extend registrar transition guard matrix assertions for currently implemented lifecycle paths with deterministic forbidden/not-found parity. No new endpoint/schema/UI behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:36:39.966Z",
+      "lane": "lane-a-api-admin-batch14",
+      "startedAt": "2026-02-28T05:35:36.828Z",
+      "finishedAt": "2026-02-28T05:36:39.966Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-396a-registrar-transition-guard-matrix-pack-5.md"
+    },
+    {
+      "id": "SLICE-ADMIN-397A",
+      "title": "Registrar code issuance replay safeguards pack 5",
+      "prompt": "Execute one MVP slice only: harden replay/duplicate issuance safeguards for existing approved-entry code paths with focused service tests only. No behavior expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:37:24.833Z",
+      "lane": "lane-a-api-admin-batch14",
+      "startedAt": "2026-02-28T05:36:47.120Z",
+      "finishedAt": "2026-02-28T05:37:24.833Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-397a-registrar-code-issuance-replay-safeguards-pack-5.md"
+    },
+    {
+      "id": "SLICE-ADMIN-398A",
+      "title": "Registrar approval metadata normalization pack 5",
+      "prompt": "Execute one MVP slice only: tighten approval/rejection metadata normalization edge assertions while preserving existing response contracts.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:38:08.460Z",
+      "lane": "lane-a-api-admin-batch14",
+      "startedAt": "2026-02-28T05:37:33.171Z",
+      "finishedAt": "2026-02-28T05:38:08.460Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-398a-registrar-approval-metadata-normalization-pack-5.md"
+    },
+    {
+      "id": "SLICE-ADMIN-399A",
+      "title": "Registrar lifecycle audit parity pack 5",
+      "prompt": "Execute one MVP slice only: strengthen lifecycle audit metadata parity checks across existing approval/issuance/revocation internals only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:39:01.737Z",
+      "lane": "lane-a-api-admin-batch14",
+      "startedAt": "2026-02-28T05:38:18.434Z",
+      "finishedAt": "2026-02-28T05:39:01.737Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-399a-registrar-lifecycle-audit-parity-pack-5.md"
+    },
+    {
+      "id": "SLICE-ADMIN-400A",
+      "title": "Registrar revocation invariants regression pack 5",
+      "prompt": "Execute one MVP slice only: reinforce revocation invariants and invalid-state regressions in current service/controller paths only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:40:08.064Z",
+      "lane": "lane-a-api-admin-batch14",
+      "startedAt": "2026-02-28T05:39:09.281Z",
+      "finishedAt": "2026-02-28T05:40:08.064Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-400a-registrar-revocation-invariants-regression-pack-5.md"
+    },
+    {
+      "id": "SLICE-ADMIN-401A",
+      "title": "Registrar admin parity closeout pack 5",
+      "prompt": "Execute one MVP slice only: expand negative-path admin parity for implemented registrar lifecycle helpers without adding new public behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:41:35.818Z",
+      "lane": "lane-a-api-admin-batch14",
+      "startedAt": "2026-02-28T05:40:17.177Z",
+      "finishedAt": "2026-02-28T05:41:35.818Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-401a-registrar-admin-parity-closeout-pack-5.md"
+    }
+  ]
+}

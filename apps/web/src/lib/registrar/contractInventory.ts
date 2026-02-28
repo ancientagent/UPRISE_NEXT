@@ -23,6 +23,13 @@ export interface RegistrarWebFieldGap {
   notes: string;
 }
 
+export interface MvpFlowRouteContract {
+  id: 'onboarding_home_scene' | 'plot_scene_dashboard' | 'registrar_scene_actions';
+  webRoute: '/onboarding' | '/plot' | '/registrar';
+  apiDependencies: readonly string[];
+  notes: string;
+}
+
 const APP_REGISTRAR_PAGE = 'apps/web/src/app/registrar/page.tsx';
 const ACTION_GATED_API_AVAILABLE_NOTE = 'API available; web surface remains action-gated.';
 const ACTION_GATED_API_READ_IMPLEMENTED_NOTE =
@@ -31,6 +38,27 @@ const ACTION_GATED_ADMIN_READ_NOTE =
   'API available; deferred admin-lifecycle read surface remains action-gated on web.';
 const ACTION_GATED_ADMIN_AUDIT_NOTE =
   'API available; deferred admin-lifecycle audit read surface remains action-gated on web.';
+
+export const MVP_FLOW_ROUTE_CONTRACTS: readonly MvpFlowRouteContract[] = [
+  {
+    id: 'onboarding_home_scene',
+    webRoute: '/onboarding',
+    apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/communities/resolve-home'],
+    notes: 'Home Scene resolution and GPS eligibility feed Plot and Registrar dependencies.',
+  },
+  {
+    id: 'plot_scene_dashboard',
+    webRoute: '/plot',
+    apiDependencies: ['/communities/resolve-home'],
+    notes: 'Plot route depends on resolved Home Scene context before scene-scoped reads.',
+  },
+  {
+    id: 'registrar_scene_actions',
+    webRoute: '/registrar',
+    apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/registrar/artist'],
+    notes: 'Registrar submit flow depends on scene-scoped onboarding + GPS eligibility context.',
+  },
+] as const;
 
 export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointContract[] = [
   {

@@ -37,3 +37,4 @@ User-visible flow chain:
 ## Notes
 - This map is spec-linked and execution-scoped for R1 only.
 - No new behavior definitions are introduced here.
+- Batch14 Lane E consistency pass confirms flow-map wording remains aligned with registrar implemented-now/deferred boundaries after batch14 QA/review slices.

@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T05:34:18.767Z",
+  "lane": "lane-d-automation-batch14",
+  "sourceFiles": [
+    "mvp-slices-batch14-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-AUTO-414A",
+      "title": "Supervisor ownership diagnostics pack 5",
+      "prompt": "Execute one MVP slice only: improve supervisor ownership diagnostics/operator cues for stale-state recovery without queue semantic changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:36:21.942Z",
+      "lane": "lane-d-automation-batch14",
+      "startedAt": "2026-02-28T05:35:46.596Z",
+      "finishedAt": "2026-02-28T05:36:21.942Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-414A.md"
+    },
+    {
+      "id": "SLICE-AUTO-415A",
+      "title": "Queue summary drift diagnostics pack 5",
+      "prompt": "Execute one MVP slice only: extend summary drift diagnostics and deterministic status output for queue sanity checks.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:36:55.058Z",
+      "lane": "lane-d-automation-batch14",
+      "startedAt": "2026-02-28T05:36:25.269Z",
+      "finishedAt": "2026-02-28T05:36:55.058Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-415A.md"
+    },
+    {
+      "id": "SLICE-AUTO-416A",
+      "title": "Claim result code normalization pack 5",
+      "prompt": "Execute one MVP slice only: normalize claim/transition result codes across queue states for automation operators.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:37:27.750Z",
+      "lane": "lane-d-automation-batch14",
+      "startedAt": "2026-02-28T05:36:58.497Z",
+      "finishedAt": "2026-02-28T05:37:27.750Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-416A.md"
+    },
+    {
+      "id": "SLICE-AUTO-417A",
+      "title": "Supervisor backoff jitter guardrails pack 5",
+      "prompt": "Execute one MVP slice only: tighten backoff/jitter guardrails for parallel lane loops to reduce contention and improve determinism.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:37:57.169Z",
+      "lane": "lane-d-automation-batch14",
+      "startedAt": "2026-02-28T05:37:31.628Z",
+      "finishedAt": "2026-02-28T05:37:57.169Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-417A.md"
+    },
+    {
+      "id": "SLICE-AUTO-418A",
+      "title": "Runtime integrity diagnostics pack 5",
+      "prompt": "Execute one MVP slice only: extend runtime integrity diagnostics/checksum metadata for malformed/stale runtime troubleshooting.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:38:30.692Z",
+      "lane": "lane-d-automation-batch14",
+      "startedAt": "2026-02-28T05:38:01.387Z",
+      "finishedAt": "2026-02-28T05:38:30.692Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-418A.md"
+    },
+    {
+      "id": "SLICE-AUTO-419A",
+      "title": "Automation runbook copy-safe hardening pack 5",
+      "prompt": "Execute one MVP slice only: docs-only copy-safe command hardening pass for automation runbook blocks.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T05:39:01.703Z",
+      "lane": "lane-d-automation-batch14",
+      "startedAt": "2026-02-28T05:38:35.597Z",
+      "finishedAt": "2026-02-28T05:39:01.703Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-419A.md"
+    }
+  ]
+}
