@@ -1,0 +1,284 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T05:36:33.293Z",
+  "lane": "batch15-real-mvp-throughput",
+  "summary": {
+    "total": 30,
+    "queued": 30,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-ADMIN-426A",
+      "title": "Registrar transition guard matrix pack 6",
+      "prompt": "Execute one MVP slice only: extend registrar transition guard matrix assertions for implemented lifecycle paths with deterministic forbidden/not-found parity. No new endpoint/schema/UI behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-427A",
+      "title": "Registrar code issuance replay safeguards pack 6",
+      "prompt": "Execute one MVP slice only: harden replay/duplicate issuance safeguards for existing approved-entry code paths with focused service tests only. No behavior expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-428A",
+      "title": "Registrar approval metadata normalization pack 6",
+      "prompt": "Execute one MVP slice only: tighten approval/rejection metadata normalization edge assertions while preserving existing response contracts.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-429A",
+      "title": "Registrar lifecycle audit parity pack 6",
+      "prompt": "Execute one MVP slice only: strengthen lifecycle audit metadata parity checks across existing approval/issuance/revocation internals only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-430A",
+      "title": "Registrar revocation invariants regression pack 6",
+      "prompt": "Execute one MVP slice only: reinforce revocation invariants and invalid-state regressions in current service/controller paths only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-431A",
+      "title": "Registrar admin parity closeout pack 6",
+      "prompt": "Execute one MVP slice only: expand negative-path admin parity for implemented registrar lifecycle helpers without adding new public behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-432A",
+      "title": "MVP flow map route contract assertions pack 2",
+      "prompt": "Execute one MVP slice only: align web typed client contract assertions to MVP flow map routes (onboarding/plot/registrar dependencies) with no UI CTA expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-433A",
+      "title": "Registrar client auth/error parity pack 6",
+      "prompt": "Execute one MVP slice only: normalize auth/error propagation assertions across existing registrar web client methods; tests-only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-434A",
+      "title": "Contract inventory action-gated notes pack 6",
+      "prompt": "Execute one MVP slice only: continue inventory note consistency for implemented-vs-action-gated registrar surfaces; tests/docs only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-435A",
+      "title": "Project/sect nullable mapping assertions pack 6",
+      "prompt": "Execute one MVP slice only: extend project/sect nullable mapping parity assertions for existing web client read contracts.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-436A",
+      "title": "Invite summary shape stability pack 6",
+      "prompt": "Execute one MVP slice only: harden invite summary top-level/per-entry shape stability assertions for existing response models only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-437A",
+      "title": "MVP flow docs-web parity pass 2",
+      "prompt": "Execute one MVP slice only: docs/tests consistency pass to ensure web contract inventory language matches MVP flow map implemented/deferred boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-INVITE-438A",
+      "title": "Invite finalize missing-record guard pack 6",
+      "prompt": "Execute one MVP slice only: reinforce invite finalize missing-record guards and deterministic diagnostics with no valid-path behavior drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-c-invite-batch15"
+    },
+    {
+      "id": "SLICE-INVITE-439A",
+      "title": "Invite queued-to-sent invariant pack 6",
+      "prompt": "Execute one MVP slice only: enforce queued-to-sent single-finalize invariants with focused service coverage only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-c-invite-batch15"
+    },
+    {
+      "id": "SLICE-INVITE-440A",
+      "title": "Invite failure boundary mapping pack 6",
+      "prompt": "Execute one MVP slice only: tighten failure-boundary mapping for invite delivery terminal outcomes with deterministic state handling.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-c-invite-batch15"
+    },
+    {
+      "id": "SLICE-INVITE-441A",
+      "title": "Invite provider outcome parser pack 6",
+      "prompt": "Execute one MVP slice only: harden provider terminal outcome parser (`sent|failed`) validation and mapping checks only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-c-invite-batch15"
+    },
+    {
+      "id": "SLICE-INVITE-442A",
+      "title": "Invite chronology read-model assertions pack 6",
+      "prompt": "Execute one MVP slice only: expand chronology assertions for dispatch/finalize read-model fields without schema/endpoint changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-c-invite-batch15"
+    },
+    {
+      "id": "SLICE-INVITE-443A",
+      "title": "Invite docs deferred-boundary pass 6",
+      "prompt": "Execute one MVP slice only: docs-only pass to preserve strict deferred-boundary wording for invite provider/scheduler capabilities.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-c-invite-batch15"
+    },
+    {
+      "id": "SLICE-AUTO-444A",
+      "title": "Supervisor ownership diagnostics pack 6",
+      "prompt": "Execute one MVP slice only: improve supervisor ownership diagnostics/operator cues for stale-state recovery without queue semantic changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-d-automation-batch15"
+    },
+    {
+      "id": "SLICE-AUTO-445A",
+      "title": "Queue summary drift diagnostics pack 6",
+      "prompt": "Execute one MVP slice only: extend summary drift diagnostics and deterministic status output for queue sanity checks.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-d-automation-batch15"
+    },
+    {
+      "id": "SLICE-AUTO-446A",
+      "title": "Claim result code normalization pack 6",
+      "prompt": "Execute one MVP slice only: normalize claim/transition result codes across queue states for automation operators.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-d-automation-batch15"
+    },
+    {
+      "id": "SLICE-AUTO-447A",
+      "title": "Supervisor backoff jitter guardrails pack 6",
+      "prompt": "Execute one MVP slice only: tighten backoff/jitter guardrails for parallel lane loops to reduce contention and improve determinism.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-d-automation-batch15"
+    },
+    {
+      "id": "SLICE-AUTO-448A",
+      "title": "Runtime integrity diagnostics pack 6",
+      "prompt": "Execute one MVP slice only: extend runtime integrity diagnostics/checksum metadata for malformed/stale runtime troubleshooting.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-d-automation-batch15"
+    },
+    {
+      "id": "SLICE-AUTO-449A",
+      "title": "Automation runbook copy-safe hardening pack 6",
+      "prompt": "Execute one MVP slice only: docs-only copy-safe command hardening pass for automation runbook blocks.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-d-automation-batch15"
+    },
+    {
+      "id": "SLICE-QAREV-450A",
+      "title": "Batch15 QA replay wave 1 (A/B)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for completed batch15 lane A/B slices and publish exact outputs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-e-qarev-batch15"
+    },
+    {
+      "id": "SLICE-QAREV-451A",
+      "title": "Batch15 risk memo wave 1 (A/B)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch15 lane A/B slices with severity-ordered findings and rollback guidance.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-e-qarev-batch15"
+    },
+    {
+      "id": "SLICE-QAREV-452A",
+      "title": "Batch15 QA replay wave 2 (C/D)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for completed batch15 lane C/D slices and publish exact outputs + gate outcomes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-e-qarev-batch15"
+    },
+    {
+      "id": "SLICE-QAREV-453A",
+      "title": "Batch15 risk memo wave 2 (C/D)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch15 lane C/D slices with residual risks/testing gaps and rollback notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-e-qarev-batch15"
+    },
+    {
+      "id": "SLICE-QAREV-454A",
+      "title": "MVP flow-map/spec consistency pass (batch15)",
+      "prompt": "Execute one MVP slice only: docs-only consistency pass aligning MVP flow map, registrar implemented-now wording, and deferred boundaries with completed batch15 slices.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-e-qarev-batch15"
+    },
+    {
+      "id": "SLICE-QAREV-455A",
+      "title": "Batch15 final targeted gate replay and closeout",
+      "prompt": "Execute one MVP slice only: run final targeted gate replay across registrar API/web contract surfaces touched by batch15 and publish closeout handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-e-qarev-batch15"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T05:36:33.293Z",
+  "lane": "lane-a-api-admin-batch15",
+  "sourceFiles": [
+    "mvp-slices-batch15-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-ADMIN-426A",
+      "title": "Registrar transition guard matrix pack 6",
+      "prompt": "Execute one MVP slice only: extend registrar transition guard matrix assertions for implemented lifecycle paths with deterministic forbidden/not-found parity. No new endpoint/schema/UI behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-427A",
+      "title": "Registrar code issuance replay safeguards pack 6",
+      "prompt": "Execute one MVP slice only: harden replay/duplicate issuance safeguards for existing approved-entry code paths with focused service tests only. No behavior expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-428A",
+      "title": "Registrar approval metadata normalization pack 6",
+      "prompt": "Execute one MVP slice only: tighten approval/rejection metadata normalization edge assertions while preserving existing response contracts.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-429A",
+      "title": "Registrar lifecycle audit parity pack 6",
+      "prompt": "Execute one MVP slice only: strengthen lifecycle audit metadata parity checks across existing approval/issuance/revocation internals only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-430A",
+      "title": "Registrar revocation invariants regression pack 6",
+      "prompt": "Execute one MVP slice only: reinforce revocation invariants and invalid-state regressions in current service/controller paths only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    },
+    {
+      "id": "SLICE-ADMIN-431A",
+      "title": "Registrar admin parity closeout pack 6",
+      "prompt": "Execute one MVP slice only: expand negative-path admin parity for implemented registrar lifecycle helpers without adding new public behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-a-api-admin-batch15"
+    }
+  ]
+}

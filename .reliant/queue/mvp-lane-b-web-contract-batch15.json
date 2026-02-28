@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T05:36:33.293Z",
+  "lane": "lane-b-web-contract-batch15",
+  "sourceFiles": [
+    "mvp-slices-batch15-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-WEBADMIN-432A",
+      "title": "MVP flow map route contract assertions pack 2",
+      "prompt": "Execute one MVP slice only: align web typed client contract assertions to MVP flow map routes (onboarding/plot/registrar dependencies) with no UI CTA expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-433A",
+      "title": "Registrar client auth/error parity pack 6",
+      "prompt": "Execute one MVP slice only: normalize auth/error propagation assertions across existing registrar web client methods; tests-only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-434A",
+      "title": "Contract inventory action-gated notes pack 6",
+      "prompt": "Execute one MVP slice only: continue inventory note consistency for implemented-vs-action-gated registrar surfaces; tests/docs only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-435A",
+      "title": "Project/sect nullable mapping assertions pack 6",
+      "prompt": "Execute one MVP slice only: extend project/sect nullable mapping parity assertions for existing web client read contracts.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-436A",
+      "title": "Invite summary shape stability pack 6",
+      "prompt": "Execute one MVP slice only: harden invite summary top-level/per-entry shape stability assertions for existing response models only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    },
+    {
+      "id": "SLICE-WEBADMIN-437A",
+      "title": "MVP flow docs-web parity pass 2",
+      "prompt": "Execute one MVP slice only: docs/tests consistency pass to ensure web contract inventory language matches MVP flow map implemented/deferred boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T05:36:33.293Z",
+      "lane": "lane-b-web-contract-batch15"
+    }
+  ]
+}
