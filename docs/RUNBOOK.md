@@ -35,6 +35,14 @@ After any **meaningful change** (new feature, endpoint, model, migration, or can
 5. Run `pnpm run docs:lint` (includes `canon:lint`) before pushing doc-heavy changes.
 6. Do not ship placeholder user actions for unapproved capabilities (no speculative `Coming Soon` CTAs in production surfaces).
 
+## 🔁 Rollback Checkpoint Policy (Required)
+- During high-throughput multi-agent runs, create named checkpoint commits/tags before major cutovers.
+- Follow `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` for:
+  - compare-first rollback checks,
+  - non-destructive rollback defaults (`git switch`/`git revert`),
+  - destructive reset restrictions (explicit in-thread approval only).
+- Record rollback actions in `docs/CHANGELOG.md` and a dated `docs/handoff/` note.
+
 ## 🔒 Branch Protection (Required)
 Configure GitHub branch protection for `main` (and `develop` if used) with these settings:
 1. Require a pull request before merging.

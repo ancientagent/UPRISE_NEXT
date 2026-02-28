@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Added rollback governance documentation for multi-agent throughput runs:
+  - `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md`
+  - Runbook policy update in `docs/RUNBOOK.md`
+  - Agent rule updates in `AGENTS.md` and `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md`
 - Fixed queue summary drift at source by syncing persisted `summary` on every queue state write in `scripts/reliant-slice-queue.mjs`; repaired existing queue files and verified no drift on batch12 lanes (`docs/handoff/2026-02-28_queue-summary-drift-investigation-and-fix.md`).
 - Lane A admin-batch12 queue execution (`SLICE-ADMIN-341A`):
   - Extended admin lifecycle negative-path parity coverage across approve/reject/issue/revoke internals with deterministic forbidden/not-found/state checks.

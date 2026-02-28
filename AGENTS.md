@@ -26,6 +26,7 @@ This file is intended for AI coding agents and new contributors. Follow it befor
 - **No unsafe environment changes:** no symlinks, no admin elevation, no global installs.
 - **Package manager rule:** UPRISE_NEXT = pnpm only. Legacy RN (`uprise_mob`) = yarn only. Do not mix.
 - **Canon import rule:** never bulk-overwrite `docs/canon/*.md` from external exports; stage raw imports in `docs/legacy/` and apply intentional canon edits separately.
+- **Rollback checkpoint rule:** for multi-agent throughput runs, follow `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` and default to non-destructive rollback (`git switch`/`git revert`); use `git reset --hard` only with explicit in-thread approval.
 
 ## Before You Push
 - Preferred: run `pnpm run verify` (docs:lint + infra-policy-check + typecheck)

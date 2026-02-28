@@ -102,6 +102,13 @@ node scripts/reliant-slice-queue.mjs claim --queue "$QUEUE_PATH" --runtime "$RUN
 
 If `claim`/`complete`/`block` reports `invalid runtime file` (for example missing `taskId`), treat it as stale runtime and run cleanup + single re-claim.
 
+
+## Rollback Checkpoints (Required in Throughput Runs)
+- Before major multi-lane cutovers, create checkpoint commits/tags.
+- Use compare-first rollback flow from .
+- Default to non-destructive rollback ( to checkpoint or ).
+- Use destructive reset only with explicit in-thread approval.
+
 ## Constraints
 - Additive/non-breaking first.
 - No feature drift.
@@ -111,6 +118,12 @@ If `claim`/`complete`/`block` reports `invalid runtime file` (for example missin
 ## Known Limits
 - Reliability depends on local environment (pnpm/git/auth) in Reliant runtime.
 - If runtime shell cannot execute project commands, task should be marked `blocked` and workflow continues.
+
+## Rollback Checkpoints (Required in Throughput Runs)
+- Before major multi-lane cutovers, create checkpoint commits/tags.
+- Use compare-first rollback flow from `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md`.
+- Default to non-destructive rollback (`git switch` to checkpoint or `git revert`).
+- Use destructive reset only with explicit in-thread approval.
 
 ## Failure-Mode Appendix
 

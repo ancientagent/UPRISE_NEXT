@@ -38,3 +38,4 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` — scheduler/chat bridge setup for queue-driven multi-agent autonomy
 - `docs/solutions/RELIANT_WORKFLOW_PILOT.md` — repo-local Reliant workflow pilot for slice plan→implement→verify→review execution
 - `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md` — queue-driven Reliant parent workflow for sequential slice execution with done/blocked continuation
+- `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — deterministic rollback checkpoints, compare-first flow, and safe revert patterns for multi-agent throughput runs
