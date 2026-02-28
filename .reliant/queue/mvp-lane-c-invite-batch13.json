@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T04:51:29.350Z",
+  "lane": "lane-c-invite-batch13",
+  "sourceFiles": [
+    "mvp-slices-batch13-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-INVITE-378A",
+      "title": "Finalize missing-record guard pack 4",
+      "prompt": "Execute one MVP slice only: reinforce invite finalize missing-record guards and deterministic diagnostics with no behavior drift to valid paths.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-c-invite-batch13"
+    },
+    {
+      "id": "SLICE-INVITE-379A",
+      "title": "Queued-to-sent invariant pack 4",
+      "prompt": "Execute one MVP slice only: enforce queued-to-sent invariant checks (single-finalize/no regression) with focused service coverage only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-c-invite-batch13"
+    },
+    {
+      "id": "SLICE-INVITE-380A",
+      "title": "Fallback failure boundary pack 4",
+      "prompt": "Execute one MVP slice only: harden fallback failure boundary handling in invite delivery outcomes for deterministic terminal states and auditability.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-c-invite-batch13"
+    },
+    {
+      "id": "SLICE-INVITE-381A",
+      "title": "Provider terminal-outcome parser pack 4",
+      "prompt": "Execute one MVP slice only: tighten provider terminal-outcome parser/validation (`sent|failed`) with deterministic mapping and targeted tests only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-c-invite-batch13"
+    },
+    {
+      "id": "SLICE-INVITE-382A",
+      "title": "Invite chronology assertions pack 4",
+      "prompt": "Execute one MVP slice only: expand chronology assertions for invite dispatch/finalize read-model fields without schema changes or new endpoints.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-c-invite-batch13"
+    },
+    {
+      "id": "SLICE-INVITE-383A",
+      "title": "Invite deferred-boundary docs pass 4",
+      "prompt": "Execute one MVP slice only: docs-only pass to keep invite deferred-boundary wording strict and non-speculative in registrar spec/runbook.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-c-invite-batch13"
+    }
+  ]
+}

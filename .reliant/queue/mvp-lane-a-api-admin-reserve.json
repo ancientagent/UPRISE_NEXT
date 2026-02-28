@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:45:34.619Z",
+  "lane": "lane-a-api-admin-reserve",
+  "sourceFiles": [
+    "mvp-slices-batch10-real-mvp-reserve.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-ADMIN-276A",
+      "title": "Promoter admin decision actor-context guardrails",
+      "prompt": "Execute one MVP slice only: harden registrar admin decision internals with explicit actor-context guardrails (system-only authority path, deterministic forbidden handling) and targeted service tests. No route/schema/UI additions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:35:47.396Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:34:50.991Z",
+      "finishedAt": "2026-02-27T23:35:47.396Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-276a-promoter-admin-decision-actor-context-guardrails.md"
+    },
+    {
+      "id": "SLICE-ADMIN-277A",
+      "title": "Registrar code issuance uniqueness + replay safety checks",
+      "prompt": "Execute one MVP slice only: enforce replay-safe uniqueness checks around registrar code issuance internals for approved promoter entries with no self-issuance path; add targeted tests only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:36:44.701Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:35:51.381Z",
+      "finishedAt": "2026-02-27T23:36:44.701Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-277a-registrar-code-issuance-uniqueness-replay-safety-checks.md"
+    },
+    {
+      "id": "SLICE-ADMIN-278A",
+      "title": "Approval/rejection reason payload normalization",
+      "prompt": "Execute one MVP slice only: normalize registrar admin approval/rejection reason payload mapping (bounded shape, stable nullability) without API contract drift; tests only where needed.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:38:05.397Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:36:50.704Z",
+      "finishedAt": "2026-02-27T23:38:05.397Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-278a-approval-rejection-reason-payload-normalization.md"
+    },
+    {
+      "id": "SLICE-ADMIN-279A",
+      "title": "Admin lifecycle audit event ordering guarantees",
+      "prompt": "Execute one MVP slice only: ensure registrar admin lifecycle audit events are emitted in deterministic ordering for decision+issuance flows; add focused test assertions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:39:10.235Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:38:08.641Z",
+      "finishedAt": "2026-02-27T23:39:10.235Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-279a-admin-lifecycle-audit-event-ordering-guarantees.md"
+    },
+    {
+      "id": "SLICE-ADMIN-280A",
+      "title": "Revocation grant-link consistency hardening",
+      "prompt": "Execute one MVP slice only: harden revocation internals to ensure capability grant-link consistency and append-only audit traceability; no new routes/UI.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:40:08.496Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:39:13.924Z",
+      "finishedAt": "2026-02-27T23:40:08.496Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-280a-revocation-grant-link-consistency-hardening.md"
+    },
+    {
+      "id": "SLICE-ADMIN-281A",
+      "title": "Admin lifecycle regression matrix expansion pack",
+      "prompt": "Execute one MVP slice only: expand regression matrix for registrar admin lifecycle internals (approval/rejection/issuance/revocation) covering forbidden/not-found/invalid-state paths.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:41:01.177Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:40:14.019Z",
+      "finishedAt": "2026-02-27T23:41:01.177Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-281a-admin-lifecycle-regression-matrix-expansion-pack.md"
+    }
+  ]
+}

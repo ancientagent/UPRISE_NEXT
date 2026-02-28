@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T20:45:00.000Z",
+  "tasks": [
+    {
+      "id": "SLICE-CODE-API-139A",
+      "title": "Registrar code verify/redeem API response-shape parity tests",
+      "prompt": "Execute one MVP slice only: harden API test coverage for registrar code verify/redeem response-shape and status transitions using existing endpoints only (`POST /registrar/code/verify`, `POST /registrar/code/redeem`). No endpoint/schema changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    },
+    {
+      "id": "SLICE-CODE-WEB-140A",
+      "title": "Registrar code web client fallback/error-path test hardening",
+      "prompt": "Execute one MVP slice only: add/align web client tests for registrar code verify/redeem fallback and error-path behavior using existing scaffolding only. No UI action additions. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    },
+    {
+      "id": "SLICE-INVITE-API-141A",
+      "title": "Invite status read API test hardening for delivery outcome fields",
+      "prompt": "Execute one MVP slice only: harden registrar invite status read tests for `deliveryStatus`, `sentAt`, `failedAt` permutations on existing `GET /registrar/artist/:entryId/invites`. No endpoint/schema changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    },
+    {
+      "id": "SLICE-INVITE-WEB-142A",
+      "title": "Invite delivery outcome web contract test hardening (no UI action changes)",
+      "prompt": "Execute one MVP slice only: strengthen web typed contract/client tests for invite delivery outcome fields on existing invite status read scaffolding. No new UI actions. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    },
+    {
+      "id": "SLICE-REGISTRAR-DOC-143A",
+      "title": "Registrar implemented-now spec consistency pass (no behavior changes)",
+      "prompt": "Execute one MVP slice only: normalize implemented-now wording in docs/specs/system/registrar.md to match currently shipped registrar read surfaces and contract scaffolding; docs-only consistency pass. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    },
+    {
+      "id": "SLICE-CONTRACT-144A",
+      "title": "Registrar contract inventory dedupe + path-template guard tests",
+      "prompt": "Execute one MVP slice only: tighten registrar contract inventory tests for unique id/method+path pairs and entry-id guard coverage across all existing helper groups. No behavior or UI changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    },
+    {
+      "id": "SLICE-QA-DOC-145A",
+      "title": "QA/docs consolidation for registrar code+invite+contract batch",
+      "prompt": "Execute one MVP slice only: run consolidated validation gates for this batch, publish dated handoff with exact outputs, and sync docs/changelog/spec notes as needed. No behavior changes unless needed for failing gates.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    },
+    {
+      "id": "SLICE-REVIEW-146A",
+      "title": "Risk/rollback review memo for registrar code+invite+contract batch",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed code/invite/contract slices with findings by severity, residual risks/testing gaps, and rollback guidance. Docs-only unless defect is discovered.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:45:00.000Z"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "queued": 8,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  }
+}

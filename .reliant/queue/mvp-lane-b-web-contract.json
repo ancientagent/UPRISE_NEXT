@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T22:16:45.947Z",
+  "lane": "lane-b-web-contract",
+  "sourceFiles": [
+    "mvp-slices-batch3.json",
+    "mvp-slices-batch4.json",
+    "mvp-slices-batch5.json",
+    "mvp-slices-batch6.json",
+    "mvp-slices-batch7.json",
+    "mvp-slices.json"
+  ],
+  "summary": {
+    "total": 7,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 7,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-PROMO-WEB-131A",
+      "title": "Promoter web read contract scaffolding alignment (list/detail/audit, no UI actions)",
+      "prompt": "Execute one MVP slice only: align web typed contract/client scaffolding for existing promoter read APIs (`GET /registrar/promoter/entries`, `GET /registrar/promoter/:entryId`, `GET /registrar/promoter/:entryId/capability-audit`). Scope: endpoint helper mapping and typed client parity checks only; no new UI actions/CTAs. Update docs/specs/system/registrar.md implemented-now wording if needed, docs/CHANGELOG.md, and dated docs/handoff note.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:36:53.185Z",
+      "sourceQueue": "mvp-slices-batch3.json",
+      "startedAt": "2026-02-26T22:35:55.693Z",
+      "finishedAt": "2026-02-26T22:36:53.185Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-131A-promoter-web-read-contract-alignment.md"
+    },
+    {
+      "id": "SLICE-PROMO-WEB-132A",
+      "title": "Promoter typed client test hardening for read paths",
+      "prompt": "Execute one MVP slice only: harden web typed client tests for promoter read methods (`listPromoterRegistrations`, `getPromoterRegistration`, `getPromoterCapabilityAudit`) including empty-data handling and stable response-shape assertions. Contract-only; no UI changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:14:49.317Z",
+      "sourceQueue": "mvp-slices-batch3.json",
+      "startedAt": "2026-02-26T23:14:08.763Z",
+      "finishedAt": "2026-02-26T23:14:49.317Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-132A-promoter-typed-client-test-hardening.md"
+    },
+    {
+      "id": "SLICE-CONTRACT-136A",
+      "title": "Registrar contract inventory metadata hygiene pass",
+      "prompt": "Execute one MVP slice only: align registrar web contract inventory metadata for API-implemented but web-action-gated endpoints to keep ids/path templates/gap classifications coherent and test-enforced. No UI implementation status flips without concrete web consumer. Update tests/changelog/handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:15:20.440Z",
+      "sourceQueue": "mvp-slices-batch3.json",
+      "startedAt": "2026-02-26T23:14:49.336Z",
+      "finishedAt": "2026-02-26T23:15:20.440Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-136A-registrar-contract-inventory-metadata-hygiene.md"
+    },
+    {
+      "id": "SLICE-CONTRACT-144A",
+      "title": "Registrar contract inventory dedupe + path-template guard tests",
+      "prompt": "Execute one MVP slice only: tighten registrar contract inventory tests for unique id/method+path pairs and entry-id guard coverage across all existing helper groups. No behavior or UI changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:16:01.447Z",
+      "sourceQueue": "mvp-slices-batch4.json",
+      "startedAt": "2026-02-26T23:15:20.458Z",
+      "finishedAt": "2026-02-26T23:16:01.447Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-144A-registrar-contract-inventory-dedupe-guards.md"
+    },
+    {
+      "id": "SLICE-REG-WEB-151A",
+      "title": "Registrar client fallback behavior consistency tests",
+      "prompt": "Execute one MVP slice only: harmonize fallback/error behavior tests for existing registrar web client read methods. Contract-only, no UI actions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:16:38.869Z",
+      "sourceQueue": "mvp-slices-batch5.json",
+      "startedAt": "2026-02-26T23:16:01.464Z",
+      "finishedAt": "2026-02-26T23:16:38.869Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-151A-registrar-client-fallback-consistency.md"
+    },
+    {
+      "id": "SLICE-PROMO-WEB-126A",
+      "title": "Promoter web typed client test hardening (list/detail/audit)",
+      "prompt": "Execute one MVP slice only: strengthen web typed client tests for promoter read methods (`listPromoterRegistrations`, `getPromoterRegistration`, `getPromoterCapabilityAudit`) with empty-data handling and shape assertions. Contract-only; no UI actions. Update changelog + handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:17:11.159Z",
+      "sourceQueue": "mvp-slices.json",
+      "startedAt": "2026-02-26T23:16:38.886Z",
+      "finishedAt": "2026-02-26T23:17:11.159Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-126A-promoter-web-client-test-hardening.md"
+    },
+    {
+      "id": "SLICE-CONTRACT-127A",
+      "title": "Registrar web contract inventory alignment for implemented read APIs",
+      "prompt": "Execute one MVP slice only: align registrar web contract inventory to include any implemented API read surfaces currently missing from inventory metadata (no UI status flips to implemented unless web consumer exists). Keep web surface action-gated. Update tests/changelog/handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:17:46.237Z",
+      "sourceQueue": "mvp-slices.json",
+      "startedAt": "2026-02-26T23:17:11.175Z",
+      "finishedAt": "2026-02-26T23:17:46.236Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-127A-registrar-contract-inventory-alignment.md"
+    }
+  ]
+}

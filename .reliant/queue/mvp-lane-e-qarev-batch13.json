@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T04:51:29.350Z",
+  "lane": "lane-e-qarev-batch13",
+  "sourceFiles": [
+    "mvp-slices-batch13-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-QAREV-390A",
+      "title": "Batch13 QA replay wave 1 (A/B)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for completed batch13 lane A/B slices and publish exact output in dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-e-qarev-batch13"
+    },
+    {
+      "id": "SLICE-QAREV-391A",
+      "title": "Batch13 risk memo wave 1 (A/B)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch13 lane A/B slices with severity-ordered findings, residual risks/testing gaps, and rollback guidance.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-e-qarev-batch13"
+    },
+    {
+      "id": "SLICE-QAREV-392A",
+      "title": "Batch13 QA replay wave 2 (C/D)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for completed batch13 lane C/D slices and publish exact outputs + gate outcomes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-e-qarev-batch13"
+    },
+    {
+      "id": "SLICE-QAREV-393A",
+      "title": "Batch13 risk memo wave 2 (C/D)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch13 lane C/D slices with severity ordering, residual risks/testing gaps, and rollback notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-e-qarev-batch13"
+    },
+    {
+      "id": "SLICE-QAREV-394A",
+      "title": "Registrar wording sync after batch13",
+      "prompt": "Execute one MVP slice only: docs-only consistency pass syncing registrar implemented-now/deferred wording with completed batch13 slices (no speculative claims).",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-e-qarev-batch13"
+    },
+    {
+      "id": "SLICE-QAREV-395A",
+      "title": "Batch13 closeout targeted gate replay",
+      "prompt": "Execute one MVP slice only: run final targeted gate replay for batch13 touched registrar API/web contract surfaces and publish closeout handoff with exact outputs and follow-up backlog notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-e-qarev-batch13"
+    }
+  ]
+}

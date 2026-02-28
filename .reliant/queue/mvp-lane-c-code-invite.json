@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T22:16:45.947Z",
+  "lane": "lane-c-code-invite",
+  "sourceFiles": [
+    "mvp-slices-batch3.json",
+    "mvp-slices-batch4.json",
+    "mvp-slices-batch5.json",
+    "mvp-slices-batch6.json",
+    "mvp-slices-batch7.json",
+    "mvp-slices.json"
+  ],
+  "summary": {
+    "total": 5,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 5,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-CODE-WEB-135A",
+      "title": "Registrar code web read/client contract test hardening (verify/redeem)",
+      "prompt": "Execute one MVP slice only: strengthen web typed client/contract tests around registrar code verify/redeem scaffolding (`POST /registrar/code/verify`, `POST /registrar/code/redeem`) without adding user actions. Keep issue endpoint unresolved per spec. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:18:33.073Z",
+      "sourceQueue": "mvp-slices-batch3.json",
+      "startedAt": "2026-02-26T23:17:54.006Z",
+      "finishedAt": "2026-02-26T23:18:33.073Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-135A-registrar-code-web-contract-test-hardening.md"
+    },
+    {
+      "id": "SLICE-CODE-API-139A",
+      "title": "Registrar code verify/redeem API response-shape parity tests",
+      "prompt": "Execute one MVP slice only: harden API test coverage for registrar code verify/redeem response-shape and status transitions using existing endpoints only (`POST /registrar/code/verify`, `POST /registrar/code/redeem`). No endpoint/schema changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:19:41.844Z",
+      "sourceQueue": "mvp-slices-batch4.json",
+      "startedAt": "2026-02-26T23:18:33.098Z",
+      "finishedAt": "2026-02-26T23:19:41.844Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-139A-registrar-code-api-response-shape-parity.md"
+    },
+    {
+      "id": "SLICE-CODE-WEB-140A",
+      "title": "Registrar code web client fallback/error-path test hardening",
+      "prompt": "Execute one MVP slice only: add/align web client tests for registrar code verify/redeem fallback and error-path behavior using existing scaffolding only. No UI action additions. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:20:14.893Z",
+      "sourceQueue": "mvp-slices-batch4.json",
+      "startedAt": "2026-02-26T23:19:41.862Z",
+      "finishedAt": "2026-02-26T23:20:14.893Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-140A-registrar-code-web-client-error-path-hardening.md"
+    },
+    {
+      "id": "SLICE-INVITE-API-141A",
+      "title": "Invite status read API test hardening for delivery outcome fields",
+      "prompt": "Execute one MVP slice only: harden registrar invite status read tests for `deliveryStatus`, `sentAt`, `failedAt` permutations on existing `GET /registrar/artist/:entryId/invites`. No endpoint/schema changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:21:41.228Z",
+      "sourceQueue": "mvp-slices-batch4.json",
+      "startedAt": "2026-02-26T23:20:14.909Z",
+      "finishedAt": "2026-02-26T23:21:41.228Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-141A-invite-status-read-api-test-hardening.md"
+    },
+    {
+      "id": "SLICE-INVITE-WEB-142A",
+      "title": "Invite delivery outcome web contract test hardening (no UI action changes)",
+      "prompt": "Execute one MVP slice only: strengthen web typed contract/client tests for invite delivery outcome fields on existing invite status read scaffolding. No new UI actions. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:22:25.171Z",
+      "sourceQueue": "mvp-slices-batch4.json",
+      "startedAt": "2026-02-26T23:21:41.246Z",
+      "finishedAt": "2026-02-26T23:22:25.170Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-142A-invite-delivery-outcome-web-contract-hardening.md"
+    }
+  ]
+}

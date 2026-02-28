@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:26:08.325Z",
+  "lane": "lane-b-web-admin-contract",
+  "sourceFiles": [
+    "mvp-slices-batch9-real-mvp.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-WEBADMIN-252A",
+      "title": "Registrar capability-audit client shape assertions hardening",
+      "prompt": "Execute one MVP slice only: harden web typed client contract assertions for registrar promoter capability-audit read responses (nullability, ordering, additive fields) with no new UI actions/CTAs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:32:10.303Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:31:39.537Z",
+      "finishedAt": "2026-02-27T21:32:10.303Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-252A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-253A",
+      "title": "Registrar contract inventory tags for deferred admin surfaces",
+      "prompt": "Execute one MVP slice only: extend registrar web contract inventory metadata to track deferred admin-lifecycle surfaces as action-gated placeholders (no implementation flip). Keep contract-only and spec-consistent wording.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:37:16.684Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:32:13.121Z",
+      "finishedAt": "2026-02-27T21:37:16.684Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-253A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-254A",
+      "title": "Registrar code verify/redeem client error-path parity",
+      "prompt": "Execute one MVP slice only: strengthen web client tests for registrar code verify/redeem negative paths (forbidden, not-found, invalid-state) and payload shape parity. No new UI actions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:38:04.161Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:37:25.464Z",
+      "finishedAt": "2026-02-27T21:38:04.161Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-254A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-255A",
+      "title": "Registrar invite read contract nullability normalization",
+      "prompt": "Execute one MVP slice only: normalize web typed contract handling for invite read outcome fields (`queued/sent/failed/claimed`) with stable nullable field mapping and focused tests only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:38:38.756Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:38:06.649Z",
+      "finishedAt": "2026-02-27T21:38:38.756Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-255A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-256A",
+      "title": "Registrar project+sect read inventory consistency pass",
+      "prompt": "Execute one MVP slice only: align registrar contract inventory metadata for project/sect read surfaces with currently implemented API paths and action-gated web status; tests-only/doc wording updates as needed.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:39:17.493Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:38:40.993Z",
+      "finishedAt": "2026-02-27T21:39:17.493Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-256A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-257A",
+      "title": "Registrar client helper dedupe for admin/read endpoint map",
+      "prompt": "Execute one MVP slice only: refactor web registrar endpoint helper mapping to reduce duplication across read/admin-adjacent contract paths without behavior drift; keep public client method signatures stable.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:39:54.867Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:39:20.162Z",
+      "finishedAt": "2026-02-27T21:39:54.867Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-257A.md"
+    }
+  ]
+}

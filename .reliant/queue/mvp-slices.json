@@ -1,94 +1,83 @@
 {
   "version": 1,
-  "generatedAt": "2026-02-26T09:35:00.000Z",
+  "generatedAt": "2026-02-26T20:05:00.000Z",
   "tasks": [
     {
-      "id": "SLICE-PROJ-READ-114B",
-      "title": "Registrar project read payload hardening (service/controller parity + tests + docs)",
-      "prompt": "Completed in-repo. Keep as historical record.",
-      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "id": "SLICE-SECT-WEB-123A",
+      "title": "Sect-motion web read contract scaffolding (list/detail, no UI actions)",
+      "prompt": "Execute one MVP slice only: add/align web typed contract/client scaffolding for existing sect-motion read APIs GET /registrar/sect-motion/entries and GET /registrar/sect-motion/:entryId. Scope: endpoint helper mapping, typed client methods, focused web tests; no new user-facing actions or CTAs. Update docs/specs/system/registrar.md implemented-now wording if needed, docs/CHANGELOG.md, and dated docs/handoff with exact command outputs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
       "status": "done",
-      "startedAt": "2026-02-26T09:20:00.000Z",
-      "finishedAt": "2026-02-26T09:35:00.000Z",
-      "updatedAt": "2026-02-26T09:35:00.000Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-114B-registrar-project-read-hardening.md"
+      "updatedAt": "2026-02-26T20:11:27.196Z",
+      "startedAt": "2026-02-26T20:10:03.283Z",
+      "finishedAt": "2026-02-26T20:11:27.196Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-123A-sect-motion-web-read-contract-scaffolding.md"
     },
     {
-      "id": "SLICE-PROJ-READ-116A",
-      "title": "Registrar project read controller parity hardening + targeted tests + docs sync",
-      "prompt": "Execute one MVP slice only: harden registrar project read controller parity for existing endpoints GET /registrar/project/entries and GET /registrar/project/:entryId. Scope: improve controller/service parity for ownership/type/not-found propagation and payload normalization expectations; add targeted tests in registrar.controller.test.ts and registrar.service.test.ts; update docs/specs/system/registrar.md implemented-now wording, docs/CHANGELOG.md, and add dated docs/handoff note with exact command outputs. Constraints: canon/spec-first, no feature drift, additive non-breaking only, no new endpoints, no migrations, no web UI actions.",
-      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "done",
-      "updatedAt": "2026-02-26T19:58:00.712Z",
-      "startedAt": "2026-02-26T19:57:05.244Z",
-      "finishedAt": "2026-02-26T19:58:00.711Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-116A-registrar-project-read-controller-parity.md"
-    },
-    {
-      "id": "SLICE-PROJ-WEB-117A",
-      "title": "Web typed contract scaffolding for registrar project read surfaces (no UI actions)",
-      "prompt": "Execute one MVP slice only: add/align web typed contract/client scaffolding for registrar project read surfaces already defined by API (list/detail). Scope: endpoint helper mapping, typed client methods, and focused web tests; no new user-facing buttons/actions. Update docs/CHANGELOG.md and dated docs/handoff note with exact commands/results. Constraints: canon/spec-first, no feature drift, web-tier boundary enforced, additive only.",
-      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "done",
-      "updatedAt": "2026-02-26T20:00:00.864Z",
-      "startedAt": "2026-02-26T19:58:37.089Z",
-      "finishedAt": "2026-02-26T20:00:00.864Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-117A-registrar-project-web-read-contract-scaffolding.md"
-    },
-    {
-      "id": "SLICE-QA-DOC-118A",
-      "title": "QA/docs/review consolidation for registrar project read slices",
-      "prompt": "Execute one MVP slice only: produce consolidated QA + docs/review closeout for registrar project read slices completed in this batch. Scope: run and record required gates, publish one dated handoff report with exact command outputs and pass/fail, sync docs/CHANGELOG.md and touched implemented-now notes. No API/schema/UI behavior changes unless required to fix a failing gate.",
-      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "done",
-      "updatedAt": "2026-02-26T20:00:27.277Z",
-      "startedAt": "2026-02-26T20:00:08.348Z",
-      "finishedAt": "2026-02-26T20:00:27.277Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-118A-registrar-project-read-qa-doc-consolidation.md"
-    },
-    {
-      "id": "SLICE-PROJ-API-119A",
-      "title": "Registrar project read response normalization helper consolidation",
-      "prompt": "Execute one MVP slice only: consolidate registrar project read response normalization into shared internal helper(s) without behavior drift. Scope: refactor-only within existing project list/detail read paths; preserve API contract; add/update targeted tests for normalization parity. No new endpoints, no migrations, no UI actions. Update changelog and dated handoff with exact commands/results.",
+      "id": "SLICE-SECT-API-124A",
+      "title": "Sect-motion API read mapping consolidation helper (refactor-only)",
+      "prompt": "Execute one MVP slice only: consolidate sect-motion list/detail read mapping into shared internal helper(s) in registrar service without behavior drift. Scope: refactor-only within existing read paths; preserve API contract and guard semantics; add/update targeted tests only as needed. No new endpoints, no migrations, no UI changes. Update changelog + dated handoff.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
       "status": "done",
-      "updatedAt": "2026-02-26T20:01:25.185Z",
-      "startedAt": "2026-02-26T20:00:57.072Z",
-      "finishedAt": "2026-02-26T20:01:25.185Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-119A-registrar-project-read-normalization-helper-consolidation.md"
+      "updatedAt": "2026-02-26T20:17:38.081Z",
+      "startedAt": "2026-02-26T20:16:57.697Z",
+      "finishedAt": "2026-02-26T20:17:38.080Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-124A-sect-motion-api-read-helper-consolidation.md"
     },
     {
-      "id": "SLICE-PROJ-WEB-120A",
-      "title": "Registrar project typed client test hardening (contract-only)",
-      "prompt": "Execute one MVP slice only: harden web typed client contract tests for registrar project list/detail reads. Scope: contract mapping/test coverage only; no new UI actions/buttons/CTAs; no server behavior expansion. Update changelog and dated handoff with exact validation outputs.",
-      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "done",
-      "updatedAt": "2026-02-26T20:02:09.824Z",
-      "startedAt": "2026-02-26T20:01:32.657Z",
-      "finishedAt": "2026-02-26T20:02:09.823Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-120A-registrar-project-typed-client-test-hardening.md"
-    },
-    {
-      "id": "SLICE-REVIEW-121A",
-      "title": "Risk/rollback review memo for registrar project read batch",
-      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed registrar project read batch slices. Enumerate findings by severity with file references, residual risks/testing gaps, and rollback guidance. Keep implementation changes minimal; docs/handoff/changelog updates only unless required to fix review-discovered defect.",
-      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "done",
-      "updatedAt": "2026-02-26T20:02:30.949Z",
-      "startedAt": "2026-02-26T20:02:16.146Z",
-      "finishedAt": "2026-02-26T20:02:30.949Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-121A-registrar-project-read-review-risk-memo.md"
-    },
-    {
-      "id": "SLICE-QA-122A",
-      "title": "Consolidated targeted gate replay for registrar project chain",
-      "prompt": "Execute one MVP slice only: run consolidated targeted validation for registrar project chain and publish exact command outputs to dated handoff. Required: docs:lint, infra-policy-check, targeted api tests, api/web typecheck. No feature work unless failing gate requires a minimal fix.",
+      "id": "SLICE-SECT-API-125A",
+      "title": "Sect-motion controller parity tests for list/detail propagation",
+      "prompt": "Execute one MVP slice only: harden registrar controller parity coverage for sect-motion list/detail reads, including forbidden/not-found propagation and response passthrough expectations. No API route/schema changes. Update docs/CHANGELOG.md and dated handoff with exact outputs.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "done",
-      "updatedAt": "2026-02-26T20:02:51.195Z",
-      "startedAt": "2026-02-26T20:02:35.411Z",
-      "finishedAt": "2026-02-26T20:02:51.195Z",
-      "reportPath": "docs/handoff/2026-02-26_slice-122A-registrar-project-chain-targeted-gate-replay.md"
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:44:31.149Z"
+    },
+    {
+      "id": "SLICE-PROMO-WEB-126A",
+      "title": "Promoter web typed client test hardening (list/detail/audit)",
+      "prompt": "Execute one MVP slice only: strengthen web typed client tests for promoter read methods (`listPromoterRegistrations`, `getPromoterRegistration`, `getPromoterCapabilityAudit`) with empty-data handling and shape assertions. Contract-only; no UI actions. Update changelog + handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:05:00.000Z"
+    },
+    {
+      "id": "SLICE-CONTRACT-127A",
+      "title": "Registrar web contract inventory alignment for implemented read APIs",
+      "prompt": "Execute one MVP slice only: align registrar web contract inventory to include any implemented API read surfaces currently missing from inventory metadata (no UI status flips to implemented unless web consumer exists). Keep web surface action-gated. Update tests/changelog/handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:05:00.000Z"
+    },
+    {
+      "id": "SLICE-QA-DOC-128A",
+      "title": "QA/docs consolidation for sect/promoter read hardening batch",
+      "prompt": "Execute one MVP slice only: run and record consolidated gates for this batch, publish dated handoff with exact outputs, and sync changelog/spec implemented-now notes as required. No behavior changes unless needed to fix failing gate.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:05:00.000Z"
+    },
+    {
+      "id": "SLICE-REVIEW-129A",
+      "title": "Risk/rollback review memo for sect/promoter read batch",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed sect/promoter read batch slices with findings by severity, residual risks/testing gaps, and migration-free rollback guidance. Docs-only unless defect discovered.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:05:00.000Z"
+    },
+    {
+      "id": "SLICE-QA-130A",
+      "title": "Consolidated targeted gate replay for sect/promoter read chain",
+      "prompt": "Execute one MVP slice only: final targeted verification replay for sect/promoter read batch, publish exact command outputs in dated handoff, and update changelog. No feature changes unless gate fix is required.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:05:00.000Z"
     }
-  ]
+  ],
+  "summary": {
+    "total": 8,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 2,
+    "blocked": 0
+  }
 }

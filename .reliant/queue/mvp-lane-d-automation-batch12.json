@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T02:25:50.435Z",
+  "lane": "lane-d-automation-batch12",
+  "sourceFiles": [
+    "mvp-slices-batch12-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-AUTO-354A",
+      "title": "Supervisor ownership diagnostics pack 3",
+      "prompt": "Execute one MVP slice only: improve lane/runtime ownership diagnostics and operator cues for faster stale-state recovery without queue semantic changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:47:46.196Z",
+      "lane": "lane-d-automation-batch12",
+      "startedAt": "2026-02-28T02:46:19.384Z",
+      "finishedAt": "2026-02-28T02:47:46.196Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-354A.md"
+    },
+    {
+      "id": "SLICE-AUTO-355A",
+      "title": "Summary drift detector pack 3",
+      "prompt": "Execute one MVP slice only: extend summary drift detector coverage and deterministic diagnostics for queue status sanity checks.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:49:13.541Z",
+      "lane": "lane-d-automation-batch12",
+      "startedAt": "2026-02-28T02:47:57.184Z",
+      "finishedAt": "2026-02-28T02:49:13.541Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-355A.md"
+    },
+    {
+      "id": "SLICE-AUTO-356A",
+      "title": "Claim refusal code normalization pack 3",
+      "prompt": "Execute one MVP slice only: normalize claim refusal/result code surface across queue states (no queued/in-progress/runtime mismatch) for automation operators.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:49:56.773Z",
+      "lane": "lane-d-automation-batch12",
+      "startedAt": "2026-02-28T02:49:18.454Z",
+      "finishedAt": "2026-02-28T02:49:56.773Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-356A.md"
+    },
+    {
+      "id": "SLICE-AUTO-357A",
+      "title": "Supervisor backoff jitter guardrails pack 3",
+      "prompt": "Execute one MVP slice only: tighten backoff/jitter guardrails for parallel lane supervisor loops to reduce contention.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:50:46.795Z",
+      "lane": "lane-d-automation-batch12",
+      "startedAt": "2026-02-28T02:50:07.145Z",
+      "finishedAt": "2026-02-28T02:50:46.795Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-357A.md"
+    },
+    {
+      "id": "SLICE-AUTO-358A",
+      "title": "Runtime integrity diagnostics pack 3",
+      "prompt": "Execute one MVP slice only: extend runtime integrity diagnostics/checksums for malformed/stale runtime troubleshooting with no transition behavior change.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:51:28.860Z",
+      "lane": "lane-d-automation-batch12",
+      "startedAt": "2026-02-28T02:50:51.949Z",
+      "finishedAt": "2026-02-28T02:51:28.860Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-358A.md"
+    },
+    {
+      "id": "SLICE-AUTO-359A",
+      "title": "Runbook copy-safe command hardening pack 3",
+      "prompt": "Execute one MVP slice only: docs-only command-copy hardening pass for automation runbook blocks to prevent shell split/quote failures.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:52:07.936Z",
+      "lane": "lane-d-automation-batch12",
+      "startedAt": "2026-02-28T02:51:32.294Z",
+      "finishedAt": "2026-02-28T02:52:07.936Z",
+      "reportPath": "docs/handoff/2026-02-28_SLICE-AUTO-359A.md"
+    }
+  ]
+}

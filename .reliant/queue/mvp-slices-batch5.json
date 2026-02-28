@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T21:30:00.000Z",
+  "tasks": [
+    {
+      "id": "SLICE-QUEUE-147A",
+      "title": "Queue script idempotency guards for complete/block transitions",
+      "prompt": "Execute one MVP slice only: harden `scripts/reliant-slice-queue.mjs` transition safety to avoid accidental complete/block on stale runtime IDs. Scope: additive guard checks + tests/docs. No product API/UI changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    },
+    {
+      "id": "SLICE-QUEUE-148A",
+      "title": "Queue status/reporting consistency for in_progress ownership",
+      "prompt": "Execute one MVP slice only: improve queue status metadata consistency for in-progress tasks and report-path visibility. Scope: queue tooling/docs only, no feature drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    },
+    {
+      "id": "SLICE-REG-API-149A",
+      "title": "Registrar read response typing cleanup in shared web/api client contracts",
+      "prompt": "Execute one MVP slice only: tighten typed contract alignment for existing registrar read responses in web client types with no endpoint or behavior changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    },
+    {
+      "id": "SLICE-REG-TEST-150A",
+      "title": "Registrar controller test matrix completion for read-path forbidden/not-found parity",
+      "prompt": "Execute one MVP slice only: fill remaining registrar read controller parity tests (forbidden/not-found/passthrough) across existing read endpoints only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    },
+    {
+      "id": "SLICE-REG-WEB-151A",
+      "title": "Registrar client fallback behavior consistency tests",
+      "prompt": "Execute one MVP slice only: harmonize fallback/error behavior tests for existing registrar web client read methods. Contract-only, no UI actions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    },
+    {
+      "id": "SLICE-DOC-152A",
+      "title": "Registrar spec/changelog consistency pass after batch3+batch4",
+      "prompt": "Execute one MVP slice only: docs-only consistency pass across registrar implemented-now entries and changelog references for completed slices.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    },
+    {
+      "id": "SLICE-QA-153A",
+      "title": "Consolidated targeted gate replay for queue tooling + registrar read contracts",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for this batch and publish exact outputs in dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    },
+    {
+      "id": "SLICE-REVIEW-154A",
+      "title": "Risk/rollback memo for queue tooling + registrar contract batch",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo with findings, residual risks, and rollback notes for completed batch5 slices.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:30:00.000Z"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "queued": 8,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  }
+}

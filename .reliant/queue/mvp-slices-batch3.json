@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T20:30:00.000Z",
+  "tasks": [
+    {
+      "id": "SLICE-PROMO-WEB-131A",
+      "title": "Promoter web read contract scaffolding alignment (list/detail/audit, no UI actions)",
+      "prompt": "Execute one MVP slice only: align web typed contract/client scaffolding for existing promoter read APIs (`GET /registrar/promoter/entries`, `GET /registrar/promoter/:entryId`, `GET /registrar/promoter/:entryId/capability-audit`). Scope: endpoint helper mapping and typed client parity checks only; no new UI actions/CTAs. Update docs/specs/system/registrar.md implemented-now wording if needed, docs/CHANGELOG.md, and dated docs/handoff note.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    },
+    {
+      "id": "SLICE-PROMO-WEB-132A",
+      "title": "Promoter typed client test hardening for read paths",
+      "prompt": "Execute one MVP slice only: harden web typed client tests for promoter read methods (`listPromoterRegistrations`, `getPromoterRegistration`, `getPromoterCapabilityAudit`) including empty-data handling and stable response-shape assertions. Contract-only; no UI changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    },
+    {
+      "id": "SLICE-PROMO-API-133A",
+      "title": "Promoter API read mapping helper consolidation (refactor-only)",
+      "prompt": "Execute one MVP slice only: consolidate promoter list/detail read mapping into shared internal helper(s) in registrar service without behavior drift. Scope: refactor-only in existing read paths; preserve capability summary and payload normalization semantics. No endpoint/schema/UI changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    },
+    {
+      "id": "SLICE-PROMO-API-134A",
+      "title": "Promoter controller parity hardening for detail/audit error propagation",
+      "prompt": "Execute one MVP slice only: harden registrar controller parity tests for promoter detail and capability-audit reads, including forbidden/not-found propagation and response passthrough expectations. No API route/schema changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    },
+    {
+      "id": "SLICE-CODE-WEB-135A",
+      "title": "Registrar code web read/client contract test hardening (verify/redeem)",
+      "prompt": "Execute one MVP slice only: strengthen web typed client/contract tests around registrar code verify/redeem scaffolding (`POST /registrar/code/verify`, `POST /registrar/code/redeem`) without adding user actions. Keep issue endpoint unresolved per spec. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    },
+    {
+      "id": "SLICE-CONTRACT-136A",
+      "title": "Registrar contract inventory metadata hygiene pass",
+      "prompt": "Execute one MVP slice only: align registrar web contract inventory metadata for API-implemented but web-action-gated endpoints to keep ids/path templates/gap classifications coherent and test-enforced. No UI implementation status flips without concrete web consumer. Update tests/changelog/handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    },
+    {
+      "id": "SLICE-QA-DOC-137A",
+      "title": "QA/docs consolidation for promoter/code contract batch",
+      "prompt": "Execute one MVP slice only: run consolidated validation for this batch, publish dated handoff with exact command outputs, and sync docs/CHANGELOG.md + touched implemented-now notes. No behavior changes unless needed to fix failing gates.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    },
+    {
+      "id": "SLICE-REVIEW-138A",
+      "title": "Risk/rollback review memo for promoter/code contract batch",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed promoter/code contract slices. Enumerate findings by severity with file references, residual risks/testing gaps, and migration-free rollback guidance. Docs-only unless defect discovered.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T20:30:00.000Z"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "queued": 8,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:45:34.619Z",
+  "lane": "lane-b-web-contract-reserve",
+  "sourceFiles": [
+    "mvp-slices-batch10-real-mvp-reserve.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-WEBADMIN-282A",
+      "title": "Promoter capability-audit empty-state contract parity",
+      "prompt": "Execute one MVP slice only: harden web contract/client tests for promoter capability-audit empty-state and sparse event payload handling; no UI action expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:35:32.494Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:34:53.909Z",
+      "finishedAt": "2026-02-27T23:35:32.494Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-282A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-283A",
+      "title": "Registrar client auth-error propagation consistency pass",
+      "prompt": "Execute one MVP slice only: normalize web registrar client auth-error propagation across read and code verify/redeem methods with focused tests only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:36:02.392Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:35:39.294Z",
+      "finishedAt": "2026-02-27T23:36:02.392Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-283A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-284A",
+      "title": "Contract inventory endpoint metadata dedupe pass",
+      "prompt": "Execute one MVP slice only: dedupe/normalize registrar contract inventory endpoint metadata entries (path/method/status notes) with no implementation-status flips.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:36:38.797Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:36:07.704Z",
+      "finishedAt": "2026-02-27T23:36:38.797Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-284A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-285A",
+      "title": "Project/sect detail read nullable-field parity tests",
+      "prompt": "Execute one MVP slice only: strengthen nullable-field parity tests for project/sect detail read methods in web typed client; no new user-facing actions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:37:08.281Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:36:44.518Z",
+      "finishedAt": "2026-02-27T23:37:08.281Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-285A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-286A",
+      "title": "Invite summary shape assertions (top-level + per-entry)",
+      "prompt": "Execute one MVP slice only: add web typed assertions for invite summary shape stability (top-level and per-entry counts/outcomes) aligned to current API behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:38:06.083Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:37:14.664Z",
+      "finishedAt": "2026-02-27T23:38:06.083Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-286A.md"
+    },
+    {
+      "id": "SLICE-WEBADMIN-287A",
+      "title": "Registrar web contract/action-gated notes consistency sweep",
+      "prompt": "Execute one MVP slice only: consistency sweep for web contract inventory action-gated notes to ensure they match implemented-now/deferred boundaries in spec; tests/docs only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:38:29.748Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:38:06.101Z",
+      "finishedAt": "2026-02-27T23:38:29.748Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-WEBADMIN-287A.md"
+    }
+  ]
+}

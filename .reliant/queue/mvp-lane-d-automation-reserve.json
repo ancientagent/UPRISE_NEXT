@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:45:34.619Z",
+  "lane": "lane-d-automation-reserve",
+  "sourceFiles": [
+    "mvp-slices-batch10-real-mvp-reserve.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-AUTO-294A",
+      "title": "Supervisor lane-runtime ownership map diagnostics",
+      "prompt": "Execute one MVP slice only: enhance supervisor diagnostics with lane->runtime ownership mapping output to speed stale-runtime triage. No product API/UI behavior change.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:35:43.504Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:35:08.029Z",
+      "finishedAt": "2026-02-27T23:35:43.504Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-294A.md"
+    },
+    {
+      "id": "SLICE-AUTO-295A",
+      "title": "Queue summary recompute sanity check hook",
+      "prompt": "Execute one MVP slice only: add queue summary recompute sanity check hook to catch persisted summary drift and emit deterministic diagnostics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:36:19.460Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:35:43.522Z",
+      "finishedAt": "2026-02-27T23:36:19.460Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-295A.md"
+    },
+    {
+      "id": "SLICE-AUTO-296A",
+      "title": "Claim refusal messaging standardization",
+      "prompt": "Execute one MVP slice only: standardize claim refusal messaging across no-queued/active-in-progress/runtime-mismatch scenarios for clearer automation operator handling.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:36:46.889Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:36:19.483Z",
+      "finishedAt": "2026-02-27T23:36:46.889Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-296A.md"
+    },
+    {
+      "id": "SLICE-AUTO-297A",
+      "title": "Supervisor loop backoff and jitter guardrails",
+      "prompt": "Execute one MVP slice only: add deterministic backoff+jitter guardrails to supervisor retry loops to reduce collision risk under simultaneous lane activity.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:37:22.203Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:36:46.906Z",
+      "finishedAt": "2026-02-27T23:37:22.203Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-297A.md"
+    },
+    {
+      "id": "SLICE-AUTO-298A",
+      "title": "Runtime file integrity checksum diagnostics",
+      "prompt": "Execute one MVP slice only: add optional runtime file integrity checksum diagnostics for troubleshooting intermittent stale-runtime mismatches; no behavior change to queue transitions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:38:47.634Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:37:22.220Z",
+      "finishedAt": "2026-02-27T23:38:47.634Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-298A.md"
+    },
+    {
+      "id": "SLICE-AUTO-299A",
+      "title": "Automation runbook command-copy hardening",
+      "prompt": "Execute one MVP slice only: harden runbook command-copy blocks to prevent shell split-line/quote errors observed in operations; docs-only with exact known-good command forms.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:39:19.117Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:38:47.654Z",
+      "finishedAt": "2026-02-27T23:39:19.117Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-299A.md"
+    }
+  ]
+}

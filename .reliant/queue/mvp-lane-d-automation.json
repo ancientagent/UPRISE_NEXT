@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T22:16:45.947Z",
+  "lane": "lane-d-automation",
+  "sourceFiles": [
+    "mvp-slices-batch3.json",
+    "mvp-slices-batch4.json",
+    "mvp-slices-batch5.json",
+    "mvp-slices-batch6.json",
+    "mvp-slices-batch7.json",
+    "mvp-slices.json"
+  ],
+  "summary": {
+    "total": 7,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 7,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-QUEUE-147A",
+      "title": "Queue script idempotency guards for complete/block transitions",
+      "prompt": "Execute one MVP slice only: harden `scripts/reliant-slice-queue.mjs` transition safety to avoid accidental complete/block on stale runtime IDs. Scope: additive guard checks + tests/docs. No product API/UI changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:24:01.209Z",
+      "sourceQueue": "mvp-slices-batch5.json",
+      "startedAt": "2026-02-26T23:22:32.724Z",
+      "finishedAt": "2026-02-26T23:24:01.209Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-147A-queue-idempotency-guards.md"
+    },
+    {
+      "id": "SLICE-QUEUE-148A",
+      "title": "Queue status/reporting consistency for in_progress ownership",
+      "prompt": "Execute one MVP slice only: improve queue status metadata consistency for in-progress tasks and report-path visibility. Scope: queue tooling/docs only, no feature drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:24:49.659Z",
+      "sourceQueue": "mvp-slices-batch5.json",
+      "startedAt": "2026-02-26T23:24:01.227Z",
+      "finishedAt": "2026-02-26T23:24:49.659Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-148A-queue-status-reporting-consistency.md"
+    },
+    {
+      "id": "SLICE-AUTO-155A",
+      "title": "Orchestrator prompt hardening to prevent bulk block loops",
+      "prompt": "Execute one MVP slice only: tighten orchestrator workflow guidance docs/templates to prevent accidental bulk claim/block loops. Tooling/docs-only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:27:00.139Z",
+      "sourceQueue": "mvp-slices-batch6.json",
+      "startedAt": "2026-02-26T23:24:49.679Z",
+      "finishedAt": "2026-02-26T23:27:00.139Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-155A-orchestrator-prompt-hardening.md"
+    },
+    {
+      "id": "SLICE-AUTO-156A",
+      "title": "Runtime stale-state cleanup utility script",
+      "prompt": "Execute one MVP slice only: add a tiny utility script to clear stale runtime task file safely (`.reliant/runtime/current-task.json`) and document usage. No product changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:28:17.411Z",
+      "sourceQueue": "mvp-slices-batch6.json",
+      "startedAt": "2026-02-26T23:27:05.973Z",
+      "finishedAt": "2026-02-26T23:28:17.410Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-156A-runtime-stale-state-cleanup-utility.md"
+    },
+    {
+      "id": "SLICE-AUTO-157A",
+      "title": "Queue file validation schema/check script",
+      "prompt": "Execute one MVP slice only: add validation for queue JSON shape/required keys before execution to reduce runtime corruption.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:29:29.057Z",
+      "sourceQueue": "mvp-slices-batch6.json",
+      "startedAt": "2026-02-26T23:29:29.037Z",
+      "finishedAt": "2026-02-26T23:29:29.057Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-157A-queue-file-validation-schema-check.md"
+    },
+    {
+      "id": "SLICE-QUEUE-163A",
+      "title": "Queue command UX: explicit stale-runtime diagnostic message",
+      "prompt": "Execute one MVP slice only: improve queue tooling diagnostics so stale runtime/current-task mismatch errors are explicit and actionable. Tooling/docs only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:30:25.574Z",
+      "sourceQueue": "mvp-slices-batch7.json",
+      "startedAt": "2026-02-26T23:30:01.823Z",
+      "finishedAt": "2026-02-26T23:30:25.574Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-163A-queue-stale-runtime-diagnostics.md"
+    },
+    {
+      "id": "SLICE-QUEUE-164A",
+      "title": "Queue command UX: optional --task-id guard for complete/block",
+      "prompt": "Execute one MVP slice only: add optional task-id guard flag to queue complete/block commands to prevent accidental wrong-task transitions. Preserve backward compatibility.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T23:31:18.545Z",
+      "sourceQueue": "mvp-slices-batch7.json",
+      "startedAt": "2026-02-26T23:30:31.551Z",
+      "finishedAt": "2026-02-26T23:31:18.545Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-164A-queue-task-id-guard.md"
+    }
+  ]
+}

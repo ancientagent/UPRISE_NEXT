@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T23:38:08.127Z",
+  "lane": "lane-c-invite-batch11",
+  "sourceFiles": [
+    "mvp-slices-batch11-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-INVITE-318A",
+      "title": "Invite finalize missing-record guard parity pack 2",
+      "prompt": "Execute one MVP slice only: harden invite finalize handling for missing delivery/member records with deterministic outcomes and diagnostics parity; no behavior drift for valid flows.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:28:41.693Z",
+      "lane": "lane-c-invite-batch11",
+      "startedAt": "2026-02-28T02:28:34.814Z",
+      "finishedAt": "2026-02-28T02:28:41.693Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-318A-invite-finalize-missing-record-guard-parity-pack-2.md"
+    },
+    {
+      "id": "SLICE-INVITE-319A",
+      "title": "Queued-to-sent invariant enforcement pack 2",
+      "prompt": "Execute one MVP slice only: reinforce queued-to-sent invite invariants (single-finalize semantics, no regression) with targeted service tests only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:28:47.286Z",
+      "lane": "lane-c-invite-batch11",
+      "startedAt": "2026-02-28T02:28:41.977Z",
+      "finishedAt": "2026-02-28T02:28:47.286Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-319A-queued-to-sent-invariant-enforcement-pack-2.md"
+    },
+    {
+      "id": "SLICE-INVITE-320A",
+      "title": "Fallback failure mapping boundary pass 2",
+      "prompt": "Execute one MVP slice only: harden fallback failure mapping boundaries in invite delivery flows to preserve deterministic final states and auditability.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:28:52.929Z",
+      "lane": "lane-c-invite-batch11",
+      "startedAt": "2026-02-28T02:28:47.516Z",
+      "finishedAt": "2026-02-28T02:28:52.929Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-320A-fallback-failure-mapping-boundary-pass-2.md"
+    },
+    {
+      "id": "SLICE-INVITE-321A",
+      "title": "Provider response strict parser pack 2",
+      "prompt": "Execute one MVP slice only: tighten provider response validation to accepted terminal outcomes (`sent|failed`) with deterministic mapping and focused tests.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:28:58.624Z",
+      "lane": "lane-c-invite-batch11",
+      "startedAt": "2026-02-28T02:28:53.163Z",
+      "finishedAt": "2026-02-28T02:28:58.624Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-321A-provider-response-strict-parser-pack-2.md"
+    },
+    {
+      "id": "SLICE-INVITE-322A",
+      "title": "Invite chronology read-model assertions pack 2",
+      "prompt": "Execute one MVP slice only: extend invite read-model chronology assertions for dispatch/finalize timestamps and ordering semantics without schema changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:29:04.870Z",
+      "lane": "lane-c-invite-batch11",
+      "startedAt": "2026-02-28T02:28:58.826Z",
+      "finishedAt": "2026-02-28T02:29:04.870Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-322A-invite-chronology-read-model-assertions-pack-2.md"
+    },
+    {
+      "id": "SLICE-INVITE-323A",
+      "title": "Invite deferred-boundary docs consistency pass 2",
+      "prompt": "Execute one MVP slice only: docs-only consistency pass reinforcing invite deferred-boundary wording in registrar spec/runbook; no speculative capability claims.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:29:09.345Z",
+      "lane": "lane-c-invite-batch11",
+      "startedAt": "2026-02-28T02:29:05.100Z",
+      "finishedAt": "2026-02-28T02:29:09.345Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-323A-invite-deferred-boundary-docs-consistency-pass-2.md"
+    }
+  ]
+}

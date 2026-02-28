@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:45:34.619Z",
+  "lane": "lane-e-qarev-reserve",
+  "sourceFiles": [
+    "mvp-slices-batch10-real-mvp-reserve.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-QAREV-300A",
+      "title": "Batch10 QA replay wave 1 (A/B reserve slices)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for completed batch10 lane A/B reserve slices, record exact output in dated handoff, and flag regressions only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:40:07.673Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:40:01.426Z",
+      "finishedAt": "2026-02-27T23:40:07.673Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-300A.md"
+    },
+    {
+      "id": "SLICE-QAREV-301A",
+      "title": "Batch10 risk memo wave 1 (A/B reserve slices)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch10 A/B reserve slices with findings by severity, residual risks/testing gaps, and rollback guidance.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:40:11.838Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:40:07.696Z",
+      "finishedAt": "2026-02-27T23:40:11.838Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-301A.md"
+    },
+    {
+      "id": "SLICE-QAREV-302A",
+      "title": "Batch10 QA replay wave 2 (C/D reserve slices)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for completed batch10 C/D reserve slices and publish exact outputs + gate outcomes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:40:17.124Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:40:11.858Z",
+      "finishedAt": "2026-02-27T23:40:17.124Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-302A.md"
+    },
+    {
+      "id": "SLICE-QAREV-303A",
+      "title": "Batch10 risk memo wave 2 (C/D reserve slices)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch10 C/D reserve slices with severity ordering, residual risks/testing gaps, and rollback notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:40:21.400Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:40:17.144Z",
+      "finishedAt": "2026-02-27T23:40:21.400Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-303A.md"
+    },
+    {
+      "id": "SLICE-QAREV-304A",
+      "title": "Registrar implemented-now/deferred wording sync after batch10",
+      "prompt": "Execute one MVP slice only: docs-only consistency pass to sync registrar implemented-now/deferred wording with completed batch10 reserve slices; no speculative claims.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:40:25.480Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:40:21.419Z",
+      "finishedAt": "2026-02-27T23:40:25.480Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-304A.md"
+    },
+    {
+      "id": "SLICE-QAREV-305A",
+      "title": "Batch10 closeout targeted gate replay",
+      "prompt": "Execute one MVP slice only: final targeted gate replay for batch10 reserve slices and publish closeout handoff with exact command outputs and follow-up backlog recommendations.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T23:40:32.396Z",
+      "sourceQueue": "mvp-slices-batch10-real-mvp-reserve.json",
+      "startedAt": "2026-02-27T23:40:25.499Z",
+      "finishedAt": "2026-02-27T23:40:32.396Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-305A.md"
+    }
+  ]
+}

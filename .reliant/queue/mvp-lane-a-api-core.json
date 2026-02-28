@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T22:16:45.945Z",
+  "lane": "lane-a-api-core",
+  "sourceFiles": [
+    "mvp-slices-batch3.json",
+    "mvp-slices-batch4.json",
+    "mvp-slices-batch5.json",
+    "mvp-slices-batch6.json",
+    "mvp-slices-batch7.json",
+    "mvp-slices.json"
+  ],
+  "summary": {
+    "total": 10,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 10,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-PROMO-API-133A",
+      "title": "Promoter API read mapping helper consolidation (refactor-only)",
+      "prompt": "Execute one MVP slice only: consolidate promoter list/detail read mapping into shared internal helper(s) in registrar service without behavior drift. Scope: refactor-only in existing read paths; preserve capability summary and payload normalization semantics. No endpoint/schema/UI changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:24:22.130Z",
+      "sourceQueue": "mvp-slices-batch3.json",
+      "startedAt": "2026-02-26T22:23:03.293Z",
+      "finishedAt": "2026-02-26T22:24:22.130Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-133A-promoter-api-read-helper-consolidation.md"
+    },
+    {
+      "id": "SLICE-PROMO-API-134A",
+      "title": "Promoter controller parity hardening for detail/audit error propagation",
+      "prompt": "Execute one MVP slice only: harden registrar controller parity tests for promoter detail and capability-audit reads, including forbidden/not-found propagation and response passthrough expectations. No API route/schema changes. Update changelog + dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:25:12.492Z",
+      "sourceQueue": "mvp-slices-batch3.json",
+      "startedAt": "2026-02-26T22:24:27.757Z",
+      "finishedAt": "2026-02-26T22:25:12.492Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-134A-promoter-controller-parity-hardening.md"
+    },
+    {
+      "id": "SLICE-REG-API-149A",
+      "title": "Registrar read response typing cleanup in shared web/api client contracts",
+      "prompt": "Execute one MVP slice only: tighten typed contract alignment for existing registrar read responses in web client types with no endpoint or behavior changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:30:17.885Z",
+      "sourceQueue": "mvp-slices-batch5.json",
+      "startedAt": "2026-02-26T22:29:05.413Z",
+      "finishedAt": "2026-02-26T22:30:17.885Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-149A-registrar-read-response-typing-cleanup.md"
+    },
+    {
+      "id": "SLICE-REG-TEST-150A",
+      "title": "Registrar controller test matrix completion for read-path forbidden/not-found parity",
+      "prompt": "Execute one MVP slice only: fill remaining registrar read controller parity tests (forbidden/not-found/passthrough) across existing read endpoints only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:31:09.123Z",
+      "sourceQueue": "mvp-slices-batch5.json",
+      "startedAt": "2026-02-26T22:30:17.903Z",
+      "finishedAt": "2026-02-26T22:31:09.123Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-150A-registrar-controller-read-parity-matrix.md"
+    },
+    {
+      "id": "SLICE-REG-158A",
+      "title": "Registrar invite read/client typed parity follow-up",
+      "prompt": "Execute one MVP slice only: align typed read parity for invite status fields across API/web contracts without behavior changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:31:58.871Z",
+      "sourceQueue": "mvp-slices-batch6.json",
+      "startedAt": "2026-02-26T22:31:09.142Z",
+      "finishedAt": "2026-02-26T22:31:58.871Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-158A-registrar-invite-read-client-typed-parity.md"
+    },
+    {
+      "id": "SLICE-REG-159A",
+      "title": "Registrar contract inventory helper coverage expansion",
+      "prompt": "Execute one MVP slice only: expand helper guard coverage in registrar contract inventory tests for all entry-id scoped endpoint builders.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:32:43.046Z",
+      "sourceQueue": "mvp-slices-batch6.json",
+      "startedAt": "2026-02-26T22:31:58.888Z",
+      "finishedAt": "2026-02-26T22:32:43.045Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-159A-registrar-contract-inventory-helper-coverage.md"
+    },
+    {
+      "id": "SLICE-REG-165A",
+      "title": "Registrar read DTO/type naming consistency cleanup",
+      "prompt": "Execute one MVP slice only: clean up registrar read-side type/interface naming consistency in web client contracts with no API behavior changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:33:32.275Z",
+      "sourceQueue": "mvp-slices-batch7.json",
+      "startedAt": "2026-02-26T22:32:43.064Z",
+      "finishedAt": "2026-02-26T22:33:32.275Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-165A-registrar-read-dto-type-naming-consistency.md"
+    },
+    {
+      "id": "SLICE-REG-166A",
+      "title": "Registrar controller read-path negative-case matrix completion",
+      "prompt": "Execute one MVP slice only: complete any missing controller negative-case tests (forbidden/not-found) for existing registrar read endpoints only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:34:16.205Z",
+      "sourceQueue": "mvp-slices-batch7.json",
+      "startedAt": "2026-02-26T22:33:32.292Z",
+      "finishedAt": "2026-02-26T22:34:16.205Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-166A-registrar-controller-negative-matrix.md"
+    },
+    {
+      "id": "SLICE-REG-167A",
+      "title": "Registrar web contract inventory notes normalization",
+      "prompt": "Execute one MVP slice only: normalize inventory notes language for implemented-vs-gap registrar endpoints to reduce ambiguity; tests/docs only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:35:01.470Z",
+      "sourceQueue": "mvp-slices-batch7.json",
+      "startedAt": "2026-02-26T22:34:16.222Z",
+      "finishedAt": "2026-02-26T22:35:01.469Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-167A-registrar-contract-inventory-notes-normalization.md"
+    },
+    {
+      "id": "SLICE-SECT-API-125A",
+      "title": "Sect-motion controller parity tests for list/detail propagation",
+      "prompt": "Execute one MVP slice only: harden registrar controller parity coverage for sect-motion list/detail reads, including forbidden/not-found propagation and response passthrough expectations. No API route/schema changes. Update docs/CHANGELOG.md and dated handoff with exact outputs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-26T22:35:46.353Z",
+      "sourceQueue": "mvp-slices.json",
+      "startedAt": "2026-02-26T22:35:01.487Z",
+      "finishedAt": "2026-02-26T22:35:46.351Z",
+      "reportPath": "docs/handoff/2026-02-26_slice-125A-sect-motion-controller-parity.md"
+    }
+  ]
+}

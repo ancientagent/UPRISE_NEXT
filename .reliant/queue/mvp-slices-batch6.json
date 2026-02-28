@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-26T21:45:00.000Z",
+  "tasks": [
+    {
+      "id": "SLICE-AUTO-155A",
+      "title": "Orchestrator prompt hardening to prevent bulk block loops",
+      "prompt": "Execute one MVP slice only: tighten orchestrator workflow guidance docs/templates to prevent accidental bulk claim/block loops. Tooling/docs-only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    },
+    {
+      "id": "SLICE-AUTO-156A",
+      "title": "Runtime stale-state cleanup utility script",
+      "prompt": "Execute one MVP slice only: add a tiny utility script to clear stale runtime task file safely (`.reliant/runtime/current-task.json`) and document usage. No product changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    },
+    {
+      "id": "SLICE-AUTO-157A",
+      "title": "Queue file validation schema/check script",
+      "prompt": "Execute one MVP slice only: add validation for queue JSON shape/required keys before execution to reduce runtime corruption.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    },
+    {
+      "id": "SLICE-REG-158A",
+      "title": "Registrar invite read/client typed parity follow-up",
+      "prompt": "Execute one MVP slice only: align typed read parity for invite status fields across API/web contracts without behavior changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    },
+    {
+      "id": "SLICE-REG-159A",
+      "title": "Registrar contract inventory helper coverage expansion",
+      "prompt": "Execute one MVP slice only: expand helper guard coverage in registrar contract inventory tests for all entry-id scoped endpoint builders.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- registrar-contract-inventory.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    },
+    {
+      "id": "SLICE-DOC-160A",
+      "title": "Handoff quality rubric and template refresh",
+      "prompt": "Execute one MVP slice only: improve handoff template quality rubric for exact commands/results, risk/rollback, and queue metadata references.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    },
+    {
+      "id": "SLICE-QA-161A",
+      "title": "Consolidated validation replay for automation hardening batch",
+      "prompt": "Execute one MVP slice only: run full consolidated targeted gates for this batch and publish exact outputs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    },
+    {
+      "id": "SLICE-REVIEW-162A",
+      "title": "Risk/rollback memo for automation hardening batch",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for batch6 completion with residual risks and rollback guidance.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-26T21:45:00.000Z"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "queued": 8,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  }
+}

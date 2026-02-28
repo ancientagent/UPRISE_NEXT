@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:26:08.325Z",
+  "lane": "lane-a-api-admin-lifecycle",
+  "sourceFiles": [
+    "mvp-slices-batch9-real-mvp.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-ADMIN-246A",
+      "title": "Promoter approval transition policy helper (service-only)",
+      "prompt": "Execute one MVP slice only: add internal registrar service transition-policy helper for promoter approval lifecycle (`submitted -> approved|rejected`) with explicit guard semantics and targeted service tests. No public route/schema/UI changes in this slice. Keep canon/spec-first and no feature drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:45:47.202Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:42:58.675Z",
+      "finishedAt": "2026-02-27T21:45:47.202Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-246a-promoter-approval-transition-policy-helper-service-only.md"
+    },
+    {
+      "id": "SLICE-ADMIN-247A",
+      "title": "System-only registrar code issuance seam for approved promoter entries",
+      "prompt": "Execute one MVP slice only: add internal system-only registrar code issuance seam enforcing approved-promoter-entry precondition and capability code metadata provenance (entry/code linkage). No self-issuance path and no web CTA additions. Add targeted API service tests.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:47:12.857Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:46:02.524Z",
+      "finishedAt": "2026-02-27T21:47:12.857Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-247a-system-only-registrar-code-issuance-seam-for-approved-promoter-entries.md"
+    },
+    {
+      "id": "SLICE-ADMIN-248A",
+      "title": "Capability audit-log emission parity for approval and issuance",
+      "prompt": "Execute one MVP slice only: harden registrar capability audit-log emission for approval/issuance transitions with deterministic metadata shape and additive-only writes. No route changes and no UI changes. Add targeted test assertions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:48:14.593Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:47:16.149Z",
+      "finishedAt": "2026-02-27T21:48:14.593Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-248a-capability-audit-log-emission-parity-for-approval-and-issuance.md"
+    },
+    {
+      "id": "SLICE-ADMIN-249A",
+      "title": "Promoter capability revocation policy helper (service-only)",
+      "prompt": "Execute one MVP slice only: add internal registrar revocation policy helper for promoter capability grants with append-only audit behavior and no destructive mutation shortcuts. Keep scope service-layer + targeted tests only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:49:26.056Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:48:18.328Z",
+      "finishedAt": "2026-02-27T21:49:26.056Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-249a-promoter-capability-revocation-policy-helper-service-only.md"
+    },
+    {
+      "id": "SLICE-ADMIN-250A",
+      "title": "Registrar status transition matrix test expansion (admin lifecycle)",
+      "prompt": "Execute one MVP slice only: expand registrar service transition matrix coverage for promoter approval/revocation lifecycle helpers (valid and invalid transitions). No new behavior beyond policy lock requirements.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:50:17.100Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:49:29.373Z",
+      "finishedAt": "2026-02-27T21:50:17.100Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-250a-registrar-status-transition-matrix-test-expansion-admin-lifecycle.md"
+    },
+    {
+      "id": "SLICE-ADMIN-251A",
+      "title": "Registrar admin lifecycle type-safety cleanup",
+      "prompt": "Execute one MVP slice only: tighten API-layer type contracts around registrar approval/issuance/revocation internals (status literals, capability enums, audit metadata typing) without introducing new endpoints or UI actions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:51:18.596Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:50:24.894Z",
+      "finishedAt": "2026-02-27T21:51:18.596Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-admin-251a-registrar-admin-lifecycle-type-safety-cleanup.md"
+    }
+  ]
+}

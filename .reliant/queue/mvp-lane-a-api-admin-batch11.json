@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T23:38:08.127Z",
+  "lane": "lane-a-api-admin-batch11",
+  "sourceFiles": [
+    "mvp-slices-batch11-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-ADMIN-306A",
+      "title": "Admin decision transition table strictness hardening",
+      "prompt": "Execute one MVP slice only: tighten registrar admin decision transition-table strictness for submitted/approved/rejected flows with deterministic invalid-state handling and targeted API tests only. No route/schema/UI additions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:29:09.226Z",
+      "lane": "lane-a-api-admin-batch11",
+      "startedAt": "2026-02-28T02:27:50.595Z",
+      "finishedAt": "2026-02-28T02:29:09.226Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-306a-admin-decision-transition-table-strictness-hardening.md"
+    },
+    {
+      "id": "SLICE-ADMIN-307A",
+      "title": "Code issuance duplicate-claim guard parity",
+      "prompt": "Execute one MVP slice only: harden registrar code issuance internals against duplicate-claim races for approved entries with focused service tests. No self-issuance path; no new endpoints.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:30:08.054Z",
+      "lane": "lane-a-api-admin-batch11",
+      "startedAt": "2026-02-28T02:29:16.577Z",
+      "finishedAt": "2026-02-28T02:30:08.054Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-307a-code-issuance-duplicate-claim-guard-parity.md"
+    },
+    {
+      "id": "SLICE-ADMIN-308A",
+      "title": "Approval payload normalization edge-case matrix",
+      "prompt": "Execute one MVP slice only: expand admin approval/rejection payload normalization edge-case matrix (nullability/empty reason guards) while preserving API shape. Tests only where needed.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:31:08.910Z",
+      "lane": "lane-a-api-admin-batch11",
+      "startedAt": "2026-02-28T02:30:13.475Z",
+      "finishedAt": "2026-02-28T02:31:08.910Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-308a-approval-payload-normalization-edge-case-matrix.md"
+    },
+    {
+      "id": "SLICE-ADMIN-309A",
+      "title": "Lifecycle audit actor metadata consistency",
+      "prompt": "Execute one MVP slice only: enforce consistency of actor metadata emitted in registrar lifecycle audit events across decision/issuance/revocation internals. Add targeted assertions only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:32:29.563Z",
+      "lane": "lane-a-api-admin-batch11",
+      "startedAt": "2026-02-28T02:31:12.209Z",
+      "finishedAt": "2026-02-28T02:32:29.563Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-309a-lifecycle-audit-actor-metadata-consistency.md"
+    },
+    {
+      "id": "SLICE-ADMIN-310A",
+      "title": "Revocation state guard regression hardening",
+      "prompt": "Execute one MVP slice only: tighten revocation state guards to reject impossible transitions deterministically with focused service/controller tests. No new behavior beyond existing policy boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:33:43.921Z",
+      "lane": "lane-a-api-admin-batch11",
+      "startedAt": "2026-02-28T02:32:38.087Z",
+      "finishedAt": "2026-02-28T02:33:43.921Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-310a-revocation-state-guard-regression-hardening.md"
+    },
+    {
+      "id": "SLICE-ADMIN-311A",
+      "title": "Admin regression parity pack 2",
+      "prompt": "Execute one MVP slice only: expand registrar admin lifecycle regression coverage for forbidden/not-found/invalid-state parity across current internal flows. No endpoint/schema/UI changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-28T02:34:38.841Z",
+      "lane": "lane-a-api-admin-batch11",
+      "startedAt": "2026-02-28T02:33:47.381Z",
+      "finishedAt": "2026-02-28T02:34:38.841Z",
+      "reportPath": "docs/handoff/2026-02-28_slice-admin-311a-admin-regression-parity-pack-2.md"
+    }
+  ]
+}

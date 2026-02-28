@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:26:08.325Z",
+  "lane": "lane-e-qa-doc-review",
+  "sourceFiles": [
+    "mvp-slices-batch9-real-mvp.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-QAREV-270A",
+      "title": "Batch9 QA consolidation replay 1 (API/admin + web contracts)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for batch9 lanes A/B in current state, capture exact outputs, and publish dated handoff. No behavior changes unless gate fix required.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:32:20.957Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:31:51.932Z",
+      "finishedAt": "2026-02-27T21:32:20.957Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-270A.md"
+    },
+    {
+      "id": "SLICE-QAREV-271A",
+      "title": "Batch9 risk/rollback memo 1 (lanes A/B)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch9 lane A/B slices with severity-ordered findings, residual risks/testing gaps, and rollback guidance.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:42:20.439Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:32:20.975Z",
+      "finishedAt": "2026-02-27T21:42:20.439Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-271A.md"
+    },
+    {
+      "id": "SLICE-QAREV-272A",
+      "title": "Batch9 QA consolidation replay 2 (invite + automation)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for batch9 lanes C/D in current state, publish exact outputs in dated handoff, and note deferred/non-deferred boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:42:44.981Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:42:23.387Z",
+      "finishedAt": "2026-02-27T21:42:44.981Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-272A.md"
+    },
+    {
+      "id": "SLICE-QAREV-273A",
+      "title": "Batch9 risk/rollback memo 2 (lanes C/D)",
+      "prompt": "Execute one MVP slice only: produce risk-first review memo for completed batch9 lane C/D slices with severity ordering, residual risks/testing gaps, and deterministic rollback notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:43:20.498Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:42:50.967Z",
+      "finishedAt": "2026-02-27T21:43:20.498Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-273A.md"
+    },
+    {
+      "id": "SLICE-QAREV-274A",
+      "title": "Registrar spec implemented-now sync after batch9",
+      "prompt": "Execute one MVP slice only: update docs/specs/system/registrar.md implemented-now/deferred wording to match completed batch9 slices with no speculative claims; docs-only consistency pass.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:44:05.718Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:43:23.198Z",
+      "finishedAt": "2026-02-27T21:44:05.718Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-274A.md"
+    },
+    {
+      "id": "SLICE-QAREV-275A",
+      "title": "Batch9 final targeted gate replay and closeout",
+      "prompt": "Execute one MVP slice only: run final targeted gate replay across registrar API/web contract surfaces touched by batch9 and publish closeout handoff with exact outputs + follow-up backlog notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:44:36.126Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:44:10.911Z",
+      "finishedAt": "2026-02-27T21:44:36.126Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-QAREV-275A.md"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:26:08.325Z",
+  "lane": "lane-c-invite-provider-integration",
+  "sourceFiles": [
+    "mvp-slices-batch9-real-mvp.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-INVITE-258A",
+      "title": "Invite delivery provider adapter contract hardening",
+      "prompt": "Execute one MVP slice only: harden invite delivery provider adapter contract (`send -> sent|failed`) with deterministic error normalization and targeted tests. No provider-specific credentials or prod wiring changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:32:14.782Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:31:39.684Z",
+      "finishedAt": "2026-02-27T21:32:14.782Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-258A-invite-delivery-provider-adapter-contract-hardening.md"
+    },
+    {
+      "id": "SLICE-INVITE-259A",
+      "title": "Queued invite replay idempotency safeguards",
+      "prompt": "Execute one MVP slice only: add replay-idempotency safeguards for queued invite-delivery finalization so duplicate worker attempts do not regress member invite states. Add focused API tests only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:32:20.354Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:32:14.821Z",
+      "finishedAt": "2026-02-27T21:32:20.354Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-259A-queued-invite-replay-idempotency-safeguards.md"
+    },
+    {
+      "id": "SLICE-INVITE-260A",
+      "title": "Invite delivery failure taxonomy mapping",
+      "prompt": "Execute one MVP slice only: introduce bounded internal failure taxonomy mapping for invite delivery outcomes to preserve stable API read shapes (`failed` details additive-only). No UI changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:39:26.508Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:32:20.402Z",
+      "finishedAt": "2026-02-27T21:39:26.508Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-260A-invite-delivery-failure-taxonomy-mapping.md"
+    },
+    {
+      "id": "SLICE-INVITE-261A",
+      "title": "Invite payload schema/version guard checks",
+      "prompt": "Execute one MVP slice only: enforce invite-delivery payload schema/version guard checks before provider dispatch and finalize paths; reject malformed payloads with deterministic handling and tests.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:39:31.702Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:39:26.537Z",
+      "finishedAt": "2026-02-27T21:39:31.702Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-261A-invite-payload-schema-version-guard-checks.md"
+    },
+    {
+      "id": "SLICE-INVITE-262A",
+      "title": "Invite delivery state read-model parity tests",
+      "prompt": "Execute one MVP slice only: expand invite read-model parity tests for roster/status summary and per-member delivery outcome fields (`queued/sent/failed/claimed`) to prevent contract drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter web test -- registrar-client.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:39:37.722Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:39:31.735Z",
+      "finishedAt": "2026-02-27T21:39:37.722Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-262A-invite-delivery-state-read-model-parity-tests.md"
+    },
+    {
+      "id": "SLICE-INVITE-263A",
+      "title": "Invite integration runbook+spec implemented-now sync",
+      "prompt": "Execute one MVP slice only: sync invite-provider integration runbook/spec wording with currently implemented queue/finalize behavior and explicit deferred items; docs-only unless gate fix required.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:39:42.009Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:39:37.759Z",
+      "finishedAt": "2026-02-27T21:39:42.009Z",
+      "reportPath": "docs/handoff/2026-02-27_slice-263A-invite-integration-runbook-spec-implemented-now-sync.md"
+    }
+  ]
+}

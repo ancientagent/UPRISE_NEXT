@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-28T04:51:29.350Z",
+  "lane": "lane-a-api-admin-batch13",
+  "sourceFiles": [
+    "mvp-slices-batch13-real-mvp-throughput.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-ADMIN-366A",
+      "title": "Admin transition guard coverage pack 4",
+      "prompt": "Execute one MVP slice only: extend registrar admin transition guard coverage for valid/invalid edge states with deterministic forbidden/not-found behavior; no route/schema/UI additions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-a-api-admin-batch13"
+    },
+    {
+      "id": "SLICE-ADMIN-367A",
+      "title": "Code issuance replay race matrix pack 4",
+      "prompt": "Execute one MVP slice only: harden replay/race safeguards around registrar code issuance for approved entries with focused service tests and no behavior expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-a-api-admin-batch13"
+    },
+    {
+      "id": "SLICE-ADMIN-368A",
+      "title": "Approval reason edge-case normalization pack 4",
+      "prompt": "Execute one MVP slice only: extend approval/rejection reason normalization edge-case assertions while preserving existing API contract semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-a-api-admin-batch13"
+    },
+    {
+      "id": "SLICE-ADMIN-369A",
+      "title": "Lifecycle audit emission parity pack 4",
+      "prompt": "Execute one MVP slice only: strengthen lifecycle audit emission parity and metadata consistency checks across existing admin internals only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-a-api-admin-batch13"
+    },
+    {
+      "id": "SLICE-ADMIN-370A",
+      "title": "Revocation invariants regression pack 4",
+      "prompt": "Execute one MVP slice only: reinforce revocation invariants and invalid-state regression checks in current service/controller paths only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-a-api-admin-batch13"
+    },
+    {
+      "id": "SLICE-ADMIN-371A",
+      "title": "Admin lifecycle parity matrix pack 4",
+      "prompt": "Execute one MVP slice only: extend parity matrix for approval/rejection/issuance/revocation negative paths without adding new public behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- registrar.service.test.ts registrar.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-02-28T04:51:29.350Z",
+      "lane": "lane-a-api-admin-batch13"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-02-27T21:26:08.325Z",
+  "lane": "lane-d-automation-scheduler",
+  "sourceFiles": [
+    "mvp-slices-batch9-real-mvp.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-AUTO-264A",
+      "title": "Invite scheduler tick ownership lock hardening",
+      "prompt": "Execute one MVP slice only: harden invite scheduler tick ownership locking to prevent overlapping executions and duplicate finalize attempts. No product API/UI behavior change.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:40:20.063Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:31:45.367Z",
+      "finishedAt": "2026-02-27T21:40:20.063Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-264A.md"
+    },
+    {
+      "id": "SLICE-AUTO-265A",
+      "title": "Scheduler telemetry payload consistency",
+      "prompt": "Execute one MVP slice only: standardize scheduler telemetry payload shape (queued processed sent failed elapsed) across invite automation logs and diagnostics utilities.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:41:30.803Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:40:26.481Z",
+      "finishedAt": "2026-02-27T21:41:30.803Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-265A.md"
+    },
+    {
+      "id": "SLICE-AUTO-266A",
+      "title": "Runtime stale-lock recovery utility extension",
+      "prompt": "Execute one MVP slice only: extend runtime cleanup tooling for deterministic stale-lock recovery in lane automation workflows, including dry-run diagnostics path and tests.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:42:25.611Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:41:37.988Z",
+      "finishedAt": "2026-02-27T21:42:25.611Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-266A.md"
+    },
+    {
+      "id": "SLICE-AUTO-267A",
+      "title": "Queue status drift detector for lane supervisors",
+      "prompt": "Execute one MVP slice only: add queue-status drift detector logic for supervisor flows (summary mismatch, impossible state transitions) with deterministic exit diagnostics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:43:32.426Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:42:30.458Z",
+      "finishedAt": "2026-02-27T21:43:32.426Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-267A.md"
+    },
+    {
+      "id": "SLICE-AUTO-268A",
+      "title": "Claim/complete race retry policy tightening",
+      "prompt": "Execute one MVP slice only: tighten claim/complete race retry policy for queue tooling to avoid duplicate terminal actions under rapid autopilot loops; keep task-id guard semantics strict.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:44:42.385Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:43:32.443Z",
+      "finishedAt": "2026-02-27T21:44:42.385Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-268A.md"
+    },
+    {
+      "id": "SLICE-AUTO-269A",
+      "title": "Automation runbook failure-mode appendix refresh",
+      "prompt": "Execute one MVP slice only: update automation runbook with newly observed failure modes (stale runtime, duplicate in-progress, malformed runtime JSON, race retries) and deterministic fixes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-02-27T21:45:12.885Z",
+      "sourceQueue": "mvp-slices-batch9-real-mvp.json",
+      "startedAt": "2026-02-27T21:44:42.403Z",
+      "finishedAt": "2026-02-27T21:45:12.885Z",
+      "reportPath": "docs/handoff/2026-02-27_SLICE-AUTO-269A.md"
+    }
+  ]
+}
