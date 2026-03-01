@@ -42,3 +42,5 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md` — spec-locked execution roadmap from current registrar-heavy throughput to full MVP launch readiness
 - `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` — canon/spec-anchored UX alignment report and demo/sample process before UX implementation
 - `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` — one-page whole-platform MVP coverage map (done/partial/missing) to prevent registrar-only execution bias
+- `docs/solutions/LEGACY_UI_REUSE_MAP_R1.md` — legacy `uprise_mob` architecture comparison (`keep/adapt/drop`) mapped to current canon/spec constraints
+- `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md` — locked R1 interaction contract for top-level RaDIYo player, in-place draggable profile expansion, and explicit `radiyo`/`collection` mode switching
