@@ -7,12 +7,13 @@ import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
+import { getCommunitySubgenreRange } from '@/lib/community/subgenre-range';
 
 type CommunityProfile = {
   id: string;
   name: string;
   slug: string;
-  description?: string | null;
+  musicCommunity?: string | null;
   avatar?: string | null;
   coverImage?: string | null;
   memberCount?: number;
@@ -132,7 +133,9 @@ export default function CommunityProfilePage() {
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <p className="text-xs uppercase tracking-[0.22em] text-black/50">Community Profile</p>
           <h1 className="mt-2 text-3xl font-semibold text-black">{community.name}</h1>
-          <p className="mt-2 text-sm text-black/70">{community.description ?? 'No description yet.'}</p>
+          <p className="mt-2 text-sm text-black/70">
+            Subgenre range: {getCommunitySubgenreRange(community.musicCommunity)}
+          </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">

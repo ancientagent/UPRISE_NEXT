@@ -6,6 +6,7 @@ import { Button } from '@uprise/ui';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
+import { getCommunitySubgenreRange } from '@/lib/community/subgenre-range';
 import {
   getDiscoveryContext,
   listDiscoverScenes,
@@ -254,6 +255,9 @@ export default function DiscoverPage() {
                         <p className="font-medium text-black">{item.name}</p>
                         <p className="text-sm text-black/60">
                           {item.city}, {item.state} · {item.memberCount.toLocaleString()} members
+                        </p>
+                        <p className="mt-1 text-xs text-black/55">
+                          Subgenre range: {getCommunitySubgenreRange(item.musicCommunity)}
                         </p>
                         <p className="mt-1 text-xs text-black/50">
                           {item.isHomeScene ? 'Current Home Scene' : item.isActive ? 'Active scene' : 'Inactive scene'}

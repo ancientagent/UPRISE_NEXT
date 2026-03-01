@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- UX copy refinement (`UX-IMPL-540A`): replaced community description-style metadata with explicit subgenre range coverage on Discover scene cards and Community profile header via shared mapper utility; report `docs/handoff/2026-03-01_ux-impl-540A-community-subgenre-range-copy.md`.
 - UX guard hardening (`UX-IMPL-539A`): `/plot` now enforces Home Scene presence as a hard prerequisite by redirecting unresolved sessions to `/onboarding` and suppressing Plot render until Home Scene is available; report `docs/handoff/2026-03-01_ux-impl-539A-plot-home-scene-hard-guard.md`.
 - UX implementation slice complete (`UX-IMPL-538A`): expanded `/plot` content footprint to better match surrounding surfaces by widening the page container, increasing primary Plot column width, and adding a fallback right-column community panel state; report `docs/handoff/2026-03-01_ux-impl-538A-plot-layout-expansion.md`.
 - Plot UX regression lock tests added for `/plot` R1 parity checkpoints (`RADIYO` vs `Collection` mode labels, expanded-profile tabs/body swap contract, and statistics-only `Top Songs` + `Scene Activity` placement); see `apps/web/__tests__/plot-ux-regression-lock.test.ts` and `docs/handoff/2026-03-01_plot-ux-regression-lock-tests.md`.
