@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- UX implementation slice complete (`UX-IMPL-535A`): refined expanded profile content model on `/plot` with collection-first shelf preview (`Tracks/Playlists/Saved`), compact 3-module statistics preview, and deterministic action row while preserving same-route expansion semantics; report `docs/handoff/2026-03-01_ux-impl-535A-expanded-profile-collection-stats-actions.md`.
 - UX implementation slice complete (`UX-IMPL-534A`): implemented route-stable expanded profile swap on `/plot` so expanded state replaces tabs/body with profile-first composition (`Player Context -> Collection Preview -> Statistics Preview -> Actions`) while preserving the same route and player shell; report `docs/handoff/2026-03-01_ux-impl-534A-expanded-profile-route-stable-swap.md`.
 - UX implementation slice complete (`UX-IMPL-533A`): aligned `/plot` layout with mobile-first structure by moving `City/State/National` tier controls into the player shell, centering the tab rail, and scoping Top Songs + Scene Activity to the `Statistics` tab only; report `docs/handoff/2026-03-01_ux-impl-533A-plot-layout-parity-tabs-stats-scope.md`.
 - UX implementation slice complete (`UX-IMPL-532A`): added dedicated `RADIYO`/`Collection` player shell under the profile seam on `/plot`, including rotation pool toggle and mode-specific control scaffolds; report `docs/handoff/2026-03-01_ux-impl-532A-player-shell-radiyo-collection.md`.

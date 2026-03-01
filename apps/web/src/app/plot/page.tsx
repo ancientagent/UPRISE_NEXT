@@ -43,6 +43,8 @@ const StatisticsPanel = dynamic(
 );
 
 const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
+const collectionShelves = ['Tracks', 'Playlists', 'Saved'] as const;
+type CollectionShelf = (typeof collectionShelves)[number];
 
 export default function PlotPage() {
   const router = useRouter();
@@ -54,6 +56,7 @@ export default function PlotPage() {
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
   const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
+  const [activeCollectionShelf, setActiveCollectionShelf] = useState<CollectionShelf>('Tracks');
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
 
@@ -259,9 +262,25 @@ export default function PlotPage() {
 
             <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
               <p className="text-xs uppercase tracking-[0.12em] text-black/55">Collection Preview</p>
-              <p className="mt-1 text-sm text-black/70">
-                Collection shelves render first in expanded profile mode. Full playback controls remain in the player shell.
-              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {collectionShelves.map((shelf) => (
+                  <Button
+                    key={shelf}
+                    size="sm"
+                    variant={activeCollectionShelf === shelf ? 'default' : 'outline'}
+                    className={activeCollectionShelf === shelf ? 'rounded-full bg-black text-white' : 'rounded-full'}
+                    onClick={() => setActiveCollectionShelf(shelf)}
+                  >
+                    {shelf}
+                  </Button>
+                ))}
+              </div>
+              <div className="mt-3 rounded-lg border border-black/10 bg-white p-3">
+                <p className="text-sm font-medium text-black">{activeCollectionShelf} Shelf</p>
+                <p className="mt-1 text-xs text-black/65">
+                  Collection preview is kept lightweight in expanded profile mode. Deep browsing remains in collection/profile surfaces.
+                </p>
+              </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
@@ -275,10 +294,33 @@ export default function PlotPage() {
               </div>
             </div>
 
+            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Statistics Preview</p>
+              <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                <div className="rounded-lg border border-black/10 bg-white p-2">
+                  <p className="text-[11px] text-black/55">Community Members</p>
+                  <p className="text-sm font-semibold text-black">{selectedCommunity?.memberCount?.toLocaleString() ?? '0'}</p>
+                </div>
+                <div className="rounded-lg border border-black/10 bg-white p-2">
+                  <p className="text-[11px] text-black/55">Mode</p>
+                  <p className="text-sm font-semibold text-black">{playerMode}</p>
+                </div>
+                <div className="rounded-lg border border-black/10 bg-white p-2">
+                  <p className="text-[11px] text-black/55">Tier</p>
+                  <p className="text-sm font-semibold capitalize text-black">{selectedTier}</p>
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-wrap gap-2">
               {selectedCommunity ? (
                 <Button size="sm" variant="outline" onClick={() => router.push(`/community/${selectedCommunity.id}`)}>
                   Open Community
+                </Button>
+              ) : null}
+              {user?.id ? (
+                <Button size="sm" variant="outline" onClick={() => router.push(`/users/${user.id}`)}>
+                  Open Collection Profile
                 </Button>
               ) : null}
               <Button size="sm" variant="outline" onClick={toggleProfilePanel}>
