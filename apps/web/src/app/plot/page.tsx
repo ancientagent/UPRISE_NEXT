@@ -194,6 +194,14 @@ export default function PlotPage() {
     switchToCollection();
   };
 
+  const handleHeaderModeSwitch = () => {
+    if (playerMode === 'radiyo') {
+      switchToCollection();
+      return;
+    }
+    switchToRadiyo();
+  };
+
   // Callback to update nearby communities from StatisticsPanel
   const handleCommunitiesUpdate = (_communities: CommunityWithDistance[]) => {
     // Communities are managed within StatisticsPanel
@@ -209,21 +217,21 @@ export default function PlotPage() {
           <h1 className="mt-3 text-3xl font-semibold text-black">
             {homeScene ? `${homeScene.city}, ${homeScene.state}` : 'Your Home Scene'}
           </h1>
-          <p className="mt-2 text-sm text-black/60">
-            {homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
-          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-black/60">
+              {homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
+            </p>
+            <Button size="sm" variant="outline" onClick={handleHeaderModeSwitch}>
+              {playerMode === 'radiyo' ? 'Collection Mode' : 'RaDIYo Mode'}
+            </Button>
+          </div>
           {homeScene?.tasteTag && (
             <p className="mt-1 text-sm text-black/50">Taste tag: {homeScene.tasteTag}</p>
           )}
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
-          <div className="mt-4">
-            <Button size="sm" variant="outline" onClick={() => router.push('/discover')}>
-              Open Discover
-            </Button>
-            <p className="mt-2 text-xs text-black/50">
-              Home Scene changes are explicit in Discover and require confirmation.
-            </p>
-          </div>
+          <p className="mt-3 text-xs text-black/50">
+            Player mode is explicit in Plot header and player strip.
+          </p>
         </header>
 
         {/* Tier Toggle */}

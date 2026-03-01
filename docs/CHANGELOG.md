@@ -269,3 +269,4 @@
 - UX-01 (state foundation): added Plot/profile interaction state machine + Zustand store for `panelState` (`collapsed|peek|expanded`), explicit player mode (`radiyo|collection`), and plot snapshot restore primitives; added focused web tests in `apps/web/__tests__/plot-ui-state-machine.test.ts` and `apps/web/__tests__/plot-ui-store.test.ts`.
 
 - UX-02/UX-03 (Plot route): implemented in-route profile expansion/body-swap behavior and mode-aware top player flow in `apps/web/src/app/plot/page.tsx` with new components `PlotPlayerStrip` and `ProfileExpansionPanel`. Expanded profile now replaces Plot body in-route, allows collection track selection, and explicitly switches player mode to `collection` with return path to `radiyo`.
+- Plot header UX refinement: replaced header right-side utility/search-style action with explicit player mode switch control beside scene community label (`Collection Mode` / `RaDIYo Mode`) to match top-strip mode switching behavior.
