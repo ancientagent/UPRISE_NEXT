@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- UX implementation slice complete (`UX-IMPL-533A`): aligned `/plot` layout with mobile-first structure by moving `City/State/National` tier controls into the player shell, centering the tab rail, and scoping Top Songs + Scene Activity to the `Statistics` tab only; report `docs/handoff/2026-03-01_ux-impl-533A-plot-layout-parity-tabs-stats-scope.md`.
 - UX implementation slice complete (`UX-IMPL-532A`): added dedicated `RADIYO`/`Collection` player shell under the profile seam on `/plot`, including rotation pool toggle and mode-specific control scaffolds; report `docs/handoff/2026-03-01_ux-impl-532A-player-shell-radiyo-collection.md`.
 - UX implementation slice complete (`UX-IMPL-531A`): implemented mobile-first Profile Header + Seam Pull-Tab behavior on `/plot` with in-route `collapsed/peek/expanded` state handling and expanded profile summary panel scaffold; report `docs/handoff/2026-03-01_ux-impl-531A-profile-header-seam-pull-tab.md`.
 - Lane B ux-gesture-r1 task complete (SLICE-UXGEST-512A): reconciled gesture terminology by adding docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md and closeout alignment notes in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-512A.md.

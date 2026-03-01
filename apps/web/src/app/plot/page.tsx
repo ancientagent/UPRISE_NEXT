@@ -7,7 +7,6 @@ import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
-import TierToggle from '@/components/plot/TierToggle';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
@@ -21,12 +20,6 @@ import {
   getCommunityById,
   resolveHomeCommunity,
 } from '@/lib/communities/client';
-import { listArtistBandRegistrations } from '@/lib/registrar/client';
-import {
-  formatRegistrarEntryStatus,
-  getRegistrarPlotSummary,
-  type RegistrarPlotSummary,
-} from '@/lib/registrar/entryStatus';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -58,9 +51,6 @@ export default function PlotPage() {
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
-  const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null);
-  const [registrarSummaryLoading, setRegistrarSummaryLoading] = useState(false);
-  const [registrarSummaryError, setRegistrarSummaryError] = useState<string | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
   const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
@@ -138,41 +128,6 @@ export default function PlotPage() {
 
     resolveDefaultCommunity();
   }, [selectedCommunity, mapCenter, token, homeScene, tunedSceneId]);
-
-  useEffect(() => {
-    let canceled = false;
-
-    async function loadRegistrarSummary() {
-      if (!token) {
-        setRegistrarSummary(null);
-        setRegistrarSummaryError(null);
-        setRegistrarSummaryLoading(false);
-        return;
-      }
-
-      setRegistrarSummaryLoading(true);
-      setRegistrarSummaryError(null);
-      try {
-        const response = await listArtistBandRegistrations(token);
-        if (canceled) return;
-        setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []));
-      } catch {
-        if (canceled) return;
-        setRegistrarSummary(null);
-        setRegistrarSummaryError('Unable to load registrar status summary.');
-      } finally {
-        if (!canceled) {
-          setRegistrarSummaryLoading(false);
-        }
-      }
-    }
-
-    loadRegistrarSummary();
-
-    return () => {
-      canceled = true;
-    };
-  }, [token]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
@@ -277,24 +232,17 @@ export default function PlotPage() {
             <p className="text-xs text-black/60">In-route profile expansion (mobile-first interaction model)</p>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Registrar Entries</p>
-                <p className="mt-1 text-lg font-semibold text-black">{registrarSummary?.totalEntries ?? 0}</p>
+                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Current Player Mode</p>
+                <p className="mt-1 text-lg font-semibold text-black">{playerMode}</p>
               </div>
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Invites Sent</p>
-                <p className="mt-1 text-lg font-semibold text-black">{registrarSummary?.sentInviteCount ?? 0}</p>
+                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Current Tier</p>
+                <p className="mt-1 text-lg font-semibold text-black capitalize">{selectedTier}</p>
               </div>
             </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button size="sm" variant="outline" onClick={() => router.push('/registrar')}>
-                Open Registrar
-              </Button>
-              {user?.id ? (
-                <Button size="sm" variant="outline" onClick={() => router.push(`/users/${user.id}`)}>
-                  Open Collection
-                </Button>
-              ) : null}
-            </div>
+            <p className="mt-3 text-xs text-black/60">
+              Profile details and collection shelves render here when expanded.
+            </p>
           </section>
         ) : null}
 
@@ -303,45 +251,28 @@ export default function PlotPage() {
           onModeChange={setPlayerMode}
           rotationPool={rotationPool}
           onRotationPoolChange={setRotationPool}
+          selectedTier={selectedTier}
+          onTierChange={setSelectedTier}
           broadcastLabel={
             homeScene ? `${homeScene.city}, ${homeScene.state} ${homeScene.musicCommunity}` : 'Home Scene not set'
           }
         />
 
-        {/* Header */}
-        <header className="mt-6 rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.25em] text-black/50">The Plot</p>
-          <h1 className="mt-3 text-3xl font-semibold text-black">
-            {homeScene ? `${homeScene.city}, ${homeScene.state}` : 'Your Home Scene'}
-          </h1>
-          <p className="mt-2 text-sm text-black/60">
-            {homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
-          </p>
-          {homeScene?.tasteTag && (
-            <p className="mt-1 text-sm text-black/50">Taste tag: {homeScene.tasteTag}</p>
-          )}
+        <div className="mt-4">
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
-          <div className="mt-4">
-            <Button size="sm" variant="outline" onClick={() => router.push('/discover')}>
-              Open Discover
-            </Button>
-            <p className="mt-2 text-xs text-black/50">
-              Home Scene changes are explicit in Discover and require confirmation.
-            </p>
-          </div>
-        </header>
-
-        {/* Tier Toggle */}
-        <div className="mt-6">
-          <TierToggle value={selectedTier} onChange={setSelectedTier} />
         </div>
 
         {/* Tab Navigation */}
-        <section className="mt-6 flex flex-wrap gap-3">
+        <section className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
           {tabs.map((tab) => (
             <Button
               key={tab}
               variant={activeTab === tab ? 'default' : 'outline'}
+              className={
+                activeTab === tab
+                  ? 'rounded-full bg-black text-white'
+                  : 'rounded-full border-black/20 bg-white text-black hover:bg-black/5'
+              }
               onClick={() => setActiveTab(tab)}
             >
               {tab}
@@ -374,12 +305,25 @@ export default function PlotPage() {
 
             {/* Statistics Panel */}
             {activeTab === 'Statistics' ? (
-              <StatisticsPanel
-                selectedTier={selectedTier}
-                selectedCommunity={selectedCommunity}
-                onCommunitySelect={handleCommunitySelect}
-                onCommunitiesUpdate={handleCommunitiesUpdate}
-              />
+              <div className="space-y-4">
+                <StatisticsPanel
+                  selectedTier={selectedTier}
+                  selectedCommunity={selectedCommunity}
+                  onCommunitySelect={handleCommunitySelect}
+                  onCommunitiesUpdate={handleCommunitiesUpdate}
+                />
+                <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
+                <div className="rounded-2xl border border-black/10 bg-white p-6">
+                  <h3 className="font-semibold text-black mb-2">Scene Activity Snapshot</h3>
+                  <p className="text-sm text-black/60">
+                    Descriptive context for the current statistics scope. This is not a ranking or authority signal.
+                  </p>
+                  <p className="text-xs text-black/50 mt-2">
+                    Current tier: <span className="capitalize">{selectedTier}</span>
+                    {selectedCommunity && <span> • Selected: {selectedCommunity.name}</span>}
+                  </p>
+                </div>
+              </div>
             ) : activeTab === 'Feed' ? (
               <SeedFeedPanel
                 communityId={selectedCommunity?.id ?? null}
@@ -409,9 +353,6 @@ export default function PlotPage() {
 
           {/* Right Panel - Top Songs & Community Info */}
           <div className="space-y-6">
-            {/* Top Songs Panel */}
-            <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
-
             {/* Selected Community Info */}
             {selectedCommunity && (
               <div className="rounded-2xl border border-black/10 bg-white p-6">
@@ -441,64 +382,6 @@ export default function PlotPage() {
                 </div>
               </div>
             )}
-
-            {/* Scene Activity Summary */}
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <h3 className="font-semibold text-black mb-4">Scene Activity</h3>
-              <p className="text-sm text-black/60">
-                Community activity summaries, registrar status, and scene map context for your current scope.
-              </p>
-              {token ? (
-                <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                  {registrarSummaryLoading ? (
-                    <p className="text-xs text-black/60">Loading registrar status...</p>
-                  ) : registrarSummaryError ? (
-                    <p className="text-xs text-red-700">{registrarSummaryError}</p>
-                  ) : registrarSummary ? (
-                    <div className="space-y-1 text-xs text-black/65">
-                      <p>
-                        Artist/Band entries: <span className="font-medium text-black">{registrarSummary.totalEntries}</span>
-                      </p>
-                      <p>
-                        Submitted: <span className="font-medium text-black">{registrarSummary.submittedCount}</span> •
-                        Materialized: <span className="font-medium text-black"> {registrarSummary.materializedCount}</span>
-                      </p>
-                      <p>
-                        Invites — pending: <span className="font-medium text-black">{registrarSummary.pendingInviteCount}</span>,
-                        queued: <span className="font-medium text-black"> {registrarSummary.queuedInviteCount}</span>,
-                        sent: <span className="font-medium text-black"> {registrarSummary.sentInviteCount}</span>,
-                        failed: <span className="font-medium text-black"> {registrarSummary.failedInviteCount}</span>
-                      </p>
-                      {registrarSummary.latestStatus && (
-                        <p>
-                          Latest status:{' '}
-                          <span className="font-medium text-black">
-                            {formatRegistrarEntryStatus(registrarSummary.latestStatus)}
-                          </span>
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-black/60">No registrar entries yet.</p>
-                  )}
-                </div>
-              ) : (
-                <p className="mt-3 text-xs text-black/55">
-                  Sign in to view registrar registration status for your account.
-                </p>
-              )}
-              <div className="mt-3">
-                <Button size="sm" variant="outline" onClick={() => router.push('/registrar')}>
-                  Open Registrar
-                </Button>
-              </div>
-              <p className="text-xs text-black/50 mt-2">
-                Current tier: <span className="capitalize">{selectedTier}</span>
-                {selectedCommunity && (
-                  <span> • Selected: {selectedCommunity.name}</span>
-                )}
-              </p>
-            </div>
           </div>
         </section>
       </div>

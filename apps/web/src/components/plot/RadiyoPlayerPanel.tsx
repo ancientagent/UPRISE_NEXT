@@ -4,12 +4,15 @@ import { Button } from '@uprise/ui';
 
 export type PlayerMode = 'RADIYO' | 'Collection';
 export type RotationPool = 'new_releases' | 'main_rotation';
+export type PlayerTier = 'city' | 'state' | 'national';
 
 interface RadiyoPlayerPanelProps {
   mode: PlayerMode;
   onModeChange: (mode: PlayerMode) => void;
   rotationPool: RotationPool;
   onRotationPoolChange: (pool: RotationPool) => void;
+  selectedTier: PlayerTier;
+  onTierChange: (tier: PlayerTier) => void;
   broadcastLabel: string;
 }
 
@@ -18,10 +21,32 @@ export default function RadiyoPlayerPanel({
   onModeChange,
   rotationPool,
   onRotationPoolChange,
+  selectedTier,
+  onTierChange,
   broadcastLabel,
 }: RadiyoPlayerPanelProps) {
   return (
     <section className="mt-4 rounded-2xl border border-black/15 bg-black p-4 text-white shadow-sm">
+      <div className="mb-3 flex flex-wrap items-center gap-5 rounded-xl border border-white/15 bg-white/5 px-3 py-2">
+        {(['city', 'state', 'national'] as PlayerTier[]).map((tier) => (
+          <button
+            key={tier}
+            type="button"
+            onClick={() => onTierChange(tier)}
+            className="inline-flex items-center gap-2 text-xs font-medium text-white transition-opacity hover:opacity-80"
+            aria-pressed={selectedTier === tier}
+          >
+            <span
+              className={`h-3 w-3 rounded-full border ${
+                selectedTier === tier ? 'border-[#b7d43f] bg-[#b7d43f]' : 'border-white/70 bg-transparent'
+              }`}
+              aria-hidden
+            />
+            <span className="capitalize">{tier}</span>
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         {mode === 'RADIYO' ? (
           <div className="flex gap-2">
