@@ -182,11 +182,62 @@ export default function PlotPlayerStrip({
           </div>
         )}
 
-        <div className="flex items-center gap-2 text-lime-300">
-          <span aria-hidden>▶</span>
-          <span aria-hidden>⏸</span>
-          <span aria-hidden>♡</span>
-        </div>
+        {playerMode === 'radiyo' ? (
+          <div className="flex items-center gap-2 text-lime-300">
+            <button
+              type="button"
+              className="rounded-md border border-white/20 px-2 py-1 text-xs text-lime-300 hover:bg-white/10"
+              aria-label="Play"
+            >
+              ▶
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-white/20 px-2 py-1 text-xs text-lime-300 hover:bg-white/10"
+              aria-label="Pause"
+            >
+              ⏸
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-white/20 px-2 py-1 text-xs text-lime-300 hover:bg-white/10"
+              aria-label="Add to collection"
+            >
+              +
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 text-blue-300">
+            <button
+              type="button"
+              className="rounded-md border border-white/20 px-2 py-1 text-xs text-blue-300 hover:bg-white/10"
+              aria-label="Back track"
+            >
+              ⏮
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-white/20 px-2 py-1 text-xs text-blue-300 hover:bg-white/10"
+              aria-label="Shuffle collection"
+            >
+              🔀
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-white/20 px-2 py-1 text-xs text-blue-300 hover:bg-white/10"
+              aria-label="Play"
+            >
+              ▶
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-white/20 px-2 py-1 text-xs text-blue-300 hover:bg-white/10"
+              aria-label="Pause"
+            >
+              ⏸
+            </button>
+          </div>
+        )}
       </div>
 
       {error && <p className="mt-2 text-xs text-amber-300">{error}</p>}
