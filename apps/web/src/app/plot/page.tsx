@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
@@ -228,9 +229,14 @@ export default function PlotPage() {
                 ? collectionTitle
                 : homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
             </p>
-            <Button size="sm" variant="outline" onClick={handleHeaderModeSwitch}>
-              {playerMode === 'radiyo' ? 'Collection Mode' : 'RaDIYo Mode'}
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button asChild size="sm" variant="outline">
+                <Link href="/artist-dashboard-r1">Artist Dashboard</Link>
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleHeaderModeSwitch}>
+                {playerMode === 'radiyo' ? 'Collection Mode' : 'RaDIYo Mode'}
+              </Button>
+            </div>
           </div>
           {homeScene?.tasteTag && (
             <p className="mt-1 text-sm text-black/50">Taste tag: {homeScene.tasteTag}</p>

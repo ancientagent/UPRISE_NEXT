@@ -27,6 +27,9 @@ export default function Home() {
             <Link href="/plot">Open The Plot</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
+            <Link href="/artist-dashboard-r1">Artist Dashboard</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
             <Link href="/discover">Open Discover</Link>
           </Button>
         </div>
