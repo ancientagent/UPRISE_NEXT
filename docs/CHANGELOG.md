@@ -276,3 +276,4 @@
 - Artist dashboard planning pack (R1) added under `docs/solutions/artist-dashboard-r1/` with IA, data-contract map, and low-fi wireframe/menu specs for separate-site implementation sequencing.
 - Artist dashboard navigation surfaced in web shell: added `Artist Dashboard` entry on landing page CTA row and Plot header menu area; added interactive prototype route at `/artist-dashboard-r1` for flow/content walkthrough.
 - Plot layout refinement: moved `Top Songs` into `Statistics` tab context only; removed always-on Top Songs block from right rail to increase Plot content real estate.
+- Plot header structure update: added profile control strip above Home Scene box with avatar/identity block plus notifications and overflow (3-dot) controls.

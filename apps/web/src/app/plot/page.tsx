@@ -217,6 +217,30 @@ export default function PlotPage() {
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-6xl">
+        <section className="mb-4 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-black/20 bg-black/5 text-sm font-semibold text-black">
+                {user?.displayName?.[0] || user?.username?.[0] || 'U'}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-black">
+                  {user?.displayName || user?.username || 'User'}
+                </p>
+                <p className="truncate text-xs text-black/60">@{user?.username || 'listener'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" aria-label="Notifications">
+                🔔
+              </Button>
+              <Button size="sm" variant="outline" aria-label="More menu">
+                ⋯
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* Header */}
         <header className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
           <p className="text-xs uppercase tracking-[0.25em] text-black/50">The Plot</p>
