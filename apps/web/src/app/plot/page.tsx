@@ -7,6 +7,7 @@ import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
+import { usePlotUiStore } from '@/store/plot-ui';
 import { api } from '@/lib/api';
 import TierToggle from '@/components/plot/TierToggle';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
@@ -14,6 +15,8 @@ import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
+import PlotPlayerStrip, { type CollectionTrack } from '@/components/plot/PlotPlayerStrip';
+import ProfileExpansionPanel from '@/components/plot/ProfileExpansionPanel';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -42,9 +45,20 @@ export default function PlotPage() {
   const router = useRouter();
   const { homeScene, gpsCoords, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
   const { token } = useAuthStore();
+  const {
+    panelState,
+    playerMode,
+    plotSnapshot,
+    setPanelState,
+    setPlotSnapshot,
+    clearPlotSnapshot,
+    switchToCollection,
+    switchToRadiyo,
+  } = usePlotUiStore();
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
+  const [selectedCollectionTrack, setSelectedCollectionTrack] = useState<CollectionTrack | null>(null);
 
   const mapCenter = useMemo(() => {
     if (gpsCoords) {
@@ -139,6 +153,47 @@ export default function PlotPage() {
     setSelectedCommunity(community);
   };
 
+  const isProfileExpanded = panelState === 'expanded';
+
+  const handleExpandProfile = () => {
+    if (!plotSnapshot) {
+      setPlotSnapshot({
+        activeTab,
+        selectedTier,
+        selectedCommunityId: selectedCommunity?.id ?? null,
+      });
+    }
+    setPanelState('expanded');
+  };
+
+  const handleCollapseProfile = async () => {
+    if (plotSnapshot) {
+      setActiveTab(plotSnapshot.activeTab);
+      setSelectedTier(plotSnapshot.selectedTier);
+
+      if (plotSnapshot.selectedCommunityId) {
+        try {
+          const response = await api.get<CommunityWithDistance | null>(
+            `/communities/${plotSnapshot.selectedCommunityId}`,
+            { token: token || undefined },
+          );
+          if (response.data) {
+            setSelectedCommunity(response.data);
+          }
+        } catch {
+          // Keep current selection if restore fetch fails.
+        }
+      }
+    }
+    clearPlotSnapshot();
+    setPanelState('collapsed');
+  };
+
+  const handleSelectCollectionTrack = (track: CollectionTrack) => {
+    setSelectedCollectionTrack(track);
+    switchToCollection();
+  };
+
   // Callback to update nearby communities from StatisticsPanel
   const handleCommunitiesUpdate = (_communities: CommunityWithDistance[]) => {
     // Communities are managed within StatisticsPanel
@@ -176,21 +231,53 @@ export default function PlotPage() {
           <TierToggle value={selectedTier} onChange={setSelectedTier} />
         </div>
 
-        {/* Tab Navigation */}
-        <section className="mt-6 flex flex-wrap gap-3">
-          {tabs.map((tab) => (
-            <Button
-              key={tab}
-              variant={activeTab === tab ? 'default' : 'outline'}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </Button>
-          ))}
-        </section>
+        {!isProfileExpanded ? (
+          <div className="mt-6">
+            <PlotPlayerStrip
+              playerMode={playerMode}
+              selectedCollectionTrack={selectedCollectionTrack}
+              onSwitchToRadiyo={switchToRadiyo}
+            />
+          </div>
+        ) : null}
 
-        {/* Main Content Grid */}
-        <section className="mt-6 grid gap-6 lg:grid-cols-2">
+        <ProfileExpansionPanel
+          panelState={panelState}
+          onExpand={handleExpandProfile}
+          onCollapse={() => {
+            void handleCollapseProfile();
+          }}
+          onPeek={() => setPanelState('peek')}
+          onSelectCollectionTrack={handleSelectCollectionTrack}
+        />
+
+        {isProfileExpanded ? (
+          <div className="mt-6">
+            <PlotPlayerStrip
+              playerMode={playerMode}
+              selectedCollectionTrack={selectedCollectionTrack}
+              onSwitchToRadiyo={switchToRadiyo}
+            />
+          </div>
+        ) : null}
+
+        {!isProfileExpanded ? (
+          <>
+            {/* Tab Navigation */}
+            <section className="mt-6 flex flex-wrap gap-3">
+              {tabs.map((tab) => (
+                <Button
+                  key={tab}
+                  variant={activeTab === tab ? 'default' : 'outline'}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab}
+                </Button>
+              ))}
+            </section>
+
+            {/* Main Content Grid */}
+            <section className="mt-6 grid gap-6 lg:grid-cols-2">
           {/* Left Panel - Statistics & Map */}
           <div className="rounded-2xl border border-black/10 bg-white p-6">
             <div className="mb-4">
@@ -295,7 +382,9 @@ export default function PlotPage() {
               </p>
             </div>
           </div>
-        </section>
+            </section>
+          </>
+        ) : null}
       </div>
     </main>
   );
