@@ -9,33 +9,36 @@ interface TierToggleProps {
 
 const tierLabels: Record<TierLevel, { label: string; description: string }> = {
   city: {
-    label: 'City',
+    label: 'City Wide',
     description: 'Your immediate music scene',
   },
   state: {
-    label: 'State',
+    label: 'State Wide',
     description: 'Regional activity across your state',
   },
   national: {
-    label: 'National',
+    label: 'Country Wide',
     description: 'Trending scenes across the country',
   },
 };
 
 export default function TierToggle({ value, onChange }: TierToggleProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-5 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
       {(Object.keys(tierLabels) as TierLevel[]).map((tier) => (
         <button
           key={tier}
           onClick={() => onChange(tier)}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-            value === tier
-              ? 'bg-black text-white shadow-sm'
-              : 'bg-white text-black border border-black/10 hover:border-black/30 hover:bg-black/5'
-          }`}
+          className="inline-flex items-center gap-2 text-sm font-medium text-black transition-opacity hover:opacity-80"
+          aria-pressed={value === tier}
         >
-          {tierLabels[tier].label}
+          <span
+            className={`h-3.5 w-3.5 rounded-full border ${
+              value === tier ? 'border-[#b7d43f] bg-[#b7d43f]' : 'border-black/60 bg-transparent'
+            }`}
+            aria-hidden
+          />
+          <span>{tierLabels[tier].label}</span>
         </button>
       ))}
     </div>

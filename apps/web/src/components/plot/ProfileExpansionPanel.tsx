@@ -77,6 +77,7 @@ interface ProfileExpansionPanelProps {
   onCollapse: () => void;
   onPeek: () => void;
   onSelectCollectionTrack: (track: CollectionTrack) => void;
+  hideHandle?: boolean;
 }
 
 export default function ProfileExpansionPanel({
@@ -85,6 +86,7 @@ export default function ProfileExpansionPanel({
   onCollapse,
   onPeek,
   onSelectCollectionTrack,
+  hideHandle = false,
 }: ProfileExpansionPanelProps) {
   const { token, user } = useAuthStore();
   const [profile, setProfile] = useState<UserProfileData | null>(null);
@@ -157,29 +159,35 @@ export default function ProfileExpansionPanel({
     }
   };
 
+  if (hideHandle && !isExpanded) {
+    return null;
+  }
+
   return (
-    <section className="mt-6 rounded-2xl border border-black/10 bg-white/90 p-4 shadow-sm">
-      <div
-        className="flex cursor-grab items-center justify-between gap-3 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-3"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-      >
-        <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.18em] text-black/55">Profile</p>
-          <p className="truncate text-sm font-semibold text-black">
-            {user?.displayName || user?.username || 'My Profile'}
-          </p>
-          <p className="text-xs text-black/60">Drag down to expand • drag up to collapse</p>
+    <section className={`${hideHandle ? 'mt-2' : 'mt-6'} rounded-2xl border border-black/10 bg-white/90 p-4 shadow-sm`}>
+      {!hideHandle ? (
+        <div
+          className="flex cursor-grab items-center justify-between gap-3 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-3"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+        >
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-[0.18em] text-black/55">Profile</p>
+            <p className="truncate text-sm font-semibold text-black">
+              {user?.displayName || user?.username || 'My Profile'}
+            </p>
+            <p className="text-xs text-black/60">Drag down to expand • drag up to collapse</p>
+          </div>
+          <div className="flex gap-2">
+            {isExpanded ? (
+              <Button size="sm" variant="outline" onClick={onCollapse}>Collapse</Button>
+            ) : (
+              <Button size="sm" variant="outline" onClick={onExpand}>Open Profile</Button>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2">
-          {isExpanded ? (
-            <Button size="sm" variant="outline" onClick={onCollapse}>Collapse</Button>
-          ) : (
-            <Button size="sm" variant="outline" onClick={onExpand}>Open Profile</Button>
-          )}
-        </div>
-      </div>
+      ) : null}
 
       {isExpanded ? (
         <div className="mt-4 space-y-4">

@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
@@ -10,12 +9,10 @@ import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
 import { usePlotUiStore } from '@/store/plot-ui';
 import { api } from '@/lib/api';
-import TierToggle from '@/components/plot/TierToggle';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
-import SceneContextBadge from '@/components/plot/SceneContextBadge';
 import PlotPlayerStrip, { type CollectionTrack } from '@/components/plot/PlotPlayerStrip';
 import ProfileExpansionPanel from '@/components/plot/ProfileExpansionPanel';
 
@@ -44,15 +41,12 @@ const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, gpsCoords, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
+  const { homeScene, gpsCoords, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
   const { token, user } = useAuthStore();
   const {
     panelState,
     playerMode,
-    plotSnapshot,
     setPanelState,
-    setPlotSnapshot,
-    clearPlotSnapshot,
     switchToCollection,
     switchToRadiyo,
   } = usePlotUiStore();
@@ -60,6 +54,8 @@ export default function PlotPage() {
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [selectedCollectionTrack, setSelectedCollectionTrack] = useState<CollectionTrack | null>(null);
+  const dragStartY = useRef<number | null>(null);
+  const dragDelta = useRef(0);
 
   const mapCenter = useMemo(() => {
     if (gpsCoords) {
@@ -68,10 +64,10 @@ export default function PlotPage() {
     return null;
   }, [gpsCoords]);
 
-  const collectionTitle = useMemo(() => {
-    const base = user?.displayName || user?.username || 'My';
-    return `${base}'s Collection`;
-  }, [user?.displayName, user?.username]);
+  const homeSceneTitle = useMemo(() => {
+    if (!homeScene) return 'Home Scene not set';
+    return `${homeScene.city}, ${homeScene.state} — ${homeScene.musicCommunity}`;
+  }, [homeScene]);
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
@@ -159,53 +155,35 @@ export default function PlotPage() {
     setSelectedCommunity(community);
   };
 
-  const isProfileExpanded = panelState === 'expanded';
-
-  const handleExpandProfile = () => {
-    if (!plotSnapshot) {
-      setPlotSnapshot({
-        activeTab,
-        selectedTier,
-        selectedCommunityId: selectedCommunity?.id ?? null,
-      });
-    }
-    setPanelState('expanded');
-  };
-
-  const handleCollapseProfile = async () => {
-    if (plotSnapshot) {
-      setActiveTab(plotSnapshot.activeTab);
-      setSelectedTier(plotSnapshot.selectedTier);
-
-      if (plotSnapshot.selectedCommunityId) {
-        try {
-          const response = await api.get<CommunityWithDistance | null>(
-            `/communities/${plotSnapshot.selectedCommunityId}`,
-            { token: token || undefined },
-          );
-          if (response.data) {
-            setSelectedCommunity(response.data);
-          }
-        } catch {
-          // Keep current selection if restore fetch fails.
-        }
-      }
-    }
-    clearPlotSnapshot();
-    setPanelState('collapsed');
-  };
-
   const handleSelectCollectionTrack = (track: CollectionTrack) => {
     setSelectedCollectionTrack(track);
     switchToCollection();
   };
 
-  const handleHeaderModeSwitch = () => {
-    if (playerMode === 'radiyo') {
-      switchToCollection();
+  const handleProfilePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    dragStartY.current = event.clientY;
+    dragDelta.current = 0;
+    (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
+  };
+
+  const handleProfilePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (dragStartY.current === null) return;
+    dragDelta.current = event.clientY - dragStartY.current;
+  };
+
+  const handleProfilePointerUp = () => {
+    const delta = dragDelta.current;
+    dragStartY.current = null;
+    dragDelta.current = 0;
+
+    if (panelState !== 'expanded' && delta > 50) {
+      setPanelState('expanded');
       return;
     }
-    switchToRadiyo();
+
+    if (panelState === 'expanded' && delta < -50) {
+      setPanelState('collapsed');
+    }
   };
 
   // Callback to update nearby communities from StatisticsPanel
@@ -218,9 +196,14 @@ export default function PlotPage() {
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-6xl">
         <section className="mb-4 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
-          <div className="flex items-center justify-between gap-3">
+          <div
+            className="flex items-center justify-between gap-3"
+            onPointerDown={handleProfilePointerDown}
+            onPointerMove={handleProfilePointerMove}
+            onPointerUp={handleProfilePointerUp}
+          >
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-black/20 bg-black/5 text-sm font-semibold text-black">
+              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all ${panelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-9 w-9 text-sm'}`}>
                 {user?.displayName?.[0] || user?.username?.[0] || 'U'}
               </div>
               <div className="min-w-0">
@@ -228,6 +211,9 @@ export default function PlotPage() {
                   {user?.displayName || user?.username || 'User'}
                 </p>
                 <p className="truncate text-xs text-black/60">@{user?.username || 'listener'}</p>
+                <p className="text-[11px] text-black/45 md:hidden">
+                  {panelState === 'expanded' ? 'Swipe up to collapse profile' : 'Pull down to open profile'}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -241,79 +227,56 @@ export default function PlotPage() {
           </div>
         </section>
 
-        {/* Header */}
-        <header className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.25em] text-black/50">The Plot</p>
-          <h1 className="mt-3 text-3xl font-semibold text-black">
-            {homeScene ? `${homeScene.city}, ${homeScene.state}` : 'Your Home Scene'}
-          </h1>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-black/60">
-              {playerMode === 'collection'
-                ? collectionTitle
-                : homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button asChild size="sm" variant="outline">
-                <Link href="/artist-dashboard-r1">Artist Dashboard</Link>
-              </Button>
-              <Button size="sm" variant="outline" onClick={handleHeaderModeSwitch}>
-                {playerMode === 'radiyo' ? 'Collection Mode' : 'RaDIYo Mode'}
-              </Button>
-            </div>
-          </div>
-          {homeScene?.tasteTag && (
-            <p className="mt-1 text-sm text-black/50">Taste tag: {homeScene.tasteTag}</p>
-          )}
-          <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
-          <p className="mt-3 text-xs text-black/50">
-            Player mode is explicit in Plot header and player strip.
-          </p>
-        </header>
-
-        {/* Tier Toggle */}
-        <div className="mt-6">
-          <TierToggle value={selectedTier} onChange={setSelectedTier} />
+        <div className="md:hidden">
+          <ProfileExpansionPanel
+            panelState={panelState}
+            onExpand={() => setPanelState('expanded')}
+            onCollapse={() => setPanelState('collapsed')}
+            onPeek={() => setPanelState('peek')}
+            onSelectCollectionTrack={handleSelectCollectionTrack}
+            hideHandle
+          />
         </div>
 
-        {!isProfileExpanded ? (
-          <div className="mt-6">
-            <PlotPlayerStrip
-              playerMode={playerMode}
-              selectedCollectionTrack={selectedCollectionTrack}
-              onSwitchToRadiyo={switchToRadiyo}
-            />
-          </div>
-        ) : null}
+        <div className="md:hidden mb-2">
+          <button
+            type="button"
+            className="mx-auto flex items-center gap-2 rounded-full border border-black/15 bg-white/90 px-3 py-1 text-[11px] font-medium text-black/70 shadow-sm"
+            onClick={() => setPanelState(panelState === 'expanded' ? 'collapsed' : 'expanded')}
+            aria-label={panelState === 'expanded' ? 'Collapse profile panel' : 'Expand profile panel'}
+          >
+            <span className="block h-1.5 w-8 rounded-full bg-black/30" aria-hidden />
+            <span>{panelState === 'expanded' ? 'Pull Up' : 'Pull Down'}</span>
+          </button>
+        </div>
 
-        <ProfileExpansionPanel
-          panelState={panelState}
-          onExpand={handleExpandProfile}
-          onCollapse={() => {
-            void handleCollapseProfile();
-          }}
-          onPeek={() => setPanelState('peek')}
-          onSelectCollectionTrack={handleSelectCollectionTrack}
-        />
+        <div className="mt-6">
+          <PlotPlayerStrip
+            playerMode={playerMode}
+            selectedCollectionTrack={selectedCollectionTrack}
+            selectedTier={selectedTier}
+            onTierChange={setSelectedTier}
+            broadcastName={homeSceneTitle}
+            onSwitchToRadiyo={switchToRadiyo}
+          />
+        </div>
 
-        {isProfileExpanded ? (
-          <div className="mt-6">
-            <PlotPlayerStrip
-              playerMode={playerMode}
-              selectedCollectionTrack={selectedCollectionTrack}
-              onSwitchToRadiyo={switchToRadiyo}
-            />
-          </div>
-        ) : null}
+        <>
+            <section className="mt-6">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">The Plot</p>
+            </section>
 
-        {!isProfileExpanded ? (
-          <>
             {/* Tab Navigation */}
-            <section className="mt-6 flex flex-wrap gap-3">
+            <section className="mt-3 flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
               {tabs.map((tab) => (
                 <Button
                   key={tab}
                   variant={activeTab === tab ? 'default' : 'outline'}
+                  className={
+                    activeTab === tab
+                      ? 'rounded-full bg-black text-white'
+                      : 'rounded-full border-black/20 bg-white text-black hover:bg-black/5'
+                  }
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab}
@@ -322,9 +285,8 @@ export default function PlotPage() {
             </section>
 
             {/* Main Content Grid */}
-            <section className="mt-6 grid gap-6 lg:grid-cols-2">
-          {/* Left Panel - Statistics & Map */}
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <section className="mt-6 space-y-6">
+          <div className="rounded-2xl border border-black/10 bg-white/92 p-6 shadow-sm">
             <div className="mb-4">
               <h2 className="text-lg font-semibold text-black">
                 {activeTab === 'Statistics' ? 'Scene Statistics' : activeTab}
@@ -391,42 +353,41 @@ export default function PlotPage() {
             )}
           </div>
 
-          {/* Right Panel - Top Songs & Community Info */}
-          <div className="space-y-6">
-            {/* Selected Community Info */}
+          <div className="rounded-2xl border border-black/10 bg-white/92 p-6 shadow-sm">
+            <h3 className="font-semibold text-black mb-3">Selected Community</h3>
             {selectedCommunity && (
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <h3 className="font-semibold text-black mb-3">Selected Community</h3>
-                <div className="p-4 rounded-xl bg-black/5">
-                  <p className="font-medium text-black">{selectedCommunity.name}</p>
-                  <p className="text-sm text-black/60 mt-1">
-                    {selectedCommunity.memberCount?.toLocaleString()} members
+              <div className="p-4 rounded-xl bg-black/5">
+                <p className="font-medium text-black">{selectedCommunity.name}</p>
+                <p className="text-sm text-black/60 mt-1">
+                  {selectedCommunity.memberCount?.toLocaleString()} members
+                </p>
+                {selectedCommunity.distance && (
+                  <p className="text-xs text-black/50 mt-1">
+                    Distance:{' '}
+                    {selectedCommunity.distance < 1000
+                      ? `${Math.round(selectedCommunity.distance)}m`
+                      : `${(selectedCommunity.distance / 1000).toFixed(1)}km`}
                   </p>
-                  {selectedCommunity.distance && (
-                    <p className="text-xs text-black/50 mt-1">
-                      Distance:{' '}
-                      {selectedCommunity.distance < 1000
-                        ? `${Math.round(selectedCommunity.distance)}m`
-                        : `${(selectedCommunity.distance / 1000).toFixed(1)}km`}
-                    </p>
-                  )}
-                  <div className="mt-3">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => router.push(`/community/${selectedCommunity.id}`)}
-                    >
-                      Open Profile
-                    </Button>
-                  </div>
+                )}
+                <div className="mt-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => router.push(`/community/${selectedCommunity.id}`)}
+                  >
+                    Open Profile
+                  </Button>
                 </div>
               </div>
             )}
-
+            {!selectedCommunity && (
+              <div className="rounded-xl border border-dashed border-black/20 px-4 py-6 text-sm text-black/60">
+                Select a community from Statistics to view details here.
+              </div>
+            )}
           </div>
             </section>
-          </>
-        ) : null}
+        </>
       </div>
     </main>
   );

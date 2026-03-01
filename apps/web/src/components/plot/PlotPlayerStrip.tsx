@@ -15,6 +15,7 @@ interface CollectionTrack {
 }
 
 type PoolKey = 'new' | 'main';
+type TierLevel = 'city' | 'state' | 'national';
 
 interface BroadcastTrack {
   id: string;
@@ -85,12 +86,18 @@ function formatDuration(duration: number | null): string {
 interface PlotPlayerStripProps {
   playerMode: PlotPlayerMode;
   selectedCollectionTrack: CollectionTrack | null;
+  selectedTier: TierLevel;
+  onTierChange: (tier: TierLevel) => void;
+  broadcastName?: string | null;
   onSwitchToRadiyo: () => void;
 }
 
 export default function PlotPlayerStrip({
   playerMode,
   selectedCollectionTrack,
+  selectedTier,
+  onTierChange,
+  broadcastName,
   onSwitchToRadiyo,
 }: PlotPlayerStripProps) {
   const router = useRouter();
@@ -135,21 +142,31 @@ export default function PlotPlayerStrip({
   );
 
   const radiyoNowPlaying = radiyoTracks[0] ?? null;
+  const activeBroadcastName = radiyoNowPlaying?.community || broadcastName || 'Uprise Broadcast';
 
   return (
     <section className="rounded-2xl border border-black/15 bg-black p-4 text-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/70">Player</span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] ${
-              playerMode === 'radiyo' ? 'bg-lime-400 text-black' : 'bg-blue-400 text-black'
-            }`}
+      <div className="mb-3 flex flex-wrap items-center gap-5 rounded-xl border border-white/15 bg-white/5 px-3 py-2">
+        {(['city', 'state', 'national'] as TierLevel[]).map((tier) => (
+          <button
+            key={tier}
+            type="button"
+            onClick={() => onTierChange(tier)}
+            className="inline-flex items-center gap-2 text-xs font-medium text-white transition-opacity hover:opacity-80"
+            aria-pressed={selectedTier === tier}
           >
-            {playerMode}
-          </span>
-        </div>
+            <span
+              className={`h-3 w-3 rounded-full border ${
+                selectedTier === tier ? 'border-[#b7d43f] bg-[#b7d43f]' : 'border-white/70 bg-transparent'
+              }`}
+              aria-hidden
+            />
+            <span className="capitalize">{tier}</span>
+          </button>
+        ))}
+      </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-2">
         {playerMode === 'radiyo' ? (
           <div className="flex gap-2">
             <Button size="sm" variant={activePool === 'new' ? 'default' : 'outline'} onClick={() => setActivePool('new')}>
@@ -165,9 +182,27 @@ export default function PlotPlayerStrip({
           </div>
         ) : (
           <Button size="sm" variant="outline" onClick={onSwitchToRadiyo}>
-            Back to RaDIYo
+            Back to RADIYO
           </Button>
         )}
+
+        <div className="min-w-0 flex items-center gap-2 px-1">
+          <span className="text-xs text-lime-300" aria-hidden>
+            📡
+          </span>
+          <p className="truncate text-xs font-medium text-white/80">{activeBroadcastName}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-white/70">Collection</span>
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] ${
+              playerMode === 'radiyo' ? 'bg-lime-400 text-black' : 'bg-blue-400 text-black'
+            }`}
+          >
+            {playerMode === 'radiyo' ? 'RADIYO' : 'Collection'}
+          </span>
+        </div>
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-3">
