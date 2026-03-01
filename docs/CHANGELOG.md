@@ -270,3 +270,5 @@
 
 - UX-02/UX-03 (Plot route): implemented in-route profile expansion/body-swap behavior and mode-aware top player flow in `apps/web/src/app/plot/page.tsx` with new components `PlotPlayerStrip` and `ProfileExpansionPanel`. Expanded profile now replaces Plot body in-route, allows collection track selection, and explicitly switches player mode to `collection` with return path to `radiyo`.
 - Plot header UX refinement: replaced header right-side utility/search-style action with explicit player mode switch control beside scene community label (`Collection Mode` / `RaDIYo Mode`) to match top-strip mode switching behavior.
+- Discovery entitlement UX gate added (web): free mode now locks cross-scene transport controls (`state`/`national` scope buttons and tune-to-non-home actions), with Discovery Pass override via `NEXT_PUBLIC_ENABLE_DISCOVERY_PASS=true` or local dev flag `localStorage.uprise.discoveryPass=active`.
+- Plot player artist navigation update: clicking active RaDIYo track title area opens artist profile when `uploadedById/artistId/userId` is available from broadcast payload.

@@ -54,8 +54,26 @@ export default function DiscoverPage() {
   const [error, setError] = useState<string | null>(null);
   const [savingHomeSceneId, setSavingHomeSceneId] = useState<string | null>(null);
   const [tuningSceneId, setTuningSceneId] = useState<string | null>(null);
+  const [hasDiscoveryPass, setHasDiscoveryPass] = useState(false);
 
   const canSearch = useMemo(() => musicCommunity.trim().length > 0, [musicCommunity]);
+  const transportLocked = !hasDiscoveryPass;
+
+  useEffect(() => {
+    const envEnabled = process.env.NEXT_PUBLIC_ENABLE_DISCOVERY_PASS === 'true';
+    if (typeof window === 'undefined') {
+      setHasDiscoveryPass(envEnabled);
+      return;
+    }
+    const localOverride = window.localStorage.getItem('uprise.discoveryPass') === 'active';
+    setHasDiscoveryPass(envEnabled || localOverride);
+  }, []);
+
+  useEffect(() => {
+    if (!hasDiscoveryPass && tier !== 'city') {
+      setTier('city');
+    }
+  }, [hasDiscoveryPass, tier]);
 
   useEffect(() => {
     async function fetchContext() {
@@ -186,6 +204,10 @@ export default function DiscoverPage() {
 
   const handleTuneScene = async (item: DiscoverCitySceneItem) => {
     if (!token) return;
+    if (transportLocked && !item.isHomeScene) {
+      setError('Discovery Pass is required to tune into non-Home scenes.');
+      return;
+    }
     setTuningSceneId(item.sceneId);
     setError(null);
     try {
@@ -230,6 +252,9 @@ export default function DiscoverPage() {
           <p className="mt-2 text-sm text-black/60">
             Discover is explicit navigation. It does not auto-join communities or change your Home Scene unless you
             choose to set one.
+          </p>
+          <p className="mt-2 text-xs text-black/55">
+            Access tier: {hasDiscoveryPass ? 'Discovery Pass (global scene transport enabled)' : 'Free Listener (Home Scene transport only)'}
           </p>
           <p className="mt-2 text-xs text-black/50">
             Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
@@ -282,11 +307,17 @@ export default function DiscoverPage() {
                 size="sm"
                 variant={tier === value ? 'default' : 'outline'}
                 onClick={() => setTier(value)}
+                disabled={transportLocked && value !== 'city'}
               >
                 {value}
               </Button>
             ))}
           </div>
+          {transportLocked && (
+            <p className="mt-3 text-xs text-amber-700">
+              Free Listener mode locks cross-scene transport controls. Enable Discovery Pass to access state/national transport.
+            </p>
+          )}
         </section>
 
         {error && (
@@ -329,13 +360,15 @@ export default function DiscoverPage() {
                         <Button
                           size="sm"
                           variant={tunedSceneId === item.sceneId ? 'default' : 'outline'}
-                          disabled={tuningSceneId === item.sceneId}
+                          disabled={tuningSceneId === item.sceneId || (transportLocked && !item.isHomeScene)}
                           onClick={() => handleTuneScene(item)}
                         >
                           {tunedSceneId === item.sceneId
                             ? 'Tuned'
                             : tuningSceneId === item.sceneId
                             ? 'Tuning...'
+                            : transportLocked && !item.isHomeScene
+                            ? 'Pass Required'
                             : 'Tune to Scene'}
                         </Button>
                         <Button

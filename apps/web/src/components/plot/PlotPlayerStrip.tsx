@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 import type { PlotPlayerMode } from '@/store/plot-ui';
 import { useAuthStore } from '@/store/auth';
 
@@ -21,6 +22,7 @@ interface BroadcastTrack {
   artist: string;
   duration: number | null;
   community: string | null;
+  artistProfileId: string | null;
 }
 
 interface BroadcastPools {
@@ -43,6 +45,11 @@ function toTrack(value: unknown, index: number): BroadcastTrack {
     community:
       (item.communityName as string | undefined) ||
       (item.sceneName as string | undefined) ||
+      null,
+    artistProfileId:
+      (item.uploadedById as string | undefined) ||
+      (item.artistId as string | undefined) ||
+      (item.userId as string | undefined) ||
       null,
   };
 }
@@ -86,6 +93,7 @@ export default function PlotPlayerStrip({
   selectedCollectionTrack,
   onSwitchToRadiyo,
 }: PlotPlayerStripProps) {
+  const router = useRouter();
   const { token } = useAuthStore();
   const [activePool, setActivePool] = useState<PoolKey>('new');
   const [pools, setPools] = useState<BroadcastPools>({ newReleases: [], mainRotation: [] });
@@ -165,7 +173,19 @@ export default function PlotPlayerStrip({
       <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-3">
         {playerMode === 'radiyo' ? (
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold">{radiyoNowPlaying?.title ?? 'No track in pool'}</p>
+            <button
+              type="button"
+              className="block w-full text-left"
+              onClick={() => {
+                if (radiyoNowPlaying?.artistProfileId) {
+                  router.push(`/users/${radiyoNowPlaying.artistProfileId}`);
+                }
+              }}
+              disabled={!radiyoNowPlaying?.artistProfileId}
+              aria-label="Open artist profile"
+            >
+              <p className="truncate text-sm font-semibold hover:underline">{radiyoNowPlaying?.title ?? 'No track in pool'}</p>
+            </button>
             <p className="truncate text-xs text-white/75">{radiyoNowPlaying?.artist ?? '—'}</p>
             <p className="text-[11px] text-white/60">
               {activePool === 'new' ? 'New Releases' : 'Main Rotation'} • {formatDuration(radiyoNowPlaying?.duration ?? null)}
