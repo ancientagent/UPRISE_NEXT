@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
@@ -15,7 +15,6 @@ import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/compone
 import { getDiscoveryContext } from '@/lib/discovery/client';
 import { toDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
-  findNearbyCommunities,
   getCommunityById,
   resolveHomeCommunity,
 } from '@/lib/communities/client';
@@ -47,7 +46,7 @@ type CollectionShelf = (typeof collectionShelves)[number];
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, gpsCoords, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
+  const { homeScene, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
   const { token, user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
@@ -56,15 +55,10 @@ export default function PlotPage() {
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
   const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
   const [activeCollectionShelf, setActiveCollectionShelf] = useState<CollectionShelf>('Tracks');
+  const hasHomeScene =
+    Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
-
-  const mapCenter = useMemo(() => {
-    if (gpsCoords) {
-      return { lat: gpsCoords.latitude, lng: gpsCoords.longitude };
-    }
-    return null;
-  }, [gpsCoords]);
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
@@ -82,6 +76,7 @@ export default function PlotPage() {
   useEffect(() => {
     async function resolveDefaultCommunity() {
       if (selectedCommunity) return;
+      if (!hasHomeScene) return;
 
       try {
         if (tunedSceneId) {
@@ -108,28 +103,13 @@ export default function PlotPage() {
             return;
           }
         }
-
-        // Fallback: nearest community from GPS when available.
-        if (mapCenter) {
-          const nearbyResponse = await findNearbyCommunities(
-            {
-              lat: mapCenter.lat,
-              lng: mapCenter.lng,
-              radius: 10000,
-              limit: 1,
-            },
-            token || undefined,
-          );
-          const closest = nearbyResponse?.[0];
-          if (closest) setSelectedCommunity(closest);
-        }
       } catch {
         // Leave unselected; Feed/Stats panels render guidance states.
       }
     }
 
     resolveDefaultCommunity();
-  }, [selectedCommunity, mapCenter, token, homeScene, tunedSceneId]);
+  }, [selectedCommunity, token, homeScene, tunedSceneId, hasHomeScene]);
 
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
@@ -194,6 +174,16 @@ export default function PlotPage() {
       : profilePanelState === 'peek'
         ? 'Release to collapse or keep pulling to expand'
         : 'Pull down profile';
+
+  useEffect(() => {
+    if (!hasHomeScene) {
+      router.replace('/onboarding');
+    }
+  }, [hasHomeScene, router]);
+
+  if (!hasHomeScene) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 sm:px-6">
