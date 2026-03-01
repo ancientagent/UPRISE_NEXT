@@ -322,11 +322,14 @@ export default function PlotPage() {
 
             {/* Statistics Panel */}
             {activeTab === 'Statistics' ? (
-              <StatisticsPanel
-                selectedTier={selectedTier}
-                onCommunitySelect={handleCommunitySelect}
-                onCommunitiesUpdate={handleCommunitiesUpdate}
-              />
+              <div className="space-y-4">
+                <StatisticsPanel
+                  selectedTier={selectedTier}
+                  onCommunitySelect={handleCommunitySelect}
+                  onCommunitiesUpdate={handleCommunitiesUpdate}
+                />
+                <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
+              </div>
             ) : activeTab === 'Feed' ? (
               <SeedFeedPanel
                 communityId={selectedCommunity?.id ?? null}
@@ -356,9 +359,6 @@ export default function PlotPage() {
 
           {/* Right Panel - Top Songs & Community Info */}
           <div className="space-y-6">
-            {/* Top Songs Panel */}
-            <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
-
             {/* Selected Community Info */}
             {selectedCommunity && (
               <div className="rounded-2xl border border-black/10 bg-white p-6">
