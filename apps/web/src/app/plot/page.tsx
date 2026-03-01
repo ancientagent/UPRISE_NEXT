@@ -196,8 +196,8 @@ export default function PlotPage() {
         : 'Pull down profile';
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-6 py-10">
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-7xl">
         <section className="rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm transition-all">
           <div
             className="flex items-center justify-between gap-3"
@@ -369,9 +369,9 @@ export default function PlotPage() {
             </section>
 
             {/* Main Content Grid */}
-            <section className="mt-6 grid gap-6 lg:grid-cols-2">
+            <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
               {/* Left Panel - Statistics & Map */}
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
+              <div className="rounded-2xl border border-black/10 bg-white p-6 lg:p-7">
                 <div className="mb-4">
                   <h2 className="text-lg font-semibold text-black">
                     {activeTab === 'Statistics' ? 'Scene Statistics' : activeTab}
@@ -467,6 +467,14 @@ export default function PlotPage() {
                         </Button>
                       </div>
                     </div>
+                  </div>
+                )}
+                {!selectedCommunity && (
+                  <div className="rounded-2xl border border-black/10 bg-white p-6">
+                    <h3 className="mb-2 font-semibold text-black">Community Panel</h3>
+                    <p className="text-sm text-black/60">
+                      Select or resolve a nearby scene to expand community details in this column.
+                    </p>
                   </div>
                 )}
               </div>

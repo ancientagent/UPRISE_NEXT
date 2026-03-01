@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- UX implementation slice complete (`UX-IMPL-538A`): expanded `/plot` content footprint to better match surrounding surfaces by widening the page container, increasing primary Plot column width, and adding a fallback right-column community panel state; report `docs/handoff/2026-03-01_ux-impl-538A-plot-layout-expansion.md`.
 - Plot UX regression lock tests added for `/plot` R1 parity checkpoints (`RADIYO` vs `Collection` mode labels, expanded-profile tabs/body swap contract, and statistics-only `Top Songs` + `Scene Activity` placement); see `apps/web/__tests__/plot-ux-regression-lock.test.ts` and `docs/handoff/2026-03-01_plot-ux-regression-lock-tests.md`.
 - Added QA-only `/plot` mobile-first parity report `docs/solutions/MVP_PLOT_UX_QA_REPORT_R1.md` (scope UX-IMPL-531A..537A) with current pass/fail matrix and evidence; handoff `docs/handoff/2026-03-01_ux-qa-plot-r1.md`.
 - `/plot` styling consistency pass (no behavior drift): normalized spacing, typography rhythm, and control sizing across profile header, player shell, tabs rail, and expanded profile blocks; handoff `docs/handoff/2026-03-01_plot-styling-consistency-pass.md`.
