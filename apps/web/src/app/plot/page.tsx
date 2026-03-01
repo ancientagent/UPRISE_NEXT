@@ -13,6 +13,7 @@ import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
+import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
 import { getDiscoveryContext } from '@/lib/discovery/client';
 import { toDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
@@ -61,6 +62,8 @@ export default function PlotPage() {
   const [registrarSummaryLoading, setRegistrarSummaryLoading] = useState(false);
   const [registrarSummaryError, setRegistrarSummaryError] = useState<string | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
+  const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
+  const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
 
@@ -294,6 +297,16 @@ export default function PlotPage() {
             </div>
           </section>
         ) : null}
+
+        <RadiyoPlayerPanel
+          mode={playerMode}
+          onModeChange={setPlayerMode}
+          rotationPool={rotationPool}
+          onRotationPoolChange={setRotationPool}
+          broadcastLabel={
+            homeScene ? `${homeScene.city}, ${homeScene.state} ${homeScene.musicCommunity}` : 'Home Scene not set'
+          }
+        />
 
         {/* Header */}
         <header className="mt-6 rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
