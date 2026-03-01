@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-03-01T05:36:58.696Z",
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXFLOW-501A",
+      "title": "Plot mobile IA: Feed screen contract",
+      "prompt": "Docs-only: define Feed mobile IA block (purpose, required data, ordering, empty/loading/error states, deferred flags) in MVP_MOBILE_UX_SYSTEM_R1.md.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T05:43:16.591Z",
+      "sourceQueue": "mvp-lane-a-ux-flow-r1.json",
+      "startedAt": "2026-03-01T05:40:05.154Z",
+      "finishedAt": "2026-03-01T05:43:16.591Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXFLOW-501A.md"
+    },
+    {
+      "id": "SLICE-UXFLOW-502A",
+      "title": "Plot mobile IA: Events screen contract",
+      "prompt": "Docs-only: define Events mobile IA block (purpose, required data, ordering, empty/loading/error states, deferred flags) in MVP_MOBILE_UX_SYSTEM_R1.md.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:42:55.463Z",
+      "sourceQueue": "mvp-lane-a-ux-flow-r1.json",
+      "startedAt": "2026-03-01T05:43:25.993Z",
+      "finishedAt": "2026-03-01T07:42:55.463Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXFLOW-502A.md"
+    },
+    {
+      "id": "SLICE-UXFLOW-503A",
+      "title": "Plot mobile IA: Promotions screen contract",
+      "prompt": "Docs-only: define Promotions mobile IA block (purpose, required data, ordering, empty/loading/error states, deferred flags) in MVP_MOBILE_UX_SYSTEM_R1.md.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:27.451Z",
+      "sourceQueue": "mvp-lane-a-ux-flow-r1.json",
+      "startedAt": "2026-03-01T07:42:55.483Z",
+      "finishedAt": "2026-03-01T07:43:27.451Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXFLOW-503A.md"
+    },
+    {
+      "id": "SLICE-UXFLOW-504A",
+      "title": "Plot mobile IA: Statistics screen contract",
+      "prompt": "Docs-only: define Statistics mobile IA block (metrics/top songs/activity ordering, required data, empty/loading/error states) in MVP_MOBILE_UX_SYSTEM_R1.md.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:44:06.522Z",
+      "sourceQueue": "mvp-lane-a-ux-flow-r1.json",
+      "startedAt": "2026-03-01T07:43:27.472Z",
+      "finishedAt": "2026-03-01T07:44:06.522Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXFLOW-504A.md"
+    },
+    {
+      "id": "SLICE-UXFLOW-505A",
+      "title": "Plot mobile IA: Social screen deferred contract",
+      "prompt": "Docs-only: define Social tab deferred contract language and no-drift placeholder rules in MVP_MOBILE_UX_SYSTEM_R1.md.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:44:38.600Z",
+      "sourceQueue": "mvp-lane-a-ux-flow-r1.json",
+      "startedAt": "2026-03-01T07:44:06.548Z",
+      "finishedAt": "2026-03-01T07:44:38.600Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXFLOW-505A.md"
+    },
+    {
+      "id": "SLICE-UXFLOW-506A",
+      "title": "Flow IA consolidation and consistency pass",
+      "prompt": "Docs-only: consolidate IA wording across all Plot tabs, ensure canon-consistent terms and no ranking/recommendation implication drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:45:14.434Z",
+      "sourceQueue": "mvp-lane-a-ux-flow-r1.json",
+      "startedAt": "2026-03-01T07:44:38.620Z",
+      "finishedAt": "2026-03-01T07:45:14.434Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXFLOW-506A.md"
+    }
+  ]
+}

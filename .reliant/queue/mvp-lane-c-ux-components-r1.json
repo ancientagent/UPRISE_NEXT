@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-03-01T05:36:58.700Z",
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXCOMP-513A",
+      "title": "Profile header component contract",
+      "prompt": "Docs-only: define profile header props/state/events and ownership boundaries in new component-contract doc.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T05:45:23.029Z",
+      "sourceQueue": "mvp-lane-c-ux-components-r1.json",
+      "startedAt": "2026-03-01T05:40:07.424Z",
+      "finishedAt": "2026-03-01T05:45:23.029Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXCOMP-513A.md"
+    },
+    {
+      "id": "SLICE-UXCOMP-514A",
+      "title": "Player shell component contract",
+      "prompt": "Docs-only: define player shell contract (mode-specific controls, source adapters, context labels, errors).",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:18.554Z",
+      "sourceQueue": "mvp-lane-c-ux-components-r1.json",
+      "startedAt": "2026-03-01T05:45:23.053Z",
+      "finishedAt": "2026-03-01T07:43:18.554Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXCOMP-514A.md"
+    },
+    {
+      "id": "SLICE-UXCOMP-515A",
+      "title": "Tier controls component contract",
+      "prompt": "Docs-only: define tier controls contract (City/State/National semantics, state ownership, disabled/loading states).",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:22.580Z",
+      "sourceQueue": "mvp-lane-c-ux-components-r1.json",
+      "startedAt": "2026-03-01T07:43:18.621Z",
+      "finishedAt": "2026-03-01T07:43:22.580Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXCOMP-515A.md"
+    },
+    {
+      "id": "SLICE-UXCOMP-516A",
+      "title": "Plot tabs rail component contract",
+      "prompt": "Docs-only: define tab rail contract (active tab state, keyboard/a11y behavior, deferred tab handling).",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:26.482Z",
+      "sourceQueue": "mvp-lane-c-ux-components-r1.json",
+      "startedAt": "2026-03-01T07:43:22.645Z",
+      "finishedAt": "2026-03-01T07:43:26.482Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXCOMP-516A.md"
+    },
+    {
+      "id": "SLICE-UXCOMP-517A",
+      "title": "Tab panel contracts bundle",
+      "prompt": "Docs-only: define per-tab panel contracts (Feed/Events/Promotions/Statistics/Social) with shared interface surface.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:30.314Z",
+      "sourceQueue": "mvp-lane-c-ux-components-r1.json",
+      "startedAt": "2026-03-01T07:43:26.545Z",
+      "finishedAt": "2026-03-01T07:43:30.314Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXCOMP-517A.md"
+    },
+    {
+      "id": "SLICE-UXCOMP-518A",
+      "title": "Component boundary and anti-drift pass",
+      "prompt": "Docs-only: add forbidden dependency map and anti-trope drift boundaries to component contract doc.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:44:14.493Z",
+      "sourceQueue": "mvp-lane-c-ux-components-r1.json",
+      "startedAt": "2026-03-01T07:43:30.378Z",
+      "finishedAt": "2026-03-01T07:44:14.493Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXCOMP-518A.md"
+    }
+  ]
+}

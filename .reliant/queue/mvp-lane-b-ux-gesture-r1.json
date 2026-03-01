@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-03-01T05:36:58.699Z",
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXGEST-507A",
+      "title": "Profile pull-down state table",
+      "prompt": "Docs-only: add strict collapsed/peek/expanded transition table with thresholds and allowed triggers.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T05:45:21.803Z",
+      "sourceQueue": "mvp-lane-b-ux-gesture-r1.json",
+      "startedAt": "2026-03-01T05:40:03.871Z",
+      "finishedAt": "2026-03-01T05:45:21.803Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXGEST-507A.md"
+    },
+    {
+      "id": "SLICE-UXGEST-508A",
+      "title": "Gesture priority and conflict rules",
+      "prompt": "Docs-only: define gesture priority between profile pull and vertical content scroll with deterministic handoff rules.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:42:56.839Z",
+      "sourceQueue": "mvp-lane-b-ux-gesture-r1.json",
+      "startedAt": "2026-03-01T05:45:21.829Z",
+      "finishedAt": "2026-03-01T07:42:56.839Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXGEST-508A.md"
+    },
+    {
+      "id": "SLICE-UXGEST-509A",
+      "title": "Seam pull-tab affordance contract",
+      "prompt": "Docs-only: define seam/tab affordance behavior, hit area, labels, and fallback controls.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:23.920Z",
+      "sourceQueue": "mvp-lane-b-ux-gesture-r1.json",
+      "startedAt": "2026-03-01T07:42:56.858Z",
+      "finishedAt": "2026-03-01T07:43:23.920Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXGEST-509A.md"
+    },
+    {
+      "id": "SLICE-UXGEST-510A",
+      "title": "Motion timing/snap contract",
+      "prompt": "Docs-only: define motion timing, snap thresholds, and interruption handling for profile expansion/collapse.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:49.945Z",
+      "sourceQueue": "mvp-lane-b-ux-gesture-r1.json",
+      "startedAt": "2026-03-01T07:43:23.944Z",
+      "finishedAt": "2026-03-01T07:43:49.945Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXGEST-510A.md"
+    },
+    {
+      "id": "SLICE-UXGEST-511A",
+      "title": "Accessibility fallback controls",
+      "prompt": "Docs-only: define non-gesture controls, focus order, and reduced-motion behavior for profile/player interactions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:44:14.581Z",
+      "sourceQueue": "mvp-lane-b-ux-gesture-r1.json",
+      "startedAt": "2026-03-01T07:43:49.967Z",
+      "finishedAt": "2026-03-01T07:44:14.581Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXGEST-511A.md"
+    },
+    {
+      "id": "SLICE-UXGEST-512A",
+      "title": "Gesture contract closeout pass",
+      "prompt": "Docs-only: reconcile gesture terms with MVP_PLAYER_PROFILE_INTERACTION_R1.md and remove ambiguities.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:44:53.695Z",
+      "sourceQueue": "mvp-lane-b-ux-gesture-r1.json",
+      "startedAt": "2026-03-01T07:44:14.603Z",
+      "finishedAt": "2026-03-01T07:44:53.695Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXGEST-512A.md"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-03-01T05:36:58.700Z",
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXDEC-525A",
+      "title": "Founder decision register scaffold",
+      "prompt": "Docs-only: create/extend founder UX decision register with structured yes/no cards and recommended defaults.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T05:49:14.987Z",
+      "sourceQueue": "mvp-lane-e-ux-founder-decisions-r1.json",
+      "startedAt": "2026-03-01T05:40:10.156Z",
+      "finishedAt": "2026-03-01T05:49:14.987Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXDEC-525A.md"
+    },
+    {
+      "id": "SLICE-UXDEC-526A",
+      "title": "Profile expanded composition decisions",
+      "prompt": "Docs-only: add decision cards for expanded profile composition order and collection/stats priorities.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T07:43:22.196Z",
+      "sourceQueue": "mvp-lane-e-ux-founder-decisions-r1.json",
+      "startedAt": "2026-03-01T05:49:15.009Z",
+      "finishedAt": "2026-03-01T07:43:22.196Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXDEC-526A.md"
+    },
+    {
+      "id": "SLICE-UXDEC-527A",
+      "title": "Player control set decisions",
+      "prompt": "Docs-only: add decision cards for mode-specific controls and persistent controls across RADIYO/Collection.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T14:07:06.945Z",
+      "sourceQueue": "mvp-lane-e-ux-founder-decisions-r1.json",
+      "startedAt": "2026-03-01T07:43:26.981Z",
+      "finishedAt": "2026-03-01T14:07:06.945Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXDEC-527A.md"
+    },
+    {
+      "id": "SLICE-UXDEC-528A",
+      "title": "Discovery/search placement decisions",
+      "prompt": "Docs-only: add decision cards for discovery/search placement and non-paying listener limits.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T14:07:45.730Z",
+      "sourceQueue": "mvp-lane-e-ux-founder-decisions-r1.json",
+      "startedAt": "2026-03-01T14:07:10.856Z",
+      "finishedAt": "2026-03-01T14:07:45.730Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXDEC-528A.md"
+    },
+    {
+      "id": "SLICE-UXDEC-529A",
+      "title": "Deferred surface language decisions",
+      "prompt": "Docs-only: add decision cards for deferred surfaces/tab language and guardrail copy.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T14:08:24.347Z",
+      "sourceQueue": "mvp-lane-e-ux-founder-decisions-r1.json",
+      "startedAt": "2026-03-01T14:07:49.384Z",
+      "finishedAt": "2026-03-01T14:08:24.347Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXDEC-529A.md"
+    },
+    {
+      "id": "SLICE-UXDEC-530A",
+      "title": "Decision register closeout + QA checklist",
+      "prompt": "Docs-only: finalize decision register with blocked-slice mapping and founder walkthrough checklist.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-01T14:09:04.830Z",
+      "sourceQueue": "mvp-lane-e-ux-founder-decisions-r1.json",
+      "startedAt": "2026-03-01T14:08:29.574Z",
+      "finishedAt": "2026-03-01T14:09:04.830Z",
+      "reportPath": "docs/handoff/2026-03-01_SLICE-UXDEC-530A.md"
+    }
+  ]
+}
