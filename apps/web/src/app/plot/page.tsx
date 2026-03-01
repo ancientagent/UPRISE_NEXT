@@ -469,14 +469,6 @@ export default function PlotPage() {
                     </div>
                   </div>
                 )}
-                {!selectedCommunity && (
-                  <div className="rounded-2xl border border-black/10 bg-white p-6">
-                    <h3 className="mb-2 font-semibold text-black">Community Panel</h3>
-                    <p className="text-sm text-black/60">
-                      Select or resolve a nearby scene to expand community details in this column.
-                    </p>
-                  </div>
-                )}
               </div>
             </section>
           </>
