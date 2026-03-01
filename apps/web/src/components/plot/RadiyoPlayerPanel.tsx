@@ -25,8 +25,10 @@ export default function RadiyoPlayerPanel({
   onTierChange,
   broadcastLabel,
 }: RadiyoPlayerPanelProps) {
+  const isRadiyoMode = mode === 'RADIYO';
+
   return (
-    <section className="mt-4 rounded-2xl border border-black/15 bg-black p-4 text-white shadow-sm">
+    <section className="mt-4 rounded-2xl border border-black/15 bg-black p-4 text-white shadow-sm transition-all">
       <div className="mb-3 flex flex-wrap items-center gap-5 rounded-xl border border-white/15 bg-white/5 px-3 py-2">
         {(['city', 'state', 'national'] as PlayerTier[]).map((tier) => (
           <button
@@ -48,7 +50,7 @@ export default function RadiyoPlayerPanel({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {mode === 'RADIYO' ? (
+        {isRadiyoMode ? (
           <div className="flex gap-2">
             <Button
               size="sm"
@@ -76,10 +78,11 @@ export default function RadiyoPlayerPanel({
           <p className="truncate text-xs font-medium text-white/80">{broadcastLabel}</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 p-1">
           <Button
             size="sm"
-            variant={mode === 'RADIYO' ? 'default' : 'outline'}
+            variant={isRadiyoMode ? 'default' : 'outline'}
+            className={isRadiyoMode ? 'bg-[#b7d43f] text-black hover:bg-[#a8c63a]' : 'text-white'}
             onClick={() => onModeChange('RADIYO')}
           >
             RADIYO
@@ -87,6 +90,7 @@ export default function RadiyoPlayerPanel({
           <Button
             size="sm"
             variant={mode === 'Collection' ? 'default' : 'outline'}
+            className={mode === 'Collection' ? 'bg-[#5da9ff] text-black hover:bg-[#499cf5]' : 'text-white'}
             onClick={() => onModeChange('Collection')}
           >
             Collection
@@ -96,7 +100,7 @@ export default function RadiyoPlayerPanel({
 
       <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-3">
         <div className="min-w-0 flex-1">
-          {mode === 'RADIYO' ? (
+          {isRadiyoMode ? (
             <>
               <p className="truncate text-sm font-semibold">Now Broadcasting</p>
               <p className="truncate text-xs text-white/75">{rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}</p>
@@ -109,7 +113,7 @@ export default function RadiyoPlayerPanel({
           )}
         </div>
 
-        {mode === 'RADIYO' ? (
+        {isRadiyoMode ? (
           <div className="flex items-center gap-2 text-lime-300">
             <button
               type="button"

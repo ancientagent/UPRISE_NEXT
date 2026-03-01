@@ -185,11 +185,17 @@ export default function PlotPage() {
     // This callback exists for potential future use
   };
   const isProfileExpanded = profilePanelState === 'expanded';
+  const seamLabel =
+    profilePanelState === 'expanded'
+      ? 'Pull up or tap to collapse profile'
+      : profilePanelState === 'peek'
+        ? 'Release to collapse or keep pulling to expand'
+        : 'Pull down profile';
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-6xl">
-        <section className="rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
+        <section className="rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm transition-all">
           <div
             className="flex items-center justify-between gap-3"
             onPointerDown={handleProfilePointerDown}
@@ -197,7 +203,7 @@ export default function PlotPage() {
             onPointerUp={handleProfilePointerUp}
           >
             <div className="flex min-w-0 items-center gap-3">
-              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all ${profilePanelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-10 w-10 text-sm'}`}>
+              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all duration-200 ${profilePanelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-10 w-10 text-sm'}`}>
                 {user?.displayName?.[0] || user?.username?.[0] || 'U'}
               </div>
               <div className="min-w-0">
@@ -208,6 +214,15 @@ export default function PlotPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <span className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${
+                profilePanelState === 'expanded'
+                  ? 'bg-[#b7d43f]/30 text-black'
+                  : profilePanelState === 'peek'
+                    ? 'bg-[#5da9ff]/20 text-black'
+                    : 'bg-black/10 text-black/70'
+              }`}>
+                {profilePanelState}
+              </span>
               <Button size="sm" variant="outline" aria-label="Notifications">
                 🔔
               </Button>
@@ -225,7 +240,7 @@ export default function PlotPage() {
               aria-label={profilePanelState === 'expanded' ? 'Collapse profile panel' : 'Expand profile panel'}
             >
               <span className="block h-1.5 w-8 rounded-full bg-black/30" aria-hidden />
-              <span>{profilePanelState === 'expanded' ? 'Collapse profile' : 'Pull down profile'}</span>
+              <span>{seamLabel}</span>
             </button>
           </div>
         </section>
@@ -247,7 +262,7 @@ export default function PlotPage() {
         </div>
 
         {isProfileExpanded ? (
-          <section className="mt-6 space-y-4 rounded-2xl border border-black/10 bg-white/92 p-5 shadow-sm">
+          <section className="mt-6 space-y-4 rounded-2xl border border-black/10 bg-white/92 p-5 shadow-sm transition-all duration-200">
             <header>
               <h2 className="text-base font-semibold text-black">Expanded Profile</h2>
               <p className="text-xs text-black/60">Single-route profile composition (mobile parity contract)</p>
