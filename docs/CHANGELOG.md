@@ -265,3 +265,5 @@
 
 ### Notes
 - CI should include a job to append merged PR titles grouped by date and labels to this file.
+
+- UX-01 (state foundation): added Plot/profile interaction state machine + Zustand store for `panelState` (`collapsed|peek|expanded`), explicit player mode (`radiyo|collection`), and plot snapshot restore primitives; added focused web tests in `apps/web/__tests__/plot-ui-state-machine.test.ts` and `apps/web/__tests__/plot-ui-store.test.ts`.
