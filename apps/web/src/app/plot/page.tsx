@@ -181,6 +181,7 @@ export default function PlotPage() {
     // Communities are managed within StatisticsPanel
     // This callback exists for potential future use
   };
+  const isProfileExpanded = profilePanelState === 'expanded';
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
@@ -226,26 +227,6 @@ export default function PlotPage() {
           </div>
         </section>
 
-        {profilePanelState === 'expanded' ? (
-          <section className="mt-3 rounded-2xl border border-black/10 bg-white/92 p-4 shadow-sm">
-            <h2 className="text-base font-semibold text-black">Profile Overview</h2>
-            <p className="text-xs text-black/60">In-route profile expansion (mobile-first interaction model)</p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Current Player Mode</p>
-                <p className="mt-1 text-lg font-semibold text-black">{playerMode}</p>
-              </div>
-              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Current Tier</p>
-                <p className="mt-1 text-lg font-semibold text-black capitalize">{selectedTier}</p>
-              </div>
-            </div>
-            <p className="mt-3 text-xs text-black/60">
-              Profile details and collection shelves render here when expanded.
-            </p>
-          </section>
-        ) : null}
-
         <RadiyoPlayerPanel
           mode={playerMode}
           onModeChange={setPlayerMode}
@@ -262,128 +243,174 @@ export default function PlotPage() {
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
         </div>
 
-        {/* Tab Navigation */}
-        <section className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
-          {tabs.map((tab) => (
-            <Button
-              key={tab}
-              variant={activeTab === tab ? 'default' : 'outline'}
-              className={
-                activeTab === tab
-                  ? 'rounded-full bg-black text-white'
-                  : 'rounded-full border-black/20 bg-white text-black hover:bg-black/5'
-              }
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </Button>
-          ))}
-        </section>
+        {isProfileExpanded ? (
+          <section className="mt-6 space-y-4 rounded-2xl border border-black/10 bg-white/92 p-5 shadow-sm">
+            <header>
+              <h2 className="text-base font-semibold text-black">Expanded Profile</h2>
+              <p className="text-xs text-black/60">Single-route profile composition (mobile parity contract)</p>
+            </header>
 
-        {/* Main Content Grid */}
-        <section className="mt-6 grid gap-6 lg:grid-cols-2">
-          {/* Left Panel - Statistics & Map */}
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold text-black">
-                {activeTab === 'Statistics' ? 'Scene Statistics' : activeTab}
-              </h2>
-              <p className="text-sm text-black/60">
-                {activeTab === 'Feed' && 'Community actions appear here.'}
-                {activeTab === 'Events' && 'Scene events listing from your selected community anchor.'}
-                {activeTab === 'Promotions' && 'Scene-scoped promotions and offers from your selected anchor.'}
-                {activeTab === 'Statistics' && (
-                  <>
-                    Scene metrics and activity from{' '}
-                    <span className="capitalize">{selectedTier}</span> tier
-                    {!homeScene && '. Complete onboarding to see your local scene.'}
-                  </>
-                )}
-                {activeTab === 'Social' && 'Message boards and listening rooms.'}
+            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Player Context</p>
+              <p className="mt-1 text-sm font-medium text-black">
+                {playerMode} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
               </p>
             </div>
 
-            {/* Statistics Panel */}
-            {activeTab === 'Statistics' ? (
-              <div className="space-y-4">
-                <StatisticsPanel
-                  selectedTier={selectedTier}
-                  selectedCommunity={selectedCommunity}
-                  onCommunitySelect={handleCommunitySelect}
-                  onCommunitiesUpdate={handleCommunitiesUpdate}
-                />
-                <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
-                <div className="rounded-2xl border border-black/10 bg-white p-6">
-                  <h3 className="font-semibold text-black mb-2">Scene Activity Snapshot</h3>
-                  <p className="text-sm text-black/60">
-                    Descriptive context for the current statistics scope. This is not a ranking or authority signal.
-                  </p>
-                  <p className="text-xs text-black/50 mt-2">
-                    Current tier: <span className="capitalize">{selectedTier}</span>
-                    {selectedCommunity && <span> • Selected: {selectedCommunity.name}</span>}
-                  </p>
-                </div>
-              </div>
-            ) : activeTab === 'Feed' ? (
-              <SeedFeedPanel
-                communityId={selectedCommunity?.id ?? null}
-                communityName={selectedCommunity?.name ?? null}
-              />
-            ) : activeTab === 'Events' ? (
-              <PlotEventsPanel
-                communityId={selectedCommunity?.id ?? null}
-                communityName={selectedCommunity?.name ?? null}
-              />
-            ) : activeTab === 'Promotions' ? (
-              <PlotPromotionsPanel
-                communityId={selectedCommunity?.id ?? null}
-                communityName={selectedCommunity?.name ?? null}
-              />
-            ) : (
-              <div className="text-center py-12 border border-dashed border-black/20 rounded-2xl">
-                <p className="text-4xl mb-3">
-                  {activeTab === 'Social' && '💬'}
-                </p>
-                <p className="text-sm text-black/60">
-                  {activeTab} content will appear here.
-                </p>
-              </div>
-            )}
-          </div>
+            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Collection Preview</p>
+              <p className="mt-1 text-sm text-black/70">
+                Collection shelves render first in expanded profile mode. Full playback controls remain in the player shell.
+              </p>
+            </div>
 
-          {/* Right Panel - Top Songs & Community Info */}
-          <div className="space-y-6">
-            {/* Selected Community Info */}
-            {selectedCommunity && (
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <h3 className="font-semibold text-black mb-3">Selected Community</h3>
-                <div className="p-4 rounded-xl bg-black/5">
-                  <p className="font-medium text-black">{selectedCommunity.name}</p>
-                  <p className="text-sm text-black/60 mt-1">
-                    {selectedCommunity.memberCount?.toLocaleString()} members
-                  </p>
-                  {selectedCommunity.distance && (
-                    <p className="text-xs text-black/50 mt-1">
-                      Distance:{' '}
-                      {selectedCommunity.distance < 1000
-                        ? `${Math.round(selectedCommunity.distance)}m`
-                        : `${(selectedCommunity.distance / 1000).toFixed(1)}km`}
-                    </p>
-                  )}
-                  <div className="mt-3">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => router.push(`/community/${selectedCommunity.id}`)}
-                    >
-                      Open Profile
-                    </Button>
-                  </div>
-                </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Community</p>
+                <p className="mt-1 text-sm font-medium text-black">{selectedCommunity?.name ?? 'No community selected'}</p>
               </div>
-            )}
-          </div>
-        </section>
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Tier Snapshot</p>
+                <p className="mt-1 text-sm font-medium capitalize text-black">{selectedTier}</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {selectedCommunity ? (
+                <Button size="sm" variant="outline" onClick={() => router.push(`/community/${selectedCommunity.id}`)}>
+                  Open Community
+                </Button>
+              ) : null}
+              <Button size="sm" variant="outline" onClick={toggleProfilePanel}>
+                Return to Plot Tabs
+              </Button>
+            </div>
+          </section>
+        ) : (
+          <>
+            {/* Tab Navigation */}
+            <section className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
+              {tabs.map((tab) => (
+                <Button
+                  key={tab}
+                  variant={activeTab === tab ? 'default' : 'outline'}
+                  className={
+                    activeTab === tab
+                      ? 'rounded-full bg-black text-white'
+                      : 'rounded-full border-black/20 bg-white text-black hover:bg-black/5'
+                  }
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab}
+                </Button>
+              ))}
+            </section>
+
+            {/* Main Content Grid */}
+            <section className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Left Panel - Statistics & Map */}
+              <div className="rounded-2xl border border-black/10 bg-white p-6">
+                <div className="mb-4">
+                  <h2 className="text-lg font-semibold text-black">
+                    {activeTab === 'Statistics' ? 'Scene Statistics' : activeTab}
+                  </h2>
+                  <p className="text-sm text-black/60">
+                    {activeTab === 'Feed' && 'Community actions appear here.'}
+                    {activeTab === 'Events' && 'Scene events listing from your selected community anchor.'}
+                    {activeTab === 'Promotions' && 'Scene-scoped promotions and offers from your selected anchor.'}
+                    {activeTab === 'Statistics' && (
+                      <>
+                        Scene metrics and activity from{' '}
+                        <span className="capitalize">{selectedTier}</span> tier
+                        {!homeScene && '. Complete onboarding to see your local scene.'}
+                      </>
+                    )}
+                    {activeTab === 'Social' && 'Message boards and listening rooms.'}
+                  </p>
+                </div>
+
+                {/* Statistics Panel */}
+                {activeTab === 'Statistics' ? (
+                  <div className="space-y-4">
+                    <StatisticsPanel
+                      selectedTier={selectedTier}
+                      selectedCommunity={selectedCommunity}
+                      onCommunitySelect={handleCommunitySelect}
+                      onCommunitiesUpdate={handleCommunitiesUpdate}
+                    />
+                    <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
+                    <div className="rounded-2xl border border-black/10 bg-white p-6">
+                      <h3 className="mb-2 font-semibold text-black">Scene Activity Snapshot</h3>
+                      <p className="text-sm text-black/60">
+                        Descriptive context for the current statistics scope. This is not a ranking or authority signal.
+                      </p>
+                      <p className="mt-2 text-xs text-black/50">
+                        Current tier: <span className="capitalize">{selectedTier}</span>
+                        {selectedCommunity && <span> • Selected: {selectedCommunity.name}</span>}
+                      </p>
+                    </div>
+                  </div>
+                ) : activeTab === 'Feed' ? (
+                  <SeedFeedPanel
+                    communityId={selectedCommunity?.id ?? null}
+                    communityName={selectedCommunity?.name ?? null}
+                  />
+                ) : activeTab === 'Events' ? (
+                  <PlotEventsPanel
+                    communityId={selectedCommunity?.id ?? null}
+                    communityName={selectedCommunity?.name ?? null}
+                  />
+                ) : activeTab === 'Promotions' ? (
+                  <PlotPromotionsPanel
+                    communityId={selectedCommunity?.id ?? null}
+                    communityName={selectedCommunity?.name ?? null}
+                  />
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-black/20 py-12 text-center">
+                    <p className="mb-3 text-4xl">
+                      {activeTab === 'Social' && '💬'}
+                    </p>
+                    <p className="text-sm text-black/60">
+                      {activeTab} content will appear here.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Panel - Selected Community Info */}
+              <div className="space-y-6">
+                {selectedCommunity && (
+                  <div className="rounded-2xl border border-black/10 bg-white p-6">
+                    <h3 className="mb-3 font-semibold text-black">Selected Community</h3>
+                    <div className="rounded-xl bg-black/5 p-4">
+                      <p className="font-medium text-black">{selectedCommunity.name}</p>
+                      <p className="mt-1 text-sm text-black/60">
+                        {selectedCommunity.memberCount?.toLocaleString()} members
+                      </p>
+                      {selectedCommunity.distance && (
+                        <p className="mt-1 text-xs text-black/50">
+                          Distance:{' '}
+                          {selectedCommunity.distance < 1000
+                            ? `${Math.round(selectedCommunity.distance)}m`
+                            : `${(selectedCommunity.distance / 1000).toFixed(1)}km`}
+                        </p>
+                      )}
+                      <div className="mt-3">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => router.push(`/community/${selectedCommunity.id}`)}
+                        >
+                          Open Profile
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </main>
   );
