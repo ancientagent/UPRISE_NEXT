@@ -44,7 +44,7 @@ const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
 export default function PlotPage() {
   const router = useRouter();
   const { homeScene, gpsCoords, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const {
     panelState,
     playerMode,
@@ -66,6 +66,11 @@ export default function PlotPage() {
     }
     return null;
   }, [gpsCoords]);
+
+  const collectionTitle = useMemo(() => {
+    const base = user?.displayName || user?.username || 'My';
+    return `${base}'s Collection`;
+  }, [user?.displayName, user?.username]);
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
@@ -219,7 +224,9 @@ export default function PlotPage() {
           </h1>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-black/60">
-              {homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
+              {playerMode === 'collection'
+                ? collectionTitle
+                : homeScene?.musicCommunity ?? 'Select a Home Scene to anchor this dashboard.'}
             </p>
             <Button size="sm" variant="outline" onClick={handleHeaderModeSwitch}>
               {playerMode === 'radiyo' ? 'Collection Mode' : 'RaDIYo Mode'}
