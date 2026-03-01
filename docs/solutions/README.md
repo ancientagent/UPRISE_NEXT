@@ -32,3 +32,9 @@ For new model onboarding and stress-testing, use:
 
 - `docs/solutions/WEB_TS6053_NEXT_TYPES.md` — `.next/types` TS6053 failures
 - `docs/solutions/NEXT_FONT_GOOGLE_FONTS_BUILD_FAIL.md` — `next/font` Google Fonts build failures
+
+## Product UX / Planning Packs
+
+- `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` — canon/spec-anchored UX alignment baseline for listener-facing MVP
+- `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md` — locked player/profile interaction contract (Plot route state swap + explicit mode switching)
+- `docs/solutions/artist-dashboard-r1/README.md` — separate-site artist dashboard R1 pack (IA, data contract map, low-fi wireframe specs)

@@ -272,3 +272,5 @@
 - Plot header UX refinement: replaced header right-side utility/search-style action with explicit player mode switch control beside scene community label (`Collection Mode` / `RaDIYo Mode`) to match top-strip mode switching behavior.
 - Discovery entitlement UX gate added (web): free mode now locks cross-scene transport controls (`state`/`national` scope buttons and tune-to-non-home actions), with Discovery Pass override via `NEXT_PUBLIC_ENABLE_DISCOVERY_PASS=true` or local dev flag `localStorage.uprise.discoveryPass=active`.
 - Plot player artist navigation update: clicking active RaDIYo track title area opens artist profile when `uploadedById/artistId/userId` is available from broadcast payload.
+
+- Artist dashboard planning pack (R1) added under `docs/solutions/artist-dashboard-r1/` with IA, data-contract map, and low-fi wireframe/menu specs for separate-site implementation sequencing.
