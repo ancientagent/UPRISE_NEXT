@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- UX implementation slice complete (`UX-IMPL-537A`): finalized player title parity on `/plot` by switching broadcast label based on mode (`RADIYO` uses scene/uprise label, `Collection` uses `<user> Collection`) and removed the extra scene context strip under player for cleaner mobile-first composition; report `docs/handoff/2026-03-01_ux-impl-537A-player-title-mode-parity-cleanup.md`.
 - UX implementation slice complete (`UX-IMPL-536A`): polished `/plot` interaction/visual parity by adding explicit profile-state affordance (`collapsed/peek/expanded`), seam label guidance per state, smooth transition styling, and stronger mode-highlight treatment for `RADIYO` vs `Collection`; report `docs/handoff/2026-03-01_ux-impl-536A-interaction-visual-polish.md`.
 - UX implementation slice complete (`UX-IMPL-535A`): refined expanded profile content model on `/plot` with collection-first shelf preview (`Tracks/Playlists/Saved`), compact 3-module statistics preview, and deterministic action row while preserving same-route expansion semantics; report `docs/handoff/2026-03-01_ux-impl-535A-expanded-profile-collection-stats-actions.md`.
 - UX implementation slice complete (`UX-IMPL-534A`): implemented route-stable expanded profile swap on `/plot` so expanded state replaces tabs/body with profile-first composition (`Player Context -> Collection Preview -> Statistics Preview -> Actions`) while preserving the same route and player shell; report `docs/handoff/2026-03-01_ux-impl-534A-expanded-profile-route-stable-swap.md`.

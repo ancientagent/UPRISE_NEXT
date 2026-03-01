@@ -11,7 +11,6 @@ import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
-import SceneContextBadge from '@/components/plot/SceneContextBadge';
 import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
 import { getDiscoveryContext } from '@/lib/discovery/client';
 import { toDiscoveryContextPatch } from '@/lib/discovery/context';
@@ -48,7 +47,7 @@ type CollectionShelf = (typeof collectionShelves)[number];
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, gpsCoords, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
+  const { homeScene, gpsCoords, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
   const { token, user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
@@ -185,6 +184,10 @@ export default function PlotPage() {
     // This callback exists for potential future use
   };
   const isProfileExpanded = profilePanelState === 'expanded';
+  const radiyoBroadcastLabel = homeScene
+    ? `${homeScene.musicCommunity}`
+    : 'City Punk Uprise';
+  const collectionBroadcastLabel = `${user?.displayName || user?.username || 'Your'} Collection`;
   const seamLabel =
     profilePanelState === 'expanded'
       ? 'Pull up or tap to collapse profile'
@@ -252,14 +255,8 @@ export default function PlotPage() {
           onRotationPoolChange={setRotationPool}
           selectedTier={selectedTier}
           onTierChange={setSelectedTier}
-          broadcastLabel={
-            homeScene ? `${homeScene.city}, ${homeScene.state} ${homeScene.musicCommunity}` : 'Home Scene not set'
-          }
+          broadcastLabel={playerMode === 'RADIYO' ? radiyoBroadcastLabel : collectionBroadcastLabel}
         />
-
-        <div className="mt-4">
-          <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
-        </div>
 
         {isProfileExpanded ? (
           <section className="mt-6 space-y-4 rounded-2xl border border-black/10 bg-white/92 p-5 shadow-sm transition-all duration-200">
