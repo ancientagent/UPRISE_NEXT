@@ -329,6 +329,16 @@ export default function PlotPage() {
                   onCommunitiesUpdate={handleCommunitiesUpdate}
                 />
                 <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
+                <div className="rounded-2xl border border-black/10 bg-white p-6">
+                  <h3 className="font-semibold text-black mb-2">Scene Activity Snapshot</h3>
+                  <p className="text-sm text-black/60">
+                    Descriptive context for the current statistics scope. This is not a ranking or authority signal.
+                  </p>
+                  <p className="text-xs text-black/50 mt-2">
+                    Current tier: <span className="capitalize">{selectedTier}</span>
+                    {selectedCommunity && <span> • Selected: {selectedCommunity.name}</span>}
+                  </p>
+                </div>
               </div>
             ) : activeTab === 'Feed' ? (
               <SeedFeedPanel
@@ -389,19 +399,6 @@ export default function PlotPage() {
               </div>
             )}
 
-            {/* Scene Activity Summary */}
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <h3 className="font-semibold text-black mb-4">Scene Activity</h3>
-              <p className="text-sm text-black/60">
-                This panel shows community activity summaries, registrar access, and scene map data.
-              </p>
-              <p className="text-xs text-black/50 mt-2">
-                Current tier: <span className="capitalize">{selectedTier}</span>
-                {selectedCommunity && (
-                  <span> • Selected: {selectedCommunity.name}</span>
-                )}
-              </p>
-            </div>
           </div>
             </section>
           </>
