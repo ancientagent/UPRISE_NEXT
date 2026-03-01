@@ -196,27 +196,27 @@ export default function PlotPage() {
         : 'Pull down profile';
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
+    <main className="min-h-screen bg-[#f7f5ef] px-6 py-10">
       <div className="mx-auto max-w-6xl">
-        <section className="rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm transition-all">
+        <section className="rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm transition-all">
           <div
             className="flex items-center justify-between gap-3"
             onPointerDown={handleProfilePointerDown}
             onPointerMove={handleProfilePointerMove}
             onPointerUp={handleProfilePointerUp}
           >
-            <div className="flex min-w-0 items-center gap-3">
-              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all duration-200 ${profilePanelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-10 w-10 text-sm'}`}>
+            <div className="flex min-w-0 items-center gap-3.5">
+              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all duration-200 ${profilePanelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-11 w-11 text-sm'}`}>
                 {user?.displayName?.[0] || user?.username?.[0] || 'U'}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-black">
+                <p className="truncate text-sm font-semibold leading-tight text-black">
                   {user?.displayName || user?.username || 'User'}
                 </p>
                 <p className="truncate text-xs text-black/60">@{user?.username || 'listener'}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <span className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${
                 profilePanelState === 'expanded'
                   ? 'bg-[#b7d43f]/30 text-black'
@@ -226,20 +226,23 @@ export default function PlotPage() {
               }`}>
                 {profilePanelState}
               </span>
-              <Button size="sm" variant="outline" aria-label="Notifications">
+              <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="Notifications">
                 🔔
               </Button>
-              <Button size="sm" variant="outline" aria-label="More menu">
+              <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="More menu">
                 ⋯
               </Button>
             </div>
           </div>
 
-          <div className="mt-3">
+          <div className="mt-4">
             <button
               type="button"
-              className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-2 text-xs font-medium text-black/70"
+              id="plot-profile-seam-toggle"
+              className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-4 py-2.5 text-xs font-medium text-black/70"
               onClick={toggleProfilePanel}
+              aria-controls="plot-profile-panel"
+              aria-expanded={isProfileExpanded}
               aria-label={profilePanelState === 'expanded' ? 'Collapse profile panel' : 'Expand profile panel'}
             >
               <span className="block h-1.5 w-8 rounded-full bg-black/30" aria-hidden />
@@ -259,10 +262,14 @@ export default function PlotPage() {
         />
 
         {isProfileExpanded ? (
-          <section className="mt-6 space-y-4 rounded-2xl border border-black/10 bg-white/92 p-5 shadow-sm transition-all duration-200">
+          <section
+            id="plot-profile-panel"
+            className="mt-6 space-y-5 rounded-2xl border border-black/10 bg-white/92 p-6 shadow-sm transition-all duration-200"
+            aria-labelledby="plot-profile-seam-toggle"
+          >
             <header>
-              <h2 className="text-base font-semibold text-black">Expanded Profile</h2>
-              <p className="text-xs text-black/60">Single-route profile composition (mobile parity contract)</p>
+              <h2 className="text-base font-semibold leading-tight text-black">Expanded Profile</h2>
+              <p className="mt-1 text-xs text-black/60">Single-route profile composition (mobile parity contract)</p>
             </header>
 
             <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
@@ -280,7 +287,7 @@ export default function PlotPage() {
                     key={shelf}
                     size="sm"
                     variant={activeCollectionShelf === shelf ? 'default' : 'outline'}
-                    className={activeCollectionShelf === shelf ? 'rounded-full bg-black text-white' : 'rounded-full'}
+                    className={activeCollectionShelf === shelf ? 'h-8 rounded-full bg-black text-xs text-white' : 'h-8 rounded-full text-xs'}
                     onClick={() => setActiveCollectionShelf(shelf)}
                   >
                     {shelf}
@@ -296,11 +303,11 @@ export default function PlotPage() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
                 <p className="text-xs uppercase tracking-[0.12em] text-black/55">Community</p>
                 <p className="mt-1 text-sm font-medium text-black">{selectedCommunity?.name ?? 'No community selected'}</p>
               </div>
-              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
                 <p className="text-xs uppercase tracking-[0.12em] text-black/55">Tier Snapshot</p>
                 <p className="mt-1 text-sm font-medium capitalize text-black">{selectedTier}</p>
               </div>
@@ -324,18 +331,18 @@ export default function PlotPage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {selectedCommunity ? (
-                <Button size="sm" variant="outline" onClick={() => router.push(`/community/${selectedCommunity.id}`)}>
+                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => router.push(`/community/${selectedCommunity.id}`)}>
                   Open Community
                 </Button>
               ) : null}
               {user?.id ? (
-                <Button size="sm" variant="outline" onClick={() => router.push(`/users/${user.id}`)}>
+                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => router.push(`/users/${user.id}`)}>
                   Open Collection Profile
                 </Button>
               ) : null}
-              <Button size="sm" variant="outline" onClick={toggleProfilePanel}>
+              <Button size="sm" variant="outline" className="h-8 text-xs" onClick={toggleProfilePanel}>
                 Return to Plot Tabs
               </Button>
             </div>
@@ -343,15 +350,16 @@ export default function PlotPage() {
         ) : (
           <>
             {/* Tab Navigation */}
-            <section className="mt-6 flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
+            <section className="mt-6 flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm">
               {tabs.map((tab) => (
                 <Button
                   key={tab}
+                  size="sm"
                   variant={activeTab === tab ? 'default' : 'outline'}
                   className={
                     activeTab === tab
-                      ? 'rounded-full bg-black text-white'
-                      : 'rounded-full border-black/20 bg-white text-black hover:bg-black/5'
+                      ? 'h-8 rounded-full bg-black px-4 text-xs text-white'
+                      : 'h-8 rounded-full border-black/20 bg-white px-4 text-xs text-black hover:bg-black/5'
                   }
                   onClick={() => setActiveTab(tab)}
                 >
