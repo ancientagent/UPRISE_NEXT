@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
@@ -53,13 +53,16 @@ const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
 export default function PlotPage() {
   const router = useRouter();
   const { homeScene, gpsCoords, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null);
   const [registrarSummaryLoading, setRegistrarSummaryLoading] = useState(false);
   const [registrarSummaryError, setRegistrarSummaryError] = useState<string | null>(null);
+  const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
+  const dragStartY = useRef<number | null>(null);
+  const dragDelta = useRef(0);
 
   const mapCenter = useMemo(() => {
     if (gpsCoords) {
@@ -172,6 +175,49 @@ export default function PlotPage() {
     setSelectedCommunity(community);
   };
 
+  const handleProfilePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    dragStartY.current = event.clientY;
+    dragDelta.current = 0;
+    (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
+  };
+
+  const handleProfilePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (dragStartY.current === null) return;
+    dragDelta.current = event.clientY - dragStartY.current;
+
+    if (profilePanelState === 'collapsed' && dragDelta.current > 20) {
+      setProfilePanelState('peek');
+    }
+  };
+
+  const handleProfilePointerUp = () => {
+    const delta = dragDelta.current;
+    dragStartY.current = null;
+    dragDelta.current = 0;
+
+    if (profilePanelState !== 'expanded' && delta >= 50) {
+      setProfilePanelState('expanded');
+      return;
+    }
+
+    if (profilePanelState === 'expanded' && delta <= -50) {
+      setProfilePanelState('collapsed');
+      return;
+    }
+
+    if (profilePanelState === 'peek') {
+      setProfilePanelState('collapsed');
+    }
+  };
+
+  const toggleProfilePanel = () => {
+    if (profilePanelState === 'expanded') {
+      setProfilePanelState('collapsed');
+      return;
+    }
+    setProfilePanelState('expanded');
+  };
+
   // Callback to update nearby communities from StatisticsPanel
   const handleCommunitiesUpdate = (_communities: CommunityWithDistance[]) => {
     // Communities are managed within StatisticsPanel
@@ -181,8 +227,76 @@ export default function PlotPage() {
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-6xl">
+        <section className="rounded-2xl border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
+          <div
+            className="flex items-center justify-between gap-3"
+            onPointerDown={handleProfilePointerDown}
+            onPointerMove={handleProfilePointerMove}
+            onPointerUp={handleProfilePointerUp}
+          >
+            <div className="flex min-w-0 items-center gap-3">
+              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all ${profilePanelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-10 w-10 text-sm'}`}>
+                {user?.displayName?.[0] || user?.username?.[0] || 'U'}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-black">
+                  {user?.displayName || user?.username || 'User'}
+                </p>
+                <p className="truncate text-xs text-black/60">@{user?.username || 'listener'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" aria-label="Notifications">
+                🔔
+              </Button>
+              <Button size="sm" variant="outline" aria-label="More menu">
+                ⋯
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-3">
+            <button
+              type="button"
+              className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-3 py-2 text-xs font-medium text-black/70"
+              onClick={toggleProfilePanel}
+              aria-label={profilePanelState === 'expanded' ? 'Collapse profile panel' : 'Expand profile panel'}
+            >
+              <span className="block h-1.5 w-8 rounded-full bg-black/30" aria-hidden />
+              <span>{profilePanelState === 'expanded' ? 'Collapse profile' : 'Pull down profile'}</span>
+            </button>
+          </div>
+        </section>
+
+        {profilePanelState === 'expanded' ? (
+          <section className="mt-3 rounded-2xl border border-black/10 bg-white/92 p-4 shadow-sm">
+            <h2 className="text-base font-semibold text-black">Profile Overview</h2>
+            <p className="text-xs text-black/60">In-route profile expansion (mobile-first interaction model)</p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Registrar Entries</p>
+                <p className="mt-1 text-lg font-semibold text-black">{registrarSummary?.totalEntries ?? 0}</p>
+              </div>
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Invites Sent</p>
+                <p className="mt-1 text-lg font-semibold text-black">{registrarSummary?.sentInviteCount ?? 0}</p>
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => router.push('/registrar')}>
+                Open Registrar
+              </Button>
+              {user?.id ? (
+                <Button size="sm" variant="outline" onClick={() => router.push(`/users/${user.id}`)}>
+                  Open Collection
+                </Button>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
+
         {/* Header */}
-        <header className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
+        <header className="mt-6 rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
           <p className="text-xs uppercase tracking-[0.25em] text-black/50">The Plot</p>
           <h1 className="mt-3 text-3xl font-semibold text-black">
             {homeScene ? `${homeScene.city}, ${homeScene.state}` : 'Your Home Scene'}

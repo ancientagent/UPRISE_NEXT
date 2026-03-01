@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- UX implementation slice complete (`UX-IMPL-531A`): implemented mobile-first Profile Header + Seam Pull-Tab behavior on `/plot` with in-route `collapsed/peek/expanded` state handling and expanded profile summary panel scaffold; report `docs/handoff/2026-03-01_ux-impl-531A-profile-header-seam-pull-tab.md`.
 - Lane B ux-gesture-r1 task complete (SLICE-UXGEST-512A): reconciled gesture terminology by adding docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md and closeout alignment notes in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-512A.md.
 - Lane B ux-gesture-r1 task complete (SLICE-UXGEST-511A): defined non-gesture accessibility controls, focus order, and reduced-motion behavior for profile/player interactions; report docs/handoff/2026-03-01_SLICE-UXGEST-511A.md.
 - Lane B ux-gesture-r1 task complete (SLICE-UXGEST-510A): defined profile motion timing targets, snap contract, and interruption rules in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-510A.md.
