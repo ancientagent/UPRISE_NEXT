@@ -10,7 +10,7 @@ import { US_STATES } from '@/data/us-states';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 
-const steps = ['Home Scene', 'Scene Details', 'Review'];
+const steps = ['Scene Details', 'Review'];
 
 interface ReverseGeocodeResponse {
   city: string | null;
@@ -31,6 +31,7 @@ export default function OnboardingPage() {
   const [gpsError, setGpsError] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [showGpsPrompt, setShowGpsPrompt] = useState(true);
   const [manualLocationMode, setManualLocationMode] = useState(!(homeScene?.city && homeScene?.state));
   const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
   const [cityLoading, setCityLoading] = useState(false);
@@ -101,7 +102,7 @@ export default function OnboardingPage() {
       }
     }
 
-    setStep(2);
+    setStep(1);
   };
 
   const handleGpsRequest = async () => {
@@ -113,9 +114,8 @@ export default function OnboardingPage() {
       setVotingEligibility(false, 'GPS is not available on this device.');
       setGpsError('GPS is not available on this device. You can still continue without voting access.');
       setManualLocationMode(true);
-      setStep(1);
-      return;
-    }
+          return;
+        }
 
     setIsDetectingLocation(true);
 
@@ -168,7 +168,6 @@ export default function OnboardingPage() {
           setLocationError('Location detection failed. Enter your city/state manually to continue.');
         } finally {
           setIsDetectingLocation(false);
-          setStep(1);
         }
       },
       () => {
@@ -178,7 +177,6 @@ export default function OnboardingPage() {
         setLocationError('Enter your city/state manually to set your Home Scene.');
         setManualLocationMode(true);
         setIsDetectingLocation(false);
-        setStep(1);
       },
       {
         enableHighAccuracy: true,
@@ -192,7 +190,16 @@ export default function OnboardingPage() {
     setVotingEligibility(false, 'Skipped GPS.');
     setLocationError('You can continue by entering your city/state manually.');
     setManualLocationMode(true);
-    setStep(1);
+  };
+
+  const handleGpsPromptEnable = () => {
+    setShowGpsPrompt(false);
+    void handleGpsRequest();
+  };
+
+  const handleGpsPromptDeny = () => {
+    setShowGpsPrompt(false);
+    handleSkipGps();
   };
 
   const handleFinish = () => {
@@ -246,38 +253,27 @@ export default function OnboardingPage() {
           <section className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
             <h1 className="text-3xl font-semibold text-black">Join Your Home Scene</h1>
             <p className="mt-2 text-sm text-black/60">
-              Welcome to UPRISE. We are a community-driven music platform where listeners shape what rises in their
-              local scene. To protect fair voting and prevent abuse, we require GPS for voting access.
-            </p>
-            <p className="mt-2 text-xs text-black/50">
-              Your location is used only inside UPRISE and is never sold or shared with third parties.
-            </p>
-
-            {gpsError && <p className="mt-4 text-sm text-red-600">{gpsError}</p>}
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button size="lg" disabled={isDetectingLocation} onClick={handleGpsRequest}>
-                {isDetectingLocation ? 'Detecting location...' : 'Enable GPS'}
-              </Button>
-              <Button size="lg" variant="outline" onClick={handleSkipGps}>
-                Deny
-              </Button>
-            </div>
-
-            {!token && (
-              <p className="mt-4 text-xs text-black/40">
-                Sign in if you want GPS to enable voting immediately.
-              </p>
-            )}
-          </section>
-        )}
-
-        {step === 1 && (
-          <section className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
-            <h1 className="text-3xl font-semibold text-black">Join Your Home Scene</h1>
-            <p className="mt-2 text-sm text-black/60">
               Your Home Scene is the local music community you are a part of or are interested in discovering.
             </p>
+
+            {showGpsPrompt && (
+              <div className="mt-5 rounded-2xl border border-black/10 bg-black/[0.03] p-4">
+                <p className="text-sm font-medium text-black">Allow UPRISE to use GPS for voting verification?</p>
+                <p className="mt-1 text-xs text-black/60">
+                  Choose <span className="font-semibold">OK</span> to auto-detect city/state, or{' '}
+                  <span className="font-semibold">Deny</span> to enter location manually. You can still use the app either
+                  way.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button size="sm" disabled={isDetectingLocation} onClick={handleGpsPromptEnable}>
+                    {isDetectingLocation ? 'Detecting location...' : 'OK'}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleGpsPromptDeny}>
+                    Deny
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {locationError && <p className="mt-4 text-sm text-black/70">{locationError}</p>}
 
@@ -368,14 +364,11 @@ export default function OnboardingPage() {
               <Button size="lg" disabled={!canContinue} onClick={handleSceneContinue}>
                 Continue
               </Button>
-              <Button size="lg" variant="outline" onClick={() => setStep(0)}>
-                Back
-              </Button>
             </div>
           </section>
         )}
 
-        {step === 2 && (
+        {step === 1 && (
           <section className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
             <h1 className="text-3xl font-semibold text-black">Review your setup</h1>
             <p className="mt-2 text-sm text-black/60">
