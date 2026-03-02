@@ -18,6 +18,13 @@ interface ReverseGeocodeResponse {
   formattedAddress: string | null;
 }
 
+interface ReverseGeocodeFallbackResponse {
+  city?: string;
+  locality?: string;
+  principalSubdivision?: string;
+  principalSubdivisionCode?: string;
+}
+
 export default function OnboardingPage() {
   const router = useRouter();
   const { homeScene, votingEligible, gpsReason, setHomeScene, setGpsStatus, setVotingEligibility } =
@@ -110,6 +117,46 @@ export default function OnboardingPage() {
     setStep(1);
   };
 
+  const reverseGeocodeWithFallback = async (
+    latitude: number,
+    longitude: number,
+  ): Promise<ReverseGeocodeResponse | null> => {
+    try {
+      const locationResponse = await api.get<ReverseGeocodeResponse>(
+        `/places/reverse?latitude=${latitude}&longitude=${longitude}&country=US`,
+      );
+      if (locationResponse.data?.city && locationResponse.data?.state) {
+        return locationResponse.data;
+      }
+    } catch {
+      // Fall through to public fallback provider.
+    }
+
+    try {
+      const fallbackResponse = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
+      );
+      if (!fallbackResponse.ok) return null;
+
+      const fallbackData = (await fallbackResponse.json()) as ReverseGeocodeFallbackResponse;
+      const city = fallbackData.city ?? fallbackData.locality ?? null;
+      const state =
+        fallbackData.principalSubdivisionCode?.split('-').pop() ??
+        fallbackData.principalSubdivision ??
+        null;
+
+      if (!city || !state) return null;
+
+      return {
+        city,
+        state,
+        formattedAddress: null,
+      };
+    } catch {
+      return null;
+    }
+  };
+
   const handleGpsRequest = async () => {
     setGpsError(null);
     setLocationError(null);
@@ -155,25 +202,16 @@ export default function OnboardingPage() {
           setVotingEligibility(false, 'Sign in to verify voting access.');
         }
 
-        try {
-          const locationResponse = await api.get<ReverseGeocodeResponse>(
-            `/places/reverse?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&country=US`,
-          );
-          const detected = locationResponse.data;
-          if (detected?.city && detected?.state) {
-            setCity(detected.city);
-            setState(detected.state);
-            setManualLocationMode(false);
-          } else {
-            setManualLocationMode(true);
-            setLocationError('We could not detect your city/state. Enter it manually to continue.');
-          }
-        } catch {
+        const detected = await reverseGeocodeWithFallback(pos.coords.latitude, pos.coords.longitude);
+        if (detected?.city && detected?.state) {
+          setCity(detected.city);
+          setState(detected.state);
+          setManualLocationMode(false);
+        } else {
           setManualLocationMode(true);
           setLocationError('Location detection failed. Enter your city/state manually to continue.');
-        } finally {
-          setIsDetectingLocation(false);
         }
+        setIsDetectingLocation(false);
       },
       () => {
         setGpsStatus('denied');
