@@ -20,7 +20,7 @@ interface ReverseGeocodeResponse {
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { homeScene, votingEligible, gpsReason, setHomeScene, setGpsStatus, setVotingEligibility, reset } =
+  const { homeScene, votingEligible, gpsReason, setHomeScene, setGpsStatus, setVotingEligibility } =
     useOnboardingStore();
   const { token } = useAuthStore();
   const [step, setStep] = useState(0);
@@ -199,25 +199,6 @@ export default function OnboardingPage() {
     router.push('/plot');
   };
 
-  const handleReset = () => {
-    reset();
-    setCity('');
-    setState('');
-    setMusicCommunity('');
-    setTasteTag('');
-    setGpsError(null);
-    setLocationError(null);
-    setIsDetectingLocation(false);
-    setManualLocationMode(true);
-    setCitySuggestions([]);
-    setCityLoading(false);
-    setCityError(null);
-    setIsPioneer(false);
-    setStateSceneOptions([]);
-    setStateSceneError(null);
-    setStep(0);
-  };
-
   const fetchCitySuggestions = async (input: string, stateValue: string) => {
     if (!input.trim()) {
       setCitySuggestions([]);
@@ -280,9 +261,6 @@ export default function OnboardingPage() {
               </Button>
               <Button size="lg" variant="outline" onClick={handleSkipGps}>
                 Deny
-              </Button>
-              <Button size="lg" variant="ghost" onClick={handleReset}>
-                Reset
               </Button>
             </div>
 
@@ -392,9 +370,6 @@ export default function OnboardingPage() {
               </Button>
               <Button size="lg" variant="outline" onClick={() => setStep(0)}>
                 Back
-              </Button>
-              <Button size="lg" variant="ghost" onClick={handleReset}>
-                Reset
               </Button>
             </div>
           </section>
