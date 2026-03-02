@@ -240,7 +240,7 @@ export default function OnboardingPage() {
       <div className="mx-auto max-w-3xl">
         {!isMobileClient ? (
           <section className="rounded-3xl border border-black/10 bg-white/90 p-8 shadow-sm">
-            <h1 className="text-3xl font-semibold text-black">Mobile Onboarding Required</h1>
+            <h1 className="text-2xl font-semibold leading-tight text-black">Mobile Onboarding Required</h1>
             <p className="mt-3 text-sm text-black/65">
               Home Scene onboarding is mobile-only. Open UPRISE on your phone to continue with GPS verification.
             </p>
@@ -268,7 +268,7 @@ export default function OnboardingPage() {
 
         {step === 0 && (
           <section className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
-            <h1 className="text-3xl font-semibold text-black">Join Your Home Scene</h1>
+            <h1 className="text-2xl font-semibold leading-tight text-black sm:text-3xl">Join Your Home Scene</h1>
             <p className="mt-2 text-sm text-black/60">
               Your Home Scene is the local music community you are a part of or are interested in discovering.
             </p>
@@ -388,7 +388,7 @@ export default function OnboardingPage() {
 
         {step === 1 && (
           <section className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
-            <h1 className="text-3xl font-semibold text-black">Review your setup</h1>
+            <h1 className="text-2xl font-semibold leading-tight text-black sm:text-3xl">Review your setup</h1>
             <p className="mt-2 text-sm text-black/60">
               You can edit this later, but your Home Scene anchors your participation.
             </p>
