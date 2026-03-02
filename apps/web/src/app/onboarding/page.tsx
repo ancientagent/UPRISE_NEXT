@@ -331,7 +331,16 @@ export default function OnboardingPage() {
               </div>
             )}
 
-            {locationError && <p className="mt-4 text-sm text-black/70">{locationError}</p>}
+            {locationError && (
+              <div className="mt-4">
+                <p className="text-sm text-black/70">{locationError}</p>
+                <div className="mt-2 flex gap-2">
+                  <Button size="sm" variant="outline" disabled={isDetectingLocation} onClick={handleGpsRequest}>
+                    {isDetectingLocation ? 'Detecting location...' : 'Retry GPS'}
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {!manualLocationMode && city.trim() && state.trim() ? (
               <div className="mt-6 rounded-2xl border border-black/10 bg-black/5 p-4 text-sm text-black/70">
