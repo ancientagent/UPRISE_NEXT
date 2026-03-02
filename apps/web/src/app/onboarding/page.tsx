@@ -34,7 +34,6 @@ export default function OnboardingPage() {
   const [city, setCity] = useState(homeScene?.city ?? '');
   const [state, setState] = useState(homeScene?.state ?? '');
   const [musicCommunity, setMusicCommunity] = useState(homeScene?.musicCommunity ?? '');
-  const [tasteTag, setTasteTag] = useState(homeScene?.tasteTag ?? '');
   const [gpsError, setGpsError] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
@@ -64,7 +63,6 @@ export default function OnboardingPage() {
       city: city.trim(),
       state: state.trim(),
       musicCommunity: musicCommunity.trim(),
-      tasteTag: tasteTag.trim() || undefined,
     };
 
     setHomeScene(selection);
@@ -412,19 +410,6 @@ export default function OnboardingPage() {
               </p>
             </div>
 
-            <div className="mt-6 flex flex-col gap-2">
-              <label className="text-xs uppercase tracking-[0.2em] text-black/60">Musical tastes (optional)</label>
-              <input
-                value={tasteTag}
-                onChange={(event) => setTasteTag(event.target.value)}
-                className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-                placeholder="Optional: musical tastes (sub/microgenre)"
-              />
-              <p className="text-xs text-black/50">
-                Tags help you find sub-communities later, but they do not define your Home Scene.
-              </p>
-            </div>
-
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button size="lg" disabled={!canContinue} onClick={handleSceneContinue}>
                 Continue
@@ -446,7 +431,6 @@ export default function OnboardingPage() {
                 <p className="mt-2 text-base text-black">
                   {homeScene?.city}, {homeScene?.state} - {homeScene?.musicCommunity}
                 </p>
-                {homeScene?.tasteTag && <p className="mt-1 text-sm text-black/60">Taste tag: {homeScene.tasteTag}</p>}
               </div>
 
               <div className="rounded-2xl border border-black/10 bg-white p-4">
