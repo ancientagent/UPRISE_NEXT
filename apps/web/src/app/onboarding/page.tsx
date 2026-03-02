@@ -258,11 +258,12 @@ export default function OnboardingPage() {
 
             {showGpsPrompt && (
               <div className="mt-5 rounded-2xl border border-black/10 bg-black/[0.03] p-4">
-                <p className="text-sm font-medium text-black">Allow UPRISE to use GPS for voting verification?</p>
+                <p className="text-sm font-medium text-black">Allow UPRISE to use GPS to verify location?</p>
                 <p className="mt-1 text-xs text-black/60">
-                  Choose <span className="font-semibold">OK</span> to auto-detect city/state, or{' '}
-                  <span className="font-semibold">Deny</span> to enter location manually. You can still use the app either
-                  way.
+                  Verification is required in order to vote in your Home Scene.
+                </p>
+                <p className="mt-1 text-xs text-black/60">
+                  Your GPS data will not be used by any third party.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Button size="sm" disabled={isDetectingLocation} onClick={handleGpsPromptEnable}>
