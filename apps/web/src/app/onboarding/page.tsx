@@ -270,7 +270,7 @@ export default function OnboardingPage() {
           <section className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
             <h1 className="text-2xl font-semibold leading-tight text-black sm:text-3xl">Join Your Home Scene</h1>
             <p className="mt-2 text-sm text-black/60">
-              Your Home Scene is your local music scene. If you don&apos;t have one, select a music community you are most interested in exploring.
+              Your Home Scene is your local music scene of choice. If you don&apos;t have one, select a music community you are most interested in exploring.
             </p>
 
             {showGpsPrompt && (
