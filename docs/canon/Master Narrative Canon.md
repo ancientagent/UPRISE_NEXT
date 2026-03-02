@@ -35,6 +35,10 @@ disabled at this tier. - No new promotion or advancement occurs beyond this poin
 The Home Scene is the user's civic anchor within the platform.
 Rules: - Each user selects exactly one Home Scene during onboarding. - Voting privileges exist only within
 the Home Scene. - GPS verification within the Scene's state is required for voting.
+Onboarding routing lock:
+- If the selected city-tier scene is inactive/unavailable, the system must route the user to the nearest active city-tier scene for the selected parent music community.
+- The original selected city/state/community must be preserved as pioneer intent.
+- The user must be loaded into Home Scene context first, then receive explicit pioneer messaging (including transactional notification) that they are temporarily tuned to the nearest active scene and can uprise their own city once sufficient local participation is reached.
 Users may: - Visit other Scenes (Discovery Pass required) - Listen, Add, Follow, and Blast outside their Home
 Scene
 Users may not: - Vote - Initiate civic actions - Influence Fair Play outside their Home Scene

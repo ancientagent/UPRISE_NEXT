@@ -7,6 +7,13 @@
 
 ## [Unreleased]
 ### Added
+- Canon/spec lock for onboarding fallback behavior:
+  - `docs/specs/users/onboarding-home-scene-resolution.md` now requires parent community selection-only onboarding, defers taste tags until post-onboarding, and codifies inactive-city fallback routing to nearest active city scene with pioneer intent persistence + notification requirement.
+  - `docs/specs/users/onboarding-home-scene-resolution.md` also now clarifies GPS auto-lock => onboarding GPS-verified eligibility path and in-scene pioneer notification timing (after Home Scene context load).
+  - `docs/specs/users/onboarding-home-scene-resolution.md` and `docs/specs/communities/plot-and-scene-plot.md` now pin notification UX placement: top-right notification icon in the profile strip, next to the `...` settings menu, with pioneer routing/uprise explanation messaging.
+  - `docs/canon/Master Narrative Canon.md` now explicitly locks nearest-active fallback routing and pioneer notification messaging when selected city scene is inactive.
+- Added QA-only `/plot` mobile-first parity report `docs/solutions/MVP_PLOT_UX_QA_REPORT_R1.md` (scope UX-IMPL-531A..537A): documented manual pass/fail for seam states, `RADIYO`/`Collection` mode semantics, expanded-tab visibility, and Statistics-tab-only content gating; handoff `docs/handoff/2026-03-01_ux-qa-plot-r1.md`.
+- Added `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md` as the mobile-first UX source-of-truth for MVP implementation sequencing (layout order, pull-down profile interaction, mode/tier invariants, and web adaptation boundaries).
 - Added `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` as a one-page whole-platform MVP coverage map (done/partial/missing by surface) for founder alignment and execution rebalancing.
 - Added `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` as the founder-review UX alignment baseline (canon/spec-confirmed behavior, ambiguity checkpoints, and demo/sample process before UX implementation).
 - Lane A admin-batch15 queue execution (`SLICE-ADMIN-431A`):
@@ -1464,3 +1471,7 @@
 - Lane D batch15 slice complete (SLICE-AUTO-448A): runtime status diagnostics now expose deterministic raw payload `lineCount` to aid malformed/stale runtime triage; see `docs/handoff/2026-02-28_SLICE-AUTO-448A.md`.
 
 - Lane D batch15 slice complete (SLICE-AUTO-449A): runbook health-gate example now includes copy-safe `LANES_JSON` file creation to avoid missing-file command failures; see `docs/handoff/2026-02-28_SLICE-AUTO-449A.md`.
+
+- UX R1 interaction contract added: locked docs-first spec for top-level RaDIYo player placement, in-place draggable profile expansion (no route transition), and explicit `radiyo`/`collection` player mode switching; see `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md`.
+- UX R1 interaction lock refined: expanded profile now replaces Plot body in-route (state swap, not overlay), with restore-on-collapse snapshot semantics and explicit motion/snap constraints for smooth cross-platform behavior; see `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md`.
+- Plot UX regression lock tests added for `/plot` R1 parity checkpoints (`RADIYO` vs `Collection` mode labels, expanded-profile tabs/body swap contract, and statistics-only `Top Songs` + `Scene Activity` placement); see `apps/web/__tests__/plot-ux-regression-lock.test.ts` and `docs/handoff/2026-03-01_plot-ux-regression-lock-tests.md`.
