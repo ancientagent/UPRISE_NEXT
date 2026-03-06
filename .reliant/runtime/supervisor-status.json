@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-03-06T16:08:43.207Z",
+  "mode": "recovered-bootstrap",
+  "notes": [
+    "runtime files regenerated from queue in_progress ownership",
+    "stale runtime removed where no single in_progress owner exists",
+    "use reliant-next/reliant-slice-queue claim flow to continue"
+  ],
+  "healthFile": ".reliant/runtime/r1-healthcheck-status.json"
+}

@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-25`
+**Last Updated:** `2026-03-02`
 
 ## Overview & Purpose
 Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -22,6 +22,10 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - Promotions
   - Statistics / Scene Map (dedicated page-level surface)
   - Social (V2)
+- Profile strip notification requirement:
+  - A notification icon is present at the top-right of the profile strip, immediately next to the `...` settings menu.
+  - Pioneer users receive an onboarding follow-up message in this notification surface after Home Scene context is loaded.
+  - Message must explain temporary nearest-active routing and that user can establish/uprise their own city scene once sufficient local users join.
 - S.E.E.D stands for Support, Explore, Engage, Distribute.
 - Activity Feed semantics:
   - explicit community actions only (blast/registration/release entry)
@@ -106,6 +110,8 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Plot is Home Scene scoped.
 - Tabs are fixed civic surfaces, not algorithmic sections.
 - Home Scene and optional taste tag are visible context on entry.
+- Profile strip includes notification icon + settings (`...`) on the right side.
+- Pioneer onboarding message is discoverable from the notification icon (not as an always-visible blocking modal).
 - Feed uses explicit scene actions from API; it does not rank or personalize.
 - Events uses scene-scoped API listings from selected community anchor.
 - Promotions uses scene-scoped API listings from selected community anchor.
