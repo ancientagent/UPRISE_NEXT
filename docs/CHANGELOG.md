@@ -1518,3 +1518,7 @@
 - Recovery housekeeping (2026-03-06): added `recovery/` to `.gitignore` to keep forensic blob-dump artifacts out of normal commits; see `docs/handoff/2026-03-06_recovery-housekeeping-ignore.md`.
 
 - UX process pivot (2026-03-06): added `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md` and updated tooling/bootstrap docs to Figma-first execution with explicit MCP validation, lane outputs, and drift gates; see `docs/handoff/2026-03-06_figma-pivot-execution-pack-r1.md`.
+
+- UX execution tooling (2026-03-06): added `docs/solutions/MVP_FIGMA_AGENT_PROMPTS_R1.md` with copy/paste lane and supervisor prompts for parallel Figma-first execution; see `docs/handoff/2026-03-06_figma-agent-prompts-pack-r1.md`.
+
+- UX process hardening (2026-03-06): added `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md` with strict MUST/MUST NOT rules, acceptance gates, and stop conditions; updated bootstrap and solutions index to require strict Figma execution.
