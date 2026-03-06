@@ -20,6 +20,7 @@ Required context files:
 5. `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md`
 6. `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md`
 7. `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md`
+8. `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md`
 
 Hard constraints:
 - No speculative redesign.
@@ -33,6 +34,7 @@ What to do first:
 3. Validate Figma MCP access (list file/project + fetch one frame).
 4. If no contradictions and MCP is valid, produce:
    - Figma page-by-page execution plan (matching `MVP_FIGMA_EXECUTION_PACK_R1.md`)
+   - strict gates and stop conditions from `MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md`
    - lane prompts/tasks (A-E)
    - one checklist mapping each screen/frame to locked MVP decisions
 
