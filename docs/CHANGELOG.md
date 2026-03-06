@@ -1512,3 +1512,5 @@
 - Lane E UX decisions complete (SLICE-UXDEC-530A): finalized decision-register blocked-slice mapping and founder walkthrough checklist in `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXDEC-530A.md`.
 
 - Recovery reconciliation (2026-03-06): restored missing solutions index target `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md`, aligned mapping to current UX R1 canon anchors, and verified docs/policy/web typecheck gates; see `docs/handoff/2026-03-06_reconcile-index-and-mapping-recovery.md`.
+
+- Recovery reconciliation (2026-03-06 pass 3): finalized remaining app/test drift by preserving onboarding GPS+mobile flow and places reverse-geocode API, normalized onboarding community labels to concise titles, validated `/plot` regression-lock test coverage, and refreshed `pnpm-lock.yaml` for current workspace graph; see `docs/handoff/2026-03-06_reconcile-app-drift-pass-3.md`.
