@@ -7,13 +7,30 @@
 
 ## [Unreleased]
 ### Added
-- Canon/spec lock for onboarding fallback behavior:
-  - `docs/specs/users/onboarding-home-scene-resolution.md` now requires parent community selection-only onboarding, defers taste tags until post-onboarding, and codifies inactive-city fallback routing to nearest active city scene with pioneer intent persistence + notification requirement.
-  - `docs/specs/users/onboarding-home-scene-resolution.md` also now clarifies GPS auto-lock => onboarding GPS-verified eligibility path and in-scene pioneer notification timing (after Home Scene context load).
-  - `docs/specs/users/onboarding-home-scene-resolution.md` and `docs/specs/communities/plot-and-scene-plot.md` now pin notification UX placement: top-right notification icon in the profile strip, next to the `...` settings menu, with pioneer routing/uprise explanation messaging.
-  - `docs/canon/Master Narrative Canon.md` now explicitly locks nearest-active fallback routing and pioneer notification messaging when selected city scene is inactive.
-- Added QA-only `/plot` mobile-first parity report `docs/solutions/MVP_PLOT_UX_QA_REPORT_R1.md` (scope UX-IMPL-531A..537A): documented manual pass/fail for seam states, `RADIYO`/`Collection` mode semantics, expanded-tab visibility, and Statistics-tab-only content gating; handoff `docs/handoff/2026-03-01_ux-qa-plot-r1.md`.
+- Added test-only credential handling note to `docs/handoff/2026-03-06_uizard-mvp-tightening-runbook.md` clarifying that temporary MCP/tooling tokens must be replaced/rotated before launch/release.
+- UX copy refinement (`UX-IMPL-540A`): replaced community description-style metadata with explicit subgenre range coverage on Discover scene cards and Community profile header via shared mapper utility; report `docs/handoff/2026-03-01_ux-impl-540A-community-subgenre-range-copy.md`.
+- UX guard hardening (`UX-IMPL-539A`): `/plot` now enforces Home Scene presence as a hard prerequisite by redirecting unresolved sessions to `/onboarding` and suppressing Plot render until Home Scene is available; report `docs/handoff/2026-03-01_ux-impl-539A-plot-home-scene-hard-guard.md`.
+- UX implementation slice complete (`UX-IMPL-538A`): expanded `/plot` content footprint to better match surrounding surfaces by widening the page container, increasing primary Plot column width, and adding a fallback right-column community panel state; report `docs/handoff/2026-03-01_ux-impl-538A-plot-layout-expansion.md`.
+- Plot UX regression lock tests added for `/plot` R1 parity checkpoints (`RADIYO` vs `Collection` mode labels, expanded-profile tabs/body swap contract, and statistics-only `Top Songs` + `Scene Activity` placement); see `apps/web/__tests__/plot-ux-regression-lock.test.ts` and `docs/handoff/2026-03-01_plot-ux-regression-lock-tests.md`.
+- Added QA-only `/plot` mobile-first parity report `docs/solutions/MVP_PLOT_UX_QA_REPORT_R1.md` (scope UX-IMPL-531A..537A) with current pass/fail matrix and evidence; handoff `docs/handoff/2026-03-01_ux-qa-plot-r1.md`.
+- `/plot` styling consistency pass (no behavior drift): normalized spacing, typography rhythm, and control sizing across profile header, player shell, tabs rail, and expanded profile blocks; handoff `docs/handoff/2026-03-01_plot-styling-consistency-pass.md`.
+- Web `/plot` accessibility hardening (no route drift): improved seam ARIA linkage and mode-toggle keyboard parity (`radiogroup` + arrow/home/end behavior); handoff `docs/handoff/2026-03-01_plot-accessibility-seam-mode-hardening.md`.
+- UX implementation slice complete (`UX-IMPL-537A`): finalized player title parity on `/plot` by switching broadcast label based on mode (`RADIYO` uses scene/uprise label, `Collection` uses `<user> Collection`) and removed the extra scene context strip under player for cleaner mobile-first composition; report `docs/handoff/2026-03-01_ux-impl-537A-player-title-mode-parity-cleanup.md`.
+- UX implementation slice complete (`UX-IMPL-536A`): polished `/plot` interaction/visual parity by adding explicit profile-state affordance (`collapsed/peek/expanded`), seam label guidance per state, smooth transition styling, and stronger mode-highlight treatment for `RADIYO` vs `Collection`; report `docs/handoff/2026-03-01_ux-impl-536A-interaction-visual-polish.md`.
+- UX implementation slice complete (`UX-IMPL-535A`): refined expanded profile content model on `/plot` with collection-first shelf preview (`Tracks/Playlists/Saved`), compact 3-module statistics preview, and deterministic action row while preserving same-route expansion semantics; report `docs/handoff/2026-03-01_ux-impl-535A-expanded-profile-collection-stats-actions.md`.
+- UX implementation slice complete (`UX-IMPL-534A`): implemented route-stable expanded profile swap on `/plot` so expanded state replaces tabs/body with profile-first composition (`Player Context -> Collection Preview -> Statistics Preview -> Actions`) while preserving the same route and player shell; report `docs/handoff/2026-03-01_ux-impl-534A-expanded-profile-route-stable-swap.md`.
+- UX implementation slice complete (`UX-IMPL-533A`): aligned `/plot` layout with mobile-first structure by moving `City/State/National` tier controls into the player shell, centering the tab rail, and scoping Top Songs + Scene Activity to the `Statistics` tab only; report `docs/handoff/2026-03-01_ux-impl-533A-plot-layout-parity-tabs-stats-scope.md`.
+- UX implementation slice complete (`UX-IMPL-532A`): added dedicated `RADIYO`/`Collection` player shell under the profile seam on `/plot`, including rotation pool toggle and mode-specific control scaffolds; report `docs/handoff/2026-03-01_ux-impl-532A-player-shell-radiyo-collection.md`.
+- UX implementation slice complete (`UX-IMPL-531A`): implemented mobile-first Profile Header + Seam Pull-Tab behavior on `/plot` with in-route `collapsed/peek/expanded` state handling and expanded profile summary panel scaffold; report `docs/handoff/2026-03-01_ux-impl-531A-profile-header-seam-pull-tab.md`.
+- Lane B ux-gesture-r1 task complete (SLICE-UXGEST-512A): reconciled gesture terminology by adding docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md and closeout alignment notes in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-512A.md.
+- Lane B ux-gesture-r1 task complete (SLICE-UXGEST-511A): defined non-gesture accessibility controls, focus order, and reduced-motion behavior for profile/player interactions; report docs/handoff/2026-03-01_SLICE-UXGEST-511A.md.
+- Lane B ux-gesture-r1 task complete (SLICE-UXGEST-510A): defined profile motion timing targets, snap contract, and interruption rules in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-510A.md.
+- Lane B ux-gesture-r1 task complete (SLICE-UXGEST-509A): defined seam pull-tab affordance behavior, hit area, labels, and fallback controls in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-509A.md.
+- Lane B ux-gesture-r1 task complete (SLICE-UXGEST-508A): defined deterministic gesture priority and profile-vs-scroll conflict handoff rules in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-508A.md.
+- Lane E ux-founder-decisions-r1 task complete (SLICE-UXDEC-525A): extended `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md` with structured UX yes/no decision cards and recommended defaults for mobile-first implementation lock; report `docs/handoff/2026-03-01_SLICE-UXDEC-525A.md`.
+- Lane B ux-gesture-r1 task complete (SLICE-UXGEST-507A): added strict collapsed/peek/expanded profile pull-down transition table with thresholds and allowed triggers in docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md; report docs/handoff/2026-03-01_SLICE-UXGEST-507A.md.
 - Added `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md` as the mobile-first UX source-of-truth for MVP implementation sequencing (layout order, pull-down profile interaction, mode/tier invariants, and web adaptation boundaries).
+- Added `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md` to map the current Plot prototype into the mobile-first UX system contract for implementation continuity.
 - Added `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` as a one-page whole-platform MVP coverage map (done/partial/missing by surface) for founder alignment and execution rebalancing.
 - Added `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` as the founder-review UX alignment baseline (canon/spec-confirmed behavior, ambiguity checkpoints, and demo/sample process before UX implementation).
 - Lane A admin-batch15 queue execution (`SLICE-ADMIN-431A`):
@@ -1472,6 +1489,26 @@
 
 - Lane D batch15 slice complete (SLICE-AUTO-449A): runbook health-gate example now includes copy-safe `LANES_JSON` file creation to avoid missing-file command failures; see `docs/handoff/2026-02-28_SLICE-AUTO-449A.md`.
 
-- UX R1 interaction contract added: locked docs-first spec for top-level RaDIYo player placement, in-place draggable profile expansion (no route transition), and explicit `radiyo`/`collection` player mode switching; see `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md`.
-- UX R1 interaction lock refined: expanded profile now replaces Plot body in-route (state swap, not overlay), with restore-on-collapse snapshot semantics and explicit motion/snap constraints for smooth cross-platform behavior; see `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md`.
-- Plot UX regression lock tests added for `/plot` R1 parity checkpoints (`RADIYO` vs `Collection` mode labels, expanded-profile tabs/body swap contract, and statistics-only `Top Songs` + `Scene Activity` placement); see `apps/web/__tests__/plot-ux-regression-lock.test.ts` and `docs/handoff/2026-03-01_plot-ux-regression-lock-tests.md`.
+- Lane D UX adapt slice complete (SLICE-UXADAPT-519A): added behavior-locked mobile parity required matrix for web adaptation interactions in `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXADAPT-519A.md`.
+
+- Lane D UX adapt slice complete (SLICE-UXADAPT-520A): added web-only adaptation allowed matrix with explicit no-behavior-drift constraints in `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXADAPT-520A.md`.
+
+- Lane E UX decisions complete (SLICE-UXDEC-526A): added expanded-profile composition + collection/stats priority cards in `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXDEC-526A.md`.
+
+- Lane D UX adapt slice complete (SLICE-UXADAPT-521A): added desktop click/keyboard fallback parity matrix mapped to mobile interaction intent in `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXADAPT-521A.md`.
+
+- Lane D UX adapt slice complete (SLICE-UXADAPT-522A): added responsive breakpoint behavior table with explicit semantics-preservation rules in `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXADAPT-522A.md`.
+
+- Lane D UX adapt slice complete (SLICE-UXADAPT-523A): added terminology normalization table/rules (`RADIYO`, `Collection`, `City/State/National`, `Plot`) for adaptation docs in `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXADAPT-523A.md`.
+
+- Lane D UX adapt slice complete (SLICE-UXADAPT-524A): added web adaptation run notes and required anti-drift checks for future UX slices in `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXADAPT-524A.md`.
+
+- Lane E UX decisions complete (SLICE-UXDEC-527A): added mode-specific player control + persistent transport decision cards in `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXDEC-527A.md`.
+
+- Lane E UX decisions complete (SLICE-UXDEC-528A): added discovery/search placement and entitlement-limit decision cards in `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXDEC-528A.md`.
+
+- Lane E UX decisions complete (SLICE-UXDEC-529A): added deferred-surface language/guardrail decision cards in `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXDEC-529A.md`.
+
+- Lane E UX decisions complete (SLICE-UXDEC-530A): finalized decision-register blocked-slice mapping and founder walkthrough checklist in `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`; see `docs/handoff/2026-03-01_SLICE-UXDEC-530A.md`.
+
+- Recovery reconciliation (2026-03-06): restored missing solutions index target `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md`, aligned mapping to current UX R1 canon anchors, and verified docs/policy/web typecheck gates; see `docs/handoff/2026-03-06_reconcile-index-and-mapping-recovery.md`.
