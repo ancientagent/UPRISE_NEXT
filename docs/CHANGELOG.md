@@ -1516,3 +1516,5 @@
 - Recovery reconciliation (2026-03-06 pass 3): finalized remaining app/test drift by preserving onboarding GPS+mobile flow and places reverse-geocode API, normalized onboarding community labels to concise titles, validated `/plot` regression-lock test coverage, and refreshed `pnpm-lock.yaml` for current workspace graph; see `docs/handoff/2026-03-06_reconcile-app-drift-pass-3.md`.
 
 - Recovery housekeeping (2026-03-06): added `recovery/` to `.gitignore` to keep forensic blob-dump artifacts out of normal commits; see `docs/handoff/2026-03-06_recovery-housekeeping-ignore.md`.
+
+- UX process pivot (2026-03-06): added `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md` and updated tooling/bootstrap docs to Figma-first execution with explicit MCP validation, lane outputs, and drift gates; see `docs/handoff/2026-03-06_figma-pivot-execution-pack-r1.md`.

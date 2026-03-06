@@ -51,6 +51,7 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md` — element-by-element screenshot capture with MVP/V2 boundaries
 - `docs/solutions/MVP_UIZARD_PROMPT_PACK_R1.md` — baseline Uizard prompt pack
 - `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md` — strict per-screen Uizard prompt pack with MUST/NEVER and acceptance checks
+- `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md` — Figma-first lane execution pack (pages, acceptance, and drift gates)
 - `docs/solutions/MVP_UX_TOOLING_STACK_R1.md` — consolidated tooling guidance for this UX stage
 - `docs/solutions/MVP_DESIGN_PLATFORM_PACK_R1.md` — multi-platform design handoff (Uizard/Figma/Penpot/Balsamiq)
 - `docs/solutions/NEW_CHAT_BOOTSTRAP_PROMPT_UX_R1.md` — copy/paste bootstrap for fresh high-context sessions

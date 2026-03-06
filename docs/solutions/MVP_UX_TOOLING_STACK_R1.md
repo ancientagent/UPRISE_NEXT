@@ -16,7 +16,26 @@ Purpose: single source for design/prototype/build tooling used in current MVP UX
 
 ## Tool Stack (Current)
 
-### 1) Uizard (Primary mockup generation)
+### 1) Figma (Primary for UX structure/state design)
+Use for:
+- Deterministic screen architecture and component variants
+- Explicit state modeling (player/profile/onboarding)
+- MCP-driven design inspection/export
+
+Inputs:
+- `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md`
+- `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`
+
+Output expectation:
+- Frame set organized by execution-pack pages
+- Variant/component definitions for locked UX states
+- Per-lane acceptance checklist
+
+Do not use for:
+- Inventing product behavior missing from canon docs
+- Rewriting locked UX decisions
+
+### 2) Uizard (Secondary exploration fallback)
 Use for:
 - Fast screen generation from strict prompts
 - Screen-set iteration with controlled constraints
@@ -32,7 +51,7 @@ Do not use for:
 - Product decision-making outside locked docs
 - Inventing controls/tabs not in prompt pack
 
-### 2) Uizard MCP Bridge (Automation path)
+### 3) Uizard MCP Bridge (Automation path)
 Files:
 - `packages/uizard-mcp/src/index.ts`
 - `docs/solutions/UIZARD_MCP_SERVER_SETUP.md`
@@ -53,7 +72,7 @@ Next hardening:
    - `create_screen`
 3. smoke test command for auth + safe GET
 
-### 3) MCP Browser (Visual verification)
+### 4) MCP Browser (Visual verification)
 Use for:
 - Snapshot/screenshot inspection of live app and generated mockups
 - Structural parity checks against locked UX rules
@@ -61,7 +80,7 @@ Use for:
 Limitations:
 - Session can drop (`Transport closed`); reconnect before review
 
-### 4) Legacy Reference Archive (Blueprint only, non-canon)
+### 5) Legacy Reference Archive (Blueprint only, non-canon)
 Paths:
 - `docs/legacy/uprise_mob/`
 - `docs/legacy/uprise_mob_code/`
@@ -73,7 +92,7 @@ Use for:
 Never do:
 - Direct behavior import without current canon/spec lock
 
-### 5) shadcn/ui (Implementation library, not design source)
+### 6) shadcn/ui (Implementation library, not design source)
 Use for:
 - Building approved UI in code after UX is locked
 
@@ -82,11 +101,12 @@ Do not use for:
 
 ## Operating Sequence (Recommended)
 1. Lock behavior in source docs.
-2. Generate Uizard screens via strict prompt pack.
-3. Validate each screen with checklist + drift guard.
-4. Approve screen set.
-5. Implement in code using shadcn primitives.
-6. Verify with MCP snapshot + typecheck.
+2. Build Figma pages/components using `MVP_FIGMA_EXECUTION_PACK_R1.md`.
+3. Validate each page/screen with checklist + drift guard.
+4. Use Uizard only for optional parallel ideation.
+5. Approve screen set.
+6. Implement in code using shadcn primitives.
+7. Verify with MCP snapshot + typecheck.
 
 ## Drift Stop Conditions
 Stop and escalate to founder if:
