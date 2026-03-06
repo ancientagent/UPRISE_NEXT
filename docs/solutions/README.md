@@ -41,6 +41,17 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — deterministic rollback checkpoints, compare-first flow, and safe revert patterns for multi-agent throughput runs
 - `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md` — spec-locked execution roadmap from current registrar-heavy throughput to full MVP launch readiness
 - `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` — canon/spec-anchored UX alignment report and demo/sample process before UX implementation
+- `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md` — mobile-first UX source-of-truth (layout, gestures, state model, and web adaptation rules) for post-alignment implementation
+- `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md` — frozen mapping of current Plot prototype decisions into the mobile-first UX system format
 - `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` — one-page whole-platform MVP coverage map (done/partial/missing) to prevent registrar-only execution bias
-- `docs/solutions/LEGACY_UI_REUSE_MAP_R1.md` — legacy `uprise_mob` architecture comparison (`keep/adapt/drop`) mapped to current canon/spec constraints
-- `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md` — locked R1 interaction contract for top-level RaDIYo player, in-place draggable profile expansion, and explicit `radiyo`/`collection` mode switching
+- `docs/solutions/MVP_PROFILE_EXPANDED_MOCKUP_R1.md` — profile IA contract (collapsed/expanded sections and collection tab content)
+- `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md` — interaction contract for panel states and player mode transitions
+- `docs/solutions/MVP_UX_DRIFT_GUARD_R1.md` — micro-decision drift guard checklist for mobile MVP UX
+- `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md` — full `/plot` + profile surface contract (elements, states, ownership)
+- `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md` — element-by-element screenshot capture with MVP/V2 boundaries
+- `docs/solutions/MVP_UIZARD_PROMPT_PACK_R1.md` — baseline Uizard prompt pack
+- `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md` — strict per-screen Uizard prompt pack with MUST/NEVER and acceptance checks
+- `docs/solutions/MVP_UX_TOOLING_STACK_R1.md` — consolidated tooling guidance for this UX stage
+- `docs/solutions/MVP_DESIGN_PLATFORM_PACK_R1.md` — multi-platform design handoff (Uizard/Figma/Penpot/Balsamiq)
+- `docs/solutions/NEW_CHAT_BOOTSTRAP_PROMPT_UX_R1.md` — copy/paste bootstrap for fresh high-context sessions
+- `docs/solutions/UIZARD_MCP_SERVER_SETUP.md` — in-repo Uizard MCP server setup and auth wiring notes
