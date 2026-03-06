@@ -57,3 +57,4 @@ prisma/migrations/**/migration.sql
 # Media processing
 temp_*
 uploads_temp/
+recovery/
