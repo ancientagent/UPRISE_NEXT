@@ -91,6 +91,8 @@ Stop condition:
 
 ```text
 Run Lane D from docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md.
+Use onboarding canon anchor:
+- docs/specs/users/onboarding-home-scene-resolution.md
 
 Focus:
 - 05_Onboarding

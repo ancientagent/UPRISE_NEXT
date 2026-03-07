@@ -9,6 +9,7 @@ Purpose: eliminate UX drift during Figma production by enforcing strict constrai
 4. `docs/solutions/MVP_UX_DRIFT_GUARD_R1.md`
 5. `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`
 6. `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md`
+7. `docs/specs/users/onboarding-home-scene-resolution.md`
 
 ## MUST
 - Validate Figma MCP session before design execution.
@@ -60,6 +61,11 @@ Purpose: eliminate UX drift during Figma production by enforcing strict constrai
 - MCP cannot authenticate/fetch frame.
 - Required source file is missing or contradictory.
 - A requested change conflicts with canon and has no founder override.
+
+## Checkpoint 05 Onboarding Canon Anchor
+- For checkpoint `05_Onboarding`, the authoritative behavior/copy contract is:
+  - `docs/specs/users/onboarding-home-scene-resolution.md`
+- If onboarding details are missing from other UX docs, use this spec as the required source instead of inferring.
 
 ## Output Template (Required)
 1. `Frames Changed`

@@ -1522,3 +1522,5 @@
 - UX execution tooling (2026-03-06): added `docs/solutions/MVP_FIGMA_AGENT_PROMPTS_R1.md` with copy/paste lane and supervisor prompts for parallel Figma-first execution; see `docs/handoff/2026-03-06_figma-agent-prompts-pack-r1.md`.
 
 - UX process hardening (2026-03-06): added `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md` with strict MUST/MUST NOT rules, acceptance gates, and stop conditions; updated bootstrap and solutions index to require strict Figma execution.
+
+- UX strict-pack unblock (2026-03-07): checkpoint `05_Onboarding` now explicitly anchors to `docs/specs/users/onboarding-home-scene-resolution.md` in the Figma strict execution pack and agent prompt set to prevent false canon-silence blocks.
