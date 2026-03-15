@@ -44,6 +44,7 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md` — mobile-first UX source-of-truth (layout, gestures, state model, and web adaptation rules) for post-alignment implementation
 - `docs/solutions/MVP_UX_MASTER_LOCK_R1.md` — single authoritative UX master lock (precedence, same-vs-different delta, MVP/deferred boundaries, and drift rejection rules)
 - `docs/solutions/MVP_UX_BATCH16_EXECUTION_PLAN.md` — lane-by-lane execution plan + queue/runtime commands for remaining MVP UX closure (Plot, Discovery, Player/Profile, automation, QA)
+- `docs/solutions/MVP_UX_BATCH16_DRIFT_WATCHLIST.md` — top failure modes + per-lane validation checklist for Batch16 drift prevention (includes onboarding/tier-title/social-deferred gates)
 - `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md` — frozen mapping of current Plot prototype decisions into the mobile-first UX system format
 - `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` — one-page whole-platform MVP coverage map (done/partial/missing) to prevent registrar-only execution bias
 - `docs/solutions/MVP_PROFILE_EXPANDED_MOCKUP_R1.md` — profile IA contract (collapsed/expanded sections and collection tab content)

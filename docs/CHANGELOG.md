@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 ### Added
+- Added oversight bootstrap handoff `docs/handoff/2026-03-15_gpt54-oversight_handoff.md` to start a fresh GPT-5.4 review/drift-prevention session on branch `feat/ux-master-lock-batch16`, including branch-state notes, source-of-truth order, Batch16 context, and a paste-ready bootstrap prompt.
+- Added `docs/solutions/MVP_UX_BATCH16_DRIFT_WATCHLIST.md` with a Batch16 top-10 drift watchlist and per-lane validation checklist (including onboarding gate checks, tier-title parity, and Social deferred-policy enforcement); handoff `docs/handoff/2026-03-15_batch16-drift-watchlist.md`.
 - Added Batch16 UX execution package:
   - new queue files for lanes A-E (`.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch16.json`) covering Plot overhaul, Discovery closure, Player/Profile parity, automation guardrails, and QA closeout;
   - `docs/solutions/MVP_UX_BATCH16_EXECUTION_PLAN.md` with lane responsibilities and copy/paste claim/runtime commands;
