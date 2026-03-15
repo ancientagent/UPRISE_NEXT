@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-15T12:00:00.000Z",
+  "lane": "lane-a-ux-plot-batch16",
+  "sourceFiles": [
+    "mvp-slices-batch16-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXPLOT-546A",
+      "title": "Plot Feed IA/state contract overhaul pack 1",
+      "prompt": "Execute one MVP slice only: align /plot Feed tab composition to locked civic IA with deterministic loading/empty/error states and no recommendation semantics. Keep route/ownership unchanged.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-a-ux-plot-batch16"
+    },
+    {
+      "id": "SLICE-UXPLOT-547A",
+      "title": "Plot Events IA/state contract overhaul pack 1",
+      "prompt": "Execute one MVP slice only: refine /plot Events tab ordering and deterministic loading/empty/error states to match canon scene-scoped behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-a-ux-plot-batch16"
+    },
+    {
+      "id": "SLICE-UXPLOT-548A",
+      "title": "Plot Promotions IA/state contract overhaul pack 1",
+      "prompt": "Execute one MVP slice only: align /plot Promotions tab content model and error/empty handling with scene-scoped deterministic contract; no economy behavior expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-a-ux-plot-batch16"
+    },
+    {
+      "id": "SLICE-UXPLOT-549A",
+      "title": "Plot Statistics/Scene Map contract coherence pack 1",
+      "prompt": "Execute one MVP slice only: enforce Statistics tab ownership of Top Songs/Scene Activity + scene-map tier read coherence, preserving existing API contracts.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-statistics-request.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-a-ux-plot-batch16"
+    },
+    {
+      "id": "SLICE-UXPLOT-550A",
+      "title": "Plot Social deferred-policy lock pass",
+      "prompt": "Execute one MVP slice only: implement locked Social deferred treatment (hidden/placeholder per current spec decision) without introducing social workflows.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-a-ux-plot-batch16"
+    },
+    {
+      "id": "SLICE-UXPLOT-551A",
+      "title": "Plot tab-system closeout + regression lock",
+      "prompt": "Execute one MVP slice only: finalize Plot tab coherence pass across Feed/Events/Promotions/Statistics and extend focused regression locks for tab/body ownership.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-a-ux-plot-batch16"
+    }
+  ]
+}

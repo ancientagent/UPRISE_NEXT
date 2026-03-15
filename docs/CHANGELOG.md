@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 ### Added
+- Added Batch16 UX execution package:
+  - new queue files for lanes A-E (`.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch16.json`) covering Plot overhaul, Discovery closure, Player/Profile parity, automation guardrails, and QA closeout;
+  - `docs/solutions/MVP_UX_BATCH16_EXECUTION_PLAN.md` with lane responsibilities and copy/paste claim/runtime commands;
+  - handoff note `docs/handoff/2026-03-15_batch16-ux-queues-and-plan.md`.
+- Added `docs/solutions/MVP_UX_MASTER_LOCK_R1.md` as the single UX implementation lock consolidating precedence rules, onboarding/plot/player/profile contracts, legacy delta boundaries, deferred scope, and drift rejection checks; indexed in `docs/solutions/README.md` with handoff `docs/handoff/2026-03-12_ux-master-lock-r1.md`.
 - Added test-only credential handling note to `docs/handoff/2026-03-06_uizard-mvp-tightening-runbook.md` clarifying that temporary MCP/tooling tokens must be replaced/rotated before launch/release.
 - UX copy refinement (`UX-IMPL-540A`): replaced community description-style metadata with explicit subgenre range coverage on Discover scene cards and Community profile header via shared mapper utility; report `docs/handoff/2026-03-01_ux-impl-540A-community-subgenre-range-copy.md`.
 - UX guard hardening (`UX-IMPL-539A`): `/plot` now enforces Home Scene presence as a hard prerequisite by redirecting unresolved sessions to `/onboarding` and suppressing Plot render until Home Scene is available; report `docs/handoff/2026-03-01_ux-impl-539A-plot-home-scene-hard-guard.md`.

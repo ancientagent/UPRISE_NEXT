@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-15T12:00:00.000Z",
+  "lane": "lane-d-ux-automation-batch16",
+  "sourceFiles": [
+    "mvp-slices-batch16-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXAUTO-564A",
+      "title": "UX master-lock preflight guard",
+      "prompt": "Execute one MVP slice only: add automation preflight guard that validates presence/readability of UX master lock and required canon/spec anchors before lane execution.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-d-ux-automation-batch16"
+    },
+    {
+      "id": "SLICE-UXAUTO-565A",
+      "title": "Queue drift guard for UX lane sequencing",
+      "prompt": "Execute one MVP slice only: strengthen queue sanity checks for UX batch sequencing and impossible state transitions in lane automation.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-d-ux-automation-batch16"
+    },
+    {
+      "id": "SLICE-UXAUTO-566A",
+      "title": "Supervisor stop-on-canon-silence enforcement",
+      "prompt": "Execute one MVP slice only: enforce deterministic supervisor stop behavior when slices declare unresolved founder-decision dependencies.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-d-ux-automation-batch16"
+    },
+    {
+      "id": "SLICE-UXAUTO-567A",
+      "title": "Runtime hygiene extension for UX queues",
+      "prompt": "Execute one MVP slice only: extend runtime stale-task cleanup/reporting for UX lane runtime files and deterministic resume behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-d-ux-automation-batch16"
+    },
+    {
+      "id": "SLICE-UXAUTO-568A",
+      "title": "Verification transcript consistency pass",
+      "prompt": "Execute one MVP slice only: normalize verify transcript capture shape across UX slices for deterministic QA/handoff parsing.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-d-ux-automation-batch16"
+    },
+    {
+      "id": "SLICE-UXAUTO-569A",
+      "title": "UX automation runbook closeout pass",
+      "prompt": "Execute one MVP slice only: update automation runbook guidance for UX single-source lock usage, stop conditions, and recovery paths.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-d-ux-automation-batch16"
+    }
+  ]
+}

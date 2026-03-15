@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-15T12:00:00.000Z",
+  "lane": "lane-b-ux-discovery-batch16",
+  "sourceFiles": [
+    "mvp-slices-batch16-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXDISC-552A",
+      "title": "Discovery IA baseline lock",
+      "prompt": "Execute one MVP slice only: lock Discovery IA sections and deterministic state model (loading/empty/error) with no recommendation/ranking semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-b-ux-discovery-batch16"
+    },
+    {
+      "id": "SLICE-UXDISC-553A",
+      "title": "Discovery scene-card contract parity",
+      "prompt": "Execute one MVP slice only: normalize Discovery scene card contract/copy fields to current lock without speculative explanatory text or pricing behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-b-ux-discovery-batch16"
+    },
+    {
+      "id": "SLICE-UXDISC-554A",
+      "title": "Discovery artist/band search contract pass 1",
+      "prompt": "Execute one MVP slice only: harden Discovery search contract for artist/band lookup entry and deterministic empty/no-result semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-b-ux-discovery-batch16"
+    },
+    {
+      "id": "SLICE-UXDISC-555A",
+      "title": "Discovery -> Plot scene-switch handoff parity",
+      "prompt": "Execute one MVP slice only: enforce deterministic Discovery-to-Plot scene-switch handoff behavior and context persistence boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-b-ux-discovery-batch16"
+    },
+    {
+      "id": "SLICE-UXDISC-556A",
+      "title": "Discovery access-limit copy guard pass",
+      "prompt": "Execute one MVP slice only: align Discovery access-limit messaging to canon-safe wording without introducing unresolved pricing/entitlement assumptions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-b-ux-discovery-batch16"
+    },
+    {
+      "id": "SLICE-UXDISC-557A",
+      "title": "Discovery contract/test closeout",
+      "prompt": "Execute one MVP slice only: close Discovery contract parity by consolidating typed-client/test assertions for locked IA and state behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-15T12:00:00.000Z",
+      "lane": "lane-b-ux-discovery-batch16"
+    }
+  ]
+}
