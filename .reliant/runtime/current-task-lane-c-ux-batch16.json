@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXPLYR-563A",
+  "title": "Player/profile regression lock closeout",
+  "prompt": "Execute one MVP slice only: finalize player/profile parity by extending focused regression locks for panel-state, mode-state, and ownership boundaries.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-15T21:52:04.469Z"
+}

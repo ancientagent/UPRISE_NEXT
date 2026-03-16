@@ -5,6 +5,12 @@ export interface StatisticsEndpointResolution {
   source: 'anchored' | 'active';
 }
 
+export interface SceneMapRequestResolution {
+  anchorId: string | null;
+  endpoint: string | null;
+  source: 'selected_community' | 'active_scene' | 'unresolved';
+}
+
 export function resolveStatisticsEndpoint(
   selectedCommunityId: string | null,
   selectedTier: TierScope,
@@ -19,6 +25,28 @@ export function resolveStatisticsEndpoint(
   return {
     endpoint: `/communities/active/statistics?tier=${selectedTier}`,
     source: 'active',
+  };
+}
+
+export function resolveSceneMapRequest(
+  selectedCommunityId: string | null,
+  activeSceneId: string | null,
+  selectedTier: TierScope,
+): SceneMapRequestResolution {
+  const anchorId = selectedCommunityId ?? activeSceneId ?? null;
+
+  if (!anchorId) {
+    return {
+      anchorId: null,
+      endpoint: null,
+      source: 'unresolved',
+    };
+  }
+
+  return {
+    anchorId,
+    endpoint: `/communities/${anchorId}/scene-map?tier=${selectedTier}`,
+    source: selectedCommunityId ? 'selected_community' : 'active_scene',
   };
 }
 

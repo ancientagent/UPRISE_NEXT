@@ -57,6 +57,19 @@ Validate queue shape before execution:
 node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/mvp-slices.json
 ```
 
+UX Batch16 preflight before execution:
+```bash
+QUEUE_PATH=".reliant/queue/mvp-lane-d-ux-automation-batch16.json"
+node scripts/reliant-ux-preflight.mjs --queue "$QUEUE_PATH"
+```
+- Required source-of-truth set for Batch16 UX queues:
+  - `docs/solutions/MVP_UX_MASTER_LOCK_R1.md`
+  - `docs/solutions/MVP_UX_BATCH16_EXECUTION_PLAN.md`
+  - `docs/solutions/MVP_UX_BATCH16_DRIFT_WATCHLIST.md`
+  - `docs/specs/users/onboarding-home-scene-resolution.md`
+  - `docs/specs/communities/plot-and-scene-plot.md`
+- If preflight returns `ok=false`, stop before execution. Do not claim-forward or complete around missing/unreadable lock/spec files.
+
 Manual claim/complete/block:
 ```bash
 QUEUE_PATH=".reliant/queue/mvp-slices.json"
@@ -82,10 +95,27 @@ node scripts/reliant-slice-queue.mjs block --queue "$QUEUE_PATH" --runtime "$RUN
 - Orchestrator claims one `queued` task.
 - `claim` is deterministic: if queue already has one `in_progress` task, it returns that active task without advancing to the next queued item.
 - `claim` fails fast on queue/runtime ownership mismatch or multiple `in_progress` tasks.
+- For Batch16 UX queues, `claim` also refuses `queue_transition_sanity_failed` when task lifecycle timestamps/statuses are impossible (for example `queued` with `finishedAt`, `done` without `finishedAt`, `blocked` with `finishedAt`).
 - Executes slice with canon/spec constraints.
 - Runs required validation gates.
 - Marks `done` if successful; marks `blocked` with exact reason on unrecoverable failure.
 - Continues until no queued tasks remain.
+
+## UX Batch16 Stop Conditions
+Stop immediately and repair/escalate when any of the following occur:
+- `blocked_preflight` from `reliant-next-action` / `reliant-autopilot`
+  - Cause: UX master lock or required Batch16 source-of-truth files are missing/unreadable.
+- `queue_transition_sanity_failed`
+  - Cause: impossible Batch16 UX queue lifecycle state in `scripts/reliant-slice-queue.mjs`.
+- `founder_decision_required`
+  - Cause: next queued task explicitly declares `founderDecisionRequired: true` or `requiresFounderDecision: true`.
+- `runtime_owner_mismatch`, `missing_runtime`, or `invalid_runtime_payload`
+  - Cause: runtime file and queue ownership disagree.
+
+When a stop condition is triggered:
+1. Do not advance queue state.
+2. Record the exact blocker in the handoff/report.
+3. Repair the runtime/queue/docs issue or escalate to founder when the blocker is a founder-decision dependency.
 
 ## Anti-Loop Guardrails (Required)
 - Do not run claim/block in a bulk loop.
@@ -119,6 +149,33 @@ node scripts/reliant-slice-queue.mjs claim --queue "$QUEUE_PATH" --runtime "$RUN
 4. If claim fails due to transition guard, resolve task state intentionally (done/blocked/queued) before retrying.
 
 If `claim`/`complete`/`block` reports `invalid runtime file` (for example missing `taskId`), treat it as stale runtime and run cleanup + single re-claim.
+
+### UX Batch16 runtime recovery
+For Batch16 UX lane runtime files, prefer queue-aware recovery:
+```bash
+RUNTIME_PATH=".reliant/runtime/current-task-lane-d-ux-batch16.json"
+QUEUE_PATH=".reliant/queue/mvp-lane-d-ux-automation-batch16.json"
+node scripts/reliant-runtime-clean.mjs --runtime "$RUNTIME_PATH" --queue "$QUEUE_PATH" --resume
+```
+- Deterministic `resumeAction` values:
+  - `restore_in_progress` -> runtime was restored for the single in-progress task.
+  - `claim_next` -> runtime remains absent; run the emitted `resumeCommand`.
+  - `blocked_multiple_in_progress` -> repair queue ownership first.
+  - `queue_missing` / `queue_invalid` -> repair queue path/payload before retrying.
+
+## Verification Transcript Capture
+For deterministic handoff parsing, capture verification with the transcript wrapper:
+```bash
+VERIFY_CMD='pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck'
+pnpm run reliant:verify:transcript -- --command "$VERIFY_CMD" --format markdown
+```
+- Fixed transcript section order:
+  - `## Verify Command`
+  - `## Verify Exit Code`
+  - `## Exact Output`
+- Optional artifacts:
+  - `--markdown-out <path>`
+  - `--json-out <path>`
 
 ## Constraints
 - Additive/non-breaking first.

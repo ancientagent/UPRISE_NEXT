@@ -7,10 +7,10 @@
   ],
   "summary": {
     "total": 6,
-    "queued": 6,
+    "queued": 0,
     "in_progress": 0,
-    "done": 0,
-    "blocked": 0
+    "done": 5,
+    "blocked": 1
   },
   "tasks": [
     {
@@ -18,54 +18,72 @@
       "title": "Plot Feed IA/state contract overhaul pack 1",
       "prompt": "Execute one MVP slice only: align /plot Feed tab composition to locked civic IA with deterministic loading/empty/error states and no recommendation semantics. Keep route/ownership unchanged.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-03-15T12:00:00.000Z",
-      "lane": "lane-a-ux-plot-batch16"
+      "status": "done",
+      "updatedAt": "2026-03-15T21:39:01.647Z",
+      "lane": "lane-a-ux-plot-batch16",
+      "startedAt": "2026-03-15T21:36:09.975Z",
+      "finishedAt": "2026-03-15T21:39:01.647Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLOT-546A.md"
     },
     {
       "id": "SLICE-UXPLOT-547A",
       "title": "Plot Events IA/state contract overhaul pack 1",
       "prompt": "Execute one MVP slice only: refine /plot Events tab ordering and deterministic loading/empty/error states to match canon scene-scoped behavior.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-03-15T12:00:00.000Z",
-      "lane": "lane-a-ux-plot-batch16"
+      "status": "done",
+      "updatedAt": "2026-03-15T21:40:40.199Z",
+      "lane": "lane-a-ux-plot-batch16",
+      "startedAt": "2026-03-15T21:39:05.748Z",
+      "finishedAt": "2026-03-15T21:40:40.199Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLOT-547A.md"
     },
     {
       "id": "SLICE-UXPLOT-548A",
       "title": "Plot Promotions IA/state contract overhaul pack 1",
       "prompt": "Execute one MVP slice only: align /plot Promotions tab content model and error/empty handling with scene-scoped deterministic contract; no economy behavior expansion.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-03-15T12:00:00.000Z",
-      "lane": "lane-a-ux-plot-batch16"
+      "status": "done",
+      "updatedAt": "2026-03-15T21:42:22.409Z",
+      "lane": "lane-a-ux-plot-batch16",
+      "startedAt": "2026-03-15T21:40:44.360Z",
+      "finishedAt": "2026-03-15T21:42:22.409Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLOT-548A.md"
     },
     {
       "id": "SLICE-UXPLOT-549A",
       "title": "Plot Statistics/Scene Map contract coherence pack 1",
       "prompt": "Execute one MVP slice only: enforce Statistics tab ownership of Top Songs/Scene Activity + scene-map tier read coherence, preserving existing API contracts.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-statistics-request.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-03-15T12:00:00.000Z",
-      "lane": "lane-a-ux-plot-batch16"
+      "status": "done",
+      "updatedAt": "2026-03-15T21:44:06.480Z",
+      "lane": "lane-a-ux-plot-batch16",
+      "startedAt": "2026-03-15T21:42:30.233Z",
+      "finishedAt": "2026-03-15T21:44:06.480Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLOT-549A.md"
     },
     {
       "id": "SLICE-UXPLOT-550A",
       "title": "Plot Social deferred-policy lock pass",
       "prompt": "Execute one MVP slice only: implement locked Social deferred treatment (hidden/placeholder per current spec decision) without introducing social workflows.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-03-15T12:00:00.000Z",
-      "lane": "lane-a-ux-plot-batch16"
+      "status": "blocked",
+      "updatedAt": "2026-03-16T17:29:02.510Z",
+      "lane": "lane-a-ux-plot-batch16",
+      "startedAt": "2026-03-16T01:25:34.849Z",
+      "blockedAt": "2026-03-16T17:29:02.510Z",
+      "blockerReason": "Conflict: docs/specs/communities/plot-and-scene-plot.md says Social remains placeholder until endpoint ships, while docs/solutions/MVP_UX_MASTER_LOCK_R1.md and docs/solutions/MVP_UX_BATCH16_DRIFT_WATCHLIST.md lock the collapsed Plot rail to Feed/Events/Promotions/Statistics only; docs/solutions/MVP_FLOW_MAP_R1.md explicitly says hidden vs placeholder Social exposure requires founder confirmation."
     },
     {
       "id": "SLICE-UXPLOT-551A",
       "title": "Plot tab-system closeout + regression lock",
       "prompt": "Execute one MVP slice only: finalize Plot tab coherence pass across Feed/Events/Promotions/Statistics and extend focused regression locks for tab/body ownership.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued",
-      "updatedAt": "2026-03-15T12:00:00.000Z",
-      "lane": "lane-a-ux-plot-batch16"
+      "status": "done",
+      "updatedAt": "2026-03-16T17:31:54.934Z",
+      "lane": "lane-a-ux-plot-batch16",
+      "startedAt": "2026-03-16T17:29:09.894Z",
+      "finishedAt": "2026-03-16T17:31:54.934Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXPLOT-551A.md"
     }
   ]
 }

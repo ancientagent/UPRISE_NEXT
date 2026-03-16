@@ -52,6 +52,69 @@ function main() {
   assert.equal(invalidDryRun.runtimeState, 'invalid_json');
   assert.equal(invalidDryRun.wouldClear, true);
   assert.equal(fs.existsSync(invalidRuntimePath), true);
+
+  const uxQueueDir = path.join(tempDir, '.reliant/queue');
+  const uxRuntimeDir = path.join(tempDir, '.reliant/runtime');
+  fs.mkdirSync(uxQueueDir, { recursive: true });
+  fs.mkdirSync(uxRuntimeDir, { recursive: true });
+  const uxQueuePath = path.join(uxQueueDir, 'mvp-lane-d-ux-automation-batch16.json');
+  const uxRuntimePath = path.join(uxRuntimeDir, 'current-task-lane-d-ux-batch16.json');
+  fs.writeFileSync(
+    uxQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        tasks: [
+          {
+            id: 'UX-RUN-1',
+            title: 'Resume me',
+            prompt: 'Resume me',
+            verifyCommand: 'pnpm run docs:lint',
+            status: 'in_progress',
+            startedAt: '2026-03-15T21:00:00.000Z',
+            updatedAt: '2026-03-15T21:00:00.000Z',
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(uxRuntimePath, JSON.stringify({ taskId: 'STALE-UX-RUN' }, null, 2));
+
+  const uxResumeDryRun = JSON.parse(
+    run(['--runtime', uxRuntimePath, '--queue', uxQueuePath, '--resume', '--dry-run']).stdout,
+  );
+  assert.equal(uxResumeDryRun.inferredQueuePath, uxQueuePath);
+  assert.equal(uxResumeDryRun.resumeAction, 'restore_in_progress');
+  assert.equal(uxResumeDryRun.resumed, false);
+  assert.equal(uxResumeDryRun.resumedTaskId, 'UX-RUN-1');
+  assert.equal(fs.existsSync(uxRuntimePath), true);
+
+  const uxResume = JSON.parse(run(['--runtime', uxRuntimePath, '--queue', uxQueuePath, '--resume']).stdout);
+  assert.equal(uxResume.resumeAction, 'restore_in_progress');
+  assert.equal(uxResume.resumed, true);
+  const restoredRuntime = JSON.parse(fs.readFileSync(uxRuntimePath, 'utf8'));
+  assert.equal(restoredRuntime.taskId, 'UX-RUN-1');
+  assert.equal(restoredRuntime.title, 'Resume me');
+
+  fs.unlinkSync(uxRuntimePath);
+  fs.writeFileSync(
+    uxQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        tasks: [{ id: 'UX-RUN-2', title: 'Claim next', prompt: 'Claim next', status: 'queued' }],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  const uxResumeClaim = JSON.parse(run(['--runtime', uxRuntimePath, '--queue', uxQueuePath, '--resume']).stdout);
+  assert.equal(uxResumeClaim.runtimeState, 'missing');
+  assert.equal(uxResumeClaim.resumeAction, 'claim_next');
+  assert.match(uxResumeClaim.resumeCommand, /reliant-slice-queue\.mjs claim/);
+  assert.equal(fs.existsSync(uxRuntimePath), false);
 }
 
 main();

@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
+const UX_BATCH16_QUEUE_PATTERN = /(^|\/)mvp-lane-[a-e]-ux-[^/]*batch16\.json$/;
+
 function readJson(filePath) {
   const raw = fs.readFileSync(filePath, 'utf8');
   return JSON.parse(raw);
@@ -124,13 +126,131 @@ function ensureQueueShape(queue) {
   }
 }
 
+function appliesUxBatch16TransitionGuard(queuePath) {
+  return UX_BATCH16_QUEUE_PATTERN.test(queuePath);
+}
+
+function isValidTimestamp(value) {
+  return typeof value === 'string' && value.trim() !== '' && Number.isFinite(Date.parse(value));
+}
+
+function collectTransitionIssues(queue) {
+  const issues = [];
+
+  for (const task of queue.tasks) {
+    const taskIssues = [];
+    const startedAtValid = task.startedAt == null ? false : isValidTimestamp(task.startedAt);
+    const finishedAtValid = task.finishedAt == null ? false : isValidTimestamp(task.finishedAt);
+    const blockedAtValid = task.blockedAt == null ? false : isValidTimestamp(task.blockedAt);
+    const updatedAtValid = task.updatedAt == null ? false : isValidTimestamp(task.updatedAt);
+
+    if (task.startedAt != null && !startedAtValid) {
+      taskIssues.push('startedAt_invalid');
+    }
+    if (task.finishedAt != null && !finishedAtValid) {
+      taskIssues.push('finishedAt_invalid');
+    }
+    if (task.blockedAt != null && !blockedAtValid) {
+      taskIssues.push('blockedAt_invalid');
+    }
+    if (task.updatedAt != null && !updatedAtValid) {
+      taskIssues.push('updatedAt_invalid');
+    }
+
+    switch (task.status) {
+      case 'queued':
+        if (task.startedAt != null) taskIssues.push('queued_has_startedAt');
+        if (task.finishedAt != null) taskIssues.push('queued_has_finishedAt');
+        if (task.blockedAt != null) taskIssues.push('queued_has_blockedAt');
+        break;
+      case 'in_progress':
+        if (task.startedAt == null) taskIssues.push('in_progress_missing_startedAt');
+        if (task.finishedAt != null) taskIssues.push('in_progress_has_finishedAt');
+        if (task.blockedAt != null) taskIssues.push('in_progress_has_blockedAt');
+        break;
+      case 'done':
+        if (task.finishedAt == null) taskIssues.push('done_missing_finishedAt');
+        if (task.blockedAt != null) taskIssues.push('done_has_blockedAt');
+        break;
+      case 'blocked':
+        if (task.blockedAt == null) taskIssues.push('blocked_missing_blockedAt');
+        if (task.finishedAt != null) taskIssues.push('blocked_has_finishedAt');
+        break;
+      default:
+        break;
+    }
+
+    if (startedAtValid && finishedAtValid && Date.parse(task.finishedAt) < Date.parse(task.startedAt)) {
+      taskIssues.push('finishedAt_before_startedAt');
+    }
+    if (startedAtValid && blockedAtValid && Date.parse(task.blockedAt) < Date.parse(task.startedAt)) {
+      taskIssues.push('blockedAt_before_startedAt');
+    }
+    if (startedAtValid && updatedAtValid && Date.parse(task.updatedAt) < Date.parse(task.startedAt)) {
+      taskIssues.push('updatedAt_before_startedAt');
+    }
+    if (finishedAtValid && updatedAtValid && Date.parse(task.updatedAt) < Date.parse(task.finishedAt)) {
+      taskIssues.push('updatedAt_before_finishedAt');
+    }
+    if (blockedAtValid && updatedAtValid && Date.parse(task.updatedAt) < Date.parse(task.blockedAt)) {
+      taskIssues.push('updatedAt_before_blockedAt');
+    }
+
+    if (taskIssues.length > 0) {
+      issues.push({
+        taskId: task.id,
+        status: task.status,
+        issues: taskIssues,
+      });
+    }
+  }
+
+  return issues;
+}
+
+function getTransitionSanity(queuePath, queue) {
+  const applicable = appliesUxBatch16TransitionGuard(queuePath);
+  const issues = applicable ? collectTransitionIssues(queue) : [];
+  return {
+    applicable,
+    issueCount: issues.length,
+    issues,
+    ok: issues.length === 0,
+  };
+}
+
+function exitOnTransitionSanityFailure(queuePath, queue, commandName) {
+  const transitionSanity = getTransitionSanity(queuePath, queue);
+  if (!transitionSanity.applicable || transitionSanity.ok) {
+    return transitionSanity;
+  }
+
+  const issueSummary = transitionSanity.issues
+    .map((entry) => `${entry.taskId}:${entry.issues.join(',')}`)
+    .join('; ');
+  console.error(
+    `[reliant-slice-queue] ${commandName} blocked by UX Batch16 transition sanity failure\n` +
+      `[reliant-slice-queue] queue=${queuePath}\n` +
+      `[reliant-slice-queue] issues=${issueSummary}\n` +
+      `[reliant-slice-queue] hint: repair impossible task status/timestamp transitions before continuing`,
+  );
+  process.exit(4);
+}
+
 function claimTask(queuePath, runtimePath, retryMs = 0, retryAttempted = false) {
   const queue = readJson(queuePath);
   ensureQueueShape(queue);
+  const transitionSanity = getTransitionSanity(queuePath, queue);
   const emitClaimRefusal = (refusalCode, message, exitCode, extra = {}) => {
     process.stdout.write(JSON.stringify({ claimed: false, refusalCode, resultCode: refusalCode, message, ...extra }));
     process.exit(exitCode);
   };
+
+  if (transitionSanity.applicable && !transitionSanity.ok) {
+    emitClaimRefusal('queue_transition_sanity_failed', 'queue blocked by UX Batch16 transition sanity failure', 4, {
+      transitionSanity,
+    });
+  }
 
   const inProgressTasks = queue.tasks.filter((t) => t.status === 'in_progress');
   if (inProgressTasks.length > 1) {
@@ -233,6 +353,7 @@ function claimTask(queuePath, runtimePath, retryMs = 0, retryAttempted = false) 
 function completeTask(queuePath, runtimePath, reportPath, taskIdGuard, retryMs = 0, retryAttempted = false) {
   const queue = readJson(queuePath);
   ensureQueueShape(queue);
+  exitOnTransitionSanityFailure(queuePath, queue, 'complete');
   if (!fs.existsSync(runtimePath)) {
     if (retryMs > 0 && !retryAttempted) {
       sleepMs(retryMs);
@@ -321,6 +442,7 @@ function completeTask(queuePath, runtimePath, reportPath, taskIdGuard, retryMs =
 function blockTask(queuePath, runtimePath, reason, taskIdGuard, retryMs = 0, retryAttempted = false) {
   const queue = readJson(queuePath);
   ensureQueueShape(queue);
+  exitOnTransitionSanityFailure(queuePath, queue, 'block');
   if (!fs.existsSync(runtimePath)) {
     if (retryMs > 0 && !retryAttempted) {
       sleepMs(retryMs);
@@ -478,6 +600,7 @@ function inspectRuntime(runtimePath, inProgressTaskIds, includeChecksum = false)
 function status(queuePath, runtimePath, includeRuntimeChecksum = false) {
   const queue = readJson(queuePath);
   ensureQueueShape(queue);
+  const transitionSanity = getTransitionSanity(queuePath, queue);
 
   const summary = queue.tasks.reduce(
     (acc, t) => {
@@ -574,6 +697,7 @@ function status(queuePath, runtimePath, includeRuntimeChecksum = false) {
           canClaim,
         },
         runtime,
+        transitionSanity,
         reportCoverage,
         tasks: queue.tasks,
       },
@@ -607,6 +731,14 @@ function initTemplate(queuePath) {
 function validateQueue(queuePath) {
   const queue = readJson(queuePath);
   ensureQueueShape(queue);
+  const transitionSanity = getTransitionSanity(queuePath, queue);
+  if (transitionSanity.applicable && !transitionSanity.ok) {
+    const issueSummary = transitionSanity.issues
+      .map((entry) => `${entry.taskId}:${entry.issues.join(',')}`)
+      .join('; ');
+    console.error(`[reliant-slice-queue] validate blocked by UX Batch16 transition sanity failure: ${issueSummary}`);
+    process.exit(1);
+  }
   const statusCounts = queue.tasks.reduce(
     (acc, task) => {
       acc[task.status] = (acc[task.status] || 0) + 1;
@@ -622,6 +754,7 @@ function validateQueue(queuePath) {
         checkedAt: nowIso(),
         taskCount: queue.tasks.length,
         statusCounts,
+        transitionSanity,
       },
       null,
       2,

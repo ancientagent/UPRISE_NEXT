@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { runUxBatch16Preflight } from './reliant-ux-preflight.mjs';
 
 function getArg(flag, fallback = null) {
   const idx = process.argv.indexOf(flag);
@@ -72,6 +73,7 @@ function main() {
   const blocked = tasks.filter((t) => t.status === 'blocked');
   const runtime = readJsonSafe(runtimePath);
   const runtimeTaskId = runtime?.taskId || null;
+  const uxPreflight = runUxBatch16Preflight(queuePath);
 
   let state = 'idle';
   let nextTask = null;
@@ -79,7 +81,19 @@ function main() {
   let commands = [];
   let assistantPrompt = '';
 
-  if (inProgress.length > 1) {
+  if (!uxPreflight.ok) {
+    state = 'blocked_preflight';
+    warnings.push(...uxPreflight.failureReasons.map((reason) => `ux-preflight failed: ${reason}`));
+    commands.push(`node scripts/reliant-ux-preflight.mjs --queue ${queuePath}`);
+    commands.push(buildStatusCmd(queuePath));
+
+    assistantPrompt = [
+      'Stop. UX Batch16 preflight failed before lane execution.',
+      `Queue: ${queuePath}`,
+      'Resolve the missing/unreadable source-of-truth files first. Do not execute or advance the slice until preflight returns ok=true.',
+      `Preflight command: node scripts/reliant-ux-preflight.mjs --queue ${queuePath}`,
+    ].join('\n');
+  } else if (inProgress.length > 1) {
     state = 'error_multiple_in_progress';
     warnings.push(`multiple in_progress tasks detected: ${inProgress.map((t) => t.id).join(', ')}`);
     commands.push(buildStatusCmd(queuePath));
@@ -157,6 +171,7 @@ function main() {
     state,
     summary,
     runtimeTaskId,
+    uxPreflight,
     nextTask: nextTask
       ? {
           id: nextTask.id,
@@ -186,6 +201,7 @@ function main() {
       `runtime: ${runtimePath}`,
       `summary: total=${summary.total} queued=${summary.queued} in_progress=${summary.in_progress} done=${summary.done} blocked=${summary.blocked}`,
       `runtime_task: ${runtimeTaskId || '(none)'}`,
+      `ux_preflight: ${uxPreflight.applicable ? (uxPreflight.ok ? 'ok' : 'failed') : 'not_applicable'}`,
       `next_task: ${formatTask(nextTask)}`,
       warnings.length ? `warnings:\n- ${warnings.join('\n- ')}` : 'warnings: (none)',
       'commands:',

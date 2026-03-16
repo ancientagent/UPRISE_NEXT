@@ -1,5 +1,7 @@
 import {
   findNearbyCommunities,
+  getActiveCommunityEvents,
+  getActiveCommunityPromotions,
   getActiveCommunityStatistics,
   resolveHomeCommunity,
 } from '../src/lib/communities/client';
@@ -80,5 +82,60 @@ describe('communities client', () => {
     expect(home?.id).toBe('community-1');
     expect(active.sceneId).toBe('scene-9');
     expect(active.data?.community?.id).toBe('scene-9');
+  });
+
+  it('builds active-events query from typed params', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await getActiveCommunityEvents(
+      {
+        limit: 20,
+        includePast: true,
+      },
+      'token-3',
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/communities/active/events?limit=20&includePast=true',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-3',
+        }),
+      }),
+    );
+  });
+
+  it('builds active-promotions query from typed params', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await getActiveCommunityPromotions(
+      {
+        limit: 20,
+      },
+      'token-4',
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/communities/active/promotions?limit=20',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-4',
+        }),
+      }),
+    );
   });
 });

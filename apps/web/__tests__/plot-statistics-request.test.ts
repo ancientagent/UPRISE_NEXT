@@ -1,4 +1,5 @@
 import {
+  resolveSceneMapRequest,
   resolveSceneMapAnchorId,
   resolveStatisticsEndpoint,
 } from '@/components/plot/statistics-request';
@@ -35,5 +36,35 @@ describe('Plot Statistics Request Helpers', () => {
   it('returns null when no anchor id is available', () => {
     const result = resolveSceneMapAnchorId(null, null);
     expect(result).toBeNull();
+  });
+
+  it('builds scene-map request from selected community when present', () => {
+    const result = resolveSceneMapRequest('community-123', 'scene-456', 'state');
+
+    expect(result).toEqual({
+      anchorId: 'community-123',
+      endpoint: '/communities/community-123/scene-map?tier=state',
+      source: 'selected_community',
+    });
+  });
+
+  it('falls back to active-scene request when no community is selected', () => {
+    const result = resolveSceneMapRequest(null, 'scene-456', 'national');
+
+    expect(result).toEqual({
+      anchorId: 'scene-456',
+      endpoint: '/communities/scene-456/scene-map?tier=national',
+      source: 'active_scene',
+    });
+  });
+
+  it('returns unresolved scene-map state when no anchor exists', () => {
+    const result = resolveSceneMapRequest(null, null, 'city');
+
+    expect(result).toEqual({
+      anchorId: null,
+      endpoint: null,
+      source: 'unresolved',
+    });
   });
 });

@@ -132,6 +132,8 @@ function main() {
   const validateResult = run(['validate', '--queue', queuePath], 0);
   const validateJson = JSON.parse(validateResult.stdout);
   assert.equal(validateJson.statusCounts.done, 1);
+  assert.equal(validateJson.transitionSanity.applicable, false);
+  assert.equal(validateJson.transitionSanity.ok, true);
 
   const alreadyInProgressQueuePath = path.join(tempDir, 'already-in-progress-queue.json');
   const alreadyInProgressRuntimePath = path.join(tempDir, 'already-in-progress-runtime.json');
@@ -256,6 +258,44 @@ function main() {
   );
   const multiInProgressResult = run(['validate', '--queue', multiInProgressQueuePath], 1);
   assert.match(multiInProgressResult.stderr, /maximum allowed: 1/);
+
+  const uxQueuePath = path.join(tempDir, '.reliant/queue/mvp-lane-d-ux-automation-batch16.json');
+  const uxRuntimePath = path.join(tempDir, '.reliant/runtime/current-task-lane-d-ux-batch16.json');
+  fs.mkdirSync(path.dirname(uxQueuePath), { recursive: true });
+  fs.mkdirSync(path.dirname(uxRuntimePath), { recursive: true });
+  fs.writeFileSync(
+    uxQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        tasks: [
+          {
+            id: 'UX-BAD-1',
+            title: 'Broken queued task',
+            prompt: 'Broken queued task',
+            verifyCommand: 'echo ok',
+            status: 'queued',
+            finishedAt: '2026-03-15T00:00:00.000Z',
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  const uxValidate = run(['validate', '--queue', uxQueuePath], 1);
+  assert.match(uxValidate.stderr, /transition sanity failure/);
+  const uxClaim = run(['claim', '--queue', uxQueuePath, '--runtime', uxRuntimePath], 4);
+  const uxClaimJson = JSON.parse(uxClaim.stdout);
+  assert.equal(uxClaimJson.refusalCode, 'queue_transition_sanity_failed');
+  assert.equal(uxClaimJson.transitionSanity.applicable, true);
+  assert.equal(uxClaimJson.transitionSanity.ok, false);
+  const uxStatus = run(['status', '--queue', uxQueuePath, '--runtime', uxRuntimePath], 0);
+  const uxStatusJson = JSON.parse(uxStatus.stdout);
+  assert.equal(uxStatusJson.transitionSanity.applicable, true);
+  assert.equal(uxStatusJson.transitionSanity.ok, false);
+  assert.equal(uxStatusJson.transitionSanity.issueCount, 1);
+  assert.deepEqual(uxStatusJson.transitionSanity.issues[0].issues, ['queued_has_finishedAt']);
 
   const finishedQueuePath = path.join(tempDir, 'finished-queue.json');
   fs.writeFileSync(

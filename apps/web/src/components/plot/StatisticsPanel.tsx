@@ -15,7 +15,7 @@ import {
   type CommunityStatisticsResponse,
 } from '@/lib/communities/client';
 import {
-  resolveSceneMapAnchorId,
+  resolveSceneMapRequest,
   resolveStatisticsEndpoint,
   type TierScope,
 } from '@/components/plot/statistics-request';
@@ -42,6 +42,7 @@ export default function StatisticsPanel({
   const [activeSceneId, setActiveSceneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mapError, setMapError] = useState<string | null>(null);
 
   const cityRadiusMeters = 10000;
 
@@ -138,17 +139,25 @@ export default function StatisticsPanel({
 
   useEffect(() => {
     async function fetchSceneMap() {
-      const anchorId = resolveSceneMapAnchorId(selectedCommunity?.id ?? null, activeSceneId);
-      if (!anchorId) {
+      const request = resolveSceneMapRequest(
+        selectedCommunity?.id ?? null,
+        activeSceneId,
+        selectedTier,
+      );
+
+      if (!request.anchorId) {
         setSceneMap(null);
+        setMapError(null);
         return;
       }
 
       try {
-        const response = await getCommunitySceneMap(anchorId, selectedTier, token || undefined);
+        setMapError(null);
+        const response = await getCommunitySceneMap(request.anchorId, selectedTier, token || undefined);
         setSceneMap(response);
       } catch {
         setSceneMap(null);
+        setMapError('Scene map is unavailable for the current statistics scope.');
       }
     }
 
@@ -202,6 +211,17 @@ export default function StatisticsPanel({
     votingEligibleUsers: 0,
     scopeCommunityCount: 0,
   };
+  const sceneMapRequest = resolveSceneMapRequest(
+    selectedCommunity?.id ?? null,
+    activeSceneId,
+    selectedTier,
+  );
+  const sceneMapScopeCopy =
+    selectedTier === 'city'
+      ? 'City view keeps local scene-map detail for the active Plot context.'
+      : selectedTier === 'state'
+        ? 'State view keeps the same parent context and rolls the map up to city-level macro reads.'
+        : 'National view keeps the same parent context and rolls the map up to state-level macro reads.';
 
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
@@ -210,6 +230,7 @@ export default function StatisticsPanel({
         <p className="text-sm text-black/60 capitalize">
           {selectedTier} scope • rollup: {statistics?.rollupUnit ?? 'local_sect'}
         </p>
+        <p className="mt-1 text-xs text-black/50">{sceneMapScopeCopy}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-2 mb-4">
@@ -243,6 +264,7 @@ export default function StatisticsPanel({
               }}
             />
           </div>
+          {mapError ? <p className="mb-4 text-xs text-red-600">{mapError}</p> : null}
 
           <div className="space-y-1 max-h-40 overflow-y-auto">
             {communities.map((community, index) => (
@@ -284,6 +306,7 @@ export default function StatisticsPanel({
           <div className="h-48 w-full">
             <SceneMap points={sceneMap?.points ?? []} />
           </div>
+          {mapError ? <p className="text-xs text-red-600">{mapError}</p> : null}
           <div className="rounded-xl border border-black/10 p-4">
             <p className="text-sm text-black/70">
               {selectedTier === 'state'
@@ -293,6 +316,14 @@ export default function StatisticsPanel({
             <p className="text-xs text-black/50 mt-2">
               Scope communities: {metrics.scopeCommunityCount.toLocaleString()} • Active tracks:{' '}
               {metrics.activeTracks.toLocaleString()}
+            </p>
+            <p className="mt-2 text-[11px] text-black/45">
+              Map anchor source:{' '}
+              {sceneMapRequest.source === 'selected_community'
+                ? 'selected community'
+                : sceneMapRequest.source === 'active_scene'
+                  ? 'active scene fallback'
+                  : 'unresolved'}
             </p>
           </div>
         </div>

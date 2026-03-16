@@ -1,7 +1,7 @@
 'use client';
 
-import type { KeyboardEvent } from 'react';
 import { Button } from '@uprise/ui';
+import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 
 export type PlayerMode = 'RADIYO' | 'Collection';
 export type RotationPool = 'new_releases' | 'main_rotation';
@@ -9,201 +9,217 @@ export type PlayerTier = 'city' | 'state' | 'national';
 
 interface RadiyoPlayerPanelProps {
   mode: PlayerMode;
-  onModeChange: (mode: PlayerMode) => void;
+  onCollectionEject: () => void;
   rotationPool: RotationPool;
   onRotationPoolChange: (pool: RotationPool) => void;
   selectedTier: PlayerTier;
   onTierChange: (tier: PlayerTier) => void;
   broadcastLabel: string;
+  collectionTitle?: string | null;
 }
 
 export default function RadiyoPlayerPanel({
   mode,
-  onModeChange,
+  onCollectionEject,
   rotationPool,
   onRotationPoolChange,
   selectedTier,
   onTierChange,
   broadcastLabel,
+  collectionTitle,
 }: RadiyoPlayerPanelProps) {
   const isRadiyoMode = mode === 'RADIYO';
-  const handleModeToggleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-      event.preventDefault();
-      onModeChange('RADIYO');
-      return;
-    }
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-      event.preventDefault();
-      onModeChange('Collection');
-      return;
-    }
-    if (event.key === 'Home') {
-      event.preventDefault();
-      onModeChange('RADIYO');
-      return;
-    }
-    if (event.key === 'End') {
-      event.preventDefault();
-      onModeChange('Collection');
-    }
-  };
+  const tierOptions: PlayerTier[] = ['city', 'state', 'national'];
+  const wheelActions = getEngagementWheelActions(mode);
 
   return (
-    <section className="mt-5 rounded-2xl border border-black/15 bg-black px-5 py-4 text-white shadow-sm transition-all">
-      <div className="mb-4 flex flex-wrap items-center gap-4 rounded-xl border border-white/15 bg-white/5 px-4 py-3">
-        {(['city', 'state', 'national'] as PlayerTier[]).map((tier) => (
-          <button
-            key={tier}
-            type="button"
-            onClick={() => onTierChange(tier)}
-            className="inline-flex items-center gap-2 rounded-full px-2 py-1 text-xs font-medium text-white transition-opacity hover:opacity-80"
-            aria-pressed={selectedTier === tier}
-          >
-            <span
-              className={`h-3 w-3 rounded-full border ${
-                selectedTier === tier ? 'border-[#b7d43f] bg-[#b7d43f]' : 'border-white/70 bg-transparent'
-              }`}
-              aria-hidden
-            />
-            <span className="capitalize">{tier}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        {isRadiyoMode ? (
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant={rotationPool === 'new_releases' ? 'default' : 'outline'}
-              className="h-8 text-xs"
-              onClick={() => onRotationPoolChange('new_releases')}
-            >
-              New Releases
-            </Button>
-            <Button
-              size="sm"
-              variant={rotationPool === 'main_rotation' ? 'default' : 'outline'}
-              className="h-8 text-xs"
-              onClick={() => onRotationPoolChange('main_rotation')}
-            >
-              Main Rotation
-            </Button>
-          </div>
-        ) : (
-          <div className="text-xs font-medium text-white/70">Collection playback</div>
-        )}
-
-        <div className="min-w-0 flex items-center gap-2 px-1.5">
-          <span className="text-xs text-lime-300" aria-hidden>
-            📡
-          </span>
-          <p className="truncate text-xs font-medium text-white/80">{broadcastLabel}</p>
+    <section
+      data-slot="compact-player-shell"
+      className="mt-4 rounded-[1.4rem] border border-black/15 bg-black px-4 py-3 text-white shadow-sm transition-all"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
+            {isRadiyoMode ? 'Scene Context' : 'Collection Context'}
+          </p>
+          <p className="mt-1 truncate text-sm font-semibold leading-tight text-white">{broadcastLabel}</p>
         </div>
 
         <div
-          className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 p-1.5"
-          role="radiogroup"
-          aria-label="Player mode"
-          onKeyDown={handleModeToggleKeyDown}
+          className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75"
+          aria-label="Player mode summary"
         >
-          <Button
-            size="sm"
-            variant={isRadiyoMode ? 'default' : 'outline'}
-            className={isRadiyoMode ? 'h-8 bg-[#b7d43f] text-xs text-black hover:bg-[#a8c63a]' : 'h-8 text-xs text-white'}
-            onClick={() => onModeChange('RADIYO')}
-            aria-label="Switch to RADIYO mode"
-            role="radio"
-            aria-checked={isRadiyoMode}
-          >
-            RADIYO
-          </Button>
-          <Button
-            size="sm"
-            variant={mode === 'Collection' ? 'default' : 'outline'}
-            className={mode === 'Collection' ? 'h-8 bg-[#5da9ff] text-xs text-black hover:bg-[#499cf5]' : 'h-8 text-xs text-white'}
-            onClick={() => onModeChange('Collection')}
-            aria-label="Switch to Collection mode"
-            role="radio"
-            aria-checked={mode === 'Collection'}
-          >
-            Collection
-          </Button>
+          {mode}
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-4">
-        <div className="min-w-0 flex-1">
+      <div
+        data-slot="player-track-row"
+        className="mt-3 flex items-stretch gap-3 rounded-[1.2rem] border border-white/12 bg-white/[0.04] p-3"
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div
+            className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border text-[11px] font-semibold uppercase tracking-[0.16em] ${
+              isRadiyoMode
+                ? 'border-lime-300/35 bg-lime-300/12 text-lime-200'
+                : 'border-sky-300/35 bg-sky-300/12 text-sky-100'
+            }`}
+            aria-hidden
+          >
+            {isRadiyoMode ? 'RAD' : 'COL'}
+          </div>
+
+          <div className="min-w-0 flex-1">
+            {isRadiyoMode ? (
+              <>
+                <p className="truncate text-sm font-semibold leading-tight">Now Broadcasting</p>
+                <p className="mt-1 truncate text-xs text-white/72">
+                  {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="truncate text-sm font-semibold leading-tight">
+                  {collectionTitle ?? 'Collection Player'}
+                </p>
+                <p className="mt-1 truncate text-xs text-white/72">Selection-driven collection queue</p>
+              </>
+            )}
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {isRadiyoMode ? (
+                <>
+                  <Button
+                    size="sm"
+                    variant={rotationPool === 'new_releases' ? 'default' : 'outline'}
+                    className="h-7 rounded-full px-3 text-[11px]"
+                    onClick={() => onRotationPoolChange('new_releases')}
+                  >
+                    New
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={rotationPool === 'main_rotation' ? 'default' : 'outline'}
+                    className="h-7 rounded-full px-3 text-[11px]"
+                    onClick={() => onRotationPoolChange('main_rotation')}
+                  >
+                    Current
+                  </Button>
+                </>
+              ) : (
+                <p className="text-[11px] font-medium text-white/60">Selection-driven queue</p>
+              )}
+
+              <div className="min-w-0 flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-2.5 py-1">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-lime-300">Live</span>
+                <p className="truncate text-[11px] text-white/72">{broadcastLabel}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {isRadiyoMode ? (
+          <div
+            data-slot="player-tier-stack"
+            className="flex w-20 shrink-0 flex-col gap-1.5 rounded-[1rem] border border-white/12 bg-black/20 p-1.5"
+          >
+            {tierOptions.map((tier) => (
+              <button
+                key={tier}
+                type="button"
+                onClick={() => onTierChange(tier)}
+                className={`rounded-xl border px-2 py-1.5 text-[11px] font-semibold capitalize transition-colors ${
+                  selectedTier === tier
+                    ? 'border-[#b7d43f] bg-[#b7d43f] text-black'
+                    : 'border-white/12 bg-white/[0.03] text-white/82 hover:bg-white/[0.08]'
+                }`}
+                aria-pressed={selectedTier === tier}
+              >
+                {tier}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="flex w-20 shrink-0 flex-col items-stretch gap-1.5">
+            <button
+              type="button"
+              className="h-8 rounded-xl border border-white/20 px-2 text-xs font-medium text-blue-100 hover:bg-white/10"
+              aria-label="Back to RADIYO"
+              onClick={onCollectionEject}
+            >
+              Eject
+            </button>
+            <button
+              type="button"
+              className="h-8 rounded-xl border border-white/20 px-2 text-xs font-medium text-blue-100 hover:bg-white/10"
+              aria-label="Shuffle collection"
+            >
+              Shuffle
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[1rem] border border-white/12 bg-white/[0.03] px-3 py-2">
+        <div className="flex items-center gap-2">
           {isRadiyoMode ? (
             <>
-              <p className="truncate text-sm font-semibold leading-tight">Now Broadcasting</p>
-              <p className="truncate text-xs text-white/75">{rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}</p>
+              <button
+                type="button"
+                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-lime-300 hover:bg-white/10"
+                aria-label="Play"
+              >
+                Play
+              </button>
+              <button
+                type="button"
+                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-lime-300 hover:bg-white/10"
+                aria-label="Pause"
+              >
+                Pause
+              </button>
+              <button
+                type="button"
+                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-lime-300 hover:bg-white/10"
+                aria-label="Add to collection"
+              >
+                Add
+              </button>
             </>
           ) : (
             <>
-              <p className="truncate text-sm font-semibold leading-tight">Collection Player</p>
-              <p className="truncate text-xs text-white/75">Use shelves from expanded profile</p>
+              <button
+                type="button"
+                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-blue-200 hover:bg-white/10"
+                onClick={onCollectionEject}
+                aria-label="Back to RADIYO"
+              >
+                Back to RADIYO
+              </button>
+              <button
+                type="button"
+                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-blue-200 hover:bg-white/10"
+                aria-label="Pause"
+              >
+                Pause
+              </button>
+              <button
+                type="button"
+                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-blue-200 hover:bg-white/10"
+                aria-label="Shuffle collection"
+              >
+                Shuffle
+              </button>
             </>
           )}
         </div>
 
-        {isRadiyoMode ? (
-          <div className="flex items-center gap-2 text-lime-300">
-            <button
-              type="button"
-              className="h-8 rounded-md border border-white/20 px-3 text-xs text-lime-300 hover:bg-white/10"
-              aria-label="Play"
-            >
-              ▶
-            </button>
-            <button
-              type="button"
-              className="h-8 rounded-md border border-white/20 px-3 text-xs text-lime-300 hover:bg-white/10"
-              aria-label="Pause"
-            >
-              ⏸
-            </button>
-            <button
-              type="button"
-              className="h-8 rounded-md border border-white/20 px-3 text-xs text-lime-300 hover:bg-white/10"
-              aria-label="Add to collection"
-            >
-              +
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-blue-300">
-            <button
-              type="button"
-              className="h-8 rounded-md border border-white/20 px-3 text-xs text-blue-300 hover:bg-white/10"
-              aria-label="Back track"
-            >
-              ⏮
-            </button>
-            <button
-              type="button"
-              className="h-8 rounded-md border border-white/20 px-3 text-xs text-blue-300 hover:bg-white/10"
-              aria-label="Shuffle collection"
-            >
-              🔀
-            </button>
-            <button
-              type="button"
-              className="h-8 rounded-md border border-white/20 px-3 text-xs text-blue-300 hover:bg-white/10"
-              aria-label="Play"
-            >
-              ▶
-            </button>
-            <button
-              type="button"
-              className="h-8 rounded-md border border-white/20 px-3 text-xs text-blue-300 hover:bg-white/10"
-              aria-label="Pause"
-            >
-              ⏸
-            </button>
-          </div>
-        )}
+        <div className="text-right text-[11px] font-medium text-white/58">
+          <p>{isRadiyoMode ? 'Collection starts from an expanded-profile selection.' : 'Return path is explicit via eject.'}</p>
+          <p className="mt-1">
+            Wheel: {wheelActions.map((action) => (action.position ? `${action.position} ${action.label}` : action.label)).join(' • ')}
+          </p>
+        </div>
       </div>
     </section>
   );

@@ -8,6 +8,59 @@ export interface ResolveHomeCommunityParams {
   musicCommunity: string;
 }
 
+export interface CommunityFeedActor {
+  id: string;
+  username: string;
+  displayName: string;
+  avatar: string | null;
+}
+
+export interface CommunityFeedEntity {
+  type: 'signal' | 'track' | 'event' | string;
+  id: string;
+}
+
+export interface CommunityFeedItem {
+  id: string;
+  type: 'blast' | 'track_release' | 'event_created' | 'signal_created' | string;
+  occurredAt: string;
+  actor: CommunityFeedActor | null;
+  entity: CommunityFeedEntity;
+  metadata?: Record<string, unknown>;
+}
+
+export interface CommunityFeedResponse {
+  items: CommunityFeedItem[];
+  nextCursor: string | null;
+  limit: number;
+  sceneId: string | null;
+}
+
+export interface CommunityEventItem {
+  id: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  locationName: string;
+  address: string;
+  attendeeCount: number;
+  maxAttendees: number | null;
+}
+
+export interface CommunityPromotionItem {
+  id: string;
+  type: string;
+  createdAt: string;
+  actor: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string | null;
+  } | null;
+  metadata: Record<string, unknown> | null;
+}
+
 export interface CommunityStatisticsResponse {
   community: {
     id: string;
@@ -134,6 +187,123 @@ export async function getActiveCommunityStatistics(
     sceneId: (response as { meta?: { sceneId?: string } }).meta?.sceneId ?? null,
     data: response.data ?? null,
   };
+}
+
+export async function getCommunityFeed(
+  communityId: string,
+  params: { limit: number; before?: string | null },
+  token?: string,
+): Promise<CommunityFeedResponse> {
+  const query = new URLSearchParams({
+    limit: String(params.limit),
+  });
+
+  if (params.before) {
+    query.set('before', params.before);
+  }
+
+  const response = await api.get<CommunityFeedItem[]>(
+    `/communities/${communityId}/feed?${query.toString()}`,
+    { token },
+  );
+
+  return {
+    items: response.data ?? [],
+    nextCursor: (response as { meta?: { nextCursor?: string | null } }).meta?.nextCursor ?? null,
+    limit: (response as { meta?: { limit?: number } }).meta?.limit ?? params.limit,
+    sceneId: communityId,
+  };
+}
+
+export async function getActiveCommunityFeed(
+  params: { limit: number; before?: string | null },
+  token?: string,
+): Promise<CommunityFeedResponse> {
+  const query = new URLSearchParams({
+    limit: String(params.limit),
+  });
+
+  if (params.before) {
+    query.set('before', params.before);
+  }
+
+  const response = await api.get<CommunityFeedItem[]>(`/communities/active/feed?${query.toString()}`, {
+    token,
+  });
+
+  return {
+    items: response.data ?? [],
+    nextCursor: (response as { meta?: { nextCursor?: string | null } }).meta?.nextCursor ?? null,
+    limit: (response as { meta?: { limit?: number } }).meta?.limit ?? params.limit,
+    sceneId: (response as { meta?: { sceneId?: string | null } }).meta?.sceneId ?? null,
+  };
+}
+
+export async function getCommunityEvents(
+  communityId: string,
+  params: { limit: number; includePast: boolean },
+  token?: string,
+): Promise<CommunityEventItem[]> {
+  const query = new URLSearchParams({
+    limit: String(params.limit),
+    includePast: String(params.includePast),
+  });
+
+  const response = await api.get<CommunityEventItem[]>(
+    `/communities/${communityId}/events?${query.toString()}`,
+    { token },
+  );
+
+  return response.data ?? [];
+}
+
+export async function getActiveCommunityEvents(
+  params: { limit: number; includePast: boolean },
+  token?: string,
+): Promise<CommunityEventItem[]> {
+  const query = new URLSearchParams({
+    limit: String(params.limit),
+    includePast: String(params.includePast),
+  });
+
+  const response = await api.get<CommunityEventItem[]>(`/communities/active/events?${query.toString()}`, {
+    token,
+  });
+
+  return response.data ?? [];
+}
+
+export async function getCommunityPromotions(
+  communityId: string,
+  params: { limit: number },
+  token?: string,
+): Promise<CommunityPromotionItem[]> {
+  const query = new URLSearchParams({
+    limit: String(params.limit),
+  });
+
+  const response = await api.get<CommunityPromotionItem[]>(
+    `/communities/${communityId}/promotions?${query.toString()}`,
+    { token },
+  );
+
+  return response.data ?? [];
+}
+
+export async function getActiveCommunityPromotions(
+  params: { limit: number },
+  token?: string,
+): Promise<CommunityPromotionItem[]> {
+  const query = new URLSearchParams({
+    limit: String(params.limit),
+  });
+
+  const response = await api.get<CommunityPromotionItem[]>(
+    `/communities/active/promotions?${query.toString()}`,
+    { token },
+  );
+
+  return response.data ?? [];
 }
 
 export async function getCommunitySceneMap(

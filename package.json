@@ -37,6 +37,7 @@
     "reliant:supervisor": "node scripts/reliant-supervisor.mjs",
     "reliant:supervisor:watch": "node scripts/reliant-supervisor.mjs --watch --interval-ms 5000",
     "reliant:next": "node scripts/reliant-next-action.mjs",
+    "reliant:verify:transcript": "node scripts/reliant-verify-transcript.mjs",
     "reliant:runtime:clean": "node scripts/reliant-runtime-clean.mjs",
     "reliant:queue:validate": "node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/mvp-slices.json",
     "reliant:queue:test": "node scripts/reliant-slice-queue.test.mjs",

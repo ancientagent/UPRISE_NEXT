@@ -21,7 +21,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - Events
   - Promotions
   - Statistics / Scene Map (dedicated page-level surface)
-  - Social (V2)
+  - Social (V2, hidden in MVP UI)
 - Profile strip notification requirement:
   - A notification icon is present at the top-right of the profile strip, immediately next to the `...` settings menu.
   - Pioneer users receive an onboarding follow-up message in this notification surface after Home Scene context is loaded.
@@ -67,7 +67,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 
 ### Deferred Behavior (Not Implemented Yet)
 - Advanced registrar lifecycle dashboard in Plot (beyond status summary + explicit registrar navigation).
-- Social tab message boards/listening rooms (V2).
+- Social tab message boards/listening rooms (V2). Social tab UI remains hidden in MVP.
 
 ## Non-Functional Requirements
 - No personalized ranking or algorithmic feed ordering.
@@ -115,7 +115,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Feed uses explicit scene actions from API; it does not rank or personalize.
 - Events uses scene-scoped API listings from selected community anchor.
 - Promotions uses scene-scoped API listings from selected community anchor.
-- Social remains placeholder until endpoint ships.
+- Social remains hidden in MVP until endpoint + surface contract ship.
 
 ## Acceptance Tests / Test Plan
 - Plot loads and displays Home Scene context from onboarding state.

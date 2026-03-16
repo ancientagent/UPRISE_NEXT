@@ -1,60 +1,68 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@uprise/ui';
-import { api } from '@/lib/api';
+import {
+  getActiveCommunityEvents,
+  getCommunityEvents,
+  type CommunityEventItem,
+} from '@/lib/communities/client';
 import { useAuthStore } from '@/store/auth';
-
-interface PlotEvent {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  locationName: string;
-  address: string;
-  attendeeCount: number;
-  maxAttendees: number | null;
-}
 
 interface PlotEventsPanelProps {
   communityId: string | null;
   communityName?: string | null;
 }
 
+function EventsSkeletonRows() {
+  return (
+    <div className="mt-4 space-y-2" aria-hidden="true">
+      {[0, 1, 2].map((index) => (
+        <div key={index} className="rounded-xl border border-black/10 p-3">
+          <div className="h-4 w-48 animate-pulse rounded bg-black/10" />
+          <div className="mt-2 h-3 w-56 animate-pulse rounded bg-black/5" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function PlotEventsPanel({ communityId, communityName }: PlotEventsPanelProps) {
   const { token } = useAuthStore();
-  const [items, setItems] = useState<PlotEvent[]>([]);
+  const [items, setItems] = useState<CommunityEventItem[]>([]);
   const [includePast, setIncludePast] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchEvents() {
-      setLoading(true);
-      setError(null);
+  const fetchEvents = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        const path = communityId
-          ? `/communities/${communityId}/events?limit=20&includePast=${includePast}`
-          : `/communities/active/events?limit=20&includePast=${includePast}`;
-        const response = await api.get<PlotEvent[]>(
-          path,
-          { token: token || undefined },
-        );
+    try {
+      const response = communityId
+        ? await getCommunityEvents(
+            communityId,
+            { limit: 20, includePast },
+            token || undefined,
+          )
+        : await getActiveCommunityEvents(
+            { limit: 20, includePast },
+            token || undefined,
+          );
 
-        setItems(response.data ?? []);
-      } catch (e) {
-        const message = e instanceof Error ? e.message : 'Unable to load events.';
-        setError(message);
-      } finally {
-        setLoading(false);
-      }
+      setItems(response);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unable to load events.';
+      setError(message);
+    } finally {
+      setLoading(false);
     }
+  }, [communityId, includePast, token]);
 
+  useEffect(() => {
     setItems([]);
     fetchEvents();
-  }, [communityId, includePast, token]);
+  }, [fetchEvents]);
 
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6">
@@ -63,23 +71,38 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
           <h2 className="text-lg font-semibold text-black">
             Events{communityName ? ` • ${communityName}` : ''}
           </h2>
-          <p className="mt-1 text-xs text-black/50">Scene-scoped events. No personalized ranking.</p>
+          <p className="mt-1 text-xs text-black/50">
+            Scene-scoped events ordered by canonical start time. No personalized ranking.
+          </p>
         </div>
         <Button size="sm" variant="outline" onClick={() => setIncludePast((prev) => !prev)}>
           {includePast ? 'Upcoming Only' : 'Include Past'}
         </Button>
       </div>
 
-      {loading && <p className="mt-4 text-sm text-black/60">Loading events...</p>}
+      {loading && items.length === 0 ? <EventsSkeletonRows /> : null}
 
       {error && (
         <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {error}
+          <p>Events read failed for this scene context. {error}</p>
+          <Button
+            className="mt-3 h-8 text-xs"
+            size="sm"
+            variant="outline"
+            onClick={() => fetchEvents()}
+          >
+            Retry Events
+          </Button>
         </div>
       )}
 
       {!loading && !error && items.length === 0 && (
-        <p className="mt-4 text-sm text-black/60">No events found for this scene.</p>
+        <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
+          <p className="text-sm font-medium text-black">No scene events are scheduled for this context.</p>
+          <p className="mt-1 text-xs text-black/55">
+            This panel stays descriptive and locality-bound. It does not hide ranked or promoted events.
+          </p>
+        </div>
       )}
 
       {!loading && !error && items.length > 0 && (
