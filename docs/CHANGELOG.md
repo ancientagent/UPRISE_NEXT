@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 ### Added
+- Added Batch18 UX execution package:
+  - `docs/solutions/MVP_UX_BATCH18_EXECUTION_PLAN.md`
+  - `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch18.json`
+  - `docs/handoff/2026-03-16_batch18-ux-queues-and-plan.md`
 - PR62 CI fix: resolved flaky API test expiry boundary in `apps/api/test/registrar.service.test.ts` by switching hard-coded expiry fixture to a deterministic future timestamp; handoff `docs/handoff/2026-03-16_pr62-api-test-expiry-fix.md`.
 - Plot MVP lock alignment: removed deferred `Social` tab rendering from `/plot` and tightened regression lock assertions to enforce `Feed/Events/Promotions/Statistics` only; see `docs/handoff/2026-03-16_plot-social-hidden-lock-pass.md`.
 - Lane E Batch16 task complete (`SLICE-UXQAREV-573A`): published the updated Batch16 UX risk/rollback memo with current `/plot` lock-conflict evidence and exact verify output in [`docs/handoff/2026-03-16_SLICE-UXQAREV-573A.md`](/home/baris/UPRISE_NEXT/docs/handoff/2026-03-16_SLICE-UXQAREV-573A.md).
