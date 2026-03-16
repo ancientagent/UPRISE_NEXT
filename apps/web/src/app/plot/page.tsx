@@ -43,9 +43,7 @@ const StatisticsPanel = dynamic(
   }
 );
 
-const primaryPlotTabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;
-const deferredPlotTabs = ['Social'] as const;
-const tabs = [...primaryPlotTabs, ...deferredPlotTabs] as const;
+const tabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;
 type PlotTab = (typeof tabs)[number];
 const expandedProfileSections = [
   'Singles/Playlists',
@@ -566,19 +564,7 @@ export default function PlotPage() {
                   </p>
                 </div>
 
-                {/* Statistics Panel */}
-                {activeTab === 'Social' ? (
-                  <div className="rounded-2xl border border-dashed border-black/20 py-12 text-center">
-                    <p className="mb-3 text-4xl">
-                      {activeTab === 'Social' && '💬'}
-                    </p>
-                    <p className="text-sm text-black/60">
-                      {activeTab} content will appear here.
-                    </p>
-                  </div>
-                ) : (
-                  renderPrimaryPlotTabBody()
-                )}
+                {renderPrimaryPlotTabBody()}
               </div>
 
               {/* Right Panel - Selected Community Info */}

@@ -81,8 +81,8 @@ describe('/plot UX regression lock', () => {
   it('locks primary Plot tab ownership to explicit Feed/Events/Promotions/Statistics bodies', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain("const primaryPlotTabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;");
-    expect(plotPageSource).toContain("const deferredPlotTabs = ['Social'] as const;");
+    expect(plotPageSource).toContain("const tabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;");
+    expect(plotPageSource).not.toContain('Social');
     expect(plotPageSource).toContain("if (activeTab === 'Feed')");
     expect(plotPageSource).toContain('SeedFeedPanel');
     expect(plotPageSource).toContain("if (activeTab === 'Events')");

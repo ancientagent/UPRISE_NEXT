@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Plot MVP lock alignment: removed deferred `Social` tab rendering from `/plot` and tightened regression lock assertions to enforce `Feed/Events/Promotions/Statistics` only; see `docs/handoff/2026-03-16_plot-social-hidden-lock-pass.md`.
 - Lane E Batch16 task complete (`SLICE-UXQAREV-573A`): published the updated Batch16 UX risk/rollback memo with current `/plot` lock-conflict evidence and exact verify output in [`docs/handoff/2026-03-16_SLICE-UXQAREV-573A.md`](/home/baris/UPRISE_NEXT/docs/handoff/2026-03-16_SLICE-UXQAREV-573A.md).
 - Lane A batch16 blocked (`SLICE-UXPLOT-550A`): Plot Social deferred-policy pass remains canon-blocked because current docs conflict on hidden-vs-placeholder Social exposure in collapsed Plot; report [`docs/handoff/2026-03-16_SLICE-UXPLOT-550A_BLOCKED.md`](/home/baris/UPRISE_NEXT/docs/handoff/2026-03-16_SLICE-UXPLOT-550A_BLOCKED.md).
 - Lane A Batch16 task complete (`SLICE-UXPLOT-551A`): finalized `/plot` primary tab/body ownership with explicit Feed/Events/Promotions/Statistics rendering paths and extended regression locks while keeping unresolved Social treatment isolated; report [`docs/handoff/2026-03-16_SLICE-UXPLOT-551A.md`](/home/baris/UPRISE_NEXT/docs/handoff/2026-03-16_SLICE-UXPLOT-551A.md).
