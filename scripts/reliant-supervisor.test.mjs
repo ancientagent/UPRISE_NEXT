@@ -196,6 +196,53 @@ function main() {
   assert.equal(healthMulti.status, 6);
   assert.match(healthMulti.stderr, /code=multiple_in_progress/);
 
+  // Supervisor should stop when the next queued task explicitly declares a founder-decision dependency.
+  const founderQueuePath = path.join(tempDir, 'founder-queue.json');
+  const founderRuntimePath = path.join(tempDir, 'founder-runtime.json');
+  const founderLanesPath = path.join(tempDir, 'founder-lanes.json');
+  fs.writeFileSync(
+    founderQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 1, queued: 1, in_progress: 0, done: 0, blocked: 0 },
+        tasks: [
+          {
+            id: 'F1',
+            title: 'Founder locked task',
+            prompt: 'Founder locked task',
+            status: 'queued',
+            founderDecisionRequired: true,
+            founderDecisionReason: 'Social exposure treatment is founder-locked.',
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(founderLanesPath, JSON.stringify([{ name: 'founder-lane', queue: founderQueuePath, runtime: founderRuntimePath }], null, 2));
+  const founderStop = spawnSync(
+    process.execPath,
+    [scriptPath, '--lanes-json', founderLanesPath, '--status-out', statusOut],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(founderStop.status, 7);
+  assert.match(founderStop.stderr, /code=founder_decision_required/);
+  const founderStopStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
+  assert.equal(founderStopStatus.stopConditions.length, 1);
+  assert.equal(founderStopStatus.stopConditions[0].taskId, 'F1');
+  assert.equal(founderStopStatus.lanes[0].founderDecisionStop.requiresStop, true);
+  assert.equal(founderStopStatus.lanes[0].actions.includes('stop:founder-decision:F1'), true);
+
+  const founderHealthStop = spawnSync(
+    process.execPath,
+    [scriptPath, '--health-check', '--lanes-json', founderLanesPath, '--status-out', statusOut],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(founderHealthStop.status, 6);
+  assert.match(founderHealthStop.stderr, /code=founder_decision_required/);
+
   // Bounded jitter should produce deterministic bounded values.
   const jitterProbe = spawnSync(
     process.execPath,

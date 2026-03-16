@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXQAREV-573A",
+  "title": "Batch16 risk/rollback memo",
+  "prompt": "Execute one MVP slice only: produce severity-ordered UX risk/rollback memo for batch16 with residual risk and deterministic revert notes.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-16T17:31:28.635Z"
+}

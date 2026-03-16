@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-15T12:00:00.000Z",
+  "lane": "lane-e-ux-qarev-batch16",
+  "sourceFiles": [
+    "mvp-slices-batch16-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 5,
+    "blocked": 1
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXQAREV-570A",
+      "title": "Batch16 QA replay 1 (Plot + Player/Profile)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for lane A/C outputs and publish exact command outputs in dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:45:00.268Z",
+      "lane": "lane-e-ux-qarev-batch16",
+      "startedAt": "2026-03-15T21:43:47.406Z",
+      "finishedAt": "2026-03-15T21:45:00.268Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXQAREV-570A.md"
+    },
+    {
+      "id": "SLICE-UXQAREV-571A",
+      "title": "Batch16 QA replay 2 (Discovery)",
+      "prompt": "Execute one MVP slice only: run consolidated validation replay for lane B discovery changes and publish exact command outputs in dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:46:04.223Z",
+      "lane": "lane-e-ux-qarev-batch16",
+      "startedAt": "2026-03-15T21:45:02.972Z",
+      "finishedAt": "2026-03-15T21:46:04.223Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXQAREV-571A.md"
+    },
+    {
+      "id": "SLICE-UXQAREV-572A",
+      "title": "Batch16 docs/spec consistency pass",
+      "prompt": "Execute one MVP slice only: verify docs/spec/solution consistency for UX master lock vs implemented behavior and patch wording drift only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "blocked",
+      "updatedAt": "2026-03-16T17:31:24.705Z",
+      "lane": "lane-e-ux-qarev-batch16",
+      "startedAt": "2026-03-16T01:25:53.037Z",
+      "blockedAt": "2026-03-16T17:31:24.705Z",
+      "blockerReason": "Blocked: wording-only docs/spec pass cannot complete because /plot still renders Social while MVP_UX_MASTER_LOCK_R1 and docs/specs/communities/plot-and-scene-plot.md keep Social hidden/deferred for MVP; see docs/handoff/2026-03-16_SLICE-UXQAREV-572A_BLOCKED.md"
+    },
+    {
+      "id": "SLICE-UXQAREV-573A",
+      "title": "Batch16 risk/rollback memo",
+      "prompt": "Execute one MVP slice only: produce severity-ordered UX risk/rollback memo for batch16 with residual risk and deterministic revert notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-16T17:32:30.662Z",
+      "lane": "lane-e-ux-qarev-batch16",
+      "startedAt": "2026-03-16T17:31:28.635Z",
+      "finishedAt": "2026-03-16T17:32:30.662Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXQAREV-573A.md"
+    },
+    {
+      "id": "SLICE-UXQAREV-574A",
+      "title": "Batch16 founder checklist closeout",
+      "prompt": "Execute one MVP slice only: publish founder walkthrough checklist covering completed UX locks and unresolved decision register items.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:52:18.249Z",
+      "lane": "lane-e-ux-qarev-batch16",
+      "startedAt": "2026-03-15T21:51:00.268Z",
+      "finishedAt": "2026-03-15T21:52:18.249Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXQAREV-574A.md"
+    },
+    {
+      "id": "SLICE-UXQAREV-575A",
+      "title": "Batch16 final gate replay + closeout",
+      "prompt": "Execute one MVP slice only: run final targeted gate replay for all batch16 touched surfaces and publish closeout with exact outputs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:53:44.323Z",
+      "lane": "lane-e-ux-qarev-batch16",
+      "startedAt": "2026-03-15T21:52:21.049Z",
+      "finishedAt": "2026-03-15T21:53:44.323Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXQAREV-575A.md"
+    }
+  ]
+}

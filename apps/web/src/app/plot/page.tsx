@@ -12,11 +12,14 @@ import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
+import { buildRadiyoBroadcastLabel } from '@/components/plot/tier-guard';
 import { getDiscoveryContext } from '@/lib/discovery/client';
 import { toDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
   getCommunityById,
+  getCommunityStatistics,
   resolveHomeCommunity,
+  type CommunityStatisticsResponse,
 } from '@/lib/communities/client';
 
 // Dynamic imports for client components
@@ -40,21 +43,41 @@ const StatisticsPanel = dynamic(
   }
 );
 
-const tabs = ['Feed', 'Events', 'Promotions', 'Statistics', 'Social'];
-const collectionShelves = ['Tracks', 'Playlists', 'Saved'] as const;
-type CollectionShelf = (typeof collectionShelves)[number];
+const tabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;
+type PlotTab = (typeof tabs)[number];
+const expandedProfileSections = [
+  'Singles/Playlists',
+  'Events',
+  'Photos',
+  'Merch',
+  'Saved Uprises',
+  'Saved Promos/Coupons',
+] as const;
+type ExpandedProfileSection = (typeof expandedProfileSections)[number];
+const singlesAndPlaylistsItems: Array<{ id: string; label: string; kind: 'track' | 'playlist' }> = [
+  { id: 'track-south-side-signal', label: 'South Side Signal', kind: 'track' },
+  { id: 'track-lakefront-lights', label: 'Lakefront Lights', kind: 'track' },
+  { id: 'playlist-city-after-hours', label: 'City After Hours', kind: 'playlist' },
+  { id: 'playlist-state-line-set', label: 'State Line Set', kind: 'playlist' },
+];
 
 export default function PlotPage() {
   const router = useRouter();
   const { homeScene, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
   const { token, user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState('Feed');
+  const [activeTab, setActiveTab] = useState<PlotTab>('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
   const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
-  const [activeCollectionShelf, setActiveCollectionShelf] = useState<CollectionShelf>('Tracks');
+  const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists');
+  const [selectedCollectionItem, setSelectedCollectionItem] = useState<{
+    id: string;
+    label: string;
+    kind: 'track' | 'playlist';
+  } | null>(null);
+  const [expandedProfileStats, setExpandedProfileStats] = useState<CommunityStatisticsResponse | null>(null);
   const hasHomeScene =
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
@@ -111,8 +134,35 @@ export default function PlotPage() {
     resolveDefaultCommunity();
   }, [selectedCommunity, token, homeScene, tunedSceneId, hasHomeScene]);
 
+  useEffect(() => {
+    async function loadExpandedProfileStats() {
+      if (!selectedCommunity?.id) {
+        setExpandedProfileStats(null);
+        return;
+      }
+
+      try {
+        const stats = await getCommunityStatistics(selectedCommunity.id, selectedTier, token || undefined);
+        setExpandedProfileStats(stats);
+      } catch {
+        setExpandedProfileStats(null);
+      }
+    }
+
+    loadExpandedProfileStats();
+  }, [selectedCommunity?.id, selectedTier, token]);
+
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
+  };
+
+  const handleCollectionSelection = (item: { id: string; label: string; kind: 'track' | 'playlist' }) => {
+    setSelectedCollectionItem(item);
+    setPlayerMode('Collection');
+  };
+
+  const handleCollectionEject = () => {
+    setPlayerMode('RADIYO');
   };
 
   const handleProfilePointerDown = (event: PointerEvent<HTMLDivElement>) => {
@@ -164,16 +214,87 @@ export default function PlotPage() {
     // This callback exists for potential future use
   };
   const isProfileExpanded = profilePanelState === 'expanded';
-  const radiyoBroadcastLabel = homeScene
-    ? `${homeScene.musicCommunity}`
-    : 'City Punk Uprise';
-  const collectionBroadcastLabel = `${user?.displayName || user?.username || 'Your'} Collection`;
+  const radiyoBroadcastLabel = buildRadiyoBroadcastLabel(selectedTier, selectedCommunity, homeScene);
+  const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Collection`;
   const seamLabel =
     profilePanelState === 'expanded'
       ? 'Pull up or tap to collapse profile'
       : profilePanelState === 'peek'
         ? 'Release to collapse or keep pulling to expand'
         : 'Pull down profile';
+  const calendarDate = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+  }).format(new Date());
+  const activityScore = expandedProfileStats?.metrics.activityScore ?? 0;
+  const eventsThisWeek = expandedProfileStats?.metrics.eventsThisWeek ?? 0;
+  const plotTabHeading = activeTab === 'Statistics' ? 'Scene Statistics' : activeTab;
+  const plotTabDescription =
+    activeTab === 'Feed'
+      ? 'Community actions appear here.'
+      : activeTab === 'Events'
+        ? 'Scene events listing from your selected community anchor.'
+        : activeTab === 'Promotions'
+          ? 'Scene-scoped promotions and offers from your selected anchor.'
+          : activeTab === 'Statistics'
+            ? null
+            : 'Message boards and listening rooms.';
+
+  const renderPrimaryPlotTabBody = () => {
+    if (activeTab === 'Statistics') {
+      return (
+        <div className="space-y-4">
+          <StatisticsPanel
+            selectedTier={selectedTier}
+            selectedCommunity={selectedCommunity}
+            onCommunitySelect={handleCommunitySelect}
+            onCommunitiesUpdate={handleCommunitiesUpdate}
+          />
+          <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <h3 className="mb-2 font-semibold text-black">Scene Activity Snapshot</h3>
+            <p className="text-sm text-black/60">
+              Descriptive context for the current statistics scope. This is not a ranking or authority signal.
+            </p>
+            <p className="mt-2 text-xs text-black/50">
+              Current tier: <span className="capitalize">{selectedTier}</span>
+              {selectedCommunity && <span> • Selected: {selectedCommunity.name}</span>}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === 'Feed') {
+      return (
+        <SeedFeedPanel
+          communityId={selectedCommunity?.id ?? null}
+          communityName={selectedCommunity?.name ?? null}
+          selectedTier={selectedTier}
+        />
+      );
+    }
+
+    if (activeTab === 'Events') {
+      return (
+        <PlotEventsPanel
+          communityId={selectedCommunity?.id ?? null}
+          communityName={selectedCommunity?.name ?? null}
+        />
+      );
+    }
+
+    if (activeTab === 'Promotions') {
+      return (
+        <PlotPromotionsPanel
+          communityId={selectedCommunity?.id ?? null}
+          communityName={selectedCommunity?.name ?? null}
+        />
+      );
+    }
+
+    return null;
+  };
 
   useEffect(() => {
     if (!hasHomeScene) {
@@ -243,12 +364,13 @@ export default function PlotPage() {
 
         <RadiyoPlayerPanel
           mode={playerMode}
-          onModeChange={setPlayerMode}
+          onCollectionEject={handleCollectionEject}
           rotationPool={rotationPool}
           onRotationPoolChange={setRotationPool}
           selectedTier={selectedTier}
           onTierChange={setSelectedTier}
           broadcastLabel={playerMode === 'RADIYO' ? radiyoBroadcastLabel : collectionBroadcastLabel}
+          collectionTitle={selectedCollectionItem?.label ?? null}
         />
 
         {isProfileExpanded ? (
@@ -257,9 +379,39 @@ export default function PlotPage() {
             className="mt-6 space-y-5 rounded-2xl border border-black/10 bg-white/92 p-6 shadow-sm transition-all duration-200"
             aria-labelledby="plot-profile-seam-toggle"
           >
-            <header>
-              <h2 className="text-base font-semibold leading-tight text-black">Expanded Profile</h2>
-              <p className="mt-1 text-xs text-black/60">Single-route profile composition (mobile parity contract)</p>
+            <header className="grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Profile Summary</p>
+                  <h2 className="mt-1 text-lg font-semibold leading-tight text-black">
+                    {user?.displayName || user?.username || 'User'}
+                  </h2>
+                  <p className="mt-1 text-sm text-black/60">@{user?.username || 'listener'}</p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-xl border border-black/10 bg-white p-3">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Activity Score</p>
+                    <p className="mt-1 text-lg font-semibold text-black">{activityScore}</p>
+                  </div>
+                  <div className="rounded-xl border border-black/10 bg-white p-3">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Tier Snapshot</p>
+                    <p className="mt-1 text-sm font-medium capitalize text-black">{selectedTier}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-black/10 bg-white p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Calendar</p>
+                <p className="mt-2 text-2xl font-semibold text-black">{calendarDate}</p>
+                <p className="mt-1 text-sm text-black/60">
+                  {eventsThisWeek} event{eventsThisWeek === 1 ? '' : 's'} this week
+                </p>
+                <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Context</p>
+                <p className="mt-1 text-sm font-medium text-black">
+                  {selectedCommunity?.name ?? homeScene?.musicCommunity ?? 'No scene selected'}
+                </p>
+              </div>
             </header>
 
             <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
@@ -270,68 +422,104 @@ export default function PlotPage() {
             </div>
 
             <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Collection Preview</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {collectionShelves.map((shelf) => (
+              <div className="flex flex-wrap gap-2">
+                {expandedProfileSections.map((section) => (
                   <Button
-                    key={shelf}
+                    key={section}
                     size="sm"
-                    variant={activeCollectionShelf === shelf ? 'default' : 'outline'}
-                    className={activeCollectionShelf === shelf ? 'h-8 rounded-full bg-black text-xs text-white' : 'h-8 rounded-full text-xs'}
-                    onClick={() => setActiveCollectionShelf(shelf)}
+                    variant={activeProfileSection === section ? 'default' : 'outline'}
+                    className={activeProfileSection === section ? 'h-8 rounded-full bg-black text-xs text-white' : 'h-8 rounded-full text-xs'}
+                    onClick={() => setActiveProfileSection(section)}
                   >
-                    {shelf}
+                    {section}
                   </Button>
                 ))}
               </div>
-              <div className="mt-3 rounded-lg border border-black/10 bg-white p-3">
-                <p className="text-sm font-medium text-black">{activeCollectionShelf} Shelf</p>
-                <p className="mt-1 text-xs text-black/65">
-                  Collection preview is kept lightweight in expanded profile mode. Deep browsing remains in collection/profile surfaces.
-                </p>
-              </div>
-            </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Community</p>
-                <p className="mt-1 text-sm font-medium text-black">{selectedCommunity?.name ?? 'No community selected'}</p>
-              </div>
-              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-                <p className="text-xs uppercase tracking-[0.12em] text-black/55">Tier Snapshot</p>
-                <p className="mt-1 text-sm font-medium capitalize text-black">{selectedTier}</p>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Statistics Preview</p>
-              <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                <div className="rounded-lg border border-black/10 bg-white p-2">
-                  <p className="text-[11px] text-black/55">Community Members</p>
-                  <p className="text-sm font-semibold text-black">{selectedCommunity?.memberCount?.toLocaleString() ?? '0'}</p>
-                </div>
-                <div className="rounded-lg border border-black/10 bg-white p-2">
-                  <p className="text-[11px] text-black/55">Mode</p>
-                  <p className="text-sm font-semibold text-black">{playerMode}</p>
-                </div>
-                <div className="rounded-lg border border-black/10 bg-white p-2">
-                  <p className="text-[11px] text-black/55">Tier</p>
-                  <p className="text-sm font-semibold capitalize text-black">{selectedTier}</p>
-                </div>
+              <div className="mt-4 rounded-lg border border-black/10 bg-white p-4">
+                <p className="text-sm font-medium text-black">{activeProfileSection}</p>
+                {activeProfileSection === 'Singles/Playlists' ? (
+                  <div className="mt-3 flex flex-col gap-2">
+                    {singlesAndPlaylistsItems.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${
+                          selectedCollectionItem?.id === item.id
+                            ? 'border-black bg-black text-white'
+                            : 'border-black/10 bg-black/[0.02] text-black hover:bg-black/[0.05]'
+                        }`}
+                        onClick={() => handleCollectionSelection(item)}
+                      >
+                        <span>
+                          <span className="block text-sm font-medium">{item.label}</span>
+                          <span className={`block text-[11px] uppercase tracking-[0.12em] ${
+                            selectedCollectionItem?.id === item.id ? 'text-white/75' : 'text-black/55'
+                          }`}>
+                            {item.kind === 'track' ? 'Track' : 'Playlist'}
+                          </span>
+                        </span>
+                        <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
+                          selectedCollectionItem?.id === item.id ? 'text-white/75' : 'text-black/55'
+                        }`}>
+                          {selectedCollectionItem?.id === item.id && playerMode === 'Collection'
+                            ? 'Live in player'
+                            : 'Select to enter Collection mode'}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                ) : activeProfileSection === 'Events' ? (
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Event Artifacts</p>
+                      <p className="mt-1 text-sm text-black/70">
+                        Event fliers and saved scene artifacts live here. Calendar stays in the header.
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Events This Week</p>
+                      <p className="mt-1 text-lg font-semibold text-black">{eventsThisWeek}</p>
+                    </div>
+                  </div>
+                ) : activeProfileSection === 'Photos' ? (
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Photography</p>
+                      <p className="mt-1 text-sm text-black/70">Saved event and scene photography artifacts appear in this workspace.</p>
+                    </div>
+                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Current Scene</p>
+                      <p className="mt-1 text-sm font-medium text-black">{selectedCommunity?.name ?? 'No scene selected'}</p>
+                    </div>
+                  </div>
+                ) : activeProfileSection === 'Merch' ? (
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+                    {['Posters', 'Shirts', 'Patches', 'Buttons', 'Special Items'].map((item) => (
+                      <div key={item} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                        <p className="text-sm font-medium text-black">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : activeProfileSection === 'Saved Uprises' ? (
+                  <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Scene Entries</p>
+                    <p className="mt-1 text-sm text-black/70">
+                      {selectedCommunity?.name ?? 'Current scene'} remains available as a saved scene anchor in this workspace.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Promos/Coupons</p>
+                    <p className="mt-1 text-sm text-black/70">
+                      Saved promos and coupons appear here with status and expiration when available for the active scene.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="flex flex-wrap gap-2.5">
-              {selectedCommunity ? (
-                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => router.push(`/community/${selectedCommunity.id}`)}>
-                  Open Community
-                </Button>
-              ) : null}
-              {user?.id ? (
-                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => router.push(`/users/${user.id}`)}>
-                  Open Collection Profile
-                </Button>
-              ) : null}
               <Button size="sm" variant="outline" className="h-8 text-xs" onClick={toggleProfilePanel}>
                 Return to Plot Tabs
               </Button>
@@ -363,13 +551,9 @@ export default function PlotPage() {
               {/* Left Panel - Statistics & Map */}
               <div className="rounded-2xl border border-black/10 bg-white p-6 lg:p-7">
                 <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-black">
-                    {activeTab === 'Statistics' ? 'Scene Statistics' : activeTab}
-                  </h2>
+                  <h2 className="text-lg font-semibold text-black">{plotTabHeading}</h2>
                   <p className="text-sm text-black/60">
-                    {activeTab === 'Feed' && 'Community actions appear here.'}
-                    {activeTab === 'Events' && 'Scene events listing from your selected community anchor.'}
-                    {activeTab === 'Promotions' && 'Scene-scoped promotions and offers from your selected anchor.'}
+                    {plotTabDescription}
                     {activeTab === 'Statistics' && (
                       <>
                         Scene metrics and activity from{' '}
@@ -377,56 +561,10 @@ export default function PlotPage() {
                         {!homeScene && '. Complete onboarding to see your local scene.'}
                       </>
                     )}
-                    {activeTab === 'Social' && 'Message boards and listening rooms.'}
                   </p>
                 </div>
 
-                {/* Statistics Panel */}
-                {activeTab === 'Statistics' ? (
-                  <div className="space-y-4">
-                    <StatisticsPanel
-                      selectedTier={selectedTier}
-                      selectedCommunity={selectedCommunity}
-                      onCommunitySelect={handleCommunitySelect}
-                      onCommunitiesUpdate={handleCommunitiesUpdate}
-                    />
-                    <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
-                    <div className="rounded-2xl border border-black/10 bg-white p-6">
-                      <h3 className="mb-2 font-semibold text-black">Scene Activity Snapshot</h3>
-                      <p className="text-sm text-black/60">
-                        Descriptive context for the current statistics scope. This is not a ranking or authority signal.
-                      </p>
-                      <p className="mt-2 text-xs text-black/50">
-                        Current tier: <span className="capitalize">{selectedTier}</span>
-                        {selectedCommunity && <span> • Selected: {selectedCommunity.name}</span>}
-                      </p>
-                    </div>
-                  </div>
-                ) : activeTab === 'Feed' ? (
-                  <SeedFeedPanel
-                    communityId={selectedCommunity?.id ?? null}
-                    communityName={selectedCommunity?.name ?? null}
-                  />
-                ) : activeTab === 'Events' ? (
-                  <PlotEventsPanel
-                    communityId={selectedCommunity?.id ?? null}
-                    communityName={selectedCommunity?.name ?? null}
-                  />
-                ) : activeTab === 'Promotions' ? (
-                  <PlotPromotionsPanel
-                    communityId={selectedCommunity?.id ?? null}
-                    communityName={selectedCommunity?.name ?? null}
-                  />
-                ) : (
-                  <div className="rounded-2xl border border-dashed border-black/20 py-12 text-center">
-                    <p className="mb-3 text-4xl">
-                      {activeTab === 'Social' && '💬'}
-                    </p>
-                    <p className="text-sm text-black/60">
-                      {activeTab} content will appear here.
-                    </p>
-                  </div>
-                )}
+                {renderPrimaryPlotTabBody()}
               </div>
 
               {/* Right Panel - Selected Community Info */}

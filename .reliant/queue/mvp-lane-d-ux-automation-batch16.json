@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-15T12:00:00.000Z",
+  "lane": "lane-d-ux-automation-batch16",
+  "sourceFiles": [
+    "mvp-slices-batch16-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXAUTO-564A",
+      "title": "UX master-lock preflight guard",
+      "prompt": "Execute one MVP slice only: add automation preflight guard that validates presence/readability of UX master lock and required canon/spec anchors before lane execution.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:42:07.935Z",
+      "lane": "lane-d-ux-automation-batch16",
+      "startedAt": "2026-03-15T21:39:37.472Z",
+      "finishedAt": "2026-03-15T21:42:07.935Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXAUTO-564A.md"
+    },
+    {
+      "id": "SLICE-UXAUTO-565A",
+      "title": "Queue drift guard for UX lane sequencing",
+      "prompt": "Execute one MVP slice only: strengthen queue sanity checks for UX batch sequencing and impossible state transitions in lane automation.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:45:28.273Z",
+      "lane": "lane-d-ux-automation-batch16",
+      "startedAt": "2026-03-15T21:42:14.981Z",
+      "finishedAt": "2026-03-15T21:45:28.273Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXAUTO-565A.md"
+    },
+    {
+      "id": "SLICE-UXAUTO-566A",
+      "title": "Supervisor stop-on-canon-silence enforcement",
+      "prompt": "Execute one MVP slice only: enforce deterministic supervisor stop behavior when slices declare unresolved founder-decision dependencies.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:47:22.752Z",
+      "lane": "lane-d-ux-automation-batch16",
+      "startedAt": "2026-03-15T21:45:31.202Z",
+      "finishedAt": "2026-03-15T21:47:22.752Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXAUTO-566A.md"
+    },
+    {
+      "id": "SLICE-UXAUTO-567A",
+      "title": "Runtime hygiene extension for UX queues",
+      "prompt": "Execute one MVP slice only: extend runtime stale-task cleanup/reporting for UX lane runtime files and deterministic resume behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:49:35.407Z",
+      "lane": "lane-d-ux-automation-batch16",
+      "startedAt": "2026-03-15T21:47:25.689Z",
+      "finishedAt": "2026-03-15T21:49:35.407Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXAUTO-567A.md"
+    },
+    {
+      "id": "SLICE-UXAUTO-568A",
+      "title": "Verification transcript consistency pass",
+      "prompt": "Execute one MVP slice only: normalize verify transcript capture shape across UX slices for deterministic QA/handoff parsing.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:51:32.784Z",
+      "lane": "lane-d-ux-automation-batch16",
+      "startedAt": "2026-03-15T21:49:40.694Z",
+      "finishedAt": "2026-03-15T21:51:32.784Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXAUTO-568A.md"
+    },
+    {
+      "id": "SLICE-UXAUTO-569A",
+      "title": "UX automation runbook closeout pass",
+      "prompt": "Execute one MVP slice only: update automation runbook guidance for UX single-source lock usage, stop conditions, and recovery paths.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:52:57.983Z",
+      "lane": "lane-d-ux-automation-batch16",
+      "startedAt": "2026-03-15T21:51:35.876Z",
+      "finishedAt": "2026-03-15T21:52:57.983Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXAUTO-569A.md"
+    }
+  ]
+}

@@ -50,6 +50,36 @@ describe('discovery client', () => {
     );
   });
 
+  it('omits city filter outside city tier and skips blank location params', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'national',
+        musicCommunity: 'Hip-Hop',
+        state: '   ',
+        city: 'Chicago',
+      },
+      'token-blank',
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/scenes?tier=national&musicCommunity=Hip-Hop',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-blank',
+        }),
+      }),
+    );
+  });
+
   it('returns typed context and mutations from tune + set-home wrappers', async () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
@@ -117,5 +147,30 @@ describe('discovery client', () => {
     expect(context?.tunedSceneId).toBe('scene-1');
     expect(tuned.tunedSceneId).toBe('scene-3');
     expect(home.homeScene.musicCommunity).toBe('Punk');
+  });
+
+  it('throws when tune or set-home responses are empty', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: null,
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: null,
+        }),
+      });
+
+    await expect(tuneDiscoverScene('scene-empty', 'token-empty')).rejects.toThrow(
+      'Tune scene response was empty.',
+    );
+    await expect(setDiscoverHomeScene('scene-empty', 'token-empty')).rejects.toThrow(
+      'Set Home Scene response was empty.',
+    );
   });
 });

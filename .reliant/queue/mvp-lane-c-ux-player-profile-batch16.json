@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-15T12:00:00.000Z",
+  "lane": "lane-c-ux-player-profile-batch16",
+  "sourceFiles": [
+    "mvp-slices-batch16-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXPLYR-558A",
+      "title": "Player compact-shell proportion pass",
+      "prompt": "Execute one MVP slice only: tighten player shell proportion/layout to locked compact contract without changing route/state semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:41:02.933Z",
+      "lane": "lane-c-ux-player-profile-batch16",
+      "startedAt": "2026-03-15T21:38:10.715Z",
+      "finishedAt": "2026-03-15T21:41:02.933Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLYR-558A.md"
+    },
+    {
+      "id": "SLICE-UXPLYR-559A",
+      "title": "Tier-context title parity pass",
+      "prompt": "Execute one MVP slice only: enforce deterministic broadcast title parity across City/State/National tier contexts for current scene/community anchor.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-tier-guard.test.ts plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:43:09.352Z",
+      "lane": "lane-c-ux-player-profile-batch16",
+      "startedAt": "2026-03-15T21:41:06.690Z",
+      "finishedAt": "2026-03-15T21:43:09.352Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLYR-559A.md"
+    },
+    {
+      "id": "SLICE-UXPLYR-560A",
+      "title": "Collection entry/eject transition lock pass",
+      "prompt": "Execute one MVP slice only: lock collection entry path (selection-driven) and eject return path to RADIYO with no alternate implicit switch behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:45:28.050Z",
+      "lane": "lane-c-ux-player-profile-batch16",
+      "startedAt": "2026-03-15T21:43:12.824Z",
+      "finishedAt": "2026-03-15T21:45:28.050Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLYR-560A.md"
+    },
+    {
+      "id": "SLICE-UXPLYR-561A",
+      "title": "Engagement wheel mode-action mapping pass",
+      "prompt": "Execute one MVP slice only: ensure wheel action mapping remains deterministic by mode (RADIYO vs Collection) with no action drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:47:19.293Z",
+      "lane": "lane-c-ux-player-profile-batch16",
+      "startedAt": "2026-03-15T21:45:32.894Z",
+      "finishedAt": "2026-03-15T21:47:19.293Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLYR-561A.md"
+    },
+    {
+      "id": "SLICE-UXPLYR-562A",
+      "title": "Expanded profile composition parity pass",
+      "prompt": "Execute one MVP slice only: align expanded profile composition/tabs ordering and calendar placement with locked master UX contract.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:52:00.935Z",
+      "lane": "lane-c-ux-player-profile-batch16",
+      "startedAt": "2026-03-15T21:47:22.699Z",
+      "finishedAt": "2026-03-15T21:52:00.935Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLYR-562A.md"
+    },
+    {
+      "id": "SLICE-UXPLYR-563A",
+      "title": "Player/profile regression lock closeout",
+      "prompt": "Execute one MVP slice only: finalize player/profile parity by extending focused regression locks for panel-state, mode-state, and ownership boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:52:59.821Z",
+      "lane": "lane-c-ux-player-profile-batch16",
+      "startedAt": "2026-03-15T21:52:04.469Z",
+      "finishedAt": "2026-03-15T21:52:59.821Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXPLYR-563A.md"
+    }
+  ]
+}

@@ -121,6 +121,13 @@ async function main() {
       return;
     }
 
+    if (plan.state === 'blocked_preflight') {
+      console.log('[autopilot] UX preflight stop condition reached');
+      if (plan.assistantPrompt) console.log(plan.assistantPrompt);
+      console.log(token);
+      return;
+    }
+
     if (plan.state === 'error_multiple_in_progress') {
       console.error('[autopilot] multiple in-progress tasks detected; manual correction required');
       if (plan.commands?.length) {

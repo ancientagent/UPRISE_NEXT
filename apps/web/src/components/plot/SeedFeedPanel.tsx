@@ -3,40 +3,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
-import { api } from '@/lib/api';
+import {
+  getActiveCommunityFeed,
+  getCommunityFeed,
+  type CommunityFeedActor,
+  type CommunityFeedItem,
+} from '@/lib/communities/client';
 import { useAuthStore } from '@/store/auth';
 
-type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created' | string;
-
-interface FeedActor {
-  id: string;
-  username: string;
-  displayName: string;
-  avatar: string | null;
-}
-
-interface FeedEntity {
-  type: 'signal' | 'track' | 'event' | string;
-  id: string;
-}
-
-interface FeedItem {
-  id: string;
-  type: FeedItemType;
-  occurredAt: string;
-  actor: FeedActor | null;
-  entity: FeedEntity;
-  metadata?: Record<string, unknown>;
-}
-
-interface FeedMeta {
-  limit: number;
-  nextCursor: string | null;
-}
+type FeedItemType = CommunityFeedItem['type'];
 
 interface SeedFeedPanelProps {
   communityId: string | null;
   communityName?: string | null;
+  selectedTier: 'city' | 'state' | 'national';
 }
 
 function formatTypeLabel(type: FeedItemType): string {
@@ -54,15 +34,33 @@ function formatTypeLabel(type: FeedItemType): string {
   }
 }
 
-function formatActor(actor: FeedActor | null): string {
+function formatActor(actor: CommunityFeedActor | null): string {
   if (!actor) return 'Community';
   return actor.displayName || actor.username || 'Community';
 }
 
-export default function SeedFeedPanel({ communityId, communityName }: SeedFeedPanelProps) {
+function FeedSkeletonRows() {
+  return (
+    <div className="mt-4 space-y-2" aria-hidden="true">
+      {[0, 1, 2].map((index) => (
+        <div key={index} className="rounded-xl border border-black/10 p-3">
+          <div className="h-4 w-40 animate-pulse rounded bg-black/10" />
+          <div className="mt-2 h-3 w-56 animate-pulse rounded bg-black/5" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function SeedFeedPanel({
+  communityId,
+  communityName,
+  selectedTier,
+}: SeedFeedPanelProps) {
   const { token } = useAuthStore();
-  const [items, setItems] = useState<FeedItem[]>([]);
+  const [items, setItems] = useState<CommunityFeedItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [resolvedSceneId, setResolvedSceneId] = useState<string | null>(communityId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,28 +69,39 @@ export default function SeedFeedPanel({ communityId, communityName }: SeedFeedPa
     return `S.E.E.D Feed • ${communityName}`;
   }, [communityName]);
 
+  const contextLabel = useMemo(() => {
+    const tierLabel = selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1);
+    if (communityName) {
+      return `${tierLabel} scene anchor: ${communityName}`;
+    }
+
+    if (resolvedSceneId) {
+      return `${tierLabel} active scene fallback loaded`;
+    }
+
+    return `${tierLabel} scene context is resolving`;
+  }, [communityName, resolvedSceneId, selectedTier]);
+
   const fetchPage = useCallback(
     async (before?: string | null) => {
       setLoading(true);
       setError(null);
 
       try {
-        const query = new URLSearchParams();
-        query.set('limit', '20');
-        if (before) query.set('before', before);
-        const basePath = communityId ? `/communities/${communityId}/feed` : '/communities/active/feed';
+        const response = communityId
+          ? await getCommunityFeed(
+              communityId,
+              { limit: 20, before },
+              token || undefined,
+            )
+          : await getActiveCommunityFeed({ limit: 20, before }, token || undefined);
 
-        const response = await api.get<FeedItem[]>(`${basePath}?${query.toString()}`, {
-          token: token || undefined,
-        });
-
-        const pageItems = response.data ?? [];
-        const meta = response.meta as FeedMeta | undefined;
-
-        setItems((prev) => (before ? [...prev, ...pageItems] : pageItems));
-        setNextCursor(meta?.nextCursor ?? null);
+        setItems((prev) => (before ? [...prev, ...response.items] : response.items));
+        setNextCursor(response.nextCursor);
+        setResolvedSceneId(response.sceneId);
       } catch (e) {
-        const message = e instanceof Error ? e.message : 'Unable to load S.E.E.D feed.';
+        const message =
+          e instanceof Error ? e.message : 'Unable to load the scene feed right now.';
         setError(message);
       } finally {
         setLoading(false);
@@ -111,17 +120,35 @@ export default function SeedFeedPanel({ communityId, communityName }: SeedFeedPa
     <div className="rounded-2xl border border-black/10 bg-white p-6">
       <h2 className="text-lg font-semibold text-black">{title}</h2>
       <p className="mt-1 text-xs text-black/50">
-        Support, Explore, Engage, Distribute. Scene-scoped and non-personalized.
+        Support, Explore, Engage, Distribute. Scene-scoped, reverse-chronological, and non-personalized.
       </p>
+      <p className="mt-2 text-xs text-black/55">{contextLabel}</p>
 
       {error && (
         <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {error}
+          <p>Feed read failed for this scene context. {error}</p>
+          <Button
+            className="mt-3 h-8 text-xs"
+            size="sm"
+            variant="outline"
+            onClick={() => fetchPage(null)}
+          >
+            Retry Feed
+          </Button>
         </div>
       )}
 
+      {!error && loading && items.length === 0 ? (
+        <FeedSkeletonRows />
+      ) : null}
+
       {!error && items.length === 0 && !loading ? (
-        <p className="mt-4 text-sm text-black/60">No scene activity yet.</p>
+        <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
+          <p className="text-sm font-medium text-black">No current scene activity for this context.</p>
+          <p className="mt-1 text-xs text-black/55">
+            When explicit community actions land here, every listener in the same scene sees the same feed.
+          </p>
+        </div>
       ) : (
         <ul className="mt-4 space-y-2">
           {items.map((item) => (

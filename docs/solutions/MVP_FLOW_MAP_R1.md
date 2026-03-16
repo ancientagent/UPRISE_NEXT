@@ -32,7 +32,7 @@ User-visible flow chain:
 
 ## Founder Decision Required
 - Exact R2 UX sequencing for how Plot should prioritize registrar status versus feed/events/promotions in first-load navigation is not explicitly ordered in current specs.
-- Exact MVP cutoff for Social tab exposure in Plot (hidden vs visible placeholder vs deferred route treatment) requires founder confirmation to avoid semantics drift.
+- Social tab exposure policy is now locked for MVP: hidden until endpoint + surface contract ship.
 
 ## Notes
 - This map is spec-linked and execution-scoped for R1 only.

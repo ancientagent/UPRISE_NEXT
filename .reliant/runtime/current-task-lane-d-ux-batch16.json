@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXAUTO-569A",
+  "title": "UX automation runbook closeout pass",
+  "prompt": "Execute one MVP slice only: update automation runbook guidance for UX single-source lock usage, stop conditions, and recovery paths.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-15T21:51:35.876Z"
+}

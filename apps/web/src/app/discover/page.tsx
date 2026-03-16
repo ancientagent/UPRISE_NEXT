@@ -20,6 +20,19 @@ import {
   toDiscoveryContextPatch,
 } from '@/lib/discovery/context';
 
+function formatSceneLocation(city: string | null, state: string | null) {
+  if (city && state) return `${city}, ${state}`;
+  if (city) return city;
+  if (state) return state;
+  return 'Location pending';
+}
+
+function getCitySceneStatusLabel(item: DiscoverCitySceneItem, tunedSceneId: string | null) {
+  if (item.isHomeScene) return 'Home Scene';
+  if (tunedSceneId === item.sceneId) return 'Tuned Scene';
+  return item.isActive ? 'Active City Scene' : 'Inactive City Scene';
+}
+
 export default function DiscoverPage() {
   const { token } = useAuthStore();
   const {
@@ -42,6 +55,7 @@ export default function DiscoverPage() {
   const [tuningSceneId, setTuningSceneId] = useState<string | null>(null);
 
   const canSearch = useMemo(() => musicCommunity.trim().length > 0, [musicCommunity]);
+  const normalizedMusicCommunity = musicCommunity.trim();
 
   useEffect(() => {
     async function fetchContext() {
@@ -59,7 +73,11 @@ export default function DiscoverPage() {
 
   useEffect(() => {
     async function fetchScenes() {
-      if (!token || !canSearch) return;
+      if (!token || !canSearch) {
+        setItems([]);
+        setLoading(false);
+        return;
+      }
 
       setLoading(true);
       setError(null);
@@ -87,6 +105,45 @@ export default function DiscoverPage() {
     fetchScenes();
   }, [token, tier, musicCommunity, stateFilter, cityFilter, canSearch]);
 
+  const resultSummary = useMemo(() => {
+    if (!token) {
+      return {
+        title: 'Sign in required',
+        body: 'Sign in to view Scene Discovery results for your selected scope.',
+      };
+    }
+
+    if (!canSearch) {
+      return {
+        title: 'Select a music community',
+        body: 'Enter a music community to load deterministic scene results for the current scope.',
+      };
+    }
+
+    if (loading) {
+      return {
+        title: 'Loading scenes',
+        body: 'Loading scene results for the current scope and music community.',
+      };
+    }
+
+    if (error) {
+      return {
+        title: 'Discovery unavailable',
+        body: error,
+      };
+    }
+
+    if (items.length === 0) {
+      return {
+        title: 'No scenes found',
+        body: 'No scenes were found for this scope and music community filter.',
+      };
+    }
+
+    return null;
+  }, [token, canSearch, loading, error, items.length]);
+
   const handleSetHomeScene = async (item: DiscoverCitySceneItem) => {
     if (!token) return;
 
@@ -112,9 +169,9 @@ export default function DiscoverPage() {
       });
       setDiscoveryContext(
         mergeDiscoveryContextPatch(response, {
-          tunedSceneId: item.sceneId,
-          tunedScene: null,
-          isVisitor: null,
+          tunedSceneId,
+          tunedScene,
+          isVisitor,
         }),
       );
 
@@ -226,24 +283,31 @@ export default function DiscoverPage() {
           </div>
         </section>
 
-        {error && (
-          <section className="rounded-2xl border border-red-200 bg-red-50 p-4">
-            <p className="text-sm text-red-700">{error}</p>
-          </section>
-        )}
-
         <section className="rounded-2xl border border-black/10 bg-white p-6">
-          <h2 className="text-lg font-semibold text-black">Results</h2>
-          <p className="mt-1 text-sm text-black/60">
-            Scope: <span className="capitalize">{tier}</span> · Community: {musicCommunity || 'Not set'}
-          </p>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Discovery Results</p>
+              <h2 className="mt-2 text-lg font-semibold text-black">Scene Results</h2>
+            </div>
+            <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
+              <p>
+                Scope: <span className="capitalize">{tier}</span>
+              </p>
+              <p>
+                Community: {normalizedMusicCommunity || 'Not set'}
+              </p>
+            </div>
+          </div>
 
-          {!token ? (
-            <p className="mt-4 text-sm text-black/60">Sign in to load discovery results.</p>
-          ) : loading ? (
-            <p className="mt-4 text-sm text-black/60">Loading scenes...</p>
-          ) : items.length === 0 ? (
-            <p className="mt-4 text-sm text-black/60">No scenes found for this scope/filter.</p>
+          {resultSummary ? (
+            <div
+              className={`mt-4 rounded-2xl border p-4 ${
+                error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
+              }`}
+            >
+              <p className="text-sm font-medium">{resultSummary.title}</p>
+              <p className="mt-1 text-sm">{resultSummary.body}</p>
+            </div>
           ) : (
             <ul className="mt-4 space-y-3">
               {items.map((item) =>
@@ -252,12 +316,24 @@ export default function DiscoverPage() {
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <p className="font-medium text-black">{item.name}</p>
-                        <p className="text-sm text-black/60">
-                          {item.city}, {item.state} · {item.memberCount.toLocaleString()} members
-                        </p>
-                        <p className="mt-1 text-xs text-black/50">
-                          {item.isHomeScene ? 'Current Home Scene' : item.isActive ? 'Active scene' : 'Inactive scene'}
-                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2 text-xs text-black/60">
+                          <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
+                            {getCitySceneStatusLabel(item, tunedSceneId)}
+                          </span>
+                          <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
+                            {item.musicCommunity?.trim() || normalizedMusicCommunity || 'Music community pending'}
+                          </span>
+                        </div>
+                        <dl className="mt-3 grid gap-1 text-sm text-black/60">
+                          <div className="flex flex-wrap gap-2">
+                            <dt className="font-medium text-black/70">Location</dt>
+                            <dd>{formatSceneLocation(item.city, item.state)}</dd>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <dt className="font-medium text-black/70">Members</dt>
+                            <dd>{item.memberCount.toLocaleString()}</dd>
+                          </div>
+                        </dl>
                       </div>
                       <div className="flex gap-2">
                         <Button asChild size="sm" variant="outline">
@@ -289,12 +365,24 @@ export default function DiscoverPage() {
                 ) : (
                   <li key={`state-${item.state}`} className="rounded-xl border border-black/10 p-4">
                     <p className="font-medium text-black">{item.state}</p>
-                    <p className="text-sm text-black/60">
-                      {item.citySceneCount} city scenes · {item.totalMembers.toLocaleString()} members
-                    </p>
-                    <p className="mt-1 text-xs text-black/50">
-                      {item.isHomeSceneState ? 'Contains your Home Scene state' : 'State-level rollup'}
-                    </p>
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-black/60">
+                      <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
+                        {item.isHomeSceneState ? 'Home Scene State' : 'State Rollup'}
+                      </span>
+                      <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
+                        {item.musicCommunity}
+                      </span>
+                    </div>
+                    <dl className="mt-3 grid gap-1 text-sm text-black/60">
+                      <div className="flex flex-wrap gap-2">
+                        <dt className="font-medium text-black/70">City Scenes</dt>
+                        <dd>{item.citySceneCount}</dd>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <dt className="font-medium text-black/70">Members</dt>
+                        <dd>{item.totalMembers.toLocaleString()}</dd>
+                      </div>
+                    </dl>
                   </li>
                 )
               )}

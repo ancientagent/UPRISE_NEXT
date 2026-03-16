@@ -218,6 +218,31 @@ function clearRuntime(lane, actions) {
   }
 }
 
+function getFounderDecisionDependency(task) {
+  if (!task || typeof task !== 'object') return null;
+
+  const declarationField =
+    task.founderDecisionRequired === true
+      ? 'founderDecisionRequired'
+      : task.requiresFounderDecision === true
+        ? 'requiresFounderDecision'
+        : null;
+
+  if (!declarationField) return null;
+
+  const reason =
+    typeof task.founderDecisionReason === 'string' && task.founderDecisionReason.trim() !== ''
+      ? task.founderDecisionReason.trim()
+      : 'founder decision required before execution';
+
+  return {
+    taskId: task.id,
+    title: task.title,
+    reason,
+    declarationField,
+  };
+}
+
 function claimNext(lane, actions) {
   const cmd = `node scripts/reliant-slice-queue.mjs claim --queue ${lane.queue} --runtime ${lane.runtime}`;
   const out = exec(cmd);
@@ -279,10 +304,28 @@ function repairLane(lane, { autoClaim, repair }, report) {
   const finalDrifts = detectDrifts(reloaded, reloadedTasks, reloadedSummary, lane.runtime);
   report.drifts = finalDrifts;
   const reloadedInProgress = reloadedTasks.filter((t) => t.status === 'in_progress');
+  report.founderDecisionStop = {
+    requiresStop: false,
+    taskId: null,
+    title: null,
+    reason: null,
+    declarationField: null,
+  };
 
   if (reloadedInProgress.length === 0) {
     if (repair) clearRuntime(lane, actions);
     const queued = reloadedTasks.filter((t) => t.status === 'queued');
+    const founderDecisionDependency = queued.length > 0 ? getFounderDecisionDependency(queued[0]) : null;
+    if (founderDecisionDependency) {
+      report.founderDecisionStop = {
+        requiresStop: true,
+        ...founderDecisionDependency,
+      };
+      actions.push(`stop:founder-decision:${founderDecisionDependency.taskId}`);
+      report.errors = errors;
+      report.actions = actions;
+      return;
+    }
     if (queued.length > 0 && autoClaim) {
       claimNext(lane, actions);
     }
@@ -366,6 +409,16 @@ function collectHealthGateFailures(report) {
     });
   }
 
+  if (report?.founderDecisionStop?.requiresStop) {
+    failures.push({
+      lane: report.lane,
+      code: 'founder_decision_required',
+      message: report.founderDecisionStop.reason,
+      taskId: report.founderDecisionStop.taskId,
+      declarationField: report.founderDecisionStop.declarationField,
+    });
+  }
+
   return failures;
 }
 
@@ -441,6 +494,15 @@ async function main() {
         failures: healthGateFailures,
       };
     }
+    cycle.stopConditions = cycle.lanes
+      .filter((lane) => lane.founderDecisionStop?.requiresStop)
+      .map((lane) => ({
+        lane: lane.lane,
+        code: 'founder_decision_required',
+        taskId: lane.founderDecisionStop.taskId,
+        declarationField: lane.founderDecisionStop.declarationField,
+        reason: lane.founderDecisionStop.reason,
+      }));
 
     writeJson(statusOut, cycle);
     if (healthCheck) {
@@ -452,6 +514,14 @@ async function main() {
       }
       console.log('[supervisor] health-gate-passed');
       return;
+    }
+    if (cycle.stopConditions.length > 0) {
+      for (const stopCondition of cycle.stopConditions) {
+        console.error(
+          `[supervisor] stop lane=${stopCondition.lane} code=${stopCondition.code} task=${stopCondition.taskId} reason=${stopCondition.reason}`,
+        );
+      }
+      process.exit(7);
     }
     if (failOnDrift && driftCount > 0) {
       console.error(`[supervisor] drift-detected count=${driftCount}`);

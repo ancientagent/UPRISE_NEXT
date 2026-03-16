@@ -20,6 +20,10 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - Manual Scene selection in Discover map/list.
   - Tier toggling (city/state/national).
 - No recommendation feed, ranking, or personalization in discovery flows.
+- Discovery search scope is scene/community only for MVP:
+  - no artist search entry
+  - no band search entry
+  - no artist/band result-state contract in MVP
 - Discovery does not imply “join” semantics:
   - User can visit/tune to a Scene.
   - User can set Home Scene only through explicit state change action.
@@ -120,6 +124,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - scope toggle (`city/state/national`)
   - current tuned Scene vs Home Scene badges
   - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status
+- Access-limit/entitlement messaging is deferred in MVP until pricing/entitlement contracts are locked in canon/spec.
 - Tune action:
   - explicit button: “Tune to Scene”
   - does not say “Join”

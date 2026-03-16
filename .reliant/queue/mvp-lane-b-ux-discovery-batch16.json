@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-15T12:00:00.000Z",
+  "lane": "lane-b-ux-discovery-batch16",
+  "sourceFiles": [
+    "mvp-slices-batch16-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 4,
+    "blocked": 2
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXDISC-552A",
+      "title": "Discovery IA baseline lock",
+      "prompt": "Execute one MVP slice only: lock Discovery IA sections and deterministic state model (loading/empty/error) with no recommendation/ranking semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:39:35.878Z",
+      "lane": "lane-b-ux-discovery-batch16",
+      "startedAt": "2026-03-15T21:37:15.228Z",
+      "finishedAt": "2026-03-15T21:39:35.878Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXDISC-552A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-553A",
+      "title": "Discovery scene-card contract parity",
+      "prompt": "Execute one MVP slice only: normalize Discovery scene card contract/copy fields to current lock without speculative explanatory text or pricing behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:41:25.923Z",
+      "lane": "lane-b-ux-discovery-batch16",
+      "startedAt": "2026-03-15T21:39:40.384Z",
+      "finishedAt": "2026-03-15T21:41:25.923Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXDISC-553A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-554A",
+      "title": "Discovery artist/band search contract pass 1",
+      "prompt": "Execute one MVP slice only: harden Discovery search contract for artist/band lookup entry and deterministic empty/no-result semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "blocked",
+      "updatedAt": "2026-03-16T17:26:37.473Z",
+      "lane": "lane-b-ux-discovery-batch16",
+      "startedAt": "2026-03-16T01:25:41.491Z",
+      "blockedAt": "2026-03-16T17:26:37.473Z",
+      "blockerReason": "Blocked: docs/specs/communities/discovery-scene-switching.md authorizes Scene discovery by scope + music community only (scene list/map, Tune to Scene, Set as Home Scene). No current canon/spec defines an MVP artist/band lookup entry, artist/band search contract, or artist/band no-result behavior on /discover, so implementing this would introduce undocumented behavior."
+    },
+    {
+      "id": "SLICE-UXDISC-555A",
+      "title": "Discovery -> Plot scene-switch handoff parity",
+      "prompt": "Execute one MVP slice only: enforce deterministic Discovery-to-Plot scene-switch handoff behavior and context persistence boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:43:33.563Z",
+      "lane": "lane-b-ux-discovery-batch16",
+      "startedAt": "2026-03-15T21:42:03.618Z",
+      "finishedAt": "2026-03-15T21:43:33.563Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXDISC-555A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-556A",
+      "title": "Discovery access-limit copy guard pass",
+      "prompt": "Execute one MVP slice only: align Discovery access-limit messaging to canon-safe wording without introducing unresolved pricing/entitlement assumptions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "blocked",
+      "updatedAt": "2026-03-16T17:26:47.070Z",
+      "lane": "lane-b-ux-discovery-batch16",
+      "startedAt": "2026-03-16T17:26:41.933Z",
+      "blockedAt": "2026-03-16T17:26:47.070Z",
+      "blockerReason": "Blocked: docs/specs/economy/revenue-and-pricing.md defines Free Listener vs Discovery Pass transport scope but also states no subscription billing or entitlement model is implemented yet, while docs/specs/communities/discovery-scene-switching.md does not define a current /discover access-limit UI state or copy contract. Implementing access-limit messaging now would require speculative entitlement behavior or pricing assumptions."
+    },
+    {
+      "id": "SLICE-UXDISC-557A",
+      "title": "Discovery contract/test closeout",
+      "prompt": "Execute one MVP slice only: close Discovery contract parity by consolidating typed-client/test assertions for locked IA and state behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "updatedAt": "2026-03-15T21:45:49.578Z",
+      "lane": "lane-b-ux-discovery-batch16",
+      "startedAt": "2026-03-15T21:44:10.300Z",
+      "finishedAt": "2026-03-15T21:45:49.578Z",
+      "reportPath": "docs/handoff/2026-03-15_SLICE-UXDISC-557A.md"
+    }
+  ]
+}

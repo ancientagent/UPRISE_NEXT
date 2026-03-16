@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXPLOT-551A",
+  "title": "Plot tab-system closeout + regression lock",
+  "prompt": "Execute one MVP slice only: finalize Plot tab coherence pass across Feed/Events/Promotions/Statistics and extend focused regression locks for tab/body ownership.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-16T17:29:09.894Z"
+}
