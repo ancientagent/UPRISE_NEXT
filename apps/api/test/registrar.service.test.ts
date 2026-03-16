@@ -2642,13 +2642,15 @@ describe('RegistrarService', () => {
   });
 
   it('verifies a redeemable registrar code for approved promoter entry', async () => {
+    const futureExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
     mockPrisma.registrarCode.findUnique.mockResolvedValue({
       id: 'rcode-verify-1',
       registrarEntryId: 'reg-promoter-approved-1',
       capability: 'promoter_capability',
       issuerType: 'system',
       status: 'issued',
-      expiresAt: new Date('2026-03-10T00:00:00.000Z'),
+      expiresAt: futureExpiresAt,
       redeemedAt: null,
       createdAt: new Date('2026-02-24T10:20:00.000Z'),
       registrarEntry: {
@@ -2674,7 +2676,7 @@ describe('RegistrarService', () => {
         capability: 'promoter_capability',
         issuerType: 'system',
         status: 'issued',
-        expiresAt: new Date('2026-03-10T00:00:00.000Z'),
+        expiresAt: futureExpiresAt,
         createdAt: new Date('2026-02-24T10:20:00.000Z'),
         redeemable: true,
       }),

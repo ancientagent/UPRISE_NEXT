@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- PR62 CI fix: resolved flaky API test expiry boundary in `apps/api/test/registrar.service.test.ts` by switching hard-coded expiry fixture to a deterministic future timestamp; handoff `docs/handoff/2026-03-16_pr62-api-test-expiry-fix.md`.
 - Plot MVP lock alignment: removed deferred `Social` tab rendering from `/plot` and tightened regression lock assertions to enforce `Feed/Events/Promotions/Statistics` only; see `docs/handoff/2026-03-16_plot-social-hidden-lock-pass.md`.
 - Lane E Batch16 task complete (`SLICE-UXQAREV-573A`): published the updated Batch16 UX risk/rollback memo with current `/plot` lock-conflict evidence and exact verify output in [`docs/handoff/2026-03-16_SLICE-UXQAREV-573A.md`](/home/baris/UPRISE_NEXT/docs/handoff/2026-03-16_SLICE-UXQAREV-573A.md).
 - Lane A batch16 blocked (`SLICE-UXPLOT-550A`): Plot Social deferred-policy pass remains canon-blocked because current docs conflict on hidden-vs-placeholder Social exposure in collapsed Plot; report [`docs/handoff/2026-03-16_SLICE-UXPLOT-550A_BLOCKED.md`](/home/baris/UPRISE_NEXT/docs/handoff/2026-03-16_SLICE-UXPLOT-550A_BLOCKED.md).
