@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
-const UX_BATCH16_QUEUE_PATTERN = /(^|\/)mvp-lane-[a-e]-ux-[^/]*batch16\.json$/;
+const UX_BATCH_QUEUE_PATTERN = /(^|\/)mvp-lane-[a-e]-ux-[^/]*batch(16|17)\.json$/;
 
 function readJson(filePath) {
   const raw = fs.readFileSync(filePath, 'utf8');
@@ -126,8 +126,16 @@ function ensureQueueShape(queue) {
   }
 }
 
-function appliesUxBatch16TransitionGuard(queuePath) {
-  return UX_BATCH16_QUEUE_PATTERN.test(queuePath);
+function parseUxBatchQueue(queuePath) {
+  const match = String(queuePath || '').match(UX_BATCH_QUEUE_PATTERN);
+  if (!match) return null;
+  return {
+    batch: Number(match[2]),
+  };
+}
+
+function appliesUxBatchTransitionGuard(queuePath) {
+  return parseUxBatchQueue(queuePath) != null;
 }
 
 function isValidTimestamp(value) {
@@ -205,17 +213,45 @@ function collectTransitionIssues(queue) {
     }
   }
 
+  for (let index = 0; index < queue.tasks.length - 1; index += 1) {
+    const current = queue.tasks[index];
+    const next = queue.tasks[index + 1];
+    const edgeIssues = [];
+
+    if (current.status === 'queued' && next.status !== 'queued') {
+      edgeIssues.push('queued_before_non_queued');
+    }
+    if (current.status === 'in_progress' && next.status !== 'queued') {
+      edgeIssues.push('in_progress_before_non_queued');
+    }
+
+    if (edgeIssues.length > 0) {
+      issues.push({
+        taskId: current.id,
+        status: current.status,
+        edgeToTaskId: next.id,
+        edgeToStatus: next.status,
+        issues: edgeIssues,
+      });
+    }
+  }
+
   return issues;
 }
 
 function getTransitionSanity(queuePath, queue) {
-  const applicable = appliesUxBatch16TransitionGuard(queuePath);
+  const parsed = parseUxBatchQueue(queuePath);
+  const applicable = parsed != null;
   const issues = applicable ? collectTransitionIssues(queue) : [];
+  const reasonCodes = [...new Set(issues.flatMap((entry) => entry.issues))].sort();
   return {
     applicable,
+    batch: parsed?.batch ?? null,
     issueCount: issues.length,
     issues,
     ok: issues.length === 0,
+    reasonCodes,
+    failureCode: issues.length === 0 ? null : 'queue_transition_sanity_failed',
   };
 }
 
@@ -229,8 +265,9 @@ function exitOnTransitionSanityFailure(queuePath, queue, commandName) {
     .map((entry) => `${entry.taskId}:${entry.issues.join(',')}`)
     .join('; ');
   console.error(
-    `[reliant-slice-queue] ${commandName} blocked by UX Batch16 transition sanity failure\n` +
+    `[reliant-slice-queue] ${commandName} blocked by UX batch transition sanity failure\n` +
       `[reliant-slice-queue] queue=${queuePath}\n` +
+      `[reliant-slice-queue] failureCode=${transitionSanity.failureCode}\n` +
       `[reliant-slice-queue] issues=${issueSummary}\n` +
       `[reliant-slice-queue] hint: repair impossible task status/timestamp transitions before continuing`,
   );
@@ -247,7 +284,7 @@ function claimTask(queuePath, runtimePath, retryMs = 0, retryAttempted = false) 
   };
 
   if (transitionSanity.applicable && !transitionSanity.ok) {
-    emitClaimRefusal('queue_transition_sanity_failed', 'queue blocked by UX Batch16 transition sanity failure', 4, {
+    emitClaimRefusal('queue_transition_sanity_failed', 'queue blocked by UX batch transition sanity failure', 4, {
       transitionSanity,
     });
   }
@@ -736,7 +773,9 @@ function validateQueue(queuePath) {
     const issueSummary = transitionSanity.issues
       .map((entry) => `${entry.taskId}:${entry.issues.join(',')}`)
       .join('; ');
-    console.error(`[reliant-slice-queue] validate blocked by UX Batch16 transition sanity failure: ${issueSummary}`);
+    console.error(
+      `[reliant-slice-queue] validate blocked by UX batch transition sanity failure (${transitionSanity.failureCode}): ${issueSummary}`,
+    );
     process.exit(1);
   }
   const statusCounts = queue.tasks.reduce(

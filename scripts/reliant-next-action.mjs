@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
-import path from 'node:path';
-import { runUxBatch16Preflight } from './reliant-ux-preflight.mjs';
+import { runUxBatchPreflight } from './reliant-ux-preflight.mjs';
+import { getResumePlan } from './reliant-runtime-clean.mjs';
 
 function getArg(flag, fallback = null) {
   const idx = process.argv.indexOf(flag);
@@ -42,6 +42,10 @@ function buildClaimCmd(queuePath, runtimePath) {
   return `node scripts/reliant-slice-queue.mjs claim --queue ${queuePath} --runtime ${runtimePath}`;
 }
 
+function buildRuntimeCleanResumeCmd(queuePath, runtimePath) {
+  return `pnpm run reliant:runtime:clean -- --runtime ${runtimePath} --queue ${queuePath} --resume`;
+}
+
 function buildStatusCmd(queuePath) {
   return `node scripts/reliant-slice-queue.mjs status --queue ${queuePath}`;
 }
@@ -73,7 +77,8 @@ function main() {
   const blocked = tasks.filter((t) => t.status === 'blocked');
   const runtime = readJsonSafe(runtimePath);
   const runtimeTaskId = runtime?.taskId || null;
-  const uxPreflight = runUxBatch16Preflight(queuePath);
+  const uxPreflight = runUxBatchPreflight(queuePath, { runtimePath });
+  let runtimeRecovery = null;
 
   let state = 'idle';
   let nextTask = null;
@@ -103,15 +108,16 @@ function main() {
     nextTask = inProgress[0];
     if (!runtimeTaskId) {
       warnings.push('runtime file missing or invalid while queue has in_progress task');
+      runtimeRecovery = getResumePlan(queuePath, runtimePath);
     } else if (runtimeTaskId !== nextTask.id) {
       warnings.push(`runtime mismatch: runtime=${runtimeTaskId}, queue in_progress=${nextTask.id}`);
+      runtimeRecovery = getResumePlan(queuePath, runtimePath);
+    }
+    if (runtimeRecovery) {
+      warnings.push(`runtime recovery plan: ${runtimeRecovery.resumeAction} (${runtimeRecovery.resumeMessage})`);
     }
     commands.push(buildStatusCmd(queuePath));
-    commands.push(`pnpm run reliant:runtime:clean -- --runtime ${runtimePath}`);
-    commands.push(
-      `# After cleanup, restore runtime intentionally for current task\n` +
-        `node -e "const fs=require('fs');const t=${JSON.stringify(nextTask.id)};fs.writeFileSync('${runtimePath}',JSON.stringify({taskId:t},null,2)+'\\n')"`,
-    );
+    commands.push(buildRuntimeCleanResumeCmd(queuePath, runtimePath));
     commands.push(buildCompleteCmd(queuePath, runtimePath, nextTask.id));
     commands.push(buildBlockCmd(queuePath, runtimePath, nextTask.id));
 
@@ -121,6 +127,9 @@ function main() {
       `Title: ${nextTask.title}`,
       `Verify command: ${nextTask.verifyCommand || '(none)'}`,
       'Do: implement scoped changes only, run verify command exactly, update docs/CHANGELOG.md + dated docs/handoff note, then mark complete.',
+      runtimeRecovery
+        ? `If runtime is stale, recover with: ${buildRuntimeCleanResumeCmd(queuePath, runtimePath)}`
+        : 'If runtime is stale, recover with queue-aware runtime cleanup before complete/block.',
       `Complete command (use real report path): ${buildCompleteCmd(queuePath, runtimePath, nextTask.id)}`,
       `If unrecoverable, block command: ${buildBlockCmd(queuePath, runtimePath, nextTask.id)}`,
     ].join('\n');
@@ -129,7 +138,9 @@ function main() {
     nextTask = queued[0];
     if (runtimeTaskId) {
       warnings.push(`stale runtime detected with no in_progress task: ${runtimeTaskId}`);
-      commands.push(`pnpm run reliant:runtime:clean -- --runtime ${runtimePath}`);
+      runtimeRecovery = getResumePlan(queuePath, runtimePath);
+      warnings.push(`runtime recovery plan: ${runtimeRecovery.resumeAction} (${runtimeRecovery.resumeMessage})`);
+      commands.push(buildRuntimeCleanResumeCmd(queuePath, runtimePath));
     }
     commands.push(buildClaimCmd(queuePath, runtimePath));
     commands.push(buildStatusCmd(queuePath));
@@ -138,10 +149,15 @@ function main() {
       'Claim and execute the next queued slice end-to-end.',
       `Queue: ${queuePath}`,
       `Runtime: ${runtimePath}`,
+      runtimeRecovery
+        ? `Before claim, clear stale runtime with: ${buildRuntimeCleanResumeCmd(queuePath, runtimePath)}`
+        : null,
       `Claim command: ${buildClaimCmd(queuePath, runtimePath)}`,
       'After claim: execute exact slice scope (no feature drift), run verifyCommand exactly, update docs/CHANGELOG.md + dated docs/handoff note, then complete the same runtime task.',
       'If unrecoverable: block with exact reason and continue.',
-    ].join('\n');
+    ]
+      .filter(Boolean)
+      .join('\n');
   } else if (blocked.length > 0) {
     state = 'blocked_only';
     nextTask = blocked[0];
@@ -172,6 +188,15 @@ function main() {
     summary,
     runtimeTaskId,
     uxPreflight,
+    runtimeRecovery: runtimeRecovery
+      ? {
+          resumeAction: runtimeRecovery.resumeAction,
+          resumeMessage: runtimeRecovery.resumeMessage,
+          queueState: runtimeRecovery.queueState,
+          resumeCommand: runtimeRecovery.resumeCommand,
+          resumedTaskId: runtimeRecovery.resumedTaskId,
+        }
+      : null,
     nextTask: nextTask
       ? {
           id: nextTask.id,

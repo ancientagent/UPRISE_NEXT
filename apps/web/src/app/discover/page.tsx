@@ -24,7 +24,7 @@ function formatSceneLocation(city: string | null, state: string | null) {
   if (city && state) return `${city}, ${state}`;
   if (city) return city;
   if (state) return state;
-  return 'Location pending';
+  return 'Unlisted';
 }
 
 function getCitySceneStatusLabel(item: DiscoverCitySceneItem, tunedSceneId: string | null) {
@@ -228,6 +228,10 @@ export default function DiscoverPage() {
           <p className="mt-2 text-xs text-black/50">
             Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
           </p>
+          <p className="mt-2 text-xs text-black/50">
+            If your selected city is not active yet, onboarding routes you to the nearest active city Scene for that
+            Music Community and tracks your pioneer intent through the profile-strip notification icon.
+          </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
             <Button asChild variant="outline" size="sm">
@@ -246,6 +250,7 @@ export default function DiscoverPage() {
                 placeholder="e.g. Punk"
                 className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
               />
+              <p className="mt-2 text-xs text-black/50">Search is limited to Scene and Music Community scope in MVP.</p>
             </div>
             <div>
               <label className="text-xs uppercase tracking-[0.2em] text-black/60">State Filter (optional)</label>
@@ -301,6 +306,7 @@ export default function DiscoverPage() {
 
           {resultSummary ? (
             <div
+              aria-live="polite"
               className={`mt-4 rounded-2xl border p-4 ${
                 error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
               }`}

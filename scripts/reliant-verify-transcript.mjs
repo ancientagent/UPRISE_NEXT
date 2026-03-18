@@ -34,7 +34,9 @@ function toMarkdown(payload) {
     '',
     '## Verify Exit Code',
     '```text',
-    String(payload.exitCode),
+    `code=${payload.exitMeta.code}`,
+    `passed=${payload.exitMeta.passed}`,
+    `signal=${payload.exitMeta.signal ?? '(none)'}`,
     '```',
     '',
     '## Exact Output',
@@ -57,22 +59,29 @@ function main() {
   const jsonOut = getArg('--json-out', null);
   const cwd = getArg('--cwd', process.cwd());
 
-  const result = spawnSync(command, {
+  const shell = process.env.SHELL || '/bin/bash';
+  const shellCommand = `set -o pipefail\n${command} 2>&1`;
+  const result = spawnSync(shell, ['-lc', shellCommand], {
     cwd,
-    shell: true,
     encoding: 'utf8',
   });
 
-  const combinedOutput = [result.stdout || '', result.stderr || ''].filter(Boolean).join(
-    result.stdout && result.stderr ? '\n' : '',
-  );
+  const combinedOutput = `${result.stdout || ''}${result.stderr || ''}`;
+  const exitCode = result.status ?? 1;
+  const exitMeta = {
+    code: exitCode,
+    passed: exitCode === 0,
+    signal: result.signal ?? null,
+  };
 
   const payload = {
     capturedAt: nowIso(),
     command,
     cwd,
-    exitCode: result.status ?? 1,
-    passed: (result.status ?? 1) === 0,
+    shell,
+    exitCode,
+    passed: exitMeta.passed,
+    exitMeta,
     output: combinedOutput,
   };
 

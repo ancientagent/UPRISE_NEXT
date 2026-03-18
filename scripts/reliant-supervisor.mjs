@@ -36,6 +36,7 @@ const MIN_INTERVAL_MS = 500;
 const MAX_INTERVAL_MS = 60_000;
 const MAX_JITTER_MS = 5_000;
 const MAX_JITTER_SEED = 1_000_000;
+const UX_BATCH_QUEUE_PATTERN = /(^|\/)mvp-lane-[a-e]-ux-[^/]*batch(16|17)\.json$/;
 
 function getArg(flag, fallback = null) {
   const idx = process.argv.indexOf(flag);
@@ -241,6 +242,54 @@ function getFounderDecisionDependency(task) {
     reason,
     declarationField,
   };
+}
+
+function isUxBatchLane(lane) {
+  return UX_BATCH_QUEUE_PATTERN.test(String(lane?.queue ?? ''));
+}
+
+function buildUxStopCondition(lane, report) {
+  if (!isUxBatchLane(lane)) return null;
+
+  if (report?.founderDecisionStop?.requiresStop) {
+    return {
+      code: 'founder_decision_required',
+      severity: 'stop',
+      stopRun: true,
+      taskId: report.founderDecisionStop.taskId,
+      declarationField: report.founderDecisionStop.declarationField,
+      reason: report.founderDecisionStop.reason,
+    };
+  }
+
+  const summary = report?.summary ?? {};
+  const queued = Number(summary.queued ?? 0);
+  const inProgress = Number(summary.in_progress ?? 0);
+  const blocked = Number(summary.blocked ?? 0);
+
+  if (queued === 0 && inProgress === 0 && blocked > 0) {
+    return {
+      code: 'blocked_only',
+      severity: 'attention',
+      stopRun: false,
+      taskId: null,
+      declarationField: null,
+      reason: `queue has no queued tasks and ${blocked} blocked task(s) remain`,
+    };
+  }
+
+  if (queued === 0 && inProgress === 0 && blocked === 0) {
+    return {
+      code: 'no_queued_tasks',
+      severity: 'info',
+      stopRun: false,
+      taskId: null,
+      declarationField: null,
+      reason: 'queue is drained',
+    };
+  }
+
+  return null;
 }
 
 function claimNext(lane, actions) {
@@ -485,6 +534,12 @@ async function main() {
       if (report.drifts?.length) {
         for (const drift of report.drifts) console.error(`[supervisor] ${lane.name} drift=${drift}`);
       }
+      report.uxStopCondition = buildUxStopCondition(lane, report);
+      if (report.uxStopCondition) {
+        console.log(
+          `[supervisor] ${lane.name} ux-stop-state code=${report.uxStopCondition.code} severity=${report.uxStopCondition.severity} reason=${report.uxStopCondition.reason}`,
+        );
+      }
     }
     if (healthCheck) {
       cycle.healthCheck = {
@@ -495,13 +550,17 @@ async function main() {
       };
     }
     cycle.stopConditions = cycle.lanes
-      .filter((lane) => lane.founderDecisionStop?.requiresStop)
+      .filter((lane) => lane.founderDecisionStop?.requiresStop || lane.uxStopCondition?.stopRun)
       .map((lane) => ({
         lane: lane.lane,
-        code: 'founder_decision_required',
-        taskId: lane.founderDecisionStop.taskId,
-        declarationField: lane.founderDecisionStop.declarationField,
-        reason: lane.founderDecisionStop.reason,
+        code: lane.founderDecisionStop?.requiresStop ? 'founder_decision_required' : lane.uxStopCondition.code,
+        taskId: lane.founderDecisionStop?.requiresStop
+          ? lane.founderDecisionStop.taskId
+          : lane.uxStopCondition.taskId,
+        declarationField: lane.founderDecisionStop?.requiresStop
+          ? lane.founderDecisionStop.declarationField
+          : lane.uxStopCondition.declarationField,
+        reason: lane.founderDecisionStop?.requiresStop ? lane.founderDecisionStop.reason : lane.uxStopCondition.reason,
       }));
 
     writeJson(statusOut, cycle);

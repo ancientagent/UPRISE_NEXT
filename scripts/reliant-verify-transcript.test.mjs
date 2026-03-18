@@ -39,13 +39,20 @@ function main() {
   assert.match(success.stdout, /## Verify Command/);
   assert.match(success.stdout, /## Verify Exit Code/);
   assert.match(success.stdout, /## Exact Output/);
+  assert.match(success.stdout, /code=0/);
+  assert.match(success.stdout, /passed=true/);
+  assert.match(success.stdout, /signal=\(none\)/);
   const successJson = JSON.parse(fs.readFileSync(jsonOut, 'utf8'));
   assert.equal(successJson.exitCode, 0);
   assert.equal(successJson.passed, true);
+  assert.equal(successJson.exitMeta.code, 0);
+  assert.equal(successJson.exitMeta.passed, true);
+  assert.equal(successJson.exitMeta.signal, null);
   assert.match(successJson.output, /ok/);
   const successMarkdown = fs.readFileSync(markdownOut, 'utf8');
   assert.match(successMarkdown, /```bash/);
   assert.match(successMarkdown, /```text/);
+  assert.match(successMarkdown, /code=0/);
 
   const failure = run(
     ['--command', `${process.execPath} -e "console.error('boom'); process.exit(3)"`, '--format', 'json'],
@@ -54,7 +61,23 @@ function main() {
   const failureJson = JSON.parse(failure.stdout);
   assert.equal(failureJson.exitCode, 3);
   assert.equal(failureJson.passed, false);
+  assert.equal(failureJson.exitMeta.code, 3);
+  assert.equal(failureJson.exitMeta.passed, false);
+  assert.equal(failureJson.exitMeta.signal, null);
   assert.match(failureJson.output, /boom/);
+
+  const multiCommand = run(
+    [
+      '--command',
+      `${process.execPath} -e "process.stdout.write('alpha\\n')" && ${process.execPath} -e "console.error('beta')"`,
+      '--format',
+      'json',
+    ],
+    0,
+  );
+  const multiCommandJson = JSON.parse(multiCommand.stdout);
+  assert.equal(multiCommandJson.exitMeta.code, 0);
+  assert.match(multiCommandJson.output, /alpha\nbeta/);
 }
 
 main();
