@@ -1,8 +1,0 @@
-{
-  "taskId": "SLICE-UXPLOT-581A",
-  "title": "Plot lane closeout + regression pack",
-  "prompt": "Execute one MVP slice only: close lane A by extending targeted /plot regression coverage for locked tab ownership and deterministic state rendering.",
-  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-  "sourceQueue": null,
-  "claimedAt": "2026-03-16T18:42:22.859Z"
-}
