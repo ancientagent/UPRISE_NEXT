@@ -229,4 +229,42 @@ describe('discovery context helpers', () => {
       isVisitor: true,
     });
   });
+
+  it('preserves fallback visitor status when primary transport context omits isVisitor', () => {
+    const result = mergeDiscoveryContextPatch(
+      {
+        tunedSceneId: 'scene-primary',
+        tunedScene: {
+          id: 'scene-primary',
+          name: 'Primary',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        homeSceneId: 'scene-home',
+        isVisitor: undefined as unknown as boolean,
+      },
+      {
+        tunedSceneId: 'scene-fallback',
+        tunedScene: {
+          id: 'scene-fallback',
+          name: 'Fallback',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        isVisitor: false,
+      },
+    );
+
+    expect(result).toEqual({
+      tunedSceneId: 'scene-primary',
+      tunedScene: expect.objectContaining({ id: 'scene-primary' }),
+      isVisitor: false,
+    });
+  });
 });

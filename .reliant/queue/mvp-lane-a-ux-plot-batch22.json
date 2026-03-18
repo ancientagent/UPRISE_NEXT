@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-18T20:18:52.908Z",
+  "lane": "lane-a-ux-plot-batch22",
+  "sourceFiles": [
+    "mvp-slices-batch22-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXPLOT-726A",
+      "title": "Plot tab rail parity lock (MVP-only tabs)",
+      "prompt": "Execute one MVP slice only: lock /plot collapsed tab rail to Feed/Events/Promotions/Statistics only and add focused regression assertions for no Social exposure.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T20:22:56.116Z",
+      "updatedAt": "2026-03-18T20:23:02.663Z",
+      "finishedAt": "2026-03-18T20:23:02.663Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXPLOT-726A.md"
+    },
+    {
+      "id": "SLICE-UXPLOT-727A",
+      "title": "Plot feed deterministic state copy pass",
+      "prompt": "Execute one MVP slice only: tighten feed loading/empty/error copy to deterministic scene-scoped semantics with no personalization language drift.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T20:23:02.688Z",
+      "updatedAt": "2026-03-18T20:23:08.060Z",
+      "finishedAt": "2026-03-18T20:23:08.060Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXPLOT-727A.md"
+    },
+    {
+      "id": "SLICE-UXPLOT-728A",
+      "title": "Plot events/promotions tab contract polish",
+      "prompt": "Execute one MVP slice only: enforce tab body ownership and deterministic fallback states for Events and Promotions without adding new CTA behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T20:23:08.080Z",
+      "updatedAt": "2026-03-18T20:23:13.546Z",
+      "finishedAt": "2026-03-18T20:23:13.546Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXPLOT-728A.md"
+    },
+    {
+      "id": "SLICE-UXPLOT-729A",
+      "title": "Statistics scene-map copy coherence pass",
+      "prompt": "Execute one MVP slice only: align Statistics scene-map context copy to selected tier and active-scene resolution behavior with no metric model changes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-statistics-request.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T20:23:13.566Z",
+      "updatedAt": "2026-03-18T20:23:19.363Z",
+      "finishedAt": "2026-03-18T20:23:19.363Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXPLOT-729A.md"
+    },
+    {
+      "id": "SLICE-UXPLOT-730A",
+      "title": "Plot/profile seam interaction regression lock",
+      "prompt": "Execute one MVP slice only: reinforce collapsed/peek/expanded seam-state transitions and route-stable ownership for profile panel interactions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T20:23:19.390Z",
+      "updatedAt": "2026-03-18T20:23:25.014Z",
+      "finishedAt": "2026-03-18T20:23:25.014Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXPLOT-730A.md"
+    },
+    {
+      "id": "SLICE-UXPLOT-731A",
+      "title": "Plot lane closeout + regression pack",
+      "prompt": "Execute one MVP slice only: close lane A by extending targeted /plot regression coverage for locked tab ownership and deterministic state rendering.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T20:23:25.037Z",
+      "updatedAt": "2026-03-18T20:23:30.898Z",
+      "finishedAt": "2026-03-18T20:23:30.898Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXPLOT-731A.md"
+    }
+  ]
+}

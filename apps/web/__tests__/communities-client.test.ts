@@ -167,6 +167,52 @@ describe('communities client', () => {
     });
   });
 
+  it('preserves active-statistics scene metadata alongside response data', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-7',
+            name: 'Texas Punk',
+            city: null,
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'state',
+            isActive: true,
+          },
+          tierScope: 'state',
+          rollupUnit: 'state',
+          metrics: {
+            totalMembers: 30,
+            activeSects: 5,
+            eventsThisWeek: 2,
+            activityScore: 10,
+            activeTracks: 8,
+            gpsVerifiedUsers: 12,
+            votingEligibleUsers: 10,
+            scopeCommunityCount: 4,
+          },
+          topSongs: [],
+          timeWindow: {
+            days: 7,
+            asOf: '2026-03-18T00:00:00.000Z',
+          },
+        },
+        meta: { sceneId: 'scene-7' },
+      }),
+    });
+
+    await expect(getActiveCommunityStatistics('state', 'token-state-meta')).resolves.toEqual({
+      sceneId: 'scene-7',
+      data: expect.objectContaining({
+        community: expect.objectContaining({ id: 'scene-7' }),
+        tierScope: 'state',
+      }),
+    });
+  });
+
   it('builds active-events query from typed params', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

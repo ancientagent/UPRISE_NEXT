@@ -35,7 +35,7 @@ export default function RadiyoPlayerPanel({
   return (
     <section
       data-slot="compact-player-shell"
-      className="mt-4 rounded-[1.2rem] border border-black/15 bg-black px-3 py-2.5 text-white shadow-sm transition-all"
+      className="mt-4 rounded-[1.15rem] border border-black/15 bg-black px-3 py-2 text-white shadow-sm transition-all"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -46,7 +46,7 @@ export default function RadiyoPlayerPanel({
         </div>
 
         <div
-          className="shrink-0 rounded-full border border-white/15 bg-white/5 px-1.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75"
+          className="shrink-0 rounded-full border border-white/15 bg-white/5 px-1.5 py-[0.3rem] text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75"
           aria-label="Player mode summary"
         >
           {mode}
@@ -55,7 +55,7 @@ export default function RadiyoPlayerPanel({
 
       <div
         data-slot="player-track-row"
-        className="mt-2.5 flex items-stretch gap-2 rounded-[1rem] border border-white/12 bg-white/[0.04] p-2"
+        className="mt-2 flex items-stretch gap-2 rounded-[0.95rem] border border-white/12 bg-white/[0.04] p-2"
       >
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div
@@ -86,13 +86,13 @@ export default function RadiyoPlayerPanel({
               </>
             )}
 
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <div className="mt-2 flex flex-wrap items-center gap-1">
               {isRadiyoMode ? (
                 <>
                   <Button
                     size="sm"
                     variant={rotationPool === 'new_releases' ? 'default' : 'outline'}
-                    className="h-6.5 rounded-full px-2.5 text-[10px]"
+                    className="h-6 rounded-full px-2.5 text-[10px]"
                     onClick={() => onRotationPoolChange('new_releases')}
                   >
                     New
@@ -100,7 +100,7 @@ export default function RadiyoPlayerPanel({
                   <Button
                     size="sm"
                     variant={rotationPool === 'main_rotation' ? 'default' : 'outline'}
-                    className="h-6.5 rounded-full px-2.5 text-[10px]"
+                    className="h-6 rounded-full px-2.5 text-[10px]"
                     onClick={() => onRotationPoolChange('main_rotation')}
                   >
                     Current
@@ -110,7 +110,7 @@ export default function RadiyoPlayerPanel({
                 <p className="text-[11px] font-medium text-white/60">Selection-driven queue</p>
               )}
 
-              <div className="min-w-0 flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.03] px-1.5 py-1">
+              <div className="min-w-0 flex items-center gap-1 rounded-full border border-white/12 bg-white/[0.03] px-1.5 py-1">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-lime-300">Live</span>
                 <p className="truncate text-[11px] text-white/72">{broadcastLabel}</p>
               </div>
@@ -121,7 +121,7 @@ export default function RadiyoPlayerPanel({
         {isRadiyoMode ? (
           <div
             data-slot="player-tier-stack"
-            className="flex w-[4.25rem] shrink-0 flex-col gap-1 rounded-[0.9rem] border border-white/12 bg-black/20 p-1"
+            className="flex w-16 shrink-0 flex-col gap-1 rounded-[0.85rem] border border-white/12 bg-black/20 p-1"
           >
             {tierOptions.map((tier) => (
               <button

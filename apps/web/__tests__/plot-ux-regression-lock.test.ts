@@ -39,6 +39,7 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
     expect(playerSource).not.toContain("useState<PlayerMode>");
+    expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
     expect(playerSource).not.toContain('Switch to Collection mode');
     expect(playerSource).toContain('Back to RADIYO');
     expect(playerSource).toContain('aria-label="Back to RADIYO"');
@@ -46,6 +47,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('Selection-driven collection queue');
     expect(playerSource).toContain('Selection-driven queue');
     expect(playerSource).toContain('aria-label="Shuffle collection"');
+    expect(plotPageSource).toContain('selectedCollectionItem?.label');
     expect(playerSource).not.toContain('onModeChange');
     expect(plotPageSource).toContain('const handleCollectionSelection =');
     expect(plotPageSource).toContain('const handleCollectionEject =');
@@ -71,6 +73,7 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain("{ label: 'Recommend', position: '1:00' }");
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
+    expect(playerSource).toContain('Wheel: {wheelActions.map');
   });
 
   it('locks expanded-profile behavior to swap out Plot tabs/body', () => {
@@ -91,6 +94,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Activity Score');
     expect(plotPageSource).toContain('Calendar');
     expect(plotPageSource).toContain('Calendar stays in the header.');
+    expect(plotPageSource).toContain("const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists')");
     expect(plotPageSource).toContain('Return to Plot Tabs');
     expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
   });

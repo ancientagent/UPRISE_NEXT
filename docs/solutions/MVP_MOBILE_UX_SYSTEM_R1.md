@@ -156,16 +156,17 @@ Determinism rule:
 
 Non-gesture controls:
 - Seam toggle is mandatory and fully equivalent to gesture expand/collapse behavior.
-- Player mode switch (`RADIYO` / `Collection`) remains operable via tap/click controls independent of drag gestures.
+- Collection-mode entry and exit must remain operable without drag gestures:
+  - enter Collection from explicit collection item selection,
+  - return to `RADIYO` from explicit eject/back control.
 - No essential profile/player action may require drag-only interaction.
 
 Focus order contract:
 1. Profile seam toggle
-2. Mode switch control group (`RADIYO`, `Collection`)
-3. Active mode primary controls (play/pause and mode-specific controls)
-4. Tier controls (`City`, `State`, `National`)
-5. Plot tabs
-6. Active tab body
+2. Active mode primary controls (tier stack / rotation control in `RADIYO`, eject / shuffle in `Collection`)
+3. Tier controls (`City`, `State`, `National`) when `RADIYO` is active
+4. Plot tabs
+5. Active tab body
 
 Reduced-motion behavior:
 - If reduced motion is enabled, profile transitions use near-instant state changes with minimal opacity/position interpolation.
@@ -189,19 +190,21 @@ Modes:
 - `Collection`
 
 Required invariants:
-- Mode switch must be explicit and visible.
 - Mode changes only switch player source/state, not route.
 - Mode labels remain exactly `RADIYO` and `Collection`.
+- Collection mode entry is selection-driven only.
+- Collection mode exit uses explicit eject/back return to `RADIYO`.
+- Dedicated `RADIYO` / `Collection` switch controls are forbidden.
 
 RADIYO mode controls:
-- Play/Pause
-- Add (`+`) action
+- Tier stack (`City`, `State`, `National`)
 - Rotation source toggle (`New Releases` / `Main Rotation`)
+- Track row and context label remain visible while active.
 
 Collection mode controls:
-- Back
+- Eject/back return to `RADIYO`
 - Shuffle
-- Play/Pause
+- Track row and collection context label remain visible.
 
 ## 7) Tier + Context Contract
 Tier controls:
@@ -368,9 +371,9 @@ Web must preserve mobile semantics while adapting layout:
 | --- | --- | --- |
 | Profile seam panel | Drag down to expand; drag up to collapse | Click seam toggle must expand/collapse the same panel state in-place, without route change |
 | Profile seam panel fallback | Tap seam toggle | Click seam toggle performs identical expand/collapse transition |
-| Player mode switch | Explicit `RADIYO` / `Collection` mode switch | Mode switch labels and state transitions remain exactly `RADIYO` / `Collection`, no extra mode semantics |
-| `RADIYO` controls | Play/Pause, Add (`+`), source toggle (`New Releases` / `Main Rotation`) | Same controls and source toggle semantics; control order may adapt visually only |
-| `Collection` controls | Back, Shuffle, Play/Pause | Same controls and intent; no additional queue/recommendation behavior introduced |
+| Player mode transition | Selection-driven Collection entry plus eject/back return to `RADIYO` | Entry/exit semantics remain exactly selection-in and eject-out, with no dedicated mode switch control |
+| `RADIYO` controls | Tier stack plus source toggle (`New Releases` / `Main Rotation`) | Same tier/source semantics; control order may adapt visually only |
+| `Collection` controls | Eject/back return plus Shuffle | Same controls and intent; no additional queue/recommendation behavior introduced |
 | Tier context controls | `City` / `State` / `National` context switch | Same tier set and read-context update behavior; no ranking/authority implications added |
 | Plot tabs | Feed / Events / Promotions / Statistics tab switching | Same tab set and tab state model; desktop layout may split panes without changing tab semantics |
 | Feed ordering | Scene-scoped, reverse-chronological | Same canonical reverse-chronological ordering; no personalization/relevance sort |
@@ -394,7 +397,8 @@ Web must preserve mobile semantics while adapting layout:
 | --- | --- | --- | --- |
 | Pull down seam to expand profile | Click seam toggle button | `Enter`/`Space` on focused seam toggle | Same expanded state transition and same route |
 | Pull up seam to collapse profile | Click seam toggle button in expanded state | `Enter`/`Space` on focused seam toggle | Same collapsed baseline state restoration |
-| Toggle player mode (`RADIYO`/`Collection`) | Click mode toggle control | Arrow keys between mode options + `Enter` to confirm | Mode labels and resulting player state remain identical |
+| Enter Collection mode | Click collection item selection | Focus collection item + `Enter` | Collection entry remains selection-driven only |
+| Return to `RADIYO` | Click eject/back control | Focus eject/back control + `Enter` | Exit path returns to `RADIYO` with no route change |
 | Toggle rotation source (`New Releases`/`Main Rotation`) | Click source toggle control | Arrow keys/select + `Enter` | Source semantics unchanged; no ranking behavior introduced |
 | Switch Plot tabs | Click tab item | Arrow keys to move focus + `Enter` to activate | Tab set/order/state machine unchanged |
 | Change tier context (`City`/`State`/`National`) | Click tier control | Arrow keys/select + `Enter` | Context read scope changes only; no authority/ranking semantics |
@@ -406,7 +410,7 @@ Web must preserve mobile semantics while adapting layout:
 | Mobile narrow | `< 768px` | Single-column stack: header -> player -> tabs -> tab body | Mobile interaction model is canonical source of truth |
 | Tablet | `768px - 1023px` | Single-column or two-region stack with persistent tab controls | Same state machine, route stability, and mode/tier/tab semantics |
 | Desktop | `1024px - 1439px` | Multi-pane optional split (profile/player + tab body) | No new actions, no semantic drift, same control outcomes |
-| Desktop wide | `>= 1440px` | Expanded spacing, optional fixed side pane for profile context | Expand/collapse, mode switch, tab switch, and tier switch semantics unchanged |
+| Desktop wide | `>= 1440px` | Expanded spacing, optional fixed side pane for profile context | Expand/collapse, selection-entry/eject-exit, tab switch, and tier switch semantics unchanged |
 
 Breakpoint implementation rules:
 1. Breakpoint changes may alter presentation density and pane arrangement only.
