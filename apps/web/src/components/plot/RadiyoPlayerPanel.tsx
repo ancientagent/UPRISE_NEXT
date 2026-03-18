@@ -35,9 +35,9 @@ export default function RadiyoPlayerPanel({
   return (
     <section
       data-slot="compact-player-shell"
-      className="mt-4 rounded-[1.4rem] border border-black/15 bg-black px-4 py-3 text-white shadow-sm transition-all"
+      className="mt-4 rounded-[1.25rem] border border-black/15 bg-black px-3.5 py-2.5 text-white shadow-sm transition-all"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2.5">
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
             {isRadiyoMode ? 'Scene Context' : 'Collection Context'}
@@ -46,7 +46,7 @@ export default function RadiyoPlayerPanel({
         </div>
 
         <div
-          className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75"
+          className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75"
           aria-label="Player mode summary"
         >
           {mode}
@@ -55,11 +55,11 @@ export default function RadiyoPlayerPanel({
 
       <div
         data-slot="player-track-row"
-        className="mt-3 flex items-stretch gap-3 rounded-[1.2rem] border border-white/12 bg-white/[0.04] p-3"
+        className="mt-2.5 flex items-stretch gap-2.5 rounded-[1.05rem] border border-white/12 bg-white/[0.04] p-2.5"
       >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
           <div
-            className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border text-[11px] font-semibold uppercase tracking-[0.16em] ${
+            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.05rem] border text-[10px] font-semibold uppercase tracking-[0.16em] ${
               isRadiyoMode
                 ? 'border-lime-300/35 bg-lime-300/12 text-lime-200'
                 : 'border-sky-300/35 bg-sky-300/12 text-sky-100'
@@ -86,13 +86,13 @@ export default function RadiyoPlayerPanel({
               </>
             )}
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
               {isRadiyoMode ? (
                 <>
                   <Button
                     size="sm"
                     variant={rotationPool === 'new_releases' ? 'default' : 'outline'}
-                    className="h-7 rounded-full px-3 text-[11px]"
+                    className="h-6.5 rounded-full px-2.5 text-[10px]"
                     onClick={() => onRotationPoolChange('new_releases')}
                   >
                     New
@@ -100,7 +100,7 @@ export default function RadiyoPlayerPanel({
                   <Button
                     size="sm"
                     variant={rotationPool === 'main_rotation' ? 'default' : 'outline'}
-                    className="h-7 rounded-full px-3 text-[11px]"
+                    className="h-6.5 rounded-full px-2.5 text-[10px]"
                     onClick={() => onRotationPoolChange('main_rotation')}
                   >
                     Current
@@ -110,7 +110,7 @@ export default function RadiyoPlayerPanel({
                 <p className="text-[11px] font-medium text-white/60">Selection-driven queue</p>
               )}
 
-              <div className="min-w-0 flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-2.5 py-1">
+              <div className="min-w-0 flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.03] px-2 py-1">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-lime-300">Live</span>
                 <p className="truncate text-[11px] text-white/72">{broadcastLabel}</p>
               </div>
@@ -121,14 +121,14 @@ export default function RadiyoPlayerPanel({
         {isRadiyoMode ? (
           <div
             data-slot="player-tier-stack"
-            className="flex w-20 shrink-0 flex-col gap-1.5 rounded-[1rem] border border-white/12 bg-black/20 p-1.5"
+            className="flex w-[4.5rem] shrink-0 flex-col gap-1 rounded-[0.95rem] border border-white/12 bg-black/20 p-1.25"
           >
             {tierOptions.map((tier) => (
               <button
                 key={tier}
                 type="button"
                 onClick={() => onTierChange(tier)}
-                className={`rounded-xl border px-2 py-1.5 text-[11px] font-semibold capitalize transition-colors ${
+                className={`rounded-[0.8rem] border px-2 py-1.25 text-[10px] font-semibold capitalize transition-colors ${
                   selectedTier === tier
                     ? 'border-[#b7d43f] bg-[#b7d43f] text-black'
                     : 'border-white/12 bg-white/[0.03] text-white/82 hover:bg-white/[0.08]'
@@ -160,27 +160,27 @@ export default function RadiyoPlayerPanel({
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[1rem] border border-white/12 bg-white/[0.03] px-3 py-2">
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2.5 rounded-[0.95rem] border border-white/12 bg-white/[0.03] px-2.5 py-2">
         <div className="flex items-center gap-2">
           {isRadiyoMode ? (
             <>
               <button
                 type="button"
-                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-lime-300 hover:bg-white/10"
+                className="h-6.5 rounded-lg border border-white/20 px-2 text-[10px] text-lime-300 hover:bg-white/10"
                 aria-label="Play"
               >
                 Play
               </button>
               <button
                 type="button"
-                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-lime-300 hover:bg-white/10"
+                className="h-6.5 rounded-lg border border-white/20 px-2 text-[10px] text-lime-300 hover:bg-white/10"
                 aria-label="Pause"
               >
                 Pause
               </button>
               <button
                 type="button"
-                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-lime-300 hover:bg-white/10"
+                className="h-6.5 rounded-lg border border-white/20 px-2 text-[10px] text-lime-300 hover:bg-white/10"
                 aria-label="Add to collection"
               >
                 Add

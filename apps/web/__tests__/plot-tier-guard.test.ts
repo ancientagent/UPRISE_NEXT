@@ -48,4 +48,22 @@ describe('Plot Tier Guard', () => {
     expect(buildRadiyoBroadcastLabel('state', anchor, null)).toBe('Texas • Austin Underground');
     expect(buildRadiyoBroadcastLabel('national', anchor, null)).toBe('National • Austin Underground');
   });
+
+  it('preserves the selected anchor community over conflicting home-scene fallback data', () => {
+    const anchor = {
+      name: 'Austin Punk Uprise',
+      city: 'Austin',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+    };
+    const homeScene = {
+      city: 'Chicago',
+      state: 'Illinois',
+      musicCommunity: 'House',
+    };
+
+    expect(buildRadiyoBroadcastLabel('city', anchor, homeScene)).toBe('Austin, Texas • Punk');
+    expect(buildRadiyoBroadcastLabel('state', anchor, homeScene)).toBe('Texas • Punk');
+    expect(buildRadiyoBroadcastLabel('national', anchor, homeScene)).toBe('National • Punk');
+  });
 });

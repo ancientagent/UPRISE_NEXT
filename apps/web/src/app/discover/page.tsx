@@ -24,7 +24,11 @@ function formatSceneLocation(city: string | null, state: string | null) {
   if (city && state) return `${city}, ${state}`;
   if (city) return city;
   if (state) return state;
-  return 'Location pending';
+  return 'Unlisted';
+}
+
+function formatMusicCommunityLabel(value: string | null | undefined, fallback?: string) {
+  return value?.trim() || fallback?.trim() || 'Unlisted';
 }
 
 function getCitySceneStatusLabel(item: DiscoverCitySceneItem, tunedSceneId: string | null) {
@@ -232,8 +236,8 @@ export default function DiscoverPage() {
             Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
           </p>
           <p className="mt-2 text-xs text-black/50">
-            If your selected city is not active yet, onboarding routes you to the nearest active city Scene for that
-            Music Community and tracks your pioneer intent through the profile-strip notification icon.
+            If your selected city is not active yet, onboarding routes you to the nearest active city Scene for the
+            selected parent music community and tracks your pioneer intent via the profile-strip notification icon.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
@@ -315,6 +319,8 @@ export default function DiscoverPage() {
 
           {resultSummary ? (
             <div
+              role="status"
+              aria-live="polite"
               className={`mt-4 rounded-2xl border p-4 ${
                 error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
               }`}
@@ -337,7 +343,7 @@ export default function DiscoverPage() {
                             {getCitySceneStatusLabel(item, tunedSceneId)}
                           </span>
                           <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                            {item.musicCommunity?.trim() || normalizedMusicCommunity || 'Unlisted'}
+                            {formatMusicCommunityLabel(item.musicCommunity, normalizedMusicCommunity)}
                           </span>
                         </div>
                         <dl className="mt-3 grid gap-1 text-sm text-black/60">
@@ -351,7 +357,7 @@ export default function DiscoverPage() {
                           </div>
                           <div className="flex flex-wrap gap-2">
                             <dt className="font-medium text-black/70">Music Community</dt>
-                            <dd>{item.musicCommunity?.trim() || normalizedMusicCommunity || 'Unlisted'}</dd>
+                            <dd>{formatMusicCommunityLabel(item.musicCommunity, normalizedMusicCommunity)}</dd>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             <dt className="font-medium text-black/70">Members</dt>
@@ -394,7 +400,7 @@ export default function DiscoverPage() {
                         {item.isHomeSceneState ? 'Home Scene State' : 'State Rollup'}
                       </span>
                       <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                        {item.musicCommunity}
+                        {formatMusicCommunityLabel(item.musicCommunity)}
                       </span>
                     </div>
                     <dl className="mt-3 grid gap-1 text-sm text-black/60">
@@ -408,7 +414,7 @@ export default function DiscoverPage() {
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <dt className="font-medium text-black/70">Music Community</dt>
-                        <dd>{item.musicCommunity}</dd>
+                        <dd>{formatMusicCommunityLabel(item.musicCommunity)}</dd>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <dt className="font-medium text-black/70">City Scenes</dt>

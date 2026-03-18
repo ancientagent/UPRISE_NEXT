@@ -110,6 +110,64 @@ describe('discovery client', () => {
     );
   });
 
+  it('never adds artist or band lookup params to discovery queries', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'city',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+      'token-scope',
+    );
+
+    const [url] = (global.fetch as jest.Mock).mock.calls[0] as [string];
+    const query = new URL(url).searchParams;
+
+    expect(query.get('tier')).toBe('city');
+    expect(query.get('musicCommunity')).toBe('Punk');
+    expect(query.get('state')).toBe('TX');
+    expect(query.get('city')).toBe('Austin');
+    expect(query.has('artist')).toBe(false);
+    expect(query.has('band')).toBe(false);
+  });
+
+  it('does not carry location filters into national-tier discovery', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'national',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+      'token-national',
+    );
+
+    const [url] = (global.fetch as jest.Mock).mock.calls[0] as [string];
+    const query = new URL(url).searchParams;
+
+    expect(query.get('tier')).toBe('national');
+    expect(query.get('musicCommunity')).toBe('Punk');
+    expect(query.has('state')).toBe(false);
+    expect(query.has('city')).toBe(false);
+  });
+
   it('returns null when discovery context data is empty', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

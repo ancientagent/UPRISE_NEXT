@@ -107,6 +107,21 @@ describe('communities client', () => {
     );
   });
 
+  it('returns null sceneId when active-statistics metadata is absent', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: null,
+      }),
+    });
+
+    await expect(getActiveCommunityStatistics('national', 'token-null-meta')).resolves.toEqual({
+      sceneId: null,
+      data: null,
+    });
+  });
+
   it('builds active-events query from typed params', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
