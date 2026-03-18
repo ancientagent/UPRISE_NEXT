@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-18T20:38:03.237Z",
+  "lane": "lane-c-ux-player-profile-batch23",
+  "sourceFiles": [
+    "mvp-slices-batch23-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXPLYR-768A",
+      "title": "RADIYO compact shell proportion lock",
+      "prompt": "Execute one MVP slice only: tighten compact RADIYO shell proportions while preserving existing control map and no behavior expansion.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXPLYR-769A",
+      "title": "Tier-label deterministic title parity",
+      "prompt": "Execute one MVP slice only: lock City/State/National title rendering parity in player header and preserve parent community anchor semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-tier-guard.test.ts plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXPLYR-770A",
+      "title": "Collection entry/eject ownership pass",
+      "prompt": "Execute one MVP slice only: enforce collection-mode entry by collection selection and eject-only return to RADIYO without direct mode-switch controls.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXPLYR-771A",
+      "title": "Engagement wheel mapping lock pass",
+      "prompt": "Execute one MVP slice only: reinforce deterministic wheel action mappings by player mode and ensure no action drift from lock docs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXPLYR-772A",
+      "title": "Expanded profile composition parity pass",
+      "prompt": "Execute one MVP slice only: align expanded profile header/workspace composition and section ordering to locked profile surface spec.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXPLYR-773A",
+      "title": "Player/profile lane closeout + regression pack",
+      "prompt": "Execute one MVP slice only: close lane C with focused regression locks for seam-state ownership, mode-state ownership, and collection/eject behavior.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    }
+  ]
+}
