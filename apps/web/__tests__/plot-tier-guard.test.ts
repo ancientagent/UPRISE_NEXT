@@ -83,4 +83,10 @@ describe('Plot Tier Guard', () => {
     expect(buildRadiyoBroadcastLabel('state', anchor, homeScene)).toBe('Texas • Punk');
     expect(buildRadiyoBroadcastLabel('national', anchor, homeScene)).toBe('National • Punk');
   });
+
+  it('falls back to UPRISE when no anchor or home-scene label data exists', () => {
+    expect(buildRadiyoBroadcastLabel('city', {}, null)).toBe('UPRISE');
+    expect(buildRadiyoBroadcastLabel('state', {}, null)).toBe('UPRISE');
+    expect(buildRadiyoBroadcastLabel('national', {}, null)).toBe('National • UPRISE');
+  });
 });

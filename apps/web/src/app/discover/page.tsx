@@ -236,7 +236,7 @@ export default function DiscoverPage() {
             Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
           </p>
           <p className="mt-2 text-xs text-black/50">
-            If your selected city is not active yet, onboarding routes you to the nearest active city Scene for the
+            If your selected city is inactive or unavailable, onboarding routes you to the nearest active city Scene for the
             selected parent community and tracks your pioneer intent via the profile-strip notification icon.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
@@ -322,6 +322,7 @@ export default function DiscoverPage() {
               role="status"
               aria-live="polite"
               aria-atomic="true"
+              aria-relevant="text"
               className={`mt-4 rounded-2xl border p-4 ${
                 error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
               }`}
@@ -398,7 +399,7 @@ export default function DiscoverPage() {
                     <p className="font-medium text-black">{item.state}</p>
                     <div className="mt-2 flex flex-wrap gap-2 text-xs text-black/60">
                       <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                        {item.isHomeSceneState ? 'Home Scene State' : 'State Rollup'}
+                        {item.isHomeSceneState ? 'Home State' : 'State'}
                       </span>
                       <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
                         {formatMusicCommunityLabel(item.musicCommunity)}

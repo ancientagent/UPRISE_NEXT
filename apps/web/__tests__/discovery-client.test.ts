@@ -218,6 +218,31 @@ describe('discovery client', () => {
     expect(query.has('city')).toBe(false);
   });
 
+  it('limits national-tier discovery queries to community scope keys only', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'national',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+      'token-national-keys',
+    );
+
+    const [url] = (global.fetch as jest.Mock).mock.calls[0] as [string];
+    const keys = Array.from(new URL(url).searchParams.keys()).sort();
+
+    expect(keys).toEqual(['musicCommunity', 'tier']);
+  });
+
   it('returns null when discovery context data is empty', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
@@ -228,6 +253,33 @@ describe('discovery client', () => {
     });
 
     await expect(getDiscoveryContext('token-null')).resolves.toBeNull();
+  });
+
+  it('sends authenticated discovery-context reads through the typed client', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          tunedSceneId: 'scene-ctx',
+          tunedScene: null,
+          homeSceneId: 'scene-home',
+          isVisitor: true,
+        },
+      }),
+    });
+
+    await getDiscoveryContext('token-context');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/context',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-context',
+        }),
+      }),
+    );
   });
 
   it('returns typed context and mutations from tune + set-home wrappers', async () => {
