@@ -35,6 +35,29 @@ describe('discovery context helpers', () => {
     });
   });
 
+  it('derives tuned scene id from the scene object when context omits tunedSceneId', () => {
+    expect(
+      toDiscoveryContextPatch({
+        tunedSceneId: null,
+        tunedScene: {
+          id: 'scene-derived',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        homeSceneId: 'scene-home',
+        isVisitor: true,
+      }),
+    ).toEqual({
+      tunedSceneId: 'scene-derived',
+      tunedScene: expect.objectContaining({ id: 'scene-derived' }),
+      isVisitor: true,
+    });
+  });
+
   it('prefers primary discovery context when available', () => {
     const result = mergeDiscoveryContextPatch(
       {

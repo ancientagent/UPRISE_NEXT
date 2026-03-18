@@ -7,9 +7,9 @@
   ],
   "summary": {
     "total": 6,
-    "queued": 6,
+    "queued": 0,
     "in_progress": 0,
-    "done": 0,
+    "done": 6,
     "blocked": 0
   },
   "tasks": [
@@ -18,42 +18,66 @@
       "title": "Queue/runtime preflight lock for Batch17",
       "prompt": "Execute one MVP slice only: extend UX preflight checks to include Batch17 queue/runtime naming and source-doc presence assertions.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:19:09.959Z",
+      "updatedAt": "2026-03-18T19:20:02.689Z",
+      "finishedAt": "2026-03-18T19:20:02.689Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXAUTO-714A.md"
     },
     {
       "id": "SLICE-UXAUTO-715A",
       "title": "Batch17 transition-sanity guard extension",
       "prompt": "Execute one MVP slice only: expand transition-sanity diagnostics for Batch17 queue status edges and deterministic refusal codes.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:20:08.790Z",
+      "updatedAt": "2026-03-18T19:21:02.252Z",
+      "finishedAt": "2026-03-18T19:21:02.252Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXAUTO-715A.md"
     },
     {
       "id": "SLICE-UXAUTO-716A",
       "title": "Runtime-clean resume diagnostics parity",
       "prompt": "Execute one MVP slice only: improve runtime-clean resume messaging for stale runtime recovery and next-action determinism.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:21:08.191Z",
+      "updatedAt": "2026-03-18T19:22:01.758Z",
+      "finishedAt": "2026-03-18T19:22:01.758Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXAUTO-716A.md"
     },
     {
       "id": "SLICE-UXAUTO-717A",
       "title": "Verify transcript guard hardening",
       "prompt": "Execute one MVP slice only: harden verify-transcript capture for multi-command slices and deterministic exit metadata formatting.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:22:05.801Z",
+      "updatedAt": "2026-03-18T19:22:49.119Z",
+      "finishedAt": "2026-03-18T19:22:49.119Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXAUTO-717A.md"
     },
     {
       "id": "SLICE-UXAUTO-718A",
       "title": "Supervisor stop-condition clarity pass",
       "prompt": "Execute one MVP slice only: tighten supervisor stop-condition diagnostics for blocked/founder-decision/no-queued states in UX lanes.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:22:56.648Z",
+      "updatedAt": "2026-03-18T19:23:44.650Z",
+      "finishedAt": "2026-03-18T19:23:44.650Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXAUTO-718A.md"
     },
     {
       "id": "SLICE-UXAUTO-719A",
       "title": "Automation lane closeout + runbook sync",
       "prompt": "Execute one MVP slice only: close lane D with runbook updates reflecting Batch17 queue operation and recovery patterns.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:23:48.981Z",
+      "updatedAt": "2026-03-18T19:24:33.524Z",
+      "finishedAt": "2026-03-18T19:24:33.524Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXAUTO-719A.md"
     }
   ]
 }

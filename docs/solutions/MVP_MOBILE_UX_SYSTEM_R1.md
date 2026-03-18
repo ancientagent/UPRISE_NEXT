@@ -33,7 +33,7 @@ This document is the execution baseline for:
 Primary order for Plot screen (mobile):
 1. Profile Header Row
 2. RaDIYo/Collection Player Shell
-3. Plot Tabs (Feed, Events, Promotions, Statistics, Social)
+3. Plot Tabs (Feed, Events, Promotions, Statistics)
 4. Active Tab Content
 
 Notes:
@@ -319,24 +319,24 @@ Statistics:
     - Preserve selected tab and context controls on error.
 
 Social:
-- Placeholder or deferred surface unless spec explicitly enables behavior.
+- Hidden in MVP collapsed `/plot` navigation unless canon/spec explicitly enables behavior.
 - Deferred Contract (R1):
   - Status:
-    - Social tab is explicitly deferred in R1 unless and until canon/spec enables concrete behavior.
+    - Social workflows are deferred in R1 unless and until canon/spec enables concrete behavior.
   - Allowed surface:
-    - Informational deferred-state panel only (no active social interaction controls).
-    - Copy may state that Social workflows are deferred for current MVP phase.
+    - No Social tab or deferred Social panel in the MVP collapsed `/plot` rail.
+    - Social behavior remains off-surface until an approved endpoint + surface contract ships.
   - No-drift placeholder rules:
     - Do not imply unavailable capabilities as active actions.
     - Do not introduce speculative CTA language (for example: follow, join, invite, boost, upgrade) unless explicitly authorized.
     - Do not imply ranking/recommendation/feed authority from deferred content.
     - Do not imply hidden unlock conditions or paywall semantics for deferred behavior.
   - Interaction constraints:
-    - Tab selection behavior remains functional and state-consistent with other tabs.
-    - Deferred panel must preserve active context controls and route stability.
+    - Active tab behavior remains limited to Feed, Events, Promotions, and Statistics.
+    - No hidden or inactive Social rail slot may be rendered in MVP.
   - Error/loading constraints:
-    - Deferred panel does not depend on social backend reads in R1.
-    - If any read is attempted by adaptation layer, fallback remains non-destructive deferred copy with no semantic drift.
+    - MVP collapsed `/plot` does not attempt Social reads in R1.
+    - If adaptation work starts prematurely, stop and wait for explicit canon/spec unlock instead of rendering deferred copy.
 
 ### Cross-Tab IA Consistency Rules (R1 Consolidation)
 - Canon-consistent terminology:
@@ -349,7 +349,8 @@ Social:
   - Feed/Events/Promotions/Statistics in R1 are descriptive context reads, not recommendation engines.
   - No personalization, behavioral weighting, or opaque ranking semantics may be implied.
 - Deferred-surface guardrail:
-  - Social tab copy must remain explicit about deferred status and must not imply hidden active workflows.
+  - Social remains hidden in MVP collapsed `/plot` navigation.
+  - Copy elsewhere may mention Social only as deferred and must not imply hidden active workflows.
   - Deferred copy cannot introduce speculative CTAs or unlock narratives not backed by canon/spec.
 - State semantics parity:
   - Loading, empty, and error states remain non-destructive and context-preserving across all tabs.
@@ -371,7 +372,7 @@ Web must preserve mobile semantics while adapting layout:
 | `RADIYO` controls | Play/Pause, Add (`+`), source toggle (`New Releases` / `Main Rotation`) | Same controls and source toggle semantics; control order may adapt visually only |
 | `Collection` controls | Back, Shuffle, Play/Pause | Same controls and intent; no additional queue/recommendation behavior introduced |
 | Tier context controls | `City` / `State` / `National` context switch | Same tier set and read-context update behavior; no ranking/authority implications added |
-| Plot tabs | Feed / Events / Promotions / Statistics / Social tab switching | Same tab set and tab state model; desktop layout may split panes without changing tab semantics |
+| Plot tabs | Feed / Events / Promotions / Statistics tab switching | Same tab set and tab state model; desktop layout may split panes without changing tab semantics |
 | Feed ordering | Scene-scoped, reverse-chronological | Same canonical reverse-chronological ordering; no personalization/relevance sort |
 | Loading/empty/error states | Deterministic tab-body states | Same loading/empty/error semantics with retry preserved; current tab/context remains unchanged |
 | Route invariants | Profile expansion and player mode changes stay on same route | Web adaptation must keep these interactions route-stable; layout shifts allowed, route drift disallowed |

@@ -66,4 +66,21 @@ describe('Plot Tier Guard', () => {
     expect(buildRadiyoBroadcastLabel('state', anchor, homeScene)).toBe('Texas • Punk');
     expect(buildRadiyoBroadcastLabel('national', anchor, homeScene)).toBe('National • Punk');
   });
+
+  it('normalizes padded anchor and fallback fields before building tier titles', () => {
+    const anchor = {
+      city: ' Austin ',
+      state: ' Texas ',
+      musicCommunity: ' Punk ',
+    };
+    const homeScene = {
+      city: ' Chicago ',
+      state: ' Illinois ',
+      musicCommunity: ' House ',
+    };
+
+    expect(buildRadiyoBroadcastLabel('city', anchor, homeScene)).toBe('Austin, Texas • Punk');
+    expect(buildRadiyoBroadcastLabel('state', anchor, homeScene)).toBe('Texas • Punk');
+    expect(buildRadiyoBroadcastLabel('national', anchor, homeScene)).toBe('National • Punk');
+  });
 });

@@ -34,7 +34,7 @@ function formatMusicCommunityLabel(value: string | null | undefined, fallback?: 
 function getCitySceneStatusLabel(item: DiscoverCitySceneItem, tunedSceneId: string | null) {
   if (item.isHomeScene) return 'Home Scene';
   if (tunedSceneId === item.sceneId) return 'Tuned Scene';
-  return item.isActive ? 'Active City Scene' : 'Inactive City Scene';
+  return item.isActive ? 'Active' : 'Inactive';
 }
 
 export default function DiscoverPage() {
@@ -237,7 +237,7 @@ export default function DiscoverPage() {
           </p>
           <p className="mt-2 text-xs text-black/50">
             If your selected city is not active yet, onboarding routes you to the nearest active city Scene for the
-            selected parent music community and tracks your pioneer intent via the profile-strip notification icon.
+            selected parent community and tracks your pioneer intent via the profile-strip notification icon.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
@@ -321,6 +321,7 @@ export default function DiscoverPage() {
             <div
               role="status"
               aria-live="polite"
+              aria-atomic="true"
               className={`mt-4 rounded-2xl border p-4 ${
                 error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
               }`}

@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXPLYR-713A",
+  "title": "Player/profile lane closeout + regression pack",
+  "prompt": "Execute one MVP slice only: close lane C with focused regression locks for seam-state ownership, mode-state ownership, and collection/eject behavior.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-18T19:24:56.663Z"
+}
