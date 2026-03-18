@@ -141,7 +141,10 @@ export default function DiscoverPage() {
       };
     }
 
-    return null;
+    return {
+      title: 'Scene results ready',
+      body: 'Showing deterministic scene results for the current scope and music community.',
+    };
   }, [token, canSearch, loading, error, items.length]);
 
   const handleSetHomeScene = async (item: DiscoverCitySceneItem) => {
@@ -228,6 +231,10 @@ export default function DiscoverPage() {
           <p className="mt-2 text-xs text-black/50">
             Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
           </p>
+          <p className="mt-2 text-xs text-black/50">
+            If your selected city is not active yet, onboarding routes you to the nearest active city Scene for that
+            Music Community and tracks your pioneer intent through the profile-strip notification icon.
+          </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
             <Button asChild variant="outline" size="sm">
@@ -239,13 +246,20 @@ export default function DiscoverPage() {
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-xs uppercase tracking-[0.2em] text-black/60">Music Community</label>
+              <label htmlFor="music-community-search" className="text-xs uppercase tracking-[0.2em] text-black/60">
+                Music Community
+              </label>
               <input
+                id="music-community-search"
+                aria-describedby="discover-search-scope-note"
                 value={musicCommunity}
                 onChange={(e) => setMusicCommunity(e.target.value)}
                 placeholder="e.g. Punk"
                 className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
               />
+              <p id="discover-search-scope-note" className="mt-2 text-xs text-black/50">
+                Search is limited to Scene and Music Community scope in MVP. Artist and band lookup is not supported.
+              </p>
             </div>
             <div>
               <label className="text-xs uppercase tracking-[0.2em] text-black/60">State Filter (optional)</label>
@@ -308,7 +322,9 @@ export default function DiscoverPage() {
               <p className="text-sm font-medium">{resultSummary.title}</p>
               <p className="mt-1 text-sm">{resultSummary.body}</p>
             </div>
-          ) : (
+          ) : null}
+
+          {items.length > 0 ? (
             <ul className="mt-4 space-y-3">
               {items.map((item) =>
                 item.entryType === 'city_scene' ? (
@@ -321,13 +337,21 @@ export default function DiscoverPage() {
                             {getCitySceneStatusLabel(item, tunedSceneId)}
                           </span>
                           <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                            {item.musicCommunity?.trim() || normalizedMusicCommunity || 'Music community pending'}
+                            {item.musicCommunity?.trim() || normalizedMusicCommunity || 'Unlisted'}
                           </span>
                         </div>
                         <dl className="mt-3 grid gap-1 text-sm text-black/60">
                           <div className="flex flex-wrap gap-2">
+                            <dt className="font-medium text-black/70">Scope</dt>
+                            <dd>City Scene</dd>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
                             <dt className="font-medium text-black/70">Location</dt>
                             <dd>{formatSceneLocation(item.city, item.state)}</dd>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <dt className="font-medium text-black/70">Music Community</dt>
+                            <dd>{item.musicCommunity?.trim() || normalizedMusicCommunity || 'Unlisted'}</dd>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             <dt className="font-medium text-black/70">Members</dt>
@@ -375,6 +399,18 @@ export default function DiscoverPage() {
                     </div>
                     <dl className="mt-3 grid gap-1 text-sm text-black/60">
                       <div className="flex flex-wrap gap-2">
+                        <dt className="font-medium text-black/70">Scope</dt>
+                        <dd>State Rollup</dd>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <dt className="font-medium text-black/70">State</dt>
+                        <dd>{item.state}</dd>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <dt className="font-medium text-black/70">Music Community</dt>
+                        <dd>{item.musicCommunity}</dd>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
                         <dt className="font-medium text-black/70">City Scenes</dt>
                         <dd>{item.citySceneCount}</dd>
                       </div>
@@ -387,7 +423,7 @@ export default function DiscoverPage() {
                 )
               )}
             </ul>
-          )}
+          ) : null}
         </section>
       </div>
     </main>

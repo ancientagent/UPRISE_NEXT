@@ -243,6 +243,69 @@ function main() {
   assert.equal(founderHealthStop.status, 6);
   assert.match(founderHealthStop.stderr, /code=founder_decision_required/);
 
+  const blockedUxQueuePath = path.join(tempDir, '.reliant/queue/mvp-lane-d-ux-automation-batch17.json');
+  const blockedUxRuntimePath = path.join(tempDir, '.reliant/runtime/current-task-lane-d-ux-batch17.json');
+  const blockedUxLanesPath = path.join(tempDir, 'blocked-ux-lanes.json');
+  fs.mkdirSync(path.dirname(blockedUxQueuePath), { recursive: true });
+  fs.mkdirSync(path.dirname(blockedUxRuntimePath), { recursive: true });
+  fs.writeFileSync(
+    blockedUxQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 1, queued: 0, in_progress: 0, done: 0, blocked: 1 },
+        tasks: [
+          {
+            id: 'B17-BLOCKED',
+            title: 'Blocked UX task',
+            prompt: 'Blocked UX task',
+            status: 'blocked',
+            blockedAt: '2026-03-17T12:00:00.000Z',
+            blockerReason: 'Founder note required from prior run',
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(
+    blockedUxLanesPath,
+    JSON.stringify([{ name: 'blocked-ux-lane', queue: blockedUxQueuePath, runtime: blockedUxRuntimePath }], null, 2),
+  );
+  const blockedUx = run(['--no-claim', '--no-repair', '--lanes-json', blockedUxLanesPath, '--status-out', statusOut], 0);
+  assert.match(blockedUx.stdout, /code=blocked_only/);
+  const blockedUxStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
+  assert.equal(blockedUxStatus.stopConditions.length, 0);
+  assert.equal(blockedUxStatus.lanes[0].uxStopCondition.code, 'blocked_only');
+  assert.match(blockedUxStatus.lanes[0].uxStopCondition.reason, /no queued tasks/);
+
+  const drainedUxQueuePath = path.join(tempDir, '.reliant/queue/mvp-lane-e-ux-qarev-batch17.json');
+  const drainedUxRuntimePath = path.join(tempDir, '.reliant/runtime/current-task-lane-e-ux-batch17.json');
+  const drainedUxLanesPath = path.join(tempDir, 'drained-ux-lanes.json');
+  fs.writeFileSync(
+    drainedUxQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 1, queued: 0, in_progress: 0, done: 1, blocked: 0 },
+        tasks: [{ id: 'DRAIN-1', title: 'Done UX task', prompt: 'Done UX task', status: 'done', finishedAt: '2026-03-17T12:00:00.000Z' }],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(
+    drainedUxLanesPath,
+    JSON.stringify([{ name: 'drained-ux-lane', queue: drainedUxQueuePath, runtime: drainedUxRuntimePath }], null, 2),
+  );
+  const drainedUx = run(['--no-claim', '--no-repair', '--lanes-json', drainedUxLanesPath, '--status-out', statusOut], 0);
+  assert.match(drainedUx.stdout, /code=no_queued_tasks/);
+  const drainedUxStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
+  assert.equal(drainedUxStatus.stopConditions.length, 0);
+  assert.equal(drainedUxStatus.lanes[0].uxStopCondition.code, 'no_queued_tasks');
+  assert.equal(drainedUxStatus.lanes[0].uxStopCondition.reason, 'queue is drained');
+
   // Bounded jitter should produce deterministic bounded values.
   const jitterProbe = spawnSync(
     process.execPath,

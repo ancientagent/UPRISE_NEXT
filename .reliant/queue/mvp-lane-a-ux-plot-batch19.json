@@ -7,10 +7,10 @@
   ],
   "summary": {
     "total": 6,
-    "queued": 6,
+    "queued": 0,
     "in_progress": 0,
-    "done": 0,
-    "blocked": 0
+    "done": 1,
+    "blocked": 5
   },
   "tasks": [
     {
@@ -18,42 +18,66 @@
       "title": "Plot tab rail parity lock (MVP-only tabs)",
       "prompt": "Execute one MVP slice only: lock /plot collapsed tab rail to Feed/Events/Promotions/Statistics only and add focused regression assertions for no Social exposure.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "blocked",
+      "startedAt": "2026-03-18T08:44:34.185Z",
+      "updatedAt": "2026-03-18T08:44:47.076Z",
+      "blockedAt": "2026-03-18T08:44:47.076Z",
+      "blockerReason": "Conflict: docs/specs/communities/plot-and-scene-plot.md still says Social remains placeholder until endpoint ships, while docs/solutions/MVP_UX_MASTER_LOCK_R1.md and the Batch19 slice prompt require no Social exposure on the collapsed Plot rail; under the documented precedence order, removing Social without a spec update would be speculative."
     },
     {
       "id": "SLICE-UXPLOT-637A",
       "title": "Plot feed deterministic state copy pass",
       "prompt": "Execute one MVP slice only: tighten feed loading/empty/error copy to deterministic scene-scoped semantics with no personalization language drift.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "blocked",
+      "startedAt": "2026-03-18T08:45:17.847Z",
+      "updatedAt": "2026-03-18T08:45:35.541Z",
+      "blockedAt": "2026-03-18T08:45:35.541Z",
+      "blockerReason": "Blocked by upstream spec conflict from SLICE-UXPLOT-636A: this slice's verifyCommand includes plot-ux-regression-lock.test.ts, which already requires no Social exposure on /plot, but docs/specs/communities/plot-and-scene-plot.md still authorizes a Social placeholder."
     },
     {
       "id": "SLICE-UXPLOT-638A",
       "title": "Plot events/promotions tab contract polish",
       "prompt": "Execute one MVP slice only: enforce tab body ownership and deterministic fallback states for Events and Promotions without adding new CTA behavior.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "blocked",
+      "startedAt": "2026-03-18T08:46:03.644Z",
+      "updatedAt": "2026-03-18T08:46:22.338Z",
+      "blockedAt": "2026-03-18T08:46:22.338Z",
+      "blockerReason": "Blocked by upstream spec conflict from SLICE-UXPLOT-636A: this slice's verifyCommand includes plot-ux-regression-lock.test.ts, which already requires no Social exposure on /plot, but docs/specs/communities/plot-and-scene-plot.md still authorizes a Social placeholder."
     },
     {
       "id": "SLICE-UXPLOT-639A",
       "title": "Statistics scene-map copy coherence pass",
       "prompt": "Execute one MVP slice only: align Statistics scene-map context copy to selected tier and active-scene resolution behavior with no metric model changes.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-statistics-request.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T08:46:43.932Z",
+      "updatedAt": "2026-03-18T08:47:40.345Z",
+      "finishedAt": "2026-03-18T08:47:40.345Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXPLOT-639A.md"
     },
     {
       "id": "SLICE-UXPLOT-640A",
       "title": "Plot/profile seam interaction regression lock",
       "prompt": "Execute one MVP slice only: reinforce collapsed/peek/expanded seam-state transitions and route-stable ownership for profile panel interactions.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "blocked",
+      "startedAt": "2026-03-18T08:47:47.887Z",
+      "updatedAt": "2026-03-18T08:48:06.753Z",
+      "blockedAt": "2026-03-18T08:48:06.753Z",
+      "blockerReason": "Blocked by upstream spec conflict from SLICE-UXPLOT-636A: this slice's verifyCommand includes plot-ux-regression-lock.test.ts, which already requires no Social exposure on /plot, but docs/specs/communities/plot-and-scene-plot.md still authorizes a Social placeholder."
     },
     {
       "id": "SLICE-UXPLOT-641A",
       "title": "Plot lane closeout + regression pack",
       "prompt": "Execute one MVP slice only: close lane A by extending targeted /plot regression coverage for locked tab ownership and deterministic state rendering.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "blocked",
+      "startedAt": "2026-03-18T08:48:26.291Z",
+      "updatedAt": "2026-03-18T08:48:39.822Z",
+      "blockedAt": "2026-03-18T08:48:39.822Z",
+      "blockerReason": "Blocked by upstream spec conflict from SLICE-UXPLOT-636A: this slice's verifyCommand includes plot-ux-regression-lock.test.ts, which already requires no Social exposure on /plot, but docs/specs/communities/plot-and-scene-plot.md still authorizes a Social placeholder."
     }
   ]
 }

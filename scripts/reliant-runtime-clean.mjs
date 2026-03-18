@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-const UX_BATCH16_RUNTIME_QUEUE_MAP = {
+const UX_BATCH_RUNTIME_QUEUE_MAP = {
   'current-task-lane-a-ux-batch16.json': '.reliant/queue/mvp-lane-a-ux-plot-batch16.json',
   'current-task-lane-b-ux-batch16.json': '.reliant/queue/mvp-lane-b-ux-discovery-batch16.json',
   'current-task-lane-c-ux-batch16.json': '.reliant/queue/mvp-lane-c-ux-player-profile-batch16.json',
   'current-task-lane-d-ux-batch16.json': '.reliant/queue/mvp-lane-d-ux-automation-batch16.json',
   'current-task-lane-e-ux-batch16.json': '.reliant/queue/mvp-lane-e-ux-qarev-batch16.json',
+  'current-task-lane-a-ux-batch17.json': '.reliant/queue/mvp-lane-a-ux-plot-batch17.json',
+  'current-task-lane-b-ux-batch17.json': '.reliant/queue/mvp-lane-b-ux-discovery-batch17.json',
+  'current-task-lane-c-ux-batch17.json': '.reliant/queue/mvp-lane-c-ux-player-profile-batch17.json',
+  'current-task-lane-d-ux-batch17.json': '.reliant/queue/mvp-lane-d-ux-automation-batch17.json',
+  'current-task-lane-e-ux-batch17.json': '.reliant/queue/mvp-lane-e-ux-qarev-batch17.json',
 };
 
 function getArg(flag, fallback = null) {
@@ -24,9 +30,9 @@ function hasFlag(flag) {
   return process.argv.includes(flag);
 }
 
-function inferQueuePath(runtimePath) {
+export function inferQueuePath(runtimePath) {
   const basename = path.basename(runtimePath);
-  return UX_BATCH16_RUNTIME_QUEUE_MAP[basename] ?? null;
+  return UX_BATCH_RUNTIME_QUEUE_MAP[basename] ?? null;
 }
 
 function readJsonSafe(filePath) {
@@ -37,7 +43,7 @@ function readJsonSafe(filePath) {
   }
 }
 
-function buildRuntimeFromTask(task) {
+export function buildRuntimeFromTask(task) {
   return {
     taskId: task.id,
     title: task.title,
@@ -48,11 +54,12 @@ function buildRuntimeFromTask(task) {
   };
 }
 
-function getResumePlan(queuePath, runtimePath) {
+export function getResumePlan(queuePath, runtimePath) {
   const absQueuePath = path.resolve(queuePath);
   if (!fs.existsSync(absQueuePath)) {
     return {
       resumeAction: 'queue_missing',
+      resumeMessage: 'repair the queue path before retrying runtime recovery',
       queuePath,
       resumeCommand: null,
       resumedTaskId: null,
@@ -64,6 +71,7 @@ function getResumePlan(queuePath, runtimePath) {
   if (!queue || !Array.isArray(queue.tasks)) {
     return {
       resumeAction: 'queue_invalid',
+      resumeMessage: 'repair the queue payload before retrying runtime recovery',
       queuePath,
       resumeCommand: null,
       resumedTaskId: null,
@@ -77,6 +85,7 @@ function getResumePlan(queuePath, runtimePath) {
   if (inProgressTasks.length === 1) {
     return {
       resumeAction: 'restore_in_progress',
+      resumeMessage: 'restore runtime for the single in-progress task',
       queuePath,
       queueState: 'in_progress_present',
       resumeCommand: null,
@@ -88,6 +97,7 @@ function getResumePlan(queuePath, runtimePath) {
   if (inProgressTasks.length > 1) {
     return {
       resumeAction: 'blocked_multiple_in_progress',
+      resumeMessage: 'repair duplicate in-progress ownership before retrying runtime recovery',
       queuePath,
       queueState: 'multiple_in_progress',
       resumeCommand: null,
@@ -99,6 +109,7 @@ function getResumePlan(queuePath, runtimePath) {
   if (queuedTasks.length > 0) {
     return {
       resumeAction: 'claim_next',
+      resumeMessage: 'clear runtime, then claim the next queued task',
       queuePath,
       queueState: 'queued_available',
       resumeCommand: `node scripts/reliant-slice-queue.mjs claim --queue ${queuePath} --runtime ${runtimePath}`,
@@ -108,6 +119,7 @@ function getResumePlan(queuePath, runtimePath) {
 
   return {
     resumeAction: 'no_queued_tasks',
+    resumeMessage: 'queue is already drained; no runtime resume action is available',
     queuePath,
     queueState: 'drained',
     resumeCommand: null,
@@ -144,6 +156,7 @@ function main() {
           resumeRequested: resume,
           resumed: !dryRun && resumePlan?.resumeAction === 'restore_in_progress',
           resumeAction: resumePlan?.resumeAction ?? null,
+          resumeMessage: resumePlan?.resumeMessage ?? null,
           resumeCommand: resumePlan?.resumeCommand ?? null,
           resumedTaskId: resumePlan?.resumedTaskId ?? null,
           queueState: resumePlan?.queueState ?? null,
@@ -189,6 +202,7 @@ function main() {
         resumeRequested: resume,
         resumed: !dryRun && resumePlan?.resumeAction === 'restore_in_progress',
         resumeAction: resumePlan?.resumeAction ?? null,
+        resumeMessage: resumePlan?.resumeMessage ?? null,
         resumeCommand: resumePlan?.resumeCommand ?? null,
         resumedTaskId: resumePlan?.resumedTaskId ?? null,
         queueState: resumePlan?.queueState ?? null,
@@ -201,4 +215,9 @@ function main() {
   );
 }
 
-main();
+const isDirectRun =
+  process.argv[1] != null && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url;
+
+if (isDirectRun) {
+  main();
+}

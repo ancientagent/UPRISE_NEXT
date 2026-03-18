@@ -80,6 +80,48 @@ describe('discovery client', () => {
     );
   });
 
+  it('keeps state filter for state-tier discovery without adding city lookup semantics', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'state',
+        musicCommunity: ' Punk ',
+        state: ' TX ',
+        city: 'Austin',
+      },
+      'token-state',
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/scenes?tier=state&musicCommunity=Punk&state=TX',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-state',
+        }),
+      }),
+    );
+  });
+
+  it('returns null when discovery context data is empty', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: null,
+      }),
+    });
+
+    await expect(getDiscoveryContext('token-null')).resolves.toBeNull();
+  });
+
   it('returns typed context and mutations from tune + set-home wrappers', async () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({
