@@ -7,9 +7,9 @@
   ],
   "summary": {
     "total": 6,
-    "queued": 6,
+    "queued": 0,
     "in_progress": 0,
-    "done": 0,
+    "done": 6,
     "blocked": 0
   },
   "tasks": [
@@ -18,42 +18,66 @@
       "title": "Batch17 QA replay 1 (Plot)",
       "prompt": "Execute one MVP slice only: run targeted gate replay for lane A and publish exact outputs in dated handoff.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T18:59:55.389Z",
+      "updatedAt": "2026-03-18T19:00:41.757Z",
+      "finishedAt": "2026-03-18T19:00:41.757Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXQAREV-690A.md"
     },
     {
       "id": "SLICE-UXQAREV-691A",
       "title": "Batch17 QA replay 2 (Discovery)",
       "prompt": "Execute one MVP slice only: run targeted gate replay for lane B and publish exact outputs in dated handoff.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:00:48.335Z",
+      "updatedAt": "2026-03-18T19:01:41.073Z",
+      "finishedAt": "2026-03-18T19:01:41.073Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXQAREV-691A.md"
     },
     {
       "id": "SLICE-UXQAREV-692A",
       "title": "Batch17 QA replay 3 (Player/Profile)",
       "prompt": "Execute one MVP slice only: run targeted gate replay for lane C and publish exact outputs in dated handoff.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:01:44.598Z",
+      "updatedAt": "2026-03-18T19:02:38.293Z",
+      "finishedAt": "2026-03-18T19:02:38.293Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXQAREV-692A.md"
     },
     {
       "id": "SLICE-UXQAREV-693A",
       "title": "Batch17 docs/spec consistency pass",
       "prompt": "Execute one MVP slice only: verify docs/spec/solution consistency for Batch17 lock behavior and patch wording drift only.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:02:42.966Z",
+      "updatedAt": "2026-03-18T19:03:25.244Z",
+      "finishedAt": "2026-03-18T19:03:25.244Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXQAREV-693A.md"
     },
     {
       "id": "SLICE-UXQAREV-694A",
       "title": "Batch17 risk/rollback memo",
       "prompt": "Execute one MVP slice only: produce severity-ordered risk/rollback memo for Batch17 changes with deterministic revert notes.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:03:31.162Z",
+      "updatedAt": "2026-03-18T19:04:21.072Z",
+      "finishedAt": "2026-03-18T19:04:21.072Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXQAREV-694A.md"
     },
     {
       "id": "SLICE-UXQAREV-695A",
       "title": "Batch17 final gate replay + closeout",
       "prompt": "Execute one MVP slice only: run final targeted gate replay for all Batch17-touched surfaces and publish closeout with exact outputs.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-18T19:04:24.557Z",
+      "updatedAt": "2026-03-18T19:07:15.719Z",
+      "finishedAt": "2026-03-18T19:07:15.719Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXQAREV-695A.md"
     }
   ]
 }

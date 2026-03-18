@@ -168,4 +168,42 @@ describe('discovery context helpers', () => {
       isVisitor: false,
     });
   });
+
+  it('derives tuned scene id from the primary scene object when the id field is omitted', () => {
+    const result = mergeDiscoveryContextPatch(
+      {
+        tunedSceneId: null,
+        tunedScene: {
+          id: 'scene-primary',
+          name: 'Primary',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        homeSceneId: 'scene-home',
+        isVisitor: true,
+      },
+      {
+        tunedSceneId: 'scene-fallback',
+        tunedScene: {
+          id: 'scene-fallback',
+          name: 'Fallback',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        isVisitor: false,
+      },
+    );
+
+    expect(result).toEqual({
+      tunedSceneId: 'scene-primary',
+      tunedScene: expect.objectContaining({ id: 'scene-primary' }),
+      isVisitor: true,
+    });
+  });
 });

@@ -64,7 +64,7 @@ export async function listDiscoverScenes(
     musicCommunity: params.musicCommunity.trim(),
   });
 
-  if (params.state?.trim()) query.set('state', params.state.trim());
+  if (params.tier !== 'national' && params.state?.trim()) query.set('state', params.state.trim());
   if (params.tier === 'city' && params.city?.trim()) query.set('city', params.city.trim());
 
   const response = await api.get<DiscoverItem[]>(`/discover/scenes?${query.toString()}`, {

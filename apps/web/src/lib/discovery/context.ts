@@ -25,7 +25,7 @@ export function mergeDiscoveryContextPatch(
   }
 
   return {
-    tunedSceneId: primary?.tunedSceneId ?? fallback.tunedSceneId,
+    tunedSceneId: primary?.tunedSceneId ?? primary?.tunedScene?.id ?? fallback.tunedSceneId,
     tunedScene: primary?.tunedScene ?? fallback.tunedScene,
     isVisitor: primary?.isVisitor ?? fallback.isVisitor,
   };

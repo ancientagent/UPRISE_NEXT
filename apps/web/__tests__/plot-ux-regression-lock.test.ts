@@ -38,10 +38,13 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
+    expect(playerSource).not.toContain("useState<PlayerMode>");
     expect(playerSource).not.toContain('Switch to Collection mode');
     expect(playerSource).toContain('Back to RADIYO');
     expect(playerSource).toContain('aria-label="Back to RADIYO"');
     expect(playerSource).toContain('onCollectionEject');
+    expect(playerSource).toContain('Selection-driven collection queue');
+    expect(playerSource).toContain('Selection-driven queue');
     expect(playerSource).not.toContain('onModeChange');
     expect(plotPageSource).toContain('const handleCollectionSelection =');
     expect(plotPageSource).toContain('const handleCollectionEject =');
@@ -57,8 +60,11 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain('export const COLLECTION_WHEEL_ACTIONS');
     expect(wheelSource).toContain("{ label: 'Report' }");
     expect(wheelSource).toContain("{ label: 'Skip' }");
+    expect(wheelSource).toContain("{ label: 'Blast' }");
     expect(wheelSource).toContain("{ label: 'Add' }");
+    expect(wheelSource).toContain("{ label: 'Upvote' }");
     expect(wheelSource).toContain("{ label: 'Back', position: '9:00' }");
+    expect(wheelSource).toContain("{ label: 'Pause', position: '10:00' }");
     expect(wheelSource).toContain("{ label: 'Recommend', position: '1:00' }");
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
@@ -69,6 +75,9 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain('const isProfileExpanded = profilePanelState ===');
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
+    expect(plotPageSource).toMatch(
+      /const expandedProfileSections = \[\s*'Singles\/Playlists',\s*'Events',\s*'Photos',\s*'Merch',\s*'Saved Uprises',\s*'Saved Promos\/Coupons',\s*\] as const;/
+    );
     expect(plotPageSource).toContain('{expandedProfileSections.map((section) => (');
     expect(plotPageSource).toContain('Singles/Playlists');
     expect(plotPageSource).toContain('Events');
