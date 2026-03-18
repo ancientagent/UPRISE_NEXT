@@ -50,6 +50,18 @@ describe('discovery client', () => {
     );
   });
 
+  it('returns null when discovery context payload is empty', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: null,
+      }),
+    });
+
+    await expect(getDiscoveryContext('token-null')).resolves.toBeNull();
+  });
+
   it('omits city filter outside city tier and skips blank location params', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

@@ -89,11 +89,13 @@ function main() {
   assert.equal(uxResumeDryRun.resumeAction, 'restore_in_progress');
   assert.equal(uxResumeDryRun.resumed, false);
   assert.equal(uxResumeDryRun.resumedTaskId, 'UX-RUN-1');
+  assert.match(uxResumeDryRun.resumeMessage, /restore runtime for in-progress task UX-RUN-1/);
   assert.equal(fs.existsSync(uxRuntimePath), true);
 
   const uxResume = JSON.parse(run(['--runtime', uxRuntimePath, '--queue', uxQueuePath, '--resume']).stdout);
   assert.equal(uxResume.resumeAction, 'restore_in_progress');
   assert.equal(uxResume.resumed, true);
+  assert.match(uxResume.resumeMessage, /restore runtime for in-progress task UX-RUN-1/);
   const restoredRuntime = JSON.parse(fs.readFileSync(uxRuntimePath, 'utf8'));
   assert.equal(restoredRuntime.taskId, 'UX-RUN-1');
   assert.equal(restoredRuntime.title, 'Resume me');
@@ -114,7 +116,26 @@ function main() {
   assert.equal(uxResumeClaim.runtimeState, 'missing');
   assert.equal(uxResumeClaim.resumeAction, 'claim_next');
   assert.match(uxResumeClaim.resumeCommand, /reliant-slice-queue\.mjs claim/);
+  assert.match(uxResumeClaim.resumeMessage, /claim the next queued task/);
   assert.equal(fs.existsSync(uxRuntimePath), false);
+
+  fs.writeFileSync(
+    uxQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        tasks: [
+          { id: 'UX-RUN-3', title: 'A', prompt: 'A', status: 'in_progress', startedAt: '2026-03-15T21:00:00.000Z' },
+          { id: 'UX-RUN-4', title: 'B', prompt: 'B', status: 'in_progress', startedAt: '2026-03-15T21:01:00.000Z' },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  const uxResumeBlocked = JSON.parse(run(['--runtime', uxRuntimePath, '--queue', uxQueuePath, '--resume']).stdout);
+  assert.equal(uxResumeBlocked.resumeAction, 'blocked_multiple_in_progress');
+  assert.match(uxResumeBlocked.resumeMessage, /cannot resume automatically/);
 }
 
 main();

@@ -1,4 +1,6 @@
 import {
+  getSceneMapResolutionCopy,
+  getSceneMapScopeCopy,
   resolveSceneMapRequest,
   resolveSceneMapAnchorId,
   resolveStatisticsEndpoint,
@@ -66,5 +68,29 @@ describe('Plot Statistics Request Helpers', () => {
       endpoint: null,
       source: 'unresolved',
     });
+  });
+
+  it('returns tier-specific scene-map scope copy', () => {
+    expect(getSceneMapScopeCopy('city')).toBe(
+      'City view keeps local scene-map detail for the active Plot context.',
+    );
+    expect(getSceneMapScopeCopy('state')).toBe(
+      'State view keeps the same parent context and rolls the map up to city-level macro reads.',
+    );
+    expect(getSceneMapScopeCopy('national')).toBe(
+      'National view keeps the same parent context and rolls the map up to state-level macro reads.',
+    );
+  });
+
+  it('returns resolution copy for selected-community and active-scene sources', () => {
+    expect(getSceneMapResolutionCopy('selected_community', 'state')).toBe(
+      'Map anchor source: selected community, preserving the current parent-context rollup.',
+    );
+    expect(getSceneMapResolutionCopy('active_scene', 'national')).toBe(
+      'Map anchor source: active scene fallback, preserving the current parent-context rollup.',
+    );
+    expect(getSceneMapResolutionCopy('unresolved', 'city')).toBe(
+      'Map anchor source: unresolved until a statistics context is available.',
+    );
   });
 });

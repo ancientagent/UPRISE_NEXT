@@ -79,6 +79,36 @@ describe('discovery context helpers', () => {
     });
   });
 
+  it('preserves fallback transport when primary payload has no tuned-scene context', () => {
+    const result = mergeDiscoveryContextPatch(
+      {
+        tunedSceneId: null,
+        tunedScene: null,
+        homeSceneId: 'scene-home',
+        isVisitor: false,
+      },
+      {
+        tunedSceneId: 'scene-fallback',
+        tunedScene: {
+          id: 'scene-fallback',
+          name: 'Dallas Punk',
+          city: 'Dallas',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        isVisitor: true,
+      },
+    );
+
+    expect(result).toEqual({
+      tunedSceneId: 'scene-fallback',
+      tunedScene: expect.objectContaining({ id: 'scene-fallback' }),
+      isVisitor: true,
+    });
+  });
+
   it('preserves explicit local status when primary context is not visitor', () => {
     const result = mergeDiscoveryContextPatch(
       {

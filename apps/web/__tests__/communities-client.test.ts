@@ -51,6 +51,35 @@ describe('communities client', () => {
     );
   });
 
+  it('builds resolve-home query from exact home-scene tuple', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: { id: 'community-home' },
+      }),
+    });
+
+    await resolveHomeCommunity(
+      {
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+      },
+      'token-home',
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/communities/resolve-home?city=Austin&state=TX&musicCommunity=Punk',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-home',
+        }),
+      }),
+    );
+  });
+
   it('extracts sceneId from active-statistics meta and resolves home anchor', async () => {
     (global.fetch as jest.Mock)
       .mockResolvedValueOnce({

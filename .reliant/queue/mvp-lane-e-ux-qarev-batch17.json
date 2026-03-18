@@ -2,50 +2,82 @@
   "version": 1,
   "generatedAt": "2026-03-16T18:35:00.000Z",
   "lane": "lane-e-ux-qarev-batch17",
-  "sourceFiles": ["mvp-slices-batch17-ux-flow.json"],
-  "summary": { "total": 6, "queued": 6, "in_progress": 0, "done": 0, "blocked": 0 },
+  "sourceFiles": [
+    "mvp-slices-batch17-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 5,
+    "blocked": 1
+  },
   "tasks": [
     {
       "id": "SLICE-UXQAREV-600A",
       "title": "Batch17 QA replay 1 (Plot)",
       "prompt": "Execute one MVP slice only: run targeted gate replay for lane A and publish exact outputs in dated handoff.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:39:05.395Z",
+      "updatedAt": "2026-03-16T18:39:50.791Z",
+      "finishedAt": "2026-03-16T18:39:50.791Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXQAREV-600A.md"
     },
     {
       "id": "SLICE-UXQAREV-601A",
       "title": "Batch17 QA replay 2 (Discovery)",
       "prompt": "Execute one MVP slice only: run targeted gate replay for lane B and publish exact outputs in dated handoff.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:39:53.875Z",
+      "updatedAt": "2026-03-16T18:40:38.221Z",
+      "finishedAt": "2026-03-16T18:40:38.221Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXQAREV-601A.md"
     },
     {
       "id": "SLICE-UXQAREV-602A",
       "title": "Batch17 QA replay 3 (Player/Profile)",
       "prompt": "Execute one MVP slice only: run targeted gate replay for lane C and publish exact outputs in dated handoff.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:40:41.218Z",
+      "updatedAt": "2026-03-16T18:41:28.058Z",
+      "finishedAt": "2026-03-16T18:41:28.058Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXQAREV-602A.md"
     },
     {
       "id": "SLICE-UXQAREV-603A",
       "title": "Batch17 docs/spec consistency pass",
       "prompt": "Execute one MVP slice only: verify docs/spec/solution consistency for Batch17 lock behavior and patch wording drift only.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "blocked",
+      "startedAt": "2026-03-16T18:41:31.896Z",
+      "updatedAt": "2026-03-16T18:42:20.402Z",
+      "blockedAt": "2026-03-16T18:42:20.402Z",
+      "blockerReason": "Blocked: Batch17 docs/spec wording is already aligned, but /plot still renders Social in the collapsed MVP tab rail; this slice allows wording drift only and cannot resolve the implementation conflict. See docs/handoff/2026-03-16_SLICE-UXQAREV-603A_BLOCKED.md"
     },
     {
       "id": "SLICE-UXQAREV-604A",
       "title": "Batch17 risk/rollback memo",
       "prompt": "Execute one MVP slice only: produce severity-ordered risk/rollback memo for Batch17 changes with deterministic revert notes.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:42:25.437Z",
+      "updatedAt": "2026-03-16T18:43:36.767Z",
+      "finishedAt": "2026-03-16T18:43:36.767Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXQAREV-604A.md"
     },
     {
       "id": "SLICE-UXQAREV-605A",
       "title": "Batch17 final gate replay + closeout",
       "prompt": "Execute one MVP slice only: run final targeted gate replay for all Batch17-touched surfaces and publish closeout with exact outputs.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:43:40.541Z",
+      "updatedAt": "2026-03-16T18:44:28.607Z",
+      "finishedAt": "2026-03-16T18:44:28.607Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXQAREV-605A.md"
     }
   ]
 }

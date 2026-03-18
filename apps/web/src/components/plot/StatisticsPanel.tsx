@@ -15,6 +15,8 @@ import {
   type CommunityStatisticsResponse,
 } from '@/lib/communities/client';
 import {
+  getSceneMapResolutionCopy,
+  getSceneMapScopeCopy,
   resolveSceneMapRequest,
   resolveStatisticsEndpoint,
   type TierScope,
@@ -216,12 +218,8 @@ export default function StatisticsPanel({
     activeSceneId,
     selectedTier,
   );
-  const sceneMapScopeCopy =
-    selectedTier === 'city'
-      ? 'City view keeps local scene-map detail for the active Plot context.'
-      : selectedTier === 'state'
-        ? 'State view keeps the same parent context and rolls the map up to city-level macro reads.'
-        : 'National view keeps the same parent context and rolls the map up to state-level macro reads.';
+  const sceneMapScopeCopy = getSceneMapScopeCopy(selectedTier);
+  const sceneMapResolutionCopy = getSceneMapResolutionCopy(sceneMapRequest.source, selectedTier);
 
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
@@ -317,14 +315,7 @@ export default function StatisticsPanel({
               Scope communities: {metrics.scopeCommunityCount.toLocaleString()} • Active tracks:{' '}
               {metrics.activeTracks.toLocaleString()}
             </p>
-            <p className="mt-2 text-[11px] text-black/45">
-              Map anchor source:{' '}
-              {sceneMapRequest.source === 'selected_community'
-                ? 'selected community'
-                : sceneMapRequest.source === 'active_scene'
-                  ? 'active scene fallback'
-                  : 'unresolved'}
-            </p>
+            <p className="mt-2 text-[11px] text-black/45">{sceneMapResolutionCopy}</p>
           </div>
         </div>
       )}

@@ -293,9 +293,42 @@ function main() {
   const uxStatus = run(['status', '--queue', uxQueuePath, '--runtime', uxRuntimePath], 0);
   const uxStatusJson = JSON.parse(uxStatus.stdout);
   assert.equal(uxStatusJson.transitionSanity.applicable, true);
+  assert.equal(uxStatusJson.transitionSanity.batch, 16);
   assert.equal(uxStatusJson.transitionSanity.ok, false);
   assert.equal(uxStatusJson.transitionSanity.issueCount, 1);
   assert.deepEqual(uxStatusJson.transitionSanity.issues[0].issues, ['queued_has_finishedAt']);
+  assert.deepEqual(uxStatusJson.transitionSanity.reasonCodes, ['queued_has_finishedAt']);
+  assert.equal(uxStatusJson.transitionSanity.failureCode, 'queue_transition_sanity_failed');
+
+  const uxBatch17QueuePath = path.join(tempDir, '.reliant/queue/mvp-lane-d-ux-automation-batch17.json');
+  const uxBatch17RuntimePath = path.join(tempDir, '.reliant/runtime/current-task-lane-d-ux-batch17.json');
+  fs.writeFileSync(
+    uxBatch17QueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        tasks: [
+          { id: 'UX17-Q', title: 'Queued first', prompt: 'Queued first', status: 'queued' },
+          { id: 'UX17-D', title: 'Done later', prompt: 'Done later', status: 'done', finishedAt: '2026-03-16T00:00:00.000Z' },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  const uxBatch17Validate = run(['validate', '--queue', uxBatch17QueuePath], 1);
+  assert.match(uxBatch17Validate.stderr, /queue_transition_sanity_failed/);
+  const uxBatch17Claim = run(['claim', '--queue', uxBatch17QueuePath, '--runtime', uxBatch17RuntimePath], 4);
+  const uxBatch17ClaimJson = JSON.parse(uxBatch17Claim.stdout);
+  assert.equal(uxBatch17ClaimJson.refusalCode, 'queue_transition_sanity_failed');
+  assert.equal(uxBatch17ClaimJson.transitionSanity.batch, 17);
+  assert.deepEqual(uxBatch17ClaimJson.transitionSanity.reasonCodes, ['queued_before_non_queued']);
+  const uxBatch17Status = run(['status', '--queue', uxBatch17QueuePath, '--runtime', uxBatch17RuntimePath], 0);
+  const uxBatch17StatusJson = JSON.parse(uxBatch17Status.stdout);
+  assert.equal(uxBatch17StatusJson.transitionSanity.applicable, true);
+  assert.equal(uxBatch17StatusJson.transitionSanity.batch, 17);
+  assert.equal(uxBatch17StatusJson.transitionSanity.failureCode, 'queue_transition_sanity_failed');
+  assert.deepEqual(uxBatch17StatusJson.transitionSanity.reasonCodes, ['queued_before_non_queued']);
 
   const finishedQueuePath = path.join(tempDir, 'finished-queue.json');
   fs.writeFileSync(

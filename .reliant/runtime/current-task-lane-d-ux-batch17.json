@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXAUTO-599A",
+  "title": "Automation lane closeout + runbook sync",
+  "prompt": "Execute one MVP slice only: close lane D with runbook updates reflecting Batch17 queue operation and recovery patterns.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-16T18:50:05.839Z"
+}

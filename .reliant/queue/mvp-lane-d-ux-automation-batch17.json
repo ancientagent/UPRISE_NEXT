@@ -2,50 +2,82 @@
   "version": 1,
   "generatedAt": "2026-03-16T18:35:00.000Z",
   "lane": "lane-d-ux-automation-batch17",
-  "sourceFiles": ["mvp-slices-batch17-ux-flow.json"],
-  "summary": { "total": 6, "queued": 6, "in_progress": 0, "done": 0, "blocked": 0 },
+  "sourceFiles": [
+    "mvp-slices-batch17-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
   "tasks": [
     {
       "id": "SLICE-UXAUTO-594A",
       "title": "Queue/runtime preflight lock for Batch17",
       "prompt": "Execute one MVP slice only: extend UX preflight checks to include Batch17 queue/runtime naming and source-doc presence assertions.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:39:03.498Z",
+      "updatedAt": "2026-03-16T18:41:59.371Z",
+      "finishedAt": "2026-03-16T18:41:59.371Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXAUTO-594A.md"
     },
     {
       "id": "SLICE-UXAUTO-595A",
       "title": "Batch17 transition-sanity guard extension",
       "prompt": "Execute one MVP slice only: expand transition-sanity diagnostics for Batch17 queue status edges and deterministic refusal codes.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:42:02.233Z",
+      "updatedAt": "2026-03-16T18:43:59.020Z",
+      "finishedAt": "2026-03-16T18:43:59.020Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXAUTO-595A.md"
     },
     {
       "id": "SLICE-UXAUTO-596A",
       "title": "Runtime-clean resume diagnostics parity",
       "prompt": "Execute one MVP slice only: improve runtime-clean resume messaging for stale runtime recovery and next-action determinism.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:44:02.302Z",
+      "updatedAt": "2026-03-16T18:46:51.446Z",
+      "finishedAt": "2026-03-16T18:46:51.446Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXAUTO-596A.md"
     },
     {
       "id": "SLICE-UXAUTO-597A",
       "title": "Verify transcript guard hardening",
       "prompt": "Execute one MVP slice only: harden verify-transcript capture for multi-command slices and deterministic exit metadata formatting.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:46:57.978Z",
+      "updatedAt": "2026-03-16T18:48:34.382Z",
+      "finishedAt": "2026-03-16T18:48:34.382Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXAUTO-597A.md"
     },
     {
       "id": "SLICE-UXAUTO-598A",
       "title": "Supervisor stop-condition clarity pass",
       "prompt": "Execute one MVP slice only: tighten supervisor stop-condition diagnostics for blocked/founder-decision/no-queued states in UX lanes.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:48:37.834Z",
+      "updatedAt": "2026-03-16T18:50:02.000Z",
+      "finishedAt": "2026-03-16T18:50:02.000Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXAUTO-598A.md"
     },
     {
       "id": "SLICE-UXAUTO-599A",
       "title": "Automation lane closeout + runbook sync",
       "prompt": "Execute one MVP slice only: close lane D with runbook updates reflecting Batch17 queue operation and recovery patterns.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-16T18:50:05.839Z",
+      "updatedAt": "2026-03-16T18:51:07.692Z",
+      "finishedAt": "2026-03-16T18:51:07.692Z",
+      "reportPath": "docs/handoff/2026-03-16_SLICE-UXAUTO-599A.md"
     }
   ]
 }

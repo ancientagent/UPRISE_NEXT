@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { runUxBatch16Preflight } from './reliant-ux-preflight.mjs';
+import { runUxBatchPreflight } from './reliant-ux-preflight.mjs';
 
 function getArg(flag, fallback = null) {
   const idx = process.argv.indexOf(flag);
@@ -55,6 +55,13 @@ function buildBlockCmd(queuePath, runtimePath, taskId) {
   return `node scripts/reliant-slice-queue.mjs block --queue ${queuePath} --runtime ${runtimePath} --task-id ${taskId} --reason "<exact blocker>"`;
 }
 
+function buildRuntimeCleanResumeCmd(queuePath, runtimePath, uxPreflight) {
+  if (uxPreflight?.applicable) {
+    return `pnpm run reliant:runtime:clean -- --runtime ${runtimePath} --queue ${queuePath} --resume`;
+  }
+  return `pnpm run reliant:runtime:clean -- --runtime ${runtimePath}`;
+}
+
 function main() {
   const queuePath = getArg('--queue', '.reliant/queue/mvp-slices.json');
   const runtimePath = getArg('--runtime', '.reliant/runtime/current-task.json');
@@ -73,7 +80,7 @@ function main() {
   const blocked = tasks.filter((t) => t.status === 'blocked');
   const runtime = readJsonSafe(runtimePath);
   const runtimeTaskId = runtime?.taskId || null;
-  const uxPreflight = runUxBatch16Preflight(queuePath);
+  const uxPreflight = runUxBatchPreflight(queuePath, { runtimePath });
 
   let state = 'idle';
   let nextTask = null;
@@ -101,17 +108,14 @@ function main() {
   } else if (inProgress.length === 1) {
     state = 'resume_in_progress';
     nextTask = inProgress[0];
+    const runtimeCleanCmd = buildRuntimeCleanResumeCmd(queuePath, runtimePath, uxPreflight);
     if (!runtimeTaskId) {
       warnings.push('runtime file missing or invalid while queue has in_progress task');
     } else if (runtimeTaskId !== nextTask.id) {
       warnings.push(`runtime mismatch: runtime=${runtimeTaskId}, queue in_progress=${nextTask.id}`);
     }
     commands.push(buildStatusCmd(queuePath));
-    commands.push(`pnpm run reliant:runtime:clean -- --runtime ${runtimePath}`);
-    commands.push(
-      `# After cleanup, restore runtime intentionally for current task\n` +
-        `node -e "const fs=require('fs');const t=${JSON.stringify(nextTask.id)};fs.writeFileSync('${runtimePath}',JSON.stringify({taskId:t},null,2)+'\\n')"`,
-    );
+    commands.push(runtimeCleanCmd);
     commands.push(buildCompleteCmd(queuePath, runtimePath, nextTask.id));
     commands.push(buildBlockCmd(queuePath, runtimePath, nextTask.id));
 
@@ -129,7 +133,7 @@ function main() {
     nextTask = queued[0];
     if (runtimeTaskId) {
       warnings.push(`stale runtime detected with no in_progress task: ${runtimeTaskId}`);
-      commands.push(`pnpm run reliant:runtime:clean -- --runtime ${runtimePath}`);
+      commands.push(buildRuntimeCleanResumeCmd(queuePath, runtimePath, uxPreflight));
     }
     commands.push(buildClaimCmd(queuePath, runtimePath));
     commands.push(buildStatusCmd(queuePath));

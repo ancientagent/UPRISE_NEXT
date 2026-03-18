@@ -21,6 +21,9 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain("useState<'collapsed' | 'peek' | 'expanded'>('collapsed')");
     expect(plotPageSource).toContain("const isProfileExpanded = profilePanelState === 'expanded'");
+    expect(plotPageSource).toContain("id=\"plot-profile-seam-toggle\"");
+    expect(plotPageSource).toContain("aria-controls=\"plot-profile-panel\"");
+    expect(plotPageSource).toContain('const toggleProfilePanel = () => {');
     expect(playerSource).not.toContain("useState<'collapsed' | 'peek' | 'expanded'>");
   });
 
@@ -37,6 +40,9 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
+    expect(plotPageSource).toContain("const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists')");
+    expect(plotPageSource).toContain("activeProfileSection === 'Singles/Playlists'");
+    expect(plotPageSource).toContain('singlesAndPlaylistsItems.map((item) => (');
     expect(playerSource).not.toContain('Switch to Collection mode');
     expect(playerSource).toContain('Back to RADIYO');
     expect(playerSource).toContain('onCollectionEject');
@@ -49,13 +55,19 @@ describe('/plot UX regression lock', () => {
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
     const wheelSource = readRepoFile('src/components/plot/engagement-wheel.ts');
+    const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
     expect(wheelSource).toContain("{ label: 'Report' }");
     expect(wheelSource).toContain("{ label: 'Skip' }");
+    expect(wheelSource).toContain("{ label: 'Blast' }");
     expect(wheelSource).toContain("{ label: 'Add' }");
+    expect(wheelSource).toContain("{ label: 'Upvote' }");
     expect(wheelSource).toContain("{ label: 'Back', position: '9:00' }");
+    expect(wheelSource).toContain("{ label: 'Pause', position: '10:00' }");
+    expect(wheelSource).toContain("{ label: 'Blast', position: '12:00' }");
     expect(wheelSource).toContain("{ label: 'Recommend', position: '1:00' }");
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
+    expect(playerSource).toContain('getEngagementWheelActions(mode)');
   });
 
   it('locks expanded-profile behavior to swap out Plot tabs/body', () => {
@@ -65,8 +77,14 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
     expect(plotPageSource).toContain('{expandedProfileSections.map((section) => (');
     expect(plotPageSource).toContain('Singles/Playlists');
+    expect(plotPageSource).toContain('Events');
+    expect(plotPageSource).toContain('Photos');
+    expect(plotPageSource).toContain('Merch');
+    expect(plotPageSource).toContain('Saved Uprises');
     expect(plotPageSource).toContain('Saved Promos/Coupons');
+    expect(plotPageSource).toContain('Activity Score');
     expect(plotPageSource).toContain('Calendar');
+    expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
     expect(plotPageSource).toContain('Return to Plot Tabs');
   });
 

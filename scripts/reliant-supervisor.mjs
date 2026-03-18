@@ -311,20 +311,48 @@ function repairLane(lane, { autoClaim, repair }, report) {
     reason: null,
     declarationField: null,
   };
+  report.stopCondition = {
+    code: null,
+    message: null,
+    blockedTaskIds: [],
+    founderDecisionTaskId: null,
+  };
 
   if (reloadedInProgress.length === 0) {
     if (repair) clearRuntime(lane, actions);
     const queued = reloadedTasks.filter((t) => t.status === 'queued');
+    const blocked = reloadedTasks.filter((t) => t.status === 'blocked');
     const founderDecisionDependency = queued.length > 0 ? getFounderDecisionDependency(queued[0]) : null;
     if (founderDecisionDependency) {
       report.founderDecisionStop = {
         requiresStop: true,
         ...founderDecisionDependency,
       };
+      report.stopCondition = {
+        code: 'founder_decision_required',
+        message: founderDecisionDependency.reason,
+        blockedTaskIds: [],
+        founderDecisionTaskId: founderDecisionDependency.taskId,
+      };
       actions.push(`stop:founder-decision:${founderDecisionDependency.taskId}`);
       report.errors = errors;
       report.actions = actions;
       return;
+    }
+    if (queued.length === 0 && blocked.length > 0) {
+      report.stopCondition = {
+        code: 'blocked_only',
+        message: 'queue has blocked tasks and no queued work remaining',
+        blockedTaskIds: blocked.map((task) => task.id),
+        founderDecisionTaskId: null,
+      };
+    } else if (queued.length === 0) {
+      report.stopCondition = {
+        code: 'no_queued_tasks',
+        message: 'queue has no queued tasks remaining',
+        blockedTaskIds: [],
+        founderDecisionTaskId: null,
+      };
     }
     if (queued.length > 0 && autoClaim) {
       claimNext(lane, actions);
@@ -495,13 +523,14 @@ async function main() {
       };
     }
     cycle.stopConditions = cycle.lanes
-      .filter((lane) => lane.founderDecisionStop?.requiresStop)
+      .filter((lane) => lane.stopCondition?.code)
       .map((lane) => ({
         lane: lane.lane,
-        code: 'founder_decision_required',
-        taskId: lane.founderDecisionStop.taskId,
-        declarationField: lane.founderDecisionStop.declarationField,
-        reason: lane.founderDecisionStop.reason,
+        code: lane.stopCondition.code,
+        taskId: lane.founderDecisionStop?.taskId ?? null,
+        declarationField: lane.founderDecisionStop?.declarationField ?? null,
+        blockedTaskIds: lane.stopCondition.blockedTaskIds ?? [],
+        reason: lane.stopCondition.message,
       }));
 
     writeJson(statusOut, cycle);
@@ -517,11 +546,14 @@ async function main() {
     }
     if (cycle.stopConditions.length > 0) {
       for (const stopCondition of cycle.stopConditions) {
-        console.error(
-          `[supervisor] stop lane=${stopCondition.lane} code=${stopCondition.code} task=${stopCondition.taskId} reason=${stopCondition.reason}`,
+        const stream = stopCondition.code === 'founder_decision_required' ? process.stderr : process.stdout;
+        stream.write(
+          `[supervisor] stop lane=${stopCondition.lane} code=${stopCondition.code} task=${stopCondition.taskId ?? '(none)'} reason=${stopCondition.reason}\n`,
         );
       }
-      process.exit(7);
+      if (cycle.stopConditions.some((stopCondition) => stopCondition.code === 'founder_decision_required')) {
+        process.exit(7);
+      }
     }
     if (failOnDrift && driftCount > 0) {
       console.error(`[supervisor] drift-detected count=${driftCount}`);

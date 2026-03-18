@@ -8,6 +8,11 @@ const UX_BATCH16_RUNTIME_QUEUE_MAP = {
   'current-task-lane-c-ux-batch16.json': '.reliant/queue/mvp-lane-c-ux-player-profile-batch16.json',
   'current-task-lane-d-ux-batch16.json': '.reliant/queue/mvp-lane-d-ux-automation-batch16.json',
   'current-task-lane-e-ux-batch16.json': '.reliant/queue/mvp-lane-e-ux-qarev-batch16.json',
+  'current-task-lane-a-ux-batch17.json': '.reliant/queue/mvp-lane-a-ux-plot-batch17.json',
+  'current-task-lane-b-ux-batch17.json': '.reliant/queue/mvp-lane-b-ux-discovery-batch17.json',
+  'current-task-lane-c-ux-batch17.json': '.reliant/queue/mvp-lane-c-ux-player-profile-batch17.json',
+  'current-task-lane-d-ux-batch17.json': '.reliant/queue/mvp-lane-d-ux-automation-batch17.json',
+  'current-task-lane-e-ux-batch17.json': '.reliant/queue/mvp-lane-e-ux-qarev-batch17.json',
 };
 
 function getArg(flag, fallback = null) {
@@ -57,6 +62,7 @@ function getResumePlan(queuePath, runtimePath) {
       resumeCommand: null,
       resumedTaskId: null,
       queueState: 'missing',
+      resumeMessage: 'matching queue file is missing; repair queue path before resume',
     };
   }
 
@@ -68,6 +74,7 @@ function getResumePlan(queuePath, runtimePath) {
       resumeCommand: null,
       resumedTaskId: null,
       queueState: 'invalid',
+      resumeMessage: 'matching queue file is invalid; repair queue payload before resume',
     };
   }
 
@@ -82,6 +89,7 @@ function getResumePlan(queuePath, runtimePath) {
       resumeCommand: null,
       resumedTaskId: inProgressTasks[0].id,
       runtimePayload: buildRuntimeFromTask(inProgressTasks[0]),
+      resumeMessage: `restore runtime for in-progress task ${inProgressTasks[0].id}`,
     };
   }
 
@@ -93,6 +101,7 @@ function getResumePlan(queuePath, runtimePath) {
       resumeCommand: null,
       resumedTaskId: null,
       inProgressTaskIds: inProgressTasks.map((task) => task.id),
+      resumeMessage: 'cannot resume automatically while queue has multiple in_progress tasks',
     };
   }
 
@@ -103,6 +112,7 @@ function getResumePlan(queuePath, runtimePath) {
       queueState: 'queued_available',
       resumeCommand: `node scripts/reliant-slice-queue.mjs claim --queue ${queuePath} --runtime ${runtimePath}`,
       resumedTaskId: null,
+      resumeMessage: 'runtime cleared; claim the next queued task',
     };
   }
 
@@ -112,6 +122,7 @@ function getResumePlan(queuePath, runtimePath) {
     queueState: 'drained',
     resumeCommand: null,
     resumedTaskId: null,
+    resumeMessage: 'queue has no queued tasks and no in-progress task to restore',
   };
 }
 
@@ -147,6 +158,7 @@ function main() {
           resumeCommand: resumePlan?.resumeCommand ?? null,
           resumedTaskId: resumePlan?.resumedTaskId ?? null,
           queueState: resumePlan?.queueState ?? null,
+          resumeMessage: resumePlan?.resumeMessage ?? null,
           message: 'runtime file not found',
           checkedAt: nowIso(),
         },
@@ -192,6 +204,7 @@ function main() {
         resumeCommand: resumePlan?.resumeCommand ?? null,
         resumedTaskId: resumePlan?.resumedTaskId ?? null,
         queueState: resumePlan?.queueState ?? null,
+        resumeMessage: resumePlan?.resumeMessage ?? null,
         checkedAt: nowIso(),
         previousTaskId: parsed && typeof parsed === 'object' ? parsed.taskId ?? null : null,
       },

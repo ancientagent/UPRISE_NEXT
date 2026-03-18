@@ -234,6 +234,7 @@ function main() {
   assert.equal(founderStopStatus.stopConditions[0].taskId, 'F1');
   assert.equal(founderStopStatus.lanes[0].founderDecisionStop.requiresStop, true);
   assert.equal(founderStopStatus.lanes[0].actions.includes('stop:founder-decision:F1'), true);
+  assert.equal(founderStopStatus.lanes[0].stopCondition.code, 'founder_decision_required');
 
   const founderHealthStop = spawnSync(
     process.execPath,
@@ -242,6 +243,57 @@ function main() {
   );
   assert.equal(founderHealthStop.status, 6);
   assert.match(founderHealthStop.stderr, /code=founder_decision_required/);
+
+  const blockedOnlyQueuePath = path.join(tempDir, 'blocked-only-queue.json');
+  const blockedOnlyRuntimePath = path.join(tempDir, 'blocked-only-runtime.json');
+  const blockedOnlyLanesPath = path.join(tempDir, 'blocked-only-lanes.json');
+  fs.writeFileSync(
+    blockedOnlyQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 1, queued: 0, in_progress: 0, done: 0, blocked: 1 },
+        tasks: [{ id: 'B1', title: 'Blocked', prompt: 'Blocked', status: 'blocked', blockedAt: '2026-03-16T18:00:00.000Z' }],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(
+    blockedOnlyLanesPath,
+    JSON.stringify([{ name: 'blocked-only-lane', queue: blockedOnlyQueuePath, runtime: blockedOnlyRuntimePath }], null, 2),
+  );
+  const blockedOnly = run(['--no-claim', '--no-repair', '--lanes-json', blockedOnlyLanesPath, '--status-out', statusOut], 0);
+  assert.match(blockedOnly.stdout, /code=blocked_only/);
+  const blockedOnlyStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
+  assert.equal(blockedOnlyStatus.stopConditions[0].code, 'blocked_only');
+  assert.deepEqual(blockedOnlyStatus.stopConditions[0].blockedTaskIds, ['B1']);
+  assert.equal(blockedOnlyStatus.lanes[0].stopCondition.code, 'blocked_only');
+
+  const drainedQueuePath = path.join(tempDir, 'drained-queue.json');
+  const drainedRuntimePath = path.join(tempDir, 'drained-runtime.json');
+  const drainedLanesPath = path.join(tempDir, 'drained-lanes.json');
+  fs.writeFileSync(
+    drainedQueuePath,
+    `${JSON.stringify(
+      {
+        version: 1,
+        summary: { total: 1, queued: 0, in_progress: 0, done: 1, blocked: 0 },
+        tasks: [{ id: 'D1', title: 'Done', prompt: 'Done', status: 'done', finishedAt: '2026-03-16T18:00:00.000Z' }],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  fs.writeFileSync(
+    drainedLanesPath,
+    JSON.stringify([{ name: 'drained-lane', queue: drainedQueuePath, runtime: drainedRuntimePath }], null, 2),
+  );
+  const drained = run(['--no-claim', '--no-repair', '--lanes-json', drainedLanesPath, '--status-out', statusOut], 0);
+  assert.match(drained.stdout, /code=no_queued_tasks/);
+  const drainedStatus = JSON.parse(fs.readFileSync(statusOut, 'utf8'));
+  assert.equal(drainedStatus.stopConditions[0].code, 'no_queued_tasks');
+  assert.equal(drainedStatus.lanes[0].stopCondition.code, 'no_queued_tasks');
 
   // Bounded jitter should produce deterministic bounded values.
   const jitterProbe = spawnSync(

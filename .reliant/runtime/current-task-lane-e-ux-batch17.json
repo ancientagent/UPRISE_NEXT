@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXQAREV-605A",
+  "title": "Batch17 final gate replay + closeout",
+  "prompt": "Execute one MVP slice only: run final targeted gate replay for all Batch17-touched surfaces and publish closeout with exact outputs.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-16T18:43:40.541Z"
+}

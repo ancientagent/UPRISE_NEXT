@@ -30,7 +30,7 @@ function formatSceneLocation(city: string | null, state: string | null) {
 function getCitySceneStatusLabel(item: DiscoverCitySceneItem, tunedSceneId: string | null) {
   if (item.isHomeScene) return 'Home Scene';
   if (tunedSceneId === item.sceneId) return 'Tuned Scene';
-  return item.isActive ? 'Active City Scene' : 'Inactive City Scene';
+  return item.isActive ? 'Active' : 'Inactive';
 }
 
 export default function DiscoverPage() {
@@ -141,7 +141,10 @@ export default function DiscoverPage() {
       };
     }
 
-    return null;
+    return {
+      title: 'Scene results ready',
+      body: `${items.length} scene result${items.length === 1 ? '' : 's'} loaded for the current scope and music community.`,
+    };
   }, [token, canSearch, loading, error, items.length]);
 
   const handleSetHomeScene = async (item: DiscoverCitySceneItem) => {
@@ -228,6 +231,10 @@ export default function DiscoverPage() {
           <p className="mt-2 text-xs text-black/50">
             Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
           </p>
+          <p className="mt-2 text-xs text-black/50">
+            If your selected city is not active yet, onboarding routes you to the nearest active city Scene for that
+            Music Community and tracks your pioneer intent in notifications.
+          </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
             <Button asChild variant="outline" size="sm">
@@ -237,6 +244,10 @@ export default function DiscoverPage() {
         </header>
 
         <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <div className="mb-4 rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
+            Discover search is locked to Scene and Music Community scope in MVP. Artist and band lookup is not part of
+            this surface.
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="text-xs uppercase tracking-[0.2em] text-black/60">Music Community</label>
@@ -308,7 +319,9 @@ export default function DiscoverPage() {
               <p className="text-sm font-medium">{resultSummary.title}</p>
               <p className="mt-1 text-sm">{resultSummary.body}</p>
             </div>
-          ) : (
+          ) : null}
+
+          {items.length > 0 && !loading && !error && token && canSearch ? (
             <ul className="mt-4 space-y-3">
               {items.map((item) =>
                 item.entryType === 'city_scene' ? (
@@ -325,6 +338,10 @@ export default function DiscoverPage() {
                           </span>
                         </div>
                         <dl className="mt-3 grid gap-1 text-sm text-black/60">
+                          <div className="flex flex-wrap gap-2">
+                            <dt className="font-medium text-black/70">Scope</dt>
+                            <dd>City Scene</dd>
+                          </div>
                           <div className="flex flex-wrap gap-2">
                             <dt className="font-medium text-black/70">Location</dt>
                             <dd>{formatSceneLocation(item.city, item.state)}</dd>
@@ -367,7 +384,7 @@ export default function DiscoverPage() {
                     <p className="font-medium text-black">{item.state}</p>
                     <div className="mt-2 flex flex-wrap gap-2 text-xs text-black/60">
                       <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                        {item.isHomeSceneState ? 'Home Scene State' : 'State Rollup'}
+                        {item.isHomeSceneState ? 'Home Scene State' : 'State'}
                       </span>
                       <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
                         {item.musicCommunity}
@@ -387,7 +404,7 @@ export default function DiscoverPage() {
                 )
               )}
             </ul>
-          )}
+          ) : null}
         </section>
       </div>
     </main>

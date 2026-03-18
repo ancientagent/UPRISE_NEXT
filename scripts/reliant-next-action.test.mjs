@@ -50,12 +50,14 @@ function main() {
   assert.equal(preflightOkJson.applicable, true);
   assert.equal(preflightOkJson.ok, true);
   assert.equal(preflightOkJson.requiredFiles.length, 5);
+  assert.equal(preflightOkJson.naming.checked, false);
 
   const nextActionOk = runNode(nextActionPath, ['--queue', queuePath, '--runtime', runtimePath, '--output', 'json']);
   const nextActionOkJson = JSON.parse(nextActionOk.stdout);
   assert.equal(nextActionOkJson.state, 'claim_next');
   assert.equal(nextActionOkJson.uxPreflight.ok, true);
   assert.equal(nextActionOkJson.uxPreflight.applicable, true);
+  assert.equal(nextActionOkJson.uxPreflight.naming.ok, true);
 
   const missingLockPath = path.join(repoRoot, 'docs/solutions/MVP_UX_MASTER_LOCK_R1.md');
   const tempLockPath = path.join(repoRoot, 'docs/solutions/MVP_UX_MASTER_LOCK_R1.md.test-backup');
@@ -91,6 +93,79 @@ function main() {
   const nonUxPreflightJson = JSON.parse(nonUxPreflight.stdout);
   assert.equal(nonUxPreflightJson.applicable, false);
   assert.equal(nonUxPreflightJson.ok, true);
+
+  const batch17QueuePath = path.join(tempDir, '.reliant/queue/mvp-lane-d-ux-automation-batch17.json');
+  const batch17RuntimePath = path.join(tempDir, '.reliant/runtime/current-task-lane-d-ux-batch17.json');
+  writeJson(batch17QueuePath, {
+    version: 1,
+    tasks: [
+      {
+        id: 'UX17',
+        title: 'UX Batch17 task',
+        prompt: 'Execute one MVP slice only',
+        verifyCommand: 'pnpm run docs:lint',
+        status: 'queued',
+      },
+    ],
+  });
+  const batch17Preflight = runNode(preflightPath, [
+    '--queue',
+    '.reliant/queue/mvp-lane-d-ux-automation-batch17.json',
+    '--runtime',
+    '.reliant/runtime/current-task-lane-d-ux-batch17.json',
+  ]);
+  const batch17PreflightJson = JSON.parse(batch17Preflight.stdout);
+  assert.equal(batch17PreflightJson.batch, 17);
+  assert.equal(batch17PreflightJson.ok, true);
+  assert.equal(batch17PreflightJson.requiredFiles.length, 8);
+  assert.equal(batch17PreflightJson.naming.ok, true);
+
+  const batch17Mismatch = runNode(
+    preflightPath,
+    [
+      '--queue',
+      '.reliant/queue/mvp-lane-d-ux-automation-batch17.json',
+      '--runtime',
+      '.reliant/runtime/current-task-lane-e-ux-batch17.json',
+    ],
+    1,
+  );
+  const batch17MismatchJson = JSON.parse(batch17Mismatch.stdout);
+  assert.equal(batch17MismatchJson.ok, false);
+  assert.equal(batch17MismatchJson.naming.ok, false);
+
+  const nextActionBatch17 = runNode(
+    nextActionPath,
+    ['--queue', batch17QueuePath, '--runtime', batch17RuntimePath, '--output', 'json'],
+  );
+  const nextActionBatch17Json = JSON.parse(nextActionBatch17.stdout);
+  assert.equal(nextActionBatch17Json.state, 'claim_next');
+  assert.equal(nextActionBatch17Json.uxPreflight.batch, 17);
+  assert.equal(nextActionBatch17Json.uxPreflight.naming.ok, true);
+
+  const resumeQueuePath = path.join(tempDir, '.reliant/queue/mvp-lane-d-ux-automation-batch17.json');
+  writeJson(resumeQueuePath, {
+    version: 1,
+    tasks: [
+      {
+        id: 'UX17-RUN',
+        title: 'Resume task',
+        prompt: 'Resume task',
+        verifyCommand: 'pnpm run docs:lint',
+        status: 'in_progress',
+        startedAt: '2026-03-16T18:00:00.000Z',
+      },
+    ],
+  });
+  const resumePlan = runNode(
+    nextActionPath,
+    ['--queue', resumeQueuePath, '--runtime', batch17RuntimePath, '--output', 'json'],
+  );
+  const resumePlanJson = JSON.parse(resumePlan.stdout);
+  assert.equal(resumePlanJson.state, 'resume_in_progress');
+  assert.ok(
+    resumePlanJson.commands.some((command) => command.includes('reliant:runtime:clean') && command.includes('--resume')),
+  );
 }
 
 main();

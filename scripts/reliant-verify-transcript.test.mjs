@@ -40,12 +40,18 @@ function main() {
   assert.match(success.stdout, /## Verify Exit Code/);
   assert.match(success.stdout, /## Exact Output/);
   const successJson = JSON.parse(fs.readFileSync(jsonOut, 'utf8'));
+  assert.equal(successJson.formatVersion, 2);
   assert.equal(successJson.exitCode, 0);
+  assert.equal(successJson.exitStatus, 'passed');
   assert.equal(successJson.passed, true);
+  assert.equal(successJson.commandChainDetected, false);
+  assert.equal(successJson.commandSegmentCount, 1);
   assert.match(successJson.output, /ok/);
   const successMarkdown = fs.readFileSync(markdownOut, 'utf8');
   assert.match(successMarkdown, /```bash/);
   assert.match(successMarkdown, /```text/);
+  assert.match(successMarkdown, /exitCode=0/);
+  assert.match(successMarkdown, /commandSegmentCount=1/);
 
   const failure = run(
     ['--command', `${process.execPath} -e "console.error('boom'); process.exit(3)"`, '--format', 'json'],
@@ -53,8 +59,25 @@ function main() {
   );
   const failureJson = JSON.parse(failure.stdout);
   assert.equal(failureJson.exitCode, 3);
+  assert.equal(failureJson.exitStatus, 'failed');
   assert.equal(failureJson.passed, false);
   assert.match(failureJson.output, /boom/);
+
+  const chained = run(
+    [
+      '--command',
+      `${process.execPath} -e "console.log('first')" && ${process.execPath} -e "console.log('second')"`,
+      '--format',
+      'json',
+    ],
+    0,
+  );
+  const chainedJson = JSON.parse(chained.stdout);
+  assert.equal(chainedJson.commandChainDetected, true);
+  assert.equal(chainedJson.commandSegmentCount, 2);
+  assert.deepEqual(chainedJson.commandChainSeparators, ['&&']);
+  assert.match(chainedJson.output, /first/);
+  assert.match(chainedJson.output, /second/);
 }
 
 main();

@@ -24,6 +24,15 @@ function escapeFence(value) {
   return String(value ?? '').replace(/```/g, '```\\`');
 }
 
+function detectCommandChain(command) {
+  const separators = command.match(/&&|\|\||;/g) ?? [];
+  return {
+    detected: separators.length > 0,
+    separators,
+    segmentCount: separators.length + 1,
+  };
+}
+
 function toMarkdown(payload) {
   const output = payload.output.trim() === '' ? '[no output captured]' : payload.output;
   return [
@@ -34,7 +43,12 @@ function toMarkdown(payload) {
     '',
     '## Verify Exit Code',
     '```text',
-    String(payload.exitCode),
+    `exitCode=${payload.exitCode}`,
+    `exitSignal=${payload.exitSignal ?? 'none'}`,
+    `exitStatus=${payload.exitStatus}`,
+    `passed=${payload.passed}`,
+    `commandChainDetected=${payload.commandChainDetected}`,
+    `commandSegmentCount=${payload.commandSegmentCount}`,
     '```',
     '',
     '## Exact Output',
@@ -62,17 +76,27 @@ function main() {
     shell: true,
     encoding: 'utf8',
   });
+  const commandChain = detectCommandChain(command);
 
   const combinedOutput = [result.stdout || '', result.stderr || ''].filter(Boolean).join(
     result.stdout && result.stderr ? '\n' : '',
   );
 
   const payload = {
+    formatVersion: 2,
     capturedAt: nowIso(),
     command,
     cwd,
     exitCode: result.status ?? 1,
+    exitSignal: result.signal ?? null,
+    exitStatus: (result.status ?? 1) === 0 ? 'passed' : 'failed',
     passed: (result.status ?? 1) === 0,
+    commandChainDetected: commandChain.detected,
+    commandChainSeparators: commandChain.separators,
+    commandSegmentCount: commandChain.segmentCount,
+    stdout: result.stdout || '',
+    stderr: result.stderr || '',
+    outputLineCount: combinedOutput === '' ? 0 : combinedOutput.split(/\r?\n/).length,
     output: combinedOutput,
   };
 

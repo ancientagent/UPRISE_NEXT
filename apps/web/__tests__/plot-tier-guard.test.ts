@@ -32,4 +32,11 @@ describe('Plot Tier Guard', () => {
       ),
     ).toBe('Chicago, Illinois • House');
   });
+
+  it('keeps state and national labels deterministic from home-scene fallback data', () => {
+    const homeScene = { city: 'Chicago', state: 'Illinois', musicCommunity: 'House' };
+
+    expect(buildRadiyoBroadcastLabel('state', null, homeScene)).toBe('Illinois • House');
+    expect(buildRadiyoBroadcastLabel('national', null, homeScene)).toBe('National • House');
+  });
 });
