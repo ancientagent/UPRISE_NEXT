@@ -267,4 +267,34 @@ describe('discovery context helpers', () => {
       isVisitor: false,
     });
   });
+
+  it('preserves fallback scene details when primary transport context provides only a tuned scene id', () => {
+    const result = mergeDiscoveryContextPatch(
+      {
+        tunedSceneId: 'scene-primary',
+        tunedScene: null,
+        homeSceneId: 'scene-home',
+        isVisitor: true,
+      },
+      {
+        tunedSceneId: 'scene-fallback',
+        tunedScene: {
+          id: 'scene-fallback',
+          name: 'Fallback',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        isVisitor: false,
+      },
+    );
+
+    expect(result).toEqual({
+      tunedSceneId: 'scene-primary',
+      tunedScene: expect.objectContaining({ id: 'scene-fallback' }),
+      isVisitor: true,
+    });
+  });
 });

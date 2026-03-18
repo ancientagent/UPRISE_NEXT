@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXDISC-767A",
+  "title": "Discovery lane closeout + contract assertions",
+  "prompt": "Execute one MVP slice only: close lane B with focused contract/test assertions for discovery scope, states, and handoff integrity.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-18T20:45:38.720Z"
+}

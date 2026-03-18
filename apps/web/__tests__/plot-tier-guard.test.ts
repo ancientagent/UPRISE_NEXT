@@ -89,4 +89,13 @@ describe('Plot Tier Guard', () => {
     expect(buildRadiyoBroadcastLabel('state', {}, null)).toBe('UPRISE');
     expect(buildRadiyoBroadcastLabel('national', {}, null)).toBe('National • UPRISE');
   });
+
+  it('uses home-scene community when anchor only provides scoped location fields', () => {
+    const anchor = { city: 'Austin', state: 'Texas' };
+    const homeScene = { city: 'Chicago', state: 'Illinois', musicCommunity: 'House' };
+
+    expect(buildRadiyoBroadcastLabel('city', anchor, homeScene)).toBe('Austin, Texas • House');
+    expect(buildRadiyoBroadcastLabel('state', anchor, homeScene)).toBe('Texas • House');
+    expect(buildRadiyoBroadcastLabel('national', anchor, homeScene)).toBe('National • House');
+  });
 });
