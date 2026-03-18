@@ -87,12 +87,14 @@ function main() {
   );
   assert.equal(uxResumeDryRun.inferredQueuePath, uxQueuePath);
   assert.equal(uxResumeDryRun.resumeAction, 'restore_in_progress');
+  assert.equal(uxResumeDryRun.resumeMessage, 'restore runtime for the single in-progress task');
   assert.equal(uxResumeDryRun.resumed, false);
   assert.equal(uxResumeDryRun.resumedTaskId, 'UX-RUN-1');
   assert.equal(fs.existsSync(uxRuntimePath), true);
 
   const uxResume = JSON.parse(run(['--runtime', uxRuntimePath, '--queue', uxQueuePath, '--resume']).stdout);
   assert.equal(uxResume.resumeAction, 'restore_in_progress');
+  assert.equal(uxResume.resumeMessage, 'restore runtime for the single in-progress task');
   assert.equal(uxResume.resumed, true);
   const restoredRuntime = JSON.parse(fs.readFileSync(uxRuntimePath, 'utf8'));
   assert.equal(restoredRuntime.taskId, 'UX-RUN-1');
@@ -113,8 +115,16 @@ function main() {
   const uxResumeClaim = JSON.parse(run(['--runtime', uxRuntimePath, '--queue', uxQueuePath, '--resume']).stdout);
   assert.equal(uxResumeClaim.runtimeState, 'missing');
   assert.equal(uxResumeClaim.resumeAction, 'claim_next');
+  assert.equal(uxResumeClaim.resumeMessage, 'clear runtime, then claim the next queued task');
   assert.match(uxResumeClaim.resumeCommand, /reliant-slice-queue\.mjs claim/);
   assert.equal(fs.existsSync(uxRuntimePath), false);
+
+  const inferredBatch17RuntimePath = path.join(uxRuntimeDir, 'current-task-lane-d-ux-batch17.json');
+  const inferredBatch17 = JSON.parse(run(['--runtime', inferredBatch17RuntimePath, '--resume']).stdout);
+  assert.equal(inferredBatch17.runtimeState, 'missing');
+  assert.equal(inferredBatch17.inferredQueuePath, '.reliant/queue/mvp-lane-d-ux-automation-batch17.json');
+  assert.equal(inferredBatch17.resumeAction, 'queue_missing');
+  assert.equal(inferredBatch17.resumeMessage, 'repair the queue path before retrying runtime recovery');
 }
 
 main();

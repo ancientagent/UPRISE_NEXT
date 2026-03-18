@@ -32,4 +32,20 @@ describe('Plot Tier Guard', () => {
       ),
     ).toBe('Chicago, Illinois • House');
   });
+
+  it('keeps state and national labels deterministic from home-scene fallback data', () => {
+    const anchor = { name: 'Fallback Scene' };
+    const homeScene = { city: 'Chicago', state: 'Illinois', musicCommunity: 'House' };
+
+    expect(buildRadiyoBroadcastLabel('state', anchor, homeScene)).toBe('Illinois • House');
+    expect(buildRadiyoBroadcastLabel('national', anchor, homeScene)).toBe('National • House');
+  });
+
+  it('falls back to the selected anchor name when no community label is available', () => {
+    const anchor = { name: 'Austin Underground', city: 'Austin', state: 'Texas' };
+
+    expect(buildRadiyoBroadcastLabel('city', anchor, null)).toBe('Austin, Texas • Austin Underground');
+    expect(buildRadiyoBroadcastLabel('state', anchor, null)).toBe('Texas • Austin Underground');
+    expect(buildRadiyoBroadcastLabel('national', anchor, null)).toBe('National • Austin Underground');
+  });
 });

@@ -108,4 +108,64 @@ describe('discovery context helpers', () => {
       isVisitor: false,
     });
   });
+
+  it('preserves fallback transport context when primary payload has no tuned scene data', () => {
+    const result = mergeDiscoveryContextPatch(
+      {
+        tunedSceneId: null,
+        tunedScene: null,
+        homeSceneId: 'scene-home',
+        isVisitor: false,
+      },
+      {
+        tunedSceneId: 'scene-fallback',
+        tunedScene: {
+          id: 'scene-fallback',
+          name: 'Fallback',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        isVisitor: true,
+      },
+    );
+
+    expect(result).toEqual({
+      tunedSceneId: 'scene-fallback',
+      tunedScene: expect.objectContaining({ id: 'scene-fallback' }),
+      isVisitor: true,
+    });
+  });
+
+  it('uses primary visitor status when tuned scene id exists without full scene details', () => {
+    const result = mergeDiscoveryContextPatch(
+      {
+        tunedSceneId: 'scene-primary',
+        tunedScene: null,
+        homeSceneId: 'scene-home',
+        isVisitor: false,
+      },
+      {
+        tunedSceneId: 'scene-fallback',
+        tunedScene: {
+          id: 'scene-fallback',
+          name: 'Fallback',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        isVisitor: true,
+      },
+    );
+
+    expect(result).toEqual({
+      tunedSceneId: 'scene-primary',
+      tunedScene: expect.objectContaining({ id: 'scene-fallback' }),
+      isVisitor: false,
+    });
+  });
 });

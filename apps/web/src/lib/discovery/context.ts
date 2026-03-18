@@ -18,6 +18,12 @@ export function mergeDiscoveryContextPatch(
   primary: DiscoveryContext | null,
   fallback: DiscoveryContextPatch,
 ): DiscoveryContextPatch {
+  const hasPrimaryTransportContext = Boolean(primary?.tunedSceneId || primary?.tunedScene);
+
+  if (!primary || !hasPrimaryTransportContext) {
+    return fallback;
+  }
+
   return {
     tunedSceneId: primary?.tunedSceneId ?? fallback.tunedSceneId,
     tunedScene: primary?.tunedScene ?? fallback.tunedScene,

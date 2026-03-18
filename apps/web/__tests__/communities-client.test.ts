@@ -84,6 +84,29 @@ describe('communities client', () => {
     expect(active.data?.community?.id).toBe('scene-9');
   });
 
+  it('builds active-statistics query from tier context', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: null,
+        meta: { sceneId: 'scene-2' },
+      }),
+    });
+
+    await getActiveCommunityStatistics('state', 'token-stats');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/communities/active/statistics?tier=state',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-stats',
+        }),
+      }),
+    );
+  });
+
   it('builds active-events query from typed params', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

@@ -57,17 +57,27 @@ Validate queue shape before execution:
 node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/mvp-slices.json
 ```
 
-UX Batch16 preflight before execution:
+UX Batch16/Batch17 preflight before execution:
 ```bash
-QUEUE_PATH=".reliant/queue/mvp-lane-d-ux-automation-batch16.json"
+QUEUE_PATH=".reliant/queue/mvp-lane-d-ux-automation-batch17.json"
 node scripts/reliant-ux-preflight.mjs --queue "$QUEUE_PATH"
 ```
-- Required source-of-truth set for Batch16 UX queues:
-  - `docs/solutions/MVP_UX_MASTER_LOCK_R1.md`
-  - `docs/solutions/MVP_UX_BATCH16_EXECUTION_PLAN.md`
-  - `docs/solutions/MVP_UX_BATCH16_DRIFT_WATCHLIST.md`
-  - `docs/specs/users/onboarding-home-scene-resolution.md`
-  - `docs/specs/communities/plot-and-scene-plot.md`
+- Required source-of-truth sets are batch-specific:
+  - Batch16 UX queues:
+    - `docs/solutions/MVP_UX_MASTER_LOCK_R1.md`
+    - `docs/solutions/MVP_UX_BATCH16_EXECUTION_PLAN.md`
+    - `docs/solutions/MVP_UX_BATCH16_DRIFT_WATCHLIST.md`
+    - `docs/specs/users/onboarding-home-scene-resolution.md`
+    - `docs/specs/communities/plot-and-scene-plot.md`
+  - Batch17 UX queues:
+    - `docs/solutions/MVP_UX_MASTER_LOCK_R1.md`
+    - `docs/solutions/MVP_UX_DRIFT_GUARD_R1.md`
+    - `docs/specs/communities/plot-and-scene-plot.md`
+    - `docs/specs/communities/discovery-scene-switching.md`
+    - `docs/specs/users/onboarding-home-scene-resolution.md`
+    - `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md`
+    - `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md`
+- If `--runtime` is provided, preflight also enforces queue/runtime lane and batch naming parity before execution.
 - If preflight returns `ok=false`, stop before execution. Do not claim-forward or complete around missing/unreadable lock/spec files.
 
 Manual claim/complete/block:
@@ -95,22 +105,25 @@ node scripts/reliant-slice-queue.mjs block --queue "$QUEUE_PATH" --runtime "$RUN
 - Orchestrator claims one `queued` task.
 - `claim` is deterministic: if queue already has one `in_progress` task, it returns that active task without advancing to the next queued item.
 - `claim` fails fast on queue/runtime ownership mismatch or multiple `in_progress` tasks.
-- For Batch16 UX queues, `claim` also refuses `queue_transition_sanity_failed` when task lifecycle timestamps/statuses are impossible (for example `queued` with `finishedAt`, `done` without `finishedAt`, `blocked` with `finishedAt`).
+- For Batch16/Batch17 UX queues, `claim` also refuses `queue_transition_sanity_failed` when task lifecycle timestamps/statuses are impossible (for example `queued` with `finishedAt`, `done` without `finishedAt`, `blocked` with `finishedAt`, or a `queued`/`in_progress` task placed ahead of a non-queued successor in the queue).
 - Executes slice with canon/spec constraints.
 - Runs required validation gates.
 - Marks `done` if successful; marks `blocked` with exact reason on unrecoverable failure.
 - Continues until no queued tasks remain.
 
-## UX Batch16 Stop Conditions
+## UX Batch16/Batch17 Stop Conditions
 Stop immediately and repair/escalate when any of the following occur:
 - `blocked_preflight` from `reliant-next-action` / `reliant-autopilot`
-  - Cause: UX master lock or required Batch16 source-of-truth files are missing/unreadable.
+  - Cause: UX master lock or required batch-specific source-of-truth files are missing/unreadable.
 - `queue_transition_sanity_failed`
-  - Cause: impossible Batch16 UX queue lifecycle state in `scripts/reliant-slice-queue.mjs`.
+  - Cause: impossible Batch16/Batch17 UX queue lifecycle state in `scripts/reliant-slice-queue.mjs`.
 - `founder_decision_required`
   - Cause: next queued task explicitly declares `founderDecisionRequired: true` or `requiresFounderDecision: true`.
 - `runtime_owner_mismatch`, `missing_runtime`, or `invalid_runtime_payload`
   - Cause: runtime file and queue ownership disagree.
+- Supervisor UX-lane diagnostics also surface non-fatal queue states:
+  - `blocked_only` -> no queued or in-progress work remains, but blocked tasks still require manual follow-up.
+  - `no_queued_tasks` -> queue is drained.
 
 When a stop condition is triggered:
 1. Do not advance queue state.
@@ -150,11 +163,11 @@ node scripts/reliant-slice-queue.mjs claim --queue "$QUEUE_PATH" --runtime "$RUN
 
 If `claim`/`complete`/`block` reports `invalid runtime file` (for example missing `taskId`), treat it as stale runtime and run cleanup + single re-claim.
 
-### UX Batch16 runtime recovery
-For Batch16 UX lane runtime files, prefer queue-aware recovery:
+### UX Batch16/Batch17 runtime recovery
+For Batch16/Batch17 UX lane runtime files, prefer queue-aware recovery:
 ```bash
-RUNTIME_PATH=".reliant/runtime/current-task-lane-d-ux-batch16.json"
-QUEUE_PATH=".reliant/queue/mvp-lane-d-ux-automation-batch16.json"
+RUNTIME_PATH=".reliant/runtime/current-task-lane-d-ux-batch17.json"
+QUEUE_PATH=".reliant/queue/mvp-lane-d-ux-automation-batch17.json"
 node scripts/reliant-runtime-clean.mjs --runtime "$RUNTIME_PATH" --queue "$QUEUE_PATH" --resume
 ```
 - Deterministic `resumeAction` values:
@@ -162,6 +175,9 @@ node scripts/reliant-runtime-clean.mjs --runtime "$RUNTIME_PATH" --queue "$QUEUE
   - `claim_next` -> runtime remains absent; run the emitted `resumeCommand`.
   - `blocked_multiple_in_progress` -> repair queue ownership first.
   - `queue_missing` / `queue_invalid` -> repair queue path/payload before retrying.
+- `no_queued_tasks` -> queue is drained; no resume action is available.
+- Deterministic `resumeMessage` mirrors the selected `resumeAction` and is also surfaced by `reliant-next-action` as `runtimeRecovery`.
+- When `reliant-next-action` detects stale runtime with queued work still available, follow the queue-aware cleanup command first, then run the emitted `claim` command once.
 
 ## Verification Transcript Capture
 For deterministic handoff parsing, capture verification with the transcript wrapper:
@@ -173,6 +189,10 @@ pnpm run reliant:verify:transcript -- --command "$VERIFY_CMD" --format markdown
   - `## Verify Command`
   - `## Verify Exit Code`
   - `## Exact Output`
+- `## Verify Exit Code` now emits deterministic key/value metadata:
+  - `code=<exit code>`
+  - `passed=<true|false>`
+  - `signal=<signal|(none)>`
 - Optional artifacts:
   - `--markdown-out <path>`
   - `--json-out <path>`
