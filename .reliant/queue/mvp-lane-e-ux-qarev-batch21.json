@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-18T19:25:00.000Z",
+  "lane": "lane-e-ux-qarev-batch21",
+  "sourceFiles": [
+    "mvp-slices-batch21-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXQAREV-720A",
+      "title": "Batch17 QA replay 1 (Plot)",
+      "prompt": "Execute one MVP slice only: run targeted gate replay for lane A and publish exact outputs in dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXQAREV-721A",
+      "title": "Batch17 QA replay 2 (Discovery)",
+      "prompt": "Execute one MVP slice only: run targeted gate replay for lane B and publish exact outputs in dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXQAREV-722A",
+      "title": "Batch17 QA replay 3 (Player/Profile)",
+      "prompt": "Execute one MVP slice only: run targeted gate replay for lane C and publish exact outputs in dated handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXQAREV-723A",
+      "title": "Batch17 docs/spec consistency pass",
+      "prompt": "Execute one MVP slice only: verify docs/spec/solution consistency for Batch17 lock behavior and patch wording drift only.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXQAREV-724A",
+      "title": "Batch17 risk/rollback memo",
+      "prompt": "Execute one MVP slice only: produce severity-ordered risk/rollback memo for Batch17 changes with deterministic revert notes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXQAREV-725A",
+      "title": "Batch17 final gate replay + closeout",
+      "prompt": "Execute one MVP slice only: run final targeted gate replay for all Batch17-touched surfaces and publish closeout with exact outputs.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts plot-statistics-request.test.ts discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    }
+  ]
+}

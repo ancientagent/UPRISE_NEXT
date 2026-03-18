@@ -1,3 +1,7 @@
+- Added Batch21 UX execution package:
+  - `docs/solutions/MVP_UX_BATCH21_EXECUTION_PLAN.md`
+  - `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch21.json`
+  - `docs/handoff/2026-03-18_batch21-ux-queues-and-plan.md`
 - Added Batch20 UX execution package:
   - `docs/solutions/MVP_UX_BATCH20_EXECUTION_PLAN.md`
   - `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch20.json`
