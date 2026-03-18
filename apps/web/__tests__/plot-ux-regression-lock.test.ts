@@ -45,11 +45,13 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('onCollectionEject');
     expect(playerSource).toContain('Selection-driven collection queue');
     expect(playerSource).toContain('Selection-driven queue');
+    expect(playerSource).toContain('aria-label="Shuffle collection"');
     expect(playerSource).not.toContain('onModeChange');
     expect(plotPageSource).toContain('const handleCollectionSelection =');
     expect(plotPageSource).toContain('const handleCollectionEject =');
     expect(plotPageSource).toContain("setPlayerMode('Collection')");
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
+    expect(plotPageSource).toContain('mode={playerMode}');
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -65,6 +67,7 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain("{ label: 'Upvote' }");
     expect(wheelSource).toContain("{ label: 'Back', position: '9:00' }");
     expect(wheelSource).toContain("{ label: 'Pause', position: '10:00' }");
+    expect(wheelSource).toContain("{ label: 'Blast', position: '12:00' }");
     expect(wheelSource).toContain("{ label: 'Recommend', position: '1:00' }");
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
@@ -87,6 +90,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Saved Promos/Coupons');
     expect(plotPageSource).toContain('Activity Score');
     expect(plotPageSource).toContain('Calendar');
+    expect(plotPageSource).toContain('Calendar stays in the header.');
     expect(plotPageSource).toContain('Return to Plot Tabs');
     expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
   });

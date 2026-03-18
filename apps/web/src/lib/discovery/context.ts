@@ -8,7 +8,7 @@ export interface DiscoveryContextPatch {
 
 export function toDiscoveryContextPatch(context: DiscoveryContext | null): DiscoveryContextPatch {
   return {
-    tunedSceneId: context?.tunedSceneId ?? null,
+    tunedSceneId: context?.tunedSceneId ?? context?.tunedScene?.id ?? null,
     tunedScene: context?.tunedScene ?? null,
     isVisitor: context?.isVisitor ?? null,
   };

@@ -110,6 +110,31 @@ describe('discovery client', () => {
     );
   });
 
+  it('limits state-tier discovery queries to the approved scope keys', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'state',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+      'token-state-keys',
+    );
+
+    const [url] = (global.fetch as jest.Mock).mock.calls[0] as [string];
+    const keys = Array.from(new URL(url).searchParams.keys()).sort();
+
+    expect(keys).toEqual(['musicCommunity', 'state', 'tier']);
+  });
+
   it('never adds artist or band lookup params to discovery queries', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
@@ -138,6 +163,31 @@ describe('discovery client', () => {
     expect(query.get('city')).toBe('Austin');
     expect(query.has('artist')).toBe(false);
     expect(query.has('band')).toBe(false);
+  });
+
+  it('limits city-tier discovery queries to the approved scope keys', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'city',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+      'token-keys',
+    );
+
+    const [url] = (global.fetch as jest.Mock).mock.calls[0] as [string];
+    const keys = Array.from(new URL(url).searchParams.keys()).sort();
+
+    expect(keys).toEqual(['city', 'musicCommunity', 'state', 'tier']);
   });
 
   it('does not carry location filters into national-tier discovery', async () => {

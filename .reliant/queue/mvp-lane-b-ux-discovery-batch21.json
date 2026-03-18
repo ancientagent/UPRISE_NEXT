@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-18T19:25:00.000Z",
+  "lane": "lane-b-ux-discovery-batch21",
+  "sourceFiles": [
+    "mvp-slices-batch21-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 0,
+    "in_progress": 0,
+    "done": 6,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXDISC-702A",
+      "title": "Discovery scene/community-only search lock",
+      "prompt": "Execute one MVP slice only: enforce Discover search contract to scene/community scope only and lock out artist/band lookup semantics.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T19:18:52.216Z",
+      "updatedAt": "2026-03-18T19:20:01.606Z",
+      "finishedAt": "2026-03-18T19:20:01.606Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXDISC-702A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-703A",
+      "title": "Discovery state model parity pass",
+      "prompt": "Execute one MVP slice only: tighten idle/loading/error/empty/results rendering parity for Discover without adding pricing/entitlement copy.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T19:20:09.056Z",
+      "updatedAt": "2026-03-18T19:21:01.619Z",
+      "finishedAt": "2026-03-18T19:21:01.619Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXDISC-703A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-704A",
+      "title": "Discovery -> Plot tuned-scene handoff stability",
+      "prompt": "Execute one MVP slice only: verify tuned-scene persistence boundaries from Discover into Plot and harden deterministic context patching.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T19:21:04.351Z",
+      "updatedAt": "2026-03-18T19:22:32.606Z",
+      "finishedAt": "2026-03-18T19:22:32.606Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXDISC-704A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-705A",
+      "title": "Discovery card metadata consistency pass",
+      "prompt": "Execute one MVP slice only: normalize scene card metadata/copy fields to lock docs and remove explanatory drift text.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T19:22:35.382Z",
+      "updatedAt": "2026-03-18T19:23:29.479Z",
+      "finishedAt": "2026-03-18T19:23:29.479Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXDISC-705A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-706A",
+      "title": "Onboarding-home-scene fallback copy parity in discover pathways",
+      "prompt": "Execute one MVP slice only: align discover-adjacent fallback copy with onboarding home-scene pioneer routing language and no entitlement assumptions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-client.test.ts discovery-context.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T19:23:35.271Z",
+      "updatedAt": "2026-03-18T19:24:37.752Z",
+      "finishedAt": "2026-03-18T19:24:37.752Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXDISC-706A.md"
+    },
+    {
+      "id": "SLICE-UXDISC-707A",
+      "title": "Discovery lane closeout + contract assertions",
+      "prompt": "Execute one MVP slice only: close lane B with focused contract/test assertions for discovery scope, states, and handoff integrity.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-context.test.ts discovery-client.test.ts communities-client.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "done",
+      "startedAt": "2026-03-18T19:24:40.509Z",
+      "updatedAt": "2026-03-18T19:25:53.941Z",
+      "finishedAt": "2026-03-18T19:25:53.941Z",
+      "reportPath": "docs/handoff/2026-03-18_SLICE-UXDISC-707A.md"
+    }
+  ]
+}
