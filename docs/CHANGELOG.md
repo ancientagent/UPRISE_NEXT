@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Clarified lock precedence for Social exposure: MVP collapsed `/plot` keeps Social hidden; placeholder wording is non-executable until a V2 unlock. Updated `docs/solutions/MVP_UX_MASTER_LOCK_R1.md` and `docs/solutions/MVP_UX_BATCH18_EXECUTION_PLAN.md`.
 - Lane D Batch18 task complete (`SLICE-UXAUTO-629A`): updated `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md` to document Batch17 UX preflight requirements, Batch16/17 transition-sanity rules, queue-aware runtime recovery messaging, supervisor UX stop-state diagnostics, and normalized verify transcript exit metadata; report `docs/handoff/2026-03-17_SLICE-UXAUTO-629A.md`.
 - Lane D Batch18 task complete (`SLICE-UXAUTO-628A`): tightened `scripts/reliant-supervisor.mjs` UX-lane diagnostics by surfacing explicit `founder_decision_required`, `blocked_only`, and `no_queued_tasks` stop-state metadata in supervisor status/console output, with regression coverage in `scripts/reliant-supervisor.test.mjs`; report `docs/handoff/2026-03-17_SLICE-UXAUTO-628A.md`.
 - Lane D Batch18 task complete (`SLICE-UXAUTO-627A`): hardened `scripts/reliant-verify-transcript.mjs` to capture chained verify commands through a single shell stream and emit normalized exit metadata formatting in both markdown and JSON, with updated regression coverage in `scripts/reliant-verify-transcript.test.mjs`; report `docs/handoff/2026-03-17_SLICE-UXAUTO-627A.md`.

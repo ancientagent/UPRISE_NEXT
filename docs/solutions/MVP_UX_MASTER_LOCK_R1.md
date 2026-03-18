@@ -97,6 +97,7 @@ Primary tabs:
 
 Social:
 - Deferred for MVP unless explicitly unlocked by spec update.
+- Enforcement lock: Social is hidden in MVP collapsed `/plot` tab rail. If any document uses placeholder wording, hidden-only behavior takes precedence until a V2 spec unlocks it.
 
 ## 5) Onboarding Lock (Home Scene)
 Required onboarding semantics:

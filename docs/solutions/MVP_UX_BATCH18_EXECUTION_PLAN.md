@@ -30,3 +30,7 @@ Execute the next UX closure pass after Batch17 with strict canon/spec lock and n
 claim -> execute exact scope -> run verifyCommand exactly -> update changelog + dated handoff -> complete with `--task-id` guard -> continue until `no_queued_tasks`.
 
 If blocked by canon/spec silence: block with exact reason and continue.
+
+## Policy Clarification (Batch18)
+- Social is hidden in MVP collapsed `/plot` tab rail.
+- Do not treat Social placeholder wording as executable MVP behavior.
