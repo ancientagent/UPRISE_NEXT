@@ -54,7 +54,7 @@ References:
 - Drag down/up on profile handle transitions `collapsed <-> peek <-> expanded`.
 - Tap on profile header toggles `collapsed <-> expanded` for accessibility fallback.
 - Selecting a collection track sets `player_mode=collection`.
-- Explicit control `Back to RaDIYo` sets `player_mode=radiyo`.
+- Explicit eject/back control sets `player_mode=radiyo`.
 - Mode does **not** auto-switch unless user action triggers it.
 - Expanding profile stores current Plot UI snapshot (`activeTab`, `tier`, selected community anchor) and hides Plot body.
 - Collapsing profile restores Plot snapshot exactly.
@@ -101,7 +101,7 @@ References:
 ### Slice UX-03: shared player shell + source adapter
 - Extract player shell component.
 - Add source adapters for `radiyo` and `collection`.
-- Add explicit mode switch control.
+- Keep mode changes selection-driven on entry and eject-driven on exit.
 
 ### Slice UX-04: collection selection handoff
 - Wire collection track selection -> `player_mode=collection` + queue load.
@@ -112,7 +112,7 @@ References:
 - Verify keyboard and screen reader labels/actions.
 
 ### Slice UX-06: polish + telemetry (non-product logic)
-- Add UI-only telemetry for mode switch/panel transitions.
+- Add UI-only telemetry for player-mode and panel transitions.
 - Tune animation timings and reduced-motion support.
 
 ## Acceptance criteria (R1)
@@ -120,19 +120,19 @@ References:
 - In expanded profile, Plot body is replaced by profile+collection workspace, then restored on collapse.
 - Player remains within same screen context and is never detached to bottom-only global bar by default.
 - Selecting collection track reliably switches to collection mode.
-- User can explicitly return to RaDIYo mode.
+- User can explicitly return to RaDIYo mode via eject/back.
 - No mode switch happens silently.
 - Typecheck/docs checks pass.
 
 ## Open decisions to confirm before final UX lock
 - Should closing profile auto-return to RaDIYo, or preserve last player mode?
-  - Recommended default: preserve mode until explicit switch.
+  - Recommended default: preserve mode until explicit eject/back return.
 - Should `peek` state be visible on desktop, or mobile only?
   - Recommended default: mobile-first `peek`; desktop uses `collapsed/expanded`.
-- Should player controls differ by mode, or remain identical transport controls?
-  - Recommended default: identical transport controls + mode label.
+- Should player controls differ by mode, or remain mode-specific within the locked shell?
+  - Recommended default: locked mode-specific controls with tier/rotation in `RADIYO` and eject/shuffle in `Collection`.
 - In expanded profile, should the compact player sit directly below profile header or pinned to collection footer region?
-  - Recommended default: below profile header for consistent discovery and quicker mode switching.
+  - Recommended default: below profile header for consistent discovery and quicker collection entry/return visibility.
 
 ## Out of scope for this R1
 - New recommendation logic.

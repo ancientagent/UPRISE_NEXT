@@ -40,6 +40,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
     expect(playerSource).not.toContain("useState<PlayerMode>");
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
+    expect(plotPageSource).toContain("const collectionBroadcastLabel = selectedCollectionItem?.label ??");
     expect(playerSource).not.toContain('Switch to Collection mode');
     expect(playerSource).toContain('Back to RADIYO');
     expect(playerSource).toContain('aria-label="Back to RADIYO"');
@@ -54,6 +55,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("setPlayerMode('Collection')");
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
     expect(plotPageSource).toContain('mode={playerMode}');
+    expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -74,6 +76,7 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
     expect(playerSource).toContain('Wheel: {wheelActions.map');
+    expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : COLLECTION_WHEEL_ACTIONS;");
   });
 
   it('locks expanded-profile behavior to swap out Plot tabs/body', () => {
@@ -95,6 +98,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Calendar');
     expect(plotPageSource).toContain('Calendar stays in the header.');
     expect(plotPageSource).toContain("const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists')");
+    expect(plotPageSource).toContain('eventsThisWeek');
     expect(plotPageSource).toContain('Return to Plot Tabs');
     expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
   });

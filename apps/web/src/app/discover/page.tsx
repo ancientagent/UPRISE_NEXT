@@ -237,7 +237,7 @@ export default function DiscoverPage() {
           </p>
           <p className="mt-2 text-xs text-black/50">
             If your selected city is inactive or unavailable, onboarding routes you to the nearest active city Scene for the
-            selected parent community and tracks your pioneer intent via the profile-strip notification icon.
+            selected parent community and tracks your pioneer intent via the top-right notification icon in the profile strip.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
@@ -312,7 +312,7 @@ export default function DiscoverPage() {
                 Scope: <span className="capitalize">{tier}</span>
               </p>
               <p>
-                Community: {normalizedMusicCommunity || 'Not set'}
+                Community: {normalizedMusicCommunity || 'Unlisted'}
               </p>
             </div>
           </div>
@@ -323,6 +323,7 @@ export default function DiscoverPage() {
               aria-live="polite"
               aria-atomic="true"
               aria-relevant="text"
+              data-discovery-state={error ? 'error' : items.length > 0 ? 'results' : loading ? 'loading' : token ? 'empty-or-idle' : 'auth'}
               className={`mt-4 rounded-2xl border p-4 ${
                 error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
               }`}

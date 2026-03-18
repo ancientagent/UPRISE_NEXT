@@ -1,0 +1,8 @@
+{
+  "taskId": "SLICE-UXQAREV-782A",
+  "title": "Batch17 QA replay 3 (Player/Profile)",
+  "prompt": "Execute one MVP slice only: run targeted gate replay for lane C and publish exact outputs in dated handoff.",
+  "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+  "sourceQueue": null,
+  "claimedAt": "2026-03-18T21:37:47.491Z"
+}

@@ -243,6 +243,35 @@ describe('discovery client', () => {
     expect(keys).toEqual(['musicCommunity', 'tier']);
   });
 
+  it('preserves the musicCommunity query key even when the typed value trims blank', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'city',
+        musicCommunity: '   ',
+        state: 'TX',
+        city: 'Austin',
+      },
+      'token-empty-community',
+    );
+
+    const [url] = (global.fetch as jest.Mock).mock.calls[0] as [string];
+    const query = new URL(url).searchParams;
+
+    expect(query.has('musicCommunity')).toBe(true);
+    expect(query.get('musicCommunity')).toBe('');
+    expect(Array.from(query.keys()).sort()).toEqual(['city', 'musicCommunity', 'state', 'tier']);
+    expect(query.has('artist')).toBe(false);
+    expect(query.has('band')).toBe(false);
+  });
+
   it('returns null when discovery context data is empty', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
@@ -349,6 +378,65 @@ describe('discovery client', () => {
     expect(context?.tunedSceneId).toBe('scene-1');
     expect(tuned.tunedSceneId).toBe('scene-3');
     expect(home.homeScene.musicCommunity).toBe('Punk');
+  });
+
+  it('posts explicit scene ids for tune and set-home mutations through the typed client', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            tunedSceneId: 'scene-9',
+            tunedScene: null,
+            homeSceneId: 'scene-home',
+            isVisitor: true,
+          },
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            tunedSceneId: 'scene-9',
+            tunedScene: null,
+            homeSceneId: 'scene-9',
+            isVisitor: false,
+            homeScene: {
+              city: 'Austin',
+              state: 'TX',
+              musicCommunity: 'Punk',
+            },
+          },
+        }),
+      });
+
+    await tuneDiscoverScene('scene-9', 'token-mutate');
+    await setDiscoverHomeScene('scene-9', 'token-mutate');
+
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      1,
+      'http://localhost:4000/discover/tune',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ sceneId: 'scene-9' }),
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-mutate',
+        }),
+      }),
+    );
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      2,
+      'http://localhost:4000/discover/set-home-scene',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ sceneId: 'scene-9' }),
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-mutate',
+        }),
+      }),
+    );
   });
 
   it('throws when tune or set-home responses are empty', async () => {

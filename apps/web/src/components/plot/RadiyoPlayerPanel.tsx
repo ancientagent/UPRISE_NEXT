@@ -35,7 +35,7 @@ export default function RadiyoPlayerPanel({
   return (
     <section
       data-slot="compact-player-shell"
-      className="mt-4 rounded-[1.15rem] border border-black/15 bg-black px-3 py-2 text-white shadow-sm transition-all"
+      className="mt-4 rounded-[1.1rem] border border-black/15 bg-black px-2.5 py-2 text-white shadow-sm transition-all"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -55,9 +55,9 @@ export default function RadiyoPlayerPanel({
 
       <div
         data-slot="player-track-row"
-        className="mt-2 flex items-stretch gap-2 rounded-[0.95rem] border border-white/12 bg-white/[0.04] p-2"
+        className="mt-2 flex items-stretch gap-1.5 rounded-[0.9rem] border border-white/12 bg-white/[0.04] p-2"
       >
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5">
           <div
             className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.05rem] border text-[10px] font-semibold uppercase tracking-[0.16em] ${
               isRadiyoMode
@@ -110,7 +110,7 @@ export default function RadiyoPlayerPanel({
                 <p className="text-[11px] font-medium text-white/60">Selection-driven queue</p>
               )}
 
-              <div className="min-w-0 flex items-center gap-1 rounded-full border border-white/12 bg-white/[0.03] px-1.5 py-1">
+              <div className="min-w-0 flex items-center gap-1 rounded-full border border-white/12 bg-white/[0.03] px-1.5 py-[0.3rem]">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-lime-300">Live</span>
                 <p className="truncate text-[11px] text-white/72">{broadcastLabel}</p>
               </div>
@@ -121,7 +121,7 @@ export default function RadiyoPlayerPanel({
         {isRadiyoMode ? (
           <div
             data-slot="player-tier-stack"
-            className="flex w-16 shrink-0 flex-col gap-1 rounded-[0.85rem] border border-white/12 bg-black/20 p-1"
+            className="flex w-[3.85rem] shrink-0 flex-col gap-1 rounded-[0.8rem] border border-white/12 bg-black/20 p-1"
           >
             {tierOptions.map((tier) => (
               <button

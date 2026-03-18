@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-18T20:40:30.565Z",
+  "lane": "lane-d-ux-automation-batch24",
+  "sourceFiles": [
+    "mvp-slices-batch24-ux-flow.json"
+  ],
+  "summary": {
+    "total": 6,
+    "queued": 6,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXAUTO-804A",
+      "title": "Queue/runtime preflight lock for Batch17",
+      "prompt": "Execute one MVP slice only: extend UX preflight checks to include Batch17 queue/runtime naming and source-doc presence assertions.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXAUTO-805A",
+      "title": "Batch17 transition-sanity guard extension",
+      "prompt": "Execute one MVP slice only: expand transition-sanity diagnostics for Batch17 queue status edges and deterministic refusal codes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXAUTO-806A",
+      "title": "Runtime-clean resume diagnostics parity",
+      "prompt": "Execute one MVP slice only: improve runtime-clean resume messaging for stale runtime recovery and next-action determinism.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXAUTO-807A",
+      "title": "Verify transcript guard hardening",
+      "prompt": "Execute one MVP slice only: harden verify-transcript capture for multi-command slices and deterministic exit metadata formatting.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXAUTO-808A",
+      "title": "Supervisor stop-condition clarity pass",
+      "prompt": "Execute one MVP slice only: tighten supervisor stop-condition diagnostics for blocked/founder-decision/no-queued states in UX lanes.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXAUTO-809A",
+      "title": "Automation lane closeout + runbook sync",
+      "prompt": "Execute one MVP slice only: close lane D with runbook updates reflecting Batch17 queue operation and recovery patterns.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    }
+  ]
+}
