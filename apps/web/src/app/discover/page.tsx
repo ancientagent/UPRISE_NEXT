@@ -151,6 +151,14 @@ export default function DiscoverPage() {
     };
   }, [token, canSearch, loading, error, items.length]);
 
+  const discoveryState = useMemo(() => {
+    if (error) return 'error';
+    if (items.length > 0) return 'results';
+    if (loading) return 'loading';
+    if (token) return 'empty-or-idle';
+    return 'auth';
+  }, [error, items.length, loading, token]);
+
   const handleSetHomeScene = async (item: DiscoverCitySceneItem) => {
     if (!token) return;
 
@@ -237,7 +245,8 @@ export default function DiscoverPage() {
           </p>
           <p className="mt-2 text-xs text-black/50">
             If your selected city is inactive or unavailable, onboarding routes you to the nearest active city Scene for the
-            selected parent community and tracks your pioneer intent via the top-right notification icon in the profile strip.
+            selected parent music community. Pioneer follow-up is delivered from the top-right notification icon in the
+            profile strip.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex gap-3">
@@ -323,7 +332,8 @@ export default function DiscoverPage() {
               aria-live="polite"
               aria-atomic="true"
               aria-relevant="text"
-              data-discovery-state={error ? 'error' : items.length > 0 ? 'results' : loading ? 'loading' : token ? 'empty-or-idle' : 'auth'}
+              aria-busy={loading}
+              data-discovery-state={discoveryState}
               className={`mt-4 rounded-2xl border p-4 ${
                 error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
               }`}
@@ -352,14 +362,14 @@ export default function DiscoverPage() {
                         <dl className="mt-3 grid gap-1 text-sm text-black/60">
                           <div className="flex flex-wrap gap-2">
                             <dt className="font-medium text-black/70">Scope</dt>
-                            <dd>City Scene</dd>
+                            <dd>City</dd>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             <dt className="font-medium text-black/70">Location</dt>
                             <dd>{formatSceneLocation(item.city, item.state)}</dd>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            <dt className="font-medium text-black/70">Music Community</dt>
+                            <dt className="font-medium text-black/70">Community</dt>
                             <dd>{formatMusicCommunityLabel(item.musicCommunity, normalizedMusicCommunity)}</dd>
                           </div>
                           <div className="flex flex-wrap gap-2">
@@ -409,14 +419,14 @@ export default function DiscoverPage() {
                     <dl className="mt-3 grid gap-1 text-sm text-black/60">
                       <div className="flex flex-wrap gap-2">
                         <dt className="font-medium text-black/70">Scope</dt>
-                        <dd>State Rollup</dd>
+                        <dd>State</dd>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <dt className="font-medium text-black/70">State</dt>
                         <dd>{item.state}</dd>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <dt className="font-medium text-black/70">Music Community</dt>
+                        <dt className="font-medium text-black/70">Community</dt>
                         <dd>{formatMusicCommunityLabel(item.musicCommunity)}</dd>
                       </div>
                       <div className="flex flex-wrap gap-2">
