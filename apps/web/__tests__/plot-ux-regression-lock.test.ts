@@ -41,6 +41,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).not.toContain("useState<PlayerMode>");
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
     expect(plotPageSource).toContain("const collectionBroadcastLabel = selectedCollectionItem?.label ??");
+    expect(plotPageSource).toContain('selectedCollectionItem?.id === item.id && playerMode === \'Collection\'');
     expect(playerSource).not.toContain('Switch to Collection mode');
     expect(playerSource).toContain('Back to RADIYO');
     expect(playerSource).toContain('aria-label="Back to RADIYO"');
@@ -56,6 +57,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
     expect(plotPageSource).toContain('mode={playerMode}');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
+    expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -77,6 +79,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
     expect(playerSource).toContain('Wheel: {wheelActions.map');
     expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : COLLECTION_WHEEL_ACTIONS;");
+    expect(wheelSource).toContain("label: 'Report' | 'Skip' | 'Blast' | 'Add' | 'Upvote' | 'Back' | 'Pause' | 'Recommend' | 'Next'");
   });
 
   it('locks expanded-profile behavior to swap out Plot tabs/body', () => {
@@ -99,6 +102,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Calendar stays in the header.');
     expect(plotPageSource).toContain("const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists')");
     expect(plotPageSource).toContain('eventsThisWeek');
+    expect(plotPageSource).toContain("['Posters', 'Shirts', 'Patches', 'Buttons', 'Special Items']");
     expect(plotPageSource).toContain('Return to Plot Tabs');
     expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
   });

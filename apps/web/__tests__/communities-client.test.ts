@@ -213,6 +213,51 @@ describe('communities client', () => {
     });
   });
 
+  it('preserves national active-statistics data when no active scene metadata is present', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-national',
+            name: 'National Punk',
+            city: null,
+            state: null,
+            musicCommunity: 'Punk',
+            tier: 'national',
+            isActive: true,
+          },
+          tierScope: 'national',
+          rollupUnit: 'state',
+          metrics: {
+            totalMembers: 300,
+            activeSects: 25,
+            eventsThisWeek: 12,
+            activityScore: 42,
+            activeTracks: 18,
+            gpsVerifiedUsers: 80,
+            votingEligibleUsers: 70,
+            scopeCommunityCount: 20,
+          },
+          topSongs: [],
+          timeWindow: {
+            days: 7,
+            asOf: '2026-03-18T00:00:00.000Z',
+          },
+        },
+      }),
+    });
+
+    await expect(getActiveCommunityStatistics('national', 'token-national-data')).resolves.toEqual({
+      sceneId: null,
+      data: expect.objectContaining({
+        community: expect.objectContaining({ id: 'scene-national' }),
+        tierScope: 'national',
+      }),
+    });
+  });
+
   it('builds active-events query from typed params', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

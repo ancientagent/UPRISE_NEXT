@@ -110,6 +110,36 @@ describe('discovery client', () => {
     );
   });
 
+  it('skips blank state values for state-tier discovery without adding city lookup semantics', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'state',
+        musicCommunity: 'Punk',
+        state: '   ',
+        city: 'Austin',
+      },
+      'token-state-blank',
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/scenes?tier=state&musicCommunity=Punk',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-state-blank',
+        }),
+      }),
+    );
+  });
+
   it('limits state-tier discovery queries to the approved scope keys', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
@@ -163,6 +193,50 @@ describe('discovery client', () => {
     expect(query.get('city')).toBe('Austin');
     expect(query.has('artist')).toBe(false);
     expect(query.has('band')).toBe(false);
+  });
+
+  it('keeps artist and band lookup semantics locked out across all discovery tiers', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    const scopedQueries = [
+      {
+        tier: 'city' as const,
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+      {
+        tier: 'state' as const,
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+      {
+        tier: 'national' as const,
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+    ];
+
+    for (const params of scopedQueries) {
+      await listDiscoverScenes(params, `token-${params.tier}`);
+    }
+
+    const queries = (global.fetch as jest.Mock).mock.calls.map(([url]) => new URL(url as string).searchParams);
+
+    expect(queries).toHaveLength(3);
+
+    for (const query of queries) {
+      expect(query.has('artist')).toBe(false);
+      expect(query.has('band')).toBe(false);
+    }
   });
 
   it('limits city-tier discovery queries to the approved scope keys', async () => {
