@@ -106,4 +106,13 @@ describe('Plot Tier Guard', () => {
     expect(buildRadiyoBroadcastLabel('state', anchor, null)).toBe('Texas • Punk');
     expect(buildRadiyoBroadcastLabel('national', anchor, null)).toBe('National • Punk');
   });
+
+  it('falls back to anchor name when home-scene only contributes location fields', () => {
+    const anchor = { name: 'Austin Underground', city: 'Austin', state: 'Texas' };
+    const homeScene = { city: 'Chicago', state: 'Illinois' };
+
+    expect(buildRadiyoBroadcastLabel('city', anchor, homeScene)).toBe('Austin, Texas • Austin Underground');
+    expect(buildRadiyoBroadcastLabel('state', anchor, homeScene)).toBe('Texas • Austin Underground');
+    expect(buildRadiyoBroadcastLabel('national', anchor, homeScene)).toBe('National • Austin Underground');
+  });
 });

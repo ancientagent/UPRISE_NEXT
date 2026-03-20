@@ -239,6 +239,53 @@ describe('discovery client', () => {
     }
   });
 
+  it('keeps discovery queries scene/community-scoped when optional location inputs trim blank', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    const scopedQueries = [
+      {
+        tier: 'city' as const,
+        expectedKeys: ['musicCommunity', 'tier'],
+      },
+      {
+        tier: 'state' as const,
+        expectedKeys: ['musicCommunity', 'tier'],
+      },
+      {
+        tier: 'national' as const,
+        expectedKeys: ['musicCommunity', 'tier'],
+      },
+    ];
+
+    for (const { tier } of scopedQueries) {
+      await listDiscoverScenes(
+        {
+          tier,
+          musicCommunity: 'Punk',
+          state: '   ',
+          city: '   ',
+        },
+        `token-blank-${tier}`,
+      );
+    }
+
+    const queries = (global.fetch as jest.Mock).mock.calls.map(([url]) => new URL(url as string).searchParams);
+
+    expect(queries).toHaveLength(3);
+
+    for (const [index, query] of queries.entries()) {
+      expect(Array.from(query.keys()).sort()).toEqual(scopedQueries[index]?.expectedKeys);
+      expect(query.has('artist')).toBe(false);
+      expect(query.has('band')).toBe(false);
+    }
+  });
+
   it('limits city-tier discovery queries to the approved scope keys', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
