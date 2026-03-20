@@ -107,6 +107,28 @@ describe('communities client', () => {
     );
   });
 
+  it('builds city active-statistics queries with the approved scope key only', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: null,
+      }),
+    });
+
+    await getActiveCommunityStatistics('city', 'token-city-stats');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/communities/active/statistics?tier=city',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-city-stats',
+        }),
+      }),
+    );
+  });
+
   it('builds national active-statistics queries with the approved scope key only', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

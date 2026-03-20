@@ -21,8 +21,15 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain("useState<'collapsed' | 'peek' | 'expanded'>('collapsed')");
     expect(plotPageSource).toContain("const isProfileExpanded = profilePanelState === 'expanded'");
+    expect(plotPageSource).toContain('const seamLabel =');
+    expect(plotPageSource).toContain("'Pull up or tap to collapse profile'");
+    expect(plotPageSource).toContain("'Release to collapse or keep pulling to expand'");
+    expect(plotPageSource).toContain("'Pull down profile'");
+    expect(plotPageSource).toContain('onClick={toggleProfilePanel}');
+    expect(plotPageSource).toContain('aria-controls="plot-profile-panel"');
     expect(plotPageSource).toContain('aria-expanded={isProfileExpanded}');
     expect(playerSource).not.toContain("useState<'collapsed' | 'peek' | 'expanded'>");
+    expect(playerSource).not.toContain('setProfilePanelState');
   });
 
   it('locks compact player shell scaffolding for track row and tier stack', () => {
@@ -57,15 +64,23 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("setPlayerMode('Collection')");
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
     expect(plotPageSource).toContain('mode={playerMode}');
+    expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
     expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
     expect(plotPageSource).toContain("selectedCollectionItem?.id === item.id && playerMode === 'Collection'");
+    expect(plotPageSource).toContain("setSelectedCollectionItem(item)");
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
     const wheelSource = readRepoFile('src/components/plot/engagement-wheel.ts');
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
+    expect(wheelSource).toMatch(
+      /export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Report' \},\s*\{ label: 'Skip' \},\s*\{ label: 'Blast' \},\s*\{ label: 'Add' \},\s*\{ label: 'Upvote' \},\s*\];/
+    );
+    expect(wheelSource).toMatch(
+      /export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Back', position: '9:00' \},\s*\{ label: 'Pause', position: '10:00' \},\s*\{ label: 'Blast', position: '12:00' \},\s*\{ label: 'Recommend', position: '1:00' \},\s*\{ label: 'Next', position: '3:00' \},\s*\];/
+    );
     expect(wheelSource).toContain('export const RADIYO_WHEEL_ACTIONS');
     expect(wheelSource).toContain('export const COLLECTION_WHEEL_ACTIONS');
     expect(wheelSource).toContain("{ label: 'Report' }");
@@ -90,6 +105,9 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain('const isProfileExpanded = profilePanelState ===');
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
+    expect(plotPageSource).toMatch(
+      /<header[\s\S]*Profile Summary[\s\S]*Activity Score[\s\S]*Calendar[\s\S]*<\/header>[\s\S]*Player Context[\s\S]*expandedProfileSections\.map[\s\S]*Return to Plot Tabs/
+    );
     expect(plotPageSource).toMatch(
       /const expandedProfileSections = \[\s*'Singles\/Playlists',\s*'Events',\s*'Photos',\s*'Merch',\s*'Saved Uprises',\s*'Saved Promos\/Coupons',\s*\] as const;/
     );

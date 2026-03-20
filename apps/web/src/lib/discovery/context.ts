@@ -16,23 +16,31 @@ function mergeDiscoveryScene(
   tunedSceneId: string | null,
 ): DiscoveryScene | null {
   if (!primaryScene) return fallbackScene;
-  if (!fallbackScene) return primaryScene;
 
-  const primarySceneId = primaryScene.id ?? tunedSceneId;
+  const primarySceneId = tunedSceneId ?? primaryScene.id;
+  const normalizedPrimaryScene =
+    primarySceneId && primaryScene.id !== primarySceneId
+      ? {
+          ...primaryScene,
+          id: primarySceneId,
+        }
+      : primaryScene;
+
+  if (!fallbackScene) return normalizedPrimaryScene;
 
   if (primarySceneId && fallbackScene.id !== primarySceneId) {
-    return primaryScene;
+    return normalizedPrimaryScene;
   }
 
   return {
     ...fallbackScene,
-    ...primaryScene,
+    ...normalizedPrimaryScene,
     id: primarySceneId ?? fallbackScene.id,
-    name: coalesceSceneString(primaryScene.name, fallbackScene.name) ?? '',
-    city: coalesceSceneString(primaryScene.city, fallbackScene.city),
-    state: coalesceSceneString(primaryScene.state, fallbackScene.state),
-    musicCommunity: coalesceSceneString(primaryScene.musicCommunity, fallbackScene.musicCommunity),
-    tier: coalesceSceneString(primaryScene.tier, fallbackScene.tier) ?? fallbackScene.tier,
+    name: coalesceSceneString(normalizedPrimaryScene.name, fallbackScene.name) ?? '',
+    city: coalesceSceneString(normalizedPrimaryScene.city, fallbackScene.city),
+    state: coalesceSceneString(normalizedPrimaryScene.state, fallbackScene.state),
+    musicCommunity: coalesceSceneString(normalizedPrimaryScene.musicCommunity, fallbackScene.musicCommunity),
+    tier: coalesceSceneString(normalizedPrimaryScene.tier, fallbackScene.tier) ?? fallbackScene.tier,
   };
 }
 

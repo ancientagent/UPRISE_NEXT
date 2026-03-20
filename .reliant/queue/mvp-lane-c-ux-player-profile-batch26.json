@@ -7,9 +7,9 @@
   ],
   "summary": {
     "total": 6,
-    "queued": 6,
+    "queued": 0,
     "in_progress": 0,
-    "done": 0,
+    "done": 6,
     "blocked": 0
   },
   "tasks": [
@@ -18,42 +18,66 @@
       "title": "RADIYO compact shell proportion lock",
       "prompt": "Execute one MVP slice only: tighten compact RADIYO shell proportions while preserving existing control map and no behavior expansion.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-20T03:02:03.510Z",
+      "updatedAt": "2026-03-20T03:03:16.655Z",
+      "finishedAt": "2026-03-20T03:03:16.655Z",
+      "reportPath": "docs/handoff/2026-03-19_SLICE-UXPLYR-858A.md"
     },
     {
       "id": "SLICE-UXPLYR-859A",
       "title": "Tier-label deterministic title parity",
       "prompt": "Execute one MVP slice only: lock City/State/National title rendering parity in player header and preserve parent community anchor semantics.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-tier-guard.test.ts plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-20T03:03:21.797Z",
+      "updatedAt": "2026-03-20T03:03:59.171Z",
+      "finishedAt": "2026-03-20T03:03:59.171Z",
+      "reportPath": "docs/handoff/2026-03-19_SLICE-UXPLYR-859A.md"
     },
     {
       "id": "SLICE-UXPLYR-860A",
       "title": "Collection entry/eject ownership pass",
       "prompt": "Execute one MVP slice only: enforce collection-mode entry by collection selection and eject-only return to RADIYO without direct mode-switch controls.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-20T03:04:06.691Z",
+      "updatedAt": "2026-03-20T03:04:46.574Z",
+      "finishedAt": "2026-03-20T03:04:46.574Z",
+      "reportPath": "docs/handoff/2026-03-19_SLICE-UXPLYR-860A.md"
     },
     {
       "id": "SLICE-UXPLYR-861A",
       "title": "Engagement wheel mapping lock pass",
       "prompt": "Execute one MVP slice only: reinforce deterministic wheel action mappings by player mode and ensure no action drift from lock docs.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-20T03:04:58.370Z",
+      "updatedAt": "2026-03-20T03:06:48.890Z",
+      "finishedAt": "2026-03-20T03:06:48.890Z",
+      "reportPath": "docs/handoff/2026-03-19_SLICE-UXPLYR-861A.md"
     },
     {
       "id": "SLICE-UXPLYR-862A",
       "title": "Expanded profile composition parity pass",
       "prompt": "Execute one MVP slice only: align expanded profile header/workspace composition and section ordering to locked profile surface spec.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-20T03:06:54.111Z",
+      "updatedAt": "2026-03-20T03:08:01.755Z",
+      "finishedAt": "2026-03-20T03:08:01.755Z",
+      "reportPath": "docs/handoff/2026-03-19_SLICE-UXPLYR-862A.md"
     },
     {
       "id": "SLICE-UXPLYR-863A",
       "title": "Player/profile lane closeout + regression pack",
       "prompt": "Execute one MVP slice only: close lane C with focused regression locks for seam-state ownership, mode-state ownership, and collection/eject behavior.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tier-guard.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-20T03:08:05.796Z",
+      "updatedAt": "2026-03-20T03:09:25.137Z",
+      "finishedAt": "2026-03-20T03:09:25.137Z",
+      "reportPath": "docs/handoff/2026-03-19_SLICE-UXPLYR-863A.md"
     }
   ]
 }
