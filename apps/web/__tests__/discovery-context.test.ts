@@ -389,4 +389,50 @@ describe('discovery context helpers', () => {
       isVisitor: false,
     });
   });
+
+  it('normalizes primary tuned-scene details to the transport tunedSceneId when ids disagree', () => {
+    const result = mergeDiscoveryContextPatch(
+      {
+        tunedSceneId: 'scene-primary',
+        tunedScene: {
+          id: 'scene-stale',
+          name: 'Dallas Punk',
+          city: 'Dallas',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        homeSceneId: 'scene-home',
+        isVisitor: false,
+      },
+      {
+        tunedSceneId: 'scene-fallback',
+        tunedScene: {
+          id: 'scene-fallback',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: false,
+        },
+        isVisitor: true,
+      },
+    );
+
+    expect(result).toEqual({
+      tunedSceneId: 'scene-primary',
+      tunedScene: expect.objectContaining({
+        id: 'scene-primary',
+        name: 'Dallas Punk',
+        city: 'Dallas',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'city',
+        isActive: true,
+      }),
+      isVisitor: false,
+    });
+  });
 });

@@ -35,7 +35,7 @@ export default function RadiyoPlayerPanel({
   return (
     <section
       data-slot="compact-player-shell"
-      className="mt-4 rounded-[1rem] border border-black/15 bg-black px-2 py-[0.45rem] text-white shadow-sm transition-all"
+      className="mt-4 rounded-[0.95rem] border border-black/15 bg-black px-2 py-[0.4rem] text-white shadow-sm transition-all"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -55,7 +55,7 @@ export default function RadiyoPlayerPanel({
 
       <div
         data-slot="player-track-row"
-        className="mt-2 flex items-stretch gap-1 rounded-[0.8rem] border border-white/12 bg-white/[0.04] p-[0.45rem]"
+        className="mt-2 flex items-stretch gap-1 rounded-[0.75rem] border border-white/12 bg-white/[0.04] p-[0.4rem]"
       >
         <div className="flex min-w-0 flex-1 items-center gap-1">
           <div
@@ -121,7 +121,7 @@ export default function RadiyoPlayerPanel({
         {isRadiyoMode ? (
           <div
             data-slot="player-tier-stack"
-            className="flex w-14 shrink-0 flex-col gap-1 rounded-[0.7rem] border border-white/12 bg-black/20 p-1"
+            className="flex w-[3.35rem] shrink-0 flex-col gap-1 rounded-[0.65rem] border border-white/12 bg-black/20 p-1"
           >
             {tierOptions.map((tier) => (
               <button
