@@ -2,6 +2,9 @@
 
 Purpose: prevent small-but-critical UX behavior drift across agents/sessions during mobile-first MVP work.
 
+Process stop rule:
+- If UX batches have converged to repeated clean closeouts and remaining uncertainty is founder acceptance rather than implementation mechanics, stop general batch seeding and switch to readiness review / walkthrough per `docs/solutions/PHASE_STOP_GATE_PLAYBOOK.md`.
+
 ## Use Before Any UX Edit
 1. Read:
    - `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`

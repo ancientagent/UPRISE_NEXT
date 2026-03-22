@@ -29,6 +29,13 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` (prevents non-canon product-pattern assumptions)
 - `docs/solutions/SESSION_STANDING_DIRECTIVES.md` (paste-ready session policy block)
 - `docs/solutions/USER_ISARTIST_DEPRECATION_READINESS.md` (bridge/removal readiness workflow for transitional artist marker)
+- `docs/solutions/PHASE_STOP_GATE_PLAYBOOK.md` (required stop-gate process to prevent infinite batching after phase convergence)
+- `docs/solutions/NARRATIVE_CARRY_FORWARD_RULES_R1.md` (prevents sessions from narrowing product understanding below existing repo narrative canon + valid legacy carry-forward detail)
+- `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md` (founder-confirmed Discover behavior lock for search, map travel, recommendations/trending/top-artists, retune flow, and visitor-mode entry)
+- `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md` (separates confirmed artist architecture/capability/issuance constraints from still-unlocked artist-page UX behavior)
+- `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md` (founder-confirmed artist-page structure, core actions, and playback handoff behavior)
+- `docs/solutions/MVP_WEB_UX_RECOVERY_PLAN_R1.md` (orders route unblocking, direct-route repairs, Discover founder-lock usage, and artist-profile lock work into one execution sequence)
+- `docs/solutions/MVP_WEB_UX_IMPLEMENTATION_BRIEF_R1.md` (coding brief for immediate route/runtime recovery plus Discover and artist-page implementation constraints)
 
 ## Web Build/Typecheck Incidents
 

@@ -31,6 +31,15 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - Tuning to non-Home Scene keeps user in visitor status for that Scene.
   - Visitor status does not grant civic voting authority in that Scene.
 
+### Clarification: `Recommended` label vs recommendation engine behavior
+- The banned behavior is algorithmic recommendation/personalization, not the literal presence of the word `Recommended`.
+- A `Recommended` Discover grouping must not imply or perform:
+  - predictive personalization
+  - taste modeling
+  - engagement-ranked ordering
+  - hidden system-directed surfacing
+  - cross-user similarity inference
+
 ### Implemented Behavior (Current)
 - API endpoint `GET /discover/scenes` is implemented with deterministic results by:
   - `tier=city|state`: city-scene entries
@@ -125,6 +134,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
   - current tuned Scene vs Home Scene badges
   - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status
 - Access-limit/entitlement messaging is deferred in MVP until pricing/entitlement contracts are locked in canon/spec.
+- If a Discover subsection/header uses `Recommended`, it must not imply predictive personalization or system-personalized recommendation behavior.
 - Tune action:
   - explicit button: “Tune to Scene”
   - does not say “Join”

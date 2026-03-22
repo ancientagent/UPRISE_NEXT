@@ -11,6 +11,9 @@ Use this block at the start of each execution session.
 - Canon + approved specs are the only source of product truth.
 - If canon/spec conflict or ambiguity appears, stop and ask one precise question.
 - Do not infer policy from platform norms.
+- Do not derive new product behavior from canon philosophy, narrative tone, or abstract product framing alone.
+- If a behavior has not been directly confirmed by founder instruction or explicitly locked in a concrete spec/decision doc, do not treat philosophical language as implementation authority.
+- Founder-confirmed behavior overrides philosophical interpretation. When in doubt, escalate instead of interpreting.
 
 3) UI action gate
 - For every new user-facing action/button/CTA, cite the exact spec/canon authorization before implementation.
@@ -37,6 +40,7 @@ Use this block at the start of each execution session.
 7) Drift prevention
 - Run a quick drift scan before commit for unauthorized wording/actions (for example unapproved Join/Coming Soon/Upgrade semantics).
 - Keep no platform-trope behavior unless explicitly specified.
+- Guard against over-interpretation drift: do not convert anti-trope or anti-platform guidance into product-removal decisions unless the founder has directly confirmed that exact removal.
 
 8) Docs/handoff required
 - For meaningful changes, update:
