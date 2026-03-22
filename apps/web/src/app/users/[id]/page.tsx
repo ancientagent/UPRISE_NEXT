@@ -64,13 +64,45 @@ export default function UserProfilePage() {
   const userId = useMemo(() => (typeof params?.id === 'string' ? params.id : ''), [params]);
   const isOwner = authUser?.id === userId;
 
+  async function withTimeout<T>(promise: Promise<T>, timeoutMessage: string, timeoutMs = 8000): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const timer = window.setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+      promise.then(
+        (value) => {
+          window.clearTimeout(timer);
+          resolve(value);
+        },
+        (reason) => {
+          window.clearTimeout(timer);
+          reject(reason);
+        },
+      );
+    });
+  }
+
   async function loadProfile() {
-    if (!token || !userId) return;
+    if (!userId) {
+      setProfile(null);
+      setError('Invalid user id.');
+      setLoading(false);
+      return;
+    }
+
+    if (!token) {
+      setProfile(null);
+      setError('You must be signed in to view user profiles.');
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const profileResponse = await api.get<UserProfileData>(`/users/${userId}/profile`, { token });
+      const profileResponse = await withTimeout(
+        api.get<UserProfileData>(`/users/${userId}/profile`, { token }),
+        'Timed out while loading user profile.',
+      );
       setProfile(profileResponse.data ?? null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load user profile.');

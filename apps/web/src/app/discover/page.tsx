@@ -77,7 +77,7 @@ export default function DiscoverPage() {
 
   useEffect(() => {
     async function fetchScenes() {
-      if (!token || !canSearch) {
+      if (!canSearch) {
         setItems([]);
         setLoading(false);
         return;
@@ -94,7 +94,7 @@ export default function DiscoverPage() {
             state: stateFilter,
             city: cityFilter,
           },
-          token,
+          token || undefined,
         );
         setItems(response);
       } catch (e) {
@@ -110,13 +110,6 @@ export default function DiscoverPage() {
   }, [token, tier, musicCommunity, stateFilter, cityFilter, canSearch]);
 
   const resultSummary = useMemo(() => {
-    if (!token) {
-      return {
-        title: 'Sign in required',
-        body: 'Sign in to view Scene Discovery results for your selected scope.',
-      };
-    }
-
     if (!canSearch) {
       return {
         title: 'Select a music community',
@@ -149,15 +142,14 @@ export default function DiscoverPage() {
       title: 'Scene results ready',
       body: 'Showing deterministic scene results for the current scope and music community.',
     };
-  }, [token, canSearch, loading, error, items.length]);
+  }, [canSearch, loading, error, items.length]);
 
   const discoveryState = useMemo(() => {
     if (error) return 'error';
     if (items.length > 0) return 'results';
     if (loading) return 'loading';
-    if (token) return 'empty-or-idle';
-    return 'auth';
-  }, [error, items.length, loading, token]);
+    return 'empty-or-idle';
+  }, [error, items.length, loading]);
 
   const handleSetHomeScene = async (item: DiscoverCitySceneItem) => {
     if (!token) return;
@@ -271,7 +263,7 @@ export default function DiscoverPage() {
                 className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
               />
               <p id="discover-search-scope-note" className="mt-2 text-xs text-black/50">
-                Search is limited to Scene and Music Community scope in MVP. Artist and band lookup is not supported.
+                Music community and location filters determine the scene results shown in the current scope.
               </p>
             </div>
             <div>
@@ -380,15 +372,17 @@ export default function DiscoverPage() {
                       </div>
                       <div className="flex gap-2">
                         <Button asChild size="sm" variant="outline">
-                          <Link href={`/community/${item.sceneId}`}>Open Scene</Link>
+                          <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
                         </Button>
                         <Button
                           size="sm"
                           variant={tunedSceneId === item.sceneId ? 'default' : 'outline'}
-                          disabled={tuningSceneId === item.sceneId}
+                          disabled={!token || tuningSceneId === item.sceneId}
                           onClick={() => handleTuneScene(item)}
                         >
-                          {tunedSceneId === item.sceneId
+                          {!token
+                            ? 'Sign in to tune'
+                            : tunedSceneId === item.sceneId
                             ? 'Tuned'
                             : tuningSceneId === item.sceneId
                             ? 'Tuning...'
@@ -397,10 +391,16 @@ export default function DiscoverPage() {
                         <Button
                           size="sm"
                           variant={item.isHomeScene ? 'default' : 'outline'}
-                          disabled={item.isHomeScene || savingHomeSceneId === item.sceneId}
+                          disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
                           onClick={() => handleSetHomeScene(item)}
                         >
-                          {item.isHomeScene ? 'Home Scene' : savingHomeSceneId === item.sceneId ? 'Saving...' : 'Set as Home Scene'}
+                          {!token
+                            ? 'Sign in to set Home'
+                            : item.isHomeScene
+                            ? 'Home Scene'
+                            : savingHomeSceneId === item.sceneId
+                            ? 'Saving...'
+                            : 'Set as Home Scene'}
                         </Button>
                       </div>
                     </div>

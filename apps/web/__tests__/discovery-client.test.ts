@@ -50,6 +50,35 @@ describe('discovery client', () => {
     );
   });
 
+  it('allows discovery scene reads without auth headers when no token is available', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'city',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/scenes?tier=city&musicCommunity=Punk&state=TX&city=Austin',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.anything(),
+        }),
+      }),
+    );
+  });
+
   it('omits city filter outside city tier and skips blank location params', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

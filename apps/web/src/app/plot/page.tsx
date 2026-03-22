@@ -296,14 +296,34 @@ export default function PlotPage() {
     return null;
   };
 
-  useEffect(() => {
-    if (!hasHomeScene) {
-      router.replace('/onboarding');
-    }
-  }, [hasHomeScene, router]);
-
   if (!hasHomeScene) {
-    return null;
+    return (
+      <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 sm:px-6">
+        <div className="mx-auto max-w-4xl space-y-6">
+          <section className="rounded-2xl border border-black/10 bg-white/90 p-6 shadow-sm">
+            <p className="text-xs uppercase tracking-[0.22em] text-black/50">The Plot</p>
+            <h1 className="mt-2 text-2xl font-semibold text-black">Home Scene setup required</h1>
+            <p className="mt-3 text-sm text-black/65">
+              Complete onboarding to anchor your Home Scene, unlock Plot context, and satisfy Registrar prerequisites.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Button onClick={() => router.push('/onboarding')}>Complete Onboarding</Button>
+              <Button variant="outline" onClick={() => router.push('/discover')}>
+                Browse Discover
+              </Button>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-black/10 bg-white/85 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-black">Plot surfaces unlock after Home Scene resolution</h2>
+            <p className="mt-2 text-sm text-black/60">
+              Feed, Events, Promotions, Statistics, and scene-scoped profile context remain unavailable until your
+              Home Scene is set.
+            </p>
+          </section>
+        </div>
+      </main>
+    );
   }
 
   return (

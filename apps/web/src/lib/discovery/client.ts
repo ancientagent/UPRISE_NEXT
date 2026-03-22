@@ -57,7 +57,7 @@ export async function getDiscoveryContext(token: string): Promise<DiscoveryConte
 
 export async function listDiscoverScenes(
   params: DiscoverScenesParams,
-  token: string,
+  token?: string,
 ): Promise<DiscoverItem[]> {
   const query = new URLSearchParams({
     tier: params.tier,

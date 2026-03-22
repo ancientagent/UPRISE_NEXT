@@ -48,6 +48,22 @@ export default function CommunityProfilePage() {
     return typeof raw === 'string' ? raw : '';
   }, [params]);
 
+  async function withTimeout<T>(promise: Promise<T>, timeoutMessage: string, timeoutMs = 8000): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const timer = window.setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+      promise.then(
+        (value) => {
+          window.clearTimeout(timer);
+          resolve(value);
+        },
+        (reason) => {
+          window.clearTimeout(timer);
+          reject(reason);
+        },
+      );
+    });
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -72,10 +88,13 @@ export default function CommunityProfilePage() {
         setLoading(true);
         setError(null);
 
-        const [communityRes, feedRes] = await Promise.all([
-          api.get<CommunityProfile>(`/communities/${communityId}`, { token }),
-          api.get<CommunityFeedItem[]>(`/communities/${communityId}/feed?limit=10`, { token }),
-        ]);
+        const [communityRes, feedRes] = await withTimeout(
+          Promise.all([
+            api.get<CommunityProfile>(`/communities/${communityId}`, { token }),
+            api.get<CommunityFeedItem[]>(`/communities/${communityId}/feed?limit=10`, { token }),
+          ]),
+          'Timed out while loading community profile.',
+        );
 
         if (!isMounted) return;
 

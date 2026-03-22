@@ -45,11 +45,6 @@ export default function OnboardingPage() {
   const [isPioneer, setIsPioneer] = useState(false);
   const [stateSceneOptions, setStateSceneOptions] = useState<string[]>([]);
   const [stateSceneError, setStateSceneError] = useState<string | null>(null);
-  const isMobileClient = useMemo(() => {
-    if (typeof navigator === 'undefined') return false;
-    const ua = navigator.userAgent.toLowerCase();
-    return /android|iphone|ipad|ipod|mobile/.test(ua);
-  }, []);
 
   const canContinue = useMemo(
     () => city.trim() && state.trim() && musicCommunity.trim(),
@@ -164,8 +159,8 @@ export default function OnboardingPage() {
       setVotingEligibility(false, 'GPS is not available on this device.');
       setGpsError('GPS is not available on this device. You can still continue without voting access.');
       setManualLocationMode(true);
-          return;
-        }
+      return;
+    }
 
     setIsDetectingLocation(true);
 
@@ -274,18 +269,7 @@ export default function OnboardingPage() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f2efe8_0%,_#f6f6f6_45%,_#e6eef7_100%)] px-6 py-16">
       <div className="mx-auto max-w-3xl">
-        {!isMobileClient ? (
-          <section className="rounded-3xl border border-black/10 bg-white/90 p-8 shadow-sm">
-            <h1 className="text-2xl font-semibold leading-tight text-black">Mobile Onboarding Required</h1>
-            <p className="mt-3 text-sm text-black/65">
-              Home Scene onboarding is mobile-only. Open UPRISE on your phone to continue with GPS verification.
-            </p>
-            <p className="mt-2 text-xs text-black/50">
-              Desktop web can browse signed-in surfaces, but cannot complete Home Scene verification.
-            </p>
-          </section>
-        ) : (
-          <>
+        <>
         <div className="mb-10 flex flex-wrap items-center gap-3">
           {steps.map((label, index) => (
             <div key={label} className="flex items-center gap-3">
@@ -460,14 +444,13 @@ export default function OnboardingPage() {
               <Button size="lg" onClick={handleFinish}>
                 Enter The Plot
               </Button>
-              <Button size="lg" variant="outline" onClick={() => setStep(1)}>
+              <Button size="lg" variant="outline" onClick={() => setStep(0)}>
                 Edit Home Scene
               </Button>
             </div>
           </section>
         )}
-          </>
-        )}
+        </>
       </div>
     </main>
   );

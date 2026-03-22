@@ -152,6 +152,15 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('renderPrimaryPlotTabBody()');
   });
 
+  it('keeps /plot reachable with an unresolved Home Scene guidance state instead of redirecting to onboarding', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('Home Scene setup required');
+    expect(plotPageSource).toContain('Complete Onboarding');
+    expect(plotPageSource).not.toContain("router.replace('/onboarding')");
+    expect(plotPageSource).not.toContain('if (!hasHomeScene) {\n    return null;');
+  });
+
   it('locks feed copy to scene-scoped deterministic, non-personalized states', () => {
     const feedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
 
