@@ -20,6 +20,7 @@ import {
   type DiscoverStateRollupItem,
   type TierScope,
 } from '@/lib/discovery/client';
+import { getDefaultLocationQueryForTier } from '@/lib/discovery/query-state';
 import { api } from '@/lib/api';
 import {
   mergeDiscoveryContextPatch,
@@ -121,7 +122,9 @@ export default function DiscoverPage() {
 
   const [tier, setTier] = useState<TierScope>('city');
   const [fallbackCommunity, setFallbackCommunity] = useState(homeScene?.musicCommunity ?? '');
-  const [locationQuery, setLocationQuery] = useState(homeScene?.city ?? homeScene?.state ?? '');
+  const [locationQuery, setLocationQuery] = useState(
+    getDefaultLocationQueryForTier('city', homeScene, tunedScene),
+  );
   const [travelItems, setTravelItems] = useState<DiscoverItem[]>([]);
   const [travelLoading, setTravelLoading] = useState(false);
   const [travelError, setTravelError] = useState<string | null>(null);
@@ -459,6 +462,12 @@ export default function DiscoverPage() {
 
   const currentCityScenes = travelItems.filter(isCityScene);
 
+  const handleChangeTier = (nextTier: TierScope) => {
+    setTier(nextTier);
+    setLocationQuery(getDefaultLocationQueryForTier(nextTier, homeScene, tunedScene));
+    setTravelError(null);
+  };
+
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -534,7 +543,7 @@ export default function DiscoverPage() {
                 key={value}
                 size="sm"
                 variant={tier === value ? 'default' : 'outline'}
-                onClick={() => setTier(value)}
+                onClick={() => handleChangeTier(value)}
               >
                 {value}
               </Button>
@@ -651,7 +660,7 @@ export default function DiscoverPage() {
                       size="sm"
                       variant="outline"
                       onClick={() => {
-                        setTier('state');
+                        handleChangeTier('state');
                         setLocationQuery(item.state);
                       }}
                     >
