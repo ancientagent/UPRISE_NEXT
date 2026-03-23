@@ -1,24 +1,32 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
-import { useAuthStore } from '@/store/auth';
-import { useOnboardingStore } from '@/store/onboarding';
+import type { CommunityDiscoverHighlights, CommunityDiscoverSearchResult } from '@uprise/types';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
+import SceneMap from '@/components/plot/SceneMap';
+import { getCommunitySceneMap, type CommunitySceneMapResponse } from '@/lib/communities/client';
 import {
+  getCommunityDiscoverHighlights,
   getDiscoveryContext,
   listDiscoverScenes,
+  saveDiscoverUprise,
+  searchCommunityDiscover,
   setDiscoverHomeScene,
   tuneDiscoverScene,
   type DiscoverCitySceneItem,
   type DiscoverItem,
+  type DiscoverStateRollupItem,
   type TierScope,
 } from '@/lib/discovery/client';
+import { api } from '@/lib/api';
 import {
   mergeDiscoveryContextPatch,
   toDiscoveryContextPatch,
 } from '@/lib/discovery/context';
+import { useAuthStore } from '@/store/auth';
+import { useOnboardingStore } from '@/store/onboarding';
 
 function formatSceneLocation(city: string | null, state: string | null) {
   if (city && state) return `${city}, ${state}`;
@@ -37,6 +45,69 @@ function getCitySceneStatusLabel(item: DiscoverCitySceneItem, tunedSceneId: stri
   return item.isActive ? 'Active' : 'Inactive';
 }
 
+function parseLocationQuery(query: string, tier: TierScope, fallbackState: string | null | undefined) {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    return {
+      state: tier === 'national' ? undefined : fallbackState?.trim() || undefined,
+      city: undefined,
+    };
+  }
+
+  const [first, second] = trimmed.split(',').map((value) => value.trim()).filter(Boolean);
+  if (tier === 'city') {
+    return {
+      city: first || trimmed,
+      state: second || fallbackState?.trim() || undefined,
+    };
+  }
+
+  return {
+    state: second || first || trimmed,
+    city: undefined,
+  };
+}
+
+function isCityScene(item: DiscoverItem): item is DiscoverCitySceneItem {
+  return item.entryType === 'city_scene';
+}
+
+function isStateRollup(item: DiscoverItem): item is DiscoverStateRollupItem {
+  return item.entryType === 'state_rollup';
+}
+
+async function postSignalAction(
+  signalId: string,
+  action: 'add' | 'blast' | 'recommend',
+  token: string,
+) {
+  const response = await api.post<{ id: string }>(`/signals/${signalId}/${action}`, {}, { token });
+  if (!response.data) {
+    throw new Error(`Signal ${action} response was empty.`);
+  }
+  return response.data;
+}
+
+function CarouselSection({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="space-y-3">
+      <div>
+        <h3 className="text-lg font-semibold text-black">{title}</h3>
+        <p className="text-sm text-black/60">{subtitle}</p>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2">{children}</div>
+    </section>
+  );
+}
+
 export default function DiscoverPage() {
   const { token } = useAuthStore();
   const {
@@ -49,17 +120,43 @@ export default function DiscoverPage() {
   } = useOnboardingStore();
 
   const [tier, setTier] = useState<TierScope>('city');
-  const [musicCommunity, setMusicCommunity] = useState(homeScene?.musicCommunity ?? '');
-  const [stateFilter, setStateFilter] = useState(homeScene?.state ?? '');
-  const [cityFilter, setCityFilter] = useState(homeScene?.city ?? '');
-  const [items, setItems] = useState<DiscoverItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [fallbackCommunity, setFallbackCommunity] = useState(homeScene?.musicCommunity ?? '');
+  const [locationQuery, setLocationQuery] = useState(homeScene?.city ?? homeScene?.state ?? '');
+  const [travelItems, setTravelItems] = useState<DiscoverItem[]>([]);
+  const [travelLoading, setTravelLoading] = useState(false);
+  const [travelError, setTravelError] = useState<string | null>(null);
+  const [mapOpen, setMapOpen] = useState(false);
   const [savingHomeSceneId, setSavingHomeSceneId] = useState<string | null>(null);
   const [tuningSceneId, setTuningSceneId] = useState<string | null>(null);
+  const [savingUpriseSceneId, setSavingUpriseSceneId] = useState<string | null>(null);
+  const [sceneMap, setSceneMap] = useState<CommunitySceneMapResponse | null>(null);
+  const [sceneMapError, setSceneMapError] = useState<string | null>(null);
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
+  const [localSearchLoading, setLocalSearchLoading] = useState(false);
+  const [localSearchError, setLocalSearchError] = useState<string | null>(null);
+  const [localSearchResult, setLocalSearchResult] = useState<CommunityDiscoverSearchResult | null>(null);
+  const [highlights, setHighlights] = useState<CommunityDiscoverHighlights | null>(null);
+  const [highlightsLoading, setHighlightsLoading] = useState(false);
+  const [highlightsError, setHighlightsError] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
 
-  const canSearch = useMemo(() => musicCommunity.trim().length > 0, [musicCommunity]);
-  const normalizedMusicCommunity = musicCommunity.trim();
+  const originMusicCommunity = useMemo(
+    () => homeScene?.musicCommunity?.trim() || tunedScene?.musicCommunity?.trim() || fallbackCommunity.trim(),
+    [fallbackCommunity, homeScene?.musicCommunity, tunedScene?.musicCommunity],
+  );
+
+  const travelParams = useMemo(() => {
+    const parsed = parseLocationQuery(locationQuery, tier, homeScene?.state ?? tunedScene?.state ?? null);
+    return {
+      tier,
+      musicCommunity: originMusicCommunity,
+      state: parsed.state,
+      city: parsed.city,
+    };
+  }, [homeScene?.state, locationQuery, originMusicCommunity, tier, tunedScene?.state]);
+
+  const activeSceneId = tunedSceneId ?? null;
+  const activeSceneName = tunedScene?.name ?? 'current community';
 
   useEffect(() => {
     async function fetchContext() {
@@ -76,102 +173,231 @@ export default function DiscoverPage() {
   }, [token, setDiscoveryContext]);
 
   useEffect(() => {
-    async function fetchScenes() {
-      if (!canSearch) {
-        setItems([]);
-        setLoading(false);
+    let ignore = false;
+
+    async function fetchTravel() {
+      if (!originMusicCommunity) {
+        setTravelItems([]);
+        setTravelLoading(false);
         return;
       }
 
-      setLoading(true);
-      setError(null);
+      setTravelLoading(true);
+      setTravelError(null);
 
       try {
-        const response = await listDiscoverScenes(
-          {
-            tier,
-            musicCommunity,
-            state: stateFilter,
-            city: cityFilter,
-          },
-          token || undefined,
-        );
-        setItems(response);
+        const response = await listDiscoverScenes(travelParams, token || undefined);
+        if (!ignore) {
+          setTravelItems(response);
+        }
       } catch (e) {
-        const message = e instanceof Error ? e.message : 'Unable to load discovery scenes.';
-        setError(message);
-        setItems([]);
+        if (!ignore) {
+          const message = e instanceof Error ? e.message : 'Unable to load Uprises.';
+          setTravelError(message);
+          setTravelItems([]);
+        }
       } finally {
-        setLoading(false);
+        if (!ignore) {
+          setTravelLoading(false);
+        }
       }
     }
 
-    fetchScenes();
-  }, [token, tier, musicCommunity, stateFilter, cityFilter, canSearch]);
+    fetchTravel();
+    return () => {
+      ignore = true;
+    };
+  }, [originMusicCommunity, token, travelParams]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchHighlights() {
+      if (!token || !activeSceneId) {
+        setHighlights(null);
+        return;
+      }
+
+      setHighlightsLoading(true);
+      setHighlightsError(null);
+
+      try {
+        const response = await getCommunityDiscoverHighlights(activeSceneId, token, 8);
+        if (!ignore) {
+          setHighlights(response);
+        }
+      } catch (e) {
+        if (!ignore) {
+          const message = e instanceof Error ? e.message : 'Unable to load Discover highlights.';
+          setHighlightsError(message);
+          setHighlights(null);
+        }
+      } finally {
+        if (!ignore) {
+          setHighlightsLoading(false);
+        }
+      }
+    }
+
+    fetchHighlights();
+    return () => {
+      ignore = true;
+    };
+  }, [activeSceneId, token]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchSceneMapData() {
+      if (!activeSceneId || !token || !mapOpen) {
+        if (!mapOpen) {
+          setSceneMap(null);
+          setSceneMapError(null);
+        }
+        return;
+      }
+
+      try {
+        setSceneMapError(null);
+        const response = await getCommunitySceneMap(activeSceneId, tier, token);
+        if (!ignore) {
+          setSceneMap(response);
+        }
+      } catch (e) {
+        if (!ignore) {
+          setSceneMap(null);
+          setSceneMapError(e instanceof Error ? e.message : 'Scene map is unavailable.');
+        }
+      }
+    }
+
+    fetchSceneMapData();
+    return () => {
+      ignore = true;
+    };
+  }, [activeSceneId, mapOpen, tier, token]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchLocalSearch() {
+      if (!token || !activeSceneId) {
+        setLocalSearchResult(null);
+        return;
+      }
+
+      const query = localSearchQuery.trim();
+      if (!query) {
+        setLocalSearchResult(null);
+        setLocalSearchError(null);
+        setLocalSearchLoading(false);
+        return;
+      }
+
+      setLocalSearchLoading(true);
+      setLocalSearchError(null);
+
+      try {
+        const response = await searchCommunityDiscover(activeSceneId, query, token, 8);
+        if (!ignore) {
+          setLocalSearchResult(response);
+        }
+      } catch (e) {
+        if (!ignore) {
+          const message = e instanceof Error ? e.message : 'Unable to search this community.';
+          setLocalSearchError(message);
+          setLocalSearchResult(null);
+        }
+      } finally {
+        if (!ignore) {
+          setLocalSearchLoading(false);
+        }
+      }
+    }
+
+    const timer = window.setTimeout(fetchLocalSearch, 250);
+    return () => {
+      ignore = true;
+      window.clearTimeout(timer);
+    };
+  }, [activeSceneId, localSearchQuery, token]);
 
   const resultSummary = useMemo(() => {
-    if (!canSearch) {
+    if (!originMusicCommunity) {
       return {
-        title: 'Select a music community',
-        body: 'Enter a music community to load deterministic scene results for the current scope.',
+        title: 'Set your origin community',
+        body: 'Discover travel inherits the Home Scene community. Enter a fallback community only when no Home Scene has been set yet.',
       };
     }
 
-    if (loading) {
+    if (travelLoading) {
       return {
-        title: 'Loading scenes',
-        body: 'Loading scene results for the current scope and music community.',
+        title: 'Loading Uprises',
+        body: 'Loading contextual Uprise results for the current travel scope.',
       };
     }
 
-    if (error) {
+    if (travelError) {
       return {
-        title: 'Discovery unavailable',
-        body: error,
+        title: 'Discover unavailable',
+        body: travelError,
       };
     }
 
-    if (items.length === 0) {
+    if (travelItems.length === 0) {
       return {
-        title: 'No scenes found',
-        body: 'No scenes were found for this scope and music community filter.',
+        title: 'No matching Uprise',
+        body: 'No matching Uprise was found for this location. Open the map and continue exploration manually.',
       };
     }
 
     return {
-      title: 'Scene results ready',
-      body: 'Showing deterministic scene results for the current scope and music community.',
+      title: 'Uprises ready',
+      body: 'Retune first, then explicitly visit the community when you want to enter it.',
     };
-  }, [canSearch, loading, error, items.length]);
+  }, [originMusicCommunity, travelError, travelItems.length, travelLoading]);
 
-  const discoveryState = useMemo(() => {
-    if (error) return 'error';
-    if (items.length > 0) return 'results';
-    if (loading) return 'loading';
-    return 'empty-or-idle';
-  }, [error, items.length, loading]);
+  const handleTuneSceneById = async (sceneId: string) => {
+    if (!token) return;
+    setTuningSceneId(sceneId);
+    setTravelError(null);
+
+    try {
+      const response = await tuneDiscoverScene(sceneId, token);
+      const context = await getDiscoveryContext(token);
+      setDiscoveryContext(
+        mergeDiscoveryContextPatch(context, {
+          tunedSceneId: response.tunedSceneId ?? sceneId,
+          tunedScene: response.tunedScene ?? null,
+          isVisitor: response.isVisitor ?? null,
+        }),
+      );
+      setActionMessage('RaDIYo retuned to the selected Uprise.');
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unable to tune to Uprise.';
+      setTravelError(message);
+    } finally {
+      setTuningSceneId(null);
+    }
+  };
 
   const handleSetHomeScene = async (item: DiscoverCitySceneItem) => {
     if (!token) return;
 
-    const targetLabel = `${item.city ?? 'Unknown City'}, ${item.state ?? 'Unknown State'} — ${
-      item.musicCommunity ?? musicCommunity
-    }`;
     const proceed = window.confirm(
-      `Set Home Scene to ${targetLabel}? This changes your civic anchor and voting authority context.`
+      `Set Home Scene to ${item.name}? This changes your civic anchor and voting authority context.`,
     );
     if (!proceed) return;
 
     setSavingHomeSceneId(item.sceneId);
-    setError(null);
+    setTravelError(null);
 
     try {
       const response = await setDiscoverHomeScene(item.sceneId, token);
-
       setHomeScene({
         city: response.homeScene?.city ?? item.city ?? '',
         state: response.homeScene?.state ?? item.state ?? '',
-        musicCommunity: response.homeScene?.musicCommunity ?? item.musicCommunity ?? musicCommunity,
+        musicCommunity: response.homeScene?.musicCommunity ?? item.musicCommunity ?? originMusicCommunity,
         tasteTag: homeScene?.tasteTag,
       });
       setDiscoveryContext(
@@ -181,114 +407,128 @@ export default function DiscoverPage() {
           isVisitor,
         }),
       );
-
-      setItems((prev) =>
+      setTravelItems((prev) =>
         prev.map((entry) =>
-          entry.entryType === 'city_scene'
+          isCityScene(entry)
             ? {
                 ...entry,
                 isHomeScene: entry.sceneId === item.sceneId,
               }
-            : entry
-        )
+            : entry,
+        ),
       );
+      setActionMessage(`${item.name} is now your Home Scene.`);
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Unable to set Home Scene.';
-      setError(message);
+      setTravelError(message);
     } finally {
       setSavingHomeSceneId(null);
     }
   };
 
-  const handleTuneScene = async (item: DiscoverCitySceneItem) => {
+  const handleSaveUprise = async (sceneId: string) => {
     if (!token) return;
-    setTuningSceneId(item.sceneId);
-    setError(null);
+    setSavingUpriseSceneId(sceneId);
     try {
-      const response = await tuneDiscoverScene(item.sceneId, token);
-      const context = await getDiscoveryContext(token);
-      setDiscoveryContext(
-        mergeDiscoveryContextPatch(context, {
-          tunedSceneId: response.tunedSceneId ?? item.sceneId,
-          tunedScene: response.tunedScene ?? null,
-          isVisitor: response.isVisitor ?? null,
-        }),
-      );
+      await saveDiscoverUprise(sceneId, token);
+      setActionMessage('Uprise saved to your profile presets.');
     } catch (e) {
-      const message = e instanceof Error ? e.message : 'Unable to tune to scene.';
-      setError(message);
+      setTravelError(e instanceof Error ? e.message : 'Unable to save Uprise.');
     } finally {
-      setTuningSceneId(null);
+      setSavingUpriseSceneId(null);
     }
   };
+
+  const handleSignalAction = async (
+    signalId: string,
+    action: 'add' | 'blast' | 'recommend',
+    successMessage: string,
+  ) => {
+    if (!token) return;
+    try {
+      await postSignalAction(signalId, action, token);
+      setActionMessage(successMessage);
+      if (activeSceneId) {
+        const response = await getCommunityDiscoverHighlights(activeSceneId, token, 8);
+        setHighlights(response);
+      }
+    } catch (e) {
+      setHighlightsError(e instanceof Error ? e.message : `Unable to ${action} signal.`);
+    }
+  };
+
+  const currentCityScenes = travelItems.filter(isCityScene);
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
           <p className="text-xs uppercase tracking-[0.25em] text-black/50">Discover</p>
-          <h1 className="mt-3 text-3xl font-semibold text-black">Scene Discovery</h1>
+          <h1 className="mt-3 text-3xl font-semibold text-black">Discover Uprises, Artists, and Songs</h1>
           <p className="mt-2 text-sm text-black/60">
-            Discover is explicit navigation. It does not auto-join communities or change your Home Scene unless you
-            choose to set one.
-          </p>
-          <p className="mt-2 text-xs text-black/50">
-            Home Scene changes are explicit civic-anchor changes. Tune is visitor-only and does not affect voting.
-          </p>
-          <p className="mt-2 text-xs text-black/50">
-            If your selected city is inactive or unavailable, onboarding routes you to the nearest active city Scene for the
-            selected parent music community. Pioneer follow-up is delivered from the top-right notification icon in the
-            profile strip.
+            Travel starts from your Home Scene community context. Retune first, then explicitly visit the community when
+            you want to enter it.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
-          <div className="mt-4 flex gap-3">
+          <div className="mt-4 flex flex-wrap gap-3">
             <Button asChild variant="outline" size="sm">
               <Link href="/plot">Back to Plot</Link>
             </Button>
+            {token && activeSceneId ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
+              </Button>
+            ) : null}
           </div>
+          {actionMessage ? (
+            <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+              {actionMessage}
+            </div>
+          ) : null}
         </header>
 
         <section className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <label htmlFor="music-community-search" className="text-xs uppercase tracking-[0.2em] text-black/60">
-                Music Community
-              </label>
-              <input
-                id="music-community-search"
-                aria-describedby="discover-search-scope-note"
-                value={musicCommunity}
-                onChange={(e) => setMusicCommunity(e.target.value)}
-                placeholder="e.g. Punk"
-                className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-              />
-              <p id="discover-search-scope-note" className="mt-2 text-xs text-black/50">
-                Music community and location filters determine the scene results shown in the current scope.
+              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Uprise Travel</p>
+              <h2 className="mt-2 text-lg font-semibold text-black">Search by city or state</h2>
+              <p className="mt-1 text-sm text-black/60">
+                Travel keeps your origin music community fixed and changes geography around it.
               </p>
             </div>
-            <div>
-              <label className="text-xs uppercase tracking-[0.2em] text-black/60">State Filter (optional)</label>
-              <input
-                value={stateFilter}
-                onChange={(e) => setStateFilter(e.target.value)}
-                placeholder="e.g. TX"
-                className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-              />
+            <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
+              <p>Origin community: {originMusicCommunity || 'Not set'}</p>
+              <p>Scope: <span className="capitalize">{tier}</span></p>
             </div>
           </div>
-          {tier === 'city' && (
-            <div className="mt-4">
-              <label className="text-xs uppercase tracking-[0.2em] text-black/60">City Filter (optional)</label>
-              <input
-                value={cityFilter}
-                onChange={(e) => setCityFilter(e.target.value)}
-                placeholder="e.g. Austin"
-                className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-              />
-            </div>
-          )}
 
-          <div className="mt-5 flex flex-wrap gap-2">
+          {!homeScene ? (
+            <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                value={fallbackCommunity}
+                onChange={(event) => setFallbackCommunity(event.target.value)}
+                placeholder="Fallback origin community"
+                className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
+              />
+              <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-xs text-black/50">
+                Used only when Home Scene is still unset.
+              </div>
+            </div>
+          ) : null}
+
+          <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
+            <input
+              value={locationQuery}
+              onChange={(event) => setLocationQuery(event.target.value)}
+              placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
+              className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
+            />
+            <Button variant="outline" size="sm" onClick={() => setMapOpen((value) => !value)}>
+              {mapOpen ? 'Hide Map' : 'Map View'}
+            </Button>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
             {(['city', 'state', 'national'] as TierScope[]).map((value) => (
               <Button
                 key={value}
@@ -300,149 +540,308 @@ export default function DiscoverPage() {
               </Button>
             ))}
           </div>
+
+          {mapOpen ? (
+            <div className="mt-5 rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-black">Map Explorer</p>
+                  <p className="text-xs text-black/50">
+                    Drag across the scene map and click a community point to retune directly from Discover.
+                  </p>
+                </div>
+                {sceneMapError ? <p className="text-xs text-red-600">{sceneMapError}</p> : null}
+              </div>
+              <div className="h-56">
+                <SceneMap
+                  points={sceneMap?.points ?? []}
+                  selectedPointId={activeSceneId}
+                  onSelectPoint={(point) => {
+                    if (point.kind === 'community') {
+                      void handleTuneSceneById(point.id);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          ) : null}
+        </section>
+
+        <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <div
+            className={`rounded-2xl border p-4 ${travelError ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'}`}
+          >
+            <p className="text-sm font-medium">{resultSummary.title}</p>
+            <p className="mt-1 text-sm">{resultSummary.body}</p>
+          </div>
+
+          {currentCityScenes.length > 0 ? (
+            <ul className="mt-4 space-y-3">
+              {currentCityScenes.map((item) => (
+                <li key={item.sceneId} className="rounded-xl border border-black/10 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-medium text-black">{item.name}</p>
+                        <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1 text-xs text-black/60">
+                          {getCitySceneStatusLabel(item, tunedSceneId)}
+                        </span>
+                        <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1 text-xs text-black/60">
+                          {formatMusicCommunityLabel(item.musicCommunity, originMusicCommunity)}
+                        </span>
+                      </div>
+                      <dl className="mt-3 grid gap-1 text-sm text-black/60">
+                        <div className="flex flex-wrap gap-2">
+                          <dt className="font-medium text-black/70">Location</dt>
+                          <dd>{formatSceneLocation(item.city, item.state)}</dd>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <dt className="font-medium text-black/70">Members</dt>
+                          <dd>{item.memberCount.toLocaleString()}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        variant={tunedSceneId === item.sceneId ? 'default' : 'outline'}
+                        disabled={!token || tuningSceneId === item.sceneId}
+                        onClick={() => void handleTuneSceneById(item.sceneId)}
+                      >
+                        {tuningSceneId === item.sceneId ? 'Retuning...' : tunedSceneId === item.sceneId ? 'Listening' : 'Retune'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={!token || savingUpriseSceneId === item.sceneId}
+                        onClick={() => void handleSaveUprise(item.sceneId)}
+                      >
+                        {savingUpriseSceneId === item.sceneId ? 'Adding...' : 'Add'}
+                      </Button>
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
+                        onClick={() => void handleSetHomeScene(item)}
+                      >
+                        {savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set Home'}
+                      </Button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {travelItems.some(isStateRollup) ? (
+            <div className="mt-4 space-y-3">
+              {travelItems.filter(isStateRollup).map((item) => (
+                <div key={item.state} className="rounded-xl border border-black/10 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <p className="font-medium text-black">{item.state} {item.musicCommunity}</p>
+                      <p className="mt-1 text-sm text-black/60">
+                        {item.citySceneCount} city scenes • {item.totalMembers.toLocaleString()} total members
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setTier('state');
+                        setLocationQuery(item.state);
+                      }}
+                    >
+                      Browse {item.state}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
         </section>
 
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Discovery Results</p>
-              <h2 className="mt-2 text-lg font-semibold text-black">Scene Results</h2>
+              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Current Community Discover</p>
+              <h2 className="mt-2 text-lg font-semibold text-black">{activeSceneName}</h2>
+              <p className="mt-1 text-sm text-black/60">
+                Search artists and songs inside the current community, then explore the community-driven carousels below.
+              </p>
             </div>
             <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
-              <p>
-                Scope: <span className="capitalize">{tier}</span>
-              </p>
-              <p>
-                Community: {normalizedMusicCommunity || 'Unlisted'}
-              </p>
+              <p>Visitor mode: {isVisitor ? 'Active' : 'Off'}</p>
+              <p>{activeSceneId ? 'RaDIYo retunes here first.' : 'Retune to an Uprise to unlock local discovery.'}</p>
             </div>
           </div>
 
-          {resultSummary ? (
-            <div
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-              aria-relevant="text"
-              aria-busy={loading}
-              data-discovery-state={discoveryState}
-              className={`mt-4 rounded-2xl border p-4 ${
-                error ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'
-              }`}
-            >
-              <p className="text-sm font-medium">{resultSummary.title}</p>
-              <p className="mt-1 text-sm">{resultSummary.body}</p>
+          <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
+            <input
+              value={localSearchQuery}
+              onChange={(event) => setLocalSearchQuery(event.target.value)}
+              placeholder={activeSceneId ? `Search artists and songs in ${activeSceneName}` : 'Retune to search locally'}
+              className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
+              disabled={!token || !activeSceneId}
+            />
+            {activeSceneId ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
+              </Button>
+            ) : (
+              <Button variant="outline" size="sm" disabled>
+                Visit Community
+              </Button>
+            )}
+          </div>
+
+          {localSearchLoading ? (
+            <p className="mt-3 text-sm text-black/60">Searching this community...</p>
+          ) : null}
+          {localSearchError ? <p className="mt-3 text-sm text-red-700">{localSearchError}</p> : null}
+          {localSearchResult ? (
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              <section className="rounded-2xl border border-black/10 p-4">
+                <h3 className="text-sm font-semibold text-black">Artists</h3>
+                {localSearchResult.artists.length === 0 ? (
+                  <p className="mt-2 text-sm text-black/50">No artists matched this search.</p>
+                ) : (
+                  <ul className="mt-3 space-y-2">
+                    {localSearchResult.artists.map((artist) => (
+                      <li key={artist.artistBandId} className="rounded-xl bg-black/5 px-3 py-2">
+                        <Link
+                          href={`/artist-bands/${artist.artistBandId}`}
+                          className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                        >
+                          <p className="text-sm font-medium text-black">{artist.name}</p>
+                          <p className="text-xs text-black/60">
+                            {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
+                          </p>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+              <section className="rounded-2xl border border-black/10 p-4">
+                <h3 className="text-sm font-semibold text-black">Songs</h3>
+                {localSearchResult.songs.length === 0 ? (
+                  <p className="mt-2 text-sm text-black/50">No songs matched this search.</p>
+                ) : (
+                  <ul className="mt-3 space-y-2">
+                    {localSearchResult.songs.map((song) => (
+                      <li key={song.trackId} className="rounded-xl bg-black/5 px-3 py-2">
+                        {song.artistBandId ? (
+                          <Link
+                            href={`/artist-bands/${song.artistBandId}?trackId=${song.trackId}`}
+                            className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                          >
+                            <p className="text-sm font-medium text-black">{song.title}</p>
+                            <p className="text-xs text-black/60">
+                              {song.artist} • {song.playCount} plays • {song.likeCount} likes
+                            </p>
+                          </Link>
+                        ) : (
+                          <>
+                            <p className="text-sm font-medium text-black">{song.title}</p>
+                            <p className="text-xs text-black/60">
+                              {song.artist} • {song.playCount} plays • {song.likeCount} likes
+                            </p>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
             </div>
           ) : null}
 
-          {items.length > 0 ? (
-            <ul className="mt-4 space-y-3">
-              {items.map((item) =>
-                item.entryType === 'city_scene' ? (
-                  <li key={item.sceneId} className="rounded-xl border border-black/10 p-4">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <p className="font-medium text-black">{item.name}</p>
-                        <div className="mt-2 flex flex-wrap gap-2 text-xs text-black/60">
-                          <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                            {getCitySceneStatusLabel(item, tunedSceneId)}
-                          </span>
-                          <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                            {formatMusicCommunityLabel(item.musicCommunity, normalizedMusicCommunity)}
-                          </span>
+          <div className="mt-6 space-y-6">
+            {highlightsLoading ? <p className="text-sm text-black/60">Loading community highlights...</p> : null}
+            {highlightsError ? <p className="text-sm text-red-700">{highlightsError}</p> : null}
+
+            {highlights ? (
+              <>
+                <CarouselSection
+                  title="Recommendations"
+                  subtitle="Signals recommended by listeners in this community."
+                >
+                  {highlights.recommendations.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-black/10 bg-[#f7f5ef] px-4 py-6 text-sm text-black/50">
+                      No recommended signals yet.
+                    </div>
+                  ) : (
+                    highlights.recommendations.map((signal) => (
+                      <article key={signal.signalId} className="min-w-[260px] rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
+                        <p className="text-xs uppercase tracking-[0.2em] text-black/50">Signal</p>
+                        <h4 className="mt-2 text-base font-semibold text-black">{String(signal.metadata?.title ?? signal.metadata?.name ?? signal.type)}</h4>
+                        <p className="mt-1 text-xs text-black/60">{signal.actionCounts.recommend} recommends</p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
+                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
+                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
                         </div>
-                        <dl className="mt-3 grid gap-1 text-sm text-black/60">
-                          <div className="flex flex-wrap gap-2">
-                            <dt className="font-medium text-black/70">Scope</dt>
-                            <dd>City</dd>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <dt className="font-medium text-black/70">Location</dt>
-                            <dd>{formatSceneLocation(item.city, item.state)}</dd>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <dt className="font-medium text-black/70">Community</dt>
-                            <dd>{formatMusicCommunityLabel(item.musicCommunity, normalizedMusicCommunity)}</dd>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <dt className="font-medium text-black/70">Members</dt>
-                            <dd>{item.memberCount.toLocaleString()}</dd>
-                          </div>
-                        </dl>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button asChild size="sm" variant="outline">
-                          <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={tunedSceneId === item.sceneId ? 'default' : 'outline'}
-                          disabled={!token || tuningSceneId === item.sceneId}
-                          onClick={() => handleTuneScene(item)}
-                        >
-                          {!token
-                            ? 'Sign in to tune'
-                            : tunedSceneId === item.sceneId
-                            ? 'Tuned'
-                            : tuningSceneId === item.sceneId
-                            ? 'Tuning...'
-                            : 'Tune to Scene'}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={item.isHomeScene ? 'default' : 'outline'}
-                          disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
-                          onClick={() => handleSetHomeScene(item)}
-                        >
-                          {!token
-                            ? 'Sign in to set Home'
-                            : item.isHomeScene
-                            ? 'Home Scene'
-                            : savingHomeSceneId === item.sceneId
-                            ? 'Saving...'
-                            : 'Set as Home Scene'}
-                        </Button>
-                      </div>
+                      </article>
+                    ))
+                  )}
+                </CarouselSection>
+
+                <CarouselSection
+                  title="Trending"
+                  subtitle="Current signal momentum in this community, driven by blast counts."
+                >
+                  {highlights.trending.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-black/10 bg-[#f7f5ef] px-4 py-6 text-sm text-black/50">
+                      No trending signals yet.
                     </div>
-                  </li>
-                ) : (
-                  <li key={`state-${item.state}`} className="rounded-xl border border-black/10 p-4">
-                    <p className="font-medium text-black">{item.state}</p>
-                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-black/60">
-                      <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                        {item.isHomeSceneState ? 'Home State' : 'State'}
-                      </span>
-                      <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                        {formatMusicCommunityLabel(item.musicCommunity)}
-                      </span>
+                  ) : (
+                    highlights.trending.map((signal) => (
+                      <article key={signal.signalId} className="min-w-[260px] rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
+                        <p className="text-xs uppercase tracking-[0.2em] text-black/50">Trending</p>
+                        <h4 className="mt-2 text-base font-semibold text-black">{String(signal.metadata?.title ?? signal.metadata?.name ?? signal.type)}</h4>
+                        <p className="mt-1 text-xs text-black/60">{signal.actionCounts.blast} blasts</p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
+                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
+                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </CarouselSection>
+
+                <CarouselSection
+                  title="Top Artists"
+                  subtitle="Community-leading artists gathered from listener stats in this Uprise."
+                >
+                  {highlights.topArtists.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-black/10 bg-[#f7f5ef] px-4 py-6 text-sm text-black/50">
+                      No top artists yet.
                     </div>
-                    <dl className="mt-3 grid gap-1 text-sm text-black/60">
-                      <div className="flex flex-wrap gap-2">
-                        <dt className="font-medium text-black/70">Scope</dt>
-                        <dd>State</dd>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <dt className="font-medium text-black/70">State</dt>
-                        <dd>{item.state}</dd>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <dt className="font-medium text-black/70">Community</dt>
-                        <dd>{formatMusicCommunityLabel(item.musicCommunity)}</dd>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <dt className="font-medium text-black/70">City Scenes</dt>
-                        <dd>{item.citySceneCount}</dd>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <dt className="font-medium text-black/70">Members</dt>
-                        <dd>{item.totalMembers.toLocaleString()}</dd>
-                      </div>
-                    </dl>
-                  </li>
-                )
-              )}
-            </ul>
-          ) : null}
+                  ) : (
+                    highlights.topArtists.map((artist) => (
+                      <article key={artist.artistBandId} className="min-w-[240px] rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
+                        <p className="text-xs uppercase tracking-[0.2em] text-black/50">Artist</p>
+                        <Link
+                          href={`/artist-bands/${artist.artistBandId}`}
+                          className="mt-2 block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                        >
+                          <h4 className="text-base font-semibold text-black">{artist.name}</h4>
+                          <p className="mt-1 text-xs text-black/60">
+                            {artist.followCount} followers • {artist.memberCount} members
+                          </p>
+                        </Link>
+                      </article>
+                    ))
+                  )}
+                </CarouselSection>
+              </>
+            ) : null}
+          </div>
         </section>
       </div>
     </main>

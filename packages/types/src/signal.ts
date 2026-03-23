@@ -22,7 +22,7 @@ export type CreateSignal = z.infer<typeof CreateSignalSchema>;
 
 export const SignalActionSchema = z.object({
   id: z.string().uuid(),
-  type: z.enum(['ADD', 'BLAST', 'SUPPORT']),
+  type: z.enum(['ADD', 'BLAST', 'SUPPORT', 'RECOMMEND']),
   userId: z.string().uuid(),
   signalId: z.string().uuid(),
   createdAt: z.date(),

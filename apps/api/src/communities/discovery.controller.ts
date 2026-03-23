@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Query,
+  Param,
   Body,
   Request,
   UseGuards,
@@ -14,10 +15,16 @@ import { ZodError } from 'zod';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommunitiesService } from './communities.service';
 import {
+  GetCommunityDiscoverHighlightsDto,
+  GetCommunityDiscoverHighlightsSchema,
+  GetCommunityDiscoverSearchDto,
+  GetCommunityDiscoverSearchSchema,
   GetDiscoverScenesDto,
   GetDiscoverScenesSchema,
   PostDiscoverSetHomeSceneDto,
   PostDiscoverSetHomeSceneSchema,
+  PostDiscoverSaveUpriseDto,
+  PostDiscoverSaveUpriseSchema,
   PostDiscoverTuneDto,
   PostDiscoverTuneSchema,
 } from './dto/community.dto';
@@ -66,6 +73,85 @@ export class DiscoveryController {
           filters: result.filters,
           count: result.items.length,
         },
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  @Get('communities/:sceneId/search')
+  async searchCommunityDiscover(
+    @Param('sceneId') sceneId: string,
+    @Query() rawQuery: any,
+    @Request() req: { user: { userId: string } },
+  ): Promise<{
+    success: true;
+    data: any;
+  }> {
+    try {
+      const query: GetCommunityDiscoverSearchDto = GetCommunityDiscoverSearchSchema.parse({
+        query: rawQuery.query,
+        limit: rawQuery.limit,
+      });
+
+      const result = await this.communitiesService.searchCommunityDiscover(
+        req.user.userId,
+        sceneId,
+        query,
+      );
+
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestException({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid query parameters',
+            details: error.errors,
+          },
+        });
+      }
+      throw error;
+    }
+  }
+
+  @Get('communities/:sceneId/highlights')
+  async getCommunityDiscoverHighlights(
+    @Param('sceneId') sceneId: string,
+    @Query() rawQuery: any,
+    @Request() req: { user: { userId: string } },
+  ): Promise<{
+    success: true;
+    data: any;
+  }> {
+    try {
+      const query: GetCommunityDiscoverHighlightsDto = GetCommunityDiscoverHighlightsSchema.parse({
+        limit: rawQuery.limit,
+      });
+
+      const result = await this.communitiesService.getCommunityDiscoverHighlights(
+        req.user.userId,
+        sceneId,
+        query,
+      );
+
+      return {
+        success: true,
+        data: result,
       };
     } catch (error) {
       if (error instanceof ZodError) {
@@ -186,6 +272,23 @@ export class DiscoveryController {
     };
   }> {
     const result = await this.communitiesService.setHomeScene(req.user.userId, dto);
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  @Post('save-uprise')
+  @HttpCode(HttpStatus.OK)
+  @ZodBody(PostDiscoverSaveUpriseSchema)
+  async saveUprise(
+    @Body() dto: PostDiscoverSaveUpriseDto,
+    @Request() req: { user: { userId: string } },
+  ): Promise<{
+    success: true;
+    data: any;
+  }> {
+    const result = await this.communitiesService.saveDiscoverUprise(req.user.userId, dto);
     return {
       success: true,
       data: result,

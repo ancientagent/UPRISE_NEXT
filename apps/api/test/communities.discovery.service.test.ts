@@ -6,6 +6,13 @@ describe('CommunitiesService.discoverScenes', () => {
     user: { findUnique: jest.fn(), update: jest.fn() },
     community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     communityMember: { create: jest.fn() },
+    artistBand: { findMany: jest.fn(), findFirst: jest.fn() },
+    track: { findMany: jest.fn() },
+    follow: { groupBy: jest.fn() },
+    signal: { findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn() },
+    signalAction: { groupBy: jest.fn(), upsert: jest.fn() },
+    collection: { upsert: jest.fn() },
+    collectionItem: { upsert: jest.fn() },
     $transaction: jest.fn(),
   };
 
@@ -369,5 +376,173 @@ describe('CommunitiesService.discoverScenes', () => {
     });
 
     await expect(service.resolveActiveSceneId('u1')).resolves.toBe('c1');
+  });
+
+  it('searchCommunityDiscover returns local artist and song results for a scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      {
+        id: 'ab1',
+        name: 'Signal Rise',
+        slug: 'signal-rise',
+        entityType: 'artist',
+        homeSceneId: 'c1',
+        homeScene: { name: 'Austin Punk' },
+        _count: { members: 2 },
+      },
+    ]);
+    mockPrisma.track.findMany.mockResolvedValue([
+      {
+        id: 't1',
+        title: 'Signal Fire',
+        artist: 'Signal Rise',
+        coverArt: null,
+        playCount: 12,
+        likeCount: 5,
+        status: 'ready',
+        uploadedById: 'uploader-1',
+        communityId: 'c1',
+        community: { name: 'Austin Punk' },
+      },
+    ]);
+    mockPrisma.follow.groupBy.mockResolvedValue([{ entityId: 'ab1', _count: { entityId: 3 } }]);
+    mockPrisma.artistBand.findFirst.mockResolvedValueOnce({
+      id: 'ab1',
+      name: 'Signal Rise',
+    });
+
+    const result = await service.searchCommunityDiscover('u1', 'c1', {
+      query: 'signal',
+      limit: 6,
+    });
+
+    expect(result.community.id).toBe('c1');
+    expect(result.artists).toEqual([
+      expect.objectContaining({
+        artistBandId: 'ab1',
+        name: 'Signal Rise',
+        followCount: 3,
+      }),
+    ]);
+    expect(result.songs).toEqual([
+      expect.objectContaining({
+        trackId: 't1',
+        artistBandId: 'ab1',
+        artistBandName: 'Signal Rise',
+      }),
+    ]);
+  });
+
+  it('getCommunityDiscoverHighlights aggregates recommendations, trending, and top artists', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.signal.findMany
+      .mockResolvedValueOnce([
+        {
+          id: 's1',
+          type: 'single',
+          metadata: { title: 'Signal Fire' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T10:00:00.000Z'),
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          id: 's2',
+          type: 'single',
+          metadata: { title: 'City Burn' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T11:00:00.000Z'),
+        },
+      ]);
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      {
+        id: 'ab1',
+        name: 'Signal Rise',
+        slug: 'signal-rise',
+        entityType: 'artist',
+        homeSceneId: 'c1',
+        homeScene: { name: 'Austin Punk' },
+        _count: { members: 2 },
+      },
+    ]);
+    mockPrisma.signalAction.groupBy.mockResolvedValue([
+      { signalId: 's1', type: 'RECOMMEND', _count: { type: 4 } },
+      { signalId: 's2', type: 'BLAST', _count: { type: 9 } },
+    ]);
+    mockPrisma.follow.groupBy.mockResolvedValue([{ entityId: 'ab1', _count: { entityId: 7 } }]);
+
+    const result = await service.getCommunityDiscoverHighlights('u1', 'c1', { limit: 8 });
+
+    expect(result.recommendations).toEqual([
+      expect.objectContaining({
+        signalId: 's1',
+        actionCounts: expect.objectContaining({ recommend: 4 }),
+      }),
+    ]);
+    expect(result.trending).toEqual([
+      expect.objectContaining({
+        signalId: 's2',
+        actionCounts: expect.objectContaining({ blast: 9 }),
+      }),
+    ]);
+    expect(result.topArtists).toEqual([
+      expect.objectContaining({
+        artistBandId: 'ab1',
+        followCount: 7,
+      }),
+    ]);
+  });
+
+  it('saveDiscoverUprise creates or reuses an Uprise signal and adds it to the uprises shelf', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.signal.findFirst.mockResolvedValue(null);
+    mockPrisma.signal.create.mockResolvedValue({ id: 'signal-u1' });
+    mockPrisma.collection.upsert.mockResolvedValue({ id: 'collection-1' });
+    mockPrisma.signalAction.upsert.mockResolvedValue({ id: 'action-1' });
+    mockPrisma.collectionItem.upsert.mockResolvedValue({ id: 'item-1' });
+
+    const result = await service.saveDiscoverUprise('user-1', { sceneId: 'c1' });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        signalId: 'signal-u1',
+        collectionId: 'collection-1',
+        collectionItemId: 'item-1',
+        actionId: 'action-1',
+        shelf: 'uprises',
+      }),
+    );
+    expect(mockPrisma.signal.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: 'uprise',
+          communityId: 'c1',
+        }),
+      }),
+    );
   });
 });

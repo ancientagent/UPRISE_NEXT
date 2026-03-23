@@ -1,0 +1,87 @@
+import { z } from 'zod';
+
+export const DiscoverySceneSummarySchema = z.object({
+  id: z.string().uuid().or(z.string().min(1)),
+  name: z.string(),
+  city: z.string().nullable(),
+  state: z.string().nullable(),
+  musicCommunity: z.string().nullable(),
+  tier: z.string(),
+  isActive: z.boolean(),
+});
+
+export type DiscoverySceneSummary = z.infer<typeof DiscoverySceneSummarySchema>;
+
+export const DiscoverArtistResultSchema = z.object({
+  artistBandId: z.string().uuid().or(z.string().min(1)),
+  name: z.string(),
+  slug: z.string(),
+  entityType: z.string(),
+  homeSceneId: z.string().uuid().or(z.string().min(1)).nullable(),
+  homeSceneName: z.string().nullable(),
+  memberCount: z.number().int().nonnegative(),
+  followCount: z.number().int().nonnegative(),
+});
+
+export type DiscoverArtistResult = z.infer<typeof DiscoverArtistResultSchema>;
+
+export const DiscoverSongResultSchema = z.object({
+  trackId: z.string().uuid().or(z.string().min(1)),
+  title: z.string(),
+  artist: z.string(),
+  artistBandId: z.string().uuid().or(z.string().min(1)).nullable(),
+  artistBandName: z.string().nullable(),
+  coverArt: z.string().nullable(),
+  playCount: z.number().int().nonnegative(),
+  likeCount: z.number().int().nonnegative(),
+  status: z.string(),
+  communityId: z.string().uuid().or(z.string().min(1)).nullable(),
+  communityName: z.string().nullable(),
+});
+
+export type DiscoverSongResult = z.infer<typeof DiscoverSongResultSchema>;
+
+export const DiscoverSignalResultSchema = z.object({
+  signalId: z.string().uuid().or(z.string().min(1)),
+  type: z.string(),
+  metadata: z.record(z.string(), z.unknown()).nullable(),
+  communityId: z.string().uuid().or(z.string().min(1)).nullable(),
+  createdAt: z.string(),
+  actionCounts: z.object({
+    add: z.number().int().nonnegative(),
+    blast: z.number().int().nonnegative(),
+    support: z.number().int().nonnegative(),
+    recommend: z.number().int().nonnegative(),
+  }),
+});
+
+export type DiscoverSignalResult = z.infer<typeof DiscoverSignalResultSchema>;
+
+export const CommunityDiscoverSearchResultSchema = z.object({
+  community: DiscoverySceneSummarySchema,
+  query: z.string(),
+  artists: z.array(DiscoverArtistResultSchema),
+  songs: z.array(DiscoverSongResultSchema),
+});
+
+export type CommunityDiscoverSearchResult = z.infer<typeof CommunityDiscoverSearchResultSchema>;
+
+export const CommunityDiscoverHighlightsSchema = z.object({
+  community: DiscoverySceneSummarySchema,
+  recommendations: z.array(DiscoverSignalResultSchema),
+  trending: z.array(DiscoverSignalResultSchema),
+  topArtists: z.array(DiscoverArtistResultSchema),
+});
+
+export type CommunityDiscoverHighlights = z.infer<typeof CommunityDiscoverHighlightsSchema>;
+
+export const SaveDiscoverUpriseResultSchema = z.object({
+  scene: DiscoverySceneSummarySchema,
+  signalId: z.string().uuid().or(z.string().min(1)),
+  collectionId: z.string().uuid().or(z.string().min(1)),
+  collectionItemId: z.string().uuid().or(z.string().min(1)),
+  actionId: z.string().uuid().or(z.string().min(1)),
+  shelf: z.literal('uprises'),
+});
+
+export type SaveDiscoverUpriseResult = z.infer<typeof SaveDiscoverUpriseResultSchema>;

@@ -32,6 +32,7 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/PHASE_STOP_GATE_PLAYBOOK.md` (required stop-gate process to prevent infinite batching after phase convergence)
 - `docs/solutions/NARRATIVE_CARRY_FORWARD_RULES_R1.md` (prevents sessions from narrowing product understanding below existing repo narrative canon + valid legacy carry-forward detail)
 - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md` (founder-confirmed Discover behavior lock for search, map travel, recommendations/trending/top-artists, retune flow, and visitor-mode entry)
+- `docs/solutions/MVP_DISCOVER_CONTRACT_CHECKLIST_R1.md` (repo-grounded inventory of existing vs missing Discover contracts, plus the minimum contract work required before a full Discover build)
 - `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md` (separates confirmed artist architecture/capability/issuance constraints from still-unlocked artist-page UX behavior)
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md` (founder-confirmed artist-page structure, core actions, and playback handoff behavior)
 - `docs/solutions/MVP_WEB_UX_RECOVERY_PLAN_R1.md` (orders route unblocking, direct-route repairs, Discover founder-lock usage, and artist-profile lock work into one execution sequence)

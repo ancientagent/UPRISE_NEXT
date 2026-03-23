@@ -68,6 +68,14 @@ export class SignalsService {
     });
   }
 
+  async recommendSignal(userId: string, signalId: string) {
+    return this.prisma.signalAction.upsert({
+      where: { userId_signalId_type: { userId, signalId, type: 'RECOMMEND' } },
+      update: {},
+      create: { userId, signalId, type: 'RECOMMEND' },
+    });
+  }
+
   async followEntity(userId: string, dto: FollowDto) {
     return this.prisma.follow.upsert({
       where: { followerId_entityType_entityId: { followerId: userId, entityType: dto.entityType, entityId: dto.entityId } },

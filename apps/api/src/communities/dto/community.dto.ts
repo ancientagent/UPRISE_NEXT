@@ -168,6 +168,34 @@ export const PostDiscoverSetHomeSceneSchema = z.object({
 export type PostDiscoverSetHomeSceneDto = z.infer<typeof PostDiscoverSetHomeSceneSchema>;
 
 /**
+ * Community Discover local search query params
+ */
+export const GetCommunityDiscoverSearchSchema = z.object({
+  query: z.string().min(1),
+  limit: z.coerce.number().int().min(1).max(50).optional().default(12),
+});
+
+export type GetCommunityDiscoverSearchDto = z.infer<typeof GetCommunityDiscoverSearchSchema>;
+
+/**
+ * Community Discover highlights query params
+ */
+export const GetCommunityDiscoverHighlightsSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(24).optional().default(8),
+});
+
+export type GetCommunityDiscoverHighlightsDto = z.infer<typeof GetCommunityDiscoverHighlightsSchema>;
+
+/**
+ * Discover save-Uprise request
+ */
+export const PostDiscoverSaveUpriseSchema = z.object({
+  sceneId: z.string().min(1),
+});
+
+export type PostDiscoverSaveUpriseDto = z.infer<typeof PostDiscoverSaveUpriseSchema>;
+
+/**
  * Response schemas
  */
 export const CommunityWithDistanceSchema = z.object({

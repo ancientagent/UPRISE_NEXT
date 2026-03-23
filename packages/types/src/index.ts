@@ -6,3 +6,5 @@ export * from './event';
 export * from './auth';
 export * from './api';
 export * from './signal';
+export * from './discovery';
+export * from './artist-band';

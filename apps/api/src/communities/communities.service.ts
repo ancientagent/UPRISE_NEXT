@@ -14,9 +14,21 @@ import {
   GetCommunityPromotionsDto,
   ResolveHomeCommunityDto,
   GetDiscoverScenesDto,
+  GetCommunityDiscoverHighlightsDto,
+  GetCommunityDiscoverSearchDto,
   PostDiscoverSetHomeSceneDto,
+  PostDiscoverSaveUpriseDto,
   PostDiscoverTuneDto,
 } from './dto/community.dto';
+import type {
+  CommunityDiscoverHighlights,
+  CommunityDiscoverSearchResult,
+  DiscoverArtistResult,
+  DiscoverSignalResult,
+  DiscoverSongResult,
+  SaveDiscoverUpriseResult,
+} from '@uprise/types';
+import { mapSignalToShelf } from '../common/constants/collection-shelves';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
 
@@ -180,6 +192,141 @@ interface DiscoverCitySceneRow {
 export class CommunitiesService {
   constructor(private prisma: PrismaService) {}
 
+  private toSceneSummary(scene: {
+    id: string;
+    name: string;
+    city: string | null;
+    state: string | null;
+    musicCommunity: string | null;
+    tier: string;
+    isActive: boolean;
+  }) {
+    return {
+      id: scene.id,
+      name: scene.name,
+      city: scene.city,
+      state: scene.state,
+      musicCommunity: scene.musicCommunity,
+      tier: scene.tier,
+      isActive: scene.isActive,
+    };
+  }
+
+  private async getSceneOrThrow(sceneId: string) {
+    const scene = await this.prisma.community.findUnique({
+      where: { id: sceneId },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+        isActive: true,
+      },
+    });
+
+    if (!scene) {
+      throw new NotFoundException(`Community with ID ${sceneId} not found`);
+    }
+
+    return scene;
+  }
+
+  private buildSignalActionCounts(
+    actionCounts: Array<{
+      type: string;
+      _count: { type: number };
+    }>
+  ) {
+    const initial = { add: 0, blast: 0, support: 0, recommend: 0 };
+
+    for (const entry of actionCounts) {
+      const key = entry.type.trim().toUpperCase();
+      if (key === 'ADD') initial.add = entry._count.type;
+      if (key === 'BLAST') initial.blast = entry._count.type;
+      if (key === 'SUPPORT') initial.support = entry._count.type;
+      if (key === 'RECOMMEND') initial.recommend = entry._count.type;
+    }
+
+    return initial;
+  }
+
+  private async getSignalActionCounts(signalIds: string[]) {
+    if (signalIds.length === 0) {
+      return new Map<string, { add: number; blast: number; support: number; recommend: number }>();
+    }
+
+    const rows = await this.prisma.signalAction.groupBy({
+      by: ['signalId', 'type'],
+      where: {
+        signalId: {
+          in: signalIds,
+        },
+      },
+      _count: {
+        type: true,
+      },
+    });
+
+    const counts = new Map<
+      string,
+      { add: number; blast: number; support: number; recommend: number }
+    >();
+
+    for (const row of rows) {
+      const current = counts.get(row.signalId) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
+      const key = row.type.trim().toUpperCase();
+      if (key === 'ADD') current.add = row._count.type;
+      if (key === 'BLAST') current.blast = row._count.type;
+      if (key === 'SUPPORT') current.support = row._count.type;
+      if (key === 'RECOMMEND') current.recommend = row._count.type;
+      counts.set(row.signalId, current);
+    }
+
+    return counts;
+  }
+
+  private async resolveTrackArtistBand(
+    communityId: string | null,
+    uploadedById: string,
+    artistName: string,
+  ): Promise<{ id: string; name: string } | null> {
+    const trimmedArtistName = artistName.trim();
+    if (!trimmedArtistName) return null;
+
+    const exactNameMatch = await this.prisma.artistBand.findFirst({
+      where: {
+        homeSceneId: communityId ?? undefined,
+        name: {
+          equals: trimmedArtistName,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: [{ createdAt: 'asc' }],
+    });
+
+    if (exactNameMatch) {
+      return exactNameMatch;
+    }
+
+    return this.prisma.artistBand.findFirst({
+      where: {
+        createdById: uploadedById,
+        ...(communityId ? { homeSceneId: communityId } : {}),
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: [{ createdAt: 'asc' }],
+    });
+  }
+
   /**
    * Deterministic scene discovery list (no personalization/ranking).
    * Scope:
@@ -313,6 +460,389 @@ export class CommunitiesService {
         city: cityFilter ?? null,
       },
       items,
+    };
+  }
+
+  async searchCommunityDiscover(
+    _userId: string,
+    sceneId: string,
+    query: GetCommunityDiscoverSearchDto,
+  ): Promise<CommunityDiscoverSearchResult> {
+    const scene = await this.getSceneOrThrow(sceneId);
+    const search = query.query.trim();
+
+    const [artistBands, tracks] = await Promise.all([
+      this.prisma.artistBand.findMany({
+        where: {
+          homeSceneId: sceneId,
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { slug: { contains: search.toLowerCase() } },
+          ],
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          entityType: true,
+          homeSceneId: true,
+          homeScene: {
+            select: {
+              name: true,
+            },
+          },
+          _count: {
+            select: {
+              members: true,
+            },
+          },
+        },
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        take: query.limit,
+      }),
+      this.prisma.track.findMany({
+        where: {
+          communityId: sceneId,
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { artist: { contains: search, mode: 'insensitive' } },
+          ],
+        },
+        select: {
+          id: true,
+          title: true,
+          artist: true,
+          coverArt: true,
+          playCount: true,
+          likeCount: true,
+          status: true,
+          uploadedById: true,
+          communityId: true,
+          community: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: [{ playCount: 'desc' }, { title: 'asc' }, { id: 'asc' }],
+        take: query.limit,
+      }),
+    ]);
+
+    const followCounts = artistBands.length
+      ? await this.prisma.follow.groupBy({
+          by: ['entityId'],
+          where: {
+            entityType: {
+              in: ['artist', 'artistBand', 'band'],
+            },
+            entityId: {
+              in: artistBands.map((artistBand) => artistBand.id),
+            },
+          },
+          _count: {
+            entityId: true,
+          },
+        })
+      : [];
+
+    const followCountMap = new Map(
+      followCounts.map((entry) => [entry.entityId, entry._count.entityId]),
+    );
+
+    const artists: DiscoverArtistResult[] = artistBands.map((artistBand) => ({
+      artistBandId: artistBand.id,
+      name: artistBand.name,
+      slug: artistBand.slug,
+      entityType: artistBand.entityType,
+      homeSceneId: artistBand.homeSceneId ?? null,
+      homeSceneName: artistBand.homeScene?.name ?? null,
+      memberCount: artistBand._count.members,
+      followCount: followCountMap.get(artistBand.id) ?? 0,
+    }));
+
+    const songs: DiscoverSongResult[] = [];
+    for (const track of tracks) {
+      const artistBand = await this.resolveTrackArtistBand(
+        track.communityId ?? null,
+        track.uploadedById,
+        track.artist,
+      );
+      songs.push({
+        trackId: track.id,
+        title: track.title,
+        artist: track.artist,
+        artistBandId: artistBand?.id ?? null,
+        artistBandName: artistBand?.name ?? null,
+        coverArt: track.coverArt ?? null,
+        playCount: track.playCount,
+        likeCount: track.likeCount,
+        status: track.status,
+        communityId: track.communityId ?? null,
+        communityName: track.community?.name ?? null,
+      });
+    }
+
+    return {
+      community: this.toSceneSummary(scene),
+      query: search,
+      artists,
+      songs,
+    };
+  }
+
+  async getCommunityDiscoverHighlights(
+    _userId: string,
+    sceneId: string,
+    query: GetCommunityDiscoverHighlightsDto,
+  ): Promise<CommunityDiscoverHighlights> {
+    const scene = await this.getSceneOrThrow(sceneId);
+
+    const [recommendedSignals, trendingSignals, artistBands] = await Promise.all([
+      this.prisma.signal.findMany({
+        where: {
+          communityId: sceneId,
+          actions: {
+            some: {
+              type: 'RECOMMEND',
+            },
+          },
+        },
+        select: {
+          id: true,
+          type: true,
+          metadata: true,
+          communityId: true,
+          createdAt: true,
+        },
+        orderBy: [{ createdAt: 'desc' }],
+        take: query.limit,
+      }),
+      this.prisma.signal.findMany({
+        where: {
+          communityId: sceneId,
+          actions: {
+            some: {
+              type: 'BLAST',
+            },
+          },
+        },
+        select: {
+          id: true,
+          type: true,
+          metadata: true,
+          communityId: true,
+          createdAt: true,
+        },
+        orderBy: [{ createdAt: 'desc' }],
+        take: query.limit,
+      }),
+      this.prisma.artistBand.findMany({
+        where: {
+          homeSceneId: sceneId,
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          entityType: true,
+          homeSceneId: true,
+          homeScene: {
+            select: {
+              name: true,
+            },
+          },
+          _count: {
+            select: {
+              members: true,
+            },
+          },
+        },
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        take: query.limit,
+      }),
+    ]);
+
+    const signalIds = Array.from(
+      new Set([
+        ...recommendedSignals.map((signal) => signal.id),
+        ...trendingSignals.map((signal) => signal.id),
+      ]),
+    );
+    const signalCounts = await this.getSignalActionCounts(signalIds);
+
+    const toSignalResult = (
+      signals: Array<{
+        id: string;
+        type: string;
+        metadata: Prisma.JsonValue | null;
+        communityId: string | null;
+        createdAt: Date;
+      }>,
+      primarySort: 'recommend' | 'blast',
+    ): DiscoverSignalResult[] =>
+      signals
+        .map((signal) => ({
+          signalId: signal.id,
+          type: signal.type,
+          metadata: (signal.metadata as Record<string, unknown> | null) ?? null,
+          communityId: signal.communityId ?? null,
+          createdAt: signal.createdAt.toISOString(),
+          actionCounts:
+            signalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 },
+        }))
+        .sort((left, right) => {
+          const primaryDiff = right.actionCounts[primarySort] - left.actionCounts[primarySort];
+          if (primaryDiff !== 0) return primaryDiff;
+          const secondaryDiff = right.actionCounts.blast - left.actionCounts.blast;
+          if (secondaryDiff !== 0) return secondaryDiff;
+          return left.signalId.localeCompare(right.signalId);
+        })
+        .slice(0, query.limit);
+
+    const artistFollowCounts = artistBands.length
+      ? await this.prisma.follow.groupBy({
+          by: ['entityId'],
+          where: {
+            entityType: {
+              in: ['artist', 'artistBand', 'band'],
+            },
+            entityId: {
+              in: artistBands.map((artistBand) => artistBand.id),
+            },
+          },
+          _count: {
+            entityId: true,
+          },
+        })
+      : [];
+
+    const followCountMap = new Map(
+      artistFollowCounts.map((entry) => [entry.entityId, entry._count.entityId]),
+    );
+
+    const topArtists: DiscoverArtistResult[] = artistBands
+      .map((artistBand) => ({
+        artistBandId: artistBand.id,
+        name: artistBand.name,
+        slug: artistBand.slug,
+        entityType: artistBand.entityType,
+        homeSceneId: artistBand.homeSceneId ?? null,
+        homeSceneName: artistBand.homeScene?.name ?? null,
+        memberCount: artistBand._count.members,
+        followCount: followCountMap.get(artistBand.id) ?? 0,
+      }))
+      .sort((left, right) => {
+        if (right.followCount !== left.followCount) return right.followCount - left.followCount;
+        if (right.memberCount !== left.memberCount) return right.memberCount - left.memberCount;
+        return left.name.localeCompare(right.name);
+      })
+      .slice(0, query.limit);
+
+    return {
+      community: this.toSceneSummary(scene),
+      recommendations: toSignalResult(recommendedSignals, 'recommend'),
+      trending: toSignalResult(trendingSignals, 'blast'),
+      topArtists,
+    };
+  }
+
+  async saveDiscoverUprise(
+    userId: string,
+    dto: PostDiscoverSaveUpriseDto,
+  ): Promise<SaveDiscoverUpriseResult> {
+    const scene = await this.getSceneOrThrow(dto.sceneId);
+
+    const signal =
+      (await this.prisma.signal.findFirst({
+        where: {
+          type: 'uprise',
+          communityId: scene.id,
+        },
+        select: {
+          id: true,
+        },
+        orderBy: [{ createdAt: 'asc' }],
+      })) ??
+      (await this.prisma.signal.create({
+        data: {
+          type: 'uprise',
+          communityId: scene.id,
+          metadata: {
+            kind: 'uprise',
+            sceneId: scene.id,
+            name: scene.name,
+            city: scene.city,
+            state: scene.state,
+            musicCommunity: scene.musicCommunity,
+            tier: scene.tier,
+          },
+        },
+        select: {
+          id: true,
+        },
+      }));
+
+    const collection = await this.prisma.collection.upsert({
+      where: {
+        userId_name: {
+          userId,
+          name: 'uprises',
+        },
+      },
+      update: {},
+      create: {
+        userId,
+        name: 'uprises',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const action = await this.prisma.signalAction.upsert({
+      where: {
+        userId_signalId_type: {
+          userId,
+          signalId: signal.id,
+          type: 'ADD',
+        },
+      },
+      update: {},
+      create: {
+        userId,
+        signalId: signal.id,
+        type: 'ADD',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const item = await this.prisma.collectionItem.upsert({
+      where: {
+        collectionId_signalId: {
+          collectionId: collection.id,
+          signalId: signal.id,
+        },
+      },
+      update: {},
+      create: {
+        collectionId: collection.id,
+        signalId: signal.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return {
+      scene: this.toSceneSummary(scene),
+      signalId: signal.id,
+      collectionId: collection.id,
+      collectionItemId: item.id,
+      actionId: action.id,
+      shelf: 'uprises',
     };
   }
 

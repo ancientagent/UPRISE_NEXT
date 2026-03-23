@@ -34,6 +34,12 @@ export class SignalsController {
     return { success: true, data: action };
   }
 
+  @Post('signals/:id/recommend')
+  async recommendSignal(@Param('id') id: string, @Request() req: any) {
+    const action = await this.signalsService.recommendSignal(req.user.userId, id);
+    return { success: true, data: action };
+  }
+
   @Post('follow')
   @ZodBody(FollowSchema)
   async follow(@Body() dto: FollowDto, @Request() req: any) {
