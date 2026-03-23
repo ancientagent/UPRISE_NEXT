@@ -36,6 +36,36 @@ describe('CommunitiesService.discoverScenes', () => {
     ).rejects.toThrow(NotFoundException);
   });
 
+  it('returns deterministic scene items without home-scene markers when reads are anonymous', async () => {
+    mockPrisma.community.findMany.mockResolvedValue([
+      {
+        id: 'c1',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        memberCount: 120,
+        isActive: true,
+      },
+    ]);
+
+    const result = await service.discoverScenes(null, {
+      tier: 'city',
+      musicCommunity: 'Punk',
+      state: 'TX',
+      limit: 50,
+    });
+
+    expect(mockPrisma.user.findUnique).not.toHaveBeenCalled();
+    expect(result.items).toEqual([
+      expect.objectContaining({
+        entryType: 'city_scene',
+        sceneId: 'c1',
+        isHomeScene: false,
+      }),
+    ]);
+  });
+
   it('returns deterministic city-scene items with home-scene marker', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       homeSceneCity: 'Austin',
@@ -262,6 +292,18 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.tunedSceneId).toBe('c2');
     expect(result.homeSceneId).toBe('c1');
     expect(result.isVisitor).toBe(true);
+  });
+
+  it('returns neutral context when discovery context is requested without auth', async () => {
+    const result = await service.getDiscoveryContext(null);
+
+    expect(mockPrisma.user.findUnique).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      tunedSceneId: null,
+      tunedScene: null,
+      homeSceneId: null,
+      isVisitor: false,
+    });
   });
 
   it('falls back to home scene when tuned scene is not set', async () => {

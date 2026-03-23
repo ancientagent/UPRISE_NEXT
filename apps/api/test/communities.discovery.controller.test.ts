@@ -4,11 +4,20 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { DiscoveryController } from '../src/communities/discovery.controller';
 import { CommunitiesService } from '../src/communities/communities.service';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard';
 
 class MockJwtGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     request.user = { userId: 'user-1' };
+    return true;
+  }
+}
+
+class MockOptionalJwtGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    request.user = request.headers?.authorization ? { userId: 'user-1' } : null;
     return true;
   }
 }
@@ -40,6 +49,8 @@ describe('DiscoveryController', () => {
     })
       .overrideGuard(JwtAuthGuard)
       .useClass(MockJwtGuard)
+      .overrideGuard(OptionalJwtAuthGuard)
+      .useClass(MockOptionalJwtGuard)
       .compile();
 
     app = moduleFixture.createNestApplication(new FastifyAdapter());
@@ -114,6 +125,31 @@ describe('DiscoveryController', () => {
 
     expect(response.statusCode).toBe(400);
     expect(communitiesServiceMock.discoverScenes).not.toHaveBeenCalled();
+  });
+
+  it('allows anonymous GET /discover/scenes and delegates with null user id', async () => {
+    communitiesServiceMock.discoverScenes.mockResolvedValue({
+      tier: 'city',
+      musicCommunity: 'Punk',
+      filters: { state: 'TX', city: 'Austin' },
+      items: [],
+    });
+
+    const response = await (app.getHttpAdapter().getInstance() as any).inject({
+      method: 'GET',
+      url: '/discover/scenes?tier=city&musicCommunity=Punk&state=TX&city=Austin',
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(communitiesServiceMock.discoverScenes).toHaveBeenCalledWith(
+      null,
+      expect.objectContaining({
+        tier: 'city',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      }),
+    );
   });
 
   it('delegates GET /discover/communities/:sceneId/search and returns local artist/song results', async () => {

@@ -333,17 +333,19 @@ export class CommunitiesService {
    * - city/state: city-scene entries
    * - national: state rollups derived from city scenes
    */
-  async discoverScenes(userId: string, query: GetDiscoverScenesDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        homeSceneCity: true,
-        homeSceneState: true,
-        homeSceneCommunity: true,
-      },
-    });
+  async discoverScenes(userId: string | null, query: GetDiscoverScenesDto) {
+    const user = userId
+      ? await this.prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            homeSceneCity: true,
+            homeSceneState: true,
+            homeSceneCommunity: true,
+          },
+        })
+      : null;
 
-    if (!user) {
+    if (userId && !user) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
@@ -352,6 +354,9 @@ export class CommunitiesService {
     const stateFilter = query.state?.trim();
     const cityFilter = query.city?.trim();
     const limit = query.limit;
+    const homeSceneCity = user?.homeSceneCity ?? null;
+    const homeSceneState = user?.homeSceneState ?? null;
+    const homeSceneCommunity = user?.homeSceneCommunity ?? null;
 
     const baseWhere: {
       tier: 'city';
@@ -395,9 +400,10 @@ export class CommunitiesService {
         memberCount: scene.memberCount,
         isActive: scene.isActive,
         isHomeScene:
-          scene.city === user.homeSceneCity &&
-          scene.state === user.homeSceneState &&
-          scene.musicCommunity === user.homeSceneCommunity,
+          Boolean(user) &&
+          scene.city === homeSceneCity &&
+          scene.state === homeSceneState &&
+          scene.musicCommunity === homeSceneCommunity,
         }));
 
       return {
@@ -449,7 +455,8 @@ export class CommunitiesService {
         totalMembers: row.totalMembers,
         representativeSceneId: row.representativeSceneId,
         isHomeSceneState:
-          row.state === user.homeSceneState && musicCommunity === user.homeSceneCommunity,
+          Boolean(user) &&
+          row.state === homeSceneState && musicCommunity === homeSceneCommunity,
       }));
 
     return {
@@ -927,7 +934,16 @@ export class CommunitiesService {
    * Resolve persisted discovery context for the current user.
    * Falls back to Home Scene when no tuned scene has been persisted yet.
    */
-  async getDiscoveryContext(userId: string) {
+  async getDiscoveryContext(userId: string | null) {
+    if (!userId) {
+      return {
+        tunedSceneId: null,
+        tunedScene: null,
+        homeSceneId: null,
+        isVisitor: false,
+      };
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {

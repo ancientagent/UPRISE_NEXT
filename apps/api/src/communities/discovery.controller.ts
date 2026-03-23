@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ZodError } from 'zod';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import { CommunitiesService } from './communities.service';
 import {
   GetCommunityDiscoverHighlightsDto,
@@ -31,18 +32,18 @@ import {
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 
 @Controller('discover')
-@UseGuards(JwtAuthGuard)
 export class DiscoveryController {
   constructor(private communitiesService: CommunitiesService) {}
 
   /**
    * GET /api/discover/scenes
    * Deterministic scene discovery list by scope + music community.
-   */
+  */
   @Get('scenes')
+  @UseGuards(OptionalJwtAuthGuard)
   async discoverScenes(
     @Query() rawQuery: any,
-    @Request() req: { user: { userId: string } }
+    @Request() req: { user?: { userId: string } | null }
   ): Promise<{
     success: true;
     data: any[];
@@ -62,7 +63,7 @@ export class DiscoveryController {
         limit: rawQuery.limit,
       });
 
-      const result = await this.communitiesService.discoverScenes(req.user.userId, query);
+      const result = await this.communitiesService.discoverScenes(req.user?.userId ?? null, query);
 
       return {
         success: true,
@@ -90,6 +91,7 @@ export class DiscoveryController {
   }
 
   @Get('communities/:sceneId/search')
+  @UseGuards(JwtAuthGuard)
   async searchCommunityDiscover(
     @Param('sceneId') sceneId: string,
     @Query() rawQuery: any,
@@ -130,6 +132,7 @@ export class DiscoveryController {
   }
 
   @Get('communities/:sceneId/highlights')
+  @UseGuards(JwtAuthGuard)
   async getCommunityDiscoverHighlights(
     @Param('sceneId') sceneId: string,
     @Query() rawQuery: any,
@@ -173,6 +176,7 @@ export class DiscoveryController {
    * Set listener tuned scene context (visitor-safe; does not change Home Scene).
    */
   @Post('tune')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ZodBody(PostDiscoverTuneSchema)
   async tuneScene(
@@ -205,10 +209,11 @@ export class DiscoveryController {
   /**
    * GET /api/discover/context
    * Get persisted tuned-scene context for current user.
-   */
+  */
   @Get('context')
+  @UseGuards(OptionalJwtAuthGuard)
   async getContext(
-    @Request() req: { user: { userId: string } }
+    @Request() req: { user?: { userId: string } | null }
   ): Promise<{
     success: true;
     data: {
@@ -226,7 +231,7 @@ export class DiscoveryController {
       isVisitor: boolean;
     };
   }> {
-    const result = await this.communitiesService.getDiscoveryContext(req.user.userId);
+    const result = await this.communitiesService.getDiscoveryContext(req.user?.userId ?? null);
     return {
       success: true,
       data: result,
@@ -238,6 +243,7 @@ export class DiscoveryController {
    * Explicit Home Scene reassignment from discovery context.
    */
   @Post('set-home-scene')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ZodBody(PostDiscoverSetHomeSceneSchema)
   async setHomeScene(
@@ -279,6 +285,7 @@ export class DiscoveryController {
   }
 
   @Post('save-uprise')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ZodBody(PostDiscoverSaveUpriseSchema)
   async saveUprise(
