@@ -644,6 +644,8 @@ describe('RegistrarService', () => {
       countsByStatus: {},
       entries: [],
     });
+    expect(mockPrisma.registrarCode.findMany).not.toHaveBeenCalled();
+    expect(mockPrisma.userCapabilityGrant.findMany).not.toHaveBeenCalled();
   });
 
   it('aggregates promoter list counts across mixed statuses', async () => {

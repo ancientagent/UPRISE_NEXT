@@ -50,7 +50,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
     expect(plotPageSource).toContain('activeBroadcastTier={activeBroadcastTier}');
     expect(plotPageSource).toContain("const collectionBroadcastLabel = selectedCollectionItem?.label ??");
-    expect(plotPageSource).toContain('selectedCollectionItem?.id === item.id && playerMode === \'Collection\'');
+    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'Collection'");
     expect(plotPageSource).toContain("const handleCollectionEject = () => {");
     expect(playerSource).not.toContain('Switch to Collection mode');
     expect(playerSource).toContain('Eject');
@@ -71,7 +71,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
     expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
-    expect(plotPageSource).toContain("selectedCollectionItem?.id === item.id && playerMode === 'Collection'");
+    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'Collection'");
     expect(plotPageSource).toContain("setSelectedCollectionItem(item)");
     expect(playerSource).not.toContain('Back to RADIYO');
   });
@@ -147,13 +147,30 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Saved Promos/Coupons');
     expect(plotPageSource).toContain('Activity Score');
     expect(plotPageSource).toContain('Calendar');
-    expect(plotPageSource).toContain('Calendar stays in the header.');
     expect(plotPageSource).toContain("const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists')");
-    expect(plotPageSource).toContain('eventsThisWeek');
-    expect(plotPageSource).toContain("['Posters', 'Shirts', 'Patches', 'Buttons', 'Special Items']");
-    expect(plotPageSource).toContain('Saved promos and coupons appear here with status and expiration');
     expect(plotPageSource).toContain('Return to Plot Tabs');
     expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
+    expect(plotPageSource).not.toContain('track-south-side-signal');
+    expect(plotPageSource).not.toContain('track-lakefront-lights');
+    expect(plotPageSource).toContain('const [plotProfile, setPlotProfile] = useState<PlotProfileRead | null>(null)');
+    expect(plotPageSource).toContain("api.get<PlotProfileRead>(`/users/${user.id}/profile`, { token })");
+    expect(plotPageSource).toContain('const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === \'singles\') ?? null;');
+    expect(plotPageSource).toContain('const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === \'uprises\') ?? null;');
+    expect(plotPageSource).toContain('const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === \'fliers\') ?? null;');
+    expect(plotPageSource).toContain('Saved playlist groupings appear here when they are available in your collection.');
+    expect(plotPageSource).toContain('No saved event artifacts or fliers yet.');
+    expect(plotPageSource).toContain('No saved Uprises yet.');
+    expect(plotPageSource).toContain('Saved promos and coupons appear here with status and expiration when collection support is available.');
+  });
+
+  it('locks expanded profile header to conditional band and promoter status cards', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([])');
+    expect(plotPageSource).toContain('listPromoterRegistrations(token)');
+    expect(plotPageSource).toContain("label: 'Band Status'");
+    expect(plotPageSource).toContain("label: 'Promoter Status'");
+    expect(plotPageSource).not.toContain('Tier Snapshot');
   });
 
   it('locks Top Songs + Scene Activity to statistics-only placement', () => {

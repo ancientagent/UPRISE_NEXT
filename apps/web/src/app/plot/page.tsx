@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
+import { api } from '@/lib/api';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
@@ -23,7 +24,7 @@ import {
   resolveHomeCommunity,
   type CommunityStatisticsResponse,
 } from '@/lib/communities/client';
-import { listArtistBandRegistrations } from '@/lib/registrar/client';
+import { listArtistBandRegistrations, listPromoterRegistrations, type RegistrarPromoterEntry } from '@/lib/registrar/client';
 import { formatRegistrarEntryStatus, getRegistrarPlotSummary, type RegistrarPlotSummary } from '@/lib/registrar/entryStatus';
 
 // Dynamic imports for client components
@@ -58,12 +59,73 @@ const expandedProfileSections = [
   'Saved Promos/Coupons',
 ] as const;
 type ExpandedProfileSection = (typeof expandedProfileSections)[number];
-const singlesAndPlaylistsItems: Array<{ id: string; label: string; kind: 'track' | 'playlist' }> = [
-  { id: 'track-south-side-signal', label: 'South Side Signal', kind: 'track' },
-  { id: 'track-lakefront-lights', label: 'Lakefront Lights', kind: 'track' },
-  { id: 'playlist-city-after-hours', label: 'City After Hours', kind: 'playlist' },
-  { id: 'playlist-state-line-set', label: 'State Line Set', kind: 'playlist' },
-];
+
+interface PlotCollectionShelfItem {
+  signalId: string;
+  type: string;
+  createdAt: string;
+  metadata: Record<string, unknown> | null;
+}
+
+interface PlotCollectionShelf {
+  shelf: string;
+  itemCount: number;
+  items: PlotCollectionShelfItem[];
+}
+
+interface PlotProfileRead {
+  canViewCollection: boolean;
+  collectionShelves: PlotCollectionShelf[];
+  managedArtistBands: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    entityType: string;
+    membershipRole: string | null;
+  }>;
+}
+
+const readMetadataString = (
+  metadata: Record<string, unknown> | null | undefined,
+  keys: string[],
+): string | null => {
+  if (!metadata) return null;
+
+  for (const key of keys) {
+    const value = metadata[key];
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return value.trim();
+    }
+  }
+
+  return null;
+};
+
+const formatShelfItemPrimaryLabel = (item: PlotCollectionShelfItem): string => {
+  const metadata = item.metadata;
+
+  const sceneCity = readMetadataString(metadata, ['city']);
+  const sceneState = readMetadataString(metadata, ['state']);
+  const sceneMusicCommunity = readMetadataString(metadata, ['musicCommunity', 'community']);
+
+  if (sceneCity && sceneState && sceneMusicCommunity) {
+    return `${sceneCity}, ${sceneState} • ${sceneMusicCommunity}`;
+  }
+
+  return (
+    readMetadataString(metadata, ['title', 'name', 'label', 'summary', 'productionName']) ??
+    item.type.replace(/_/g, ' ')
+  );
+};
+
+const formatShelfItemSecondaryLabel = (item: PlotCollectionShelfItem): string => {
+  const metadata = item.metadata;
+
+  return (
+    readMetadataString(metadata, ['callToAction', 'status', 'expiresAt', 'expiration']) ??
+    new Date(item.createdAt).toLocaleDateString()
+  );
+};
 
 export default function PlotPage() {
   const router = useRouter();
@@ -88,6 +150,12 @@ export default function PlotPage() {
   const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null);
   const [registrarSummaryLoading, setRegistrarSummaryLoading] = useState(false);
   const [registrarSummaryError, setRegistrarSummaryError] = useState<string | null>(null);
+  const [plotProfile, setPlotProfile] = useState<PlotProfileRead | null>(null);
+  const [plotProfileLoading, setPlotProfileLoading] = useState(false);
+  const [plotProfileError, setPlotProfileError] = useState<string | null>(null);
+  const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
+  const [promoterEntriesLoading, setPromoterEntriesLoading] = useState(false);
+  const [promoterEntriesError, setPromoterEntriesError] = useState<string | null>(null);
   const hasHomeScene =
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
@@ -209,6 +277,86 @@ export default function PlotPage() {
     };
   }, [hasHomeScene, token]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPlotProfile() {
+      if (!token || !user?.id) {
+        setPlotProfile(null);
+        setPlotProfileError(null);
+        setPlotProfileLoading(false);
+        return;
+      }
+
+      setPlotProfileLoading(true);
+      setPlotProfileError(null);
+
+      try {
+        const response = await api.get<PlotProfileRead>(`/users/${user.id}/profile`, { token });
+
+        if (cancelled) return;
+
+        setPlotProfile(response.data ?? { canViewCollection: true, collectionShelves: [], managedArtistBands: [] });
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load collection shelves.';
+        setPlotProfile(null);
+        setPlotProfileError(message);
+      } finally {
+        if (!cancelled) {
+          setPlotProfileLoading(false);
+        }
+      }
+    }
+
+    loadPlotProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, user?.id]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPromoterEntries() {
+      if (!token) {
+        setPromoterEntries([]);
+        setPromoterEntriesError(null);
+        setPromoterEntriesLoading(false);
+        return;
+      }
+
+      setPromoterEntriesLoading(true);
+      setPromoterEntriesError(null);
+
+      try {
+        const response = await listPromoterRegistrations(token);
+
+        if (cancelled) return;
+
+        setPromoterEntries(response.entries ?? []);
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load promoter status.';
+        setPromoterEntries([]);
+        setPromoterEntriesError(message);
+      } finally {
+        if (!cancelled) {
+          setPromoterEntriesLoading(false);
+        }
+      }
+    }
+
+    loadPromoterEntries();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
   };
@@ -282,6 +430,63 @@ export default function PlotPage() {
   const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Collection`;
   const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;
   const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
+  const collectionShelves = plotProfile?.collectionShelves ?? [];
+  const canViewCollection = Boolean(plotProfile?.canViewCollection);
+  const managedArtistBands = plotProfile?.managedArtistBands ?? [];
+  const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === 'singles') ?? null;
+  const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === 'fliers') ?? null;
+  const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === 'uprises') ?? null;
+  const posterShelf = collectionShelves.find((shelf) => shelf.shelf === 'posters') ?? null;
+  const merchButtonShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_buttons') ?? null;
+  const merchPatchShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_patches') ?? null;
+  const merchShirtShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_shirts') ?? null;
+  const singlesCollectionItems =
+    singlesShelf?.items.map((item) => ({
+      id: item.signalId,
+      label: formatShelfItemPrimaryLabel(item),
+      kind: 'track' as const,
+    })) ?? [];
+  const latestPromoterEntry = promoterEntries[0] ?? null;
+  const bandStatusCard =
+    managedArtistBands.length > 0 || (registrarSummary?.totalEntries ?? 0) > 0
+      ? {
+          label: 'Band Status',
+          value:
+            managedArtistBands.length > 0
+              ? managedArtistBands.length === 1
+                ? '1 linked entity'
+                : `${managedArtistBands.length} linked entities`
+              : registrarSummary?.latestStatus
+                ? formatRegistrarEntryStatus(registrarSummary.latestStatus)
+                : 'No recent status',
+          detail:
+            managedArtistBands.length > 0
+              ? managedArtistBands
+                  .slice(0, 2)
+                  .map((artistBand) => artistBand.name)
+                  .join(' • ')
+              : 'Registrar-linked identity status',
+        }
+      : null;
+  const promoterStatusCard =
+    latestPromoterEntry || promoterEntriesLoading || promoterEntriesError
+      ? {
+          label: 'Promoter Status',
+          value: promoterEntriesLoading
+            ? 'Loading...'
+            : promoterEntriesError
+              ? 'Unavailable'
+              : latestPromoterEntry?.promoterCapability.granted
+                ? 'Capability granted'
+                : latestPromoterEntry
+                  ? formatRegistrarEntryStatus(latestPromoterEntry.status)
+                  : 'No recent status',
+          detail: latestPromoterEntry?.payload.productionName ?? 'Promoter registrar lifecycle',
+        }
+      : null;
+  const profileStatusCards = [bandStatusCard, promoterStatusCard].filter(
+    (card): card is { label: string; value: string; detail: string } => Boolean(card),
+  );
   const seamLabel =
     profilePanelState === 'expanded'
       ? 'Pull up or tap to collapse profile'
@@ -579,10 +784,13 @@ export default function PlotPage() {
                     <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Activity Score</p>
                     <p className="mt-1 text-lg font-semibold text-black">{activityScore}</p>
                   </div>
-                  <div className="rounded-xl border border-black/10 bg-white p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Tier Snapshot</p>
-                    <p className="mt-1 text-sm font-medium capitalize text-black">{selectedTier}</p>
-                  </div>
+                  {profileStatusCards.map((card) => (
+                    <div key={card.label} className="rounded-xl border border-black/10 bg-white p-3">
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">{card.label}</p>
+                      <p className="mt-1 text-sm font-medium text-black">{card.value}</p>
+                      <p className="mt-1 text-xs text-black/55">{card.detail}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -627,48 +835,93 @@ export default function PlotPage() {
               <div className="mt-4 rounded-lg border border-black/10 bg-white p-4">
                 <p className="text-sm font-medium text-black">{activeProfileSection}</p>
                 {activeProfileSection === 'Singles/Playlists' ? (
-                  <div className="mt-3 flex flex-col gap-2">
-                    {singlesAndPlaylistsItems.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${
-                          selectedCollectionItem?.id === item.id
-                            ? 'border-black bg-black text-white'
-                            : 'border-black/10 bg-black/[0.02] text-black hover:bg-black/[0.05]'
-                        }`}
-                        onClick={() => handleCollectionSelection(item)}
-                      >
-                        <span>
-                          <span className="block text-sm font-medium">{item.label}</span>
-                          <span className={`block text-[11px] uppercase tracking-[0.12em] ${
-                            selectedCollectionItem?.id === item.id ? 'text-white/75' : 'text-black/55'
-                          }`}>
-                            {item.kind === 'track' ? 'Track' : 'Playlist'}
-                          </span>
-                        </span>
-                        <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
-                          selectedCollectionItem?.id === item.id ? 'text-white/75' : 'text-black/55'
-                        }`}>
-                          {selectedCollectionItem?.id === item.id && playerMode === 'Collection'
-                            ? 'Live in player'
-                            : 'Select to enter Collection mode'}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                ) : activeProfileSection === 'Events' ? (
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved singles and playlist groupings.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : !canViewCollection ? (
+                      <p className="text-sm text-black/60">Collection visibility is disabled for this profile.</p>
+                    ) : singlesCollectionItems.length > 0 ? (
+                      <div className="flex flex-col gap-2">
+                        {singlesShelf?.items.map((item) => {
+                          const collectionItem = {
+                            id: item.signalId,
+                            label: formatShelfItemPrimaryLabel(item),
+                            kind: 'track' as const,
+                          };
+
+                          return (
+                            <button
+                              key={item.signalId}
+                              type="button"
+                              className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${
+                                selectedCollectionItem?.id === collectionItem.id
+                                  ? 'border-black bg-black text-white'
+                                  : 'border-black/10 bg-black/[0.02] text-black hover:bg-black/[0.05]'
+                              }`}
+                              onClick={() => handleCollectionSelection(collectionItem)}
+                            >
+                              <span>
+                                <span className="block text-sm font-medium">{collectionItem.label}</span>
+                                <span className={`block text-[11px] uppercase tracking-[0.12em] ${
+                                  selectedCollectionItem?.id === collectionItem.id ? 'text-white/75' : 'text-black/55'
+                                }`}>
+                                  Track • {formatShelfItemSecondaryLabel(item)}
+                                </span>
+                              </span>
+                              <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
+                                selectedCollectionItem?.id === collectionItem.id ? 'text-white/75' : 'text-black/55'
+                              }`}>
+                                {selectedCollectionItem?.id === collectionItem.id && playerMode === 'Collection'
+                                  ? 'Live in player'
+                                  : 'Select to enter Collection mode'}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-black/60">No saved singles yet.</p>
+                    )}
+
                     <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Event Artifacts</p>
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Playlist Groupings</p>
                       <p className="mt-1 text-sm text-black/70">
-                        Event fliers and saved scene artifacts live here. Calendar stays in the header.
+                        Saved playlist groupings appear here when they are available in your collection.
                       </p>
                     </div>
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Events This Week</p>
-                      <p className="mt-1 text-lg font-semibold text-black">{eventsThisWeek}</p>
-                    </div>
+                  </div>
+                ) : activeProfileSection === 'Events' ? (
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved event artifacts and fliers.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : (fliersShelf?.items.length ?? 0) > 0 ? (
+                      <ul className="space-y-2">
+                        {fliersShelf?.items.slice(0, 6).map((item) => (
+                          <li key={item.signalId} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                            <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
+                            <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-black/60">No saved event artifacts or fliers yet.</p>
+                    )}
                   </div>
                 ) : activeProfileSection === 'Photos' ? (
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -682,25 +935,69 @@ export default function PlotPage() {
                     </div>
                   </div>
                 ) : activeProfileSection === 'Merch' ? (
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-                    {['Posters', 'Shirts', 'Patches', 'Buttons', 'Special Items'].map((item) => (
-                      <div key={item} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                        <p className="text-sm font-medium text-black">{item}</p>
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved merch items.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : (
+                      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+                        {[
+                          { label: 'Posters', shelf: posterShelf },
+                          { label: 'Shirts', shelf: merchShirtShelf },
+                          { label: 'Patches', shelf: merchPatchShelf },
+                          { label: 'Buttons', shelf: merchButtonShelf },
+                          { label: 'Special Items', shelf: null },
+                        ].map((item) => (
+                          <div key={item.label} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                            <p className="text-sm font-medium text-black">{item.label}</p>
+                            <p className="mt-1 text-xs text-black/55">
+                              {item.shelf ? `${item.shelf.itemCount} saved item${item.shelf.itemCount === 1 ? '' : 's'}` : 'No saved items yet.'}
+                            </p>
+                            {item.shelf?.items[0] ? (
+                              <p className="mt-2 text-xs text-black/60">{formatShelfItemPrimaryLabel(item.shelf.items[0])}</p>
+                            ) : null}
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 ) : activeProfileSection === 'Saved Uprises' ? (
-                  <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Scene Entries</p>
-                    <p className="mt-1 text-sm text-black/70">
-                      {selectedCommunity?.name ?? 'Current scene'} remains available as a saved scene anchor in this workspace.
-                    </p>
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved/followed Uprises.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : (uprisesShelf?.items.length ?? 0) > 0 ? (
+                      <ul className="space-y-2">
+                        {uprisesShelf?.items.slice(0, 6).map((item) => (
+                          <li key={item.signalId} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                            <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
+                            <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-black/60">No saved Uprises yet.</p>
+                    )}
                   </div>
                 ) : (
                   <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
                     <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Promos/Coupons</p>
                     <p className="mt-1 text-sm text-black/70">
-                      Saved promos and coupons appear here with status and expiration when available for the active scene.
+                      Saved promos and coupons appear here with status and expiration when collection support is available.
                     </p>
                   </div>
                 )}
