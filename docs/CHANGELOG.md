@@ -1868,3 +1868,6 @@
 - Founder override hardening (2026-03-21): updated `docs/solutions/SESSION_STANDING_DIRECTIVES.md` so agents do not derive product behavior from canon philosophy or anti-trope framing alone when founder behavior has not been directly confirmed; see `docs/handoff/2026-03-21_founder-instruction-override-for-philosophy-interpretation.md`.
 
 - Narrative carry-forward hardening (2026-03-22): added `docs/solutions/NARRATIVE_CARRY_FORWARD_RULES_R1.md` and linked it from the solutions index so future sessions preserve repo-canon structural locks and valid legacy-canon carry-forward detail instead of narrowing behavior from thinner working summaries alone.
+
+- Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out `/registrar` history state, and added `apps/web/src/app/favicon.ico` to remove persistent route QA noise; see `docs/handoff/2026-03-23_discover-verification-and-runtime-cleanup.md`.
+- Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out  history state, and added  to remove persistent route QA noise; see .

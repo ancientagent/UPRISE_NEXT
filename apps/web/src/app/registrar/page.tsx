@@ -71,6 +71,8 @@ export default function RegistrarPage() {
   const loadEntries = async () => {
     if (!token) {
       setEntries([]);
+      setEntriesError(null);
+      setEntriesLoading(false);
       return;
     }
 
@@ -481,7 +483,13 @@ export default function RegistrarPage() {
             <p className="mt-4 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{entriesError}</p>
           )}
 
-          {!entriesError && entries.length === 0 && !entriesLoading && (
+          {!token && !entriesLoading && (
+            <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              Sign in is required to view registrar entry history and manage registrar actions.
+            </p>
+          )}
+
+          {token && !entriesError && entries.length === 0 && !entriesLoading && (
             <p className="mt-4 text-sm text-black/60">No Artist/Band registrar entries yet.</p>
           )}
 
