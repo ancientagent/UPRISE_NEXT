@@ -1872,4 +1872,6 @@
 - Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out `/registrar` history state, and added `apps/web/src/app/favicon.ico` to remove persistent route QA noise; see `docs/handoff/2026-03-23_discover-verification-and-runtime-cleanup.md`.
 
 - Runtime track creation for Discover QA (2026-03-23): added authenticated `POST /tracks` so local track rows can be created through the API instead of direct DB fixtures, with focused service coverage and API README update; see `docs/handoff/2026-03-23_runtime-track-create-path.md`.
+
+- Broadcast spec reconciliation (2026-03-23): updated `docs/specs/broadcast/radiyo-and-fair-play.md` to record the implemented `POST /tracks` runtime ingestion contract and clarify that it is not yet a full upload/transcoding pipeline spec.
 - Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out  history state, and added  to remove persistent route QA noise; see .

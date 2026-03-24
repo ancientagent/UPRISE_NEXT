@@ -3,7 +3,7 @@
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-20`
+**Last Updated:** `2026-03-23`
 
 ## Overview & Purpose
 Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
@@ -123,11 +123,17 @@ Hard constraints:
 ### Implemented now
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
+| POST | `/tracks` | required | Create a track row for the authenticated uploader; supports community-scoped runtime ingestion for current artist/discover flows |
 | POST | `/tracks/:id/engage` | required | Record recurrence input event |
 | POST | `/tracks/:id/vote` | required | Cast propagation vote (GPS/Home Scene gated; currently-playing assertion required) |
 | GET | `/broadcast/:sceneId/rotation` | required | Retrieve ordered New Releases + Main Rotation pools with metadata |
 | GET | `/broadcast/rotation` | required | Retrieve ordered pools for active scene context (tuned scene first, Home Scene fallback) |
 | GET | `/fair-play/metrics?sceneId=:sceneId` | required | Retrieve scene lifecycle/recurrence diagnostics |
+
+### Implemented support contract
+- `POST /tracks` currently creates a valid track row with uploader ownership, file URL, duration, and optional community attachment.
+- This is a runtime ingestion contract, not a full upload/transcoding pipeline definition.
+- Track creation support exists so artist/discover flows can be exercised through the API instead of direct DB fixture insertion.
 
 ### Planned
 | Method | Path | Auth | Description |
