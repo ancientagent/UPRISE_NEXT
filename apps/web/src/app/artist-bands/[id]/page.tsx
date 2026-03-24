@@ -15,9 +15,16 @@ import {
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
 import { useAuthStore } from '@/store/auth';
 
-function formatLocation(city: string | null, state: string | null) {
+function formatCommunityIdentity(
+  city: string | null,
+  state: string | null,
+  musicCommunity: string | null,
+) {
+  if (city && state && musicCommunity) return `${city}, ${state} • ${musicCommunity}`;
+  if (city && musicCommunity) return `${city} • ${musicCommunity}`;
+  if (state && musicCommunity) return `${state} • ${musicCommunity}`;
   if (city && state) return `${city}, ${state}`;
-  return city || state || 'Unlisted';
+  return musicCommunity || city || state || 'Unlisted';
 }
 
 function formatDuration(seconds: number) {
@@ -154,7 +161,11 @@ export default function ArtistBandProfilePage() {
                 </span>
                 {profile.homeScene ? (
                   <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
-                    {profile.homeScene.name} • {formatLocation(profile.homeScene.city, profile.homeScene.state)}
+                    {formatCommunityIdentity(
+                      profile.homeScene.city,
+                      profile.homeScene.state,
+                      profile.homeScene.musicCommunity,
+                    )}
                   </span>
                 ) : null}
               </div>
@@ -301,7 +312,15 @@ export default function ArtistBandProfilePage() {
                 </div>
                 <div>
                   <dt className="font-medium text-black">Home Scene</dt>
-                  <dd>{profile.homeScene ? `${profile.homeScene.name} • ${formatLocation(profile.homeScene.city, profile.homeScene.state)}` : 'Not set'}</dd>
+                  <dd>
+                    {profile.homeScene
+                      ? formatCommunityIdentity(
+                          profile.homeScene.city,
+                          profile.homeScene.state,
+                          profile.homeScene.musicCommunity,
+                        )
+                      : 'Not set'}
+                  </dd>
                 </div>
                 <div>
                   <dt className="font-medium text-black">Action counts</dt>

@@ -493,11 +493,14 @@ export class CommunitiesService {
           slug: true,
           entityType: true,
           homeSceneId: true,
-          homeScene: {
-            select: {
-              name: true,
-            },
+        homeScene: {
+          select: {
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
           },
+        },
           _count: {
             select: {
               members: true,
@@ -525,11 +528,14 @@ export class CommunitiesService {
           status: true,
           uploadedById: true,
           communityId: true,
-          community: {
-            select: {
-              name: true,
-            },
+        community: {
+          select: {
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
           },
+        },
         },
         orderBy: [{ playCount: 'desc' }, { title: 'asc' }, { id: 'asc' }],
         take: query.limit,
@@ -564,6 +570,9 @@ export class CommunitiesService {
       entityType: artistBand.entityType,
       homeSceneId: artistBand.homeSceneId ?? null,
       homeSceneName: artistBand.homeScene?.name ?? null,
+      homeSceneCity: artistBand.homeScene?.city ?? null,
+      homeSceneState: artistBand.homeScene?.state ?? null,
+      homeSceneMusicCommunity: artistBand.homeScene?.musicCommunity ?? null,
       memberCount: artistBand._count.members,
       followCount: followCountMap.get(artistBand.id) ?? 0,
     }));
@@ -587,6 +596,9 @@ export class CommunitiesService {
         status: track.status,
         communityId: track.communityId ?? null,
         communityName: track.community?.name ?? null,
+        communityCity: track.community?.city ?? null,
+        communityState: track.community?.state ?? null,
+        communityMusicCommunity: track.community?.musicCommunity ?? null,
       });
     }
 
@@ -657,6 +669,9 @@ export class CommunitiesService {
           homeScene: {
             select: {
               name: true,
+              city: true,
+              state: true,
+              musicCommunity: true,
             },
           },
           _count: {
@@ -736,6 +751,9 @@ export class CommunitiesService {
         entityType: artistBand.entityType,
         homeSceneId: artistBand.homeSceneId ?? null,
         homeSceneName: artistBand.homeScene?.name ?? null,
+        homeSceneCity: artistBand.homeScene?.city ?? null,
+        homeSceneState: artistBand.homeScene?.state ?? null,
+        homeSceneMusicCommunity: artistBand.homeScene?.musicCommunity ?? null,
         memberCount: artistBand._count.members,
         followCount: followCountMap.get(artistBand.id) ?? 0,
       }))

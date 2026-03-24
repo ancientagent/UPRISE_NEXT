@@ -19,6 +19,9 @@ export const DiscoverArtistResultSchema = z.object({
   entityType: z.string(),
   homeSceneId: z.string().uuid().or(z.string().min(1)).nullable(),
   homeSceneName: z.string().nullable(),
+  homeSceneCity: z.string().nullable(),
+  homeSceneState: z.string().nullable(),
+  homeSceneMusicCommunity: z.string().nullable(),
   memberCount: z.number().int().nonnegative(),
   followCount: z.number().int().nonnegative(),
 });
@@ -37,6 +40,9 @@ export const DiscoverSongResultSchema = z.object({
   status: z.string(),
   communityId: z.string().uuid().or(z.string().min(1)).nullable(),
   communityName: z.string().nullable(),
+  communityCity: z.string().nullable(),
+  communityState: z.string().nullable(),
+  communityMusicCommunity: z.string().nullable(),
 });
 
 export type DiscoverSongResult = z.infer<typeof DiscoverSongResultSchema>;

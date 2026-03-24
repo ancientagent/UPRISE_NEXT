@@ -109,11 +109,20 @@ function CarouselSection({
   );
 }
 
-function formatOriginIdentity(city: string | null | undefined, musicCommunity: string | null | undefined) {
+function formatCommunityIdentity(
+  city: string | null | undefined,
+  state: string | null | undefined,
+  musicCommunity: string | null | undefined,
+) {
   const cityLabel = city?.trim();
+  const stateLabel = state?.trim();
   const communityLabel = musicCommunity?.trim();
+  if (cityLabel && stateLabel && communityLabel) return `${cityLabel}, ${stateLabel} • ${communityLabel}`;
   if (cityLabel && communityLabel) return `${cityLabel} • ${communityLabel}`;
+  if (cityLabel && stateLabel) return `${cityLabel}, ${stateLabel}`;
+  if (stateLabel && communityLabel) return `${stateLabel} • ${communityLabel}`;
   if (cityLabel) return cityLabel;
+  if (stateLabel) return stateLabel;
   if (communityLabel) return communityLabel;
   return 'Not set';
 }
@@ -340,7 +349,7 @@ export default function DiscoverPage() {
     if (!hasOriginContext) {
       return {
         title: 'Community context required',
-        body: 'Discover travel inherits the city and genre of the community you already left from. Open Discover from a real community context before trying to travel.',
+        body: 'Discover travel inherits the full community identity you already left from. Open Discover from a real community context before trying to travel.',
       };
     }
 
@@ -486,7 +495,7 @@ export default function DiscoverPage() {
           <p className="text-xs uppercase tracking-[0.25em] text-black/50">Discover</p>
           <h1 className="mt-3 text-3xl font-semibold text-black">Discover Uprises, Artists, and Songs</h1>
           <p className="mt-2 text-sm text-black/60">
-            Travel starts from the community you are already in. Discover keeps that genre context and changes geography.
+            Travel starts from the community you are already in. Discover keeps that current community context and changes geography.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex flex-wrap gap-3">
@@ -512,18 +521,25 @@ export default function DiscoverPage() {
               <p className="text-xs uppercase tracking-[0.2em] text-black/50">Uprise Travel</p>
               <h2 className="mt-2 text-lg font-semibold text-black">Search by city or state</h2>
               <p className="mt-1 text-sm text-black/60">
-                Travel keeps your current community genre fixed and changes geography around it.
+                Travel keeps your current community context fixed and changes geography around it.
               </p>
             </div>
             <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
-              <p>Origin community: {formatOriginIdentity(originScene?.city ?? null, originMusicCommunity)}</p>
+              <p>
+                Origin community:{' '}
+                {formatCommunityIdentity(
+                  originScene?.city ?? null,
+                  originScene?.state ?? null,
+                  originMusicCommunity,
+                )}
+              </p>
               <p>Scope: <span className="capitalize">{tier}</span></p>
             </div>
           </div>
 
           {!hasOriginContext ? (
             <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              Discover travel needs an active community context so the city and genre are already known.
+              Discover travel needs an active community context so the city, state, and music community are already known.
             </div>
           ) : null}
 
@@ -733,6 +749,13 @@ export default function DiscoverPage() {
                           <p className="text-xs text-black/60">
                             {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
                           </p>
+                          <p className="text-xs text-black/50">
+                            {formatCommunityIdentity(
+                              artist.homeSceneCity,
+                              artist.homeSceneState,
+                              artist.homeSceneMusicCommunity,
+                            )}
+                          </p>
                         </Link>
                       </li>
                     ))}
@@ -755,6 +778,13 @@ export default function DiscoverPage() {
                             <p className="text-sm font-medium text-black">{song.title}</p>
                             <p className="text-xs text-black/60">
                               {song.artist} • {song.playCount} plays • {song.likeCount} likes
+                            </p>
+                            <p className="text-xs text-black/50">
+                              {formatCommunityIdentity(
+                                song.communityCity,
+                                song.communityState,
+                                song.communityMusicCommunity,
+                              )}
                             </p>
                           </Link>
                         ) : (
@@ -846,6 +876,13 @@ export default function DiscoverPage() {
                           <h4 className="text-base font-semibold text-black">{artist.name}</h4>
                           <p className="mt-1 text-xs text-black/60">
                             {artist.followCount} followers • {artist.memberCount} members
+                          </p>
+                          <p className="mt-1 text-xs text-black/50">
+                            {formatCommunityIdentity(
+                              artist.homeSceneCity,
+                              artist.homeSceneState,
+                              artist.homeSceneMusicCommunity,
+                            )}
                           </p>
                         </Link>
                       </article>

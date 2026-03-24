@@ -4,26 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
+import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
-
-type CommunityProfile = {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string | null;
-  avatar?: string | null;
-  coverImage?: string | null;
-  memberCount?: number;
-  radius?: number | null;
-  coordinates?: { lat: number; lng: number } | null;
-  _count?: {
-    members?: number;
-    tracks?: number;
-    events?: number;
-  };
-};
 
 type CommunityFeedItem = {
   id: string;
@@ -38,7 +22,7 @@ export default function CommunityProfilePage() {
   const { token } = useAuthStore();
   const { homeScene, tunedScene, isVisitor } = useOnboardingStore();
 
-  const [community, setCommunity] = useState<CommunityProfile | null>(null);
+  const [community, setCommunity] = useState<CommunityWithDistance | null>(null);
   const [feedItems, setFeedItems] = useState<CommunityFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +74,7 @@ export default function CommunityProfilePage() {
 
         const [communityRes, feedRes] = await withTimeout(
           Promise.all([
-            api.get<CommunityProfile>(`/communities/${communityId}`, { token }),
+            api.get<CommunityWithDistance>(`/communities/${communityId}`, { token }),
             api.get<CommunityFeedItem[]>(`/communities/${communityId}/feed?limit=10`, { token }),
           ]),
           'Timed out while loading community profile.',
@@ -151,6 +135,11 @@ export default function CommunityProfilePage() {
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <p className="text-xs uppercase tracking-[0.22em] text-black/50">Community Profile</p>
           <h1 className="mt-2 text-3xl font-semibold text-black">{community.name}</h1>
+          <p className="mt-1 text-sm text-black/60">
+            {community.city && community.state && community.musicCommunity
+              ? `${community.city}, ${community.state} • ${community.musicCommunity}`
+              : 'Community identity unavailable.'}
+          </p>
           <p className="mt-2 text-sm text-black/70">{community.description ?? 'No description yet.'}</p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
 
