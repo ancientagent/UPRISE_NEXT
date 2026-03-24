@@ -27,7 +27,7 @@ interface ReverseGeocodeFallbackResponse {
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { homeScene, votingEligible, gpsReason, setHomeScene, setGpsStatus, setVotingEligibility } =
+  const { homeScene, votingEligible, gpsReason, setHomeScene, setGpsStatus, setVotingEligibility, setDiscoveryContext } =
     useOnboardingStore();
   const { token } = useAuthStore();
   const [step, setStep] = useState(0);
@@ -67,9 +67,24 @@ export default function OnboardingPage() {
 
     if (token) {
       try {
-        const response = await api.post<{ pioneer?: boolean }>('/onboarding/home-scene', selection, { token });
+        const response = await api.post<{ pioneer?: boolean; sceneId?: string | null }>('/onboarding/home-scene', selection, { token });
         const pioneer = Boolean(response.data?.pioneer);
         setIsPioneer(pioneer);
+        if (response.data?.sceneId) {
+          setDiscoveryContext({
+            tunedSceneId: response.data.sceneId,
+            tunedScene: {
+              id: response.data.sceneId,
+              name: `${selection.city}, ${selection.state} ${selection.musicCommunity}`,
+              city: selection.city,
+              state: selection.state,
+              musicCommunity: selection.musicCommunity,
+              tier: 'city',
+              isActive: !pioneer,
+            },
+            isVisitor: false,
+          });
+        }
 
         if (pioneer) {
           try {

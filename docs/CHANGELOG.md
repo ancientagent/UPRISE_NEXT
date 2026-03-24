@@ -1874,4 +1874,6 @@
 - Runtime track creation for Discover QA (2026-03-23): added authenticated `POST /tracks` so local track rows can be created through the API instead of direct DB fixtures, with focused service coverage and API README update; see `docs/handoff/2026-03-23_runtime-track-create-path.md`.
 
 - Broadcast spec reconciliation (2026-03-23): updated `docs/specs/broadcast/radiyo-and-fair-play.md` to record the implemented `POST /tracks` runtime ingestion contract and clarify that it is not yet a full upload/transcoding pipeline spec.
+
+- Discover/Plot auth-state hardening (2026-03-23): persisted scene context immediately after onboarding Home Scene selection, stopped Discover from exposing dead-end community entry without auth, and replaced false Plot read failures with explicit sign-in-required states across Feed/Events/Promotions/Statistics panels.
 - Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out  history state, and added  to remove persistent route QA noise; see .

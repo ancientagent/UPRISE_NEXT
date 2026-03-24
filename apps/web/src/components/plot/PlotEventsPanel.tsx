@@ -35,6 +35,13 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
   const [error, setError] = useState<string | null>(null);
 
   const fetchEvents = useCallback(async () => {
+    if (!token) {
+      setItems([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -80,9 +87,15 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
         </Button>
       </div>
 
-      {loading && items.length === 0 ? <EventsSkeletonRows /> : null}
+      {!token && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <p>Sign in is required to load scene events for this context.</p>
+        </div>
+      )}
 
-      {error && (
+      {token && loading && items.length === 0 ? <EventsSkeletonRows /> : null}
+
+      {token && error && (
         <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           <p>Events read failed for this scene context. {error}</p>
           <Button
@@ -96,7 +109,7 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
         </div>
       )}
 
-      {!loading && !error && items.length === 0 && (
+      {token && !loading && !error && items.length === 0 && (
         <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
           <p className="text-sm font-medium text-black">No scene events are scheduled for this context.</p>
           <p className="mt-1 text-xs text-black/55">
@@ -105,7 +118,7 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
         </div>
       )}
 
-      {!loading && !error && items.length > 0 && (
+      {token && !loading && !error && items.length > 0 && (
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
             <li key={item.id} className="rounded-xl border border-black/10 p-3">

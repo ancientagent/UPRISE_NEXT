@@ -84,6 +84,15 @@ export default function SeedFeedPanel({
 
   const fetchPage = useCallback(
     async (before?: string | null) => {
+      if (!token) {
+        setItems([]);
+        setNextCursor(null);
+        setResolvedSceneId(communityId);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
@@ -124,7 +133,13 @@ export default function SeedFeedPanel({
       </p>
       <p className="mt-2 text-xs text-black/55">{contextLabel}</p>
 
-      {error && (
+      {!token ? (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <p>Sign in is required to load the S.E.E.D feed for this scene context.</p>
+        </div>
+      ) : null}
+
+      {token && error && (
         <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           <p>Feed read failed for this scene context. {error}</p>
           <Button
@@ -138,18 +153,18 @@ export default function SeedFeedPanel({
         </div>
       )}
 
-      {!error && loading && items.length === 0 ? (
+      {token && !error && loading && items.length === 0 ? (
         <FeedSkeletonRows />
       ) : null}
 
-      {!error && items.length === 0 && !loading ? (
+      {token && !error && items.length === 0 && !loading ? (
         <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
           <p className="text-sm font-medium text-black">No current scene activity for this context.</p>
           <p className="mt-1 text-xs text-black/55">
             When explicit community actions land here, every listener in the same scene sees the same feed.
           </p>
         </div>
-      ) : (
+      ) : token ? (
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
             <li key={item.id} className="rounded-xl border border-black/10 p-3">
@@ -173,13 +188,13 @@ export default function SeedFeedPanel({
             </li>
           ))}
         </ul>
-      )}
+      ) : null}
 
       <div className="mt-4 flex items-center gap-2">
         <Button
           variant="outline"
           size="sm"
-          disabled={loading || !nextCursor}
+          disabled={!token || loading || !nextCursor}
           onClick={() => fetchPage(nextCursor)}
         >
           {loading ? 'Loading...' : 'Load More'}

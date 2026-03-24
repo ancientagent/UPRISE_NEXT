@@ -42,6 +42,13 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
   const [error, setError] = useState<string | null>(null);
 
   const fetchPromotions = useCallback(async () => {
+    if (!token) {
+      setItems([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -73,9 +80,15 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
         Explicit local offers surface only. No Fair Play, governance, or recommendation effects.
       </p>
 
-      {loading && items.length === 0 ? <PromotionsSkeletonRows /> : null}
+      {!token && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <p>Sign in is required to load promotions for this scene context.</p>
+        </div>
+      )}
 
-      {error && (
+      {token && loading && items.length === 0 ? <PromotionsSkeletonRows /> : null}
+
+      {token && error && (
         <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           <p>Promotions read failed for this scene context. {error}</p>
           <Button
@@ -89,7 +102,7 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
         </div>
       )}
 
-      {!loading && !error && items.length === 0 && (
+      {token && !loading && !error && items.length === 0 && (
         <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
           <p className="text-sm font-medium text-black">No local offers are active for this scene context.</p>
           <p className="mt-1 text-xs text-black/55">
@@ -98,7 +111,7 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
         </div>
       )}
 
-      {!loading && !error && items.length > 0 && (
+      {token && !loading && !error && items.length > 0 && (
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
             <li key={item.id} className="rounded-xl border border-black/10 p-3">

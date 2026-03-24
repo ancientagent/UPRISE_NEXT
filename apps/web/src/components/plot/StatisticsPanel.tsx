@@ -59,6 +59,12 @@ export default function StatisticsPanel({
   // City-only: fetch nearby communities for local map.
   useEffect(() => {
     async function fetchNearbyCommunities() {
+      if (!token) {
+        setCommunities([]);
+        onCommunitiesUpdate?.([]);
+        return;
+      }
+
       if (!shouldFetchNearbyForTier(selectedTier)) {
         setCommunities([]);
         onCommunitiesUpdate?.([]);
@@ -105,6 +111,14 @@ export default function StatisticsPanel({
   // Tier-scoped statistics use explicit community anchor when selected, otherwise active-scene fallback.
   useEffect(() => {
     async function fetchStatistics() {
+      if (!token) {
+        setStatistics(null);
+        setActiveSceneId(null);
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
@@ -139,6 +153,12 @@ export default function StatisticsPanel({
 
   useEffect(() => {
     async function fetchSceneMap() {
+      if (!token) {
+        setSceneMap(null);
+        setMapError(null);
+        return;
+      }
+
       const request = resolveSceneMapRequest(
         selectedCommunity?.id ?? null,
         activeSceneId,
@@ -188,6 +208,14 @@ export default function StatisticsPanel({
   }
 
   if (!selectedCommunity && !activeSceneId) {
+    if (!token) {
+      return (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 h-full">
+          <p className="text-sm text-amber-900">Sign in is required to load scene statistics.</p>
+        </div>
+      );
+    }
+
     return (
       <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
         <div className="text-center py-8">

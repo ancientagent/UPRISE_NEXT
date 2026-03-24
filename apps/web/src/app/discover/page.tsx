@@ -171,8 +171,13 @@ export default function DiscoverPage() {
     };
   }, [homeScene?.state, locationQuery, originMusicCommunity, tier, tunedScene?.state]);
 
-  const activeSceneId = tunedSceneId ?? null;
+  const activeSceneId = tunedSceneId ?? tunedScene?.id ?? null;
   const activeSceneName = tunedScene?.name ?? 'current community';
+  const localDiscoverLockedReason = !activeSceneId
+    ? 'Retune to an Uprise to unlock local discovery.'
+    : !token
+      ? 'Sign in to search this community and open its full Discover surfaces.'
+      : 'RaDIYo retunes here first.';
 
   useEffect(() => {
     async function fetchContext() {
@@ -641,9 +646,15 @@ export default function DiscoverPage() {
                       >
                         {savingUpriseSceneId === item.sceneId ? 'Adding...' : 'Add'}
                       </Button>
-                      <Button asChild size="sm" variant="outline">
-                        <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
-                      </Button>
+                      {token ? (
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
+                        </Button>
+                      ) : (
+                        <Button size="sm" variant="outline" disabled>
+                          Visit {item.name}
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
@@ -698,7 +709,7 @@ export default function DiscoverPage() {
             </div>
             <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
               <p>Visitor mode: {isVisitor ? 'Active' : 'Off'}</p>
-              <p>{activeSceneId ? 'RaDIYo retunes here first.' : 'Retune to an Uprise to unlock local discovery.'}</p>
+              <p>{localDiscoverLockedReason}</p>
             </div>
           </div>
 
@@ -710,12 +721,18 @@ export default function DiscoverPage() {
               className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
               disabled={!token || !activeSceneId}
             />
-            {activeSceneId ? (
+            {token && activeSceneId ? (
               <Button asChild variant="outline" size="sm">
                 <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
               </Button>
             ) : null}
           </div>
+
+          {activeSceneId && !token ? (
+            <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Sign in is required to search this community and open its full Discover sections.
+            </div>
+          ) : null}
 
           {localSearchLoading ? (
             <p className="mt-3 text-sm text-black/60">Searching this community...</p>
