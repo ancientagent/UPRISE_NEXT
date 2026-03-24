@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-24T04:33:00Z",
+  "lane": "lane-e-ux-qarev-batch27",
+  "sourceFiles": [
+    "mvp-slices-batch27-ux-closeout.json"
+  ],
+  "summary": {
+    "total": 2,
+    "queued": 2,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXQAREV-884A",
+      "title": "Batch27 fresh current-HEAD QA sweep",
+      "prompt": "Execute one MVP slice only: run a fresh live QA sweep on current HEAD across Discover, artist, community, registrar, plot, users, and onboarding; discard stale findings; report only current reproducible defects with exact evidence.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXQAREV-885A",
+      "title": "Batch27 merge-readiness closeout memo",
+      "prompt": "Execute one MVP slice only: produce the final Batch27 closeout memo summarizing current reproducible-defect status, exact verification commands run, residual risks, and merge/readiness recommendation for the branch.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    }
+  ]
+}

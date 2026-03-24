@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-24T04:33:00Z",
+  "lane": "lane-a-ux-plot-batch27",
+  "sourceFiles": [
+    "mvp-slices-batch27-ux-closeout.json"
+  ],
+  "summary": {
+    "total": 2,
+    "queued": 2,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXWEB-876A",
+      "title": "Batch27 web residual triage and patch",
+      "prompt": "Execute one MVP slice only: inspect current routed web surfaces on current HEAD, fix only current reproducible UX/state defects in Discover/community/artist/registrar/onboarding, and publish exact before-after evidence. If no reproducible defect exists, record a no-defect handoff instead of inventing work.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXWEB-877A",
+      "title": "Batch27 web auth and identity regression lock",
+      "prompt": "Execute one MVP slice only: tighten focused regression coverage for auth-state clarity and full community-identity rendering on touched web routes only, based on current reproduced behavior or current no-defect evidence.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-query-state.test.ts discovery-client.test.ts communities-client.test.ts plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    }
+  ]
+}

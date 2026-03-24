@@ -1,3 +1,12 @@
+# 📜 CHANGELOG.md — UPRISE Monorepo
+
+**Repository:** `music-community-platform`  
+**Policy:** Auto-updated via CI from PR titles & labels. Manual edits allowed for summaries.
+
+---
+
+## [Unreleased]
+### Added
 - Added Batch21 UX execution package:
   - `docs/solutions/MVP_UX_BATCH21_EXECUTION_PLAN.md`
   - `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch21.json`
@@ -10,15 +19,7 @@
   - `docs/solutions/MVP_UX_BATCH19_EXECUTION_PLAN.md`
   - `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch19.json`
   - `docs/handoff/2026-03-17_batch19-ux-queues-and-plan.md`
-# 📜 CHANGELOG.md — UPRISE Monorepo
-
-**Repository:** `music-community-platform`  
-**Policy:** Auto-updated via CI from PR titles & labels. Manual edits allowed for summaries.
-
----
-
-## [Unreleased]
-### Added
+- Seeded Batch27 remaining-work queue files for the verified Discover/runtime closeout pass and documented the queue scope in `docs/handoff/2026-03-23_batch27-queue-seeding.md`.
 - Tightened Discover and artist-page identity rendering so community labels only render from the full `city + state + music community` tuple, removing partial fallback identity strings and the generic disabled `Visit Community` CTA from `apps/web/src/app/discover/page.tsx` and `apps/web/src/app/artist-bands/[id]/page.tsx`; see `docs/handoff/2026-03-23_strict-community-identity-rendering.md`.
 - Tightened `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md` to remove the lingering `music community/genre` phrasing and keep the implementation-facing Discover lock aligned to inherited current-community context.
 - Extended Discover and related destination surfaces to carry structural community identity through runtime data instead of collapsed display names, adding city/state/music-community fields to Discover artist/song results in `packages/types/src/discovery.ts` and `apps/api/src/communities/communities.service.ts`, updating `apps/web/src/app/discover/page.tsx`, `apps/web/src/app/community/[id]/page.tsx`, and `apps/web/src/app/artist-bands/[id]/page.tsx` to render the full tuple, and aligning `apps/web/src/lib/types/community.ts`; see `docs/handoff/2026-03-23_discover-structural-community-identity-runtime.md`.
