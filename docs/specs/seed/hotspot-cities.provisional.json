@@ -17,28 +17,166 @@
     }
   ],
   "cities": [
-    { "city": "Nashville", "state": "Tennessee", "source": "fifty-grande-top-20-2023", "rank": 1 },
-    { "city": "New Orleans", "state": "Louisiana", "source": "fifty-grande-top-20-2023", "rank": 2 },
-    { "city": "New York", "state": "New York", "source": "fifty-grande-top-20-2023", "rank": 3 },
-    { "city": "Austin", "state": "Texas", "source": "fifty-grande-top-20-2023", "rank": 4 },
-    { "city": "Los Angeles", "state": "California", "source": "fifty-grande-top-20-2023", "rank": 5 },
-    { "city": "Las Vegas", "state": "Nevada", "source": "fifty-grande-top-20-2023", "rank": 6 },
-    { "city": "Chicago", "state": "Illinois", "source": "fifty-grande-top-20-2023", "rank": 7 },
-    { "city": "Memphis", "state": "Tennessee", "source": "fifty-grande-top-20-2023", "rank": 8 },
-    { "city": "Denver", "state": "Colorado", "source": "fifty-grande-top-20-2023", "rank": 9 },
-    { "city": "San Francisco", "state": "California", "source": "fifty-grande-top-20-2023", "rank": 10 },
-    { "city": "Boston", "state": "Massachusetts", "source": "fifty-grande-top-20-2023", "rank": 11 },
-    { "city": "Washington", "state": "District of Columbia", "source": "fifty-grande-top-20-2023", "rank": 12 },
-    { "city": "Seattle", "state": "Washington", "source": "fifty-grande-top-20-2023", "rank": 13 },
-    { "city": "Asheville", "state": "North Carolina", "source": "fifty-grande-top-20-2023", "rank": 13 },
-    { "city": "Detroit", "state": "Michigan", "source": "fifty-grande-top-20-2023", "rank": 15 },
-    { "city": "Philadelphia", "state": "Pennsylvania", "source": "fifty-grande-top-20-2023", "rank": 15 },
-    { "city": "Kansas City", "state": "Missouri", "source": "fifty-grande-top-20-2023", "rank": 17 },
-    { "city": "Dallas", "state": "Texas", "source": "fifty-grande-top-20-2023", "rank": 18 },
-    { "city": "Columbus", "state": "Ohio", "source": "fifty-grande-top-20-2023", "rank": 18 },
-    { "city": "Portland", "state": "Oregon", "source": "fifty-grande-top-20-2023", "rank": 18 },
-    { "city": "Houston", "state": "Texas", "source": "founder-supplement-2026-03-24", "rank": null },
-    { "city": "San Antonio", "state": "Texas", "source": "founder-supplement-2026-03-24", "rank": null },
-    { "city": "Long Beach", "state": "California", "source": "founder-supplement-2026-03-24", "rank": null }
+    {
+      "city": "Nashville",
+      "state": "Tennessee",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 1,
+      "launchOpen": false
+    },
+    {
+      "city": "New Orleans",
+      "state": "Louisiana",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 2,
+      "launchOpen": false
+    },
+    {
+      "city": "New York",
+      "state": "New York",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 3,
+      "launchOpen": false
+    },
+    {
+      "city": "Austin",
+      "state": "Texas",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 4,
+      "launchOpen": true
+    },
+    {
+      "city": "Los Angeles",
+      "state": "California",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 5,
+      "launchOpen": true
+    },
+    {
+      "city": "Las Vegas",
+      "state": "Nevada",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 6,
+      "launchOpen": false
+    },
+    {
+      "city": "Chicago",
+      "state": "Illinois",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 7,
+      "launchOpen": false
+    },
+    {
+      "city": "Memphis",
+      "state": "Tennessee",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 8,
+      "launchOpen": false
+    },
+    {
+      "city": "Denver",
+      "state": "Colorado",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 9,
+      "launchOpen": false
+    },
+    {
+      "city": "San Francisco",
+      "state": "California",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 10,
+      "launchOpen": false
+    },
+    {
+      "city": "Boston",
+      "state": "Massachusetts",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 11,
+      "launchOpen": false
+    },
+    {
+      "city": "Washington",
+      "state": "District of Columbia",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 12,
+      "launchOpen": false
+    },
+    {
+      "city": "Seattle",
+      "state": "Washington",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 13,
+      "launchOpen": false
+    },
+    {
+      "city": "Asheville",
+      "state": "North Carolina",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 13,
+      "launchOpen": false
+    },
+    {
+      "city": "Detroit",
+      "state": "Michigan",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 15,
+      "launchOpen": false
+    },
+    {
+      "city": "Philadelphia",
+      "state": "Pennsylvania",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 15,
+      "launchOpen": false
+    },
+    {
+      "city": "Kansas City",
+      "state": "Missouri",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 17,
+      "launchOpen": false
+    },
+    {
+      "city": "Dallas",
+      "state": "Texas",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 18,
+      "launchOpen": true
+    },
+    {
+      "city": "Columbus",
+      "state": "Ohio",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 18,
+      "launchOpen": false
+    },
+    {
+      "city": "Portland",
+      "state": "Oregon",
+      "source": "fifty-grande-top-20-2023",
+      "rank": 18,
+      "launchOpen": false
+    },
+    {
+      "city": "Houston",
+      "state": "Texas",
+      "source": "founder-supplement-2026-03-24",
+      "rank": null,
+      "launchOpen": true
+    },
+    {
+      "city": "San Antonio",
+      "state": "Texas",
+      "source": "founder-supplement-2026-03-24",
+      "rank": null,
+      "launchOpen": false
+    },
+    {
+      "city": "Long Beach",
+      "state": "California",
+      "source": "founder-supplement-2026-03-24",
+      "rank": null,
+      "launchOpen": false
+    }
   ]
 }

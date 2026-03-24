@@ -22,3 +22,9 @@
 ## Notes
 - `Dallas, Texas` is already included from the Fifty Grande source list.
 - The repo still does not have a canonlocked launch-city matrix; this file is a practical candidate inventory until that exists.
+
+## Current launch-open cities
+- `Austin, Texas`
+- `Los Angeles, California`
+- `Houston, Texas`
+- `Dallas, Texas`

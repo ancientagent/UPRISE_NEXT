@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Marked `Austin`, `Los Angeles`, `Houston`, and `Dallas` as `launchOpen: true` in `docs/specs/seed/hotspot-cities.provisional.json` so the current branch has an explicit operational launch-open subset without reopening broader city inventory work.
 - Added `docs/specs/seed/hotspot-cities.provisional.json` as a provisional hotspot / launch-city candidate inventory, combining the Fifty Grande top-20 music cities with founder-supplied supplemental candidates (`Houston`, `San Antonio`, `Long Beach`), and documented its non-canon role in `docs/specs/seed/README.md`.
 - Published the final Batch27 merge-readiness closeout memo in `docs/handoff/2026-03-24_SLICE-UXQAREV-885A.md`, recording the no-defect Lane E sweep, exact verification baseline, residual risks, and merge recommendation for `feat/ux-founder-locks-and-harness`.
 - Closed the remaining unsigned `/discover` Home Scene tuple gap by letting current-community Discover unlock from valid `{city, state, music community}` onboarding context even when no live city-scene anchor exists yet, opening anonymous current-community search/highlights reads in the Discover API/client, adding regression coverage in `apps/web/__tests__/discover-page-lock.test.ts`, `apps/web/__tests__/discovery-client.test.ts`, and `apps/api/test/communities.discovery.controller.test.ts`, and recording the slice in `docs/handoff/2026-03-24_discover-unsigned-home-scene-unlock-fix.md`.
