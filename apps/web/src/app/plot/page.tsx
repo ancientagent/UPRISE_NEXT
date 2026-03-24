@@ -109,10 +109,11 @@ export default function PlotPage() {
     async function resolveDefaultCommunity() {
       if (selectedCommunity) return;
       if (!hasHomeScene) return;
+      if (!token) return;
 
       try {
         if (tunedSceneId) {
-          const tunedResponse = await getCommunityById(tunedSceneId, token || undefined);
+          const tunedResponse = await getCommunityById(tunedSceneId, token);
           if (tunedResponse) {
             setSelectedCommunity(tunedResponse);
             return;
@@ -127,7 +128,7 @@ export default function PlotPage() {
               state: homeScene.state,
               musicCommunity: homeScene.musicCommunity,
             },
-            token || undefined,
+            token,
           );
 
           if (homeResponse) {

@@ -33,6 +33,13 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   useEffect(() => {
     async function fetchTopSongs() {
+      if (!token) {
+        setSongs([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
@@ -42,7 +49,7 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
           : `/communities/active/statistics?tier=${selectedTier}`;
         const response = await api.get<CommunityStatisticsResponse>(
           path,
-          { token: token || undefined }
+          { token }
         );
 
         setSongs((response.data?.topSongs ?? []).slice(0, 40));
@@ -77,6 +84,14 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
             ))}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (!token) {
+    return (
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 h-full">
+        <p className="text-sm text-amber-900">Sign in is required to load Top 40 songs for this scene context.</p>
       </div>
     );
   }

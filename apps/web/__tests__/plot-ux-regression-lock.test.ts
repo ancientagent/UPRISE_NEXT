@@ -204,6 +204,27 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Open Registrar');
   });
 
+  it('avoids protected community resolution reads for unsigned /plot states', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('if (!token) return;');
+    expect(plotPageSource).toContain('const tunedResponse = await getCommunityById(tunedSceneId, token);');
+    expect(plotPageSource).toContain('const homeResponse = await resolveHomeCommunity(');
+    expect(plotPageSource).toContain('musicCommunity: homeScene.musicCommunity,');
+    expect(plotPageSource).toContain('token,');
+  });
+
+  it('keeps Top 40 in explicit signed-in terminal state instead of protected-read failure for unsigned statistics', () => {
+    const topSongsSource = readRepoFile('src/components/plot/TopSongsPanel.tsx');
+
+    expect(topSongsSource).toContain('if (!token) {');
+    expect(topSongsSource).toContain("setSongs([]);");
+    expect(topSongsSource).toContain("setError(null);");
+    expect(topSongsSource).toContain("setLoading(false);");
+    expect(topSongsSource).toContain("Sign in is required to load Top 40 songs for this scene context.");
+    expect(topSongsSource).toContain('{ token }');
+  });
+
   it('locks feed copy to scene-scoped deterministic, non-personalized states', () => {
     const feedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
 
