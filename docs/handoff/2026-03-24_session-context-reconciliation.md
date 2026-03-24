@@ -42,6 +42,7 @@ Primary sources:
 - Canon/legacy-canon text confirms the concept that major hotspot cities will be identified and pre-populate in beta.
 - The repo does not currently preserve a concrete hotspot-city or launch-city matrix.
 - The active repo therefore preserves the fallback rule, but not the actual named fallback-city inventory.
+- A provisional implementation-support candidate inventory now exists in `docs/specs/seed/hotspot-cities.provisional.json`, combining the Fifty Grande top-20 music cities with founder-supplied supplemental candidates (`Houston`, `San Antonio`, `Long Beach`).
 
 Supporting source:
 - `docs/canon/Legacy Narrative plus Context .md`
