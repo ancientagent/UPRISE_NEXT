@@ -33,4 +33,12 @@ describe('/discover current-community lock', () => {
     expect(discoverSource).toContain('setHighlights(emptyHighlights);');
     expect(discoverSource).not.toContain('Sign in is required to search this community and open its full Discover sections.');
   });
+
+  it('keeps signed-out discover destinations explicit instead of linking directly into auth-dead-end artist pages', () => {
+    const discoverSource = readRepoFile('src/app/discover/page.tsx');
+
+    expect(discoverSource).toContain('Sign in is required to open artist pages and change Home Scene from Discover.');
+    expect(discoverSource).toContain("{song.artistBandId && token ? (");
+    expect(discoverSource).toContain("{savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}");
+  });
 });

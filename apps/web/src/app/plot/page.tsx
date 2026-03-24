@@ -16,7 +16,7 @@ import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/compone
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 import { buildRadiyoBroadcastLabel } from '@/components/plot/tier-guard';
 import { getDiscoveryContext } from '@/lib/discovery/client';
-import { toDiscoveryContextPatch } from '@/lib/discovery/context';
+import { mergeDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
   getCommunityById,
   getCommunityStatistics,
@@ -67,7 +67,7 @@ const singlesAndPlaylistsItems: Array<{ id: string; label: string; kind: 'track'
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, pioneerFollowUp, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
+  const { homeScene, pioneerFollowUp, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
   const { token, user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<PlotTab>('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
@@ -97,13 +97,19 @@ export default function PlotPage() {
       if (!token) return;
       try {
         const response = await getDiscoveryContext(token);
-        setDiscoveryContext(toDiscoveryContextPatch(response));
+        setDiscoveryContext(
+          mergeDiscoveryContextPatch(response, {
+            tunedSceneId,
+            tunedScene,
+            isVisitor,
+          }),
+        );
       } catch {
         // Keep local state if context fetch fails.
       }
     }
     fetchDiscoveryContext();
-  }, [token, setDiscoveryContext]);
+  }, [isVisitor, setDiscoveryContext, token, tunedScene, tunedSceneId]);
 
   useEffect(() => {
     async function resolveDefaultCommunity() {
@@ -430,9 +436,6 @@ export default function PlotPage() {
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Button onClick={() => router.push('/onboarding')}>Complete Onboarding</Button>
-              <Button variant="outline" onClick={() => router.push('/discover')}>
-                Browse Discover
-              </Button>
             </div>
           </section>
 
@@ -459,27 +462,12 @@ export default function PlotPage() {
             onPointerMove={handleProfilePointerMove}
             onPointerUp={handleProfilePointerUp}
           >
-            <div className="flex min-w-0 items-center gap-3.5">
-              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all duration-200 ${profilePanelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-11 w-11 text-sm'}`}>
-                {user?.displayName?.[0] || user?.username?.[0] || 'U'}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold leading-tight text-black">
-                  {user?.displayName || user?.username || 'User'}
-                </p>
-                <p className="truncate text-xs text-black/60">@{user?.username || 'listener'}</p>
-              </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold leading-tight text-black">
+                {user?.displayName || user?.username || 'User'}
+              </p>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${
-                profilePanelState === 'expanded'
-                  ? 'bg-[#b7d43f]/30 text-black'
-                  : profilePanelState === 'peek'
-                    ? 'bg-[#5da9ff]/20 text-black'
-                    : 'bg-black/10 text-black/70'
-              }`}>
-                {profilePanelState}
-              </span>
               <div className="relative">
                 <Button
                   type="button"

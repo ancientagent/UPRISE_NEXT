@@ -325,9 +325,15 @@ export default function RegistrarPage() {
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <h2 className="text-lg font-semibold text-black">Registration Actions</h2>
           <p className="mt-1 text-sm text-black/60">Choose a registrar action to begin.</p>
+          {!token && (
+            <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              Sign in is required before opening registrar submission actions.
+            </p>
+          )}
           <div className="mt-4">
             <Button
               variant={selectedAction === 'artist_band' ? 'default' : 'outline'}
+              disabled={!token}
               onClick={() => setSelectedAction('artist_band')}
             >
               Band / Artist Registration
@@ -335,7 +341,7 @@ export default function RegistrarPage() {
           </div>
         </section>
 
-        {selectedAction === 'artist_band' && (
+        {selectedAction === 'artist_band' && token && (
           <section className="rounded-2xl border border-black/10 bg-white p-6">
             <h2 className="text-lg font-semibold text-black">Artist/Band Registration Form</h2>
             <p className="mt-1 text-sm text-black/60">

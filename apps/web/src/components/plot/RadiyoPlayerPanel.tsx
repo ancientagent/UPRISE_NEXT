@@ -144,7 +144,7 @@ export default function RadiyoPlayerPanel({
             <button
               type="button"
               className="h-8 rounded-xl border border-white/20 px-2 text-xs font-medium text-blue-100 hover:bg-white/10"
-              aria-label="Back to RADIYO"
+              aria-label="Eject to RADIYO"
               onClick={onCollectionEject}
             >
               Eject
@@ -161,61 +161,12 @@ export default function RadiyoPlayerPanel({
       </div>
 
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-[0.9rem] border border-white/12 bg-white/[0.03] px-2 py-2">
-        <div className="flex items-center gap-2">
-          {isRadiyoMode ? (
-            <>
-              <button
-                type="button"
-                className="h-6.5 rounded-lg border border-white/20 px-2 text-[10px] text-lime-300 hover:bg-white/10"
-                aria-label="Play"
-              >
-                Play
-              </button>
-              <button
-                type="button"
-                className="h-6.5 rounded-lg border border-white/20 px-2 text-[10px] text-lime-300 hover:bg-white/10"
-                aria-label="Pause"
-              >
-                Pause
-              </button>
-              <button
-                type="button"
-                className="h-6.5 rounded-lg border border-white/20 px-2 text-[10px] text-lime-300 hover:bg-white/10"
-                aria-label="Add to collection"
-              >
-                Add
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-blue-200 hover:bg-white/10"
-                onClick={onCollectionEject}
-                aria-label="Back to RADIYO"
-              >
-                Back to RADIYO
-              </button>
-              <button
-                type="button"
-                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-blue-200 hover:bg-white/10"
-                aria-label="Pause"
-              >
-                Pause
-              </button>
-              <button
-                type="button"
-                className="h-7 rounded-lg border border-white/20 px-2.5 text-[11px] text-blue-200 hover:bg-white/10"
-                aria-label="Shuffle collection"
-              >
-                Shuffle
-              </button>
-            </>
-          )}
-        </div>
-
-        <div className="text-right text-[11px] font-medium text-white/58">
-          <p>{isRadiyoMode ? 'Collection starts from an expanded-profile selection.' : 'Return path is explicit via eject.'}</p>
+        <div className="text-[11px] font-medium text-white/58">
+          <p>
+            {isRadiyoMode
+              ? 'Tap City, State, or National to start that broadcast. Tap the active tier again to stop.'
+              : 'Collection mode stays selection-driven. Use eject to return to RADIYO.'}
+          </p>
           <p className="mt-1">
             Wheel: {wheelActions.map((action) => (action.position ? `${action.position} ${action.label}` : action.label)).join(' • ')}
           </p>

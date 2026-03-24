@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
@@ -236,11 +237,16 @@ export default function UserProfilePage() {
             <ul className="mt-4 space-y-2">
               {profile.managedArtistBands.map((entity) => (
                 <li key={entity.id} className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2">
-                  <p className="text-sm font-medium text-black">{entity.name}</p>
-                  <p className="text-xs text-black/60">
-                    {formatArtistBandEntityType(entity.entityType)} • {entity.slug}
-                    {entity.membershipRole ? ` • ${entity.membershipRole}` : ''}
-                  </p>
+                  <Link
+                    href={`/artist-bands/${entity.id}`}
+                    className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                  >
+                    <p className="text-sm font-medium text-black">{entity.name}</p>
+                    <p className="text-xs text-black/60">
+                      {formatArtistBandEntityType(entity.entityType)} • {entity.slug}
+                      {entity.membershipRole ? ` • ${entity.membershipRole}` : ''}
+                    </p>
+                  </Link>
                 </li>
               ))}
             </ul>

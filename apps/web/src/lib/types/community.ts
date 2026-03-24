@@ -4,6 +4,8 @@ export type CommunityWithDistance = Community & {
   city?: string | null;
   state?: string | null;
   musicCommunity?: string | null;
+  tier?: 'city' | 'state' | 'national';
+  isActive?: boolean;
   radius?: number | null;
   coordinates?: {
     lat: number;

@@ -824,7 +824,7 @@ export default function DiscoverPage() {
                         disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
                         onClick={() => void handleSetHomeScene(item)}
                       >
-                        {savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set Home'}
+                        {savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}
                       </Button>
                     </div>
                   </div>
@@ -894,6 +894,11 @@ export default function DiscoverPage() {
               </Button>
             ) : null}
           </div>
+          {!token ? (
+            <p className="mt-3 text-xs text-black/50">
+              Sign in is required to open artist pages and change Home Scene from Discover.
+            </p>
+          ) : null}
 
           {localSearchLoading ? (
             <p className="mt-3 text-sm text-black/60">Searching this community...</p>
@@ -909,22 +914,38 @@ export default function DiscoverPage() {
                   <ul className="mt-3 space-y-2">
                     {localSearchResult.artists.map((artist) => (
                       <li key={artist.artistBandId} className="rounded-xl bg-black/5 px-3 py-2">
-                        <Link
-                          href={`/artist-bands/${artist.artistBandId}`}
-                          className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                        >
-                          <p className="text-sm font-medium text-black">{artist.name}</p>
-                          <p className="text-xs text-black/60">
-                            {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
-                          </p>
-                          <p className="text-xs text-black/50">
-                            {formatCommunityIdentity(
-                              artist.homeSceneCity,
-                              artist.homeSceneState,
-                              artist.homeSceneMusicCommunity,
-                            )}
-                          </p>
-                        </Link>
+                        {token ? (
+                          <Link
+                            href={`/artist-bands/${artist.artistBandId}`}
+                            className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                          >
+                            <p className="text-sm font-medium text-black">{artist.name}</p>
+                            <p className="text-xs text-black/60">
+                              {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
+                            </p>
+                            <p className="text-xs text-black/50">
+                              {formatCommunityIdentity(
+                                artist.homeSceneCity,
+                                artist.homeSceneState,
+                                artist.homeSceneMusicCommunity,
+                              )}
+                            </p>
+                          </Link>
+                        ) : (
+                          <>
+                            <p className="text-sm font-medium text-black">{artist.name}</p>
+                            <p className="text-xs text-black/60">
+                              {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
+                            </p>
+                            <p className="text-xs text-black/50">
+                              {formatCommunityIdentity(
+                                artist.homeSceneCity,
+                                artist.homeSceneState,
+                                artist.homeSceneMusicCommunity,
+                              )}
+                            </p>
+                          </>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -938,7 +959,7 @@ export default function DiscoverPage() {
                   <ul className="mt-3 space-y-2">
                     {localSearchResult.songs.map((song) => (
                       <li key={song.trackId} className="rounded-xl bg-black/5 px-3 py-2">
-                        {song.artistBandId ? (
+                        {song.artistBandId && token ? (
                           <Link
                             href={`/artist-bands/${song.artistBandId}?trackId=${song.trackId}`}
                             className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
@@ -1037,22 +1058,38 @@ export default function DiscoverPage() {
                     highlights.topArtists.map((artist) => (
                       <article key={artist.artistBandId} className="min-w-[240px] rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
                         <p className="text-xs uppercase tracking-[0.2em] text-black/50">Artist</p>
-                        <Link
-                          href={`/artist-bands/${artist.artistBandId}`}
-                          className="mt-2 block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                        >
-                          <h4 className="text-base font-semibold text-black">{artist.name}</h4>
-                          <p className="mt-1 text-xs text-black/60">
-                            {artist.followCount} followers • {artist.memberCount} members
-                          </p>
-                          <p className="mt-1 text-xs text-black/50">
-                            {formatCommunityIdentity(
-                              artist.homeSceneCity,
-                              artist.homeSceneState,
-                              artist.homeSceneMusicCommunity,
-                            )}
-                          </p>
-                        </Link>
+                        {token ? (
+                          <Link
+                            href={`/artist-bands/${artist.artistBandId}`}
+                            className="mt-2 block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                          >
+                            <h4 className="text-base font-semibold text-black">{artist.name}</h4>
+                            <p className="mt-1 text-xs text-black/60">
+                              {artist.followCount} followers • {artist.memberCount} members
+                            </p>
+                            <p className="mt-1 text-xs text-black/50">
+                              {formatCommunityIdentity(
+                                artist.homeSceneCity,
+                                artist.homeSceneState,
+                                artist.homeSceneMusicCommunity,
+                              )}
+                            </p>
+                          </Link>
+                        ) : (
+                          <>
+                            <h4 className="mt-2 text-base font-semibold text-black">{artist.name}</h4>
+                            <p className="mt-1 text-xs text-black/60">
+                              {artist.followCount} followers • {artist.memberCount} members
+                            </p>
+                            <p className="mt-1 text-xs text-black/50">
+                              {formatCommunityIdentity(
+                                artist.homeSceneCity,
+                                artist.homeSceneState,
+                                artist.homeSceneMusicCommunity,
+                              )}
+                            </p>
+                          </>
+                        )}
                       </article>
                     ))
                   )}

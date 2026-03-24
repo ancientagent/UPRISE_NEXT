@@ -51,11 +51,10 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('selectedCollectionItem?.id === item.id && playerMode === \'Collection\'');
     expect(plotPageSource).toContain("const handleCollectionEject = () => {");
     expect(playerSource).not.toContain('Switch to Collection mode');
-    expect(playerSource).toContain('Back to RADIYO');
-    expect(playerSource).toContain('aria-label="Back to RADIYO"');
+    expect(playerSource).toContain('Eject');
+    expect(playerSource).toContain('aria-label="Eject to RADIYO"');
     expect(playerSource).toContain('onCollectionEject');
     expect(playerSource).toContain('Selection-driven collection queue');
-    expect(playerSource).toContain('Selection-driven queue');
     expect(playerSource).toContain('aria-label="Shuffle collection"');
     expect(plotPageSource).toContain('selectedCollectionItem?.label');
     expect(playerSource).not.toContain('onModeChange');
@@ -69,6 +68,27 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
     expect(plotPageSource).toContain("selectedCollectionItem?.id === item.id && playerMode === 'Collection'");
     expect(plotPageSource).toContain("setSelectedCollectionItem(item)");
+    expect(playerSource).not.toContain('Back to RADIYO');
+  });
+
+  it('keeps the collapsed profile strip to username plus notifications and options only', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).not.toContain("user?.displayName?.[0] || user?.username?.[0] || 'U'");
+    expect(plotPageSource).not.toContain('{profilePanelState}');
+    expect(plotPageSource).toContain('aria-label="Notifications"');
+    expect(plotPageSource).toContain('aria-label="More menu"');
+  });
+
+  it('keeps player controls tier-driven and wheel-driven instead of exposing forbidden transport buttons', () => {
+    const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
+
+    expect(playerSource).toContain('Tap City, State, or National to start that broadcast. Tap the active tier again to stop.');
+    expect(playerSource).toContain('Collection mode stays selection-driven. Use eject to return to RADIYO.');
+    expect(playerSource).not.toContain('aria-label="Play"');
+    expect(playerSource).not.toContain('aria-label="Pause"');
+    expect(playerSource).not.toContain('aria-label="Add to collection"');
+    expect(playerSource).not.toContain('Back to RADIYO');
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -168,7 +188,9 @@ describe('/plot UX regression lock', () => {
   it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain('const { homeScene, pioneerFollowUp, tunedSceneId, setDiscoveryContext } = useOnboardingStore();');
+    expect(plotPageSource).toContain(
+      'const { homeScene, pioneerFollowUp, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();',
+    );
     expect(plotPageSource).toContain("const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;");
     expect(plotPageSource).toContain("const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);");
     expect(plotPageSource).toContain('aria-label="Notifications"');
@@ -223,6 +245,17 @@ describe('/plot UX regression lock', () => {
     expect(topSongsSource).toContain("setLoading(false);");
     expect(topSongsSource).toContain("Sign in is required to load Top 40 songs for this scene context.");
     expect(topSongsSource).toContain('{ token }');
+  });
+
+  it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('mergeDiscoveryContextPatch(response, {');
+    expect(plotPageSource).not.toContain('SceneContextBadge');
+    expect(plotPageSource).toContain('Scene Context');
+    expect(plotPageSource).toContain('Selected Community');
+    expect(plotPageSource).toContain('Complete onboarding to anchor your Home Scene and unlock Plot context.');
+    expect(plotPageSource).not.toContain('Browse Discover');
   });
 
   it('locks feed copy to scene-scoped deterministic, non-personalized states', () => {

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
+import { tuneDiscoverScene } from '@/lib/discovery/client';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
@@ -20,12 +21,13 @@ export default function CommunityProfilePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { token } = useAuthStore();
-  const { homeScene, tunedScene, isVisitor } = useOnboardingStore();
+  const { homeScene, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
 
   const [community, setCommunity] = useState<CommunityWithDistance | null>(null);
   const [feedItems, setFeedItems] = useState<CommunityFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [visitingScene, setVisitingScene] = useState(false);
 
   const communityId = useMemo(() => {
     const raw = params?.id;
@@ -128,6 +130,48 @@ export default function CommunityProfilePage() {
   const members = community._count?.members ?? community.memberCount ?? 0;
   const tracks = community._count?.tracks ?? 0;
   const events = community._count?.events ?? 0;
+  const handleVisitSceneInPlot = async () => {
+    const matchesHomeScene = Boolean(
+      homeScene?.city === community.city &&
+        homeScene?.state === community.state &&
+        homeScene?.musicCommunity === community.musicCommunity,
+    );
+
+    const localPatch = {
+      tunedSceneId: community.id,
+      tunedScene: {
+        id: community.id,
+        name: community.name,
+        city: community.city ?? null,
+        state: community.state ?? null,
+        musicCommunity: community.musicCommunity ?? null,
+        tier: community.tier === 'state' || community.tier === 'national' ? community.tier : 'city',
+        isActive: Boolean(community.isActive),
+      },
+      isVisitor: matchesHomeScene ? false : true,
+    };
+
+    setVisitingScene(true);
+
+    try {
+      if (token) {
+        const response = await tuneDiscoverScene(community.id, token);
+        setDiscoveryContext({
+          tunedSceneId: response.tunedSceneId,
+          tunedScene: response.tunedScene,
+          isVisitor: response.isVisitor,
+        });
+      } else {
+        setDiscoveryContext(localPatch);
+      }
+      router.push('/plot');
+    } catch {
+      setDiscoveryContext(localPatch);
+      router.push('/plot');
+    } finally {
+      setVisitingScene(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
@@ -172,8 +216,8 @@ export default function CommunityProfilePage() {
             <Button variant="outline" onClick={() => router.push('/plot')}>
               Back to Plot
             </Button>
-            <Button variant="outline" onClick={() => router.push('/plot')}>
-              Visit Scene in Plot
+            <Button variant="outline" onClick={() => void handleVisitSceneInPlot()} disabled={visitingScene}>
+              {visitingScene ? 'Opening Scene...' : 'Visit Scene in Plot'}
             </Button>
           </div>
         </section>
