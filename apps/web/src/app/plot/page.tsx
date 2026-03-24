@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { useOnboardingStore } from '@/store/onboarding';
@@ -12,6 +13,7 @@ import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
+import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 import { buildRadiyoBroadcastLabel } from '@/components/plot/tier-guard';
 import { getDiscoveryContext } from '@/lib/discovery/client';
 import { toDiscoveryContextPatch } from '@/lib/discovery/context';
@@ -78,6 +80,7 @@ export default function PlotPage() {
     kind: 'track' | 'playlist';
   } | null>(null);
   const [expandedProfileStats, setExpandedProfileStats] = useState<CommunityStatisticsResponse | null>(null);
+  const [isEngagementWheelOpen, setIsEngagementWheelOpen] = useState(false);
   const hasHomeScene =
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
@@ -229,6 +232,7 @@ export default function PlotPage() {
   const activityScore = expandedProfileStats?.metrics.activityScore ?? 0;
   const eventsThisWeek = expandedProfileStats?.metrics.eventsThisWeek ?? 0;
   const plotTabHeading = activeTab === 'Statistics' ? 'Scene Statistics' : activeTab;
+  const wheelActions = getEngagementWheelActions(playerMode);
   const plotTabDescription =
     activeTab === 'Feed'
       ? 'Community actions appear here.'
@@ -239,6 +243,75 @@ export default function PlotPage() {
           : activeTab === 'Statistics'
             ? null
             : 'Message boards and listening rooms.';
+
+  const renderBottomNav = () => (
+    <>
+      {isEngagementWheelOpen ? (
+        <div className="fixed inset-x-0 bottom-24 z-40 px-4 sm:px-6">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-black/10 bg-white/95 p-4 shadow-lg backdrop-blur">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.16em] text-black/50">UPRISE Wheel</p>
+                <p className="mt-1 text-sm text-black/65">
+                  {playerMode === 'RADIYO'
+                    ? 'RADIYO actions stay deterministic for the current scene context.'
+                    : 'Collection actions stay deterministic for the selected collection context.'}
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs"
+                onClick={() => setIsEngagementWheelOpen(false)}
+                aria-label="Close engagement wheel"
+              >
+                Close
+              </Button>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {wheelActions.map((action) => (
+                <span
+                  key={`${action.label}-${action.position ?? 'center'}`}
+                  className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-2 text-xs font-medium text-black"
+                >
+                  {action.position ? `${action.position} ${action.label}` : action.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <nav
+        aria-label="Plot bottom navigation"
+        data-slot="plot-bottom-nav"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white/95 px-4 py-3 backdrop-blur sm:px-6"
+      >
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
+          <Button asChild variant="outline" className="min-w-[92px] rounded-full">
+            <Link href="/plot">Home</Link>
+          </Button>
+
+          <Button
+            type="button"
+            variant="default"
+            className="min-w-[132px] rounded-full bg-black text-white hover:bg-black/90"
+            onClick={() => setIsEngagementWheelOpen((value) => !value)}
+            aria-expanded={isEngagementWheelOpen}
+            aria-controls="plot-engagement-wheel"
+            aria-label="Open UPRISE engagement wheel"
+          >
+            UPRISE
+          </Button>
+
+          <Button asChild variant="outline" className="min-w-[92px] rounded-full">
+            <Link href="/discover">Discover</Link>
+          </Button>
+        </div>
+      </nav>
+    </>
+  );
 
   const renderPrimaryPlotTabBody = () => {
     if (activeTab === 'Statistics') {
@@ -298,7 +371,7 @@ export default function PlotPage() {
 
   if (!hasHomeScene) {
     return (
-      <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 sm:px-6">
+      <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 pb-28 sm:px-6">
         <div className="mx-auto max-w-4xl space-y-6">
           <section className="rounded-2xl border border-black/10 bg-white/90 p-6 shadow-sm">
             <p className="text-xs uppercase tracking-[0.22em] text-black/50">The Plot</p>
@@ -322,12 +395,13 @@ export default function PlotPage() {
             </p>
           </section>
         </div>
+        {renderBottomNav()}
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 sm:px-6">
+    <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 pb-28 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <section className="rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm transition-all">
           <div
@@ -625,6 +699,7 @@ export default function PlotPage() {
           </>
         )}
       </div>
+      <div id="plot-engagement-wheel">{renderBottomNav()}</div>
     </main>
   );
 }

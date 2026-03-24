@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Restored the founder-locked `/plot` bottom nav with `Home`, center `UPRISE`, and `Discover`, added a minimal deterministic wheel drawer backed by the existing engagement-wheel action map, and extended `apps/web/__tests__/plot-ux-regression-lock.test.ts`; see `docs/handoff/2026-03-24_plot-bottom-nav-restoration.md`.
 - Added Batch21 UX execution package:
   - `docs/solutions/MVP_UX_BATCH21_EXECUTION_PLAN.md`
   - `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch21.json`

@@ -137,6 +137,19 @@ describe('/plot UX regression lock', () => {
     );
   });
 
+  it('locks bottom nav and center UPRISE wheel trigger onto the /plot route', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('aria-label="Plot bottom navigation"');
+    expect(plotPageSource).toContain('data-slot="plot-bottom-nav"');
+    expect(plotPageSource).toContain('<Link href="/plot">Home</Link>');
+    expect(plotPageSource).toContain('<Link href="/discover">Discover</Link>');
+    expect(plotPageSource).toContain('Open UPRISE engagement wheel');
+    expect(plotPageSource).toContain('UPRISE Wheel');
+    expect(plotPageSource).toContain('getEngagementWheelActions(playerMode)');
+    expect(plotPageSource).toContain('renderBottomNav()');
+  });
+
   it('locks primary Plot tab ownership to explicit Feed/Events/Promotions/Statistics bodies', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
