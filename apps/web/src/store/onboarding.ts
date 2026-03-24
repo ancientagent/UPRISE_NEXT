@@ -10,6 +10,10 @@ export interface HomeSceneSelection {
   tasteTag?: string;
 }
 
+export interface PioneerFollowUp {
+  homeScene: HomeSceneSelection;
+}
+
 export interface TunedSceneContext {
   id: string;
   name: string;
@@ -22,6 +26,7 @@ export interface TunedSceneContext {
 
 interface OnboardingState {
   homeScene: HomeSceneSelection | null;
+  pioneerFollowUp: PioneerFollowUp | null;
   tunedSceneId: string | null;
   tunedScene: TunedSceneContext | null;
   isVisitor: boolean | null;
@@ -30,6 +35,7 @@ interface OnboardingState {
   votingEligible: boolean;
   gpsReason: string | null;
   setHomeScene: (homeScene: HomeSceneSelection) => void;
+  setPioneerFollowUp: (followUp: PioneerFollowUp | null) => void;
   setTunedSceneId: (sceneId: string | null) => void;
   setDiscoveryContext: (
     payload: { tunedSceneId: string | null; tunedScene: TunedSceneContext | null; isVisitor: boolean | null }
@@ -43,6 +49,7 @@ export const useOnboardingStore = create<OnboardingState>()(
   persist(
     (set) => ({
       homeScene: null,
+      pioneerFollowUp: null,
       tunedSceneId: null,
       tunedScene: null,
       isVisitor: null,
@@ -50,7 +57,8 @@ export const useOnboardingStore = create<OnboardingState>()(
       gpsCoords: undefined,
       votingEligible: false,
       gpsReason: null,
-      setHomeScene: (homeScene) => set({ homeScene }),
+      setHomeScene: (homeScene) => set({ homeScene, pioneerFollowUp: null }),
+      setPioneerFollowUp: (pioneerFollowUp) => set({ pioneerFollowUp }),
       setTunedSceneId: (tunedSceneId) => set({ tunedSceneId }),
       setDiscoveryContext: (payload) =>
         set({
@@ -63,6 +71,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       reset: () =>
         set({
           homeScene: null,
+          pioneerFollowUp: null,
           tunedSceneId: null,
           tunedScene: null,
           isVisitor: null,

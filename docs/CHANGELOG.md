@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 ### Added
+- Fixed `/onboarding` founder-lock drift by constraining `Music Community` to approved selections, adding deterministic unsigned/signed review fallback resolution in `apps/web/src/lib/onboarding/review-resolution.ts`, extending `apps/web/src/app/onboarding/page.tsx`, and adding focused onboarding regression coverage in `apps/web/__tests__/onboarding-review-resolution.test.ts` and `apps/web/__tests__/onboarding-page-lock.test.ts`; see `docs/handoff/2026-03-24_onboarding-home-scene-selection-and-fallback-fix.md`.
+- Lane D founder-lock regression pass: added targeted onboarding regression coverage in `apps/web/__tests__/onboarding-regression-lock.test.ts` for selection-only Music Community input and unsigned pioneer review fallback, and re-verified the current `/plot` founder-lock regression coverage for registrar access/status and pioneer notification discoverability on branch `feat/ux-founder-locks-and-harness`; see `docs/handoff/2026-03-24_lane-d-regression-locks.md`.
+- Fixed the `/plot` registrar access/status mismatch by surfacing the existing registrar entry summary and `Open Registrar` path inside the resolved Plot civic workflow, trimming stale unresolved copy that implied registrar prerequisites from the locked Home Scene gate, extending `apps/web/__tests__/plot-ux-regression-lock.test.ts`, and recording the change in `docs/handoff/2026-03-24_plot-registrar-access-status-fix.md`.
 - Marked `Austin`, `Los Angeles`, `Houston`, and `Dallas` as `launchOpen: true` in `docs/specs/seed/hotspot-cities.provisional.json` so the current branch has an explicit operational launch-open subset without reopening broader city inventory work.
 - Added `docs/specs/seed/hotspot-cities.provisional.json` as a provisional hotspot / launch-city candidate inventory, combining the Fifty Grande top-20 music cities with founder-supplied supplemental candidates (`Houston`, `San Antonio`, `Long Beach`), and documented its non-canon role in `docs/specs/seed/README.md`.
 - Published the final Batch27 merge-readiness closeout memo in `docs/handoff/2026-03-24_SLICE-UXQAREV-885A.md`, recording the no-defect Lane E sweep, exact verification baseline, residual risks, and merge recommendation for `feat/ux-founder-locks-and-harness`.
@@ -1886,3 +1889,5 @@
 
 - Batch27 closeout prep (2026-03-23): added `docs/solutions/MVP_UX_BATCH27_EXECUTION_PLAN.md` to frame the next 5-lane pass as remaining-work QA/bugfix/readiness closure on top of the already-complete Discover/runtime branch state; see `docs/handoff/2026-03-23_batch27-closeout-plan.md`.
 - Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out  history state, and added  to remove persistent route QA noise; see .
+
+- Plot pioneer follow-up discoverability (2026-03-24): persisted pioneer follow-up context from onboarding and exposed the locked onboarding follow-up message from the existing `/plot` notification icon, with focused onboarding/plot regression coverage; see `docs/handoff/2026-03-24_plot-pioneer-follow-up-notification-fix.md`.

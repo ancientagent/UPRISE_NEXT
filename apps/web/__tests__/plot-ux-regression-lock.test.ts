@@ -165,6 +165,24 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('renderPrimaryPlotTabBody()');
   });
 
+  it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('const { homeScene, pioneerFollowUp, tunedSceneId, setDiscoveryContext } = useOnboardingStore();');
+    expect(plotPageSource).toContain("const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;");
+    expect(plotPageSource).toContain("const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);");
+    expect(plotPageSource).toContain('aria-label="Notifications"');
+    expect(plotPageSource).toContain("aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}");
+    expect(plotPageSource).toContain('onPointerDown={(event) => {');
+    expect(plotPageSource).toContain('event.stopPropagation();');
+    expect(plotPageSource).toContain('setIsNotificationPanelOpen((open) => !open)');
+    expect(plotPageSource).toContain('Pioneer Follow-up');
+    expect(plotPageSource).toContain('Your Home Scene is still pioneering.');
+    expect(plotPageSource).toContain('nearest active city');
+    expect(plotPageSource).toContain('establish or uprise your own city scene');
+    expect(plotPageSource).toContain('aria-label="More menu"');
+  });
+
   it('keeps /plot reachable with an unresolved Home Scene guidance state instead of redirecting to onboarding', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
@@ -172,6 +190,18 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Complete Onboarding');
     expect(plotPageSource).not.toContain("router.replace('/onboarding')");
     expect(plotPageSource).not.toContain('if (!hasHomeScene) {\n    return null;');
+  });
+
+  it('locks registrar access/status context onto the resolved plot route', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain("const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null)");
+    expect(plotPageSource).toContain('listArtistBandRegistrations(token)');
+    expect(plotPageSource).toContain('setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []))');
+    expect(plotPageSource).toContain('Registrar Access');
+    expect(plotPageSource).toContain('Sign in to view registrar status and continue registration work.');
+    expect(plotPageSource).toContain('No Artist/Band registrar entries yet.');
+    expect(plotPageSource).toContain('Open Registrar');
   });
 
   it('locks feed copy to scene-scoped deterministic, non-personalized states', () => {

@@ -23,6 +23,8 @@ import {
   resolveHomeCommunity,
   type CommunityStatisticsResponse,
 } from '@/lib/communities/client';
+import { listArtistBandRegistrations } from '@/lib/registrar/client';
+import { formatRegistrarEntryStatus, getRegistrarPlotSummary, type RegistrarPlotSummary } from '@/lib/registrar/entryStatus';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -65,7 +67,7 @@ const singlesAndPlaylistsItems: Array<{ id: string; label: string; kind: 'track'
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
+  const { homeScene, pioneerFollowUp, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
   const { token, user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<PlotTab>('Feed');
   const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
@@ -81,6 +83,10 @@ export default function PlotPage() {
   } | null>(null);
   const [expandedProfileStats, setExpandedProfileStats] = useState<CommunityStatisticsResponse | null>(null);
   const [isEngagementWheelOpen, setIsEngagementWheelOpen] = useState(false);
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
+  const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null);
+  const [registrarSummaryLoading, setRegistrarSummaryLoading] = useState(false);
+  const [registrarSummaryError, setRegistrarSummaryError] = useState<string | null>(null);
   const hasHomeScene =
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
@@ -155,6 +161,46 @@ export default function PlotPage() {
     loadExpandedProfileStats();
   }, [selectedCommunity?.id, selectedTier, token]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadRegistrarSummary() {
+      if (!token || !hasHomeScene) {
+        setRegistrarSummary(null);
+        setRegistrarSummaryError(null);
+        setRegistrarSummaryLoading(false);
+        return;
+      }
+
+      setRegistrarSummaryLoading(true);
+      setRegistrarSummaryError(null);
+
+      try {
+        const response = await listArtistBandRegistrations(token);
+
+        if (cancelled) return;
+
+        setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []));
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load registrar status.';
+        setRegistrarSummary(null);
+        setRegistrarSummaryError(message);
+      } finally {
+        if (!cancelled) {
+          setRegistrarSummaryLoading(false);
+        }
+      }
+    }
+
+    loadRegistrarSummary();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasHomeScene, token]);
+
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
   };
@@ -219,6 +265,8 @@ export default function PlotPage() {
   const isProfileExpanded = profilePanelState === 'expanded';
   const radiyoBroadcastLabel = buildRadiyoBroadcastLabel(selectedTier, selectedCommunity, homeScene);
   const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Collection`;
+  const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;
+  const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
   const seamLabel =
     profilePanelState === 'expanded'
       ? 'Pull up or tap to collapse profile'
@@ -377,7 +425,7 @@ export default function PlotPage() {
             <p className="text-xs uppercase tracking-[0.22em] text-black/50">The Plot</p>
             <h1 className="mt-2 text-2xl font-semibold text-black">Home Scene setup required</h1>
             <p className="mt-3 text-sm text-black/65">
-              Complete onboarding to anchor your Home Scene, unlock Plot context, and satisfy Registrar prerequisites.
+              Complete onboarding to anchor your Home Scene and unlock Plot context.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Button onClick={() => router.push('/onboarding')}>Complete Onboarding</Button>
@@ -431,9 +479,54 @@ export default function PlotPage() {
               }`}>
                 {profilePanelState}
               </span>
-              <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="Notifications">
-                🔔
-              </Button>
+              <div className="relative">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="relative h-8 text-xs"
+                  aria-label="Notifications"
+                  aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}
+                  aria-expanded={hasPioneerFollowUp ? isNotificationPanelOpen : undefined}
+                  onPointerDown={(event) => {
+                    event.stopPropagation();
+                  }}
+                  onPointerUp={(event) => {
+                    event.stopPropagation();
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    if (!hasPioneerFollowUp) return;
+                    setIsNotificationPanelOpen((open) => !open);
+                  }}
+                >
+                  🔔
+                  {hasPioneerFollowUp ? (
+                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#b7d43f]" aria-hidden />
+                  ) : null}
+                </Button>
+                {hasPioneerFollowUp && isNotificationPanelOpen && pioneerNotificationHomeScene ? (
+                  <div
+                    id="plot-pioneer-follow-up"
+                    className="absolute right-0 top-10 z-20 w-72 rounded-2xl border border-black/10 bg-white p-4 text-left shadow-lg"
+                  >
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">
+                      Pioneer Follow-up
+                    </p>
+                    <p className="mt-2 text-sm font-medium text-black">
+                      {pioneerNotificationHomeScene.city}, {pioneerNotificationHomeScene.state} •{' '}
+                      {pioneerNotificationHomeScene.musicCommunity}
+                    </p>
+                    <p className="mt-2 text-sm text-black/70">
+                      Your Home Scene is still pioneering. You are temporarily routed through the nearest active city
+                      scene for {pioneerNotificationHomeScene.musicCommunity} while your city builds.
+                    </p>
+                    <p className="mt-2 text-sm text-black/70">
+                      Once enough local users join, you can establish or uprise your own city scene.
+                    </p>
+                  </div>
+                ) : null}
+              </div>
               <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="More menu">
                 ⋯
               </Button>
@@ -666,6 +759,48 @@ export default function PlotPage() {
 
               {/* Right Panel - Selected Community Info */}
               <div className="space-y-6">
+                <div className="rounded-2xl border border-black/10 bg-white p-6">
+                  <h3 className="mb-2 font-semibold text-black">Registrar Access</h3>
+                  <p className="text-sm text-black/60">
+                    Artist/Band registration status stays visible here so Plot keeps registrar access inside the civic workflow.
+                  </p>
+
+                  {!token ? (
+                    <p className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                      Sign in to view registrar status and continue registration work.
+                    </p>
+                  ) : registrarSummaryLoading ? (
+                    <p className="mt-4 text-sm text-black/60">Loading registrar status...</p>
+                  ) : registrarSummaryError ? (
+                    <p className="mt-4 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                      {registrarSummaryError}
+                    </p>
+                  ) : registrarSummary && registrarSummary.totalEntries > 0 ? (
+                    <div className="mt-4 rounded-xl border border-black/10 bg-black/[0.03] p-4">
+                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Latest Status</p>
+                      <p className="mt-1 text-sm font-medium text-black">
+                        {registrarSummary.latestStatus ? formatRegistrarEntryStatus(registrarSummary.latestStatus) : 'No recent status'}
+                      </p>
+                      <p className="mt-3 text-sm text-black/70">
+                        Entries: {registrarSummary.totalEntries} • Submitted: {registrarSummary.submittedCount} • Materialized:{' '}
+                        {registrarSummary.materializedCount}
+                      </p>
+                      <p className="mt-1 text-xs text-black/55">
+                        Invites pending: {registrarSummary.pendingInviteCount} • queued: {registrarSummary.queuedInviteCount} •
+                        sent: {registrarSummary.sentInviteCount} • failed: {registrarSummary.failedInviteCount}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="mt-4 text-sm text-black/60">No Artist/Band registrar entries yet.</p>
+                  )}
+
+                  <div className="mt-4">
+                    <Button size="sm" variant="outline" onClick={() => router.push('/registrar')}>
+                      Open Registrar
+                    </Button>
+                  </div>
+                </div>
+
                 {selectedCommunity && (
                   <div className="rounded-2xl border border-black/10 bg-white p-6">
                     <h3 className="mb-3 font-semibold text-black">Selected Community</h3>

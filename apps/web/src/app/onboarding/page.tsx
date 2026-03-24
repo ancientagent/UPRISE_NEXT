@@ -4,9 +4,14 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
-import { listDiscoverScenes } from '@/lib/discovery/client';
 import { MUSIC_COMMUNITIES } from '@/data/music-communities';
 import { US_STATES } from '@/data/us-states';
+import {
+  formatHomeSceneLabel,
+  normalizeApprovedMusicCommunitySelection,
+  resolveOnboardingReviewState,
+  type OnboardingReviewResolutionMode,
+} from '@/lib/onboarding/review-resolution';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 
@@ -27,13 +32,24 @@ interface ReverseGeocodeFallbackResponse {
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { homeScene, votingEligible, gpsReason, setHomeScene, setGpsStatus, setVotingEligibility, setDiscoveryContext } =
+  const {
+    homeScene,
+    votingEligible,
+    gpsReason,
+    setHomeScene,
+    setPioneerFollowUp,
+    setGpsStatus,
+    setVotingEligibility,
+    setDiscoveryContext,
+  } =
     useOnboardingStore();
   const { token } = useAuthStore();
   const [step, setStep] = useState(0);
   const [city, setCity] = useState(homeScene?.city ?? '');
   const [state, setState] = useState(homeScene?.state ?? '');
-  const [musicCommunity, setMusicCommunity] = useState(homeScene?.musicCommunity ?? '');
+  const [musicCommunity, setMusicCommunity] = useState(
+    normalizeApprovedMusicCommunitySelection(homeScene?.musicCommunity),
+  );
   const [gpsError, setGpsError] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
@@ -45,10 +61,27 @@ export default function OnboardingPage() {
   const [isPioneer, setIsPioneer] = useState(false);
   const [stateSceneOptions, setStateSceneOptions] = useState<string[]>([]);
   const [stateSceneError, setStateSceneError] = useState<string | null>(null);
+  const [reviewSceneLabel, setReviewSceneLabel] = useState<string | null>(null);
+  const [reviewResolutionMode, setReviewResolutionMode] =
+    useState<OnboardingReviewResolutionMode | null>(null);
+
+  const approvedMusicCommunity = useMemo(
+    () => normalizeApprovedMusicCommunitySelection(musicCommunity),
+    [musicCommunity],
+  );
+  const selectedHomeSceneLabel = useMemo(
+    () =>
+      formatHomeSceneLabel(
+        city.trim() && state.trim() && approvedMusicCommunity
+          ? { city: city.trim(), state: state.trim(), musicCommunity: approvedMusicCommunity }
+          : homeScene,
+      ),
+    [approvedMusicCommunity, city, homeScene, state],
+  );
 
   const canContinue = useMemo(
-    () => city.trim() && state.trim() && musicCommunity.trim(),
-    [city, state, musicCommunity],
+    () => city.trim() && state.trim() && approvedMusicCommunity,
+    [approvedMusicCommunity, city, state],
   );
 
   const handleSceneContinue = async () => {
@@ -57,68 +90,63 @@ export default function OnboardingPage() {
     const selection = {
       city: city.trim(),
       state: state.trim(),
-      musicCommunity: musicCommunity.trim(),
+      musicCommunity: approvedMusicCommunity,
     };
 
     setHomeScene(selection);
+    setPioneerFollowUp(null);
     setIsPioneer(false);
     setStateSceneOptions([]);
     setStateSceneError(null);
+    setReviewSceneLabel(null);
+    setReviewResolutionMode(null);
+    setDiscoveryContext({
+      tunedSceneId: null,
+      tunedScene: null,
+      isVisitor: null,
+    });
+
+    let authenticatedPioneer: boolean | null = null;
 
     if (token) {
       try {
         const response = await api.post<{ pioneer?: boolean; sceneId?: string | null }>('/onboarding/home-scene', selection, { token });
-        const pioneer = Boolean(response.data?.pioneer);
-        setIsPioneer(pioneer);
-        if (response.data?.sceneId) {
-          setDiscoveryContext({
-            tunedSceneId: response.data.sceneId,
-            tunedScene: {
-              id: response.data.sceneId,
-              name: `${selection.city}, ${selection.state} ${selection.musicCommunity}`,
-              city: selection.city,
-              state: selection.state,
-              musicCommunity: selection.musicCommunity,
-              tier: 'city',
-              isActive: !pioneer,
-            },
-            isVisitor: false,
-          });
-        }
-
-        if (pioneer) {
-          try {
-            const scenes = await listDiscoverScenes(
-              {
-                tier: 'city',
-                state: selection.state,
-                musicCommunity: selection.musicCommunity,
-              },
-              token,
-            );
-
-            const activeInState = Array.from(
-              new Set(
-                scenes
-                  .filter(
-                    (
-                      scene,
-                    ): scene is Extract<(typeof scenes)[number], { entryType: 'city_scene' }> =>
-                      scene.entryType === 'city_scene' && scene.isActive,
-                  )
-                  .map((scene) =>
-                    scene.city && scene.state ? `${scene.city}, ${scene.state}` : scene.name,
-                  ),
-              ),
-            ).slice(0, 8);
-
-            setStateSceneOptions(activeInState);
-          } catch {
-            setStateSceneError('Could not load active scenes in your state right now.');
-          }
-        }
+        authenticatedPioneer = response.data?.pioneer === undefined ? null : Boolean(response.data.pioneer);
       } catch {
         // Keep local state if API request fails.
+      }
+    }
+
+    try {
+      const reviewResolution = await resolveOnboardingReviewState(selection, token || undefined);
+      const pioneer = authenticatedPioneer ?? reviewResolution.pioneer;
+
+      setIsPioneer(pioneer);
+      setPioneerFollowUp(pioneer ? { homeScene: selection } : null);
+      setReviewResolutionMode(pioneer ? reviewResolution.resolutionMode : 'exact');
+      setReviewSceneLabel(
+        pioneer
+          ? reviewResolution.resolvedSceneLabel
+          : reviewResolution.resolvedSceneLabel ?? formatHomeSceneLabel(selection),
+      );
+      setStateSceneOptions(reviewResolution.stateSceneOptions);
+
+      if (reviewResolution.discoveryContext) {
+        setDiscoveryContext(reviewResolution.discoveryContext);
+      }
+
+      if (pioneer && reviewResolution.resolutionMode === 'unresolved') {
+        setStateSceneError('Could not resolve active fallback scene details right now.');
+      }
+    } catch {
+      const pioneer = Boolean(authenticatedPioneer);
+      setIsPioneer(pioneer);
+      setPioneerFollowUp(pioneer ? { homeScene: selection } : null);
+      setReviewResolutionMode(pioneer ? 'unresolved' : 'exact');
+      setReviewSceneLabel(pioneer ? null : formatHomeSceneLabel(selection));
+
+      if (pioneer) {
+        setStateSceneError('Could not resolve active fallback scene details right now.');
       }
     }
 
@@ -392,20 +420,18 @@ export default function OnboardingPage() {
 
             <div className="mt-6 flex flex-col gap-2">
               <label className="text-xs uppercase tracking-[0.2em] text-black/60">Music Community</label>
-              <input
-                list="communities"
+              <select
                 value={musicCommunity}
                 onChange={(event) => setMusicCommunity(event.target.value)}
                 className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-                placeholder="Choose the community that fits your local scene"
-              />
-              <datalist id="communities">
+              >
+                <option value="">Select an approved parent music community</option>
                 {MUSIC_COMMUNITIES.map((community) => (
                   <option key={community} value={community} />
                 ))}
-              </datalist>
+              </select>
               <p className="text-xs text-black/50">
-                If your city is not active yet, we will treat you as a pioneer and show active scenes in your state.
+                Selection only from the approved parent communities. If your city is not active yet, we will preserve your pioneer intent and show the active fallback scene review.
               </p>
             </div>
 
@@ -428,7 +454,23 @@ export default function OnboardingPage() {
               <div className="rounded-2xl border border-black/10 bg-white p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-black/50">Home Scene</p>
                 <p className="mt-2 text-base text-black">
-                  {homeScene?.city}, {homeScene?.state} - {homeScene?.musicCommunity}
+                  {selectedHomeSceneLabel}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-black/10 bg-white p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-black/50">
+                  {isPioneer ? 'Fallback listening scene' : 'Listening scene'}
+                </p>
+                <p className="mt-2 text-base text-black">
+                  {reviewSceneLabel ?? 'Active scene review is unavailable right now.'}
+                </p>
+                <p className="mt-1 text-sm text-black/60">
+                  {isPioneer
+                    ? reviewSceneLabel
+                      ? `${selectedHomeSceneLabel} stays saved as your Home Scene pioneer intent while this active city scene carries your initial listening context.`
+                      : `${selectedHomeSceneLabel} stays saved as your Home Scene pioneer intent while active fallback details are unavailable.`
+                    : 'Your selected Home Scene is active and will anchor your first session.'}
                 </p>
               </div>
 
@@ -443,8 +485,18 @@ export default function OnboardingPage() {
                 <div className="rounded-2xl border border-black/10 bg-white p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-black/50">Pioneer status</p>
                   <p className="mt-2 text-base text-black">
-                    Your immediate city is not active yet. You are helping pioneer this Home Scene.
+                    Your selected city is not active yet. We will keep tracking your Home Scene intent while routing you through an active scene for this parent community.
                   </p>
+                  {reviewResolutionMode === 'fallback_state' && (
+                    <p className="mt-2 text-sm text-black/60">
+                      Active fallback currently resolves inside {state.trim()}.
+                    </p>
+                  )}
+                  {reviewResolutionMode === 'fallback_community' && (
+                    <p className="mt-2 text-sm text-black/60">
+                      No active city scene was found in {state.trim()}, so review falls back to the next active city scene for {approvedMusicCommunity}.
+                    </p>
+                  )}
                   {stateSceneOptions.length > 0 && (
                     <p className="mt-2 text-sm text-black/60">
                       Active scenes in {state.trim()}: {stateSceneOptions.join(' · ')}
