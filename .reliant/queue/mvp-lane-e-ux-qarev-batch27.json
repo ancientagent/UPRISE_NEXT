@@ -7,9 +7,9 @@
   ],
   "summary": {
     "total": 2,
-    "queued": 2,
+    "queued": 0,
     "in_progress": 0,
-    "done": 0,
+    "done": 2,
     "blocked": 0
   },
   "tasks": [
@@ -18,14 +18,22 @@
       "title": "Batch27 fresh current-HEAD QA sweep",
       "prompt": "Execute one MVP slice only: run a fresh live QA sweep on current HEAD across Discover, artist, community, registrar, plot, users, and onboarding; discard stale findings; report only current reproducible defects with exact evidence.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-24T05:00:11.167Z",
+      "updatedAt": "2026-03-24T05:07:08.776Z",
+      "finishedAt": "2026-03-24T05:07:08.776Z",
+      "reportPath": "docs/handoff/2026-03-23_SLICE-UXQAREV-884A.md"
     },
     {
       "id": "SLICE-UXQAREV-885A",
       "title": "Batch27 merge-readiness closeout memo",
       "prompt": "Execute one MVP slice only: produce the final Batch27 closeout memo summarizing current reproducible-defect status, exact verification commands run, residual risks, and merge/readiness recommendation for the branch.",
       "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
-      "status": "queued"
+      "status": "done",
+      "startedAt": "2026-03-24T06:45:00Z",
+      "updatedAt": "2026-03-24T06:45:00Z",
+      "finishedAt": "2026-03-24T06:45:00Z",
+      "reportPath": "docs/handoff/2026-03-24_SLICE-UXQAREV-885A.md"
     }
   ]
 }

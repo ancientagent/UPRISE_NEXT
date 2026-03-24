@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Published the final Batch27 merge-readiness closeout memo in `docs/handoff/2026-03-24_SLICE-UXQAREV-885A.md`, recording the no-defect Lane E sweep, exact verification baseline, residual risks, and merge recommendation for `feat/ux-founder-locks-and-harness`.
 - Closed the remaining unsigned `/discover` Home Scene tuple gap by letting current-community Discover unlock from valid `{city, state, music community}` onboarding context even when no live city-scene anchor exists yet, opening anonymous current-community search/highlights reads in the Discover API/client, adding regression coverage in `apps/web/__tests__/discover-page-lock.test.ts`, `apps/web/__tests__/discovery-client.test.ts`, and `apps/api/test/communities.discovery.controller.test.ts`, and recording the slice in `docs/handoff/2026-03-24_discover-unsigned-home-scene-unlock-fix.md`.
 - Added a merged session-context carry-forward note in `docs/handoff/2026-03-24_session-context-reconciliation.md`, consolidating the verified community-identity, Discover setup/runtime, fixture-path, harness, and route-regression facts re-established across the 2026-03-24 multi-agent discussion so future handoffs do not depend on fragmented chat memory.
 - Restored the founder-locked `/plot` bottom nav with `Home`, center `UPRISE`, and `Discover`, added a minimal deterministic wheel drawer backed by the existing engagement-wheel action map, and extended `apps/web/__tests__/plot-ux-regression-lock.test.ts`; see `docs/handoff/2026-03-24_plot-bottom-nav-restoration.md`.
