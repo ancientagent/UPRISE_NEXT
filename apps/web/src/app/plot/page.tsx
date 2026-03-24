@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -161,24 +161,37 @@ export default function PlotPage() {
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
 
+  const discoveryContextFallback = useMemo(
+    () => ({
+      tunedSceneId,
+      tunedScene,
+      isVisitor,
+    }),
+    [
+      isVisitor,
+      tunedSceneId,
+      tunedScene?.city,
+      tunedScene?.id,
+      tunedScene?.isActive,
+      tunedScene?.musicCommunity,
+      tunedScene?.name,
+      tunedScene?.state,
+      tunedScene?.tier,
+    ],
+  );
+
   useEffect(() => {
     async function fetchDiscoveryContext() {
       if (!token) return;
       try {
         const response = await getDiscoveryContext(token);
-        setDiscoveryContext(
-          mergeDiscoveryContextPatch(response, {
-            tunedSceneId,
-            tunedScene,
-            isVisitor,
-          }),
-        );
+        setDiscoveryContext(mergeDiscoveryContextPatch(response, discoveryContextFallback));
       } catch {
         // Keep local state if context fetch fails.
       }
     }
     fetchDiscoveryContext();
-  }, [isVisitor, setDiscoveryContext, token, tunedScene, tunedSceneId]);
+  }, [discoveryContextFallback, setDiscoveryContext, token]);
 
   useEffect(() => {
     async function resolveDefaultCommunity() {
@@ -1118,7 +1131,7 @@ export default function PlotPage() {
                           variant="outline"
                           onClick={() => router.push(`/community/${selectedCommunity.id}`)}
                         >
-                          Open Profile
+                          Open Community
                         </Button>
                       </div>
                     </div>

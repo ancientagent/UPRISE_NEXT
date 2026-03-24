@@ -38,6 +38,9 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('data-slot="compact-player-shell"');
     expect(playerSource).toContain('data-slot="player-track-row"');
     expect(playerSource).toContain('data-slot="player-tier-stack"');
+    expect(playerSource).toContain('Current track art thumbnail');
+    expect(playerSource).toContain('Collection track art thumbnail');
+    expect(playerSource).not.toContain("{isRadiyoMode ? 'RAD' : 'COL'}");
   });
 
   it('locks collection mode to selection entry and explicit eject return', () => {
@@ -96,6 +99,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).not.toContain('aria-label="Pause"');
     expect(playerSource).not.toContain('aria-label="Add to collection"');
     expect(playerSource).not.toContain('Back to RADIYO');
+    expect(playerSource).toContain("const tierOptions: PlayerTier[] = ['national', 'state', 'city'];");
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -274,10 +278,12 @@ describe('/plot UX regression lock', () => {
   it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain('mergeDiscoveryContextPatch(response, {');
+    expect(plotPageSource).toContain('const discoveryContextFallback = useMemo(');
+    expect(plotPageSource).toContain('mergeDiscoveryContextPatch(response, discoveryContextFallback)');
     expect(plotPageSource).not.toContain('SceneContextBadge');
     expect(plotPageSource).toContain('Scene Context');
     expect(plotPageSource).toContain('Selected Community');
+    expect(plotPageSource).toContain('Open Community');
     expect(plotPageSource).toContain('Complete onboarding to anchor your Home Scene and unlock Plot context.');
     expect(plotPageSource).not.toContain('Browse Discover');
   });

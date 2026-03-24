@@ -31,7 +31,7 @@ export default function RadiyoPlayerPanel({
   collectionTitle,
 }: RadiyoPlayerPanelProps) {
   const isRadiyoMode = mode === 'RADIYO';
-  const tierOptions: PlayerTier[] = ['city', 'state', 'national'];
+  const tierOptions: PlayerTier[] = ['national', 'state', 'city'];
   const wheelActions = getEngagementWheelActions(mode);
 
   return (
@@ -61,14 +61,14 @@ export default function RadiyoPlayerPanel({
       >
         <div className="flex min-w-0 flex-1 items-center gap-1">
           <div
-            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.05rem] border text-[10px] font-semibold uppercase tracking-[0.16em] ${
+            className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[1.05rem] border ${
               isRadiyoMode
-                ? 'border-lime-300/35 bg-lime-300/12 text-lime-200'
-                : 'border-sky-300/35 bg-sky-300/12 text-sky-100'
+                ? 'border-lime-300/35 bg-[radial-gradient(circle_at_top,_rgba(183,212,63,0.45),_rgba(255,255,255,0.08)_55%,_rgba(0,0,0,0.55))]'
+                : 'border-sky-300/35 bg-[radial-gradient(circle_at_top,_rgba(125,211,252,0.45),_rgba(255,255,255,0.08)_55%,_rgba(0,0,0,0.55))]'
             }`}
-            aria-hidden
+            aria-label={isRadiyoMode ? 'Current track art thumbnail' : 'Collection track art thumbnail'}
           >
-            {isRadiyoMode ? 'RAD' : 'COL'}
+            <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-white/72">Art</span>
           </div>
 
           <div className="min-w-0 flex-1">
