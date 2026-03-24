@@ -13,19 +13,24 @@ describe('/discover current-community lock', () => {
 
     expect(discoverSource).toContain('listDiscoverScenes(');
     expect(discoverSource).toContain("tier: 'city'");
-    expect(discoverSource).toContain('const exactMatch = response.find(');
+    expect(discoverSource).toContain('const exactMatch = exactResponse.find(');
     expect(discoverSource).toContain('if (activeSceneId) return;');
-    expect(discoverSource).toContain('tunedSceneId: exactMatch.sceneId');
-    expect(discoverSource).toContain('isVisitor: false');
+    expect(discoverSource).toContain('const sameStateActiveMatch = stateResponse.find(');
+    expect(discoverSource).toContain('const anyActiveMatch = communityResponse.find(');
+    expect(discoverSource).toContain('const resolvedMatch = exactMatch ?? sameStateActiveMatch ?? anyActiveMatch;');
+    expect(discoverSource).toContain('tunedSceneId: resolvedMatch.sceneId');
+    expect(discoverSource).toContain('isVisitor: Boolean(');
   });
 
   it('does not hard-gate current-community reads on auth when active scene context exists', () => {
     const discoverSource = readRepoFile('src/app/discover/page.tsx');
 
-    expect(discoverSource).toContain('if (!activeSceneId) {');
+    expect(discoverSource).toContain('const localContextReady = Boolean(activeSceneId || hasOriginContext);');
+    expect(discoverSource).toContain('if (!localContextReady) {');
     expect(discoverSource).toContain('getCommunityDiscoverHighlights(activeSceneId, token || undefined, 8)');
     expect(discoverSource).toContain('searchCommunityDiscover(activeSceneId, query, token || undefined, 8)');
-    expect(discoverSource).toContain('disabled={!activeSceneId}');
+    expect(discoverSource).toContain('disabled={!localContextReady}');
+    expect(discoverSource).toContain('setHighlights(emptyHighlights);');
     expect(discoverSource).not.toContain('Sign in is required to search this community and open its full Discover sections.');
   });
 });

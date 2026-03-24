@@ -175,10 +175,42 @@ export default function DiscoverPage() {
   }, [homeScene?.state, locationQuery, originMusicCommunity, tier, tunedScene?.state]);
 
   const activeSceneId = tunedSceneId ?? tunedScene?.id ?? null;
-  const activeSceneName = tunedScene?.name ?? 'current community';
-  const localDiscoverLockedReason = !activeSceneId
-    ? 'Retune to an Uprise to unlock local discovery.'
-    : 'RaDIYo retunes here first.';
+  const localContextReady = Boolean(activeSceneId || hasOriginContext);
+  const activeSceneName =
+    tunedScene?.name ??
+    (homeScene ? `${homeScene.city}, ${homeScene.state} ${homeScene.musicCommunity}` : 'current community');
+  const localDiscoverLockedReason = !localContextReady
+    ? 'Home Scene or tuned community context is required to search locally.'
+    : !activeSceneId
+      ? 'This Home Scene does not have a live city-scene anchor yet. Local discovery is available in empty-state mode until the scene resolves.'
+      : 'RaDIYo retunes here first.';
+  const emptyHighlights: CommunityDiscoverHighlights = useMemo(
+    () => ({
+      community: {
+        id: activeSceneId ?? 'unresolved-home-scene',
+        name: activeSceneName,
+        city: tunedScene?.city ?? homeScene?.city ?? null,
+        state: tunedScene?.state ?? homeScene?.state ?? null,
+        musicCommunity: tunedScene?.musicCommunity ?? homeScene?.musicCommunity ?? null,
+        tier: 'city',
+        isActive: Boolean(tunedScene?.isActive),
+      },
+      recommendations: [],
+      trending: [],
+      topArtists: [],
+    }),
+    [
+      activeSceneId,
+      activeSceneName,
+      homeScene?.city,
+      homeScene?.musicCommunity,
+      homeScene?.state,
+      tunedScene?.city,
+      tunedScene?.isActive,
+      tunedScene?.musicCommunity,
+      tunedScene?.state,
+    ],
+  );
 
   useEffect(() => {
     async function fetchContext() {
@@ -202,7 +234,7 @@ export default function DiscoverPage() {
       if (!homeScene?.city || !homeScene?.state || !homeScene?.musicCommunity) return;
 
       try {
-        const response = await listDiscoverScenes(
+        const exactResponse = await listDiscoverScenes(
           {
             tier: 'city',
             city: homeScene.city,
@@ -212,7 +244,7 @@ export default function DiscoverPage() {
           token || undefined,
         );
 
-        const exactMatch = response.find(
+        const exactMatch = exactResponse.find(
           (item): item is DiscoverCitySceneItem =>
             item.entryType === 'city_scene' &&
             item.city?.trim().toLowerCase() === homeScene.city.trim().toLowerCase() &&
@@ -221,20 +253,67 @@ export default function DiscoverPage() {
               homeScene.musicCommunity.trim().toLowerCase(),
         );
 
-        if (!exactMatch || ignore) return;
+        const stateResponse =
+          exactMatch && exactMatch.isActive
+            ? []
+            : await listDiscoverScenes(
+                {
+                  tier: 'city',
+                  state: homeScene.state,
+                  musicCommunity: homeScene.musicCommunity,
+                },
+                token || undefined,
+              );
+
+        const sameStateActiveMatch = stateResponse.find(
+          (item): item is DiscoverCitySceneItem =>
+            item.entryType === 'city_scene' &&
+            item.isActive &&
+            item.state?.trim().toLowerCase() === homeScene.state.trim().toLowerCase() &&
+            item.musicCommunity?.trim().toLowerCase() ===
+              homeScene.musicCommunity.trim().toLowerCase(),
+        );
+
+        const communityResponse =
+          exactMatch || sameStateActiveMatch
+            ? []
+            : await listDiscoverScenes(
+                {
+                  tier: 'city',
+                  musicCommunity: homeScene.musicCommunity,
+                },
+                token || undefined,
+              );
+
+        const anyActiveMatch = communityResponse.find(
+          (item): item is DiscoverCitySceneItem =>
+            item.entryType === 'city_scene' &&
+            item.isActive &&
+            item.musicCommunity?.trim().toLowerCase() ===
+              homeScene.musicCommunity.trim().toLowerCase(),
+        );
+
+        const resolvedMatch = exactMatch ?? sameStateActiveMatch ?? anyActiveMatch;
+
+        if (!resolvedMatch || ignore) return;
 
         setDiscoveryContext({
-          tunedSceneId: exactMatch.sceneId,
+          tunedSceneId: resolvedMatch.sceneId,
           tunedScene: {
-            id: exactMatch.sceneId,
-            name: exactMatch.name,
-            city: exactMatch.city ?? null,
-            state: exactMatch.state ?? null,
-            musicCommunity: exactMatch.musicCommunity ?? null,
+            id: resolvedMatch.sceneId,
+            name: resolvedMatch.name,
+            city: resolvedMatch.city ?? null,
+            state: resolvedMatch.state ?? null,
+            musicCommunity: resolvedMatch.musicCommunity ?? null,
             tier: 'city',
-            isActive: exactMatch.isActive,
+            isActive: resolvedMatch.isActive,
           },
-          isVisitor: false,
+          isVisitor: Boolean(
+            resolvedMatch.city?.trim().toLowerCase() !== homeScene.city.trim().toLowerCase() ||
+              resolvedMatch.state?.trim().toLowerCase() !== homeScene.state.trim().toLowerCase() ||
+              resolvedMatch.musicCommunity?.trim().toLowerCase() !==
+                homeScene.musicCommunity.trim().toLowerCase(),
+          ),
         });
       } catch {
         // Keep Discover in the explicit locked state if home-scene resolution fails.
@@ -297,8 +376,16 @@ export default function DiscoverPage() {
     let ignore = false;
 
     async function fetchHighlights() {
-      if (!activeSceneId) {
+      if (!localContextReady) {
         setHighlights(null);
+        setHighlightsError(null);
+        return;
+      }
+
+      if (!activeSceneId) {
+        setHighlights(emptyHighlights);
+        setHighlightsError(null);
+        setHighlightsLoading(false);
         return;
       }
 
@@ -327,7 +414,7 @@ export default function DiscoverPage() {
     return () => {
       ignore = true;
     };
-  }, [activeSceneId, token]);
+  }, [activeSceneId, emptyHighlights, localContextReady, token]);
 
   useEffect(() => {
     let ignore = false;
@@ -365,7 +452,7 @@ export default function DiscoverPage() {
     let ignore = false;
 
     async function fetchLocalSearch() {
-      if (!activeSceneId) {
+      if (!localContextReady) {
         setLocalSearchResult(null);
         setLocalSearchError(null);
         setLocalSearchLoading(false);
@@ -375,6 +462,18 @@ export default function DiscoverPage() {
       const query = localSearchQuery.trim();
       if (!query) {
         setLocalSearchResult(null);
+        setLocalSearchError(null);
+        setLocalSearchLoading(false);
+        return;
+      }
+
+      if (!activeSceneId) {
+        setLocalSearchResult({
+          community: emptyHighlights.community,
+          query,
+          artists: [],
+          songs: [],
+        });
         setLocalSearchError(null);
         setLocalSearchLoading(false);
         return;
@@ -406,7 +505,7 @@ export default function DiscoverPage() {
       ignore = true;
       window.clearTimeout(timer);
     };
-  }, [activeSceneId, localSearchQuery, token]);
+  }, [activeSceneId, emptyHighlights.community, localContextReady, localSearchQuery, token]);
 
   const resultSummary = useMemo(() => {
     if (!hasOriginContext) {
@@ -781,9 +880,13 @@ export default function DiscoverPage() {
             <input
               value={localSearchQuery}
               onChange={(event) => setLocalSearchQuery(event.target.value)}
-              placeholder={activeSceneId ? `Search artists and songs in ${activeSceneName}` : 'Retune to search locally'}
+              placeholder={
+                localContextReady
+                  ? `Search artists and songs in ${activeSceneName}`
+                  : 'Home Scene or tuned community required'
+              }
               className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-              disabled={!activeSceneId}
+              disabled={!localContextReady}
             />
             {activeSceneId ? (
               <Button asChild variant="outline" size="sm">

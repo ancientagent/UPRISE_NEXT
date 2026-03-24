@@ -60,7 +60,7 @@ Primary source:
 ### 6. Current-community Discover should not require retune when community context is already valid
 - The current-community section is supposed to expose local artist/song search plus Recommendations, Trending, and Top Artists once the user is in a real community Discover context.
 - This became a live bug because unsigned onboarding preserved the Home Scene tuple without a resolved city-scene id, leaving current-community Discover gated on `activeSceneId`.
-- That gap is now closed on current `feat/ux-founder-locks-and-harness` HEAD for the valid-Home-Scene-tuple path: `/discover` resolves the tuple to a city-scene id and unlocks local artist/song search plus Recommendations, Trending, and Top Artists even without auth storage.
+- That gap is now closed on current `feat/ux-founder-locks-and-harness` HEAD for the valid-Home-Scene-tuple path: `/discover` now unlocks local artist/song search plus Recommendations, Trending, and Top Artists from Home Scene context even when no live city-scene anchor exists yet, using explicit empty-state messaging until the scene resolves.
 
 Primary sources:
 - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`

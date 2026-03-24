@@ -1,7 +1,7 @@
 # 2026-03-24 — Discover unsigned Home Scene unlock fix
 
 ## Scope
-- Fix the unsigned onboarding -> plot -> Discover path so current-community Discover unlocks from a valid Home Scene tuple even when there is no resolved tuned city-scene id yet.
+- Fix the unsigned onboarding -> plot -> Discover path so current-community Discover unlocks from a valid Home Scene tuple even when there is no resolved tuned city-scene id or live city-scene anchor yet.
 
 ## Files
 - `apps/web/src/app/discover/page.tsx`
@@ -15,10 +15,10 @@
 - `docs/CHANGELOG.md`
 
 ## What changed
-- Added a client-side Home Scene tuple fallback in `/discover` that resolves `{city, state, musicCommunity}` into the matching city-scene id when no tuned-scene id is present yet.
-- Removed the auth hard-gate on current-community Discover reads once a valid scene context exists.
-- Allowed anonymous `GET /discover/communities/:sceneId/search` and `GET /discover/communities/:sceneId/highlights` reads so unsigned current-community Discover can render from a resolved Home Scene context.
-- Added regression coverage for the tuple-resolution path and anonymous typed-client/API reads.
+- Added a client-side Home Scene fallback ladder in `/discover` that first attempts to resolve `{city, state, musicCommunity}` into a live city-scene id, then keeps the page in current-community empty-state mode when no city-scene anchor exists yet.
+- Removed the auth hard-gate on current-community Discover reads once valid community context exists.
+- Allowed anonymous `GET /discover/communities/:sceneId/search` and `GET /discover/communities/:sceneId/highlights` reads so unsigned current-community Discover can render from either a resolved scene id or the Home Scene empty-state fallback.
+- Added regression coverage for both the fallback-resolution path and anonymous typed-client/API reads.
 
 ## Live verification
 ### Unsigned state repro
@@ -31,15 +31,16 @@
 - Opened `/plot`, then `/discover`.
 
 ### Observed result
-- `/plot` resolved `Austin, Texas • Punk` scene context in the unsigned browser state.
+- `/plot` carried `Austin, Texas • Rock` scene context in the unsigned browser state.
 - `/discover` showed:
-  - `Home Scene: Austin, Texas — Punk`
-  - `Tuned Scene: Austin, Texas — Punk`
-  - unlocked current-community Discover
+  - `Home Scene: Austin, Texas — Rock`
+  - `Tuned Scene: Not set`
+  - enabled local artist/song search
   - `Recommendations`
   - `Trending`
   - `Top Artists`
-- This confirms the current-community Discover surface now unlocks from valid Home Scene context even when there is no pre-existing tuned city-scene id in storage.
+  - empty-state current-community messaging explaining that no live city-scene anchor exists yet
+- This confirms the current-community Discover surface now unlocks from valid Home Scene context even when there is no pre-existing tuned city-scene id or live city-scene anchor in storage.
 
 ## Verification commands
 ```bash
@@ -49,4 +50,4 @@ pnpm --filter web test -- discovery-client.test.ts --runInBand
 ```
 
 ## Notes
-- The earlier signed-in Discover fixture flow was already working; this slice closes the remaining unsigned tuple-only gap.
+- The earlier signed-in Discover fixture flow was already working; this slice closes the remaining unsigned tuple-only gap and keeps current-community Discover usable even before a live city-scene anchor exists.
