@@ -33,4 +33,20 @@ describe('plot tab contract locks', () => {
     expect(promotionsSource).toContain("metadataValue(item.metadata, ['callToAction']) ?? 'Promotion posted.'");
     expect(promotionsSource).toContain("metadataValue(item.metadata, ['expiresAt', 'expiration'])");
   });
+
+  it('passes structural community labels into feed, events, and promotions headers', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const feedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+    const eventsSource = readRepoFile('src/components/plot/PlotEventsPanel.tsx');
+    const promotionsSource = readRepoFile('src/components/plot/PlotPromotionsPanel.tsx');
+
+    expect(plotPageSource).toContain('communityLabel={selectedCommunityLabel}');
+    expect(feedSource).toContain('communityLabel?: string | null;');
+    expect(feedSource).toContain("return `S.E.E.D Feed • ${communityLabel}`;");
+    expect(feedSource).toContain('scene anchor: ${communityLabel}');
+    expect(eventsSource).toContain('communityLabel?: string | null;');
+    expect(eventsSource).toContain('Events{communityLabel ? ` • ${communityLabel}` : \'\'}');
+    expect(promotionsSource).toContain('communityLabel?: string | null;');
+    expect(promotionsSource).toContain('Promotions{communityLabel ? ` • ${communityLabel}` : \'\'}');
+  });
 });

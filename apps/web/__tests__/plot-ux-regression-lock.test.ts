@@ -185,6 +185,15 @@ describe('/plot UX regression lock', () => {
     );
   });
 
+  it('keeps selected Plot community identity structural when tuple fields exist', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain("const selectedCommunityLabel = useMemo(() => formatPlotCommunityLabel(selectedCommunity), [selectedCommunity]);");
+    expect(plotPageSource).toContain("return `${community.city}, ${community.state} • ${community.musicCommunity}`;");
+    expect(plotPageSource).toContain('{selectedCommunityLabel ??');
+    expect(plotPageSource).toContain('{selectedCommunityLabel ?? selectedCommunity.name}');
+  });
+
   it('locks bottom nav and center UPRISE wheel trigger onto the /plot route', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 

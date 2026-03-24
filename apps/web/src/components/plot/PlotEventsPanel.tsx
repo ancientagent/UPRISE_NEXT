@@ -11,7 +11,7 @@ import { useAuthStore } from '@/store/auth';
 
 interface PlotEventsPanelProps {
   communityId: string | null;
-  communityName?: string | null;
+  communityLabel?: string | null;
 }
 
 function formatEventStatus(startDate: string, endDate: string): 'Upcoming' | 'Live now' | 'Ended' {
@@ -43,7 +43,7 @@ function EventsSkeletonRows() {
   );
 }
 
-export default function PlotEventsPanel({ communityId, communityName }: PlotEventsPanelProps) {
+export default function PlotEventsPanel({ communityId, communityLabel }: PlotEventsPanelProps) {
   const { token } = useAuthStore();
   const [items, setItems] = useState<CommunityEventItem[]>([]);
   const [includePast, setIncludePast] = useState(false);
@@ -92,7 +92,7 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-black">
-            Events{communityName ? ` • ${communityName}` : ''}
+            Events{communityLabel ? ` • ${communityLabel}` : ''}
           </h2>
           <p className="mt-1 text-xs text-black/50">
             Scene-scoped events ordered by canonical start time. No personalized ranking.

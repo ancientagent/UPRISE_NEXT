@@ -127,6 +127,16 @@ const formatShelfItemSecondaryLabel = (item: PlotCollectionShelfItem): string =>
   );
 };
 
+const formatPlotCommunityLabel = (community: Pick<CommunityWithDistance, 'city' | 'state' | 'musicCommunity' | 'name'> | null): string | null => {
+  if (!community) return null;
+
+  if (community.city && community.state && community.musicCommunity) {
+    return `${community.city}, ${community.state} • ${community.musicCommunity}`;
+  }
+
+  return community.name ?? null;
+};
+
 export default function PlotPage() {
   const router = useRouter();
   const { homeScene, pioneerFollowUp, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
@@ -179,6 +189,7 @@ export default function PlotPage() {
       tunedScene?.tier,
     ],
   );
+  const selectedCommunityLabel = useMemo(() => formatPlotCommunityLabel(selectedCommunity), [selectedCommunity]);
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
@@ -623,7 +634,7 @@ export default function PlotPage() {
       return (
         <SeedFeedPanel
           communityId={selectedCommunity?.id ?? null}
-          communityName={selectedCommunity?.name ?? null}
+          communityLabel={selectedCommunityLabel}
           selectedTier={selectedTier}
         />
       );
@@ -633,7 +644,7 @@ export default function PlotPage() {
       return (
         <PlotEventsPanel
           communityId={selectedCommunity?.id ?? null}
-          communityName={selectedCommunity?.name ?? null}
+          communityLabel={selectedCommunityLabel}
         />
       );
     }
@@ -642,7 +653,7 @@ export default function PlotPage() {
       return (
         <PlotPromotionsPanel
           communityId={selectedCommunity?.id ?? null}
-          communityName={selectedCommunity?.name ?? null}
+          communityLabel={selectedCommunityLabel}
         />
       );
     }
@@ -815,7 +826,7 @@ export default function PlotPage() {
                 </p>
                 <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Context</p>
                 <p className="mt-1 text-sm font-medium text-black">
-                  {selectedCommunity?.name ??
+                  {selectedCommunityLabel ??
                     (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
                       ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
                       : 'No scene selected')}
@@ -944,7 +955,7 @@ export default function PlotPage() {
                     </div>
                     <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
                       <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Current Scene</p>
-                      <p className="mt-1 text-sm font-medium text-black">{selectedCommunity?.name ?? 'No scene selected'}</p>
+                      <p className="mt-1 text-sm font-medium text-black">{selectedCommunityLabel ?? 'No scene selected'}</p>
                     </div>
                   </div>
                 ) : activeProfileSection === 'Merch' ? (
@@ -1113,7 +1124,7 @@ export default function PlotPage() {
                   <div className="rounded-2xl border border-black/10 bg-white p-6">
                     <h3 className="mb-3 font-semibold text-black">Selected Community</h3>
                     <div className="rounded-xl bg-black/5 p-4">
-                      <p className="font-medium text-black">{selectedCommunity.name}</p>
+                      <p className="font-medium text-black">{selectedCommunityLabel ?? selectedCommunity.name}</p>
                       <p className="mt-1 text-sm text-black/60">
                         {selectedCommunity.memberCount?.toLocaleString()} members
                       </p>

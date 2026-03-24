@@ -15,7 +15,7 @@ type FeedItemType = CommunityFeedItem['type'];
 
 interface SeedFeedPanelProps {
   communityId: string | null;
-  communityName?: string | null;
+  communityLabel?: string | null;
   selectedTier: 'city' | 'state' | 'national';
 }
 
@@ -54,7 +54,7 @@ function FeedSkeletonRows() {
 
 export default function SeedFeedPanel({
   communityId,
-  communityName,
+  communityLabel,
   selectedTier,
 }: SeedFeedPanelProps) {
   const { token } = useAuthStore();
@@ -65,14 +65,14 @@ export default function SeedFeedPanel({
   const [error, setError] = useState<string | null>(null);
 
   const title = useMemo(() => {
-    if (!communityName) return 'S.E.E.D Feed';
-    return `S.E.E.D Feed • ${communityName}`;
-  }, [communityName]);
+    if (!communityLabel) return 'S.E.E.D Feed';
+    return `S.E.E.D Feed • ${communityLabel}`;
+  }, [communityLabel]);
 
   const contextLabel = useMemo(() => {
     const tierLabel = selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1);
-    if (communityName) {
-      return `${tierLabel} scene anchor: ${communityName}`;
+    if (communityLabel) {
+      return `${tierLabel} scene anchor: ${communityLabel}`;
     }
 
     if (resolvedSceneId) {
@@ -80,7 +80,7 @@ export default function SeedFeedPanel({
     }
 
     return `${tierLabel} scene context is resolving`;
-  }, [communityName, resolvedSceneId, selectedTier]);
+  }, [communityLabel, resolvedSceneId, selectedTier]);
 
   const fetchPage = useCallback(
     async (before?: string | null) => {

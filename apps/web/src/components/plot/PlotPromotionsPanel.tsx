@@ -11,7 +11,7 @@ import { useAuthStore } from '@/store/auth';
 
 interface PlotPromotionsPanelProps {
   communityId: string | null;
-  communityName?: string | null;
+  communityLabel?: string | null;
 }
 
 function metadataText(metadata: CommunityPromotionItem['metadata']): string {
@@ -48,7 +48,7 @@ function PromotionsSkeletonRows() {
   );
 }
 
-export default function PlotPromotionsPanel({ communityId, communityName }: PlotPromotionsPanelProps) {
+export default function PlotPromotionsPanel({ communityId, communityLabel }: PlotPromotionsPanelProps) {
   const { token } = useAuthStore();
   const [items, setItems] = useState<CommunityPromotionItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -87,7 +87,7 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6">
       <h2 className="text-lg font-semibold text-black">
-        Promotions{communityName ? ` • ${communityName}` : ''}
+        Promotions{communityLabel ? ` • ${communityLabel}` : ''}
       </h2>
       <p className="mt-1 text-xs text-black/50">
         Explicit local offers surface only. No Fair Play, governance, or recommendation effects.
