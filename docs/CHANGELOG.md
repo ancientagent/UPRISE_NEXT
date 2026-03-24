@@ -19,6 +19,7 @@
 
 ## [Unreleased]
 ### Added
+- Fixed the API dev/build runtime path for live QA by adding `apps/api/tsconfig.build.json` so `nest build` and `pnpm --filter api dev` emit runnable output again, verified boot on `:4000`, and recorded the slice in `docs/handoff/2026-03-23_api-dev-build-runtime-fix.md`.
 - Fixed Discover public-read runtime wiring by allowing anonymous `GET /discover/scenes` and `GET /discover/context`, expanding API dev CORS defaults to include `http://127.0.0.1:3000`, adding `apps/api/src/auth/guards/optional-jwt-auth.guard.ts`, covering the behavior in `apps/api/test/communities.discovery.{controller,service}.test.ts`, and recording the slice in `docs/handoff/2026-03-23_discover-public-read-runtime-fix.md`.
 - Fixed Discover scope-change travel normalization in `apps/web/src/app/discover/page.tsx` by resetting the location query to the active tier default, added helper `apps/web/src/lib/discovery/query-state.ts`, covered it in `apps/web/__tests__/discovery-query-state.test.ts`, and recorded the slice in `docs/handoff/2026-03-23_discover-scope-normalization-fix.md`.
 - Added the native artist-destination Discover slice by extending `apps/api/src/artist-bands/` with profile/action contracts, adding shared profile types in `packages/types/src/artist-band.ts`, introducing the new artist route `apps/web/src/app/artist-bands/[id]/page.tsx`, wiring Discover artist/song/top-artist links to that route, and recording the slice in `docs/handoff/2026-03-23_discover-artist-destination-slice.md`.
