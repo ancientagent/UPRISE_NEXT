@@ -22,6 +22,19 @@ function metadataText(metadata: CommunityPromotionItem['metadata']): string {
   return title ?? summary ?? cta ?? 'Promotion posted.';
 }
 
+function metadataValue(metadata: CommunityPromotionItem['metadata'], keys: string[]): string | null {
+  if (!metadata) return null;
+
+  for (const key of keys) {
+    const value = metadata[key];
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return value.trim();
+    }
+  }
+
+  return null;
+}
+
 function PromotionsSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
@@ -115,10 +128,25 @@ export default function PlotPromotionsPanel({ communityId, communityName }: Plot
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
             <li key={item.id} className="rounded-xl border border-black/10 p-3">
-              <p className="text-sm font-medium text-black">{metadataText(item.metadata)}</p>
-              <p className="mt-1 text-xs text-black/60">
-                {item.actor?.displayName || item.actor?.username || 'Scene Publisher'} •{' '}
-                {new Date(item.createdAt).toLocaleString()}
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-medium text-black">{metadataText(item.metadata)}</p>
+                  <p className="mt-1 text-xs text-black/60">
+                    {item.actor?.displayName || item.actor?.username || 'Scene Publisher'} • {new Date(item.createdAt).toLocaleString()}
+                  </p>
+                </div>
+                <span className="rounded-full border border-black/10 bg-black/[0.03] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
+                  {metadataValue(item.metadata, ['status']) ?? item.type}
+                </span>
+              </div>
+              {metadataValue(item.metadata, ['summary', 'description']) ? (
+                <p className="mt-2 text-sm text-black/65">{metadataValue(item.metadata, ['summary', 'description'])}</p>
+              ) : null}
+              <p className="mt-2 text-xs text-black/55">
+                {metadataValue(item.metadata, ['callToAction']) ?? 'Promotion posted.'}
+                {metadataValue(item.metadata, ['expiresAt', 'expiration'])
+                  ? ` • Expires ${metadataValue(item.metadata, ['expiresAt', 'expiration'])}`
+                  : ''}
               </p>
             </li>
           ))}

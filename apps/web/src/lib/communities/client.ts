@@ -42,10 +42,17 @@ export interface CommunityEventItem {
   description: string;
   startDate: string;
   endDate: string;
+  createdAt: string;
   locationName: string;
   address: string;
   attendeeCount: number;
   maxAttendees: number | null;
+  createdBy: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string | null;
+  } | null;
 }
 
 export interface CommunityPromotionItem {

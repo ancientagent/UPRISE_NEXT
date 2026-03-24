@@ -1947,7 +1947,7 @@ export class CommunitiesService {
           const row = await this.prisma.$queryRaw<Array<{ id: string; lat: number | null; lng: number | null }>>`
             SELECT id::text as id, ST_Y(geofence::geometry) as lat, ST_X(geofence::geometry) as lng
             FROM communities
-            WHERE id = ${id}::uuid
+            WHERE id::text = ${id}
           `;
           return row[0] ?? { id, lat: null, lng: null };
         })

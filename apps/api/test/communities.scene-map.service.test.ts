@@ -46,6 +46,7 @@ describe('CommunitiesService.getSceneMap', () => {
     expect(result.points).toHaveLength(1);
     expect(result.points[0].kind).toBe('community');
     expect(result.points[0].label).toBe('Austin Punk');
+    expect(mockPrisma.$queryRaw.mock.calls[0][0].join('')).toContain('WHERE id::text = ');
   });
 
   it('rolls up national scope by state', async () => {

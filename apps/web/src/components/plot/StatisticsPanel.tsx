@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 import type { CommunityWithDistance } from '@/lib/types/community';
@@ -33,7 +33,7 @@ export default function StatisticsPanel({
   onCommunitySelect,
   onCommunitiesUpdate,
 }: StatisticsPanelProps) {
-  const { homeScene, gpsCoords } = useOnboardingStore();
+  const { gpsCoords } = useOnboardingStore();
   const { token } = useAuthStore();
 
   const [communities, setCommunities] = useState<CommunityWithDistance[]>([]);
@@ -45,16 +45,6 @@ export default function StatisticsPanel({
   const [mapError, setMapError] = useState<string | null>(null);
 
   const cityRadiusMeters = 10000;
-
-  const mapCenter = useMemo(() => {
-    if (gpsCoords) {
-      return { lat: gpsCoords.latitude, lng: gpsCoords.longitude };
-    }
-
-    return homeScene
-      ? { lat: 40.7128, lng: -74.006 }
-      : { lat: 39.8283, lng: -98.5795 };
-  }, [gpsCoords, homeScene]);
 
   // City-only: fetch nearby communities for local map.
   useEffect(() => {
@@ -71,16 +61,18 @@ export default function StatisticsPanel({
         return;
       }
 
-      if (!mapCenter.lat || !mapCenter.lng) {
-        setError('Location not available');
+      if (!gpsCoords) {
+        const fallbackCommunities = selectedCommunity ? [selectedCommunity] : [];
+        setCommunities(fallbackCommunities);
+        onCommunitiesUpdate?.(fallbackCommunities);
         return;
       }
 
       try {
         const response = await findNearbyCommunities(
           {
-            lat: mapCenter.lat,
-            lng: mapCenter.lng,
+            lat: gpsCoords.latitude,
+            lng: gpsCoords.longitude,
             radius: cityRadiusMeters,
             limit: 50,
           },
@@ -106,7 +98,7 @@ export default function StatisticsPanel({
     }
 
     fetchNearbyCommunities();
-  }, [selectedTier, mapCenter, cityRadiusMeters, token, selectedCommunity, onCommunitySelect, onCommunitiesUpdate]);
+  }, [selectedTier, gpsCoords, cityRadiusMeters, token, selectedCommunity, onCommunitySelect, onCommunitiesUpdate]);
 
   // Tier-scoped statistics use explicit community anchor when selected, otherwise active-scene fallback.
   useEffect(() => {

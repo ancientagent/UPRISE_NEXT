@@ -14,6 +14,22 @@ interface PlotEventsPanelProps {
   communityName?: string | null;
 }
 
+function formatEventStatus(startDate: string, endDate: string): 'Upcoming' | 'Live now' | 'Ended' {
+  const now = Date.now();
+  const start = new Date(startDate).getTime();
+  const end = new Date(endDate).getTime();
+
+  if (Number.isFinite(end) && end < now) {
+    return 'Ended';
+  }
+
+  if (Number.isFinite(start) && start <= now) {
+    return 'Live now';
+  }
+
+  return 'Upcoming';
+}
+
 function EventsSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
@@ -122,14 +138,27 @@ export default function PlotEventsPanel({ communityId, communityName }: PlotEven
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
             <li key={item.id} className="rounded-xl border border-black/10 p-3">
-              <p className="text-sm font-medium text-black">{item.title}</p>
-              <p className="mt-1 text-xs text-black/60">
-                {new Date(item.startDate).toLocaleString()} • {item.locationName}
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-medium text-black">{item.title}</p>
+                  <p className="mt-1 text-xs text-black/60">
+                    {new Date(item.startDate).toLocaleString()} • {item.locationName}
+                  </p>
+                </div>
+                <span className="rounded-full border border-black/10 bg-black/[0.03] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
+                  {formatEventStatus(item.startDate, item.endDate)}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-black/55">
+                Published by {item.createdBy?.displayName || item.createdBy?.username || 'Scene organizer'} • {new Date(item.createdAt).toLocaleDateString()}
               </p>
               <p className="mt-1 text-xs text-black/50">
                 {item.attendeeCount}
                 {item.maxAttendees ? ` / ${item.maxAttendees}` : ''} attending
               </p>
+              {item.description ? (
+                <p className="mt-2 text-sm text-black/65">{item.description}</p>
+              ) : null}
             </li>
           ))}
         </ul>
