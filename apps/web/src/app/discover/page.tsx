@@ -6,7 +6,10 @@ import { Button } from '@uprise/ui';
 import type { CommunityDiscoverHighlights, CommunityDiscoverSearchResult } from '@uprise/types';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
 import SceneMap from '@/components/plot/SceneMap';
-import { getCommunitySceneMap, type CommunitySceneMapResponse } from '@/lib/communities/client';
+import {
+  getCommunitySceneMap,
+  type CommunitySceneMapResponse,
+} from '@/lib/communities/client';
 import {
   getCommunityDiscoverHighlights,
   getDiscoveryContext,
@@ -175,9 +178,7 @@ export default function DiscoverPage() {
   const activeSceneName = tunedScene?.name ?? 'current community';
   const localDiscoverLockedReason = !activeSceneId
     ? 'Retune to an Uprise to unlock local discovery.'
-    : !token
-      ? 'Sign in to search this community and open its full Discover surfaces.'
-      : 'RaDIYo retunes here first.';
+    : 'RaDIYo retunes here first.';
 
   useEffect(() => {
     async function fetchContext() {
@@ -192,6 +193,67 @@ export default function DiscoverPage() {
 
     fetchContext();
   }, [token, setDiscoveryContext]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function resolveHomeSceneFallback() {
+      if (activeSceneId) return;
+      if (!homeScene?.city || !homeScene?.state || !homeScene?.musicCommunity) return;
+
+      try {
+        const response = await listDiscoverScenes(
+          {
+            tier: 'city',
+            city: homeScene.city,
+            state: homeScene.state,
+            musicCommunity: homeScene.musicCommunity,
+          },
+          token || undefined,
+        );
+
+        const exactMatch = response.find(
+          (item): item is DiscoverCitySceneItem =>
+            item.entryType === 'city_scene' &&
+            item.city?.trim().toLowerCase() === homeScene.city.trim().toLowerCase() &&
+            item.state?.trim().toLowerCase() === homeScene.state.trim().toLowerCase() &&
+            item.musicCommunity?.trim().toLowerCase() ===
+              homeScene.musicCommunity.trim().toLowerCase(),
+        );
+
+        if (!exactMatch || ignore) return;
+
+        setDiscoveryContext({
+          tunedSceneId: exactMatch.sceneId,
+          tunedScene: {
+            id: exactMatch.sceneId,
+            name: exactMatch.name,
+            city: exactMatch.city ?? null,
+            state: exactMatch.state ?? null,
+            musicCommunity: exactMatch.musicCommunity ?? null,
+            tier: 'city',
+            isActive: exactMatch.isActive,
+          },
+          isVisitor: false,
+        });
+      } catch {
+        // Keep Discover in the explicit locked state if home-scene resolution fails.
+      }
+    }
+
+    void resolveHomeSceneFallback();
+
+    return () => {
+      ignore = true;
+    };
+  }, [
+    activeSceneId,
+    homeScene?.city,
+    homeScene?.musicCommunity,
+    homeScene?.state,
+    setDiscoveryContext,
+    token,
+  ]);
 
   useEffect(() => {
     let ignore = false;
@@ -235,7 +297,7 @@ export default function DiscoverPage() {
     let ignore = false;
 
     async function fetchHighlights() {
-      if (!token || !activeSceneId) {
+      if (!activeSceneId) {
         setHighlights(null);
         return;
       }
@@ -244,7 +306,7 @@ export default function DiscoverPage() {
       setHighlightsError(null);
 
       try {
-        const response = await getCommunityDiscoverHighlights(activeSceneId, token, 8);
+        const response = await getCommunityDiscoverHighlights(activeSceneId, token || undefined, 8);
         if (!ignore) {
           setHighlights(response);
         }
@@ -303,8 +365,10 @@ export default function DiscoverPage() {
     let ignore = false;
 
     async function fetchLocalSearch() {
-      if (!token || !activeSceneId) {
+      if (!activeSceneId) {
         setLocalSearchResult(null);
+        setLocalSearchError(null);
+        setLocalSearchLoading(false);
         return;
       }
 
@@ -320,7 +384,7 @@ export default function DiscoverPage() {
       setLocalSearchError(null);
 
       try {
-        const response = await searchCommunityDiscover(activeSceneId, query, token, 8);
+        const response = await searchCommunityDiscover(activeSceneId, query, token || undefined, 8);
         if (!ignore) {
           setLocalSearchResult(response);
         }
@@ -719,20 +783,14 @@ export default function DiscoverPage() {
               onChange={(event) => setLocalSearchQuery(event.target.value)}
               placeholder={activeSceneId ? `Search artists and songs in ${activeSceneName}` : 'Retune to search locally'}
               className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-              disabled={!token || !activeSceneId}
+              disabled={!activeSceneId}
             />
-            {token && activeSceneId ? (
+            {activeSceneId ? (
               <Button asChild variant="outline" size="sm">
                 <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
               </Button>
             ) : null}
           </div>
-
-          {activeSceneId && !token ? (
-            <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              Sign in is required to search this community and open its full Discover sections.
-            </div>
-          ) : null}
 
           {localSearchLoading ? (
             <p className="mt-3 text-sm text-black/60">Searching this community...</p>

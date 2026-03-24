@@ -91,11 +91,11 @@ export class DiscoveryController {
   }
 
   @Get('communities/:sceneId/search')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   async searchCommunityDiscover(
     @Param('sceneId') sceneId: string,
     @Query() rawQuery: any,
-    @Request() req: { user: { userId: string } },
+    @Request() req: { user?: { userId: string } | null },
   ): Promise<{
     success: true;
     data: any;
@@ -107,7 +107,7 @@ export class DiscoveryController {
       });
 
       const result = await this.communitiesService.searchCommunityDiscover(
-        req.user.userId,
+        req.user?.userId ?? null,
         sceneId,
         query,
       );
@@ -132,11 +132,11 @@ export class DiscoveryController {
   }
 
   @Get('communities/:sceneId/highlights')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   async getCommunityDiscoverHighlights(
     @Param('sceneId') sceneId: string,
     @Query() rawQuery: any,
-    @Request() req: { user: { userId: string } },
+    @Request() req: { user?: { userId: string } | null },
   ): Promise<{
     success: true;
     data: any;
@@ -147,7 +147,7 @@ export class DiscoveryController {
       });
 
       const result = await this.communitiesService.getCommunityDiscoverHighlights(
-        req.user.userId,
+        req.user?.userId ?? null,
         sceneId,
         query,
       );

@@ -197,6 +197,76 @@ describe('discovery client', () => {
     expect(keys).toEqual(['musicCommunity', 'state', 'tier']);
   });
 
+  it('allows community discover search reads without auth headers when no token is available', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-1',
+            name: 'Austin Punk',
+            city: 'Austin',
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'city',
+            isActive: true,
+          },
+          query: 'signal',
+          artists: [],
+          songs: [],
+        },
+      }),
+    });
+
+    await searchCommunityDiscover('scene-1', 'signal');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/communities/scene-1/search?query=signal',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.anything(),
+        }),
+      }),
+    );
+  });
+
+  it('allows community discover highlights reads without auth headers when no token is available', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-1',
+            name: 'Austin Punk',
+            city: 'Austin',
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'city',
+            isActive: true,
+          },
+          recommendations: [],
+          trending: [],
+          topArtists: [],
+        },
+      }),
+    });
+
+    await getCommunityDiscoverHighlights('scene-1');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/communities/scene-1/highlights',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.anything(),
+        }),
+      }),
+    );
+  });
+
   it('never adds artist or band lookup params to discovery queries', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

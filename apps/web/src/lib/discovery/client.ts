@@ -105,7 +105,7 @@ export async function setDiscoverHomeScene(sceneId: string, token: string): Prom
 export async function searchCommunityDiscover(
   sceneId: string,
   query: string,
-  token: string,
+  token?: string,
   limit?: number,
 ): Promise<CommunityDiscoverSearchResult> {
   const params = new URLSearchParams({
@@ -130,7 +130,7 @@ export async function searchCommunityDiscover(
 
 export async function getCommunityDiscoverHighlights(
   sceneId: string,
-  token: string,
+  token?: string,
   limit?: number,
 ): Promise<CommunityDiscoverHighlights> {
   const params = new URLSearchParams();

@@ -190,6 +190,38 @@ describe('DiscoveryController', () => {
     );
   });
 
+  it('allows anonymous GET /discover/communities/:sceneId/search and delegates with null user id', async () => {
+    communitiesServiceMock.searchCommunityDiscover.mockResolvedValue({
+      community: {
+        id: 'scene-1',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'city',
+        isActive: true,
+      },
+      query: 'signal',
+      artists: [],
+      songs: [],
+    });
+
+    const response = await (app.getHttpAdapter().getInstance() as any).inject({
+      method: 'GET',
+      url: '/discover/communities/scene-1/search?query=signal&limit=5',
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(communitiesServiceMock.searchCommunityDiscover).toHaveBeenCalledWith(
+      null,
+      'scene-1',
+      {
+        query: 'signal',
+        limit: 5,
+      },
+    );
+  });
+
   it('returns 400 on invalid community discover search query', async () => {
     const response = await (app.getHttpAdapter().getInstance() as any).inject({
       method: 'GET',
@@ -233,6 +265,37 @@ describe('DiscoveryController', () => {
     expect(payload.data.community.id).toBe('scene-1');
     expect(communitiesServiceMock.getCommunityDiscoverHighlights).toHaveBeenCalledWith(
       'user-1',
+      'scene-1',
+      {
+        limit: 6,
+      },
+    );
+  });
+
+  it('allows anonymous GET /discover/communities/:sceneId/highlights and delegates with null user id', async () => {
+    communitiesServiceMock.getCommunityDiscoverHighlights.mockResolvedValue({
+      community: {
+        id: 'scene-1',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'city',
+        isActive: true,
+      },
+      recommendations: [],
+      trending: [],
+      topArtists: [],
+    });
+
+    const response = await (app.getHttpAdapter().getInstance() as any).inject({
+      method: 'GET',
+      url: '/discover/communities/scene-1/highlights?limit=6',
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(communitiesServiceMock.getCommunityDiscoverHighlights).toHaveBeenCalledWith(
+      null,
       'scene-1',
       {
         limit: 6,

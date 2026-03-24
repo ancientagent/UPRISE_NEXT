@@ -471,7 +471,7 @@ export class CommunitiesService {
   }
 
   async searchCommunityDiscover(
-    _userId: string,
+    _userId: string | null,
     sceneId: string,
     query: GetCommunityDiscoverSearchDto,
   ): Promise<CommunityDiscoverSearchResult> {
@@ -611,7 +611,7 @@ export class CommunitiesService {
   }
 
   async getCommunityDiscoverHighlights(
-    _userId: string,
+    _userId: string | null,
     sceneId: string,
     query: GetCommunityDiscoverHighlightsDto,
   ): Promise<CommunityDiscoverHighlights> {
