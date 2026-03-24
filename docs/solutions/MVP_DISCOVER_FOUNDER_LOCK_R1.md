@@ -68,7 +68,7 @@ All three are horizontal carousel-style lists.
 - Community identity is `city + state + music community`.
 - The map/dropdown search is the community/Uprise search.
 - This search is context-based on the Home Scene/community the user left from.
-- When Discover is opened from Home Scene or another community screen, the music community/genre is already inherited from that current context.
+- When Discover is opened from Home Scene or another community screen, the current music community is already inherited from that context.
 - Geography changes; origin community remains constant.
 - The user can type a city or state.
 - Predictive matches appear in a text dropdown.
