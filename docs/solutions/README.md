@@ -37,6 +37,7 @@ For new model onboarding and stress-testing, use:
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md` (founder-confirmed artist-page structure, core actions, and playback handoff behavior)
 - `docs/solutions/MVP_WEB_UX_RECOVERY_PLAN_R1.md` (orders route unblocking, direct-route repairs, Discover founder-lock usage, and artist-profile lock work into one execution sequence)
 - `docs/solutions/MVP_WEB_UX_IMPLEMENTATION_BRIEF_R1.md` (coding brief for immediate route/runtime recovery plus Discover and artist-page implementation constraints)
+- `docs/solutions/MVP_UX_BATCH27_EXECUTION_PLAN.md` (remaining-work 5-lane closeout plan for current verified Discover/runtime branch state; prevents re-queuing already-complete work)
 
 ## Web Build/Typecheck Incidents
 
