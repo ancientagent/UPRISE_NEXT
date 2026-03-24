@@ -118,13 +118,7 @@ function formatCommunityIdentity(
   const stateLabel = state?.trim();
   const communityLabel = musicCommunity?.trim();
   if (cityLabel && stateLabel && communityLabel) return `${cityLabel}, ${stateLabel} • ${communityLabel}`;
-  if (cityLabel && communityLabel) return `${cityLabel} • ${communityLabel}`;
-  if (cityLabel && stateLabel) return `${cityLabel}, ${stateLabel}`;
-  if (stateLabel && communityLabel) return `${stateLabel} • ${communityLabel}`;
-  if (cityLabel) return cityLabel;
-  if (stateLabel) return stateLabel;
-  if (communityLabel) return communityLabel;
-  return 'Not set';
+  return 'Community identity unavailable.';
 }
 
 export default function DiscoverPage() {
@@ -720,11 +714,7 @@ export default function DiscoverPage() {
               <Button asChild variant="outline" size="sm">
                 <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
               </Button>
-            ) : (
-              <Button variant="outline" size="sm" disabled>
-                Visit Community
-              </Button>
-            )}
+            ) : null}
           </div>
 
           {localSearchLoading ? (

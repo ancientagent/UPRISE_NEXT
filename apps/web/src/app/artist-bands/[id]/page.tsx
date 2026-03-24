@@ -21,10 +21,7 @@ function formatCommunityIdentity(
   musicCommunity: string | null,
 ) {
   if (city && state && musicCommunity) return `${city}, ${state} • ${musicCommunity}`;
-  if (city && musicCommunity) return `${city} • ${musicCommunity}`;
-  if (state && musicCommunity) return `${state} • ${musicCommunity}`;
-  if (city && state) return `${city}, ${state}`;
-  return musicCommunity || city || state || 'Unlisted';
+  return 'Community identity unavailable.';
 }
 
 function formatDuration(seconds: number) {
