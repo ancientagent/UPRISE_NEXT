@@ -13,6 +13,7 @@ interface RadiyoPlayerPanelProps {
   rotationPool: RotationPool;
   onRotationPoolChange: (pool: RotationPool) => void;
   selectedTier: PlayerTier;
+  activeBroadcastTier: PlayerTier | null;
   onTierChange: (tier: PlayerTier) => void;
   broadcastLabel: string;
   collectionTitle?: string | null;
@@ -24,6 +25,7 @@ export default function RadiyoPlayerPanel({
   rotationPool,
   onRotationPoolChange,
   selectedTier,
+  activeBroadcastTier,
   onTierChange,
   broadcastLabel,
   collectionTitle,
@@ -111,7 +113,9 @@ export default function RadiyoPlayerPanel({
               )}
 
               <div className="min-w-0 flex items-center gap-1 rounded-full border border-white/12 bg-white/[0.03] px-1.5 py-[0.3rem]">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-lime-300">Live</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-lime-300">
+                  {activeBroadcastTier ? 'Live' : 'Stopped'}
+                </span>
                 <p className="truncate text-[11px] text-white/72">{broadcastLabel}</p>
               </div>
             </div>
@@ -129,11 +133,11 @@ export default function RadiyoPlayerPanel({
                 type="button"
                 onClick={() => onTierChange(tier)}
                 className={`rounded-[0.8rem] border px-2 py-1.25 text-[10px] font-semibold capitalize transition-colors ${
-                  selectedTier === tier
+                  activeBroadcastTier === tier
                     ? 'border-[#b7d43f] bg-[#b7d43f] text-black'
                     : 'border-white/12 bg-white/[0.03] text-white/82 hover:bg-white/[0.08]'
                 }`}
-                aria-pressed={selectedTier === tier}
+                aria-pressed={activeBroadcastTier === tier}
               >
                 {tier}
               </button>

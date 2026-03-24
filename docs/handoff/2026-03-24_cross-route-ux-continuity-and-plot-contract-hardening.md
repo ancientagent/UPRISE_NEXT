@@ -52,6 +52,7 @@ Active web UX lockdown follow-on after `34f625a`, focused on:
   - removed duplicate bottom-row collection transport buttons
   - kept `Collection` mode to eject + shuffle only
   - replaced those extra controls with deterministic helper copy and wheel-action summary
+  - added explicit active-tier re-tap stop state so the current tier can visibly switch from `Live` to `Stopped` without changing selected scene context
 - `/plot`
   - removed Plot-level `SceneContextBadge` after checking spec precedence
   - Plot continuity now lives in the player/context surfaces themselves, which matches the locked mobile + Plot surface docs
@@ -81,6 +82,7 @@ Verified with a disposable signed-in Austin Punk fixture plus runtime Home Scene
   - collapsed strip shows username + notification + options only
   - no stacked context badge boxes remain
   - no forbidden RADIYO transport buttons remain
+  - re-tapping the active tier flips the player shell to `Stopped` while keeping the selected scene context stable
 - expanded `/plot` -> Collection mode
   - collection mode enters from selection
   - player shows `Eject` and `Shuffle`
@@ -88,6 +90,5 @@ Verified with a disposable signed-in Austin Punk fixture plus runtime Home Scene
 
 ## Residual queue
 These are not blocked by ambiguity, but they are larger follow-on work than this hardening slice:
-- Plot player semantics still do not model a distinct stopped-broadcast state when re-tapping the active tier.
 - Expanded-profile `Saved Uprises` / `Saved Promos/Coupons` remain lightweight scene-context placeholders rather than data-backed shelves/cards.
 - Plot/profile surface still carries a compact `player mode summary` pill and collection helper copy that may warrant one tighter strict-spec pass if founder wants the screen reduced further.

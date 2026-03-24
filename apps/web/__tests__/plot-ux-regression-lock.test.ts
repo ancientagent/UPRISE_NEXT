@@ -45,8 +45,10 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
+    expect(plotPageSource).toContain("const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>('city')");
     expect(playerSource).not.toContain("useState<PlayerMode>");
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
+    expect(plotPageSource).toContain('activeBroadcastTier={activeBroadcastTier}');
     expect(plotPageSource).toContain("const collectionBroadcastLabel = selectedCollectionItem?.label ??");
     expect(plotPageSource).toContain('selectedCollectionItem?.id === item.id && playerMode === \'Collection\'');
     expect(plotPageSource).toContain("const handleCollectionEject = () => {");
@@ -62,6 +64,9 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('const handleCollectionEject =');
     expect(plotPageSource).toContain("setPlayerMode('Collection')");
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
+    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => current ?? selectedTier);');
+    expect(plotPageSource).toContain('const handleTierChange = (tier: PlayerTier) => {');
+    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === tier ? null : tier));');
     expect(plotPageSource).toContain('mode={playerMode}');
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
@@ -85,6 +90,8 @@ describe('/plot UX regression lock', () => {
 
     expect(playerSource).toContain('Tap City, State, or National to start that broadcast. Tap the active tier again to stop.');
     expect(playerSource).toContain('Collection mode stays selection-driven. Use eject to return to RADIYO.');
+    expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");
+    expect(playerSource).toContain('aria-pressed={activeBroadcastTier === tier}');
     expect(playerSource).not.toContain('aria-label="Play"');
     expect(playerSource).not.toContain('aria-label="Pause"');
     expect(playerSource).not.toContain('aria-label="Add to collection"');

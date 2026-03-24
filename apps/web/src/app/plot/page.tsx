@@ -12,7 +12,7 @@ import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
-import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
+import RadiyoPlayerPanel, { type PlayerMode, type PlayerTier, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 import { buildRadiyoBroadcastLabel } from '@/components/plot/tier-guard';
 import { getDiscoveryContext } from '@/lib/discovery/client';
@@ -70,7 +70,8 @@ export default function PlotPage() {
   const { homeScene, pioneerFollowUp, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
   const { token, user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<PlotTab>('Feed');
-  const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
+  const [selectedTier, setSelectedTier] = useState<PlayerTier>('city');
+  const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>('city');
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
@@ -219,6 +220,13 @@ export default function PlotPage() {
 
   const handleCollectionEject = () => {
     setPlayerMode('RADIYO');
+    setActiveBroadcastTier((current) => current ?? selectedTier);
+  };
+
+  const handleTierChange = (tier: PlayerTier) => {
+    setSelectedTier(tier);
+    setPlayerMode('RADIYO');
+    setActiveBroadcastTier((current) => (current === tier ? null : tier));
   };
 
   const handleProfilePointerDown = (event: PointerEvent<HTMLDivElement>) => {
@@ -544,7 +552,8 @@ export default function PlotPage() {
           rotationPool={rotationPool}
           onRotationPoolChange={setRotationPool}
           selectedTier={selectedTier}
-          onTierChange={setSelectedTier}
+          activeBroadcastTier={activeBroadcastTier}
+          onTierChange={handleTierChange}
           broadcastLabel={playerMode === 'RADIYO' ? radiyoBroadcastLabel : collectionBroadcastLabel}
           collectionTitle={selectedCollectionItem?.label ?? null}
         />
