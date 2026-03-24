@@ -3,6 +3,7 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { PrismaService } from '../prisma/prisma.service';
 import { engagementToScore, isValidEngagementScore } from './engagement.utils';
 import type { TrackEngageDto, EngagementType } from './dto/track-engage.dto';
+import type { CreateTrackDto } from './dto/create-track.dto';
 
 @Injectable()
 export class TracksService {
@@ -20,6 +21,32 @@ export class TracksService {
 
   async findById(id: string) {
     return this.prisma.track.findUnique({ where: { id } });
+  }
+
+  async createTrack(userId: string, dto: CreateTrackDto) {
+    if (dto.communityId) {
+      const community = await this.prisma.community.findUnique({
+        where: { id: dto.communityId },
+        select: { id: true },
+      });
+      if (!community) {
+        throw new NotFoundException({ success: false, error: { message: 'Community not found' } });
+      }
+    }
+
+    return this.prisma.track.create({
+      data: {
+        title: dto.title,
+        artist: dto.artist,
+        album: dto.album ?? null,
+        duration: dto.duration,
+        fileUrl: dto.fileUrl,
+        coverArt: dto.coverArt ?? null,
+        communityId: dto.communityId ?? null,
+        status: dto.status ?? 'ready',
+        uploadedById: userId,
+      },
+    });
   }
 
   /**
