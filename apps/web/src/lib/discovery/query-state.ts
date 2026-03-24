@@ -7,6 +7,6 @@ export function getDefaultLocationQueryForTier(
   tunedScene: TunedSceneContext | null,
 ): string {
   if (tier === 'national') return '';
-  if (tier === 'state') return homeScene?.state ?? tunedScene?.state ?? '';
-  return homeScene?.city ?? tunedScene?.city ?? '';
+  if (tier === 'state') return tunedScene?.state ?? homeScene?.state ?? '';
+  return tunedScene?.city ?? homeScene?.city ?? '';
 }

@@ -19,6 +19,7 @@ This file is intended for AI coding agents and new contributors. Follow it befor
 
 ## Non-Negotiables
 - **No feature drift:** implement only what’s covered by `docs/specs/` (or `docs/Specifications/` legacy IDs) unless a spec update is explicitly requested.
+- **Community identity rule:** communities/Uprises are identified by `city + state + music community`. Do not collapse identity to city-only or genre-only, and when a flow already knows the current community context, inherit the music community from that context instead of asking the user to redefine it.
 - **No unapproved placeholder CTAs:** do not add UI actions like `Coming Soon`, `Join`, `Upgrade`, etc. unless explicitly authorized by a spec or founder direction in-thread.
 - **No platform-trope drift:** do not import default Spotify/Instagram/TikTok/Facebook patterns. Use `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` guardrails for scoped implementation prompts.
 - **Web-tier boundary:** `apps/web` must not import DB clients, server-only modules, or secrets; use the API layer and shared packages instead.

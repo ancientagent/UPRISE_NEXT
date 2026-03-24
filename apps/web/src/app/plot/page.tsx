@@ -429,7 +429,10 @@ export default function PlotPage() {
                 </p>
                 <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Context</p>
                 <p className="mt-1 text-sm font-medium text-black">
-                  {selectedCommunity?.name ?? homeScene?.musicCommunity ?? 'No scene selected'}
+                  {selectedCommunity?.name ??
+                    (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
+                      ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
+                      : 'No scene selected')}
                 </p>
               </div>
             </header>

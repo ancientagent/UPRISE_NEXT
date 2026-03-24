@@ -15,10 +15,11 @@ async function bootstrap() {
     'http://localhost:3000',
     'http://127.0.0.1:3000',
   ];
+  const isProduction = process.env.NODE_ENV === 'production';
 
   // Enable CORS
   app.enableCors({
-    origin: corsOrigins,
+    origin: isProduction ? corsOrigins : true,
     credentials: true,
   });
 

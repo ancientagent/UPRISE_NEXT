@@ -37,7 +37,7 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
   - Scene Map is inherent to the Scene and lives inside the Statistics surface.
   - Statistics is its own dedicated page-level surface within The Plot (not a mini widget).
   - Tier toggles scale the same Scene context from city to state to national aggregates.
-  - Parent music-community context remains constant during tier toggles unless explicitly changed by user.
+  - Parent community context remains anchored to the active community identity (`city + state + music community`) during tier toggles unless explicitly changed by user.
   - City map shows local sect-level/community detail.
   - State map shows city-level macro statistics.
   - National map shows state-level macro statistics.

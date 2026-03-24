@@ -18,7 +18,8 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - The Scene Map is inherent to the currently selected Scene context.
 - The Statistics surface is Scene-scoped and descriptive only.
 - Parent context rule:
-  - Users select a parent music community context.
+  - Users operate within a parent music-community context anchored to the active community identity (`city + state + music community`).
+  - When the current community is already known, the parent music-community context is inherited rather than re-selected.
   - Tier toggles (`city` -> `state` -> `national`) keep the same parent context.
   - Toggling tiers changes aggregation scope only; it does not switch parent context.
 - Map + metrics do not change ranking, Fair Play rotation, or governance authority.

@@ -48,4 +48,22 @@ describe('discovery query state', () => {
       ),
     ).toBe('Dallas');
   });
+
+  it('prefers the active tuned scene context over the stored home scene', () => {
+    expect(
+      getDefaultLocationQueryForTier(
+        'city',
+        { city: 'Austin', state: 'TX', musicCommunity: 'Punk' },
+        {
+          id: 'scene-2',
+          name: 'Dallas Punk',
+          city: 'Dallas',
+          state: 'TX',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+      ),
+    ).toBe('Dallas');
+  });
 });

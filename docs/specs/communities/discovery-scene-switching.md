@@ -8,11 +8,13 @@
 ## Overview & Purpose
 Defines explicit, non-algorithmic discovery flows for changing listening context across Scenes and tiers. Discovery is user-initiated only and does not alter civic authority unless the user explicitly changes Home Scene.
 
+Community identity is represented by `city + state + music community`.
+
 ## User Roles & Use Cases
 - Listener explores other Scenes via explicit controls (swipe, manual map selection, tier toggle).
 - Listener tunes into another Scene broadcast as a visitor.
 - Listener can set a new Home Scene explicitly (outside passive discovery).
-- Artist/listener can filter discovery by music community across city/state/national scopes.
+- Artist/listener travels Discover across city/state/national scopes while keeping the current community context inherited from the active Home Scene or tuned community.
 
 ## Functional Requirements
 - Discovery is explicit user action only:
@@ -52,7 +54,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 - API endpoint `POST /discover/tune` persists tuned-scene transport context on the user record.
 - Web discovery surface is implemented at `apps/web/src/app/discover/page.tsx`:
   - explicit scope toggle (`city/state/national`)
-  - explicit music-community filter
+  - inherited current-community context (`city + state + music community`) for travel
   - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
   - Home Scene action requires explicit confirmation copy
   - read-only context chip shows Home Scene, Tuned Scene, and Visitor/Local status
@@ -65,13 +67,13 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 
 ### Scope Model (Locked)
 - `city` scope:
-  - Discover map/list shows city Scene options for selected music community.
+  - Discover map/list shows city Scene options for the inherited current community context.
   - User can tune into available city Scenes.
 - `state` scope:
-  - Discover map/list shows city-level entries within a state for selected music community (macro view).
+  - Discover map/list shows city-level entries within a state for the inherited current community context (macro view).
   - No sect-level deep detail expansion by default.
 - `national` scope:
-  - Discover map/list shows state-level entries for selected music community (macro view).
+  - Discover map/list shows state-level entries for the inherited current community context (macro view).
 
 ### Home Scene Change Boundary
 - Home Scene changes are explicit profile/onboarding actions.
@@ -129,7 +131,7 @@ Defines explicit, non-algorithmic discovery flows for changing listening context
 
 ## Web UI / Client Behavior
 - Discover surface must show:
-  - selected music community filter
+  - inherited current community identity (`city + state + music community`)
   - scope toggle (`city/state/national`)
   - current tuned Scene vs Home Scene badges
   - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status

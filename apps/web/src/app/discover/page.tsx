@@ -109,6 +109,15 @@ function CarouselSection({
   );
 }
 
+function formatOriginIdentity(city: string | null | undefined, musicCommunity: string | null | undefined) {
+  const cityLabel = city?.trim();
+  const communityLabel = musicCommunity?.trim();
+  if (cityLabel && communityLabel) return `${cityLabel} • ${communityLabel}`;
+  if (cityLabel) return cityLabel;
+  if (communityLabel) return communityLabel;
+  return 'Not set';
+}
+
 export default function DiscoverPage() {
   const { token } = useAuthStore();
   const {
@@ -121,7 +130,6 @@ export default function DiscoverPage() {
   } = useOnboardingStore();
 
   const [tier, setTier] = useState<TierScope>('city');
-  const [fallbackCommunity, setFallbackCommunity] = useState(homeScene?.musicCommunity ?? '');
   const [locationQuery, setLocationQuery] = useState(
     getDefaultLocationQueryForTier('city', homeScene, tunedScene),
   );
@@ -143,13 +151,15 @@ export default function DiscoverPage() {
   const [highlightsError, setHighlightsError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
+  const originScene = tunedScene ?? homeScene;
   const originMusicCommunity = useMemo(
-    () => homeScene?.musicCommunity?.trim() || tunedScene?.musicCommunity?.trim() || fallbackCommunity.trim(),
-    [fallbackCommunity, homeScene?.musicCommunity, tunedScene?.musicCommunity],
+    () => tunedScene?.musicCommunity?.trim() || homeScene?.musicCommunity?.trim() || '',
+    [homeScene?.musicCommunity, tunedScene?.musicCommunity],
   );
+  const hasOriginContext = Boolean(originMusicCommunity && (tunedScene || homeScene));
 
   const travelParams = useMemo(() => {
-    const parsed = parseLocationQuery(locationQuery, tier, homeScene?.state ?? tunedScene?.state ?? null);
+    const parsed = parseLocationQuery(locationQuery, tier, tunedScene?.state ?? homeScene?.state ?? null);
     return {
       tier,
       musicCommunity: originMusicCommunity,
@@ -179,9 +189,10 @@ export default function DiscoverPage() {
     let ignore = false;
 
     async function fetchTravel() {
-      if (!originMusicCommunity) {
+      if (!hasOriginContext || !originMusicCommunity) {
         setTravelItems([]);
         setTravelLoading(false);
+        setTravelError(null);
         return;
       }
 
@@ -210,7 +221,7 @@ export default function DiscoverPage() {
     return () => {
       ignore = true;
     };
-  }, [originMusicCommunity, token, travelParams]);
+  }, [hasOriginContext, originMusicCommunity, token, travelParams]);
 
   useEffect(() => {
     let ignore = false;
@@ -326,10 +337,10 @@ export default function DiscoverPage() {
   }, [activeSceneId, localSearchQuery, token]);
 
   const resultSummary = useMemo(() => {
-    if (!originMusicCommunity) {
+    if (!hasOriginContext) {
       return {
-        title: 'Set your origin community',
-        body: 'Discover travel inherits the Home Scene community. Enter a fallback community only when no Home Scene has been set yet.',
+        title: 'Community context required',
+        body: 'Discover travel inherits the city and genre of the community you already left from. Open Discover from a real community context before trying to travel.',
       };
     }
 
@@ -358,7 +369,7 @@ export default function DiscoverPage() {
       title: 'Uprises ready',
       body: 'Retune first, then explicitly visit the community when you want to enter it.',
     };
-  }, [originMusicCommunity, travelError, travelItems.length, travelLoading]);
+  }, [hasOriginContext, travelError, travelItems.length, travelLoading]);
 
   const handleTuneSceneById = async (sceneId: string) => {
     if (!token) return;
@@ -475,8 +486,7 @@ export default function DiscoverPage() {
           <p className="text-xs uppercase tracking-[0.25em] text-black/50">Discover</p>
           <h1 className="mt-3 text-3xl font-semibold text-black">Discover Uprises, Artists, and Songs</h1>
           <p className="mt-2 text-sm text-black/60">
-            Travel starts from your Home Scene community context. Retune first, then explicitly visit the community when
-            you want to enter it.
+            Travel starts from the community you are already in. Discover keeps that genre context and changes geography.
           </p>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
           <div className="mt-4 flex flex-wrap gap-3">
@@ -502,26 +512,18 @@ export default function DiscoverPage() {
               <p className="text-xs uppercase tracking-[0.2em] text-black/50">Uprise Travel</p>
               <h2 className="mt-2 text-lg font-semibold text-black">Search by city or state</h2>
               <p className="mt-1 text-sm text-black/60">
-                Travel keeps your origin music community fixed and changes geography around it.
+                Travel keeps your current community genre fixed and changes geography around it.
               </p>
             </div>
             <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
-              <p>Origin community: {originMusicCommunity || 'Not set'}</p>
+              <p>Origin community: {formatOriginIdentity(originScene?.city ?? null, originMusicCommunity)}</p>
               <p>Scope: <span className="capitalize">{tier}</span></p>
             </div>
           </div>
 
-          {!homeScene ? (
-            <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
-              <input
-                value={fallbackCommunity}
-                onChange={(event) => setFallbackCommunity(event.target.value)}
-                placeholder="Fallback origin community"
-                className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-              />
-              <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-xs text-black/50">
-                Used only when Home Scene is still unset.
-              </div>
+          {!hasOriginContext ? (
+            <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Discover travel needs an active community context so the city and genre are already known.
             </div>
           ) : null}
 
@@ -531,8 +533,9 @@ export default function DiscoverPage() {
               onChange={(event) => setLocationQuery(event.target.value)}
               placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
               className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
+              disabled={!hasOriginContext}
             />
-            <Button variant="outline" size="sm" onClick={() => setMapOpen((value) => !value)}>
+            <Button variant="outline" size="sm" onClick={() => setMapOpen((value) => !value)} disabled={!hasOriginContext}>
               {mapOpen ? 'Hide Map' : 'Map View'}
             </Button>
           </div>
@@ -544,6 +547,7 @@ export default function DiscoverPage() {
                 size="sm"
                 variant={tier === value ? 'default' : 'outline'}
                 onClick={() => handleChangeTier(value)}
+                disabled={!hasOriginContext}
               >
                 {value}
               </Button>
