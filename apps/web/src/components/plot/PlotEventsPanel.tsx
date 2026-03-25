@@ -34,7 +34,7 @@ function EventsSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
       {[0, 1, 2].map((index) => (
-        <div key={index} className="rounded-xl border border-black/10 p-3">
+        <div key={index} className="plot-wire-list-item bg-[#efefe2] p-3">
           <div className="h-4 w-48 animate-pulse rounded bg-black/10" />
           <div className="mt-2 h-3 w-56 animate-pulse rounded bg-black/5" />
         </div>
@@ -88,23 +88,23 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
   }, [fetchEvents]);
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-6">
-      <div className="flex items-center justify-between gap-3">
+    <div className="space-y-4">
+      <header className="flex flex-wrap items-start justify-between gap-3 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
         <div>
           <h2 className="text-lg font-semibold text-black">
             Events{communityLabel ? ` • ${communityLabel}` : ''}
           </h2>
-          <p className="mt-1 text-xs text-black/50">
+          <p className="mt-1 text-xs text-black/55">
             Scene-scoped events ordered by canonical start time. No personalized ranking.
           </p>
         </div>
-        <Button size="sm" variant="outline" onClick={() => setIncludePast((prev) => !prev)}>
+        <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => setIncludePast((prev) => !prev)}>
           {includePast ? 'Upcoming Only' : 'Include Past'}
         </Button>
-      </div>
+      </header>
 
       {!token && (
-        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <div className="rounded-[1rem] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           <p>Sign in is required to load scene events for this context.</p>
         </div>
       )}
@@ -112,10 +112,10 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
       {token && loading && items.length === 0 ? <EventsSkeletonRows /> : null}
 
       {token && error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-[1rem] border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
           <p>Events read failed for this scene context. {error}</p>
           <Button
-            className="mt-3 h-8 text-xs"
+            className="mt-3 h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
             size="sm"
             variant="outline"
             onClick={() => fetchEvents()}
@@ -126,7 +126,7 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
       )}
 
       {token && !loading && !error && items.length === 0 && (
-        <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
+        <div className="plot-wire-card-muted border-dashed p-4">
           <p className="text-sm font-medium text-black">No scene events are scheduled for this context.</p>
           <p className="mt-1 text-xs text-black/55">
             This panel stays descriptive and locality-bound. It does not hide ranked or promoted events.
@@ -135,9 +135,9 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
       )}
 
       {token && !loading && !error && items.length > 0 && (
-        <ul className="mt-4 space-y-2">
+        <ul className="space-y-2">
           {items.map((item) => (
-            <li key={item.id} className="rounded-xl border border-black/10 p-3">
+            <li key={item.id} className="plot-wire-list-item">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <p className="text-sm font-medium text-black">{item.title}</p>
@@ -145,9 +145,7 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
                     {new Date(item.startDate).toLocaleString()} • {item.locationName}
                   </p>
                 </div>
-                <span className="rounded-full border border-black/10 bg-black/[0.03] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
-                  {formatEventStatus(item.startDate, item.endDate)}
-                </span>
+                <span className="plot-wire-chip bg-[#d8e79a]">{formatEventStatus(item.startDate, item.endDate)}</span>
               </div>
               <p className="mt-2 text-xs text-black/55">
                 Published by {item.createdBy?.displayName || item.createdBy?.username || 'Scene organizer'} • {new Date(item.createdAt).toLocaleDateString()}

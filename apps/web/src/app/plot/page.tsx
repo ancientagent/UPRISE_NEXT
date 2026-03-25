@@ -540,11 +540,11 @@ export default function PlotPage() {
     <>
       {isEngagementWheelOpen ? (
         <div className="fixed inset-x-0 bottom-24 z-40 px-4 sm:px-6">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-black/10 bg-white/95 p-4 shadow-lg backdrop-blur">
+          <div className="mx-auto max-w-3xl rounded-[1.25rem] border border-black bg-[#efefe4] p-4 shadow-[4px_4px_0_rgba(0,0,0,0.35)]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-black/50">UPRISE Wheel</p>
-                <p className="mt-1 text-sm text-black/65">
+                <p className="plot-wire-label">UPRISE Wheel</p>
+                <p className="mt-1 text-sm text-black/70">
                   {playerMode === 'RADIYO'
                     ? 'RADIYO actions stay deterministic for the current scene context.'
                     : 'Collection actions stay deterministic for the selected collection context.'}
@@ -565,7 +565,7 @@ export default function PlotPage() {
               {wheelActions.map((action) => (
                 <span
                   key={`${action.label}-${action.position ?? 'center'}`}
-                  className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-2 text-xs font-medium text-black"
+                  className="plot-wire-chip bg-white px-3 py-2 text-[11px]"
                 >
                   {action.position ? `${action.position} ${action.label}` : action.label}
                 </span>
@@ -578,28 +578,33 @@ export default function PlotPage() {
       <nav
         aria-label="Plot bottom navigation"
         data-slot="plot-bottom-nav"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white/95 px-4 py-3 backdrop-blur sm:px-6"
+        className="plot-wire-nav"
       >
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
-          <Button asChild variant="outline" className="min-w-[92px] rounded-full">
-            <Link href="/plot">Home</Link>
-          </Button>
+          <Link
+            href="/plot"
+            className="plot-wire-nav-button inline-flex min-h-11 items-center justify-center px-4"
+          >
+            Home
+          </Link>
 
-          <Button
+          <button
             type="button"
-            variant="default"
-            className="min-w-[132px] rounded-full bg-black text-white hover:bg-black/90"
+            className="plot-wire-nav-center inline-flex min-h-11 items-center justify-center px-5 hover:bg-[#b8d63b]/90"
             onClick={() => setIsEngagementWheelOpen((value) => !value)}
             aria-expanded={isEngagementWheelOpen}
             aria-controls="plot-engagement-wheel"
             aria-label="Open UPRISE engagement wheel"
           >
             UPRISE
-          </Button>
+          </button>
 
-          <Button asChild variant="outline" className="min-w-[92px] rounded-full">
-            <Link href="/discover">Discover</Link>
-          </Button>
+          <Link
+            href="/discover"
+            className="plot-wire-nav-button inline-flex min-h-11 items-center justify-center px-4"
+          >
+            Discover
+          </Link>
         </div>
       </nav>
     </>
@@ -663,22 +668,22 @@ export default function PlotPage() {
 
   if (!hasHomeScene) {
     return (
-      <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 pb-28 sm:px-6">
-        <div className="mx-auto max-w-4xl space-y-6">
-          <section className="rounded-2xl border border-black/10 bg-white/90 p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.22em] text-black/50">The Plot</p>
+      <main className="plot-wire-page">
+        <div className="plot-wire-frame max-w-5xl space-y-4">
+          <section className="plot-wire-card p-6">
+            <p className="plot-wire-label">The Plot</p>
             <h1 className="mt-2 text-2xl font-semibold text-black">Home Scene setup required</h1>
-            <p className="mt-3 text-sm text-black/65">
+            <p className="mt-3 max-w-2xl text-sm text-black/70">
               Complete onboarding to anchor your Home Scene and unlock Plot context.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Button onClick={() => router.push('/onboarding')}>Complete Onboarding</Button>
+              <Button className="rounded-full border border-black bg-[#b8d63b] text-black hover:bg-[#b8d63b]/90" onClick={() => router.push('/onboarding')}>Complete Onboarding</Button>
             </div>
           </section>
 
-          <section className="rounded-2xl border border-black/10 bg-white/85 p-6 shadow-sm">
+          <section className="plot-wire-panel plot-wire-grid-bg p-6">
             <h2 className="text-lg font-semibold text-black">Plot surfaces unlock after Home Scene resolution</h2>
-            <p className="mt-2 text-sm text-black/60">
+            <p className="mt-2 max-w-2xl text-sm text-black/65">
               Feed, Events, Promotions, Statistics, and scene-scoped profile context remain unavailable until your
               Home Scene is set.
             </p>
@@ -690,18 +695,25 @@ export default function PlotPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 pb-28 sm:px-6">
-      <div className="mx-auto max-w-7xl">
-        <section className="rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm transition-all">
+    <main className="plot-wire-page">
+      <div className="plot-wire-frame">
+        <section className="plot-wire-card px-4 py-3 transition-all">
           <div
-            className="flex items-center justify-between gap-3"
+            className="flex items-center justify-between gap-3 rounded-[1rem] border border-black bg-[#dfdfcf] px-3 py-2.5"
             onPointerDown={handleProfilePointerDown}
             onPointerMove={handleProfilePointerMove}
             onPointerUp={handleProfilePointerUp}
           >
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
+              <p className="plot-wire-label">User dashboard</p>
               <p className="truncate text-sm font-semibold leading-tight text-black">
                 {user?.displayName || user?.username || 'User'}
+              </p>
+              <p className="mt-1 truncate text-[11px] text-black/60">
+                {selectedCommunityLabel ??
+                  (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
+                    ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
+                    : 'No scene selected')}
               </p>
             </div>
             <div className="flex items-center gap-2.5">
@@ -710,7 +722,7 @@ export default function PlotPage() {
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="relative h-8 text-xs"
+                  className="relative h-8 rounded-full border-black bg-white text-xs"
                   aria-label="Notifications"
                   aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}
                   aria-expanded={hasPioneerFollowUp ? isNotificationPanelOpen : undefined}
@@ -734,11 +746,9 @@ export default function PlotPage() {
                 {hasPioneerFollowUp && isNotificationPanelOpen && pioneerNotificationHomeScene ? (
                   <div
                     id="plot-pioneer-follow-up"
-                    className="absolute right-0 top-10 z-20 w-72 rounded-2xl border border-black/10 bg-white p-4 text-left shadow-lg"
+                    className="absolute right-0 top-10 z-20 w-72 rounded-[1.1rem] border border-black bg-[#f7f7ef] p-4 text-left shadow-[4px_4px_0_rgba(0,0,0,0.3)]"
                   >
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">
-                      Pioneer Follow-up
-                    </p>
+                    <p className="plot-wire-label">Pioneer Follow-up</p>
                     <p className="mt-2 text-sm font-medium text-black">
                       {pioneerNotificationHomeScene.city}, {pioneerNotificationHomeScene.state} •{' '}
                       {pioneerNotificationHomeScene.musicCommunity}
@@ -753,7 +763,7 @@ export default function PlotPage() {
                   </div>
                 ) : null}
               </div>
-              <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="More menu">
+              <Button size="sm" variant="outline" className="h-8 rounded-full border-black bg-white text-xs" aria-label="More menu">
                 ⋯
               </Button>
             </div>
@@ -763,7 +773,7 @@ export default function PlotPage() {
             <button
               type="button"
               id="plot-profile-seam-toggle"
-              className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-4 py-2.5 text-xs font-medium text-black/70"
+              className="mx-auto flex w-full items-center justify-center gap-2 rounded-[0.95rem] border border-black bg-[#efefe2] px-4 py-2.5 text-xs font-medium text-black/70"
               onClick={toggleProfilePanel}
               aria-controls="plot-profile-panel"
               aria-expanded={isProfileExpanded}
@@ -790,10 +800,10 @@ export default function PlotPage() {
         {isProfileExpanded ? (
           <section
             id="plot-profile-panel"
-            className="mt-6 space-y-5 rounded-2xl border border-black/10 bg-white/92 p-6 shadow-sm transition-all duration-200"
+            className="mt-4 space-y-4 rounded-[1.4rem] border border-black bg-[#f7f7ef] p-4 shadow-[3px_3px_0_rgba(0,0,0,0.3)] transition-all duration-200"
             aria-labelledby="plot-profile-seam-toggle"
           >
-            <header className="grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
+            <header className="grid gap-4 rounded-[1.15rem] border border-black bg-[#efefe2] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
               <div className="space-y-4">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Profile Summary</p>
@@ -804,13 +814,13 @@ export default function PlotPage() {
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl border border-black/10 bg-white p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Activity Score</p>
+                  <div className="plot-wire-card-muted bg-white p-3">
+                    <p className="plot-wire-label">Activity Score</p>
                     <p className="mt-1 text-lg font-semibold text-black">{activityScore}</p>
                   </div>
                   {profileStatusCards.map((card) => (
-                    <div key={card.label} className="rounded-xl border border-black/10 bg-white p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">{card.label}</p>
+                    <div key={card.label} className="plot-wire-card-muted bg-white p-3">
+                      <p className="plot-wire-label">{card.label}</p>
                       <p className="mt-1 text-sm font-medium text-black">{card.value}</p>
                       <p className="mt-1 text-xs text-black/55">{card.detail}</p>
                     </div>
@@ -818,8 +828,8 @@ export default function PlotPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-black/10 bg-white p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Calendar</p>
+              <div className="plot-wire-card-muted bg-white p-4">
+                <p className="plot-wire-label">Calendar</p>
                 <p className="mt-2 text-2xl font-semibold text-black">{calendarDate}</p>
                 <p className="mt-1 text-sm text-black/60">
                   {eventsThisWeek} event{eventsThisWeek === 1 ? '' : 's'} this week
@@ -834,21 +844,21 @@ export default function PlotPage() {
               </div>
             </header>
 
-            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Player Context</p>
+            <div className="plot-wire-card-muted p-4">
+              <p className="plot-wire-label">Player Context</p>
               <p className="mt-1 text-sm font-medium text-black">
                 {playerMode} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
               </p>
             </div>
 
-            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+            <div className="plot-wire-card-muted p-4">
               <div className="flex flex-wrap gap-2">
                 {expandedProfileSections.map((section) => (
                   <Button
                     key={section}
                     size="sm"
                     variant={activeProfileSection === section ? 'default' : 'outline'}
-                    className={activeProfileSection === section ? 'h-8 rounded-full bg-black text-xs text-white' : 'h-8 rounded-full text-xs'}
+                    className={activeProfileSection === section ? 'h-8 rounded-full border-black bg-[#b8d63b] text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-[#b8d63b]/90' : 'h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-black/5'}
                     onClick={() => setActiveProfileSection(section)}
                   >
                     {section}
@@ -856,7 +866,7 @@ export default function PlotPage() {
                 ))}
               </div>
 
-              <div className="mt-4 rounded-lg border border-black/10 bg-white p-4">
+              <div className="mt-4 rounded-[1rem] border border-black bg-white p-4">
                 <p className="text-sm font-medium text-black">{activeProfileSection}</p>
                 {activeProfileSection === 'Singles/Playlists' ? (
                   <div className="mt-3 space-y-3">
@@ -915,8 +925,8 @@ export default function PlotPage() {
                       <p className="text-sm text-black/60">No saved singles yet.</p>
                     )}
 
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Playlist Groupings</p>
+                    <div className="plot-wire-card-muted p-3">
+                      <p className="plot-wire-label">Playlist Groupings</p>
                       <p className="mt-1 text-sm text-black/70">
                         Saved playlist groupings appear here when they are available in your collection.
                       </p>
@@ -937,7 +947,7 @@ export default function PlotPage() {
                     ) : (fliersShelf?.items.length ?? 0) > 0 ? (
                       <ul className="space-y-2">
                         {fliersShelf?.items.slice(0, 6).map((item) => (
-                          <li key={item.signalId} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                          <li key={item.signalId} className="plot-wire-card-muted p-3">
                             <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
                             <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
                           </li>
@@ -949,12 +959,12 @@ export default function PlotPage() {
                   </div>
                 ) : activeProfileSection === 'Photos' ? (
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Photography</p>
+                    <div className="plot-wire-card-muted p-3">
+                      <p className="plot-wire-label">Scene Photography</p>
                       <p className="mt-1 text-sm text-black/70">Saved event and scene photography artifacts appear in this workspace.</p>
                     </div>
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Current Scene</p>
+                    <div className="plot-wire-card-muted p-3">
+                      <p className="plot-wire-label">Current Scene</p>
                       <p className="mt-1 text-sm font-medium text-black">{selectedCommunityLabel ?? 'No scene selected'}</p>
                     </div>
                   </div>
@@ -979,7 +989,7 @@ export default function PlotPage() {
                           { label: 'Buttons', shelf: merchButtonShelf },
                           { label: 'Special Items', shelf: null },
                         ].map((item) => (
-                          <div key={item.label} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                          <div key={item.label} className="plot-wire-card-muted p-3">
                             <p className="text-sm font-medium text-black">{item.label}</p>
                             <p className="mt-1 text-xs text-black/55">
                               {item.shelf ? `${item.shelf.itemCount} saved item${item.shelf.itemCount === 1 ? '' : 's'}` : 'No saved items yet.'}
@@ -1007,7 +1017,7 @@ export default function PlotPage() {
                     ) : (uprisesShelf?.items.length ?? 0) > 0 ? (
                       <ul className="space-y-2">
                         {uprisesShelf?.items.slice(0, 6).map((item) => (
-                          <li key={item.signalId} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                          <li key={item.signalId} className="plot-wire-card-muted p-3">
                             <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
                             <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
                           </li>
@@ -1018,8 +1028,8 @@ export default function PlotPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Promos/Coupons</p>
+                  <div className="mt-3 plot-wire-card-muted p-3">
+                    <p className="plot-wire-label">Saved Promos/Coupons</p>
                     <p className="mt-1 text-sm text-black/70">
                       Saved promos and coupons appear here with status and expiration when collection support is available.
                     </p>
@@ -1029,7 +1039,7 @@ export default function PlotPage() {
             </div>
 
             <div className="flex flex-wrap gap-2.5">
-              <Button size="sm" variant="outline" className="h-8 text-xs" onClick={toggleProfilePanel}>
+              <Button size="sm" variant="outline" className="h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={toggleProfilePanel}>
                 Return to Plot Tabs
               </Button>
             </div>
@@ -1037,7 +1047,7 @@ export default function PlotPage() {
         ) : (
           <>
             {/* Tab Navigation */}
-            <section className="mt-6 flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm">
+            <section className="mt-4 flex flex-wrap items-end justify-start gap-2 overflow-x-auto px-2 pt-1">
               {tabs.map((tab) => (
                 <Button
                   key={tab}
@@ -1045,8 +1055,8 @@ export default function PlotPage() {
                   variant={activeTab === tab ? 'default' : 'outline'}
                   className={
                     activeTab === tab
-                      ? 'h-8 rounded-full bg-black px-4 text-xs text-white'
-                      : 'h-8 rounded-full border-black/20 bg-white px-4 text-xs text-black hover:bg-black/5'
+                      ? 'plot-wire-tab plot-wire-tab-active h-auto'
+                      : 'plot-wire-tab h-auto hover:bg-[#e7e7d8]'
                   }
                   onClick={() => setActiveTab(tab)}
                 >
@@ -1056,12 +1066,13 @@ export default function PlotPage() {
             </section>
 
             {/* Main Content Grid */}
-            <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
+            <section className="grid gap-4 border border-black bg-[#d8d8c8] p-3 lg:grid-cols-[minmax(0,1.75fr)_300px]">
               {/* Left Panel - Statistics & Map */}
-              <div className="rounded-2xl border border-black/10 bg-white p-6 lg:p-7">
-                <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-black">{plotTabHeading}</h2>
-                  <p className="text-sm text-black/60">
+              <div className="plot-wire-panel">
+                <div className="mb-4 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
+                  <p className="plot-wire-label">Active Surface</p>
+                  <h2 className="mt-1 text-lg font-semibold text-black">{plotTabHeading}</h2>
+                  <p className="mt-1 text-sm text-black/65">
                     {plotTabDescription}
                     {activeTab === 'Statistics' && (
                       <>
@@ -1077,10 +1088,10 @@ export default function PlotPage() {
               </div>
 
               {/* Right Panel - Selected Community Info */}
-              <div className="space-y-6">
-                <div className="rounded-2xl border border-black/10 bg-white p-6">
+              <div className="space-y-4">
+                <div className="plot-wire-panel">
                   <h3 className="mb-2 font-semibold text-black">Registrar Access</h3>
-                  <p className="text-sm text-black/60">
+                  <p className="text-sm text-black/65">
                     Artist/Band registration status stays visible here so Plot keeps registrar access inside the civic workflow.
                   </p>
 
@@ -1095,8 +1106,8 @@ export default function PlotPage() {
                       {registrarSummaryError}
                     </p>
                   ) : registrarSummary && registrarSummary.totalEntries > 0 ? (
-                    <div className="mt-4 rounded-xl border border-black/10 bg-black/[0.03] p-4">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Latest Status</p>
+                    <div className="mt-4 plot-wire-card-muted p-4">
+                      <p className="plot-wire-label">Latest Status</p>
                       <p className="mt-1 text-sm font-medium text-black">
                         {registrarSummary.latestStatus ? formatRegistrarEntryStatus(registrarSummary.latestStatus) : 'No recent status'}
                       </p>
@@ -1114,16 +1125,16 @@ export default function PlotPage() {
                   )}
 
                   <div className="mt-4">
-                    <Button size="sm" variant="outline" onClick={() => router.push('/registrar')}>
+                    <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/registrar')}>
                       Open Registrar
                     </Button>
                   </div>
                 </div>
 
                 {selectedCommunity && (
-                  <div className="rounded-2xl border border-black/10 bg-white p-6">
+                  <div className="plot-wire-panel">
                     <h3 className="mb-3 font-semibold text-black">Selected Community</h3>
-                    <div className="rounded-xl bg-black/5 p-4">
+                    <div className="plot-wire-card-muted p-4">
                       <p className="font-medium text-black">{selectedCommunityLabel ?? selectedCommunity.name}</p>
                       <p className="mt-1 text-sm text-black/60">
                         {selectedCommunity.memberCount?.toLocaleString()} members
@@ -1140,6 +1151,7 @@ export default function PlotPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
                           onClick={() => router.push(`/community/${selectedCommunity.id}`)}
                         >
                           Open Community

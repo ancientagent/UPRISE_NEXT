@@ -39,7 +39,7 @@ function PromotionsSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
       {[0, 1, 2].map((index) => (
-        <div key={index} className="rounded-xl border border-black/10 p-3">
+        <div key={index} className="plot-wire-list-item bg-[#efefe2] p-3">
           <div className="h-4 w-48 animate-pulse rounded bg-black/10" />
           <div className="mt-2 h-3 w-40 animate-pulse rounded bg-black/5" />
         </div>
@@ -85,16 +85,18 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
   }, [fetchPromotions]);
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-6">
-      <h2 className="text-lg font-semibold text-black">
-        Promotions{communityLabel ? ` • ${communityLabel}` : ''}
-      </h2>
-      <p className="mt-1 text-xs text-black/50">
-        Explicit local offers surface only. No Fair Play, governance, or recommendation effects.
-      </p>
+    <div className="space-y-4">
+      <header className="rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
+        <h2 className="text-lg font-semibold text-black">
+          Promotions{communityLabel ? ` • ${communityLabel}` : ''}
+        </h2>
+        <p className="mt-1 text-xs text-black/55">
+          Explicit local offers surface only. No Fair Play, governance, or recommendation effects.
+        </p>
+      </header>
 
       {!token && (
-        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <div className="rounded-[1rem] border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           <p>Sign in is required to load promotions for this scene context.</p>
         </div>
       )}
@@ -102,10 +104,10 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
       {token && loading && items.length === 0 ? <PromotionsSkeletonRows /> : null}
 
       {token && error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-[1rem] border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
           <p>Promotions read failed for this scene context. {error}</p>
           <Button
-            className="mt-3 h-8 text-xs"
+            className="mt-3 h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
             size="sm"
             variant="outline"
             onClick={() => fetchPromotions()}
@@ -116,7 +118,7 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
       )}
 
       {token && !loading && !error && items.length === 0 && (
-        <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
+        <div className="plot-wire-card-muted border-dashed p-4">
           <p className="text-sm font-medium text-black">No local offers are active for this scene context.</p>
           <p className="mt-1 text-xs text-black/55">
             Promotions stay explicit and scoped here. They do not imply hidden boosts or feed ranking changes.
@@ -125,9 +127,9 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
       )}
 
       {token && !loading && !error && items.length > 0 && (
-        <ul className="mt-4 space-y-2">
+        <ul className="space-y-2">
           {items.map((item) => (
-            <li key={item.id} className="rounded-xl border border-black/10 p-3">
+            <li key={item.id} className="plot-wire-list-item">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <p className="text-sm font-medium text-black">{metadataText(item.metadata)}</p>
@@ -135,7 +137,7 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
                     {item.actor?.displayName || item.actor?.username || 'Scene Publisher'} • {new Date(item.createdAt).toLocaleString()}
                   </p>
                 </div>
-                <span className="rounded-full border border-black/10 bg-black/[0.03] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
+                <span className="plot-wire-chip">
                   {metadataValue(item.metadata, ['status']) ?? item.type}
                 </span>
               </div>

@@ -72,7 +72,7 @@ export default function SceneMap({ points, selectedPointId, onSelectPoint }: Sce
 
   if (points.length === 0) {
     return (
-      <div className="h-full w-full rounded-2xl bg-gradient-to-br from-black/5 to-black/10 border border-black/10 flex items-center justify-center">
+      <div className="plot-wire-grid-bg flex h-full w-full items-center justify-center rounded-[1.15rem] border border-black bg-[#efefe2]">
         <div className="text-center">
           <p className="text-4xl mb-2">🗺️</p>
           <p className="text-sm text-black/60">No map data in this scope</p>
@@ -82,23 +82,12 @@ export default function SceneMap({ points, selectedPointId, onSelectPoint }: Sce
   }
 
   return (
-    <div className="h-full w-full rounded-2xl bg-gradient-to-br from-black/5 to-black/10 border border-black/10 flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 opacity-30">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="black" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
+    <div className="plot-wire-grid-bg relative flex h-full w-full items-center justify-center overflow-hidden rounded-[1.15rem] border border-black bg-[#efefe2]">
       {markerPositions.map(({ point, x, y, isSelected }) => (
         <button
           key={point.id}
           onClick={() => onSelectPoint?.(point)}
-          className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all ${
+          className={`absolute -translate-x-1/2 -translate-y-1/2 transition-all ${
             isSelected ? 'z-20 scale-110' : 'z-10'
           }`}
           style={{ left: `${x}%`, top: `${y}%` }}
@@ -106,16 +95,16 @@ export default function SceneMap({ points, selectedPointId, onSelectPoint }: Sce
         >
           <div className="relative">
             <div
-              className={`w-3 h-3 rounded-full border-2 border-white shadow-sm ${
-                isSelected ? 'bg-black' : 'bg-black/70 hover:bg-black'
+              className={`h-3 w-3 rounded-full border-2 border-black shadow-sm ${
+                isSelected ? 'bg-[#b8d63b]' : 'bg-black/70 hover:bg-black'
               }`}
             />
-            {isSelected && <div className="absolute inset-0 rounded-full bg-black/20 animate-ping" />}
+            {isSelected && <div className="absolute inset-[-6px] rounded-full border border-black/40" />}
           </div>
         </button>
       ))}
 
-      <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg text-[10px] text-black/70">
+      <div className="absolute bottom-3 right-3 rounded-full border border-black bg-white px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/70">
         {points.length} point{points.length !== 1 ? 's' : ''}
       </div>
     </div>

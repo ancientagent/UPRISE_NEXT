@@ -75,12 +75,12 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
+      <div className="plot-wire-panel h-full">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 w-32 bg-black/10 rounded" />
+          <div className="h-6 w-32 rounded bg-black/10" />
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-12 w-full bg-black/5 rounded" />
+              <div key={i} className="h-12 w-full rounded bg-black/5" />
             ))}
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   if (!token) {
     return (
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 h-full">
+      <div className="rounded-[1rem] border border-amber-300 bg-amber-50 p-4">
         <p className="text-sm text-amber-900">Sign in is required to load Top 40 songs for this scene context.</p>
       </div>
     );
@@ -98,7 +98,7 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 h-full">
+      <div className="rounded-[1rem] border border-red-300 bg-red-50 p-4">
         <p className="text-sm text-red-600">{error}</p>
       </div>
     );
@@ -106,37 +106,34 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   if (tracks.length === 0) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
-        <div className="text-center py-8">
-          <p className="text-4xl mb-3">🎵</p>
-          <h3 className="font-semibold text-black mb-1">No Top Songs Yet</h3>
-          <p className="text-sm text-black/60">No tracks available in this scope.</p>
-        </div>
+      <div className="plot-wire-card-muted p-4">
+        <h3 className="font-semibold text-black">No Top Songs Yet</h3>
+        <p className="mt-1 text-sm text-black/60">No tracks available in this scope.</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
-      <div className="mb-4">
+    <div className="plot-wire-panel h-full">
+      <div className="mb-4 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
         <h2 className="text-lg font-semibold text-black">Top 40</h2>
-        <p className="text-sm text-black/60 capitalize">{selectedTier} scope</p>
+        <p className="text-sm capitalize text-black/60">{selectedTier} scope</p>
       </div>
 
-      <div className="space-y-1 max-h-[400px] overflow-y-auto">
+      <div className="space-y-2 max-h-[400px] overflow-y-auto">
         {tracks.map((track, index) => (
           <div
             key={track.trackId}
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-black/5 transition-colors"
+            className="plot-wire-list-item flex items-center gap-3"
           >
-            <span className="w-6 h-6 rounded-full bg-black/10 text-black/60 text-xs flex items-center justify-center font-medium">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black bg-[#e3e3d2] text-xs font-medium text-black/70">
               {index + 1}
             </span>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-black text-sm truncate">{track.title || 'Untitled Track'}</p>
-              <p className="text-xs text-black/60 truncate">{track.artist || 'Unknown Artist'}</p>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-black">{track.title || 'Untitled Track'}</p>
+              <p className="truncate text-xs text-black/60">{track.artist || 'Unknown Artist'}</p>
             </div>
-            <span className="text-xs text-black/50 whitespace-nowrap">{formatDuration(track.duration)}</span>
+            <span className="shrink-0 text-xs text-black/50">{formatDuration(track.duration)}</span>
           </div>
         ))}
       </div>

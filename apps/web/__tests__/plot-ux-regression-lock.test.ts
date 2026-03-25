@@ -199,8 +199,10 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain('aria-label="Plot bottom navigation"');
     expect(plotPageSource).toContain('data-slot="plot-bottom-nav"');
-    expect(plotPageSource).toContain('<Link href="/plot">Home</Link>');
-    expect(plotPageSource).toContain('<Link href="/discover">Discover</Link>');
+    expect(plotPageSource).toContain('href="/plot"');
+    expect(plotPageSource).toContain('href="/discover"');
+    expect(plotPageSource).toContain('plot-wire-nav-button');
+    expect(plotPageSource).toContain('plot-wire-nav-center');
     expect(plotPageSource).toContain('Open UPRISE engagement wheel');
     expect(plotPageSource).toContain('UPRISE Wheel');
     expect(plotPageSource).toContain('getEngagementWheelActions(playerMode)');

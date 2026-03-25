@@ -46,7 +46,6 @@ export default function StatisticsPanel({
 
   const cityRadiusMeters = 10000;
 
-  // City-only: fetch nearby communities for local map.
   useEffect(() => {
     async function fetchNearbyCommunities() {
       if (!token) {
@@ -100,7 +99,6 @@ export default function StatisticsPanel({
     fetchNearbyCommunities();
   }, [selectedTier, gpsCoords, cityRadiusMeters, token, selectedCommunity, onCommunitySelect, onCommunitiesUpdate]);
 
-  // Tier-scoped statistics use explicit community anchor when selected, otherwise active-scene fallback.
   useEffect(() => {
     async function fetchStatistics() {
       if (!token) {
@@ -182,10 +180,10 @@ export default function StatisticsPanel({
 
   if (loading && !statistics) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
+      <div className="plot-wire-panel h-full">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 w-48 bg-black/10 rounded" />
-          <div className="h-64 w-full bg-black/5 rounded-2xl" />
+          <div className="h-6 w-48 rounded bg-black/10" />
+          <div className="h-64 w-full rounded-[1rem] bg-black/5" />
         </div>
       </div>
     );
@@ -193,7 +191,7 @@ export default function StatisticsPanel({
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 h-full">
+      <div className="rounded-[1rem] border border-red-300 bg-red-50 p-4">
         <p className="text-sm text-red-600">{error}</p>
       </div>
     );
@@ -202,21 +200,19 @@ export default function StatisticsPanel({
   if (!selectedCommunity && !activeSceneId) {
     if (!token) {
       return (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 h-full">
+        <div className="rounded-[1rem] border border-amber-300 bg-amber-50 p-4">
           <p className="text-sm text-amber-900">Sign in is required to load scene statistics.</p>
         </div>
       );
     }
 
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
-        <div className="text-center py-8">
-          <p className="text-4xl mb-3">🧭</p>
-          <h3 className="font-semibold text-black mb-1">Select a community</h3>
-          <p className="text-sm text-black/60">
-            Choose a local community in city view to anchor state/national statistics.
-          </p>
-        </div>
+      <div className="plot-wire-card-muted p-6 text-center">
+        <p className="text-4xl mb-3">🧭</p>
+        <h3 className="font-semibold text-black mb-1">Select a community</h3>
+        <p className="text-sm text-black/60">
+          Choose a local community in city view to anchor state/national statistics.
+        </p>
       </div>
     );
   }
@@ -244,29 +240,29 @@ export default function StatisticsPanel({
         : 'National view keeps the same parent context and rolls the map up to state-level macro reads.';
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
-      <div className="mb-4">
+    <div className="space-y-4">
+      <div className="rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
         <h2 className="text-lg font-semibold text-black">Scene Statistics</h2>
-        <p className="text-sm text-black/60 capitalize">
+        <p className="text-sm capitalize text-black/60">
           {selectedTier} scope • rollup: {statistics?.rollupUnit ?? 'local_sect'}
         </p>
         <p className="mt-1 text-xs text-black/50">{sceneMapScopeCopy}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        <div className="p-3 rounded-xl bg-black/5">
+      <div className="grid grid-cols-2 gap-2">
+        <div className="plot-wire-card-muted bg-white p-3">
           <p className="text-xl font-semibold text-black">{metrics.totalMembers.toLocaleString()}</p>
           <p className="text-xs text-black/60">Members</p>
         </div>
-        <div className="p-3 rounded-xl bg-black/5">
+        <div className="plot-wire-card-muted bg-white p-3">
           <p className="text-xl font-semibold text-black">{metrics.activeSects}</p>
           <p className="text-xs text-black/60">Active Sects</p>
         </div>
-        <div className="p-3 rounded-xl bg-black/5">
+        <div className="plot-wire-card-muted bg-white p-3">
           <p className="text-xl font-semibold text-black">{metrics.eventsThisWeek}</p>
           <p className="text-xs text-black/60">Events (7d)</p>
         </div>
-        <div className="p-3 rounded-xl bg-black/5">
+        <div className="plot-wire-card-muted bg-white p-3">
           <p className="text-xl font-semibold text-black">{metrics.activityScore}</p>
           <p className="text-xs text-black/60">Activity (7d)</p>
         </div>
@@ -274,7 +270,7 @@ export default function StatisticsPanel({
 
       {selectedTier === 'city' ? (
         <>
-          <div className="h-48 w-full mb-4">
+          <div className="h-52 w-full">
             <SceneMap
               points={sceneMap?.points ?? []}
               selectedPointId={selectedCommunity?.id ?? null}
@@ -284,26 +280,26 @@ export default function StatisticsPanel({
               }}
             />
           </div>
-          {mapError ? <p className="mb-4 text-xs text-red-600">{mapError}</p> : null}
+          {mapError ? <p className="text-xs text-red-600">{mapError}</p> : null}
 
-          <div className="space-y-1 max-h-40 overflow-y-auto">
+          <div className="space-y-2 max-h-48 overflow-y-auto">
             {communities.map((community, index) => (
               <button
                 key={community.id}
                 onClick={() => handleCommunitySelect(community)}
-                className={`w-full text-left p-2 rounded-lg transition-colors ${
+                className={`plot-wire-list-item w-full text-left transition-colors ${
                   selectedCommunity?.id === community.id
-                    ? 'border border-black bg-black/5'
-                    : 'border border-transparent hover:bg-black/5'
+                    ? 'bg-[#dfe8b4]'
+                    : 'hover:bg-[#efefe2]'
                 }`}
               >
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-black text-white text-xs flex items-center justify-center">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full border border-black bg-black text-xs font-semibold text-white">
                       {index + 1}
                     </span>
                     <div>
-                      <p className="font-medium text-black text-xs">{community.name}</p>
+                      <p className="text-xs font-medium text-black">{community.name}</p>
                       <p className="text-[10px] text-black/60">
                         {community.memberCount?.toLocaleString()} members
                       </p>
@@ -323,17 +319,17 @@ export default function StatisticsPanel({
         </>
       ) : (
         <div className="space-y-3">
-          <div className="h-48 w-full">
+          <div className="h-52 w-full">
             <SceneMap points={sceneMap?.points ?? []} />
           </div>
           {mapError ? <p className="text-xs text-red-600">{mapError}</p> : null}
-          <div className="rounded-xl border border-black/10 p-4">
+          <div className="plot-wire-card-muted p-4">
             <p className="text-sm text-black/70">
               {selectedTier === 'state'
                 ? 'State tier aggregates city-scoped scenes in this parent music community context.'
                 : 'National tier aggregates state-level macro context in this parent music community.'}
             </p>
-            <p className="text-xs text-black/50 mt-2">
+            <p className="mt-2 text-xs text-black/50">
               Scope communities: {metrics.scopeCommunityCount.toLocaleString()} • Active tracks:{' '}
               {metrics.activeTracks.toLocaleString()}
             </p>
