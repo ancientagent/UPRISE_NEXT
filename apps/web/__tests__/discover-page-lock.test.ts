@@ -41,4 +41,15 @@ describe('/discover current-community lock', () => {
     expect(discoverSource).toContain("{song.artistBandId && token ? (");
     expect(discoverSource).toContain("{savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}");
   });
+
+  it('uses the plot zine visual system for the founder-locked discover shell and shelves', () => {
+    const discoverSource = readRepoFile('src/app/discover/page.tsx');
+
+    expect(discoverSource).toContain('plot-zine-page');
+    expect(discoverSource).toContain('plot-zine-card plot-paper-clip plot-record-sleeve');
+    expect(discoverSource).toContain('plot-embossed-label');
+    expect(discoverSource).toContain('plot-divider-tab');
+    expect(discoverSource).toContain('plot-handwritten');
+    expect(discoverSource).toContain('Record Shelf View');
+  });
 });
