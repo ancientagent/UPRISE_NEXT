@@ -104,8 +104,9 @@ function CarouselSection({
   return (
     <section className="space-y-3">
       <div>
-        <h3 className="text-lg font-semibold text-black">{title}</h3>
-        <p className="text-sm text-black/60">{subtitle}</p>
+        <p className="plot-wire-label">{title}</p>
+        <h3 className="mt-1 text-lg font-semibold text-black">{title}</h3>
+        <p className="mt-1 text-sm text-black/60">{subtitle}</p>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2">{children}</div>
     </section>
@@ -651,69 +652,88 @@ export default function DiscoverPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <header className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.25em] text-black/50">Discover</p>
-          <h1 className="mt-3 text-3xl font-semibold text-black">Discover Uprises, Artists, and Songs</h1>
-          <p className="mt-2 text-sm text-black/60">
-            Travel starts from the community you are already in. Discover keeps that current community context and changes geography.
-          </p>
+    <main className="plot-wire-page pb-10">
+      <div className="plot-wire-frame max-w-6xl space-y-4">
+        <header className="plot-wire-card p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-3xl">
+              <p className="plot-wire-label">Discover</p>
+              <h1 className="mt-2 text-3xl font-semibold text-black">Discover Uprises, Artists, and Songs</h1>
+              <p className="mt-2 text-sm text-black/60">
+                Travel starts from the community you are already in. Discover keeps that current community context and changes geography.
+              </p>
+            </div>
+            <div className="plot-wire-toolbar min-w-[220px]">
+              <p className="plot-wire-label">Travel Model</p>
+              <p className="mt-1 text-sm text-black/70">Retune first. Enter explicitly.</p>
+            </div>
+          </div>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Button asChild variant="outline" size="sm">
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
               <Link href="/plot">Back to Plot</Link>
             </Button>
             {token && activeSceneId ? (
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
                 <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
               </Button>
             ) : null}
           </div>
           {actionMessage ? (
-            <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            <div className="mt-4 rounded-[1rem] border border-black bg-[#b8d63b] px-4 py-3 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.2)]">
               {actionMessage}
             </div>
           ) : null}
         </header>
 
-        <section className="rounded-2xl border border-black/10 bg-white p-6">
+        <section className="plot-wire-panel">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Uprise Travel</p>
+            <div className="max-w-2xl">
+              <p className="plot-wire-label">Uprise Travel</p>
               <h2 className="mt-2 text-lg font-semibold text-black">Search by city or state</h2>
               <p className="mt-1 text-sm text-black/60">
                 Travel keeps your current community context fixed and changes geography around it.
               </p>
             </div>
-            <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
-              <p>
-                Origin community:{' '}
+            <div className="plot-wire-toolbar min-w-[260px]">
+              <p className="plot-wire-label">Origin Community</p>
+              <p className="mt-1 text-sm text-black/70">
                 {formatCommunityIdentity(
                   originScene?.city ?? null,
                   originScene?.state ?? null,
                   originMusicCommunity,
                 )}
               </p>
-              <p>Scope: <span className="capitalize">{tier}</span></p>
+              <p className="mt-2 text-xs uppercase tracking-[0.14em] text-black/55">
+                Scope <span className="font-semibold capitalize text-black">{tier}</span>
+              </p>
             </div>
           </div>
 
           {!hasOriginContext ? (
-            <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <div className="mt-4 rounded-[1rem] border border-black bg-[#f5e8bf] px-4 py-3 text-sm text-black">
               Discover travel needs an active community context so the city, state, and music community are already known.
             </div>
           ) : null}
 
-          <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
-            <input
-              value={locationQuery}
-              onChange={(event) => setLocationQuery(event.target.value)}
-              placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
-              className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
+          <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="plot-wire-toolbar">
+              <p className="plot-wire-label">Travel Search</p>
+              <input
+                value={locationQuery}
+                onChange={(event) => setLocationQuery(event.target.value)}
+                placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
+                className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
+                disabled={!hasOriginContext}
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setMapOpen((value) => !value)}
               disabled={!hasOriginContext}
-            />
-            <Button variant="outline" size="sm" onClick={() => setMapOpen((value) => !value)} disabled={!hasOriginContext}>
+              className="plot-wire-chip h-auto rounded-full bg-white px-4 py-3 text-[11px] text-black"
+            >
               {mapOpen ? 'Hide Map' : 'Map View'}
             </Button>
           </div>
@@ -723,7 +743,12 @@ export default function DiscoverPage() {
               <Button
                 key={value}
                 size="sm"
-                variant={tier === value ? 'default' : 'outline'}
+                variant="outline"
+                className={
+                  tier === value
+                    ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                    : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
+                }
                 onClick={() => handleChangeTier(value)}
                 disabled={!hasOriginContext}
               >
@@ -733,15 +758,15 @@ export default function DiscoverPage() {
           </div>
 
           {mapOpen ? (
-            <div className="mt-5 rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
+            <div className="plot-wire-card-muted plot-wire-grid-bg mt-5 p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-medium text-black">Map Explorer</p>
-                  <p className="text-xs text-black/50">
+                  <p className="plot-wire-label">Map Explorer</p>
+                  <p className="mt-1 text-xs text-black/55">
                     Drag across the scene map and click a community point to retune directly from Discover.
                   </p>
                 </div>
-                {sceneMapError ? <p className="text-xs text-red-600">{sceneMapError}</p> : null}
+                {sceneMapError ? <p className="text-xs text-red-700">{sceneMapError}</p> : null}
               </div>
               <div className="h-56">
                 <SceneMap
@@ -758,36 +783,34 @@ export default function DiscoverPage() {
           ) : null}
         </section>
 
-        <section className="rounded-2xl border border-black/10 bg-white p-6">
+        <section className="plot-wire-panel">
           <div
-            className={`rounded-2xl border p-4 ${travelError ? 'border-red-200 bg-red-50 text-red-700' : 'border-black/10 bg-[#f7f5ef] text-black/60'}`}
+            className={`rounded-[1rem] border px-4 py-4 ${
+              travelError ? 'border-black bg-[#f2d3d2] text-black' : 'border-black bg-[#efefe2] text-black/65'
+            }`}
           >
-            <p className="text-sm font-medium">{resultSummary.title}</p>
-            <p className="mt-1 text-sm">{resultSummary.body}</p>
+            <p className="plot-wire-label">{resultSummary.title}</p>
+            <p className="mt-1 text-sm text-black/75">{resultSummary.body}</p>
           </div>
 
           {currentCityScenes.length > 0 ? (
             <ul className="mt-4 space-y-3">
               {currentCityScenes.map((item) => (
-                <li key={item.sceneId} className="rounded-xl border border-black/10 p-4">
+                <li key={item.sceneId} className="plot-wire-list-item">
                   <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
+                    <div className="max-w-2xl">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-medium text-black">{item.name}</p>
-                        <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1 text-xs text-black/60">
-                          {getCitySceneStatusLabel(item, tunedSceneId)}
-                        </span>
-                        <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1 text-xs text-black/60">
-                          {formatMusicCommunityLabel(item.musicCommunity, originMusicCommunity)}
-                        </span>
+                        <p className="text-base font-semibold text-black">{item.name}</p>
+                        <span className="plot-wire-chip">{getCitySceneStatusLabel(item, tunedSceneId)}</span>
+                        <span className="plot-wire-chip">{formatMusicCommunityLabel(item.musicCommunity, originMusicCommunity)}</span>
                       </div>
                       <dl className="mt-3 grid gap-1 text-sm text-black/60">
                         <div className="flex flex-wrap gap-2">
-                          <dt className="font-medium text-black/70">Location</dt>
+                          <dt className="plot-wire-label">Location</dt>
                           <dd>{formatSceneLocation(item.city, item.state)}</dd>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          <dt className="font-medium text-black/70">Members</dt>
+                          <dt className="plot-wire-label">Members</dt>
                           <dd>{item.memberCount.toLocaleString()}</dd>
                         </div>
                       </dl>
@@ -795,7 +818,12 @@ export default function DiscoverPage() {
                     <div className="flex flex-wrap gap-2">
                       <Button
                         size="sm"
-                        variant={tunedSceneId === item.sceneId ? 'default' : 'outline'}
+                        variant="outline"
+                        className={
+                          tunedSceneId === item.sceneId
+                            ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                            : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
+                        }
                         disabled={!token || tuningSceneId === item.sceneId}
                         onClick={() => void handleTuneSceneById(item.sceneId)}
                       >
@@ -804,23 +832,25 @@ export default function DiscoverPage() {
                       <Button
                         size="sm"
                         variant="outline"
+                        className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                         disabled={!token || savingUpriseSceneId === item.sceneId}
                         onClick={() => void handleSaveUprise(item.sceneId)}
                       >
                         {savingUpriseSceneId === item.sceneId ? 'Adding...' : 'Add'}
                       </Button>
                       {token ? (
-                        <Button asChild size="sm" variant="outline">
+                        <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
                           <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
                         </Button>
                       ) : (
-                        <Button size="sm" variant="outline" disabled>
+                        <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" disabled>
                           Visit {item.name}
                         </Button>
                       )}
                       <Button
                         size="sm"
                         variant="outline"
+                        className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                         disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
                         onClick={() => void handleSetHomeScene(item)}
                       >
@@ -836,10 +866,10 @@ export default function DiscoverPage() {
           {travelItems.some(isStateRollup) ? (
             <div className="mt-4 space-y-3">
               {travelItems.filter(isStateRollup).map((item) => (
-                <div key={item.state} className="rounded-xl border border-black/10 p-4">
+                <div key={item.state} className="plot-wire-list-item">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <p className="font-medium text-black">{item.state} {item.musicCommunity}</p>
+                      <p className="text-base font-semibold text-black">{item.state} {item.musicCommunity}</p>
                       <p className="mt-1 text-sm text-black/60">
                         {item.citySceneCount} city scenes • {item.totalMembers.toLocaleString()} total members
                       </p>
@@ -847,6 +877,7 @@ export default function DiscoverPage() {
                     <Button
                       size="sm"
                       variant="outline"
+                      className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                       onClick={() => {
                         handleChangeTier('state');
                         setLocationQuery(item.state);
@@ -861,35 +892,39 @@ export default function DiscoverPage() {
           ) : null}
         </section>
 
-        <section className="rounded-2xl border border-black/10 bg-white p-6">
+        <section className="plot-wire-panel">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Current Community Discover</p>
+            <div className="max-w-2xl">
+              <p className="plot-wire-label">Current Community Discover</p>
               <h2 className="mt-2 text-lg font-semibold text-black">{activeSceneName}</h2>
               <p className="mt-1 text-sm text-black/60">
                 Search artists and songs inside the current community, then explore the community-driven carousels below.
               </p>
             </div>
-            <div className="rounded-xl border border-black/10 bg-[#f7f5ef] px-4 py-3 text-sm text-black/60">
+            <div className="plot-wire-toolbar min-w-[280px]">
+              <p className="plot-wire-label">Local State</p>
               <p>Visitor mode: {isVisitor ? 'Active' : 'Off'}</p>
-              <p>{localDiscoverLockedReason}</p>
+              <p className="mt-2 text-sm text-black/70">{localDiscoverLockedReason}</p>
             </div>
           </div>
 
-          <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
-            <input
-              value={localSearchQuery}
-              onChange={(event) => setLocalSearchQuery(event.target.value)}
-              placeholder={
-                localContextReady
-                  ? `Search artists and songs in ${activeSceneName}`
-                  : 'Home Scene or tuned community required'
-              }
-              className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
-              disabled={!localContextReady}
-            />
+          <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="plot-wire-toolbar">
+              <p className="plot-wire-label">Local Search</p>
+              <input
+                value={localSearchQuery}
+                onChange={(event) => setLocalSearchQuery(event.target.value)}
+                placeholder={
+                  localContextReady
+                    ? `Search artists and songs in ${activeSceneName}`
+                    : 'Home Scene or tuned community required'
+                }
+                className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
+                disabled={!localContextReady}
+              />
+            </div>
             {activeSceneId ? (
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-3 text-[11px] text-black">
                 <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
               </Button>
             ) : null}
@@ -906,14 +941,15 @@ export default function DiscoverPage() {
           {localSearchError ? <p className="mt-3 text-sm text-red-700">{localSearchError}</p> : null}
           {localSearchResult ? (
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
-              <section className="rounded-2xl border border-black/10 p-4">
-                <h3 className="text-sm font-semibold text-black">Artists</h3>
+              <section className="plot-wire-list-item">
+                <p className="plot-wire-label">Artists</p>
+                <h3 className="mt-1 text-sm font-semibold text-black">Artists</h3>
                 {localSearchResult.artists.length === 0 ? (
                   <p className="mt-2 text-sm text-black/50">No artists matched this search.</p>
                 ) : (
                   <ul className="mt-3 space-y-2">
                     {localSearchResult.artists.map((artist) => (
-                      <li key={artist.artistBandId} className="rounded-xl bg-black/5 px-3 py-2">
+                      <li key={artist.artistBandId} className="plot-wire-card-muted px-3 py-3">
                         {token ? (
                           <Link
                             href={`/artist-bands/${artist.artistBandId}`}
@@ -951,14 +987,15 @@ export default function DiscoverPage() {
                   </ul>
                 )}
               </section>
-              <section className="rounded-2xl border border-black/10 p-4">
-                <h3 className="text-sm font-semibold text-black">Songs</h3>
+              <section className="plot-wire-list-item">
+                <p className="plot-wire-label">Songs</p>
+                <h3 className="mt-1 text-sm font-semibold text-black">Songs</h3>
                 {localSearchResult.songs.length === 0 ? (
                   <p className="mt-2 text-sm text-black/50">No songs matched this search.</p>
                 ) : (
                   <ul className="mt-3 space-y-2">
                     {localSearchResult.songs.map((song) => (
-                      <li key={song.trackId} className="rounded-xl bg-black/5 px-3 py-2">
+                      <li key={song.trackId} className="plot-wire-card-muted px-3 py-3">
                         {song.artistBandId && token ? (
                           <Link
                             href={`/artist-bands/${song.artistBandId}?trackId=${song.trackId}`}
@@ -1003,19 +1040,19 @@ export default function DiscoverPage() {
                   subtitle="Signals recommended by listeners in this community."
                 >
                   {highlights.recommendations.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-black/10 bg-[#f7f5ef] px-4 py-6 text-sm text-black/50">
+                    <div className="plot-wire-card-muted min-w-[260px] border-dashed px-4 py-6 text-sm text-black/50">
                       No recommended signals yet.
                     </div>
                   ) : (
                     highlights.recommendations.map((signal) => (
-                      <article key={signal.signalId} className="min-w-[260px] rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
-                        <p className="text-xs uppercase tracking-[0.2em] text-black/50">Signal</p>
+                      <article key={signal.signalId} className="plot-wire-list-item min-w-[260px]">
+                        <p className="plot-wire-label">Signal</p>
                         <h4 className="mt-2 text-base font-semibold text-black">{String(signal.metadata?.title ?? signal.metadata?.name ?? signal.type)}</h4>
                         <p className="mt-1 text-xs text-black/60">{signal.actionCounts.recommend} recommends</p>
                         <div className="mt-4 flex flex-wrap gap-2">
-                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
-                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
-                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
+                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
+                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
+                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
                         </div>
                       </article>
                     ))
@@ -1027,19 +1064,19 @@ export default function DiscoverPage() {
                   subtitle="Current signal momentum in this community, driven by blast counts."
                 >
                   {highlights.trending.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-black/10 bg-[#f7f5ef] px-4 py-6 text-sm text-black/50">
+                    <div className="plot-wire-card-muted min-w-[260px] border-dashed px-4 py-6 text-sm text-black/50">
                       No trending signals yet.
                     </div>
                   ) : (
                     highlights.trending.map((signal) => (
-                      <article key={signal.signalId} className="min-w-[260px] rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
-                        <p className="text-xs uppercase tracking-[0.2em] text-black/50">Trending</p>
+                      <article key={signal.signalId} className="plot-wire-list-item min-w-[260px]">
+                        <p className="plot-wire-label">Trending</p>
                         <h4 className="mt-2 text-base font-semibold text-black">{String(signal.metadata?.title ?? signal.metadata?.name ?? signal.type)}</h4>
                         <p className="mt-1 text-xs text-black/60">{signal.actionCounts.blast} blasts</p>
                         <div className="mt-4 flex flex-wrap gap-2">
-                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
-                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
-                          <Button size="sm" variant="outline" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
+                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
+                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
+                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
                         </div>
                       </article>
                     ))
@@ -1051,13 +1088,13 @@ export default function DiscoverPage() {
                   subtitle="Community-leading artists gathered from listener stats in this Uprise."
                 >
                   {highlights.topArtists.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-black/10 bg-[#f7f5ef] px-4 py-6 text-sm text-black/50">
+                    <div className="plot-wire-card-muted min-w-[240px] border-dashed px-4 py-6 text-sm text-black/50">
                       No top artists yet.
                     </div>
                   ) : (
                     highlights.topArtists.map((artist) => (
-                      <article key={artist.artistBandId} className="min-w-[240px] rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
-                        <p className="text-xs uppercase tracking-[0.2em] text-black/50">Artist</p>
+                      <article key={artist.artistBandId} className="plot-wire-list-item min-w-[240px]">
+                        <p className="plot-wire-label">Artist</p>
                         {token ? (
                           <Link
                             href={`/artist-bands/${artist.artistBandId}`}
