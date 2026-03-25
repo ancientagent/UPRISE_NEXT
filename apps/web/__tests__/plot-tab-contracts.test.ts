@@ -69,18 +69,4 @@ describe('plot tab contract locks', () => {
     expect(topSongsSource).toContain('plot-zine-card plot-record-sleeve');
     expect(topSongsSource).toContain('plot-annotation-note');
   });
-
-  it('locks statistics visuals to handmade map and metric cues', () => {
-    const sceneMapSource = readRepoFile('src/components/plot/SceneMap.tsx');
-    const statisticsSource = readRepoFile('src/components/plot/StatisticsPanel.tsx');
-
-    expect(sceneMapSource).toContain("pattern id=\"crosshatch\"");
-    expect(sceneMapSource).toContain('plot-ledger-card h-full w-full');
-    expect(sceneMapSource).toContain("bg-[var(--highlighter)]");
-    expect(sceneMapSource).toContain('map notes');
-    expect(statisticsSource).toContain('plot-annotation-note inline-block text-sm');
-    expect(statisticsSource).toContain('scene pin list');
-    expect(statisticsSource).toContain('circle a scene to anchor stats');
-    expect(statisticsSource).toContain('macro rollup');
-  });
 });

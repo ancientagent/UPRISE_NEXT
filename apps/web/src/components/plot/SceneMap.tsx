@@ -72,33 +72,27 @@ export default function SceneMap({ points, selectedPointId, onSelectPoint }: Sce
 
   if (points.length === 0) {
     return (
-      <div className="plot-zine-card h-full w-full rounded-2xl flex items-center justify-center">
+      <div className="h-full w-full rounded-2xl bg-gradient-to-br from-black/5 to-black/10 border border-black/10 flex items-center justify-center">
         <div className="text-center">
           <p className="text-4xl mb-2">🗺️</p>
-          <p className="text-sm plot-ink-muted">No map data in this scope</p>
+          <p className="text-sm text-black/60">No map data in this scope</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="plot-ledger-card h-full w-full rounded-[1.4rem] flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 opacity-35">
+    <div className="h-full w-full rounded-2xl bg-gradient-to-br from-black/5 to-black/10 border border-black/10 flex items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 opacity-30">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
-              <path d="M 36 0 L 0 0 0 36" fill="none" stroke="rgba(96,73,48,0.45)" strokeWidth="0.7" strokeDasharray="2 2" />
-            </pattern>
-            <pattern id="crosshatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
-              <line x1="0" y1="0" x2="0" y2="12" stroke="rgba(142,45,37,0.12)" strokeWidth="2" />
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="black" strokeWidth="0.5" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill="url(#crosshatch)" />
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
       </div>
-
-      <div className="pointer-events-none absolute inset-[10px] rounded-[1.1rem] border border-dashed border-[rgba(96,73,48,0.26)]" />
 
       {markerPositions.map(({ point, x, y, isSelected }) => (
         <button
@@ -112,28 +106,17 @@ export default function SceneMap({ points, selectedPointId, onSelectPoint }: Sce
         >
           <div className="relative">
             <div
-              className={`h-4 w-4 rounded-full border-2 shadow-sm transition-colors ${
-                isSelected
-                  ? 'border-[var(--red-pen)] bg-[var(--highlighter)]'
-                  : 'border-[rgba(43,31,20,0.3)] bg-[rgba(35,24,15,0.72)] hover:bg-[rgba(35,24,15,0.92)]'
+              className={`w-3 h-3 rounded-full border-2 border-white shadow-sm ${
+                isSelected ? 'bg-black' : 'bg-black/70 hover:bg-black'
               }`}
             />
-            {isSelected ? (
-              <>
-                <div className="absolute -inset-1 rounded-full border-2 border-[var(--red-pen)] opacity-80" />
-                <div className="absolute -inset-2 rounded-full border border-[rgba(142,45,37,0.45)]" />
-              </>
-            ) : null}
+            {isSelected && <div className="absolute inset-0 rounded-full bg-black/20 animate-ping" />}
           </div>
         </button>
       ))}
 
-      <div className="plot-embossed-label absolute bottom-3 right-3 px-3 py-2 text-[10px]">
+      <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg text-[10px] text-black/70">
         {points.length} point{points.length !== 1 ? 's' : ''}
-      </div>
-
-      <div className="absolute left-3 top-3 rounded-full bg-[rgba(243,224,96,0.82)] px-3 py-1 text-[11px] text-[var(--red-pen)] shadow-[0_0_0_2px_rgba(142,45,37,0.14)]">
-        map notes
       </div>
     </div>
   );
