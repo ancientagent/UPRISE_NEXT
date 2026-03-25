@@ -105,7 +105,6 @@ function CarouselSection({
     <section className="space-y-4">
       <div className="plot-ledger-card rounded-[1.25rem] px-4 py-4">
         <p className="plot-embossed-label px-3 py-1 text-[11px] font-semibold">{title}</p>
-        <p className="plot-handwritten mt-3 text-xl text-[var(--red-pen)]">{title}</p>
         <p className="mt-2 text-sm plot-ink-muted">{subtitle}</p>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-2">{children}</div>
@@ -657,20 +656,20 @@ export default function DiscoverPage() {
         <header className="plot-zine-card plot-paper-clip plot-record-sleeve rounded-[2rem] p-8 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="plot-embossed-label px-3 py-1 text-[11px] font-semibold">Discover Desk</p>
+              <p className="plot-embossed-label px-3 py-1 text-[11px] font-semibold">Discover</p>
               <h1 className="mt-4 text-3xl font-semibold text-[var(--ink-main)]">Discover Uprises, Artists, and Songs</h1>
               <p className="mt-2 text-sm plot-ink-muted">
                 Travel starts from the community you are already in. Discover keeps that current community context and changes geography.
               </p>
             </div>
             <div className="plot-ledger-card rounded-[1.25rem] px-4 py-4 text-right">
-              <p className="plot-annotation-note inline-block text-base">Record Shelf View</p>
+              <p className="plot-annotation-note inline-block text-base">Local + Travel Context</p>
               <p className="mt-2 text-xs uppercase tracking-[0.2em] plot-ink-muted">
-                Travel first. Visit second.
+                Retune first. Enter explicitly.
               </p>
             </div>
           </div>
-          <p className="plot-handwritten mt-5 text-xl text-[var(--red-pen)]">Travel by place. Keep your scene identity intact.</p>
+          <p className="mt-5 text-lg font-medium text-[var(--ink-main)]">Travel by place. Keep your scene identity intact.</p>
           <p className="mt-2 text-sm plot-ink-muted">
             Travel starts from the community you are already in. Discover keeps that current community context and changes geography.
           </p>
@@ -785,7 +784,7 @@ export default function DiscoverPage() {
             className={`rounded-[1.4rem] border p-4 ${travelError ? 'border-red-200 bg-red-50 text-red-700' : 'plot-ledger-card text-[var(--ink-main)]'}`}
           >
             <p className="plot-embossed-label px-3 py-1 text-[11px] font-semibold">{resultSummary.title}</p>
-            <p className="plot-handwritten mt-3 text-lg text-[var(--red-pen)]">{resultSummary.body}</p>
+            <p className="mt-3 text-sm text-[var(--ink-main)]">{resultSummary.body}</p>
           </div>
 
           {currentCityScenes.length > 0 ? (
@@ -921,7 +920,7 @@ export default function DiscoverPage() {
             ) : null}
           </div>
           {!token ? (
-            <p className="plot-handwritten mt-3 text-base text-[var(--red-pen)]">
+            <p className="mt-3 text-xs uppercase tracking-[0.18em] text-[var(--red-pen)]">
               Sign in is required to open artist pages and change Home Scene from Discover.
             </p>
           ) : null}
