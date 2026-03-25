@@ -15,7 +15,8 @@ Agent handoffs prevent context loss when work is transferred between contributor
 
 ## Functional Requirements
 - Every multi-step task creates a handoff document under `docs/handoff/`:
-  - `agent-<name>-<task>.md`
+  - default: dated handoff note (for example, `YYYY-MM-DD_<slice-or-topic>.md`)
+  - legacy `agent-<name>-<task>.md` files may remain as historical artifacts but are not the preferred current format
 - Handoff doc includes:
   - scope and deliverables (in/out),
   - decisions made (with rationale),
@@ -23,7 +24,7 @@ Agent handoffs prevent context loss when work is transferred between contributor
   - challenges/lessons,
   - outstanding questions and next steps,
   - references (PRs/commits/specs).
-- Phase-level work produces `docs/handoff/handoff-phase-<n>.md` using the phase template.
+- Phase-level work may still produce `docs/handoff/handoff-phase-<n>.md` when a phase report is explicitly requested, but dated handoff notes are the default current carry-forward format.
 
 ## Non-Functional Requirements
 - **Clarity:** future readers can answer “what changed and why” quickly.
@@ -35,8 +36,8 @@ Agent handoffs prevent context loss when work is transferred between contributor
 - Handoffs must respect web-tier boundary rules (no DB/secrets in `apps/web`).
 
 ## Acceptance Tests / Test Plan
-- Ensure new handoff docs follow `docs/handoff/TEMPLATE_agent-handoff.md`.
-- Ensure phase reports follow `docs/handoff/TEMPLATE_handoff-phase.md`.
+- Ensure new handoff docs follow the current dated handoff practice described in `docs/AGENT_STRATEGY_AND_HANDOFF.md` and `docs/handoff/README.md`.
+- Ensure phase reports follow `docs/handoff/TEMPLATE_handoff-phase.md` only when a phase report is explicitly in scope.
 - Confirm docs are discoverable via `docs/handoff/README.md`.
 
 ## Success Metrics
@@ -48,5 +49,5 @@ Agent handoffs prevent context loss when work is transferred between contributor
 - `docs/handoff/TEMPLATE_handoff-phase.md`
 - `docs/handoff/handoff-phase-1.md`
 - `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+- `docs/handoff/README.md`
 - `docs/FEATURE_DRIFT_GUARDRAILS.md`
-

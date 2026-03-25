@@ -1,6 +1,10 @@
 # Agent Control Loop (Autonomous Lane Coordination)
 
-This folder is the control plane for parallel coding agents in UPRISE.
+> Specialized queue/orchestrator workflow only.
+>
+> This folder is not the default agent entry path. Start with `AGENTS.md`, then use `docs/AGENT_STRATEGY_AND_HANDOFF.md` and `docs/handoff/README.md`. Use this control-plane workflow only when a queue-driven multi-lane run is explicitly in scope.
+
+This folder is the control plane for queue-driven parallel coding agents in UPRISE.
 
 ## Goal
 Allow one orchestrator agent to assign tasks directly to lane agents, and let lane agents self-claim work and report completion/blockers without manual relay.

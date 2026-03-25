@@ -13,14 +13,15 @@ Primary objective:
 - Default design platform: Figma via MCP (OAuth session required and must be validated first).
 
 Required context files:
-1. `docs/handoff/2026-03-05_context-reset-handoff-ux-uizard.md`
-2. `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`
-3. `docs/solutions/MVP_PROFILE_EXPANDED_MOCKUP_R1.md`
-4. `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md`
-5. `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md`
-6. `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md`
-7. `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md`
-8. `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md`
+1. `AGENTS.md`
+2. The exact active founder locks or `docs/specs/` files for the assigned UX task
+3. The latest relevant dated handoff only if current work depends on prior slice context
+
+Optional historical appendix only when needed:
+- `docs/handoff/2026-03-05_context-reset-handoff-ux-uizard.md`
+- `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md`
+- `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md`
+- `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md`
 
 Hard constraints:
 - No speculative redesign.
@@ -29,12 +30,12 @@ Hard constraints:
 - Do not override locked UX decisions in handoff without explicit founder confirmation.
 
 What to do first:
-1. Report current locked UX decisions from the handoff file.
-2. Report any contradictions across the required context files.
+1. Report current locked UX decisions from the active founder locks/specs actually loaded for the task.
+2. Report any contradictions across those active context files.
 3. Validate Figma MCP access (list file/project + fetch one frame).
 4. If no contradictions and MCP is valid, produce:
-   - Figma page-by-page execution plan (matching `MVP_FIGMA_EXECUTION_PACK_R1.md`)
-   - strict gates and stop conditions from `MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md`
+   - Figma page-by-page execution plan for the active task
+   - strict gates and stop conditions from the active founder locks/specs
    - lane prompts/tasks (A-E)
    - one checklist mapping each screen/frame to locked MVP decisions
 

@@ -24,5 +24,5 @@ UPRISE_NEXT is a Turborepo monorepo for the UPRISE music community platform. It 
 - Operational rules: `docs/RUNBOOK.md`
 - Repo map + conventions: `docs/PROJECT_STRUCTURE.md`
 - Environment setup: `docs/ENVIRONMENTS.md`
-- Multi-agent docs + handoffs: `docs/blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md` and `docs/handoff/`
+- Multi-agent workflow + handoffs: `docs/AGENT_STRATEGY_AND_HANDOFF.md` and `docs/handoff/README.md`
 - Specs: `docs/specs/` (module-based) and `docs/Specifications/` (legacy index)
