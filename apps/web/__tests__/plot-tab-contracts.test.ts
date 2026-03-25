@@ -49,24 +49,4 @@ describe('plot tab contract locks', () => {
     expect(promotionsSource).toContain('communityLabel?: string | null;');
     expect(promotionsSource).toContain('Promotions{communityLabel ? ` • ${communityLabel}` : \'\'}');
   });
-
-  it('locks plot internals to the zine paper and ledger style language', () => {
-    const feedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
-    const eventsSource = readRepoFile('src/components/plot/PlotEventsPanel.tsx');
-    const promotionsSource = readRepoFile('src/components/plot/PlotPromotionsPanel.tsx');
-    const statisticsSource = readRepoFile('src/components/plot/StatisticsPanel.tsx');
-    const topSongsSource = readRepoFile('src/components/plot/TopSongsPanel.tsx');
-
-    expect(feedSource).toContain('plot-zine-card plot-record-sleeve');
-    expect(feedSource).toContain('plot-ledger-card');
-    expect(feedSource).toContain('plot-annotation-note');
-    expect(eventsSource).toContain('plot-zine-card plot-record-sleeve');
-    expect(eventsSource).toContain('plot-embossed-label');
-    expect(promotionsSource).toContain('plot-zine-card plot-record-sleeve');
-    expect(promotionsSource).toContain('plot-embossed-label');
-    expect(statisticsSource).toContain('plot-zine-card plot-record-sleeve');
-    expect(statisticsSource).toContain('plot-ledger-card');
-    expect(topSongsSource).toContain('plot-zine-card plot-record-sleeve');
-    expect(topSongsSource).toContain('plot-annotation-note');
-  });
 });

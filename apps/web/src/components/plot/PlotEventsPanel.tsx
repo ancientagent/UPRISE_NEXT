@@ -88,18 +88,18 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
   }, [fetchEvents]);
 
   return (
-    <div className="plot-zine-card plot-record-sleeve rounded-[1.45rem] p-6">
+    <div className="rounded-2xl border border-black/10 bg-white p-6">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="plot-annotation-note inline-block text-lg">
+          <h2 className="text-lg font-semibold text-black">
             Events{communityLabel ? ` • ${communityLabel}` : ''}
-          </p>
-          <p className="mt-2 text-xs plot-ink-muted">
+          </h2>
+          <p className="mt-1 text-xs text-black/50">
             Scene-scoped events ordered by canonical start time. No personalized ranking.
           </p>
         </div>
-        <Button size="sm" variant="outline" className="plot-divider-tab text-[var(--ink-main)]" onClick={() => setIncludePast((prev) => !prev)}>
-          <span>{includePast ? 'Upcoming Only' : 'Include Past'}</span>
+        <Button size="sm" variant="outline" onClick={() => setIncludePast((prev) => !prev)}>
+          {includePast ? 'Upcoming Only' : 'Include Past'}
         </Button>
       </div>
 
@@ -126,9 +126,9 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
       )}
 
       {token && !loading && !error && items.length === 0 && (
-        <div className="plot-ledger-card mt-4 rounded-xl p-4">
-          <p className="text-sm font-medium text-[var(--ink-main)]">No scene events are scheduled for this context.</p>
-          <p className="mt-1 text-xs plot-ink-muted">
+        <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
+          <p className="text-sm font-medium text-black">No scene events are scheduled for this context.</p>
+          <p className="mt-1 text-xs text-black/55">
             This panel stays descriptive and locality-bound. It does not hide ranked or promoted events.
           </p>
         </div>
@@ -137,27 +137,27 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
       {token && !loading && !error && items.length > 0 && (
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
-            <li key={item.id} className="plot-ledger-card rounded-xl p-3">
+            <li key={item.id} className="rounded-xl border border-black/10 p-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-medium text-[var(--ink-main)]">{item.title}</p>
-                  <p className="mt-1 text-xs plot-ink-muted">
+                  <p className="text-sm font-medium text-black">{item.title}</p>
+                  <p className="mt-1 text-xs text-black/60">
                     {new Date(item.startDate).toLocaleString()} • {item.locationName}
                   </p>
                 </div>
-                <span className="plot-embossed-label px-3 py-1 text-[10px] font-semibold">
+                <span className="rounded-full border border-black/10 bg-black/[0.03] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
                   {formatEventStatus(item.startDate, item.endDate)}
                 </span>
               </div>
-              <p className="mt-2 text-xs plot-ink-muted">
+              <p className="mt-2 text-xs text-black/55">
                 Published by {item.createdBy?.displayName || item.createdBy?.username || 'Scene organizer'} • {new Date(item.createdAt).toLocaleDateString()}
               </p>
-              <p className="mt-1 text-xs plot-ink-muted">
+              <p className="mt-1 text-xs text-black/50">
                 {item.attendeeCount}
                 {item.maxAttendees ? ` / ${item.maxAttendees}` : ''} attending
               </p>
               {item.description ? (
-                <p className="mt-2 text-sm plot-ink-muted">{item.description}</p>
+                <p className="mt-2 text-sm text-black/65">{item.description}</p>
               ) : null}
             </li>
           ))}

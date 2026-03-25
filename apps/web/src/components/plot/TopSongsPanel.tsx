@@ -75,7 +75,7 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   if (loading) {
     return (
-      <div className="plot-zine-card rounded-2xl p-6 h-full">
+      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
         <div className="animate-pulse space-y-4">
           <div className="h-6 w-32 bg-black/10 rounded" />
           <div className="space-y-2">
@@ -106,7 +106,7 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
   if (tracks.length === 0) {
     return (
-      <div className="plot-zine-card rounded-2xl p-6 h-full">
+      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
         <div className="text-center py-8">
           <p className="text-4xl mb-3">🎵</p>
           <h3 className="font-semibold text-black mb-1">No Top Songs Yet</h3>
@@ -117,26 +117,26 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
   }
 
   return (
-    <div className="plot-zine-card plot-record-sleeve rounded-[1.45rem] p-6 h-full">
+    <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
       <div className="mb-4">
-        <p className="plot-annotation-note inline-block text-lg">Top 40</p>
-        <p className="mt-2 text-sm plot-ink-muted capitalize">{selectedTier} scope</p>
+        <h2 className="text-lg font-semibold text-black">Top 40</h2>
+        <p className="text-sm text-black/60 capitalize">{selectedTier} scope</p>
       </div>
 
       <div className="space-y-1 max-h-[400px] overflow-y-auto">
         {tracks.map((track, index) => (
           <div
             key={track.trackId}
-            className="plot-ledger-card flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-[rgba(243,224,96,0.22)]"
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-black/5 transition-colors"
           >
-            <span className="plot-embossed-label h-7 w-7 justify-center px-0 text-[10px]">
+            <span className="w-6 h-6 rounded-full bg-black/10 text-black/60 text-xs flex items-center justify-center font-medium">
               {index + 1}
             </span>
             <div className="flex-1 min-w-0">
-              <p className="truncate text-sm font-medium text-[var(--ink-main)]">{track.title || 'Untitled Track'}</p>
-              <p className="truncate text-xs plot-ink-muted">{track.artist || 'Unknown Artist'}</p>
+              <p className="font-medium text-black text-sm truncate">{track.title || 'Untitled Track'}</p>
+              <p className="text-xs text-black/60 truncate">{track.artist || 'Unknown Artist'}</p>
             </div>
-            <span className="whitespace-nowrap text-xs plot-ink-muted">{formatDuration(track.duration)}</span>
+            <span className="text-xs text-black/50 whitespace-nowrap">{formatDuration(track.duration)}</span>
           </div>
         ))}
       </div>
