@@ -1,17 +1,24 @@
 # UPRISE_NEXT Agent Guide
 
-This file is intended for AI coding agents and new contributors. Follow it before making changes.
+This file is the primary agent entry point for this repo. If another agent-facing doc conflicts with this file, `AGENTS.md` wins.
 
-## Required Reading (in order)
+## Required Reading
+
+### Always Read (in order)
 1. `docs/STRATEGY_CRITICAL_INFRA_NOTE.md`
 2. `docs/RUNBOOK.md`
 3. `docs/FEATURE_DRIFT_GUARDRAILS.md`
 4. `docs/architecture/UPRISE_OVERVIEW.md`
 5. `docs/PROJECT_STRUCTURE.md`
-6. `apps/web/WEB_TIER_BOUNDARY.md`
-7. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
-8. `docs/README.md` (indexes/specs/handoffs)
-9. `docs/solutions/README.md` (recurring-issue playbooks)
+6. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+
+### Task-Specific Add-Ons
+Load only the minimum additional material required for the task.
+
+- Web/UI/routes: `apps/web/WEB_TIER_BOUNDARY.md` + the relevant active specs/founder locks
+- Spec/doc work: `docs/README.md` + `docs/specs/README.md` + relevant canon/spec files
+- Recurring incidents / operating failures: `docs/solutions/README.md` + only the relevant playbook
+- Multi-agent execution / handoff review: `docs/handoff/README.md` + the latest relevant dated handoff(s)
 
 ## Legacy Reference Archives (Non-Canon)
 - `docs/legacy/uprise_mob/` — prior mobile-era documentation set (reference only)
@@ -28,6 +35,13 @@ This file is intended for AI coding agents and new contributors. Follow it befor
 - **Package manager rule:** UPRISE_NEXT = pnpm only. Legacy RN (`uprise_mob`) = yarn only. Do not mix.
 - **Canon import rule:** never bulk-overwrite `docs/canon/*.md` from external exports; stage raw imports in `docs/legacy/` and apply intentional canon edits separately.
 - **Rollback checkpoint rule:** for multi-agent throughput runs, follow `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` and default to non-destructive rollback (`git switch`/`git revert`); use `git reset --hard` only with explicit in-thread approval.
+
+## Working Rules
+- Prefer current repo truth over stale handoff memory.
+- Do not audit or implement against a mixed uncommitted worktree unless you are the explicit implementation owner.
+- QA findings must be tied to a commit/branch state and fixture/setup context.
+- Classify issues before acting: `bug`, `stale`, `environment`, `fixture/data`, or `product decision`.
+- Use dated handoffs as context, not as higher authority than current code/specs.
 
 ## Before You Push
 - Preferred: run `pnpm run verify` (docs:lint + infra-policy-check + typecheck)

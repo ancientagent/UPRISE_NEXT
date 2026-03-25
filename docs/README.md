@@ -2,52 +2,30 @@
 
 This folder contains operational docs, architecture references, specifications, and multi-agent handoff material for the UPRISE_NEXT monorepo.
 
-## Start Here (New Agents)
-- [`AGENT_STRATEGY_AND_HANDOFF.md`](./AGENT_STRATEGY_AND_HANDOFF.md) — Critical boundaries + context recovery protocol.
-- [`FEATURE_DRIFT_GUARDRAILS.md`](./FEATURE_DRIFT_GUARDRAILS.md) — Spec-first policy (no undocumented features).
-- [`architecture/UPRISE_OVERVIEW.md`](./architecture/UPRISE_OVERVIEW.md) — Quick orientation to the repo and tiers.
-- [`RUNBOOK.md`](./RUNBOOK.md) — Day-to-day operational guidance and PR requirements.
-- [`PROJECT_STRUCTURE.md`](./PROJECT_STRUCTURE.md) — Monorepo map, conventions, and boundaries.
-- [`ENVIRONMENTS.md`](./ENVIRONMENTS.md) — Local + CI setup details.
-- [`INTERVIEW_WALKTHROUGH_FOR_INTERVIEWER.md`](./INTERVIEW_WALKTHROUGH_FOR_INTERVIEWER.md) — Repo follow-along (5–8 min).
+## Start Here
+- `AGENTS.md` (repo root) — primary agent entry point and non-negotiables.
+- [`AGENT_STRATEGY_AND_HANDOFF.md`](./AGENT_STRATEGY_AND_HANDOFF.md) — authority order, task-specific reading model, and handoff/QA protocol.
+- [`FEATURE_DRIFT_GUARDRAILS.md`](./FEATURE_DRIFT_GUARDRAILS.md) — spec-first policy.
+- [`RUNBOOK.md`](./RUNBOOK.md) — operational rules, verification, PR metadata, and branch protection.
+- [`architecture/UPRISE_OVERVIEW.md`](./architecture/UPRISE_OVERVIEW.md) — quick repo and tier orientation.
+- [`PROJECT_STRUCTURE.md`](./PROJECT_STRUCTURE.md) — monorepo map and conventions.
 
-## Writing Specs
-- [`specs/README.md`](./specs/README.md) — Module-organized specs + templates.
-- [`Specifications/README.md`](./Specifications/README.md) — Legacy spec index / canonical IDs referenced elsewhere.
+## Read Only What You Need Next
+- Spec work: [`specs/README.md`](./specs/README.md)
+- Legacy spec IDs / older references: [`Specifications/README.md`](./Specifications/README.md)
+- Recurring issue playbooks: [`solutions/README.md`](./solutions/README.md)
+- Dated execution notes and carry-forward context: [`handoff/README.md`](./handoff/README.md)
+- Web boundary rules: [`../apps/web/WEB_TIER_BOUNDARY.md`](../apps/web/WEB_TIER_BOUNDARY.md)
 
-## Canon Protocol (docs/canon)
-- **`docs/canon/` is the authoritative source of truth for product semantics.**
-- **All documents in `docs/canon/` are canon** (no `+`/`-` prefixes required).
-- If two canon documents conflict, the newest creation date prevails. If conflicts involve the Master Canon Set, **Master Canon Set wins**.
-- Any product-defining document outside `docs/canon/` should be archived under `docs/legacy/`.
-- Canon sources live as Markdown in `docs/canon/`. PDFs are not required and should not be committed.
-- The prior mobile-era documentation set is archived at `docs/legacy/uprise_mob/` for reference only and must not override canon.
-- Legacy code/reference snapshots from the same project live under `docs/legacy/uprise_mob_code/` (non-canon; reference only).
-- **No direct bulk overwrite of canon files from imports.** Import raw external exports into `docs/legacy/` first, then apply intentional line-level canon edits in a separate commit.
-- Canon guardrails are enforced by `pnpm run canon:lint` (also included in `pnpm run docs:lint` and CI).
-- PRs touching `docs/canon/**` must also update `docs/CHANGELOG.md` (enforced by `Canon Guard` workflow).
-
-### Master Canon Set (Authoritative)
-These documents are the canonical foundation for building the platform:
-- `Master Narrative Canon`
-- `Master Glossary Canon`
-- `Master Identity and Philosohpy Canon`
-- `Master Application Surfaces, Capabilities & Lifecycle Canon`
-- `Master Revenue Strategy Canonon`
-- `How Uprise Works — Canon Audit (working)`
-- `Legacy Narrative plus Context`
-- `UPRISE_VOICE_MESSAGING_CANONICAL`
-- `Operational Getting Started`
-- `Expanded Getting Started`
+## Canon Protocol (`docs/canon`)
+- `docs/canon/` is the authoritative source of truth for product semantics.
+- All documents in `docs/canon/` are canon.
+- If canon documents conflict, the Master Canon Set wins; otherwise prefer the newer relevant canon source.
+- Do not bulk-overwrite canon from imports. Stage raw imports under `docs/legacy/` and apply intentional canon edits separately.
+- Canon changes must pass `pnpm run docs:lint` and update `docs/CHANGELOG.md`.
 
 ## Multi-Agent Workflow
-- [`blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md`](./blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md) — Documentation + handoff strategy.
-- [`handoff/README.md`](./handoff/README.md) — Where agent notes and phase handoffs live.
-- [`solutions/README.md`](./solutions/README.md) — Playbooks for recurring issues (symptoms → fix → prevention).
-- Drift correction policy (active):
-  - Placeholder actions are not allowed unless explicitly approved by spec/founder.
-  - See `AGENTS.md`, `FEATURE_DRIFT_GUARDRAILS.md`, and `RUNBOOK.md` for enforcement.
-
-## Architecture Pointers
-- [`architecture/README.md`](./architecture/README.md) — Architectural overviews.
-- [`../apps/web/WEB_TIER_BOUNDARY.md`](../apps/web/WEB_TIER_BOUNDARY.md) — Web-tier contract rules.
+- Use current specs/code/runtime before dated handoffs.
+- Audit only committed branch state, not mixed worktrees.
+- Prefer a single reconciliation note over parallel memory docs.
+- Use [`solutions/AGENT_WORKFLOW_PROTOCOL_R1.md`](./solutions/AGENT_WORKFLOW_PROTOCOL_R1.md) for the current recommended operating protocol.
