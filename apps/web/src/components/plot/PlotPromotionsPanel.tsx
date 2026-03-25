@@ -85,11 +85,11 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
   }, [fetchPromotions]);
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-6">
-      <h2 className="text-lg font-semibold text-black">
+    <div className="plot-zine-card plot-record-sleeve rounded-[1.45rem] p-6">
+      <p className="plot-annotation-note inline-block text-lg">
         Promotions{communityLabel ? ` • ${communityLabel}` : ''}
-      </h2>
-      <p className="mt-1 text-xs text-black/50">
+      </p>
+      <p className="mt-2 text-xs plot-ink-muted">
         Explicit local offers surface only. No Fair Play, governance, or recommendation effects.
       </p>
 
@@ -116,9 +116,9 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
       )}
 
       {token && !loading && !error && items.length === 0 && (
-        <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
-          <p className="text-sm font-medium text-black">No local offers are active for this scene context.</p>
-          <p className="mt-1 text-xs text-black/55">
+        <div className="plot-ledger-card mt-4 rounded-xl p-4">
+          <p className="text-sm font-medium text-[var(--ink-main)]">No local offers are active for this scene context.</p>
+          <p className="mt-1 text-xs plot-ink-muted">
             Promotions stay explicit and scoped here. They do not imply hidden boosts or feed ranking changes.
           </p>
         </div>
@@ -127,22 +127,22 @@ export default function PlotPromotionsPanel({ communityId, communityLabel }: Plo
       {token && !loading && !error && items.length > 0 && (
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
-            <li key={item.id} className="rounded-xl border border-black/10 p-3">
+            <li key={item.id} className="plot-ledger-card rounded-xl p-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-medium text-black">{metadataText(item.metadata)}</p>
-                  <p className="mt-1 text-xs text-black/60">
+                  <p className="text-sm font-medium text-[var(--ink-main)]">{metadataText(item.metadata)}</p>
+                  <p className="mt-1 text-xs plot-ink-muted">
                     {item.actor?.displayName || item.actor?.username || 'Scene Publisher'} • {new Date(item.createdAt).toLocaleString()}
                   </p>
                 </div>
-                <span className="rounded-full border border-black/10 bg-black/[0.03] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
+                <span className="plot-embossed-label px-3 py-1 text-[10px] font-semibold">
                   {metadataValue(item.metadata, ['status']) ?? item.type}
                 </span>
               </div>
               {metadataValue(item.metadata, ['summary', 'description']) ? (
-                <p className="mt-2 text-sm text-black/65">{metadataValue(item.metadata, ['summary', 'description'])}</p>
+                <p className="mt-2 text-sm plot-ink-muted">{metadataValue(item.metadata, ['summary', 'description'])}</p>
               ) : null}
-              <p className="mt-2 text-xs text-black/55">
+              <p className="mt-2 text-xs plot-ink-muted">
                 {metadataValue(item.metadata, ['callToAction']) ?? 'Promotion posted.'}
                 {metadataValue(item.metadata, ['expiresAt', 'expiration'])
                   ? ` • Expires ${metadataValue(item.metadata, ['expiresAt', 'expiration'])}`

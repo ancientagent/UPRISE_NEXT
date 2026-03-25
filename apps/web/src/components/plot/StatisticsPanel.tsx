@@ -244,31 +244,31 @@ export default function StatisticsPanel({
         : 'National view keeps the same parent context and rolls the map up to state-level macro reads.';
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
+    <div className="plot-zine-card plot-record-sleeve rounded-[1.45rem] p-6 h-full">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-black">Scene Statistics</h2>
-        <p className="text-sm text-black/60 capitalize">
+        <p className="plot-annotation-note inline-block text-lg">Scene Statistics</p>
+        <p className="mt-2 text-sm plot-ink-muted capitalize">
           {selectedTier} scope • rollup: {statistics?.rollupUnit ?? 'local_sect'}
         </p>
-        <p className="mt-1 text-xs text-black/50">{sceneMapScopeCopy}</p>
+        <p className="mt-1 text-xs plot-ink-muted">{sceneMapScopeCopy}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-2 mb-4">
-        <div className="p-3 rounded-xl bg-black/5">
-          <p className="text-xl font-semibold text-black">{metrics.totalMembers.toLocaleString()}</p>
-          <p className="text-xs text-black/60">Members</p>
+        <div className="plot-ledger-card rounded-xl p-3">
+          <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.totalMembers.toLocaleString()}</p>
+          <p className="text-xs plot-ink-muted">Members</p>
         </div>
-        <div className="p-3 rounded-xl bg-black/5">
-          <p className="text-xl font-semibold text-black">{metrics.activeSects}</p>
-          <p className="text-xs text-black/60">Active Sects</p>
+        <div className="plot-ledger-card rounded-xl p-3">
+          <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.activeSects}</p>
+          <p className="text-xs plot-ink-muted">Active Sects</p>
         </div>
-        <div className="p-3 rounded-xl bg-black/5">
-          <p className="text-xl font-semibold text-black">{metrics.eventsThisWeek}</p>
-          <p className="text-xs text-black/60">Events (7d)</p>
+        <div className="plot-ledger-card rounded-xl p-3">
+          <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.eventsThisWeek}</p>
+          <p className="text-xs plot-ink-muted">Events (7d)</p>
         </div>
-        <div className="p-3 rounded-xl bg-black/5">
-          <p className="text-xl font-semibold text-black">{metrics.activityScore}</p>
-          <p className="text-xs text-black/60">Activity (7d)</p>
+        <div className="plot-ledger-card rounded-xl p-3">
+          <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.activityScore}</p>
+          <p className="text-xs plot-ink-muted">Activity (7d)</p>
         </div>
       </div>
 
@@ -291,26 +291,26 @@ export default function StatisticsPanel({
               <button
                 key={community.id}
                 onClick={() => handleCommunitySelect(community)}
-                className={`w-full text-left p-2 rounded-lg transition-colors ${
+                className={`w-full rounded-lg p-2 text-left transition-colors ${
                   selectedCommunity?.id === community.id
-                    ? 'border border-black bg-black/5'
-                    : 'border border-transparent hover:bg-black/5'
+                    ? 'plot-ledger-card border-[var(--red-pen)] bg-[rgba(243,224,96,0.28)]'
+                    : 'plot-ledger-card hover:bg-[rgba(243,224,96,0.18)]'
                 }`}
               >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-black text-white text-xs flex items-center justify-center">
+                    <span className="plot-embossed-label h-6 w-6 justify-center px-0 text-[10px]">
                       {index + 1}
                     </span>
                     <div>
-                      <p className="font-medium text-black text-xs">{community.name}</p>
-                      <p className="text-[10px] text-black/60">
+                      <p className="text-xs font-medium text-[var(--ink-main)]">{community.name}</p>
+                      <p className="text-[10px] plot-ink-muted">
                         {community.memberCount?.toLocaleString()} members
                       </p>
                     </div>
                   </div>
                   {community.distance && (
-                    <span className="text-[10px] text-black/50">
+                    <span className="text-[10px] plot-ink-muted">
                       {community.distance < 1000
                         ? `${Math.round(community.distance)}m`
                         : `${(community.distance / 1000).toFixed(1)}km`}
@@ -327,17 +327,17 @@ export default function StatisticsPanel({
             <SceneMap points={sceneMap?.points ?? []} />
           </div>
           {mapError ? <p className="text-xs text-red-600">{mapError}</p> : null}
-          <div className="rounded-xl border border-black/10 p-4">
-            <p className="text-sm text-black/70">
+          <div className="plot-ledger-card rounded-xl p-4">
+            <p className="text-sm plot-ink-muted">
               {selectedTier === 'state'
                 ? 'State tier aggregates city-scoped scenes in this parent music community context.'
                 : 'National tier aggregates state-level macro context in this parent music community.'}
             </p>
-            <p className="text-xs text-black/50 mt-2">
+            <p className="mt-2 text-xs plot-ink-muted">
               Scope communities: {metrics.scopeCommunityCount.toLocaleString()} • Active tracks:{' '}
               {metrics.activeTracks.toLocaleString()}
             </p>
-            <p className="mt-2 text-[11px] text-black/45">
+            <p className="mt-2 text-[11px] plot-ink-muted">
               Map anchor source:{' '}
               {sceneMapRequest.source === 'selected_community'
                 ? 'selected community'

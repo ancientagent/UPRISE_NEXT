@@ -126,12 +126,12 @@ export default function SeedFeedPanel({
   }, [communityId, fetchPage]);
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-6">
-      <h2 className="text-lg font-semibold text-black">{title}</h2>
-      <p className="mt-1 text-xs text-black/50">
+    <div className="plot-zine-card plot-record-sleeve rounded-[1.45rem] p-6">
+      <p className="plot-annotation-note inline-block text-lg">{title}</p>
+      <p className="mt-2 text-xs plot-ink-muted">
         Support, Explore, Engage, Distribute. Scene-scoped, reverse-chronological, and non-personalized.
       </p>
-      <p className="mt-2 text-xs text-black/55">{contextLabel}</p>
+      <p className="plot-embossed-label mt-3 px-3 py-1 text-[11px]">{contextLabel}</p>
 
       {!token ? (
         <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
@@ -158,19 +158,19 @@ export default function SeedFeedPanel({
       ) : null}
 
       {token && !error && items.length === 0 && !loading ? (
-        <div className="mt-4 rounded-xl border border-dashed border-black/15 bg-black/[0.02] p-4">
-          <p className="text-sm font-medium text-black">No current scene activity for this context.</p>
-          <p className="mt-1 text-xs text-black/55">
+        <div className="plot-ledger-card mt-4 rounded-xl p-4">
+          <p className="text-sm font-medium text-[var(--ink-main)]">No current scene activity for this context.</p>
+          <p className="mt-1 text-xs plot-ink-muted">
             When explicit community actions land here, every listener in the same scene sees the same feed.
           </p>
         </div>
       ) : token ? (
         <ul className="mt-4 space-y-2">
           {items.map((item) => (
-            <li key={item.id} className="rounded-xl border border-black/10 p-3">
-              <p className="text-sm text-black">
+            <li key={item.id} className="plot-ledger-card rounded-xl p-3">
+              <p className="text-sm text-[var(--ink-main)]">
                 <span className="font-medium">{formatTypeLabel(item.type)}</span>
-                <span className="text-black/60">
+                <span className="plot-ink-muted">
                   {' '}
                   by{' '}
                   {item.actor ? (
@@ -182,7 +182,7 @@ export default function SeedFeedPanel({
                   )}
                 </span>
               </p>
-              <p className="mt-1 text-xs text-black/50">
+              <p className="mt-2 text-xs plot-ink-muted">
                 {new Date(item.occurredAt).toLocaleString()} • {item.entity.type}
               </p>
             </li>
@@ -194,10 +194,11 @@ export default function SeedFeedPanel({
         <Button
           variant="outline"
           size="sm"
+          className="plot-divider-tab text-[var(--ink-main)]"
           disabled={!token || loading || !nextCursor}
           onClick={() => fetchPage(nextCursor)}
         >
-          {loading ? 'Loading...' : 'Load More'}
+          <span>{loading ? 'Loading...' : 'Load More'}</span>
         </Button>
       </div>
     </div>
