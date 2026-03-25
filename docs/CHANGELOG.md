@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Applied the shared wireframe-style utility system to `/community/[id]` and `/artist-bands/[id]`, reworking both routes into the same compact modular shell as Plot/Discover while preserving `Visit Scene in Plot`, artist-page playback behavior, and familiar profile structure; see `docs/handoff/2026-03-25_community-artist-wireframe-pass.md`.
 - Applied the new wireframe-style utility language to `/discover`, restyling the route shell, travel rows, current-community search, carousel cards, and shared scene-context badge to match the founder Miro anchor while preserving Discover's founder-locked IA and runtime behavior; see `docs/handoff/2026-03-25_discover-wireframe-visual-pass.md`.
 - Rebuilt `/plot` around a compact wireframe-style utility layout anchored to the founder Miro reference, including a new Plot shell, player, bottom nav, and aligned Feed / Events / Promotions / Statistics / Top 40 / Scene Map panel framing while preserving existing route contracts; see `docs/handoff/2026-03-25_plot-wireframe-layout-pass.md`.
 - Added a trigger-based context refresh standing order across the workflow docs, including immediate refresh on new checkpoints/overlapping commits/conflicting evidence, a soft refresh backstop after roughly 8-10 substantial turns, and a hard refresh backstop after roughly 15 turns; see `docs/handoff/2026-03-24_context-refresh-standing-order.md`.

@@ -107,9 +107,12 @@ export default function ArtistBandProfilePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
-        <div className="mx-auto max-w-6xl rounded-3xl border border-black/10 bg-white p-6">
-          <p className="text-sm text-black/60">Loading artist profile...</p>
+      <main className="plot-wire-page pb-10">
+        <div className="plot-wire-frame max-w-6xl">
+          <div className="plot-wire-card p-6">
+            <p className="plot-wire-label">Artist Page</p>
+            <p className="mt-2 text-sm text-black/60">Loading artist profile...</p>
+          </div>
         </div>
       </main>
     );
@@ -117,14 +120,17 @@ export default function ArtistBandProfilePage() {
 
   if (error || !profile) {
     return (
-      <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
-        <div className="mx-auto max-w-6xl rounded-3xl border border-black/10 bg-white p-6">
-          <p className="text-sm text-red-700">{error ?? 'Artist profile not found.'}</p>
+      <main className="plot-wire-page pb-10">
+        <div className="plot-wire-frame max-w-6xl">
+          <div className="plot-wire-card p-6">
+            <p className="plot-wire-label">Artist Page</p>
+            <p className="mt-2 text-sm text-red-700">{error ?? 'Artist profile not found.'}</p>
+          </div>
           <div className="mt-4 flex gap-3">
-            <Button variant="outline" onClick={() => router.push('/discover')}>
+            <Button variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" onClick={() => router.push('/discover')}>
               Back to Discover
             </Button>
-            <Button variant="outline" onClick={() => router.push('/plot')}>
+            <Button variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" onClick={() => router.push('/plot')}>
               Back to Plot
             </Button>
           </div>
@@ -134,12 +140,12 @@ export default function ArtistBandProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
+    <main className="plot-wire-page pb-10">
+      <div className="plot-wire-frame max-w-6xl space-y-4">
+        <section className="plot-wire-card p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.24em] text-black/50">Artist Page</p>
+            <div className="space-y-3 max-w-3xl">
+              <p className="plot-wire-label">Artist Page</p>
               <div>
                 <h1 className="text-3xl font-semibold text-black">{profile.name}</h1>
                 <p className="mt-1 text-sm text-black/60">
@@ -150,14 +156,14 @@ export default function ArtistBandProfilePage() {
                 {profile.bio ?? 'No artist bio has been published yet.'}
               </p>
               <div className="flex flex-wrap gap-2 text-xs text-black/55">
-                <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
+                <span className="plot-wire-chip">
                   {profile.followCount} followers
                 </span>
-                <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
+                <span className="plot-wire-chip">
                   {profile.memberCount} members
                 </span>
                 {profile.homeScene ? (
-                  <span className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-1">
+                  <span className="plot-wire-chip">
                     {formatCommunityIdentity(
                       profile.homeScene.city,
                       profile.homeScene.state,
@@ -172,6 +178,7 @@ export default function ArtistBandProfilePage() {
               <Button
                 size="sm"
                 variant="outline"
+                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                 disabled={!token || busyAction === 'follow'}
                 onClick={() =>
                   void runAction(
@@ -186,6 +193,7 @@ export default function ArtistBandProfilePage() {
               <Button
                 size="sm"
                 variant="outline"
+                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                 disabled={!token || busyAction === 'add'}
                 onClick={() =>
                   void runAction(
@@ -200,6 +208,7 @@ export default function ArtistBandProfilePage() {
               <Button
                 size="sm"
                 variant="outline"
+                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                 disabled={!token || busyAction === 'blast'}
                 onClick={() =>
                   void runAction(
@@ -214,6 +223,7 @@ export default function ArtistBandProfilePage() {
               <Button
                 size="sm"
                 variant="outline"
+                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                 disabled={!token || busyAction === 'support'}
                 onClick={() =>
                   void runAction(
@@ -228,27 +238,27 @@ export default function ArtistBandProfilePage() {
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-3 text-sm text-black/60">
-            <Button asChild variant="outline" size="sm">
+          <div className="mt-6 flex flex-wrap gap-2 text-sm text-black/60">
+            <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
               <Link href="/discover">Back to Discover</Link>
             </Button>
             {profile.homeScene ? (
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
                 <Link href={`/community/${profile.homeScene.id}`}>Visit {profile.homeScene.name}</Link>
               </Button>
             ) : null}
           </div>
 
           {actionMessage ? (
-            <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            <div className="mt-4 rounded-[1rem] border border-black bg-[#b8d63b] px-4 py-3 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.2)]">
               {actionMessage}
             </div>
           ) : null}
         </section>
 
         {selectedTrack ? (
-          <section className="rounded-2xl border border-black/10 bg-white p-6">
-            <p className="text-xs uppercase tracking-[0.2em] text-black/50">Now Streaming</p>
+          <section className="plot-wire-panel">
+            <p className="plot-wire-label">Now Streaming</p>
             <h2 className="mt-2 text-xl font-semibold text-black">{selectedTrack.title}</h2>
             <p className="mt-1 text-sm text-black/60">
               Selected single playback stops RaDIYo and streams from the artist page.
@@ -260,13 +270,13 @@ export default function ArtistBandProfilePage() {
         ) : null}
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
-          <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <section className="plot-wire-panel">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-black/50">Songs / Releases</p>
+                <p className="plot-wire-label">Songs / Releases</p>
                 <h2 className="mt-2 text-lg font-semibold text-black">Released songs</h2>
               </div>
-              <p className="text-sm text-black/50">{profile.tracks.length} tracks</p>
+              <p className="plot-wire-chip">{profile.tracks.length} tracks</p>
             </div>
 
             {profile.tracks.length === 0 ? (
@@ -276,7 +286,7 @@ export default function ArtistBandProfilePage() {
                 {profile.tracks.map((track) => {
                   const isSelected = selectedTrack?.id === track.id;
                   return (
-                    <li key={track.id} className="rounded-2xl border border-black/10 bg-[#f7f5ef] p-4">
+                    <li key={track.id} className="plot-wire-list-item">
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <div>
                           <p className="text-base font-medium text-black">{track.title}</p>
@@ -285,7 +295,16 @@ export default function ArtistBandProfilePage() {
                           </p>
                           {track.album ? <p className="mt-1 text-xs text-black/50">{track.album}</p> : null}
                         </div>
-                        <Button asChild size="sm" variant={isSelected ? 'default' : 'outline'}>
+                        <Button
+                          asChild
+                          size="sm"
+                          variant="outline"
+                          className={
+                            isSelected
+                              ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                              : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
+                          }
+                        >
                           <Link href={`/artist-bands/${profile.id}?trackId=${track.id}`}>
                             {isSelected ? 'Streaming' : 'Play Single'}
                           </Link>
@@ -299,8 +318,8 @@ export default function ArtistBandProfilePage() {
           </section>
 
           <div className="space-y-6">
-            <section className="rounded-2xl border border-black/10 bg-white p-6">
-              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Artist Info</p>
+            <section className="plot-wire-panel">
+              <p className="plot-wire-label">Artist Info</p>
               <h2 className="mt-2 text-lg font-semibold text-black">Identity</h2>
               <dl className="mt-4 space-y-3 text-sm text-black/65">
                 <div>
@@ -328,15 +347,15 @@ export default function ArtistBandProfilePage() {
               </dl>
             </section>
 
-            <section className="rounded-2xl border border-black/10 bg-white p-6">
-              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Members</p>
+            <section className="plot-wire-panel">
+              <p className="plot-wire-label">Members</p>
               <h2 className="mt-2 text-lg font-semibold text-black">Lineup</h2>
               {profile.members.length === 0 ? (
                 <p className="mt-4 text-sm text-black/60">No members have been linked yet.</p>
               ) : (
                 <ul className="mt-4 space-y-2">
                   {profile.members.map((member) => (
-                    <li key={`${member.userId}-${member.role}`} className="rounded-xl border border-black/10 bg-[#f7f5ef] px-3 py-2">
+                    <li key={`${member.userId}-${member.role}`} className="plot-wire-list-item">
                       <p className="text-sm font-medium text-black">{member.user.displayName}</p>
                       <p className="text-xs text-black/60">@{member.user.username} • {member.role}</p>
                     </li>
@@ -345,15 +364,15 @@ export default function ArtistBandProfilePage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-black/10 bg-white p-6">
-              <p className="text-xs uppercase tracking-[0.2em] text-black/50">Events</p>
+            <section className="plot-wire-panel">
+              <p className="plot-wire-label">Events</p>
               <h2 className="mt-2 text-lg font-semibold text-black">Upcoming and recent</h2>
               {profile.events.length === 0 ? (
                 <p className="mt-4 text-sm text-black/60">No events are published yet.</p>
               ) : (
                 <ul className="mt-4 space-y-3">
                   {profile.events.map((event) => (
-                    <li key={event.id} className="rounded-xl border border-black/10 bg-[#f7f5ef] p-3">
+                    <li key={event.id} className="plot-wire-list-item">
                       <p className="text-sm font-medium text-black">{event.title}</p>
                       <p className="mt-1 text-xs text-black/60">
                         {new Date(event.startDate).toLocaleString()} • {event.locationName}

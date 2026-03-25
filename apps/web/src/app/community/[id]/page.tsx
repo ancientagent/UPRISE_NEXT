@@ -104,9 +104,12 @@ export default function CommunityProfilePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
-        <div className="mx-auto max-w-4xl rounded-2xl border border-black/10 bg-white p-6">
-          <p className="text-sm text-black/60">Loading community profile...</p>
+      <main className="plot-wire-page pb-10">
+        <div className="plot-wire-frame max-w-5xl">
+          <div className="plot-wire-card p-6">
+            <p className="plot-wire-label">Community Profile</p>
+            <p className="mt-2 text-sm text-black/60">Loading community profile...</p>
+          </div>
         </div>
       </main>
     );
@@ -114,11 +117,14 @@ export default function CommunityProfilePage() {
 
   if (error || !community) {
     return (
-      <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
-        <div className="mx-auto max-w-4xl rounded-2xl border border-black/10 bg-white p-6">
-          <p className="text-sm text-red-700">{error ?? 'Community not found.'}</p>
+      <main className="plot-wire-page pb-10">
+        <div className="plot-wire-frame max-w-5xl">
+          <div className="plot-wire-card p-6">
+            <p className="plot-wire-label">Community Profile</p>
+            <p className="mt-2 text-sm text-red-700">{error ?? 'Community not found.'}</p>
+          </div>
           <div className="mt-4">
-            <Button variant="outline" onClick={() => router.push('/plot')}>
+            <Button variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" onClick={() => router.push('/plot')}>
               Back to Plot
             </Button>
           </div>
@@ -174,62 +180,86 @@ export default function CommunityProfilePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
-      <div className="mx-auto max-w-4xl space-y-6">
-        <section className="rounded-2xl border border-black/10 bg-white p-6">
-          <p className="text-xs uppercase tracking-[0.22em] text-black/50">Community Profile</p>
-          <h1 className="mt-2 text-3xl font-semibold text-black">{community.name}</h1>
-          <p className="mt-1 text-sm text-black/60">
-            {community.city && community.state && community.musicCommunity
-              ? `${community.city}, ${community.state} • ${community.musicCommunity}`
-              : 'Community identity unavailable.'}
-          </p>
-          <p className="mt-2 text-sm text-black/70">{community.description ?? 'No description yet.'}</p>
+    <main className="plot-wire-page pb-10">
+      <div className="plot-wire-frame max-w-5xl space-y-4">
+        <section className="plot-wire-card p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-3xl">
+              <p className="plot-wire-label">Community Profile</p>
+              <h1 className="mt-2 text-3xl font-semibold text-black">{community.name}</h1>
+              <p className="mt-1 text-sm text-black/60">
+                {community.city && community.state && community.musicCommunity
+                  ? `${community.city}, ${community.state} • ${community.musicCommunity}`
+                  : 'Community identity unavailable.'}
+              </p>
+              <p className="mt-2 text-sm text-black/70">{community.description ?? 'No description yet.'}</p>
+            </div>
+            <div className="plot-wire-toolbar min-w-[240px]">
+              <p className="plot-wire-label">Community State</p>
+              <p className="mt-1 text-sm text-black/70">{community.isActive ? 'Active scene' : 'Inactive scene'}</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.14em] text-black/55">
+                Tier <span className="font-semibold capitalize text-black">{community.tier ?? 'city'}</span>
+              </p>
+            </div>
+          </div>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl bg-black/5 p-3">
-              <p className="text-xs text-black/50">Members</p>
-              <p className="text-lg font-semibold text-black">{members.toLocaleString()}</p>
+            <div className="plot-wire-card-muted p-3">
+              <p className="plot-wire-label">Members</p>
+              <p className="mt-1 text-lg font-semibold text-black">{members.toLocaleString()}</p>
             </div>
-            <div className="rounded-xl bg-black/5 p-3">
-              <p className="text-xs text-black/50">Tracks</p>
-              <p className="text-lg font-semibold text-black">{tracks.toLocaleString()}</p>
+            <div className="plot-wire-card-muted p-3">
+              <p className="plot-wire-label">Tracks</p>
+              <p className="mt-1 text-lg font-semibold text-black">{tracks.toLocaleString()}</p>
             </div>
-            <div className="rounded-xl bg-black/5 p-3">
-              <p className="text-xs text-black/50">Events</p>
-              <p className="text-lg font-semibold text-black">{events.toLocaleString()}</p>
+            <div className="plot-wire-card-muted p-3">
+              <p className="plot-wire-label">Events</p>
+              <p className="mt-1 text-lg font-semibold text-black">{events.toLocaleString()}</p>
             </div>
           </div>
 
-          <div className="mt-5 text-xs text-black/50">
-            <p>Slug: {community.slug}</p>
-            {community.radius ? <p>Geofence radius: {community.radius}m</p> : null}
-            {community.coordinates ? (
-              <p>
-                Coordinates: {community.coordinates.lat.toFixed(4)}, {community.coordinates.lng.toFixed(4)}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="mt-6 flex gap-3">
-            <Button variant="outline" onClick={() => router.push('/plot')}>
-              Back to Plot
-            </Button>
-            <Button variant="outline" onClick={() => void handleVisitSceneInPlot()} disabled={visitingScene}>
-              {visitingScene ? 'Opening Scene...' : 'Visit Scene in Plot'}
-            </Button>
+          <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div className="plot-wire-card-muted p-4">
+              <p className="plot-wire-label">About This Community</p>
+              <div className="mt-3 space-y-2 text-sm text-black/70">
+                <p>Slug: {community.slug}</p>
+                {community.radius ? <p>Geofence radius: {community.radius}m</p> : null}
+                {community.coordinates ? (
+                  <p>
+                    Coordinates: {community.coordinates.lat.toFixed(4)}, {community.coordinates.lng.toFixed(4)}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="plot-wire-card-muted p-4">
+              <p className="plot-wire-label">Actions</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" onClick={() => router.push('/plot')}>
+                  Back to Plot
+                </Button>
+                <Button variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" onClick={() => void handleVisitSceneInPlot()} disabled={visitingScene}>
+                  {visitingScene ? 'Opening Scene...' : 'Visit Scene in Plot'}
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-black/10 bg-white p-6">
-          <h2 className="text-lg font-semibold text-black">Recent S.E.E.D Activity</h2>
+        <section className="plot-wire-panel">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="plot-wire-label">Recent Activity</p>
+              <h2 className="mt-1 text-lg font-semibold text-black">Recent S.E.E.D Activity</h2>
+            </div>
+            <span className="plot-wire-chip">{feedItems.length} items</span>
+          </div>
           {feedItems.length === 0 ? (
             <p className="mt-3 text-sm text-black/60">No recent activity yet.</p>
           ) : (
             <ul className="mt-3 space-y-2">
               {feedItems.map((item) => (
-                <li key={item.id} className="rounded-xl border border-black/10 p-3">
+                <li key={item.id} className="plot-wire-list-item">
                   <p className="text-sm text-black">
                     <span className="font-medium">{item.type}</span>
                     <span className="text-black/50"> · {new Date(item.occurredAt).toLocaleString()}</span>
