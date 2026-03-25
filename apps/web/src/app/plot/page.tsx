@@ -540,11 +540,11 @@ export default function PlotPage() {
     <>
       {isEngagementWheelOpen ? (
         <div className="fixed inset-x-0 bottom-24 z-40 px-4 sm:px-6">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-black/10 bg-white/95 p-4 shadow-lg backdrop-blur">
+          <div className="plot-zine-card plot-paper-clip mx-auto max-w-3xl rounded-[1.45rem] p-4 shadow-lg backdrop-blur">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-black/50">UPRISE Wheel</p>
-                <p className="mt-1 text-sm text-black/65">
+                <p className="plot-embossed-label px-3 py-1 text-xs">UPRISE Wheel</p>
+                <p className="mt-2 text-sm plot-ink-muted">
                   {playerMode === 'RADIYO'
                     ? 'RADIYO actions stay deterministic for the current scene context.'
                     : 'Collection actions stay deterministic for the selected collection context.'}
@@ -565,9 +565,9 @@ export default function PlotPage() {
               {wheelActions.map((action) => (
                 <span
                   key={`${action.label}-${action.position ?? 'center'}`}
-                  className="rounded-full border border-black/10 bg-[#f7f5ef] px-3 py-2 text-xs font-medium text-black"
+                  className="plot-divider-tab px-3 py-2 text-xs font-medium text-[var(--ink-main)]"
                 >
-                  {action.position ? `${action.position} ${action.label}` : action.label}
+                  <span>{action.position ? `${action.position} ${action.label}` : action.label}</span>
                 </span>
               ))}
             </div>
@@ -578,17 +578,17 @@ export default function PlotPage() {
       <nav
         aria-label="Plot bottom navigation"
         data-slot="plot-bottom-nav"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white/95 px-4 py-3 backdrop-blur sm:px-6"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-[rgba(92,68,45,0.18)] bg-[rgba(251,246,234,0.96)] px-4 py-3 backdrop-blur sm:px-6"
       >
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
-          <Button asChild variant="outline" className="min-w-[92px] rounded-full">
+          <Button asChild variant="outline" className="plot-divider-tab min-w-[92px] text-[var(--ink-main)]">
             <Link href="/plot">Home</Link>
           </Button>
 
           <Button
             type="button"
             variant="default"
-            className="min-w-[132px] rounded-full bg-black text-white hover:bg-black/90"
+            className="min-w-[132px] rounded-full border border-[var(--red-pen)] bg-[var(--highlighter)] text-[var(--ink-main)] shadow-[0_0_0_3px_rgba(142,45,37,0.16)] hover:bg-[rgba(243,224,96,0.92)]"
             onClick={() => setIsEngagementWheelOpen((value) => !value)}
             aria-expanded={isEngagementWheelOpen}
             aria-controls="plot-engagement-wheel"
@@ -597,7 +597,7 @@ export default function PlotPage() {
             UPRISE
           </Button>
 
-          <Button asChild variant="outline" className="min-w-[92px] rounded-full">
+          <Button asChild variant="outline" className="plot-divider-tab min-w-[92px] text-[var(--ink-main)]">
             <Link href="/discover">Discover</Link>
           </Button>
         </div>
@@ -663,12 +663,12 @@ export default function PlotPage() {
 
   if (!hasHomeScene) {
     return (
-      <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 pb-28 sm:px-6">
+      <main className="plot-zine-page min-h-screen px-4 py-10 pb-28 sm:px-6">
         <div className="mx-auto max-w-4xl space-y-6">
-          <section className="rounded-2xl border border-black/10 bg-white/90 p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.22em] text-black/50">The Plot</p>
-            <h1 className="mt-2 text-2xl font-semibold text-black">Home Scene setup required</h1>
-            <p className="mt-3 text-sm text-black/65">
+          <section className="plot-zine-card plot-paper-clip rounded-[1.6rem] p-6 shadow-sm">
+            <p className="plot-embossed-label px-3 py-1 text-xs font-semibold">The Plot</p>
+            <h1 className="mt-3 text-2xl font-semibold text-[var(--ink-main)]">Home Scene setup required</h1>
+            <p className="mt-3 text-sm plot-ink-muted">
               Complete onboarding to anchor your Home Scene and unlock Plot context.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
@@ -676,9 +676,9 @@ export default function PlotPage() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-black/10 bg-white/85 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-black">Plot surfaces unlock after Home Scene resolution</h2>
-            <p className="mt-2 text-sm text-black/60">
+          <section className="plot-zine-card rounded-[1.6rem] p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-[var(--ink-main)]">Plot surfaces unlock after Home Scene resolution</h2>
+            <p className="mt-2 text-sm plot-ink-muted">
               Feed, Events, Promotions, Statistics, and scene-scoped profile context remain unavailable until your
               Home Scene is set.
             </p>
@@ -690,9 +690,9 @@ export default function PlotPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 pb-28 sm:px-6">
+    <main className="plot-zine-page min-h-screen px-4 py-10 pb-28 sm:px-6">
       <div className="mx-auto max-w-7xl">
-        <section className="rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm transition-all">
+        <section className="plot-zine-card plot-paper-clip rounded-[1.65rem] px-5 py-4 shadow-sm transition-all">
           <div
             className="flex items-center justify-between gap-3"
             onPointerDown={handleProfilePointerDown}
@@ -710,7 +710,7 @@ export default function PlotPage() {
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="relative h-8 text-xs"
+                  className="relative h-8 rounded-full border-[rgba(92,68,45,0.2)] bg-[rgba(255,255,255,0.72)] text-xs text-[var(--ink-main)]"
                   aria-label="Notifications"
                   aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}
                   aria-expanded={hasPioneerFollowUp ? isNotificationPanelOpen : undefined}
@@ -728,32 +728,32 @@ export default function PlotPage() {
                 >
                   🔔
                   {hasPioneerFollowUp ? (
-                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#b7d43f]" aria-hidden />
+                    <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--highlighter)] ring-1 ring-[var(--red-pen)]" aria-hidden />
                   ) : null}
                 </Button>
                 {hasPioneerFollowUp && isNotificationPanelOpen && pioneerNotificationHomeScene ? (
                   <div
                     id="plot-pioneer-follow-up"
-                    className="absolute right-0 top-10 z-20 w-72 rounded-2xl border border-black/10 bg-white p-4 text-left shadow-lg"
+                    className="plot-zine-card absolute right-0 top-10 z-20 w-72 rounded-[1.4rem] p-4 text-left shadow-lg"
                   >
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">
+                    <p className="plot-embossed-label px-3 py-1 text-[11px] font-semibold">
                       Pioneer Follow-up
                     </p>
-                    <p className="mt-2 text-sm font-medium text-black">
+                    <p className="mt-3 text-sm font-medium text-[var(--ink-main)]">
                       {pioneerNotificationHomeScene.city}, {pioneerNotificationHomeScene.state} •{' '}
                       {pioneerNotificationHomeScene.musicCommunity}
                     </p>
-                    <p className="mt-2 text-sm text-black/70">
+                    <p className="plot-handwritten mt-2 text-base text-[var(--red-pen)]">
                       Your Home Scene is still pioneering. You are temporarily routed through the nearest active city
                       scene for {pioneerNotificationHomeScene.musicCommunity} while your city builds.
                     </p>
-                    <p className="mt-2 text-sm text-black/70">
+                    <p className="mt-2 text-sm plot-ink-muted">
                       Once enough local users join, you can establish or uprise your own city scene.
                     </p>
                   </div>
                 ) : null}
               </div>
-              <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="More menu">
+              <Button size="sm" variant="outline" className="h-8 rounded-full border-[rgba(92,68,45,0.2)] bg-[rgba(255,255,255,0.72)] text-xs text-[var(--ink-main)]" aria-label="More menu">
                 ⋯
               </Button>
             </div>
@@ -763,7 +763,7 @@ export default function PlotPage() {
             <button
               type="button"
               id="plot-profile-seam-toggle"
-              className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-4 py-2.5 text-xs font-medium text-black/70"
+              className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[rgba(92,68,45,0.18)] bg-[rgba(255,255,255,0.62)] px-4 py-2.5 text-xs font-medium plot-ink-muted"
               onClick={toggleProfilePanel}
               aria-controls="plot-profile-panel"
               aria-expanded={isProfileExpanded}
@@ -790,42 +790,42 @@ export default function PlotPage() {
         {isProfileExpanded ? (
           <section
             id="plot-profile-panel"
-            className="mt-6 space-y-5 rounded-2xl border border-black/10 bg-white/92 p-6 shadow-sm transition-all duration-200"
+            className="plot-zine-card plot-record-sleeve mt-6 space-y-5 rounded-[1.6rem] p-6 shadow-sm transition-all duration-200"
             aria-labelledby="plot-profile-seam-toggle"
           >
-            <header className="grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
+            <header className="plot-ledger-card grid gap-4 rounded-[1.35rem] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
               <div className="space-y-4">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Profile Summary</p>
-                  <h2 className="mt-1 text-lg font-semibold leading-tight text-black">
+                  <p className="plot-embossed-label px-3 py-1 text-[11px] font-semibold">Profile Summary</p>
+                  <h2 className="mt-2 text-lg font-semibold leading-tight text-[var(--ink-main)]">
                     {user?.displayName || user?.username || 'User'}
                   </h2>
-                  <p className="mt-1 text-sm text-black/60">@{user?.username || 'listener'}</p>
+                  <p className="mt-1 text-sm plot-ink-muted">@{user?.username || 'listener'}</p>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl border border-black/10 bg-white p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Activity Score</p>
-                    <p className="mt-1 text-lg font-semibold text-black">{activityScore}</p>
+                  <div className="plot-zine-card rounded-xl p-3">
+                    <p className="plot-embossed-label px-3 py-1 text-[11px]">Activity Score</p>
+                    <p className="mt-2 text-lg font-semibold text-[var(--ink-main)]">{activityScore}</p>
                   </div>
                   {profileStatusCards.map((card) => (
-                    <div key={card.label} className="rounded-xl border border-black/10 bg-white p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">{card.label}</p>
-                      <p className="mt-1 text-sm font-medium text-black">{card.value}</p>
-                      <p className="mt-1 text-xs text-black/55">{card.detail}</p>
+                    <div key={card.label} className="plot-zine-card rounded-xl p-3">
+                      <p className="plot-embossed-label px-3 py-1 text-[11px]">{card.label}</p>
+                      <p className="mt-2 text-sm font-medium text-[var(--ink-main)]">{card.value}</p>
+                      <p className="mt-1 text-xs plot-ink-muted">{card.detail}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-black/10 bg-white p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Calendar</p>
-                <p className="mt-2 text-2xl font-semibold text-black">{calendarDate}</p>
-                <p className="mt-1 text-sm text-black/60">
+              <div className="plot-zine-card rounded-[1.25rem] p-4">
+                <p className="plot-embossed-label px-3 py-1 text-[11px] font-semibold">Calendar</p>
+                <p className="mt-2 text-2xl font-semibold text-[var(--ink-main)]">{calendarDate}</p>
+                <p className="mt-1 text-sm plot-ink-muted">
                   {eventsThisWeek} event{eventsThisWeek === 1 ? '' : 's'} this week
                 </p>
-                <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Context</p>
-                <p className="mt-1 text-sm font-medium text-black">
+                <p className="plot-annotation-note mt-4 inline-block text-base">Scene Context</p>
+                <p className="mt-2 text-sm font-medium text-[var(--ink-main)]">
                   {selectedCommunityLabel ??
                     (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
                       ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
@@ -834,30 +834,30 @@ export default function PlotPage() {
               </div>
             </header>
 
-            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Player Context</p>
-              <p className="mt-1 text-sm font-medium text-black">
+            <div className="plot-ledger-card rounded-xl p-4">
+              <p className="plot-annotation-note inline-block text-base">Player Context</p>
+              <p className="mt-2 text-sm font-medium text-[var(--ink-main)]">
                 {playerMode} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
               </p>
             </div>
 
-            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+            <div className="plot-ledger-card rounded-xl p-4">
               <div className="flex flex-wrap gap-2">
                 {expandedProfileSections.map((section) => (
-                  <Button
+                  <button
                     key={section}
-                    size="sm"
-                    variant={activeProfileSection === section ? 'default' : 'outline'}
-                    className={activeProfileSection === section ? 'h-8 rounded-full bg-black text-xs text-white' : 'h-8 rounded-full text-xs'}
+                    type="button"
+                    data-active={activeProfileSection === section}
+                    className="plot-divider-tab h-9 px-4 text-xs"
                     onClick={() => setActiveProfileSection(section)}
                   >
-                    {section}
-                  </Button>
+                    <span>{section}</span>
+                  </button>
                 ))}
               </div>
 
-              <div className="mt-4 rounded-lg border border-black/10 bg-white p-4">
-                <p className="text-sm font-medium text-black">{activeProfileSection}</p>
+              <div className="plot-zine-card mt-4 rounded-lg p-4">
+                <p className="plot-annotation-note inline-block text-base">{activeProfileSection}</p>
                 {activeProfileSection === 'Singles/Playlists' ? (
                   <div className="mt-3 space-y-3">
                     {!token ? (
@@ -915,9 +915,9 @@ export default function PlotPage() {
                       <p className="text-sm text-black/60">No saved singles yet.</p>
                     )}
 
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Playlist Groupings</p>
-                      <p className="mt-1 text-sm text-black/70">
+                    <div className="plot-ledger-card rounded-xl p-3">
+                      <p className="plot-embossed-label px-3 py-1 text-[11px]">Playlist Groupings</p>
+                      <p className="mt-2 text-sm plot-ink-muted">
                         Saved playlist groupings appear here when they are available in your collection.
                       </p>
                     </div>
@@ -948,14 +948,14 @@ export default function PlotPage() {
                     )}
                   </div>
                 ) : activeProfileSection === 'Photos' ? (
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Photography</p>
-                      <p className="mt-1 text-sm text-black/70">Saved event and scene photography artifacts appear in this workspace.</p>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="plot-ledger-card rounded-xl p-3">
+                      <p className="plot-embossed-label px-3 py-1 text-[11px]">Scene Photography</p>
+                      <p className="mt-2 text-sm plot-ink-muted">Saved event and scene photography artifacts appear in this workspace.</p>
                     </div>
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Current Scene</p>
-                      <p className="mt-1 text-sm font-medium text-black">{selectedCommunityLabel ?? 'No scene selected'}</p>
+                    <div className="plot-ledger-card rounded-xl p-3">
+                      <p className="plot-embossed-label px-3 py-1 text-[11px]">Current Scene</p>
+                      <p className="mt-2 text-sm font-medium text-[var(--ink-main)]">{selectedCommunityLabel ?? 'No scene selected'}</p>
                     </div>
                   </div>
                 ) : activeProfileSection === 'Merch' ? (
@@ -979,13 +979,13 @@ export default function PlotPage() {
                           { label: 'Buttons', shelf: merchButtonShelf },
                           { label: 'Special Items', shelf: null },
                         ].map((item) => (
-                          <div key={item.label} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                            <p className="text-sm font-medium text-black">{item.label}</p>
-                            <p className="mt-1 text-xs text-black/55">
+                          <div key={item.label} className="plot-ledger-card rounded-xl p-3">
+                            <p className="text-sm font-medium text-[var(--ink-main)]">{item.label}</p>
+                            <p className="mt-1 text-xs plot-ink-muted">
                               {item.shelf ? `${item.shelf.itemCount} saved item${item.shelf.itemCount === 1 ? '' : 's'}` : 'No saved items yet.'}
                             </p>
                             {item.shelf?.items[0] ? (
-                              <p className="mt-2 text-xs text-black/60">{formatShelfItemPrimaryLabel(item.shelf.items[0])}</p>
+                              <p className="mt-2 text-xs plot-ink-muted">{formatShelfItemPrimaryLabel(item.shelf.items[0])}</p>
                             ) : null}
                           </div>
                         ))}
@@ -1018,9 +1018,9 @@ export default function PlotPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Promos/Coupons</p>
-                    <p className="mt-1 text-sm text-black/70">
+                  <div className="plot-ledger-card mt-3 rounded-xl p-3">
+                    <p className="plot-embossed-label px-3 py-1 text-[11px]">Saved Promos/Coupons</p>
+                    <p className="mt-2 text-sm plot-ink-muted">
                       Saved promos and coupons appear here with status and expiration when collection support is available.
                     </p>
                   </div>
@@ -1037,31 +1037,27 @@ export default function PlotPage() {
         ) : (
           <>
             {/* Tab Navigation */}
-            <section className="mt-6 flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm">
+            <section className="plot-zine-card plot-paper-clip mt-6 flex flex-wrap items-center justify-center gap-3 rounded-[1.45rem] px-5 py-5 shadow-sm">
               {tabs.map((tab) => (
-                <Button
+                <button
                   key={tab}
-                  size="sm"
-                  variant={activeTab === tab ? 'default' : 'outline'}
-                  className={
-                    activeTab === tab
-                      ? 'h-8 rounded-full bg-black px-4 text-xs text-white'
-                      : 'h-8 rounded-full border-black/20 bg-white px-4 text-xs text-black hover:bg-black/5'
-                  }
+                  type="button"
+                  data-active={activeTab === tab}
+                  className="plot-divider-tab h-11 px-5 text-xs"
                   onClick={() => setActiveTab(tab)}
                 >
-                  {tab}
-                </Button>
+                  <span>{tab}</span>
+                </button>
               ))}
             </section>
 
             {/* Main Content Grid */}
             <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
               {/* Left Panel - Statistics & Map */}
-              <div className="rounded-2xl border border-black/10 bg-white p-6 lg:p-7">
+              <div className="plot-zine-card plot-record-sleeve rounded-[1.55rem] p-6 lg:p-7">
                 <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-black">{plotTabHeading}</h2>
-                  <p className="text-sm text-black/60">
+                  <p className="plot-annotation-note inline-block text-lg">{plotTabHeading}</p>
+                  <p className="mt-2 text-sm plot-ink-muted">
                     {plotTabDescription}
                     {activeTab === 'Statistics' && (
                       <>
@@ -1078,9 +1074,9 @@ export default function PlotPage() {
 
               {/* Right Panel - Selected Community Info */}
               <div className="space-y-6">
-                <div className="rounded-2xl border border-black/10 bg-white p-6">
-                  <h3 className="mb-2 font-semibold text-black">Registrar Access</h3>
-                  <p className="text-sm text-black/60">
+                <div className="plot-zine-card plot-paper-clip rounded-[1.45rem] p-6">
+                  <p className="plot-embossed-label px-3 py-1 text-[11px]">Registrar Access</p>
+                  <p className="mt-3 text-sm plot-ink-muted">
                     Artist/Band registration status stays visible here so Plot keeps registrar access inside the civic workflow.
                   </p>
 
@@ -1095,16 +1091,16 @@ export default function PlotPage() {
                       {registrarSummaryError}
                     </p>
                   ) : registrarSummary && registrarSummary.totalEntries > 0 ? (
-                    <div className="mt-4 rounded-xl border border-black/10 bg-black/[0.03] p-4">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Latest Status</p>
-                      <p className="mt-1 text-sm font-medium text-black">
+                    <div className="plot-ledger-card mt-4 rounded-xl p-4">
+                      <p className="plot-embossed-label px-3 py-1 text-[11px]">Latest Status</p>
+                      <p className="mt-2 text-sm font-medium text-[var(--ink-main)]">
                         {registrarSummary.latestStatus ? formatRegistrarEntryStatus(registrarSummary.latestStatus) : 'No recent status'}
                       </p>
-                      <p className="mt-3 text-sm text-black/70">
+                      <p className="mt-3 text-sm plot-ink-muted">
                         Entries: {registrarSummary.totalEntries} • Submitted: {registrarSummary.submittedCount} • Materialized:{' '}
                         {registrarSummary.materializedCount}
                       </p>
-                      <p className="mt-1 text-xs text-black/55">
+                      <p className="mt-1 text-xs plot-ink-muted">
                         Invites pending: {registrarSummary.pendingInviteCount} • queued: {registrarSummary.queuedInviteCount} •
                         sent: {registrarSummary.sentInviteCount} • failed: {registrarSummary.failedInviteCount}
                       </p>
@@ -1121,15 +1117,15 @@ export default function PlotPage() {
                 </div>
 
                 {selectedCommunity && (
-                  <div className="rounded-2xl border border-black/10 bg-white p-6">
-                    <h3 className="mb-3 font-semibold text-black">Selected Community</h3>
-                    <div className="rounded-xl bg-black/5 p-4">
-                      <p className="font-medium text-black">{selectedCommunityLabel ?? selectedCommunity.name}</p>
-                      <p className="mt-1 text-sm text-black/60">
+                  <div className="plot-zine-card plot-paper-clip rounded-[1.45rem] p-6">
+                    <p className="plot-embossed-label px-3 py-1 text-[11px]">Selected Community</p>
+                    <div className="plot-ledger-card mt-4 rounded-xl p-4">
+                      <p className="font-medium text-[var(--ink-main)]">{selectedCommunityLabel ?? selectedCommunity.name}</p>
+                      <p className="mt-1 text-sm plot-ink-muted">
                         {selectedCommunity.memberCount?.toLocaleString()} members
                       </p>
                       {selectedCommunity.distance && (
-                        <p className="mt-1 text-xs text-black/50">
+                        <p className="mt-1 text-xs plot-ink-muted">
                           Distance:{' '}
                           {selectedCommunity.distance < 1000
                             ? `${Math.round(selectedCommunity.distance)}m`

@@ -182,7 +182,7 @@ export default function StatisticsPanel({
 
   if (loading && !statistics) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
+      <div className="plot-zine-card rounded-2xl p-6 h-full">
         <div className="animate-pulse space-y-4">
           <div className="h-6 w-48 bg-black/10 rounded" />
           <div className="h-64 w-full bg-black/5 rounded-2xl" />
@@ -209,7 +209,7 @@ export default function StatisticsPanel({
     }
 
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
+      <div className="plot-zine-card rounded-2xl p-6 h-full">
         <div className="text-center py-8">
           <p className="text-4xl mb-3">🧭</p>
           <h3 className="font-semibold text-black mb-1">Select a community</h3>

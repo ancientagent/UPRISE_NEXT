@@ -222,6 +222,22 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('renderPrimaryPlotTabBody()');
   });
 
+  it('locks the Plot shell to the paper-and-divider style system', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
+    const globalsSource = readRepoFile('src/app/globals.css');
+
+    expect(globalsSource).toContain('.plot-zine-page');
+    expect(globalsSource).toContain('.plot-zine-card');
+    expect(globalsSource).toContain('.plot-divider-tab');
+    expect(globalsSource).toContain('.plot-annotation-note');
+    expect(globalsSource).toContain('.plot-record-sleeve');
+    expect(plotPageSource).toContain('className="plot-zine-page min-h-screen');
+    expect(plotPageSource).toContain('className="plot-divider-tab h-11 px-5 text-xs"');
+    expect(plotPageSource).toContain('className="plot-zine-card plot-record-sleeve rounded-[1.55rem] p-6 lg:p-7"');
+    expect(playerSource).toContain('className="plot-zine-card plot-record-sleeve plot-paper-clip mt-4');
+  });
+
   it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 

@@ -1,7 +1,19 @@
-
 import type { Metadata } from 'next';
+import { Caveat, Special_Elite } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
+
+const editorial = Special_Elite({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-editorial',
+});
+
+const handwritten = Caveat({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-handwritten',
+});
 
 export const metadata: Metadata = {
   title: 'UPRISE - Music Community Platform',
@@ -15,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className={`${editorial.variable} ${handwritten.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>
