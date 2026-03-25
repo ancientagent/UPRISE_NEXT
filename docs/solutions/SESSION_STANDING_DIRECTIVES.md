@@ -53,10 +53,21 @@ Use this block at the start of each execution session.
 - Consolidate and review outputs into one coherent result before commit.
 - Skip parallelization only for tightly-coupled or order-dependent edits.
 
-10) Reasoning/model intensity
-- Increase reasoning intensity for high-risk work (schema migrations, cross-module refactors, failing CI/debug loops, canon-sensitive logic).
-- Use medium/low intensity for routine edits.
-- Explicitly announce when changing intensity and why.
+10) Model assignment / reasoning policy
+- Planner / lead integrator role:
+  - model: `gpt-5.4`
+  - reasoning: `high`
+  - use for cross-cutting triage, ambiguous spec boundaries, integration, and final decision-making
+- Coding / implementation role:
+  - model: `gpt-5.3-codex`
+  - reasoning: `high`
+  - use for code changes, targeted refactors, test updates, and implementation slices
+- QA / read-only audit role:
+  - model: `gpt-5.4-mini`
+  - reasoning: `medium` by default, `high` only when the repro is subtle or stale-state-sensitive
+  - use for live verification, route audits, and defect listing only
+- Do not assign all agents to the same model by default.
+- Prefer the fastest model that still fits the role.
 
 11) Tooling baseline and context compaction guard
 - Assume `python3` as the canonical Python command. Do not assume `python` alias exists.
@@ -66,3 +77,19 @@ Use this block at the start of each execution session.
   - a dated handoff note under `docs/handoff/`
 - After installing Codex skills, note that a Codex restart is required for skill pickup.
 - Keep tooling changes non-global and non-destructive; avoid admin/system-level install changes.
+
+12) QA gate discipline
+- QA runs only against committed local `HEAD` or pushed branch state.
+- Every QA finding must include:
+  - commit/branch state
+  - route/surface
+  - signed-in or signed-out state
+  - fixture/setup used
+  - exact repro steps
+  - clean-session/storage status
+- Classify each finding before acting:
+  - `bug`
+  - `stale`
+  - `environment`
+  - `fixture/data`
+  - `product decision`

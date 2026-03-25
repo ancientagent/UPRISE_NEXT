@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Updated standing-order and agent-directive docs to route planners to `gpt-5.4` (`high`), coding lanes to `gpt-5.3-codex` (`high`), and QA lanes to `gpt-5.4-mini` (`medium` by default), and documented the rationale/mapping in `docs/handoff/2026-03-24_model-routing-standing-orders.md`.
 - Tightened agent-facing documentation by splitting default vs task-specific reading in `AGENTS.md`, rewriting `docs/AGENT_STRATEGY_AND_HANDOFF.md` around current authority/QA/handoff rules, simplifying the docs and handoff indexes, and adding `docs/solutions/AGENT_WORKFLOW_PROTOCOL_R1.md` as the reusable multi-agent operating protocol; see `docs/handoff/2026-03-24_agent-doc-hygiene-and-workflow-protocol.md`.
 - Locked Plot-visible selected-community identity to `city + state + music community` wherever the current community tuple is already known, replacing remaining `name`-only labels across the Plot route shell and Feed / Events / Promotions headers while preserving safe fallback labels for aggregate scopes; see `docs/handoff/2026-03-24_plot-structural-community-identity-lock.md`.
 - Hardened Plot tab contracts by removing the fake city-view NYC fallback from `Statistics`, anchoring no-GPS city scope to the resolved selected community, enriching `Events` / `Promotions` rows with source and status context already returned by the API, and fixing the city-tier `/communities/:id/scene-map` raw query so the Statistics tab no longer 500s on valid scene anchors; see `docs/handoff/2026-03-24_plot-tab-contract-and-scene-map-hardening.md`.

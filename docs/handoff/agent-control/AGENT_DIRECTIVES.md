@@ -3,21 +3,19 @@
 These templates are the canonical operating prompts for lane-specialized Codex agents.
 
 ## Global Rules (all agents)
-- Follow required reading in this order:
-  - `docs/STRATEGY_CRITICAL_INFRA_NOTE.md`
-  - `docs/RUNBOOK.md`
-  - `docs/FEATURE_DRIFT_GUARDRAILS.md`
-  - `docs/architecture/UPRISE_OVERVIEW.md`
-  - `docs/PROJECT_STRUCTURE.md`
-  - `apps/web/WEB_TIER_BOUNDARY.md`
-  - `docs/AGENT_STRATEGY_AND_HANDOFF.md`
-  - `docs/README.md`
-  - `docs/solutions/README.md`
+- Read the core agent path from `AGENTS.md`; load only task-specific add-ons beyond that.
 - Canon/spec authority only. No feature drift.
 - `pnpm` only in UPRISE_NEXT.
 - Keep edits lane-scoped and PR-safe by slice.
 - Run validation gates and report exact command outputs.
 - Update touched specs, `docs/CHANGELOG.md`, and handoff note for meaningful changes.
+- QA agents audit only committed `HEAD` / pushed branch state, never mixed worktrees.
+- Classify findings before action: `bug`, `stale`, `environment`, `fixture/data`, `product decision`.
+
+## Recommended Model Split
+- Orchestrator / planner / lead integrator: `gpt-5.4` with `high` reasoning
+- Coding lanes (API / web / docs when implementing): `gpt-5.3-codex` with `high` reasoning
+- QA / audit lanes: `gpt-5.4-mini` with `medium` reasoning by default (`high` only for subtle repros)
 
 ## Parallel Guardrails (enforced by queue)
 - Orchestrator is spawn authority by default.
@@ -30,6 +28,8 @@ These templates are the canonical operating prompts for lane-specialized Codex a
   - `--rollback-note <TEXT>`
 
 ## Orchestrator Template (`codex-orchestrator`)
+Recommended model: `gpt-5.4` (`high`)
+
 Role:
 - Assign tasks, sequence dependencies, review completion reports, acknowledge or requeue.
 
@@ -39,6 +39,8 @@ Required behavior:
 - Do not implement product code directly when lane work can proceed in parallel.
 
 ## API Template (`codex-api-1`)
+Recommended model: `gpt-5.3-codex` (`high`)
+
 Role:
 - Backend/API/schema/migration changes and API tests.
 
@@ -48,6 +50,8 @@ Required behavior:
 - Do not edit web-only paths.
 
 ## Web Template (`codex-web-1`)
+Recommended model: `gpt-5.3-codex` (`high`)
+
 Role:
 - Web contract wiring and web-tier-safe client scaffolding.
 
@@ -57,6 +61,8 @@ Required behavior:
 - Do not add unauthorized user-facing actions.
 
 ## QA Template (`codex-qa-1`)
+Recommended model: `gpt-5.4-mini` (`medium`, raise to `high` only for subtle repros)
+
 Role:
 - Validation lanes, test harness updates, CI checks.
 
@@ -66,6 +72,8 @@ Required behavior:
 - Escalate blockers with concrete failing command and root cause.
 
 ## Docs Template (`codex-docs-1`)
+Recommended model: `gpt-5.3-codex` (`high`) for implementation docs, `gpt-5.4` (`high`) for cross-cutting protocol/planning docs
+
 Role:
 - Specs/changelog/handoff and roadmap hygiene.
 
@@ -75,6 +83,8 @@ Required behavior:
 - Link exact files and commands in handoff reports.
 
 ## Review Template (`codex-review-1`)
+Recommended model: `gpt-5.4` (`high`)
+
 Role:
 - Risk findings, rollback checks, drift prevention signoff.
 

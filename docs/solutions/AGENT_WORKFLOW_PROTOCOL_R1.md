@@ -16,6 +16,12 @@ Use this protocol for current multi-agent coding/QA work in UPRISE_NEXT.
 6. dated handoffs
 7. chat memory
 
+## Model Routing
+- Planner / lead integrator: `gpt-5.4` with `high` reasoning
+- Coding / implementation lanes: `gpt-5.3-codex` with `high` reasoning
+- QA / audit lanes: `gpt-5.4-mini` with `medium` reasoning by default (`high` only for subtle repros)
+- Do not assign all agents to the same model by default; prefer the fastest model that still fits the role.
+
 ## 2. Working Roles
 ### Main implementation owner
 - owns code changes for the current slice
