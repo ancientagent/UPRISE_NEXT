@@ -49,7 +49,7 @@ describe('/discover current-community lock', () => {
     expect(discoverSource).toContain('plot-zine-card plot-paper-clip plot-record-sleeve');
     expect(discoverSource).toContain('plot-embossed-label');
     expect(discoverSource).toContain('plot-divider-tab');
-    expect(discoverSource).toContain('Local + Travel Context');
-    expect(discoverSource).toContain('Retune first. Enter explicitly.');
+    expect(discoverSource).toContain('plot-handwritten');
+    expect(discoverSource).toContain('Record Shelf View');
   });
 });
