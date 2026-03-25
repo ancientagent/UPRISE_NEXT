@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Deepened Plot `Statistics` styling with a handmade paper map treatment, crosshatch/grid overlays, red-pen/highlighter marker states, and annotation-led metric cards while preserving the existing statistics/scene-map contracts; see `docs/handoff/2026-03-25_plot-statistics-handmade-map-pass.md`.
 - Extended the Plot DIY zine/record-divider style system into the current Plot tab internals (`Feed`, `Events`, `Promotions`, `Statistics`, and `Top 40`) by converting panel shells, list rows, and status labels to the same paper/ledger/annotation language without changing data flow; see `docs/handoff/2026-03-25_plot-internal-zine-panel-pass.md`.
 - Applied the first Plot UI style slice: added a DIY zine/lined-paper shell, record-divider tabs, yellow-highlighter/red-pen annotation accents, and a paper-sleeve compact player presentation for `/plot` without changing route behavior; see `docs/handoff/2026-03-24_plot-zine-shell-style-pass.md`.
 - Added a trigger-based context refresh standing order across the workflow docs, including immediate refresh on new checkpoints/overlapping commits/conflicting evidence, a soft refresh backstop after roughly 8-10 substantial turns, and a hard refresh backstop after roughly 15 turns; see `docs/handoff/2026-03-24_context-refresh-standing-order.md`.

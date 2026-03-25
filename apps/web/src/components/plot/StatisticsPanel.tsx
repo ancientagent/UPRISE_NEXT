@@ -255,20 +255,32 @@ export default function StatisticsPanel({
 
       <div className="grid grid-cols-2 gap-2 mb-4">
         <div className="plot-ledger-card rounded-xl p-3">
+          <p className="plot-annotation-note inline-block text-sm">members</p>
           <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.totalMembers.toLocaleString()}</p>
-          <p className="text-xs plot-ink-muted">Members</p>
+          <div className="mt-2 h-1.5 rounded-full bg-[rgba(142,45,37,0.08)]">
+            <div className="h-1.5 rounded-full bg-[rgba(142,45,37,0.48)]" style={{ width: `${Math.min(metrics.totalMembers / 20, 100)}%` }} />
+          </div>
         </div>
         <div className="plot-ledger-card rounded-xl p-3">
+          <p className="plot-annotation-note inline-block text-sm">sects</p>
           <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.activeSects}</p>
-          <p className="text-xs plot-ink-muted">Active Sects</p>
+          <div className="mt-2 h-1.5 rounded-full bg-[rgba(243,224,96,0.22)]">
+            <div className="h-1.5 rounded-full bg-[rgba(243,224,96,0.82)]" style={{ width: `${Math.min(metrics.activeSects * 8, 100)}%` }} />
+          </div>
         </div>
         <div className="plot-ledger-card rounded-xl p-3">
+          <p className="plot-annotation-note inline-block text-sm">events</p>
           <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.eventsThisWeek}</p>
-          <p className="text-xs plot-ink-muted">Events (7d)</p>
+          <div className="mt-2 h-1.5 rounded-full bg-[rgba(142,45,37,0.08)]">
+            <div className="h-1.5 rounded-full bg-[rgba(142,45,37,0.48)]" style={{ width: `${Math.min(metrics.eventsThisWeek * 16, 100)}%` }} />
+          </div>
         </div>
         <div className="plot-ledger-card rounded-xl p-3">
+          <p className="plot-annotation-note inline-block text-sm">activity</p>
           <p className="text-xl font-semibold text-[var(--ink-main)]">{metrics.activityScore}</p>
-          <p className="text-xs plot-ink-muted">Activity (7d)</p>
+          <div className="mt-2 h-1.5 rounded-full bg-[rgba(243,224,96,0.22)]">
+            <div className="h-1.5 rounded-full bg-[rgba(243,224,96,0.82)]" style={{ width: `${Math.min(metrics.activityScore, 100)}%` }} />
+          </div>
         </div>
       </div>
 
@@ -285,6 +297,11 @@ export default function StatisticsPanel({
             />
           </div>
           {mapError ? <p className="mb-4 text-xs text-red-600">{mapError}</p> : null}
+
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="plot-embossed-label px-3 py-1 text-[11px]">scene pin list</p>
+            <p className="plot-handwritten text-base text-[var(--red-pen)]">circle a scene to anchor stats</p>
+          </div>
 
           <div className="space-y-1 max-h-40 overflow-y-auto">
             {communities.map((community, index) => (
@@ -328,6 +345,7 @@ export default function StatisticsPanel({
           </div>
           {mapError ? <p className="text-xs text-red-600">{mapError}</p> : null}
           <div className="plot-ledger-card rounded-xl p-4">
+            <p className="plot-annotation-note inline-block text-sm">macro rollup</p>
             <p className="text-sm plot-ink-muted">
               {selectedTier === 'state'
                 ? 'State tier aggregates city-scoped scenes in this parent music community context.'
