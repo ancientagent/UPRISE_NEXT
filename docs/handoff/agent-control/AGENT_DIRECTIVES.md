@@ -11,6 +11,10 @@ These templates are the canonical operating prompts for lane-specialized Codex a
 - Update touched specs, `docs/CHANGELOG.md`, and handoff note for meaningful changes.
 - QA agents audit only committed `HEAD` / pushed branch state, never mixed worktrees.
 - Classify findings before action: `bug`, `stale`, `environment`, `fixture/data`, `product decision`.
+- Refresh context by trigger, not by blind length:
+  - immediate refresh on new checkpoint commit, overlapping agent commit, or conflicting evidence,
+  - soft refresh after roughly 8-10 substantial turns on one slice,
+  - hard refresh after roughly 15 substantial turns or sooner if drift appears.
 
 ## Recommended Model Split
 - Orchestrator / planner / lead integrator: `gpt-5.4` with `high` reasoning

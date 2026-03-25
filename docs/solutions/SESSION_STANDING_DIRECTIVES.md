@@ -93,3 +93,21 @@ Use this block at the start of each execution session.
   - `environment`
   - `fixture/data`
   - `product decision`
+
+13) Context refresh discipline
+- Use refresh triggers, not a blind token-count rule.
+- Immediate refresh required when:
+  - `HEAD` changes materially,
+  - another agent lands overlapping work,
+  - a new checkpoint commit becomes the source of truth,
+  - docs/runtime/handoffs conflict,
+  - stale findings are cited as current.
+- Soft refresh required after roughly 8-10 substantial turns on the same slice:
+  - restate current source of truth,
+  - re-check committed `HEAD`,
+  - re-scope remaining work.
+- Hard refresh required after roughly 15 substantial turns on the same slice, or sooner if drift signals appear.
+- Refresh means:
+  - re-anchor to current authority order,
+  - confirm current branch state,
+  - discard stale handoff/chat assumptions that conflict with current evidence.

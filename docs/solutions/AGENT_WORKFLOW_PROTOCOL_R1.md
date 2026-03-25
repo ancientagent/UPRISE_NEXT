@@ -76,3 +76,18 @@ A slice or batch is not closed until:
 ## 8. Reconciliation Rule
 - Prefer one current reconciliation note over multiple competing carry-forward docs.
 - If a reconciliation note becomes stale, patch it or supersede it explicitly.
+
+## 9. Context Refresh Rule
+- Use trigger-based refresh with a turn-count backstop.
+- Immediate refresh required when:
+  - current `HEAD` changes materially,
+  - another agent lands overlapping work,
+  - a new checkpoint commit replaces the previous source of truth,
+  - docs/runtime/handoffs disagree,
+  - stale findings are being carried forward as if current.
+- Soft refresh after roughly 8-10 substantial turns on the same slice:
+  - restate the active source of truth,
+  - re-check current committed `HEAD`,
+  - re-scope the remaining work.
+- Hard refresh after roughly 15 substantial turns on the same slice, or earlier if context drift appears.
+- Refresh is meant to reduce stale-context drift; it is not a mandatory full-repo reread.
