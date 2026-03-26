@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Midjourney Avatar Picker",
+  "version": "0.1.0",
+  "description": "Select and export individual avatars from Midjourney result sheets.",
+  "permissions": [
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://www.midjourney.com/*",
+    "https://cdn.midjourney.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.midjourney.com/*"
+      ],
+      "js": [
+        "content-script.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

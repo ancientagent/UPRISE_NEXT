@@ -55,7 +55,8 @@
     "report:isartist-consumers": "node scripts/is-artist-consumer-report.mjs",
     "report:isartist-consumers:strict": "node scripts/is-artist-consumer-report.mjs --fail-on-unapproved",
     "browser:mcp:launch": "bash scripts/launch-chrome-mcp.sh",
-    "browser:mcp:launch:wsl": "bash scripts/launch-chrome-mcp-wsl.sh"
+    "browser:mcp:launch:wsl": "bash scripts/launch-chrome-mcp-wsl.sh",
+    "browser:mcp:launch:wsl:avatars": "bash scripts/launch-chrome-mcp-wsl-avatar-picker.sh"
   },
   "devDependencies": {
     "@turbo/gen": "^2.0.0",
