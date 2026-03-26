@@ -53,7 +53,8 @@
     "verify": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run typecheck",
     "verify:full": "pnpm run verify && pnpm run test && pnpm run build",
     "report:isartist-consumers": "node scripts/is-artist-consumer-report.mjs",
-    "report:isartist-consumers:strict": "node scripts/is-artist-consumer-report.mjs --fail-on-unapproved"
+    "report:isartist-consumers:strict": "node scripts/is-artist-consumer-report.mjs --fail-on-unapproved",
+    "browser:mcp:launch": "bash scripts/launch-chrome-mcp.sh"
   },
   "devDependencies": {
     "@turbo/gen": "^2.0.0",

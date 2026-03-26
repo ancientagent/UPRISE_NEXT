@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added a dedicated shared-browser launcher for Chrome MCP in `scripts/windows/launch-chrome-mcp.ps1` plus a WSL wrapper and `pnpm run browser:mcp:launch`, so the shared debug browser can be started consistently with the `ChromeMCP` profile and `9222` remote-debug port; see `docs/handoff/2026-03-26_chrome-mcp-launcher.md`.
 - Standardized browser-tooling workflow for agents: normal Chrome for visible/shared browsing, isolated Chromium for manual clean sessions, Playwright for deterministic QA, and DevTools MCP as a single-owner debug path only after a smoke test passes; see `docs/handoff/2026-03-26_browser-tooling-standardization.md`.
 - Applied the shared wireframe-style utility system to `/community/[id]` and `/artist-bands/[id]`, reworking both routes into the same compact modular shell as Plot/Discover while preserving `Visit Scene in Plot`, artist-page playback behavior, and familiar profile structure; see `docs/handoff/2026-03-25_community-artist-wireframe-pass.md`.
 - Applied the new wireframe-style utility language to `/discover`, restyling the route shell, travel rows, current-community search, carousel cards, and shared scene-context badge to match the founder Miro anchor while preserving Discover's founder-locked IA and runtime behavior; see `docs/handoff/2026-03-25_discover-wireframe-visual-pass.md`.
