@@ -15,6 +15,7 @@
 
 ## Behavior
 - Toggle picker mode with the floating `Avatar Picker` button.
+- Use `Magic Wand` to auto-tighten each cell around non-background avatar art when a sheet is uneven.
 - Click `Pick avatars` on a Midjourney result card.
 - Adjust rows/columns and crop spacing if the default split is off.
 - Click desired tiles.

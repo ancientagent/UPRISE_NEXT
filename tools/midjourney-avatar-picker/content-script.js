@@ -12,6 +12,7 @@
     gapX: 12,
     gapY: 12,
     selected: new Set(),
+    autoFitRects: null,
     syncTimer: null,
   };
 
@@ -212,6 +213,11 @@
       border-color: #7a3f4d;
       color: #ffbcc7;
     }
+    .mj-avatar-picker-btn.is-quiet {
+      background: #141823;
+      border-color: #2e3547;
+      color: #dbe1f0;
+    }
     .mj-avatar-picker-code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 11px;
@@ -263,6 +269,7 @@
             <h3>Selection</h3>
             <p class="mj-avatar-picker-subtle" id="mj-avatar-picker-selection-count">0 tiles selected</p>
             <div class="mj-avatar-picker-btn-row">
+              <button class="mj-avatar-picker-btn is-quiet" data-action="autofit">Magic Wand</button>
               <button class="mj-avatar-picker-btn" data-action="clear-selection">Clear Selection</button>
               <button class="mj-avatar-picker-btn is-primary" data-action="export">Export Selected</button>
             </div>
@@ -280,6 +287,7 @@
       if (event.target === modal) closeModal();
     });
     modal.querySelector('[data-action="close"]').addEventListener('click', closeModal);
+    modal.querySelector('[data-action="autofit"]').addEventListener('click', autoFitGrid);
     modal.querySelector('[data-action="clear-selection"]').addEventListener('click', () => {
       STATE.selected.clear();
       renderGrid();
@@ -333,6 +341,7 @@
       input.value = String(STATE[key]);
       input.addEventListener('input', () => {
         STATE[key] = Math.max(min, Math.min(max, Number(input.value || 0)));
+        STATE.autoFitRects = null;
         renderGrid();
       });
       container.appendChild(row);
@@ -395,6 +404,7 @@
       naturalHeight: card.img.naturalHeight,
     };
     STATE.selected = new Set();
+    STATE.autoFitRects = null;
     const guessed = guessRowsCols(card.img);
     STATE.cols = guessed.cols;
     STATE.rows = guessed.rows;
@@ -415,6 +425,7 @@
   }
 
   function getCellRects() {
+    if (STATE.autoFitRects?.length) return STATE.autoFitRects;
     const { naturalWidth, naturalHeight } = STATE.currentCard;
     const cols = Math.max(1, STATE.cols);
     const rows = Math.max(1, STATE.rows);
@@ -486,6 +497,91 @@
     img.src = blobUrl;
     await img.decode();
     return { img, blobUrl };
+  }
+
+  function colorDistance(a, b) {
+    return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+  }
+
+  function averagePixels(samples) {
+    if (samples.length === 0) return [0, 0, 0];
+    const total = samples.reduce((acc, sample) => {
+      acc[0] += sample[0];
+      acc[1] += sample[1];
+      acc[2] += sample[2];
+      return acc;
+    }, [0, 0, 0]);
+    return total.map((value) => Math.round(value / samples.length));
+  }
+
+  function detectBackgroundColor(ctx, width, height) {
+    const points = [
+      [8, 8],
+      [width - 8, 8],
+      [8, height - 8],
+      [width - 8, height - 8],
+      [Math.floor(width / 2), 8],
+      [Math.floor(width / 2), height - 8],
+    ];
+    const samples = points
+      .filter(([x, y]) => x >= 0 && y >= 0 && x < width && y < height)
+      .map(([x, y]) => Array.from(ctx.getImageData(x, y, 1, 1).data.slice(0, 3)));
+    return averagePixels(samples);
+  }
+
+  function findContentBounds(ctx, rect, backgroundColor) {
+    const left = Math.max(0, Math.floor(rect.x));
+    const top = Math.max(0, Math.floor(rect.y));
+    const width = Math.max(1, Math.floor(rect.width));
+    const height = Math.max(1, Math.floor(rect.height));
+    const imageData = ctx.getImageData(left, top, width, height).data;
+
+    let minX = width;
+    let minY = height;
+    let maxX = -1;
+    let maxY = -1;
+
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const idx = (y * width + x) * 4;
+        const alpha = imageData[idx + 3];
+        if (alpha < 24) continue;
+        const pixel = [imageData[idx], imageData[idx + 1], imageData[idx + 2]];
+        if (colorDistance(pixel, backgroundColor) <= 80) continue;
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+
+    if (maxX === -1 || maxY === -1) return rect;
+
+    const padding = 10;
+    return {
+      ...rect,
+      x: Math.max(0, left + minX - padding),
+      y: Math.max(0, top + minY - padding),
+      width: Math.min(rect.width, maxX - minX + 1 + padding * 2),
+      height: Math.min(rect.height, maxY - minY + 1 + padding * 2),
+    };
+  }
+
+  async function autoFitGrid() {
+    if (!STATE.currentCard) return;
+    const { img, blobUrl } = await loadSourceImage();
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      const backgroundColor = detectBackgroundColor(ctx, canvas.width, canvas.height);
+      STATE.autoFitRects = getCellRects().map((rect) => findContentBounds(ctx, rect, backgroundColor));
+      renderGrid();
+    } finally {
+      URL.revokeObjectURL(blobUrl);
+    }
   }
 
   function blobToDataUrl(blob) {
