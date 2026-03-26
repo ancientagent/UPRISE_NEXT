@@ -132,3 +132,6 @@ Use this block at the start of each execution session.
 - Use Playwright for local app QA, not for "look at my already-open tab" collaboration.
 - Use screenshots from the user's normal browser for shared visual review on external/logged-in sites.
 - Opera is not part of the default workflow. Only consider it as a manual fallback if it is already installed and explicitly chosen; do not add it as a setup dependency.
+- Current preferred shared MCP browser command:
+  - from WSL repo root, run `pnpm run browser:mcp:launch:wsl`
+  - this launches the persistent shared WSL Chrome profile used for MCP attachment on `127.0.0.1:9222`

@@ -20,6 +20,8 @@ These templates are the canonical operating prompts for lane-specialized Codex a
   - `chromium` with explicit profile = isolated manual session,
   - Playwright = automated QA,
   - DevTools MCP = one owner only, and only after a smoke test passes.
+- Preferred shared MCP browser command:
+  - from WSL repo root, run `pnpm run browser:mcp:launch:wsl`
 - If DevTools MCP smoke test fails, agents must stop relying on it for that session and fall back to screenshots / normal browser / Playwright as appropriate.
 
 ## Recommended Model Split

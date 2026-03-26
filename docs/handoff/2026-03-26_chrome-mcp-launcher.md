@@ -17,6 +17,11 @@
 - WSL Chrome shared MCP browser (attach-only path):
   - `pnpm run browser:mcp:launch:wsl`
 
+## Quick reference
+- If you want the shared browser that MCP can actually attach to reliably, run:
+  - `pnpm run browser:mcp:launch:wsl`
+- Then restart Codex only when MCP config has changed, or smoke-test MCP directly if Codex is already on the correct attach config.
+
 ## Current preferred path
 - Preferred shared MCP browser: WSL Chrome launched by `browser:mcp:launch:wsl`
 - Expected debug endpoint: `http://127.0.0.1:9222`

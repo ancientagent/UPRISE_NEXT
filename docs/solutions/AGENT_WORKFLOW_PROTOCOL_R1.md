@@ -99,6 +99,9 @@ A slice or batch is not closed until:
   - isolated Chromium (`chromium` or `chromium-browser` with `--user-data-dir`) for manual clean sessions,
   - Playwright for deterministic QA,
   - DevTools MCP for single-owner debugging only.
+- Current preferred shared MCP browser bootstrap:
+  - from WSL repo root, run `pnpm run browser:mcp:launch:wsl`
+  - this provides the attach-only MCP browser on `http://127.0.0.1:9222`
 - Do not assume shared cookies or session state between Windows Chrome, WSL-launched Chrome/Chromium, Playwright, and DevTools targets.
 - If DevTools MCP is needed:
   - assign one explicit owner,
