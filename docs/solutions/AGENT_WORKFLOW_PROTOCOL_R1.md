@@ -91,3 +91,17 @@ A slice or batch is not closed until:
   - re-scope the remaining work.
 - Hard refresh after roughly 15 substantial turns on the same slice, or earlier if context drift appears.
 - Refresh is meant to reduce stale-context drift; it is not a mandatory full-repo reread.
+
+## 10. Browser Ownership Rule
+- Treat browser tooling as role-specific, not interchangeable.
+- Standard roles:
+  - normal Chrome (`google-chrome`) for visible/shared browsing,
+  - isolated Chromium (`chromium` or `chromium-browser` with `--user-data-dir`) for manual clean sessions,
+  - Playwright for deterministic QA,
+  - DevTools MCP for single-owner debugging only.
+- Do not assume shared cookies or session state between Windows Chrome, WSL-launched Chrome/Chromium, Playwright, and DevTools targets.
+- If DevTools MCP is needed:
+  - assign one explicit owner,
+  - run a smoke test first,
+  - if the smoke test fails, stop using MCP for that session instead of repeatedly retrying.
+- For shared visual review on logged-in or anti-bot external sites, prefer the user's normal browser plus screenshots over Playwright or MCP.

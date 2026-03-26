@@ -111,3 +111,24 @@ Use this block at the start of each execution session.
   - re-anchor to current authority order,
   - confirm current branch state,
   - discard stale handoff/chat assumptions that conflict with current evidence.
+
+14) Browser tooling standard
+- Treat browser contexts as separate by default:
+  - Windows/native Chrome = user-visible browsing and shared visual reference
+  - Playwright harness = deterministic app QA only
+  - DevTools MCP = single-owner debugging tool only when a smoke test passes
+- Default browser roles:
+  - `google-chrome` = normal visible browsing
+  - `chromium` / `chromium-browser` with an explicit `--user-data-dir` = isolated manual session when separation is needed
+- Do not assume browser login/cookie state is shared across:
+  - Windows Chrome,
+  - WSL-launched Chrome/Chromium,
+  - Playwright,
+  - DevTools MCP targets.
+- DevTools MCP is opt-in, not default:
+  - assign one explicit owner at a time,
+  - smoke-test it first (`list_pages`, then `new_page`),
+  - if the smoke test fails, treat MCP as unavailable for that session and fall back to normal Chrome + screenshots + Playwright.
+- Use Playwright for local app QA, not for "look at my already-open tab" collaboration.
+- Use screenshots from the user's normal browser for shared visual review on external/logged-in sites.
+- Opera is not part of the default workflow. Only consider it as a manual fallback if it is already installed and explicitly chosen; do not add it as a setup dependency.

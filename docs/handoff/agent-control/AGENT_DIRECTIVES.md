@@ -15,6 +15,12 @@ These templates are the canonical operating prompts for lane-specialized Codex a
   - immediate refresh on new checkpoint commit, overlapping agent commit, or conflicting evidence,
   - soft refresh after roughly 8-10 substantial turns on one slice,
   - hard refresh after roughly 15 substantial turns or sooner if drift appears.
+- Browser tooling is not shared state:
+  - `google-chrome` = user-visible browsing,
+  - `chromium` with explicit profile = isolated manual session,
+  - Playwright = automated QA,
+  - DevTools MCP = one owner only, and only after a smoke test passes.
+- If DevTools MCP smoke test fails, agents must stop relying on it for that session and fall back to screenshots / normal browser / Playwright as appropriate.
 
 ## Recommended Model Split
 - Orchestrator / planner / lead integrator: `gpt-5.4` with `high` reasoning
