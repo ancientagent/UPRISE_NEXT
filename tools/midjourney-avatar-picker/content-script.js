@@ -26,6 +26,8 @@
     presetWrap: 'mj-avatar-picker-presets',
   };
 
+  const STORAGE_KEY = 'mj-avatar-picker-processed-cards';
+
   const STYLE = `
     #${IDS.launcher} {
       position: fixed;
@@ -57,6 +59,11 @@
       border-radius: 999px;
       cursor: pointer;
       display: none;
+    }
+    .mj-avatar-picker-open-btn.is-processed {
+      background: rgba(95, 207, 146, 0.94);
+      border-color: #2f8f5d;
+      color: #09120d;
     }
     .mj-avatar-picker-enabled .mj-avatar-picker-open-btn {
       display: inline-flex;
@@ -231,6 +238,30 @@
     const style = document.createElement('style');
     style.textContent = STYLE;
     document.documentElement.appendChild(style);
+  }
+
+  function loadProcessedCards() {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return new Set(Array.isArray(parsed) ? parsed.filter((value) => typeof value === 'string') : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  function saveProcessedCards(processed) {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(processed)));
+  }
+
+  function markCardProcessed(href) {
+    const processed = loadProcessedCards();
+    processed.add(href);
+    saveProcessedCards(processed);
+  }
+
+  function isCardProcessed(href) {
+    return loadProcessedCards().has(href);
   }
 
   function getVisibleCard(cards) {
@@ -424,6 +455,9 @@
         });
         wrap.appendChild(btn);
       }
+      const processed = isCardProcessed(anchor.href);
+      btn.textContent = processed ? 'Picked' : 'Pick avatars';
+      btn.classList.toggle('is-processed', processed);
       btn.dataset.src = img.currentSrc || img.src;
       btn.dataset.href = anchor.href;
     }
@@ -736,6 +770,9 @@
       }
       const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
       await downloadBlob(manifestBlob, `${jobId}-manifest.json`);
+      markCardProcessed(STATE.currentCard.href);
+      updateStatusMessage(`Exported ${rects.length} avatar${rects.length === 1 ? '' : 's'}. Sheet marked as done.`);
+      syncCardButtons();
     } finally {
       URL.revokeObjectURL(blobUrl);
     }

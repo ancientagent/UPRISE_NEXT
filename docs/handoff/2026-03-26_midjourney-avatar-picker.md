@@ -33,6 +33,7 @@
   - `Magic Wand` fetches CDN sheets without credentialed CORS requests
 
 ## Notes
+- Exported sheets now persist a processed marker in local storage, and their per-card action pill changes from `Pick avatars` to `Picked` after export so you can see which cards are done across reloads in the shared browser profile.
 - Grid controls now commit on `blur` / `Enter` and select their existing value on focus, so typing a replacement value no longer appends digits into the old number and immediately clamps to the max.
 - The picker now surfaces explicit auto-fit feedback (`Running auto-fit...`, `Auto-fit applied.`, or `No tighter fit detected for this sheet.`) so `Magic Wand` no longer feels dead on sheets where the change is subtle.
 - Grid controls now normalize to valid minimums so the visible inputs cannot drift to `0` while the internal crop engine clamps to `1`.
