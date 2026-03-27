@@ -504,7 +504,7 @@
   }
 
   async function loadSourceImage() {
-    const response = await fetch(STATE.currentCard.src, { mode: 'cors', credentials: 'include' });
+    const response = await fetch(STATE.currentCard.src, { mode: 'cors', credentials: 'omit' });
     if (!response.ok) throw new Error(`Image fetch failed: ${response.status}`);
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);

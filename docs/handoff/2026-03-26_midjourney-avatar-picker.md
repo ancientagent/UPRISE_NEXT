@@ -30,6 +30,7 @@
   - clicking `Pick avatars` opened the modal on a real Midjourney result card
   - `Magic Wand` rendered in the modal
   - grid selection worked on live page
+  - `Magic Wand` fetches CDN sheets without credentialed CORS requests
 
 ## Notes
 - Live export was validated through the extension download path in code, but the shared browser session used for MCP testing was script-injected rather than fully reloaded with the unpacked extension. The intended daily-use path is the preloaded launcher command, not manual injection.
