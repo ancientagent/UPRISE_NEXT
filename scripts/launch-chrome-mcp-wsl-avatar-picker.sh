@@ -8,6 +8,12 @@ URL="${1:-https://www.midjourney.com/imagine}"
 
 mkdir -p "${PROFILE_DIR}"
 
+# Chrome will often reuse an existing process for the same profile and ignore
+# new --load-extension flags. Kill the shared-profile browser first so the
+# avatar-picker extension is always loaded on relaunch.
+pkill -f "${PROFILE_DIR}" 2>/dev/null || true
+sleep 1
+
 CHROME_BIN=""
 if command -v google-chrome >/dev/null 2>&1; then
   CHROME_BIN="$(command -v google-chrome)"
