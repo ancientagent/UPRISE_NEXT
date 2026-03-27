@@ -14,6 +14,7 @@
     selected: new Set(),
     autoFitRects: null,
     syncTimer: null,
+    statusMessage: '',
   };
 
   const IDS = {
@@ -283,6 +284,7 @@
           <div class="mj-avatar-picker-group">
             <h3>Selection</h3>
             <p class="mj-avatar-picker-subtle" id="mj-avatar-picker-selection-count">0 tiles selected</p>
+            <p class="mj-avatar-picker-subtle" id="mj-avatar-picker-status"></p>
             <div class="mj-avatar-picker-btn-row">
               <button class="mj-avatar-picker-btn is-quiet" data-action="autofit">Magic Wand</button>
               <button class="mj-avatar-picker-btn" data-action="clear-selection">Clear Selection</button>
@@ -305,6 +307,7 @@
     modal.querySelector('[data-action="autofit"]').addEventListener('click', autoFitGrid);
     modal.querySelector('[data-action="clear-selection"]').addEventListener('click', () => {
       STATE.selected.clear();
+      updateStatusMessage('');
       renderGrid();
       updateSelectionLabel();
     });
@@ -337,6 +340,28 @@
     }
   }
 
+  function normalizeState() {
+    STATE.cols = Math.max(1, Math.min(8, Number(STATE.cols || 0)));
+    STATE.rows = Math.max(1, Math.min(6, Number(STATE.rows || 0)));
+    STATE.outerX = Math.max(0, Math.min(120, Number(STATE.outerX || 0)));
+    STATE.outerY = Math.max(0, Math.min(120, Number(STATE.outerY || 0)));
+    STATE.gapX = Math.max(0, Math.min(80, Number(STATE.gapX || 0)));
+    STATE.gapY = Math.max(0, Math.min(80, Number(STATE.gapY || 0)));
+  }
+
+  function commitControlValue(input, key, min, max) {
+    const parsed = Number(input.value);
+    if (!Number.isFinite(parsed)) {
+      input.value = String(STATE[key]);
+      return;
+    }
+    STATE[key] = Math.max(min, Math.min(max, parsed));
+    normalizeState();
+    input.value = String(STATE[key]);
+    STATE.autoFitRects = null;
+    renderGrid();
+  }
+
   function buildControls() {
     const container = document.querySelector('[data-group="grid-controls"]');
     const controls = [
@@ -354,16 +379,23 @@
       row.innerHTML = `<span>${label}</span><input type="number" min="${min}" max="${max}" step="1" data-key="${key}">`;
       const input = row.querySelector('input');
       input.value = String(STATE[key]);
-      input.addEventListener('input', () => {
-        STATE[key] = Math.max(min, Math.min(max, Number(input.value || 0)));
-        STATE.autoFitRects = null;
-        renderGrid();
+      input.addEventListener('focus', () => input.select());
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          commitControlValue(input, key, min, max);
+          input.blur();
+        }
+      });
+      input.addEventListener('blur', () => {
+        commitControlValue(input, key, min, max);
       });
       container.appendChild(row);
     }
   }
 
   function syncControlInputs() {
+    normalizeState();
     document.querySelectorAll('#' + IDS.modal + ' input[data-key]').forEach((input) => {
       input.value = String(STATE[input.dataset.key]);
     });
@@ -420,6 +452,7 @@
     };
     STATE.selected = new Set();
     STATE.autoFitRects = null;
+    updateStatusMessage('');
     const guessed = guessRowsCols(card.img);
     STATE.cols = guessed.cols;
     STATE.rows = guessed.rows;
@@ -440,6 +473,7 @@
   }
 
   function getCellRects() {
+    normalizeState();
     if (STATE.autoFitRects?.length) return STATE.autoFitRects;
     const { naturalWidth, naturalHeight } = STATE.currentCard;
     const cols = Math.max(1, STATE.cols);
@@ -460,6 +494,7 @@
   }
 
   function renderGrid() {
+    normalizeState();
     const img = document.getElementById(IDS.preview);
     const grid = document.getElementById(IDS.grid);
     if (!img || !grid || !STATE.currentCard) return;
@@ -501,6 +536,12 @@
   function updateSelectionLabel() {
     const el = document.getElementById('mj-avatar-picker-selection-count');
     if (el) el.textContent = `${STATE.selected.size} tile${STATE.selected.size === 1 ? '' : 's'} selected`;
+  }
+
+  function updateStatusMessage(message = '') {
+    STATE.statusMessage = message;
+    const el = document.getElementById('mj-avatar-picker-status');
+    if (el) el.textContent = message;
   }
 
   async function loadSourceImage() {
@@ -584,6 +625,7 @@
 
   async function autoFitGrid() {
     if (!STATE.currentCard) return;
+    updateStatusMessage('Running auto-fit...');
     const { img, blobUrl } = await loadSourceImage();
     try {
       const canvas = document.createElement('canvas');
@@ -592,8 +634,18 @@
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       ctx.drawImage(img, 0, 0);
       const backgroundColor = detectBackgroundColor(ctx, canvas.width, canvas.height);
-      STATE.autoFitRects = getCellRects().map((rect) => findContentBounds(ctx, rect, backgroundColor));
+      const baseRects = getCellRects().map((rect) => ({ ...rect }));
+      const nextRects = baseRects.map((rect) => findContentBounds(ctx, rect, backgroundColor));
+      const changed = nextRects.some((rect, index) => {
+        const prev = baseRects[index];
+        return Math.abs(rect.x - prev.x) > 1 || Math.abs(rect.y - prev.y) > 1 || Math.abs(rect.width - prev.width) > 1 || Math.abs(rect.height - prev.height) > 1;
+      });
+      STATE.autoFitRects = nextRects;
       renderGrid();
+      updateStatusMessage(changed ? 'Auto-fit applied.' : 'No tighter fit detected for this sheet.');
+    } catch (error) {
+      updateStatusMessage(`Auto-fit failed: ${error?.message || 'unknown error'}`);
+      throw error;
     } finally {
       URL.revokeObjectURL(blobUrl);
     }
