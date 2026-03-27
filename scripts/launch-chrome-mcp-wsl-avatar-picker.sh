@@ -31,6 +31,7 @@ fi
 "${CHROME_BIN}" \
   --remote-debugging-port=9222 \
   --user-data-dir="${PROFILE_DIR}" \
+  --disable-extensions-except="${EXT_DIR}" \
   --load-extension="${EXT_DIR}" \
   --new-window \
   "${URL}" >/dev/null 2>&1 &
