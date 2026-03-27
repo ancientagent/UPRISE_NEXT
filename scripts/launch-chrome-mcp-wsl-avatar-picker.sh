@@ -15,14 +15,14 @@ pkill -f "${PROFILE_DIR}" 2>/dev/null || true
 sleep 1
 
 CHROME_BIN=""
-if command -v google-chrome >/dev/null 2>&1; then
-  CHROME_BIN="$(command -v google-chrome)"
-elif command -v google-chrome-stable >/dev/null 2>&1; then
-  CHROME_BIN="$(command -v google-chrome-stable)"
-elif command -v chromium >/dev/null 2>&1; then
+if command -v chromium >/dev/null 2>&1; then
   CHROME_BIN="$(command -v chromium)"
 elif command -v chromium-browser >/dev/null 2>&1; then
   CHROME_BIN="$(command -v chromium-browser)"
+elif command -v google-chrome >/dev/null 2>&1; then
+  CHROME_BIN="$(command -v google-chrome)"
+elif command -v google-chrome-stable >/dev/null 2>&1; then
+  CHROME_BIN="$(command -v google-chrome-stable)"
 else
   echo "No Chrome/Chromium binary found." >&2
   exit 1

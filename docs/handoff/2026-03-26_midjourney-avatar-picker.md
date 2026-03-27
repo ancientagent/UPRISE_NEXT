@@ -3,7 +3,7 @@
 ## Summary
 - Added a browser-native Midjourney avatar picker as an unpacked Chrome extension under `tools/midjourney-avatar-picker/`.
 - The extension runs directly on the Midjourney Create page, overlays `Pick avatars` buttons on result cards, opens a crop-selection modal, and exports selected avatar crops plus a JSON manifest.
-- Added a WSL shared-browser launcher that preloads the extension: `pnpm run browser:mcp:launch:wsl:avatars`.
+- Added a WSL shared-browser launcher that preloads the extension: `pnpm run browser:mcp:launch:wsl:avatars`. The launcher now prefers Chromium because Google Chrome ignores the extension-restriction flags needed for reliable autoload.
 
 ## Files
 - `tools/midjourney-avatar-picker/manifest.json`
