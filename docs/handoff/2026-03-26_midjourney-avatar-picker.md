@@ -14,9 +14,9 @@
 - `package.json`
 
 ## Behavior
-- Toggle picker mode with the floating `Avatar Picker` button.
+- Click the floating `Avatar Picker` button to open the picker on the first visible Midjourney sheet and reveal per-card `Pick avatars` buttons.
 - Use `Magic Wand` to auto-tighten each cell around non-background avatar art when a sheet is uneven.
-- Click `Pick avatars` on a Midjourney result card.
+- Use `Pick avatars` on any result card if you want to open a specific sheet directly.
 - Adjust rows/columns and crop spacing if the default split is off.
 - Click desired tiles.
 - Export selected PNGs plus one manifest into `midjourney-avatar-picker/` downloads.
@@ -27,7 +27,8 @@
 - Live MCP validation against `https://www.midjourney.com/imagine`:
   - floating launcher rendered
   - result-card `Pick avatars` buttons rendered
-  - modal opened on a real Midjourney result card
+  - clicking `Pick avatars` opened the modal on a real Midjourney result card
+  - `Magic Wand` rendered in the modal
   - grid selection worked on live page
 
 ## Notes

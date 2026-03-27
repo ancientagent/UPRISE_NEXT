@@ -29,7 +29,7 @@
     #${IDS.launcher} {
       position: fixed;
       right: 16px;
-      bottom: 16px;
+      top: 16px;
       z-index: 2147483600;
       border: 1px solid #111;
       background: #d8ff3e;
@@ -232,13 +232,28 @@
     document.documentElement.appendChild(style);
   }
 
+  function getVisibleCard(cards) {
+    const viewportTop = 0;
+    const viewportBottom = window.innerHeight || document.documentElement.clientHeight;
+    return cards
+      .map((card) => ({ card, rect: card.anchor.getBoundingClientRect() }))
+      .filter(({ rect }) => rect.bottom > viewportTop + 40 && rect.top < viewportBottom - 40)
+      .sort((a, b) => Math.abs(a.rect.top - 120) - Math.abs(b.rect.top - 120))[0]?.card || null;
+  }
+
   function createLauncher() {
     const btn = document.createElement('button');
     btn.id = IDS.launcher;
     btn.textContent = 'Avatar Picker';
+    btn.title = 'Open the picker on the first visible Midjourney sheet';
     btn.addEventListener('click', () => {
-      document.documentElement.classList.toggle('mj-avatar-picker-enabled');
+      document.documentElement.classList.add('mj-avatar-picker-enabled');
       syncCardButtons();
+      const cards = collectCards();
+      const visibleCard = getVisibleCard(cards) || cards[0] || null;
+      if (visibleCard) {
+        openPicker(visibleCard);
+      }
     });
     document.body.appendChild(btn);
   }
@@ -258,7 +273,7 @@
         <aside class="mj-avatar-picker-sidebar">
           <div>
             <p class="mj-avatar-picker-title">Avatar Picker</p>
-            <p class="mj-avatar-picker-subtle">Click a Midjourney result card, adjust the grid if needed, then select only the avatars you want.</p>
+            <p class="mj-avatar-picker-subtle">Pick a sheet from the current page, fine-tune the grid only if needed, then export just the avatars you want.</p>
           </div>
           <div class="mj-avatar-picker-group">
             <h3>Presets</h3>
