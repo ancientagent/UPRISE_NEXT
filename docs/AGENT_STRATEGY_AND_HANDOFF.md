@@ -35,6 +35,7 @@ Load only the materials directly needed for the current task:
 - Do not bulk-load old batch plans, old phase notes, or large handoff sets by default.
 - Do not treat every dated handoff as equally authoritative.
 - Do not inherit product behavior from prior chat memory when current code/specs disagree.
+- Keep context lean: prefer concise summaries over transcript dumps, salvage dense threads early, and use `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` when a thread is starting to bloat.
 
 ## Multi-Agent Operating Protocol
 ### One implementation owner

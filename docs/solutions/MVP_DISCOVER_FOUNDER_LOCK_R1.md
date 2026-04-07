@@ -12,6 +12,7 @@ This document is the controlling lock for:
 - Discover search behavior
 - Discover/player relationship
 - Discover ontology (`sources`, `signals`, `recommendations`, `support`)
+- Discover statistics lenses
 - Discover post/rendering grammar
 - Popular Singles, recommendation, and conditional signal surface behavior
 - Travel map expansion behavior
@@ -41,6 +42,7 @@ Until `docs/specs/communities/discovery-scene-switching.md` is intentionally rec
 - `docs/canon/Master Application Surfaces, Capabilities & Lifecycle Canon.md`
 - `docs/specs/communities/discovery-scene-switching.md`
 - `docs/specs/communities/plot-and-scene-plot.md`
+- `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`
 - `docs/specs/core/signals-and-universal-actions.md`
 - `docs/specs/users/onboarding-home-scene-resolution.md`
 - `docs/specs/users/identity-roles-capabilities.md`
@@ -217,7 +219,8 @@ Discover does **not** use a split primary model where travel/community search is
 - MVP category lenses for `Popular Singles` are:
   - `Most Added`
   - `Supported Now`
-- `Recent Rises`
+  - `Recent Rises`
+- Lens semantics are controlled by `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`.
 - `Popular Now` is intentionally excluded from Discover because it belongs to the sacred RaDIYo/broadcast engagement system.
 - `Recent Rises` is allowed in Discover because it surfaces signals that have already risen out of the current broadcast mix and helps users identify what has recently broken upward without duplicating what is currently in rotation.
 

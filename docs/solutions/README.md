@@ -28,11 +28,13 @@ Start from: `docs/solutions/TEMPLATE.md`
 - `docs/solutions/SURFACE_CONTRACT_HOME_R1.md` / `SURFACE_CONTRACT_PLOT_R1.md` / `SURFACE_CONTRACT_DISCOVER_R1.md` / `SURFACE_CONTRACT_COMMUNITY_R1.md` — minimum stable per-surface contracts for Home, Plot, Discover, and Community
 - `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — safe rollback/checkpoint flow
 - `docs/solutions/SESSION_STANDING_DIRECTIVES.md` — paste-ready session policy block
+- `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` — keep dense doctrine/implementation work from wasting session context
 - `docs/solutions/PHASE_STOP_GATE_PLAYBOOK.md` — stop-gate process to prevent infinite batching after convergence
 - `docs/solutions/NARRATIVE_CARRY_FORWARD_RULES_R1.md` — prevents context narrowing below valid repo/carry-forward truth
 
 ## Active Founder Locks / Execution Guides
 - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_WEB_UX_IMPLEMENTATION_BRIEF_R1.md`
 - `docs/solutions/MVP_UX_BATCH27_EXECUTION_PLAN.md`

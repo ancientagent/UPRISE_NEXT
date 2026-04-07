@@ -2,7 +2,7 @@
 
 **Status:** `active`
 **Owner:** `founder + codex`
-**Last Updated:** `2026-04-05`
+**Last Updated:** `2026-04-07`
 
 ## Purpose
 Define the minimum stable contract for `Plot` as the Home-side sectional system.
@@ -26,12 +26,15 @@ Define the minimum stable contract for `Plot` as the Home-side sectional system.
 - Plot inherits Home-side player context.
 - Plot inherits current Home/tuned community context.
 - Plot remains bound to Home-side scene participation, not generic discovery.
+- Followed-source updates surface through Plot feed grammar.
+- The profile-strip notification icon is a separate system/state-change notice surface, not a second activity feed.
 
 ## What Must Remain True
 - Plot remains a tabbed sectional system.
 - The current MVP tab set is `Feed`, `Events`, `Promotions`, `Statistics`.
 - Plot does not become Home itself.
 - Plot does not become a generic social dashboard.
+- Feed remains the primary place where followed-source updates appear.
 
 ## What Plot Must Not Become
 - not a peer route to Home

@@ -1,7 +1,7 @@
 # MVP Phase 1 / Phase 2 Action Board (R1)
 
 **Status:** Active near-term action board
-**Last Updated:** 2026-04-05
+**Last Updated:** 2026-04-07
 **Owner:** Founder + Codex control layer
 
 ## Purpose
@@ -88,7 +88,7 @@ Blocked by founder decision:
 - Discover is player-anchored.
 - Discover uses one current unified listening scope.
 - Scope is stable until explicit Travel action.
-- Search, Popular Signals, Active Participants, and Map share that same scope.
+- Search, `Popular Singles`, `Recommendations`, and Map share that same scope.
 - Travel is attached to the bottom of the player.
 - The map expands downward from the player.
 - Discover does not become a generic global search or recommendation engine.
@@ -107,8 +107,8 @@ Blocked by founder decision:
 Scope:
 - Recompose Discover into the locked vertical order:
   - search
-  - Popular Signals
-  - Active Participants
+  - Popular Singles
+  - Recommendations
   - persistent player
   - Travel
   - map
@@ -126,32 +126,23 @@ Scope:
 Blocked by founder decision:
 - No.
 
-#### 4. Popular Signals first-pass closure
+#### 4. Popular Singles first-pass closure
 Scope:
 - Build/render the section under the shared Discover scope.
 - Keep it descriptive and scene/scope-bound.
 - Do not invent personalization or recommendation-engine logic.
 
-Still blocked by founder decision:
-- final metric
-- final time window
-- final count
-
 What can proceed now:
 - section placement
 - state handling
 - scope plumbing
-- placeholder or configurable display contract
+- the locked lens contract from `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`
 
-#### 5. Active Participants first-pass closure
+#### 5. Recommendations row closure
 Scope:
 - Build/render the section under the shared Discover scope.
-- Keep it community-orientation, not influencer/authority behavior.
-- Preserve avatar + text-bubble recommendation direction without overlocking visual details.
-
-Still blocked by founder decision:
-- qualification rule
-- final count
+- Keep it listener-to-listener discovery, not influencer/authority behavior.
+- Preserve the locked avatar + fixed-balloon recommendation grammar.
 
 What can proceed now:
 - section placement
@@ -186,16 +177,7 @@ What can proceed now:
 
 ### Phase 2 founder decisions still required
 Only these should block final closure:
-1. `Popular Signals`
-- metric
-- time window
-- count
-
-2. `Active Participants`
-- qualification rule
-- count
-
-3. `Map visualization`
+1. `Map visualization`
 - how each already-approved structural scope is shown geographically
 
 ### Phase 2 exit gates
@@ -208,7 +190,7 @@ Only these should block final closure:
 2. Run a shell-coherence review against the rule that `Plot` lives inside `Home` and is not a peer destination to `Home` or `Discover`.
 3. Implement/reconcile Discover against the unified scope model.
 4. Close Discover structure before polishing secondary visual details.
-5. Resolve the three remaining founder decisions for Popular Signals, Active Participants, and Map visualization.
+5. Resolve the remaining founder decisions for Map visualization and any still-open statistics semantics that affect implementation.
 6. Re-run founder walkthrough on the assembled shell + Discover.
 
 ## Stop Conditions
@@ -216,4 +198,5 @@ Stop and ask founder before proceeding if any of these occur:
 - Discover planning tries to reopen the shell ownership model.
 - Travel is reframed as a generic scene-switching or map-explore product.
 - Metrics start drifting into authority, ranking power, or recommendation authority.
+- Recommendations are reframed as a separate card system instead of the locked avatar + balloon grammar.
 - A proposed fix requires product semantics not already covered by the current locks.
