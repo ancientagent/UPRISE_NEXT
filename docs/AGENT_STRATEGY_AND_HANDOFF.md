@@ -9,6 +9,7 @@ This document complements `AGENTS.md`. If any guidance here conflicts with `AGEN
 - Define agent-document authority and loading order.
 - Prevent stale handoff memory from outranking current repo truth.
 - Standardize multi-agent execution, QA, and checkpoint behavior.
+- Pair with `docs/solutions/SEAMLESS_AGENT_CONTINUITY_PROTOCOL_R1.md` when packaging a new-session or new-agent transfer.
 
 ## Authority Order
 Use this precedence when evaluating what to trust:

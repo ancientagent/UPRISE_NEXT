@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added `docs/solutions/SEAMLESS_AGENT_CONTINUITY_PROTOCOL_R1.md` as the production-ready cross-agent handoff system for this repo, defining canon vs active working memory vs temporary task context, zero-drift enforcement, executable handoff templates, and fresh-session transfer blocks; linked it from `docs/solutions/README.md` and `docs/AGENT_STRATEGY_AND_HANDOFF.md`.
 - Refreshed `docs/state/current_context_snapshot.json` and added `docs/handoff/2026-04-07_session-transition-package.md` so a fresh Codex session can resume from the current Discover/Stats/Plot doctrine state, branch head, and dirty-worktree caveats without reconstructing the full thread.
 - Added `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` and linked it from `docs/solutions/README.md` plus `docs/AGENT_STRATEGY_AND_HANDOFF.md` so dense doctrine/implementation threads get salvaged earlier, avoid transcript dumping, and rely on durable repo locks instead of bloated chat history.
 - Added `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md` as the shared MVP statistics contract for Plot, Discover, and future paid analytics, explicitly separating descriptive stats from the deferred Activity Points/Activity Score system and locking `Popular Singles` to `Most Added`, `Supported Now`, and `Recent Rises`.
