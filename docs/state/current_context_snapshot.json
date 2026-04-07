@@ -1,53 +1,54 @@
 {
-  "date": "2026-04-06",
-  "topic": "discover_doctrine",
-  "chat_name": "",
-  "summary": "Current Discover doctrine and MVP execution state after ontology, rail, and roadmap cleanup.",
+  "date": "2026-04-07",
+  "topic": "stats_lockdown_and_session_transition",
+  "chat_name": "019cb1dc-93be-7813-b3da-dc7a3b7f3998",
+  "summary": "Current transition snapshot after Discover + Stats doctrine locks, Plot feed/notification/calendar clarification, and lean-context workflow rules. Active branch is feat/ux-founder-locks-and-harness at commit 1245891; worktree is still dirty from unrelated non-doc changes.",
   "locks": [
     "Home is the left destination, Discover is the right destination, and Plot lives inside Home.",
     "Discover is player-anchored and inherits the active listening scope rather than creating a parallel context system.",
-    "Sources are followable origin objects; signals are the objects users receive, add, and act on.",
-    "Recommendations are explicit user-to-signal relationships rendered through the avatar + balloon grammar.",
-    "Support is a lightweight post-level counter/reaction, not a separate authored post type.",
-    "Discover uses one top search bar, then Popular Singles, then Recommendations, then the persistent player with Travel attached below.",
-    "Popular Singles uses the MVP lenses Most Added, Supported Now, and Recent Rises.",
-    "Popular Now remains owned by RaDIYo/broadcast momentum logic and is not a Discover lens.",
-    "Community visit is a secondary Discover outcome, not the primary Discover success condition."
+    "Discover recommendations are explicit user-to-signal relationships rendered through the avatar + fixed balloon grammar.",
+    "Discover Popular Singles uses the MVP lenses Most Added, Supported Now, and Recent Rises.",
+    "Popular Now remains owned by RaDIYo or broadcast momentum logic and is not a Discover lens.",
+    "Statistics are a shared descriptive contract for Plot, Discover, and future analytics, separate from the deferred Activity Points or Activity Score system.",
+    "Plot feed carries explicit scene actions and followed-source updates.",
+    "The profile-strip notification icon is a separate system or state-change notice surface, not a second activity feed.",
+    "Calendar auto-population remains part of MVP organizational behavior.",
+    "Top 40 or billboard-style lists are deferred from MVP until population justifies them.",
+    "Lean-context operation is now a documented workflow rule: salvage early, avoid transcript dumps, and separate doctrine threads from implementation threads."
   ],
   "open_decisions": [
-    "Define the exact implementation rules for Most Added, Supported Now, and Recent Rises in apps/web.",
-    "Finish the founder pass on Home / Feed / user profile.",
-    "Lock the broader statistics contract that community and Discover surfaces will read from without finalizing the full Activity Points system."
+    "Exact notification taxonomy beyond the locked feed-vs-notification split.",
+    "Exact map visualization treatment by structural scope.",
+    "Activity Points or Activity Score formula and decay semantics.",
+    "Top 40 or billboard tie-break semantics if those surfaces are intentionally reintroduced later."
   ],
   "drift_corrections": [
     "Do not treat Plot as a peer destination to Home.",
     "Do not treat recommendations as freeform user-written text.",
-    "Do not assume venues or ambassadors are MVP systems.",
-    "Do not treat all signals as equally relevant in Discover; promos and events are conditional content.",
-    "Do not reuse RaDIYo's Popular Now momentum semantics inside Discover."
+    "Do not reuse RaDIYo's Popular Now momentum semantics inside Discover.",
+    "Do not move followed-source updates into the notification icon by default.",
+    "Do not treat Search Party or sect private channels as MVP feed behavior.",
+    "Do not treat Top 40 or billboard lists as current MVP requirements."
   ],
   "next_actions": [
-    "Finish Home / Feed / user profile founder pass.",
-    "Translate the Discover founder lock into an apps/web implementation plan.",
-    "Reconcile any stale Discover prompt packs or solution docs that still use High Activity or generic Popular Signals wording."
+    "Start a clean implementation-facing session rather than continuing ontology work in a dense doctrine thread.",
+    "Translate Discover and stats locks into an apps/web implementation plan.",
+    "Reconcile any remaining prompt packs or docs that still imply stale Discover or Top 40 behavior.",
+    "If needed, add a dedicated founder lock for notification classes.",
+    "Avoid auditing or implementing against the current mixed unrelated worktree without explicit ownership."
   ],
   "source_docs": [
     "docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md",
-    "docs/solutions/MVP_CURRENT_EXECUTION_ROADMAP_R1.md",
+    "docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md",
     "docs/solutions/MVP_PHASE1_PHASE2_ACTION_BOARD_R1.md",
-    "docs/solutions/SURFACE_CONTRACT_HOME_R1.md",
     "docs/solutions/SURFACE_CONTRACT_PLOT_R1.md",
-    "docs/solutions/UPRISE_AUTOHARNESS_R1.md",
-    "docs/solutions/UPRISE_DRIFT_TAXONOMY_R1.md"
+    "docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md",
+    "docs/specs/communities/plot-and-scene-plot.md",
+    "docs/specs/communities/scene-map-and-metrics.md",
+    "docs/AGENT_STRATEGY_AND_HANDOFF.md"
   ],
   "handoff_paths": [
-    "docs/handoff/2026-04-05_mvp-current-execution-roadmap-r1.md",
-    "docs/handoff/2026-04-05_mvp-phase1-phase2-action-board-r1.md",
-    "docs/handoff/2026-04-05_surface-contracts-r1.md",
-    "docs/handoff/2026-04-05_uprise-autoharness-r1.md",
-    "docs/handoff/2026-04-06_discover-ontology-and-post-grammar-lock.md",
-    "docs/handoff/2026-04-06_discover-rail-priority-lock.md",
-    "docs/handoff/2026-04-06_discover-popular-singles-metric-boundary-lock.md",
-    "docs/handoff/2026-04-06_discover-recent-rises-restored.md"
+    "docs/handoff/2026-04-07_stats-and-plot-feed-lock.md",
+    "docs/handoff/2026-04-07_lean-context-rules.md"
   ]
 }
