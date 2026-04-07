@@ -50,6 +50,7 @@
     "reliant:runtime:clean": "node scripts/reliant-runtime-clean.mjs",
     "reliant:queue:validate": "node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/mvp-slices.json",
     "reliant:queue:test": "node scripts/reliant-slice-queue.test.mjs",
+    "context:salvage": "node scripts/salvage-context.mjs",
     "verify": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm run typecheck",
     "verify:full": "pnpm run verify && pnpm run test && pnpm run build",
     "report:isartist-consumers": "node scripts/is-artist-consumer-report.mjs",

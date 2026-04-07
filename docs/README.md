@@ -15,6 +15,7 @@ This folder contains operational docs, architecture references, specifications, 
 - Legacy spec IDs / older references: [`Specifications/README.md`](./Specifications/README.md)
 - Recurring issue playbooks: [`solutions/README.md`](./solutions/README.md)
 - Dated execution notes and carry-forward context: [`handoff/README.md`](./handoff/README.md)
+- Active recovery snapshot + salvage protocol: `docs/state/`
 - Web boundary rules: [`../apps/web/WEB_TIER_BOUNDARY.md`](../apps/web/WEB_TIER_BOUNDARY.md)
 
 ## Canon Protocol (`docs/canon`)

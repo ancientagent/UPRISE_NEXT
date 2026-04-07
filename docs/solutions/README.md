@@ -22,6 +22,10 @@ Start from: `docs/solutions/TEMPLATE.md`
 ## Start Here For Agent Workflow
 - `docs/solutions/AGENT_WORKFLOW_PROTOCOL_R1.md` — current recommended multi-agent operating protocol
 - `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` — prevents non-canon product-pattern assumptions
+- `docs/solutions/SOFTWARE_SYSTEMS_GUARDRAILS_R1.md` — strict systems-thinking rules for software composition, context inheritance, and control-surface discipline
+- `docs/solutions/UPRISE_AUTOHARNESS_R1.md` — founder-to-agent control harness for prompt shaping, drift review, and model-agnostic product-truth enforcement
+- `docs/solutions/UPRISE_DRIFT_TAXONOMY_R1.md` — recurring UPRISE-specific drift cases and correction directions for external models and agents
+- `docs/solutions/SURFACE_CONTRACT_HOME_R1.md` / `SURFACE_CONTRACT_PLOT_R1.md` / `SURFACE_CONTRACT_DISCOVER_R1.md` / `SURFACE_CONTRACT_COMMUNITY_R1.md` — minimum stable per-surface contracts for Home, Plot, Discover, and Community
 - `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — safe rollback/checkpoint flow
 - `docs/solutions/SESSION_STANDING_DIRECTIVES.md` — paste-ready session policy block
 - `docs/solutions/PHASE_STOP_GATE_PLAYBOOK.md` — stop-gate process to prevent infinite batching after convergence
@@ -42,6 +46,8 @@ Start from: `docs/solutions/TEMPLATE.md`
 - `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`
 - `docs/solutions/RELIANT_WORKFLOW_PILOT.md`
 - `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md`
+- `docs/solutions/MVP_CURRENT_EXECUTION_ROADMAP_R1.md`
+- `docs/solutions/MVP_PHASE1_PHASE2_ACTION_BOARD_R1.md`
 - `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md`
 - `docs/solutions/MVP_UX_MASTER_LOCK_R1.md`
 - `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md`
