@@ -42,7 +42,7 @@ Use the following terms exactly as defined.
 
 **Sect:** the sum of listeners and artists sharing a taste tag inside a Home Scene. A Sect becomes an Uprise only after meeting the support threshold and having sufficient committed artist catalog to sustain rotation.
 
-**The Plot:** the Home Scene dashboard surface. It is a civic interface, not a personalized feed.
+**The Plot:** the Home-side sectional dashboard surface inside `Home`. It is a civic interface, not a personalized feed.
 **Activity Feed (S.E.E.D Feed):** the default Plot surface. S.E.E.D stands for Support, Explore, Engage, Distribute. It reflects explicit community actions only and is identical for all listeners in the Home Scene.
 
 **RaDIYo:** the listener‑governed broadcast infrastructure that carries Uprises across tiers; the player is a receiver, not a playlist.
@@ -63,7 +63,7 @@ None.
 
 ## Web UI / Client Behavior
 - Home Scene selection labels use **City**, **State**, **Music Community**.
-- The Plot is the Home Scene dashboard surface.
+- The left shell destination is `Home`; `Plot` is the sectional system inside that Home-side surface.
 
 ## Acceptance Tests / Test Plan
 - Doc review: terms must match the canon list above.

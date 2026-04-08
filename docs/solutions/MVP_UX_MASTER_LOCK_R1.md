@@ -84,6 +84,10 @@ Bottom nav:
 - Center UPRISE wheel trigger
 - Discover (right)
 
+Shell relationship:
+- `Home` and `Discover` are the bottom-nav peers.
+- `Plot` lives inside `Home` as the Home-side tabbed sectional system.
+
 Engagement wheel:
 - Triggered from center UPRISE button
 - RADIYO and Collection action sets are mode-specific and deterministic

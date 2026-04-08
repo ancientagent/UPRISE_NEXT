@@ -14,6 +14,7 @@ Hard constraints:
 - Dark UI, high contrast, compact spacing.
 - Emphasize clarity, fast one-handed interactions, and minimal text clutter.
 - Bottom nav has 3 anchors: Home (left), central UPRISE logo action button, Discover (right).
+- `Home` and `Discover` are shell peers; `Plot` lives inside `Home` as the tabbed sectional system.
 
 Product semantics:
 - Two player modes: RADIYO and Collection.

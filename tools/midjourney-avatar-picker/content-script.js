@@ -351,19 +351,33 @@
   function buildPresetButtons() {
     const wrap = document.getElementById(IDS.presetWrap);
     const presets = [
-      ['4 x 2', 4, 2],
-      ['4 x 3', 4, 3],
-      ['3 x 3', 3, 3],
-      ['5 x 2', 5, 2],
+      { label: '4 x 2', cols: 4, rows: 2 },
+      { label: '4 x 3', cols: 4, rows: 3 },
+      { label: '3 x 3', cols: 3, rows: 3 },
+      { label: '5 x 2', cols: 5, rows: 2 },
+      {
+        label: '5 x 2 tight',
+        cols: 5,
+        rows: 2,
+        outerX: 107,
+        outerY: 46,
+        gapX: 0,
+        gapY: 0,
+      },
     ];
     wrap.innerHTML = '';
-    for (const [label, cols, rows] of presets) {
+    for (const preset of presets) {
       const btn = document.createElement('button');
       btn.className = 'mj-avatar-picker-btn';
-      btn.textContent = label;
+      btn.textContent = preset.label;
       btn.addEventListener('click', () => {
-        STATE.cols = cols;
-        STATE.rows = rows;
+        STATE.cols = preset.cols;
+        STATE.rows = preset.rows;
+        if (Number.isFinite(preset.outerX)) STATE.outerX = preset.outerX;
+        if (Number.isFinite(preset.outerY)) STATE.outerY = preset.outerY;
+        if (Number.isFinite(preset.gapX)) STATE.gapX = preset.gapX;
+        if (Number.isFinite(preset.gapY)) STATE.gapY = preset.gapY;
+        STATE.autoFitRects = null;
         syncControlInputs();
         renderGrid();
       });

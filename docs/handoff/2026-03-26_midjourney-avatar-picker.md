@@ -37,4 +37,5 @@
 - Grid controls now commit on `blur` / `Enter` and select their existing value on focus, so typing a replacement value no longer appends digits into the old number and immediately clamps to the max.
 - The picker now surfaces explicit auto-fit feedback (`Running auto-fit...`, `Auto-fit applied.`, or `No tighter fit detected for this sheet.`) so `Magic Wand` no longer feels dead on sheets where the change is subtle.
 - Grid controls now normalize to valid minimums so the visible inputs cannot drift to `0` while the internal crop engine clamps to `1`.
+- Added a named `5 x 2 tight` preset for the current Midjourney avatar sheets with: `Outer X 107`, `Outer Y 46`, `Gap X 0`, `Gap Y 0`, so the known-good crop layout is one click instead of a manual re-entry.
 - Live export was validated through the extension download path in code, but the shared browser session used for MCP testing was script-injected rather than fully reloaded with the unpacked extension. The intended daily-use path is the preloaded launcher command, not manual injection.

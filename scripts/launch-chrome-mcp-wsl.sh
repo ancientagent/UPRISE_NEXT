@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CHROME_BIN=${CHROME_BIN:-/usr/bin/google-chrome}
+CHROME_BIN=${CHROME_BIN:-/usr/bin/chromium-browser}
 PROFILE_DIR=${PROFILE_DIR:-$HOME/.cache/chrome-devtools-mcp/shared-profile}
 PORT=${PORT:-9222}
 URL=${1:-about:blank}
@@ -13,6 +13,11 @@ nohup "$CHROME_BIN" \
   --user-data-dir="$PROFILE_DIR" \
   --no-first-run \
   --no-default-browser-check \
+  --ignore-gpu-blocklist \
+  --enable-webgl \
+  --enable-unsafe-swiftshader \
+  --use-gl=angle \
+  --use-angle=gl \
   "$URL" >/tmp/chrome-mcp-wsl.log 2>&1 &
 
 echo "Launched WSL Chrome MCP browser"
