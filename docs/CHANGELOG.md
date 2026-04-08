@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Clarified MVP/admin analytics scope so all cleanly trackable metrics with operational, audit, admin, or future analytics value should be retained even when not publicly surfaced, and Super Admin access remains broader than MVP display scope; aligned `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md` with `docs/specs/admin/super-admin-controls.md`.
 - Extended `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md` with retained artist/listener/venue profile-data inventories so later-version profile work keeps those fields in scope without widening current MVP profile surfaces; also linked the carry-forward rule from `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`.
 - Extended `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md` so retained analytics can include per-tier and platform-wide metrics plus future packaged analytics inputs for artists, mixologists, venues, businesses, and similar valid source domains, while keeping those metrics off the current MVP Plot/Discover surface unless explicitly promoted later.
 - Added `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md` plus dated handoff `docs/handoff/2026-04-08_later-version-domain-understandings.md` to preserve ambassadors, venues, mixologists, and mixes as legitimate later-version product domains while keeping them out of the current MVP Discover/Stats scope unless explicitly reactivated.

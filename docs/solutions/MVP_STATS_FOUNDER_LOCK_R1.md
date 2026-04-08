@@ -21,6 +21,8 @@ It also exists to keep Plot, Discover, and future paid analytics on one shared s
 - Statistics must not become legitimacy, governance authority, or ranking power.
 - UPRISE should prefer one durable stats contract over multiple parallel metric systems.
 - The platform may track more than it currently displays.
+- If a metric can be tracked cleanly and has operational, audit, admin, or future analytics value, it should be retained even if it is not currently surfaced.
+- Super Admin should have access to retained metrics whether or not those metrics are exposed in current MVP user-facing surfaces.
 - Activity Points are **not required** to lock MVP statistics.
 - If a stat has no clear MVP surface, operational, or future analytics purpose, do not lock it now.
 
@@ -254,11 +256,22 @@ Handling rule:
 - these metrics are legitimate parts of the broader analytics foundation
 - they do **not** automatically become MVP Plot/Discover surface requirements
 - they may be retained, computed, and later packaged into analytics products without reopening the MVP display contract
+- they should be available to Super Admin even when hidden from current user-facing MVP surfaces
 
 Packaging rule:
 - platform-wide metrics are allowed where they support internal reporting or future analytics packaging
 - tier-level metrics are allowed where they preserve the platform's locality/progression model
 - neither platform-wide nor tier-level packaging may bypass Fair Play, governance, or current MVP surface boundaries
+
+Admin visibility rule:
+- Super Admin access is broader than public MVP display scope
+- all retained trackable metrics should be queryable by Super Admin
+- this includes:
+  - surfaced MVP metrics
+  - hidden retained metrics
+  - tier-level metrics
+  - platform-wide metrics
+  - future-domain analytics inputs where the platform is already capable of tracking them
 
 ## Explicit Non-Locks
 This document does **not** lock:

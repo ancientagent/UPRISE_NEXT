@@ -3,7 +3,7 @@
 **ID:** `ADMIN-SUPER`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-04-08`
 
 ## Overview & Purpose
 Defines the Super Admin’s platform oversight capabilities.
@@ -15,6 +15,7 @@ Defines the Super Admin’s platform oversight capabilities.
 ## Functional Requirements
 - Full visibility into Users, Artists, Businesses, Events, and transactions.
 - Full visibility into all analytics and instrumentation datasets (including non-UI metrics).
+- All trackable metrics with operational, audit, admin, or future analytics value should remain available to Super Admin even when they are not surfaced in current MVP user-facing UI.
 - Account control: view, edit, suspend, release, or ban.
 - Moderation queue access and dispute handling.
 - Platform configuration:
