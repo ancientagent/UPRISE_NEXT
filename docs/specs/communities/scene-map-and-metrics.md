@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENEMAP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-07`
+**Last Updated:** `2026-04-08`
 
 ## Overview & Purpose
 Defines the Scene Map and Statistics contract as an inherent Scene surface inside The Plot. The map is not a separate product; it is the descriptive structural view of a Scene and its community activity.
@@ -20,7 +20,9 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - Parent context rule:
   - Users operate within a parent music-community context anchored to the active community identity (`city + state + music community`).
   - When the current community is already known, the parent music-community context is inherited rather than re-selected.
-  - Tier toggles (`city` -> `state` -> `national`) keep the same parent context.
+  - Tier toggles keep the same parent context.
+  - Current MVP Plot Statistics exposes only `city` and `state` tier toggles.
+  - The broader platform model may still retain `national`, but `national` is deferred from the live MVP Plot Statistics surface until population justifies it.
   - Toggling tiers changes aggregation scope only; it does not switch parent context.
 - Map + metrics do not change ranking, Fair Play rotation, or governance authority.
 
@@ -35,9 +37,6 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
     - number of active citywide Scenes in scope
     - Uprise macro activity metrics per city
     - top/most active sects per city (macro summary only)
-- `national` tier map:
-  - national map of states for the same parent music-community context.
-  - shows state-level macro statistics per state.
 - Parent context remains constant while toggling tiers; only the aggregation unit changes (`sect/local` -> `city` -> `state`).
 - Top 40 / billboard-style ranking lists are deferred from MVP until population justifies them.
 
@@ -69,6 +68,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
   - per-city macro rollups (for example: member totals, activity totals, active tracks, top sects)
 - `national`:
   - per-state macro rollups (for example: member totals, activity totals, active tracks)
+  - retained for later broader-scope analytics/modeling, not current MVP Plot UI
 
 ### Implemented Now
 - Plot shell includes a Statistics tab in `apps/web/src/app/plot/page.tsx`.
@@ -79,13 +79,14 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
   - `points[]` with tier-scoped markers/rollups (`community` at city scope, city rollups at state scope, state rollups at national scope)
   - `center` and rollup metadata (`tierScope`, `rollupUnit`, `timeWindow`)
 - Web Statistics panel consumes the statistics endpoint for metrics across tiers.
-- Web Scene Map now consumes `/communities/:id/scene-map` for city/state/national map data.
+- Web Scene Map now consumes `/communities/:id/scene-map` for the active Plot scope, with MVP UI currently clamped to `city/state`.
 - Any existing `topSongs` payload remains implementation detail / future scaffolding until Top 40 is explicitly re-locked for MVP or later.
 
 ### Deferred (Not Implemented Yet)
 - Activity Points engine integration into scene-level score semantics.
 - Final geo aggregation/privacy floor policy locks from `docs/specs/DECISIONS_REQUIRED.md`.
 - Advanced clustering and pagination controls for very large national map payloads.
+- Live Plot Statistics exposure of `national` tier.
 
 ## Non-Functional Requirements
 - No personalization or recommendation behavior.
@@ -135,13 +136,12 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - Parent context changes only via explicit user selection.
 - City view emphasizes sect/local structure.
 - State view emphasizes city-level macro cards/labels.
-- National view emphasizes state-level macro cards/labels.
 - Top 40 / billboard list UI is deferred from MVP surface requirements.
 
 ## Acceptance Tests / Test Plan
 - Tier toggle keeps parent context unchanged.
-- Statistics/map values change by scope only (`city` vs `state` vs `national`).
-- City map renders sect/local detail; state/national maps render macro rollups only.
+- Statistics/map values change by scope only (`city` vs `state`) in current MVP Plot UI.
+- City map renders sect/local detail; state maps render macro rollups in current MVP Plot UI.
 - No stats value affects voting authority or rotation ordering.
 - Metrics remain visible as descriptive-only labels in UI.
 

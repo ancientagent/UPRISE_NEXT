@@ -69,7 +69,8 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
     expect(plotPageSource).toContain('setActiveBroadcastTier((current) => current ?? selectedTier);');
     expect(plotPageSource).toContain('const handleTierChange = (tier: PlayerTier) => {');
-    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === tier ? null : tier));');
+    expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
+    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === nextTier ? null : nextTier));');
     expect(plotPageSource).toContain('mode={playerMode}');
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
@@ -90,8 +91,9 @@ describe('/plot UX regression lock', () => {
 
   it('keeps player controls tier-driven and wheel-driven instead of exposing forbidden transport buttons', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(playerSource).toContain('Tap City, State, or National to start that broadcast. Tap the active tier again to stop.');
+    expect(playerSource).toContain('Tap City or State to start that broadcast. Tap the active tier again to stop.');
     expect(playerSource).toContain('Collection mode stays selection-driven. Use eject to return to RADIYO.');
     expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");
     expect(playerSource).toContain('aria-pressed={activeBroadcastTier === tier}');
@@ -99,7 +101,8 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).not.toContain('aria-label="Pause"');
     expect(playerSource).not.toContain('aria-label="Add to collection"');
     expect(playerSource).not.toContain('Back to RADIYO');
-    expect(playerSource).toContain("const tierOptions: PlayerTier[] = ['national', 'state', 'city'];");
+    expect(playerSource).toContain("const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];");
+    expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {

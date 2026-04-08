@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-06`
+**Last Updated:** `2026-04-08`
 
 ## Overview & Purpose
 Defines The Plot as the Home-side sectional system inside the `Home` surface where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -49,11 +49,11 @@ Shell relationship lock:
 - Statistics / Scene Map rule:
   - Scene Map is inherent to the Scene and lives inside the Statistics surface.
   - Statistics is its own dedicated page-level surface within The Plot (not a mini widget).
-  - Tier toggles scale the same Scene context from city to state to national aggregates.
+  - Current MVP Plot tier toggles expose `city` and `state` only.
+  - The broader platform model may still retain `national`, but `national` is deferred from the live MVP Plot surface until population justifies it.
   - Parent community context remains anchored to the active community identity (`city + state + music community`) during tier toggles unless explicitly changed by user.
   - City map shows local sect-level/community detail.
   - State map shows city-level macro statistics.
-  - National map shows state-level macro statistics.
   - Top 40 / billboard-style lists are deferred from MVP until population supports them.
 
 ### Implemented Behavior (Current)
@@ -72,6 +72,7 @@ Shell relationship lock:
   - `GET /communities/active/promotions`
   - `GET /communities/active/statistics`
 - Statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor.
+- Plot player controls and Statistics surface now clamp active MVP tier selection to `city` and `state`.
 - Plot Scene Activity panel now integrates registrar status read context:
   - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,
   - displays registration totals/status summary while retaining explicit `Open Registrar` navigation.

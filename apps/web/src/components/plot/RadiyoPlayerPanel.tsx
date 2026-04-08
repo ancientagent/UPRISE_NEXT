@@ -6,6 +6,7 @@ import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 export type PlayerMode = 'RADIYO' | 'Collection';
 export type RotationPool = 'new_releases' | 'main_rotation';
 export type PlayerTier = 'city' | 'state' | 'national';
+const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];
 
 interface RadiyoPlayerPanelProps {
   mode: PlayerMode;
@@ -31,7 +32,6 @@ export default function RadiyoPlayerPanel({
   collectionTitle,
 }: RadiyoPlayerPanelProps) {
   const isRadiyoMode = mode === 'RADIYO';
-  const tierOptions: PlayerTier[] = ['national', 'state', 'city'];
   const wheelActions = getEngagementWheelActions(mode);
 
   return (
@@ -118,8 +118,8 @@ export default function RadiyoPlayerPanel({
         </div>
 
         {isRadiyoMode ? (
-          <div data-slot="player-tier-stack" className="grid grid-cols-3 gap-2 sm:grid-cols-1 sm:grid-rows-3">
-            {tierOptions.map((tier) => (
+            <div data-slot="player-tier-stack" className="grid grid-cols-3 gap-2 sm:grid-cols-1 sm:grid-rows-3">
+            {MVP_PLAYER_TIER_OPTIONS.map((tier) => (
               <button
                 key={tier}
                 type="button"
@@ -159,7 +159,7 @@ export default function RadiyoPlayerPanel({
       <div className="border-t border-white/12 bg-[#161616] px-3 py-2.5 text-[11px] text-white/64">
         <p>
           {isRadiyoMode
-            ? 'Tap City, State, or National to start that broadcast. Tap the active tier again to stop.'
+            ? 'Tap City or State to start that broadcast. Tap the active tier again to stop.'
             : 'Collection mode stays selection-driven. Use eject to return to RADIYO.'}
         </p>
         <p className="mt-1">

@@ -211,7 +211,7 @@ export default function StatisticsPanel({
         <p className="text-4xl mb-3">🧭</p>
         <h3 className="font-semibold text-black mb-1">Select a community</h3>
         <p className="text-sm text-black/60">
-          Choose a local community in city view to anchor state/national statistics.
+          Choose a local community in city view to anchor state statistics.
         </p>
       </div>
     );
@@ -235,9 +235,7 @@ export default function StatisticsPanel({
   const sceneMapScopeCopy =
     selectedTier === 'city'
       ? 'City view keeps local scene-map detail for the active Plot context.'
-      : selectedTier === 'state'
-        ? 'State view keeps the same parent context and rolls the map up to city-level macro reads.'
-        : 'National view keeps the same parent context and rolls the map up to state-level macro reads.';
+      : 'State view keeps the same parent context and rolls the map up to city-level macro reads.';
 
   return (
     <div className="space-y-4">
@@ -325,9 +323,7 @@ export default function StatisticsPanel({
           {mapError ? <p className="text-xs text-red-600">{mapError}</p> : null}
           <div className="plot-wire-card-muted p-4">
             <p className="text-sm text-black/70">
-              {selectedTier === 'state'
-                ? 'State tier aggregates city-scoped scenes in this parent music community context.'
-                : 'National tier aggregates state-level macro context in this parent music community.'}
+              State tier aggregates city-scoped scenes in this parent music community context.
             </p>
             <p className="mt-2 text-xs text-black/50">
               Scope communities: {metrics.scopeCommunityCount.toLocaleString()} • Active tracks:{' '}

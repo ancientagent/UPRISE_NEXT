@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Propagated the current MVP `city/state` tier decision into the live Plot surface: the player and Statistics UI now stop advertising `national`, stale `national` inputs on `/plot` defensively clamp to `state`, the Plot specs now describe `national` as broader-platform retained but deferred from the active MVP Plot UI, and the slice is recorded in `docs/handoff/2026-04-08_plot-city-state-surface-clamp.md`.
 - Added `docs/handoff/2026-04-08_legacy-source-doc-reconciliation.md` to tie the two reviewed legacy source documents to their current durable destinations in the repo, including the narrowed MVP boundaries, retained analytics rules, later-version domains, and preserved profile-data inventories.
 - Clarified MVP/admin analytics scope so all cleanly trackable metrics with operational, audit, admin, or future analytics value should be retained even when not publicly surfaced, and Super Admin access remains broader than MVP display scope; aligned `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md` with `docs/specs/admin/super-admin-controls.md`.
 - Extended `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md` with retained artist/listener/venue profile-data inventories so later-version profile work keeps those fields in scope without widening current MVP profile surfaces; also linked the carry-forward rule from `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`.

@@ -396,9 +396,11 @@ export default function PlotPage() {
   };
 
   const handleTierChange = (tier: PlayerTier) => {
-    setSelectedTier(tier);
+    const nextTier = tier === 'national' ? 'state' : tier;
+
+    setSelectedTier(nextTier);
     setPlayerMode('RADIYO');
-    setActiveBroadcastTier((current) => (current === tier ? null : tier));
+    setActiveBroadcastTier((current) => (current === nextTier ? null : nextTier));
   };
 
   const handleProfilePointerDown = (event: PointerEvent<HTMLDivElement>) => {
