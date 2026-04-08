@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added a live MVP retained-analytics admin surface: `GET /admin/analytics/query` now exposes platform totals, signal-action totals, and current retained-metric availability/data from the existing runtime, and `/admin` renders that read-only summary for authenticated users while RBAC remains deferred per `docs/specs/admin/super-admin-controls.md`; recorded in `docs/handoff/2026-04-08_admin-retained-analytics-surface.md`.
 - Propagated the current MVP `city/state` tier decision into the live Plot surface: the player and Statistics UI now stop advertising `national`, stale `national` inputs on `/plot` defensively clamp to `state`, the Plot specs now describe `national` as broader-platform retained but deferred from the active MVP Plot UI, and the slice is recorded in `docs/handoff/2026-04-08_plot-city-state-surface-clamp.md`.
 - Added `docs/handoff/2026-04-08_legacy-source-doc-reconciliation.md` to tie the two reviewed legacy source documents to their current durable destinations in the repo, including the narrowed MVP boundaries, retained analytics rules, later-version domains, and preserved profile-data inventories.
 - Clarified MVP/admin analytics scope so all cleanly trackable metrics with operational, audit, admin, or future analytics value should be retained even when not publicly surfaced, and Super Admin access remains broader than MVP display scope; aligned `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md` with `docs/specs/admin/super-admin-controls.md`.

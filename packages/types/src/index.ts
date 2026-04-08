@@ -8,3 +8,4 @@ export * from './api';
 export * from './signal';
 export * from './discovery';
 export * from './artist-band';
+export * from './admin';
