@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Extended `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md` with retained artist/listener/venue profile-data inventories so later-version profile work keeps those fields in scope without widening current MVP profile surfaces; also linked the carry-forward rule from `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`.
 - Extended `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md` so retained analytics can include per-tier and platform-wide metrics plus future packaged analytics inputs for artists, mixologists, venues, businesses, and similar valid source domains, while keeping those metrics off the current MVP Plot/Discover surface unless explicitly promoted later.
 - Added `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md` plus dated handoff `docs/handoff/2026-04-08_later-version-domain-understandings.md` to preserve ambassadors, venues, mixologists, and mixes as legitimate later-version product domains while keeping them out of the current MVP Discover/Stats scope unless explicitly reactivated.
 - Narrowed Discover MVP scope to `city` + `state`, deferring `national` from the current surface while wiring `Recent Rises` to real city-to-state promotion data from the state player (`rotation_entries.enteredPoolAt`); the Discover page now clamps national listeners back to state scope for MVP, recent-rise cards preserve origin community identity, and the founder locks now record that `Recent Rises` means recent city-origin singles pulled into the state player.

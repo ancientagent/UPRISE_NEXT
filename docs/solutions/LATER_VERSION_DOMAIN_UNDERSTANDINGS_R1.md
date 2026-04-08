@@ -74,6 +74,49 @@ For the active Discover and Statistics MVP work:
   - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
   - `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`
 
+## Retained Profile Data
+Some legacy profile fields should remain part of background product understanding even when they are not part of the current MVP profile surfaces.
+
+These fields should be treated as:
+- legitimate profile-data candidates for later-version work
+- retained understanding for future profile/spec reconciliation
+- not automatic authorization to widen current MVP profile surfaces
+
+### Artist Profile Data To Retain
+- biography
+- genre / inspiration tags
+- photos / videos
+- external links
+- contact information
+- artist library
+- upcoming tour dates
+- ratings
+- messaging entry point
+
+### Listener Profile Data To Retain
+- username
+- location
+- favorite genre
+- playlists
+- artists followed
+- listeners followed
+- favorite artists
+- ambassador services offered
+- ambassador ratings from artists
+- ambassador location
+
+### Venue Profile Data To Retain
+- venue name
+- venue location
+- ratings
+- photos
+- upcoming events
+
+### Handling Rule
+- keep these profile-data inventories in future-version understanding
+- do not assume they are all approved for current MVP surface rendering
+- when profile work expands later, reconcile against current repo locks/specs before implementation
+
 ## Founder Confirmation Rule
 If a later-version domain introduces:
 - a new concept not already represented in current repo specs/canon, or

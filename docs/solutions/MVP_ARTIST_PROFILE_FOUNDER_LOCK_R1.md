@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: Founder + product engineering  
-Last updated: 2026-03-22
+Last updated: 2026-04-08
 
 ## 1) Purpose
 Capture founder-confirmed artist-page behavior so future sessions stop guessing about the artist surface from mixed narrative summaries, partial specs, or external synthesis.
@@ -93,6 +93,11 @@ This document does not yet finalize:
 - exact external-link inventory
 - exact artifact/display rules on the profile
 - artist-facing dashboard/management internals
+
+Legacy carry-forward rule:
+- richer artist profile data inventories from older product documents remain valid future-profile understanding
+- they are preserved in `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md`
+- they do not automatically expand the current MVP artist-page contract
 
 ## 9) Implementation Guardrails
 - Do not redesign the artist page as an unusual bespoke surface.
