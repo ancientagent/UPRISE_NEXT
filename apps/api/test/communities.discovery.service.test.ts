@@ -10,7 +10,7 @@ describe('CommunitiesService.discoverScenes', () => {
     track: { findMany: jest.fn() },
     follow: { groupBy: jest.fn() },
     signal: { findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn() },
-    signalAction: { groupBy: jest.fn(), upsert: jest.fn() },
+    signalAction: { findMany: jest.fn(), groupBy: jest.fn(), upsert: jest.fn() },
     collection: { upsert: jest.fn() },
     collectionItem: { upsert: jest.fn() },
     $transaction: jest.fn(),
@@ -483,7 +483,7 @@ describe('CommunitiesService.discoverScenes', () => {
     ]);
   });
 
-  it('getCommunityDiscoverHighlights aggregates recommendations, trending, and top artists', async () => {
+  it('getCommunityDiscoverHighlights aggregates popular singles lenses and listener recommendations', async () => {
     mockPrisma.community.findUnique.mockResolvedValue({
       id: 'c1',
       name: 'Austin Punk',
@@ -502,8 +502,6 @@ describe('CommunitiesService.discoverScenes', () => {
           communityId: 'c1',
           createdAt: new Date('2026-03-23T10:00:00.000Z'),
         },
-      ])
-      .mockResolvedValueOnce([
         {
           id: 's2',
           type: 'single',
@@ -512,43 +510,90 @@ describe('CommunitiesService.discoverScenes', () => {
           createdAt: new Date('2026-03-23T11:00:00.000Z'),
         },
       ]);
-    mockPrisma.artistBand.findMany.mockResolvedValue([
+    mockPrisma.signalAction.findMany.mockResolvedValue([
       {
-        id: 'ab1',
-        name: 'Signal Rise',
-        slug: 'signal-rise',
-        entityType: 'artist',
-        homeSceneId: 'c1',
-        homeScene: { name: 'Austin Punk' },
-        _count: { members: 2 },
+        id: 'recommend-1',
+        createdAt: new Date('2026-03-24T12:00:00.000Z'),
+        user: {
+          id: 'u2',
+          username: 'listener2',
+          displayName: 'Listener Two',
+          avatar: null,
+        },
+        signal: {
+          id: 's1',
+          type: 'single',
+          metadata: { title: 'Signal Fire' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T10:00:00.000Z'),
+        },
       },
     ]);
-    mockPrisma.signalAction.groupBy.mockResolvedValue([
-      { signalId: 's1', type: 'RECOMMEND', _count: { type: 4 } },
-      { signalId: 's2', type: 'BLAST', _count: { type: 9 } },
-    ]);
-    mockPrisma.follow.groupBy.mockResolvedValue([{ entityId: 'ab1', _count: { entityId: 7 } }]);
+    mockPrisma.signalAction.groupBy
+      .mockResolvedValueOnce([
+        { signalId: 's1', type: 'RECOMMEND', _count: { type: 4 } },
+        { signalId: 's1', type: 'ADD', _count: { type: 6 } },
+        { signalId: 's2', type: 'ADD', _count: { type: 3 } },
+        { signalId: 's2', type: 'SUPPORT', _count: { type: 5 } },
+      ])
+      .mockResolvedValueOnce([
+        { signalId: 's1', type: 'SUPPORT', _count: { type: 2 } },
+        { signalId: 's2', type: 'SUPPORT', _count: { type: 5 } },
+      ]);
 
     const result = await service.getCommunityDiscoverHighlights('u1', 'c1', { limit: 8 });
 
-    expect(result.recommendations).toEqual([
+    expect(result.popularSingles.mostAdded).toEqual([
       expect.objectContaining({
         signalId: 's1',
-        actionCounts: expect.objectContaining({ recommend: 4 }),
+        lensMetricValue: 6,
+        lensMetricLabel: 'All-time adds',
       }),
-    ]);
-    expect(result.trending).toEqual([
       expect.objectContaining({
         signalId: 's2',
-        actionCounts: expect.objectContaining({ blast: 9 }),
+        lensMetricValue: 3,
+        lensMetricLabel: 'All-time adds',
       }),
     ]);
-    expect(result.topArtists).toEqual([
+    expect(result.popularSingles.supportedNow).toEqual([
       expect.objectContaining({
-        artistBandId: 'ab1',
-        followCount: 7,
+        signalId: 's2',
+        lensMetricValue: 5,
+        lensMetricLabel: 'Supports in the last 7 days',
+      }),
+      expect.objectContaining({
+        signalId: 's1',
+        lensMetricValue: 2,
+        lensMetricLabel: 'Supports in the last 7 days',
       }),
     ]);
+    expect(result.popularSingles.recentRises).toEqual([]);
+    expect(result.recommendations).toEqual([
+      expect.objectContaining({
+        recommendationId: 'recommend-1',
+        actor: expect.objectContaining({
+          id: 'u2',
+          username: 'listener2',
+        }),
+        signal: expect.objectContaining({
+          signalId: 's1',
+          lensMetricValue: 4,
+          lensMetricLabel: 'Active recommendations',
+          actionCounts: expect.objectContaining({ recommend: 4 }),
+        }),
+      }),
+    ]);
+
+    expect(mockPrisma.signal.findMany).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        take: expect.any(Number),
+      }),
+    );
+    expect(mockPrisma.signalAction.findMany).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        take: expect.any(Number),
+      }),
+    );
   });
 
   it('saveDiscoverUprise creates or reuses an Uprise signal and adds it to the uprises shelf', async () => {

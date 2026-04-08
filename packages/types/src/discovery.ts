@@ -59,9 +59,39 @@ export const DiscoverSignalResultSchema = z.object({
     support: z.number().int().nonnegative(),
     recommend: z.number().int().nonnegative(),
   }),
+  lensMetricValue: z.number().int().nonnegative().nullable().optional(),
+  lensMetricLabel: z.string().nullable().optional(),
+  highestScopeReached: z.string().nullable().optional(),
+  lastRiseAt: z.string().nullable().optional(),
 });
 
 export type DiscoverSignalResult = z.infer<typeof DiscoverSignalResultSchema>;
+
+export const DiscoverRecommendationActorSchema = z.object({
+  id: z.string().uuid().or(z.string().min(1)),
+  username: z.string(),
+  displayName: z.string(),
+  avatar: z.string().nullable(),
+});
+
+export type DiscoverRecommendationActor = z.infer<typeof DiscoverRecommendationActorSchema>;
+
+export const DiscoverRecommendationResultSchema = z.object({
+  recommendationId: z.string().uuid().or(z.string().min(1)),
+  createdAt: z.string(),
+  actor: DiscoverRecommendationActorSchema,
+  signal: DiscoverSignalResultSchema,
+});
+
+export type DiscoverRecommendationResult = z.infer<typeof DiscoverRecommendationResultSchema>;
+
+export const DiscoverPopularSinglesSchema = z.object({
+  mostAdded: z.array(DiscoverSignalResultSchema),
+  supportedNow: z.array(DiscoverSignalResultSchema),
+  recentRises: z.array(DiscoverSignalResultSchema),
+});
+
+export type DiscoverPopularSingles = z.infer<typeof DiscoverPopularSinglesSchema>;
 
 export const CommunityDiscoverSearchResultSchema = z.object({
   community: DiscoverySceneSummarySchema,
@@ -74,9 +104,8 @@ export type CommunityDiscoverSearchResult = z.infer<typeof CommunityDiscoverSear
 
 export const CommunityDiscoverHighlightsSchema = z.object({
   community: DiscoverySceneSummarySchema,
-  recommendations: z.array(DiscoverSignalResultSchema),
-  trending: z.array(DiscoverSignalResultSchema),
-  topArtists: z.array(DiscoverArtistResultSchema),
+  popularSingles: DiscoverPopularSinglesSchema,
+  recommendations: z.array(DiscoverRecommendationResultSchema),
 });
 
 export type CommunityDiscoverHighlights = z.infer<typeof CommunityDiscoverHighlightsSchema>;

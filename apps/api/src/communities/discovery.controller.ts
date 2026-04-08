@@ -103,6 +103,7 @@ export class DiscoveryController {
     try {
       const query: GetCommunityDiscoverSearchDto = GetCommunityDiscoverSearchSchema.parse({
         query: rawQuery.query,
+        tier: rawQuery.tier,
         limit: rawQuery.limit,
       });
 
@@ -143,6 +144,7 @@ export class DiscoveryController {
   }> {
     try {
       const query: GetCommunityDiscoverHighlightsDto = GetCommunityDiscoverHighlightsSchema.parse({
+        tier: rawQuery.tier,
         limit: rawQuery.limit,
       });
 

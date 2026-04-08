@@ -24,6 +24,7 @@ import type {
   CommunityDiscoverHighlights,
   CommunityDiscoverSearchResult,
   DiscoverArtistResult,
+  DiscoverRecommendationResult,
   DiscoverSignalResult,
   DiscoverSongResult,
   SaveDiscoverUpriseResult,
@@ -287,6 +288,71 @@ export class CommunitiesService {
     return counts;
   }
 
+  private async getSignalActionCountsSince(
+    signalIds: string[],
+    since: Date,
+  ) {
+    if (signalIds.length === 0) {
+      return new Map<string, { add: number; blast: number; support: number; recommend: number }>();
+    }
+
+    const rows = await this.prisma.signalAction.groupBy({
+      by: ['signalId', 'type'],
+      where: {
+        signalId: {
+          in: signalIds,
+        },
+        createdAt: {
+          gte: since,
+        },
+      },
+      _count: {
+        type: true,
+      },
+    });
+
+    const counts = new Map<
+      string,
+      { add: number; blast: number; support: number; recommend: number }
+    >();
+
+    for (const row of rows) {
+      const current = counts.get(row.signalId) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
+      const key = row.type.trim().toUpperCase();
+      if (key === 'ADD') current.add = row._count.type;
+      if (key === 'BLAST') current.blast = row._count.type;
+      if (key === 'SUPPORT') current.support = row._count.type;
+      if (key === 'RECOMMEND') current.recommend = row._count.type;
+      counts.set(row.signalId, current);
+    }
+
+    return counts;
+  }
+
+  private buildDiscoverScopeWhere(
+    scene: {
+      id: string;
+      state: string | null;
+      musicCommunity: string | null;
+    },
+    tier: 'city' | 'state' | 'national',
+  ) {
+    if (tier === 'city') {
+      return { id: scene.id };
+    }
+
+    if (tier === 'state') {
+      return {
+        state: scene.state ?? undefined,
+        musicCommunity: scene.musicCommunity ?? undefined,
+      };
+    }
+
+    return {
+      musicCommunity: scene.musicCommunity ?? undefined,
+    };
+  }
+
   private async resolveTrackArtistBand(
     communityId: string | null,
     uploadedById: string,
@@ -477,11 +543,12 @@ export class CommunitiesService {
   ): Promise<CommunityDiscoverSearchResult> {
     const scene = await this.getSceneOrThrow(sceneId);
     const search = query.query.trim();
+    const scopeWhere = this.buildDiscoverScopeWhere(scene, query.tier);
 
     const [artistBands, tracks] = await Promise.all([
       this.prisma.artistBand.findMany({
         where: {
-          homeSceneId: sceneId,
+          homeScene: scopeWhere,
           OR: [
             { name: { contains: search, mode: 'insensitive' } },
             { slug: { contains: search.toLowerCase() } },
@@ -512,7 +579,7 @@ export class CommunitiesService {
       }),
       this.prisma.track.findMany({
         where: {
-          communityId: sceneId,
+          community: scopeWhere,
           OR: [
             { title: { contains: search, mode: 'insensitive' } },
             { artist: { contains: search, mode: 'insensitive' } },
@@ -616,16 +683,14 @@ export class CommunitiesService {
     query: GetCommunityDiscoverHighlightsDto,
   ): Promise<CommunityDiscoverHighlights> {
     const scene = await this.getSceneOrThrow(sceneId);
+    const scopeWhere = this.buildDiscoverScopeWhere(scene, query.tier);
+    const windowStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-    const [recommendedSignals, trendingSignals, artistBands] = await Promise.all([
+    const [singleSignals, recommendationActions] = await Promise.all([
       this.prisma.signal.findMany({
         where: {
-          communityId: sceneId,
-          actions: {
-            some: {
-              type: 'RECOMMEND',
-            },
-          },
+          type: 'single',
+          community: scopeWhere,
         },
         select: {
           id: true,
@@ -634,141 +699,149 @@ export class CommunitiesService {
           communityId: true,
           createdAt: true,
         },
-        orderBy: [{ createdAt: 'desc' }],
-        take: query.limit,
       }),
-      this.prisma.signal.findMany({
+      this.prisma.signalAction.findMany({
         where: {
-          communityId: sceneId,
-          actions: {
-            some: {
-              type: 'BLAST',
-            },
+          type: 'RECOMMEND',
+          signal: {
+            community: scopeWhere,
           },
         },
         select: {
           id: true,
-          type: true,
-          metadata: true,
-          communityId: true,
           createdAt: true,
-        },
-        orderBy: [{ createdAt: 'desc' }],
-        take: query.limit,
-      }),
-      this.prisma.artistBand.findMany({
-        where: {
-          homeSceneId: sceneId,
-        },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          entityType: true,
-          homeSceneId: true,
-          homeScene: {
+          user: {
             select: {
-              name: true,
-              city: true,
-              state: true,
-              musicCommunity: true,
+              id: true,
+              username: true,
+              displayName: true,
+              avatar: true,
             },
           },
-          _count: {
+          signal: {
             select: {
-              members: true,
+              id: true,
+              type: true,
+              metadata: true,
+              communityId: true,
+              createdAt: true,
             },
           },
         },
-        orderBy: [{ name: 'asc' }, { id: 'asc' }],
-        take: query.limit,
+        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
       }),
     ]);
 
-    const signalIds = Array.from(
+    const recommendationActionsByUser = new Map<string, (typeof recommendationActions)[number]>();
+    for (const action of recommendationActions) {
+      if (!recommendationActionsByUser.has(action.user.id)) {
+        recommendationActionsByUser.set(action.user.id, action);
+      }
+    }
+
+    const recommendationSignalIds = Array.from(
+      new Set(Array.from(recommendationActionsByUser.values()).map((action) => action.signal.id)),
+    );
+    const candidateSignalIds = Array.from(
       new Set([
-        ...recommendedSignals.map((signal) => signal.id),
-        ...trendingSignals.map((signal) => signal.id),
+        ...singleSignals.map((signal) => signal.id),
+        ...recommendationSignalIds,
       ]),
     );
-    const signalCounts = await this.getSignalActionCounts(signalIds);
+    const [signalCounts, currentWindowSignalCounts] = await Promise.all([
+      this.getSignalActionCounts(candidateSignalIds),
+      this.getSignalActionCountsSince(candidateSignalIds, windowStart),
+    ]);
 
     const toSignalResult = (
-      signals: Array<{
+      signal: {
         id: string;
         type: string;
         metadata: Prisma.JsonValue | null;
         communityId: string | null;
         createdAt: Date;
-      }>,
-      primarySort: 'recommend' | 'blast',
-    ): DiscoverSignalResult[] =>
-      signals
-        .map((signal) => ({
-          signalId: signal.id,
-          type: signal.type,
-          metadata: (signal.metadata as Record<string, unknown> | null) ?? null,
-          communityId: signal.communityId ?? null,
-          createdAt: signal.createdAt.toISOString(),
-          actionCounts:
-            signalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 },
-        }))
-        .sort((left, right) => {
-          const primaryDiff = right.actionCounts[primarySort] - left.actionCounts[primarySort];
-          if (primaryDiff !== 0) return primaryDiff;
-          const secondaryDiff = right.actionCounts.blast - left.actionCounts.blast;
-          if (secondaryDiff !== 0) return secondaryDiff;
-          return left.signalId.localeCompare(right.signalId);
-        })
-        .slice(0, query.limit);
+      },
+      options?: {
+        lensMetricValue?: number | null;
+        lensMetricLabel?: string | null;
+        highestScopeReached?: string | null;
+        lastRiseAt?: string | null;
+      },
+    ): DiscoverSignalResult => ({
+      signalId: signal.id,
+      type: signal.type,
+      metadata: (signal.metadata as Record<string, unknown> | null) ?? null,
+      communityId: signal.communityId ?? null,
+      createdAt: signal.createdAt.toISOString(),
+      actionCounts:
+        signalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 },
+      lensMetricValue: options?.lensMetricValue ?? null,
+      lensMetricLabel: options?.lensMetricLabel ?? null,
+      highestScopeReached: options?.highestScopeReached ?? null,
+      lastRiseAt: options?.lastRiseAt ?? null,
+    });
 
-    const artistFollowCounts = artistBands.length
-      ? await this.prisma.follow.groupBy({
-          by: ['entityId'],
-          where: {
-            entityType: {
-              in: ['artist', 'artistBand', 'band'],
-            },
-            entityId: {
-              in: artistBands.map((artistBand) => artistBand.id),
-            },
-          },
-          _count: {
-            entityId: true,
-          },
-        })
-      : [];
-
-    const followCountMap = new Map(
-      artistFollowCounts.map((entry) => [entry.entityId, entry._count.entityId]),
-    );
-
-    const topArtists: DiscoverArtistResult[] = artistBands
-      .map((artistBand) => ({
-        artistBandId: artistBand.id,
-        name: artistBand.name,
-        slug: artistBand.slug,
-        entityType: artistBand.entityType,
-        homeSceneId: artistBand.homeSceneId ?? null,
-        homeSceneName: artistBand.homeScene?.name ?? null,
-        homeSceneCity: artistBand.homeScene?.city ?? null,
-        homeSceneState: artistBand.homeScene?.state ?? null,
-        homeSceneMusicCommunity: artistBand.homeScene?.musicCommunity ?? null,
-        memberCount: artistBand._count.members,
-        followCount: followCountMap.get(artistBand.id) ?? 0,
-      }))
-      .sort((left, right) => {
-        if (right.followCount !== left.followCount) return right.followCount - left.followCount;
-        if (right.memberCount !== left.memberCount) return right.memberCount - left.memberCount;
-        return left.name.localeCompare(right.name);
+    const mostAdded = singleSignals
+      .map((signal) => {
+        const counts = signalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
+        return toSignalResult(signal, {
+          lensMetricValue: counts.add,
+          lensMetricLabel: 'All-time adds',
+        });
       })
+      .sort((left, right) => {
+        const primaryDiff = (right.lensMetricValue ?? 0) - (left.lensMetricValue ?? 0);
+        if (primaryDiff !== 0) return primaryDiff;
+        return left.signalId.localeCompare(right.signalId);
+      })
+      .slice(0, query.limit);
+
+    const supportedNow = singleSignals
+      .map((signal) => {
+        const counts = currentWindowSignalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
+        return toSignalResult(signal, {
+          lensMetricValue: counts.support,
+          lensMetricLabel: 'Supports in the last 7 days',
+        });
+      })
+      .sort((left, right) => {
+        const primaryDiff = (right.lensMetricValue ?? 0) - (left.lensMetricValue ?? 0);
+        if (primaryDiff !== 0) return primaryDiff;
+        const secondaryDiff = right.actionCounts.support - left.actionCounts.support;
+        if (secondaryDiff !== 0) return secondaryDiff;
+        return left.signalId.localeCompare(right.signalId);
+      })
+      .slice(0, query.limit);
+
+    const recentRises: DiscoverSignalResult[] = [];
+
+    const recommendations: DiscoverRecommendationResult[] = Array.from(recommendationActionsByUser.values())
+      .map((action) => ({
+        recommendationId: action.id,
+        createdAt: action.createdAt.toISOString(),
+        actor: {
+          id: action.user.id,
+          username: action.user.username,
+          displayName: action.user.displayName,
+          avatar: action.user.avatar ?? null,
+        },
+        signal: toSignalResult(action.signal, {
+          lensMetricValue:
+            (signalCounts.get(action.signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 })
+              .recommend,
+          lensMetricLabel: 'Active recommendations',
+        }),
+      }))
       .slice(0, query.limit);
 
     return {
       community: this.toSceneSummary(scene),
-      recommendations: toSignalResult(recommendedSignals, 'recommend'),
-      trending: toSignalResult(trendingSignals, 'blast'),
-      topArtists,
+      popularSingles: {
+        mostAdded,
+        supportedNow,
+        recentRises,
+      },
+      recommendations,
     };
   }
 

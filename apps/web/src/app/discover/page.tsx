@@ -3,7 +3,16 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
-import type { CommunityDiscoverHighlights, CommunityDiscoverSearchResult } from '@uprise/types';
+import type {
+  CommunityDiscoverHighlights,
+  CommunityDiscoverSearchResult,
+  DiscoverRecommendationResult,
+  DiscoverSignalResult,
+} from '@uprise/types';
+import RadiyoPlayerPanel, {
+  type PlayerTier,
+  type RotationPool,
+} from '@/components/plot/RadiyoPlayerPanel';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
 import SceneMap from '@/components/plot/SceneMap';
 import {
@@ -31,6 +40,8 @@ import {
 } from '@/lib/discovery/context';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
+
+type PopularSinglesLens = 'mostAdded' | 'supportedNow' | 'recentRises';
 
 function formatSceneLocation(city: string | null, state: string | null) {
   if (city && state) return `${city}, ${state}`;
@@ -92,25 +103,26 @@ async function postSignalAction(
   return response.data;
 }
 
-function CarouselSection({
-  title,
-  subtitle,
-  children,
-}: {
-  title: string;
-  subtitle: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="space-y-3">
-      <div>
-        <p className="plot-wire-label">{title}</p>
-        <h3 className="mt-1 text-lg font-semibold text-black">{title}</h3>
-        <p className="mt-1 text-sm text-black/60">{subtitle}</p>
-      </div>
-      <div className="flex gap-3 overflow-x-auto pb-2">{children}</div>
-    </section>
-  );
+function extractSignalTitle(signal: DiscoverSignalResult) {
+  const metadata = signal.metadata ?? {};
+  const title = metadata.title;
+  if (typeof title === 'string' && title.trim()) return title.trim();
+  const name = metadata.name;
+  if (typeof name === 'string' && name.trim()) return name.trim();
+  return signal.type;
+}
+
+function extractSignalSubtitle(signal: DiscoverSignalResult) {
+  const metadata = signal.metadata ?? {};
+  const artist =
+    typeof metadata.artist === 'string'
+      ? metadata.artist.trim()
+      : typeof metadata.artistName === 'string'
+        ? metadata.artistName.trim()
+        : '';
+
+  if (artist) return artist;
+  return signal.type.toUpperCase();
 }
 
 function formatCommunityIdentity(
@@ -125,6 +137,266 @@ function formatCommunityIdentity(
   return 'Community identity unavailable.';
 }
 
+function formatLensMetric(signal: DiscoverSignalResult) {
+  if (!signal.lensMetricLabel) return null;
+  return `${signal.lensMetricValue ?? 0} ${signal.lensMetricLabel}`;
+}
+
+function SearchResultsSection({
+  localSearchResult,
+  localSearchLoading,
+  localSearchError,
+  token,
+}: {
+  localSearchResult: CommunityDiscoverSearchResult | null;
+  localSearchLoading: boolean;
+  localSearchError: string | null;
+  token: string | null;
+}) {
+  if (localSearchLoading) {
+    return <p className="mt-4 text-sm text-black/60">Searching this listening scope...</p>;
+  }
+
+  if (localSearchError) {
+    return <p className="mt-4 text-sm text-red-700">{localSearchError}</p>;
+  }
+
+  if (!localSearchResult) {
+    return null;
+  }
+
+  return (
+    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <section className="plot-wire-list-item">
+        <p className="plot-wire-label">Artists</p>
+        <h3 className="mt-1 text-sm font-semibold text-black">Artists</h3>
+        {localSearchResult.artists.length === 0 ? (
+          <p className="mt-2 text-sm text-black/50">No artists matched this search.</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {localSearchResult.artists.map((artist) => (
+              <li key={artist.artistBandId} className="plot-wire-card-muted px-3 py-3">
+                {token ? (
+                  <Link
+                    href={`/artist-bands/${artist.artistBandId}`}
+                    className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                  >
+                    <p className="text-sm font-medium text-black">{artist.name}</p>
+                    <p className="text-xs text-black/60">
+                      {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
+                    </p>
+                    <p className="text-xs text-black/50">
+                      {formatCommunityIdentity(
+                        artist.homeSceneCity,
+                        artist.homeSceneState,
+                        artist.homeSceneMusicCommunity,
+                      )}
+                    </p>
+                  </Link>
+                ) : (
+                  <>
+                    <p className="text-sm font-medium text-black">{artist.name}</p>
+                    <p className="text-xs text-black/60">
+                      {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
+                    </p>
+                    <p className="text-xs text-black/50">
+                      {formatCommunityIdentity(
+                        artist.homeSceneCity,
+                        artist.homeSceneState,
+                        artist.homeSceneMusicCommunity,
+                      )}
+                    </p>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="plot-wire-list-item">
+        <p className="plot-wire-label">Songs</p>
+        <h3 className="mt-1 text-sm font-semibold text-black">Songs</h3>
+        {localSearchResult.songs.length === 0 ? (
+          <p className="mt-2 text-sm text-black/50">No songs matched this search.</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {localSearchResult.songs.map((song) => (
+              <li key={song.trackId} className="plot-wire-card-muted px-3 py-3">
+                {song.artistBandId && token ? (
+                  <Link
+                    href={`/artist-bands/${song.artistBandId}?trackId=${song.trackId}`}
+                    className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                  >
+                    <p className="text-sm font-medium text-black">{song.title}</p>
+                    <p className="text-xs text-black/60">
+                      {song.artist} • {song.playCount} plays • {song.likeCount} likes
+                    </p>
+                    <p className="text-xs text-black/50">
+                      {formatCommunityIdentity(
+                        song.communityCity,
+                        song.communityState,
+                        song.communityMusicCommunity,
+                      )}
+                    </p>
+                  </Link>
+                ) : (
+                  <>
+                    <p className="text-sm font-medium text-black">{song.title}</p>
+                    <p className="text-xs text-black/60">
+                      {song.artist} • {song.playCount} plays • {song.likeCount} likes
+                    </p>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function SignalCard({
+  signal,
+  token,
+  onSignalAction,
+}: {
+  signal: DiscoverSignalResult;
+  token: string | null;
+  onSignalAction: (
+    signalId: string,
+    action: 'add' | 'blast' | 'recommend',
+    successMessage: string,
+  ) => void;
+}) {
+  const title = extractSignalTitle(signal);
+  const subtitle = extractSignalSubtitle(signal);
+  const metric = formatLensMetric(signal);
+
+  return (
+    <article className="plot-wire-list-item min-w-[260px]">
+      <p className="plot-wire-label">Single</p>
+      <h4 className="mt-2 text-base font-semibold text-black">{title}</h4>
+      <p className="mt-1 text-xs text-black/60">{subtitle}</p>
+      {metric ? <p className="mt-2 text-xs text-black/55">{metric}</p> : null}
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
+          disabled={!token}
+          onClick={() => void onSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}
+        >
+          Add
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
+          disabled={!token}
+          onClick={() => void onSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}
+        >
+          Blast
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
+          disabled={!token}
+          onClick={() => void onSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}
+        >
+          Recommend
+        </Button>
+      </div>
+    </article>
+  );
+}
+
+function RecommendationCard({
+  recommendation,
+  token,
+  onSignalAction,
+}: {
+  recommendation: DiscoverRecommendationResult;
+  token: string | null;
+  onSignalAction: (
+    signalId: string,
+    action: 'add' | 'blast' | 'recommend',
+    successMessage: string,
+  ) => void;
+}) {
+  const title = extractSignalTitle(recommendation.signal);
+
+  return (
+    <article className="plot-wire-list-item min-w-[300px]">
+      <div className="flex items-start gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-black bg-[#efefe2] text-sm font-semibold text-black">
+          {recommendation.actor.displayName.charAt(0).toUpperCase()}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="plot-wire-label">Recommendation</p>
+          <p className="mt-1 text-sm font-semibold text-black">{recommendation.actor.displayName}</p>
+          <div className="mt-2 rounded-[1rem] border border-black bg-white px-3 py-3 text-sm text-black shadow-[2px_2px_0_rgba(0,0,0,0.16)]">
+            Check out "{title}"
+          </div>
+          <p className="mt-2 text-xs text-black/55">{extractSignalSubtitle(recommendation.signal)}</p>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
+          disabled={!token}
+          onClick={() => void onSignalAction(recommendation.signal.signalId, 'add', 'Signal added to your collection.')}
+        >
+          Add
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
+          disabled={!token}
+          onClick={() => void onSignalAction(recommendation.signal.signalId, 'blast', 'Signal blasted to your community.')}
+        >
+          Blast
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
+          disabled={!token}
+          onClick={() => void onSignalAction(recommendation.signal.signalId, 'recommend', 'Signal recommended.')}
+        >
+          Recommend
+        </Button>
+      </div>
+    </article>
+  );
+}
+
+function HorizontalRail({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="space-y-3">
+      <div>
+        <p className="plot-wire-label">{title}</p>
+        <h2 className="mt-1 text-lg font-semibold text-black">{title}</h2>
+        <p className="mt-1 text-sm text-black/60">{subtitle}</p>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2">{children}</div>
+    </section>
+  );
+}
+
 export default function DiscoverPage() {
   const { token } = useAuthStore();
   const {
@@ -136,14 +408,22 @@ export default function DiscoverPage() {
     setDiscoveryContext,
   } = useOnboardingStore();
 
-  const [tier, setTier] = useState<TierScope>('city');
+  const initialTier = useMemo<PlayerTier>(() => {
+    if (tunedScene?.tier === 'state' || tunedScene?.tier === 'national') {
+      return tunedScene.tier;
+    }
+    return 'city';
+  }, [tunedScene?.tier]);
+
+  const [tier, setTier] = useState<TierScope>(initialTier);
+  const [rotationPool, setRotationPool] = useState<RotationPool>('main_rotation');
   const [locationQuery, setLocationQuery] = useState(
-    getDefaultLocationQueryForTier('city', homeScene, tunedScene),
+    getDefaultLocationQueryForTier(initialTier, homeScene, tunedScene),
   );
   const [travelItems, setTravelItems] = useState<DiscoverItem[]>([]);
   const [travelLoading, setTravelLoading] = useState(false);
   const [travelError, setTravelError] = useState<string | null>(null);
-  const [mapOpen, setMapOpen] = useState(false);
+  const [travelOpen, setTravelOpen] = useState(false);
   const [savingHomeSceneId, setSavingHomeSceneId] = useState<string | null>(null);
   const [tuningSceneId, setTuningSceneId] = useState<string | null>(null);
   const [savingUpriseSceneId, setSavingUpriseSceneId] = useState<string | null>(null);
@@ -157,6 +437,7 @@ export default function DiscoverPage() {
   const [highlightsLoading, setHighlightsLoading] = useState(false);
   const [highlightsError, setHighlightsError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [selectedLens, setSelectedLens] = useState<PopularSinglesLens>('mostAdded');
 
   const originScene = tunedScene ?? homeScene;
   const originMusicCommunity = useMemo(
@@ -184,7 +465,8 @@ export default function DiscoverPage() {
     ? 'Home Scene or tuned community context is required to search locally.'
     : !activeSceneId
       ? 'This Home Scene does not have a live city-scene anchor yet. Local discovery is available in empty-state mode until the scene resolves.'
-      : 'RaDIYo retunes here first.';
+      : 'Search, Popular Singles, and Recommendations all follow the current player scope.';
+
   const emptyHighlights: CommunityDiscoverHighlights = useMemo(
     () => ({
       community: {
@@ -193,12 +475,15 @@ export default function DiscoverPage() {
         city: tunedScene?.city ?? homeScene?.city ?? null,
         state: tunedScene?.state ?? homeScene?.state ?? null,
         musicCommunity: tunedScene?.musicCommunity ?? homeScene?.musicCommunity ?? null,
-        tier: 'city',
+        tier,
         isActive: Boolean(tunedScene?.isActive),
       },
+      popularSingles: {
+        mostAdded: [],
+        supportedNow: [],
+        recentRises: [],
+      },
       recommendations: [],
-      trending: [],
-      topArtists: [],
     }),
     [
       activeSceneId,
@@ -206,12 +491,21 @@ export default function DiscoverPage() {
       homeScene?.city,
       homeScene?.musicCommunity,
       homeScene?.state,
+      tier,
       tunedScene?.city,
       tunedScene?.isActive,
       tunedScene?.musicCommunity,
       tunedScene?.state,
     ],
   );
+
+  const popularSingles = highlights?.popularSingles ?? emptyHighlights.popularSingles;
+  const selectedPopularSingles = popularSingles[selectedLens];
+
+  useEffect(() => {
+    setTier(initialTier);
+    setLocationQuery(getDefaultLocationQueryForTier(initialTier, homeScene, tunedScene));
+  }, [homeScene, initialTier, tunedScene]);
 
   useEffect(() => {
     async function fetchContext() {
@@ -224,7 +518,7 @@ export default function DiscoverPage() {
       }
     }
 
-    fetchContext();
+    void fetchContext();
   }, [token, setDiscoveryContext]);
 
   useEffect(() => {
@@ -356,8 +650,7 @@ export default function DiscoverPage() {
         }
       } catch (e) {
         if (!ignore) {
-          const message = e instanceof Error ? e.message : 'Unable to load Uprises.';
-          setTravelError(message);
+          setTravelError(e instanceof Error ? e.message : 'Unable to load Uprises.');
           setTravelItems([]);
         }
       } finally {
@@ -367,7 +660,7 @@ export default function DiscoverPage() {
       }
     }
 
-    fetchTravel();
+    void fetchTravel();
     return () => {
       ignore = true;
     };
@@ -394,14 +687,18 @@ export default function DiscoverPage() {
       setHighlightsError(null);
 
       try {
-        const response = await getCommunityDiscoverHighlights(activeSceneId, token || undefined, 8);
+        const response = await getCommunityDiscoverHighlights(
+          activeSceneId,
+          token || undefined,
+          8,
+          tier,
+        );
         if (!ignore) {
           setHighlights(response);
         }
       } catch (e) {
         if (!ignore) {
-          const message = e instanceof Error ? e.message : 'Unable to load Discover highlights.';
-          setHighlightsError(message);
+          setHighlightsError(e instanceof Error ? e.message : 'Unable to load Discover highlights.');
           setHighlights(null);
         }
       } finally {
@@ -411,18 +708,18 @@ export default function DiscoverPage() {
       }
     }
 
-    fetchHighlights();
+    void fetchHighlights();
     return () => {
       ignore = true;
     };
-  }, [activeSceneId, emptyHighlights, localContextReady, token]);
+  }, [activeSceneId, emptyHighlights, localContextReady, tier, token]);
 
   useEffect(() => {
     let ignore = false;
 
     async function fetchSceneMapData() {
-      if (!activeSceneId || !token || !mapOpen) {
-        if (!mapOpen) {
+      if (!activeSceneId || !token || !travelOpen) {
+        if (!travelOpen) {
           setSceneMap(null);
           setSceneMapError(null);
         }
@@ -443,11 +740,11 @@ export default function DiscoverPage() {
       }
     }
 
-    fetchSceneMapData();
+    void fetchSceneMapData();
     return () => {
       ignore = true;
     };
-  }, [activeSceneId, mapOpen, tier, token]);
+  }, [activeSceneId, tier, token, travelOpen]);
 
   useEffect(() => {
     let ignore = false;
@@ -484,14 +781,19 @@ export default function DiscoverPage() {
       setLocalSearchError(null);
 
       try {
-        const response = await searchCommunityDiscover(activeSceneId, query, token || undefined, 8);
+        const response = await searchCommunityDiscover(
+          activeSceneId,
+          query,
+          token || undefined,
+          8,
+          tier,
+        );
         if (!ignore) {
           setLocalSearchResult(response);
         }
       } catch (e) {
         if (!ignore) {
-          const message = e instanceof Error ? e.message : 'Unable to search this community.';
-          setLocalSearchError(message);
+          setLocalSearchError(e instanceof Error ? e.message : 'Unable to search this listening scope.');
           setLocalSearchResult(null);
         }
       } finally {
@@ -506,42 +808,7 @@ export default function DiscoverPage() {
       ignore = true;
       window.clearTimeout(timer);
     };
-  }, [activeSceneId, emptyHighlights.community, localContextReady, localSearchQuery, token]);
-
-  const resultSummary = useMemo(() => {
-    if (!hasOriginContext) {
-      return {
-        title: 'Community context required',
-        body: 'Discover travel inherits the full community identity you already left from. Open Discover from a real community context before trying to travel.',
-      };
-    }
-
-    if (travelLoading) {
-      return {
-        title: 'Loading Uprises',
-        body: 'Loading contextual Uprise results for the current travel scope.',
-      };
-    }
-
-    if (travelError) {
-      return {
-        title: 'Discover unavailable',
-        body: travelError,
-      };
-    }
-
-    if (travelItems.length === 0) {
-      return {
-        title: 'No matching Uprise',
-        body: 'No matching Uprise was found for this location. Open the map and continue exploration manually.',
-      };
-    }
-
-    return {
-      title: 'Uprises ready',
-      body: 'Retune first, then explicitly visit the community when you want to enter it.',
-    };
-  }, [hasOriginContext, travelError, travelItems.length, travelLoading]);
+  }, [activeSceneId, emptyHighlights.community, localContextReady, localSearchQuery, tier, token]);
 
   const handleTuneSceneById = async (sceneId: string) => {
     if (!token) return;
@@ -560,8 +827,7 @@ export default function DiscoverPage() {
       );
       setActionMessage('RaDIYo retuned to the selected Uprise.');
     } catch (e) {
-      const message = e instanceof Error ? e.message : 'Unable to tune to Uprise.';
-      setTravelError(message);
+      setTravelError(e instanceof Error ? e.message : 'Unable to tune to Uprise.');
     } finally {
       setTuningSceneId(null);
     }
@@ -605,8 +871,7 @@ export default function DiscoverPage() {
       );
       setActionMessage(`${item.name} is now your Home Scene.`);
     } catch (e) {
-      const message = e instanceof Error ? e.message : 'Unable to set Home Scene.';
-      setTravelError(message);
+      setTravelError(e instanceof Error ? e.message : 'Unable to set Home Scene.');
     } finally {
       setSavingHomeSceneId(null);
     }
@@ -635,7 +900,7 @@ export default function DiscoverPage() {
       await postSignalAction(signalId, action, token);
       setActionMessage(successMessage);
       if (activeSceneId) {
-        const response = await getCommunityDiscoverHighlights(activeSceneId, token, 8);
+        const response = await getCommunityDiscoverHighlights(activeSceneId, token, 8, tier);
         setHighlights(response);
       }
     } catch (e) {
@@ -643,29 +908,37 @@ export default function DiscoverPage() {
     }
   };
 
-  const currentCityScenes = travelItems.filter(isCityScene);
-
-  const handleChangeTier = (nextTier: TierScope) => {
+  const handleChangeTier = (nextTier: PlayerTier) => {
     setTier(nextTier);
     setLocationQuery(getDefaultLocationQueryForTier(nextTier, homeScene, tunedScene));
     setTravelError(null);
   };
 
+  const currentCityScenes = travelItems.filter(isCityScene);
+
   return (
     <main className="plot-wire-page pb-10">
-      <div className="plot-wire-frame max-w-6xl space-y-4">
+      <div className="plot-wire-frame max-w-6xl space-y-5">
         <header className="plot-wire-card p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-3xl">
               <p className="plot-wire-label">Discover</p>
               <h1 className="mt-2 text-3xl font-semibold text-black">Discover Uprises, Artists, and Songs</h1>
               <p className="mt-2 text-sm text-black/60">
-                Travel starts from the community you are already in. Discover keeps that current community context and changes geography.
+                One listening scope governs search, Popular Singles, Recommendations, and Travel. Change the player
+                tier when you want the scope to widen.
               </p>
             </div>
-            <div className="plot-wire-toolbar min-w-[220px]">
-              <p className="plot-wire-label">Travel Model</p>
-              <p className="mt-1 text-sm text-black/70">Retune first. Enter explicitly.</p>
+            <div className="plot-wire-toolbar min-w-[240px]">
+              <p className="plot-wire-label">Current Listening Scope</p>
+              <p className="mt-1 text-sm text-black/70 capitalize">{tier}</p>
+              <p className="mt-2 text-sm text-black/70">
+                {formatCommunityIdentity(
+                  originScene?.city ?? null,
+                  originScene?.state ?? null,
+                  originMusicCommunity,
+                )}
+              </p>
             </div>
           </div>
           <SceneContextBadge homeScene={homeScene} tunedScene={tunedScene} isVisitor={isVisitor} />
@@ -689,234 +962,28 @@ export default function DiscoverPage() {
         <section className="plot-wire-panel">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
-              <p className="plot-wire-label">Uprise Travel</p>
-              <h2 className="mt-2 text-lg font-semibold text-black">Search by city or state</h2>
+              <p className="plot-wire-label">Search</p>
+              <h2 className="mt-1 text-lg font-semibold text-black">Artist and song search</h2>
               <p className="mt-1 text-sm text-black/60">
-                Travel keeps your current community context fixed and changes geography around it.
-              </p>
-            </div>
-            <div className="plot-wire-toolbar min-w-[260px]">
-              <p className="plot-wire-label">Origin Community</p>
-              <p className="mt-1 text-sm text-black/70">
-                {formatCommunityIdentity(
-                  originScene?.city ?? null,
-                  originScene?.state ?? null,
-                  originMusicCommunity,
-                )}
-              </p>
-              <p className="mt-2 text-xs uppercase tracking-[0.14em] text-black/55">
-                Scope <span className="font-semibold capitalize text-black">{tier}</span>
-              </p>
-            </div>
-          </div>
-
-          {!hasOriginContext ? (
-            <div className="mt-4 rounded-[1rem] border border-black bg-[#f5e8bf] px-4 py-3 text-sm text-black">
-              Discover travel needs an active community context so the city, state, and music community are already known.
-            </div>
-          ) : null}
-
-          <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
-            <div className="plot-wire-toolbar">
-              <p className="plot-wire-label">Travel Search</p>
-              <input
-                value={locationQuery}
-                onChange={(event) => setLocationQuery(event.target.value)}
-                placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
-                className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
-                disabled={!hasOriginContext}
-              />
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMapOpen((value) => !value)}
-              disabled={!hasOriginContext}
-              className="plot-wire-chip h-auto rounded-full bg-white px-4 py-3 text-[11px] text-black"
-            >
-              {mapOpen ? 'Hide Map' : 'Map View'}
-            </Button>
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {(['city', 'state', 'national'] as TierScope[]).map((value) => (
-              <Button
-                key={value}
-                size="sm"
-                variant="outline"
-                className={
-                  tier === value
-                    ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
-                    : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
-                }
-                onClick={() => handleChangeTier(value)}
-                disabled={!hasOriginContext}
-              >
-                {value}
-              </Button>
-            ))}
-          </div>
-
-          {mapOpen ? (
-            <div className="plot-wire-card-muted plot-wire-grid-bg mt-5 p-4">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="plot-wire-label">Map Explorer</p>
-                  <p className="mt-1 text-xs text-black/55">
-                    Drag across the scene map and click a community point to retune directly from Discover.
-                  </p>
-                </div>
-                {sceneMapError ? <p className="text-xs text-red-700">{sceneMapError}</p> : null}
-              </div>
-              <div className="h-56">
-                <SceneMap
-                  points={sceneMap?.points ?? []}
-                  selectedPointId={activeSceneId}
-                  onSelectPoint={(point) => {
-                    if (point.kind === 'community') {
-                      void handleTuneSceneById(point.id);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          ) : null}
-        </section>
-
-        <section className="plot-wire-panel">
-          <div
-            className={`rounded-[1rem] border px-4 py-4 ${
-              travelError ? 'border-black bg-[#f2d3d2] text-black' : 'border-black bg-[#efefe2] text-black/65'
-            }`}
-          >
-            <p className="plot-wire-label">{resultSummary.title}</p>
-            <p className="mt-1 text-sm text-black/75">{resultSummary.body}</p>
-          </div>
-
-          {currentCityScenes.length > 0 ? (
-            <ul className="mt-4 space-y-3">
-              {currentCityScenes.map((item) => (
-                <li key={item.sceneId} className="plot-wire-list-item">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="max-w-2xl">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-base font-semibold text-black">{item.name}</p>
-                        <span className="plot-wire-chip">{getCitySceneStatusLabel(item, tunedSceneId)}</span>
-                        <span className="plot-wire-chip">{formatMusicCommunityLabel(item.musicCommunity, originMusicCommunity)}</span>
-                      </div>
-                      <dl className="mt-3 grid gap-1 text-sm text-black/60">
-                        <div className="flex flex-wrap gap-2">
-                          <dt className="plot-wire-label">Location</dt>
-                          <dd>{formatSceneLocation(item.city, item.state)}</dd>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          <dt className="plot-wire-label">Members</dt>
-                          <dd>{item.memberCount.toLocaleString()}</dd>
-                        </div>
-                      </dl>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className={
-                          tunedSceneId === item.sceneId
-                            ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
-                            : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
-                        }
-                        disabled={!token || tuningSceneId === item.sceneId}
-                        onClick={() => void handleTuneSceneById(item.sceneId)}
-                      >
-                        {tuningSceneId === item.sceneId ? 'Retuning...' : tunedSceneId === item.sceneId ? 'Listening' : 'Retune'}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                        disabled={!token || savingUpriseSceneId === item.sceneId}
-                        onClick={() => void handleSaveUprise(item.sceneId)}
-                      >
-                        {savingUpriseSceneId === item.sceneId ? 'Adding...' : 'Add'}
-                      </Button>
-                      {token ? (
-                        <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
-                          <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
-                        </Button>
-                      ) : (
-                        <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" disabled>
-                          Visit {item.name}
-                        </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                        disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
-                        onClick={() => void handleSetHomeScene(item)}
-                      >
-                        {savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}
-                      </Button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-
-          {travelItems.some(isStateRollup) ? (
-            <div className="mt-4 space-y-3">
-              {travelItems.filter(isStateRollup).map((item) => (
-                <div key={item.state} className="plot-wire-list-item">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                      <p className="text-base font-semibold text-black">{item.state} {item.musicCommunity}</p>
-                      <p className="mt-1 text-sm text-black/60">
-                        {item.citySceneCount} city scenes • {item.totalMembers.toLocaleString()} total members
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                      onClick={() => {
-                        handleChangeTier('state');
-                        setLocationQuery(item.state);
-                      }}
-                    >
-                      Browse {item.state}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </section>
-
-        <section className="plot-wire-panel">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="max-w-2xl">
-              <p className="plot-wire-label">Current Community Discover</p>
-              <h2 className="mt-2 text-lg font-semibold text-black">{activeSceneName}</h2>
-              <p className="mt-1 text-sm text-black/60">
-                Search artists and songs inside the current community, then explore the community-driven carousels below.
+                The single Discover search bar stays anchored to the current player scope.
               </p>
             </div>
             <div className="plot-wire-toolbar min-w-[280px]">
-              <p className="plot-wire-label">Local State</p>
-              <p>Visitor mode: {isVisitor ? 'Active' : 'Off'}</p>
+              <p className="plot-wire-label">Scope State</p>
+              <p className="text-sm text-black/70">Visitor mode: {isVisitor ? 'Active' : 'Off'}</p>
               <p className="mt-2 text-sm text-black/70">{localDiscoverLockedReason}</p>
             </div>
           </div>
 
           <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
             <div className="plot-wire-toolbar">
-              <p className="plot-wire-label">Local Search</p>
+              <p className="plot-wire-label">Search Bar</p>
               <input
                 value={localSearchQuery}
                 onChange={(event) => setLocalSearchQuery(event.target.value)}
                 placeholder={
                   localContextReady
-                    ? `Search artists and songs in ${activeSceneName}`
+                    ? `Search artists and songs in the current ${tier} listening scope`
                     : 'Home Scene or tuned community required'
                 }
                 className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
@@ -935,205 +1002,338 @@ export default function DiscoverPage() {
             </p>
           ) : null}
 
-          {localSearchLoading ? (
-            <p className="mt-3 text-sm text-black/60">Searching this community...</p>
-          ) : null}
-          {localSearchError ? <p className="mt-3 text-sm text-red-700">{localSearchError}</p> : null}
-          {localSearchResult ? (
-            <div className="mt-4 grid gap-4 lg:grid-cols-2">
-              <section className="plot-wire-list-item">
-                <p className="plot-wire-label">Artists</p>
-                <h3 className="mt-1 text-sm font-semibold text-black">Artists</h3>
-                {localSearchResult.artists.length === 0 ? (
-                  <p className="mt-2 text-sm text-black/50">No artists matched this search.</p>
-                ) : (
-                  <ul className="mt-3 space-y-2">
-                    {localSearchResult.artists.map((artist) => (
-                      <li key={artist.artistBandId} className="plot-wire-card-muted px-3 py-3">
-                        {token ? (
-                          <Link
-                            href={`/artist-bands/${artist.artistBandId}`}
-                            className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+          <SearchResultsSection
+            localSearchResult={localSearchResult}
+            localSearchLoading={localSearchLoading}
+            localSearchError={localSearchError}
+            token={token}
+          />
+        </section>
+
+        <section className="plot-wire-panel">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="plot-wire-label">Popular Singles</p>
+              <h2 className="mt-1 text-lg font-semibold text-black">Popular Singles</h2>
+              <p className="mt-1 text-sm text-black/60">
+                Descriptive signal discovery inside the current player scope. No `Popular Now`, no recommendation engine.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className={selectedLens === 'mostAdded'
+                  ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                  : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'}
+                onClick={() => setSelectedLens('mostAdded')}
+              >
+                Most Added
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className={selectedLens === 'supportedNow'
+                  ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                  : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'}
+                onClick={() => setSelectedLens('supportedNow')}
+              >
+                Supported Now
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className={selectedLens === 'recentRises'
+                  ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                  : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'}
+                onClick={() => setSelectedLens('recentRises')}
+              >
+                Recent Rises
+              </Button>
+            </div>
+          </div>
+
+          {highlightsLoading ? <p className="mt-4 text-sm text-black/60">Loading Popular Singles...</p> : null}
+          {highlightsError ? <p className="mt-4 text-sm text-red-700">{highlightsError}</p> : null}
+
+          <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+            {selectedPopularSingles.length === 0 ? (
+              <div className="plot-wire-card-muted min-w-[280px] border-dashed px-4 py-6 text-sm text-black/50">
+                {selectedLens === 'recentRises'
+                  ? 'Recent rise markers are not available in this scope yet.'
+                  : 'No singles available for this lens yet.'}
+              </div>
+            ) : (
+              selectedPopularSingles.map((signal) => (
+                <SignalCard
+                  key={`${selectedLens}-${signal.signalId}`}
+                  signal={signal}
+                  token={token}
+                  onSignalAction={handleSignalAction}
+                />
+              ))
+            )}
+          </div>
+        </section>
+
+        <section className="plot-wire-panel">
+          <HorizontalRail
+            title="Recommendations"
+            subtitle="Listener-to-listener discovery using the fixed avatar and recommendation-balloon grammar."
+          >
+            {highlightsLoading ? (
+              <div className="plot-wire-card-muted min-w-[280px] border-dashed px-4 py-6 text-sm text-black/50">
+                Loading recommendations...
+              </div>
+            ) : highlights?.recommendations.length ? (
+              highlights.recommendations.map((recommendation) => (
+                <RecommendationCard
+                  key={recommendation.recommendationId}
+                  recommendation={recommendation}
+                  token={token}
+                  onSignalAction={handleSignalAction}
+                />
+              ))
+            ) : (
+              <div className="plot-wire-card-muted min-w-[280px] border-dashed px-4 py-6 text-sm text-black/50">
+                No listener recommendations are active in this scope yet.
+              </div>
+            )}
+          </HorizontalRail>
+        </section>
+
+        <section className="space-y-0">
+          <RadiyoPlayerPanel
+            mode="RADIYO"
+            onCollectionEject={() => undefined}
+            rotationPool={rotationPool}
+            onRotationPoolChange={setRotationPool}
+            selectedTier={tier}
+            activeBroadcastTier={tier}
+            onTierChange={handleChangeTier}
+            broadcastLabel={`${activeSceneName} • ${tier}`}
+            collectionTitle={null}
+          />
+
+          <div className="mt-[-1px] rounded-b-[1rem] border border-t-0 border-black bg-[#161616] px-4 py-4 text-white">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/52">Travel</p>
+                <p className="mt-1 text-sm text-white/82">
+                  Travel stays attached to the player. Open it when you want the map and retune controls to drop below the current scope.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-auto rounded-full border-white/18 bg-white/8 px-4 py-2 text-[11px] text-white hover:bg-white/12"
+                onClick={() => setTravelOpen((value) => !value)}
+                disabled={!hasOriginContext}
+              >
+                {travelOpen ? 'Hide Travel' : 'Open Travel'}
+              </Button>
+            </div>
+          </div>
+
+          {travelOpen ? (
+            <div className="mt-[-1px] rounded-b-[1.2rem] border border-t-0 border-black bg-[#efefe2] p-4">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="max-w-2xl">
+                  <p className="plot-wire-label">Travel Panel</p>
+                  <h2 className="mt-1 text-lg font-semibold text-black">Move the scope without breaking community identity</h2>
+                  <p className="mt-1 text-sm text-black/60">
+                    Travel keeps the parent music community fixed and changes geography under the current player tier.
+                  </p>
+                </div>
+                <div className="plot-wire-toolbar min-w-[260px]">
+                  <p className="plot-wire-label">Origin Community</p>
+                  <p className="mt-1 text-sm text-black/70">
+                    {formatCommunityIdentity(
+                      originScene?.city ?? null,
+                      originScene?.state ?? null,
+                      originMusicCommunity,
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {!hasOriginContext ? (
+                <div className="mt-4 rounded-[1rem] border border-black bg-[#f5e8bf] px-4 py-3 text-sm text-black">
+                  Discover travel needs an active community context so the city, state, and music community are already known.
+                </div>
+              ) : null}
+
+              <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="plot-wire-toolbar">
+                  <p className="plot-wire-label">Travel Search</p>
+                  <input
+                    value={locationQuery}
+                    onChange={(event) => setLocationQuery(event.target.value)}
+                    placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
+                    className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
+                    disabled={!hasOriginContext}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(['city', 'state', 'national'] as TierScope[]).map((value) => (
+                    <Button
+                      key={value}
+                      size="sm"
+                      variant="outline"
+                      className={
+                        tier === value
+                          ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-3 text-[11px] text-black'
+                          : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-3 text-[11px] text-black'
+                      }
+                      onClick={() => handleChangeTier(value)}
+                      disabled={!hasOriginContext}
+                    >
+                      {value}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="plot-wire-card-muted plot-wire-grid-bg mt-5 p-4">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="plot-wire-label">Map View</p>
+                    <p className="mt-1 text-xs text-black/55">
+                      The visual map drops from the Travel bar and follows the same player scope.
+                    </p>
+                  </div>
+                  {sceneMapError ? <p className="text-xs text-red-700">{sceneMapError}</p> : null}
+                </div>
+                <div className="h-56">
+                  <SceneMap
+                    points={sceneMap?.points ?? []}
+                    selectedPointId={activeSceneId}
+                    onSelectPoint={(point) => {
+                      if (point.kind === 'community') {
+                        void handleTuneSceneById(point.id);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              {travelLoading ? <p className="mt-4 text-sm text-black/60">Loading Uprises for this scope...</p> : null}
+              {travelError ? <p className="mt-4 text-sm text-red-700">{travelError}</p> : null}
+              {token && isVisitor && activeSceneId ? (
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[1rem] border border-black bg-[#b8d63b] px-4 py-3 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.2)]">
+                  <p>
+                    Travel active. You are tuned to {activeSceneName} and can visit the community now.
+                  </p>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                  >
+                    <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
+                  </Button>
+                </div>
+              ) : null}
+
+              {currentCityScenes.length > 0 ? (
+                <ul className="mt-4 space-y-3">
+                  {currentCityScenes.map((item) => (
+                    <li key={item.sceneId} className="plot-wire-list-item">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div className="max-w-2xl">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-base font-semibold text-black">{item.name}</p>
+                            <span className="plot-wire-chip">{getCitySceneStatusLabel(item, tunedSceneId)}</span>
+                            <span className="plot-wire-chip">{formatMusicCommunityLabel(item.musicCommunity, originMusicCommunity)}</span>
+                          </div>
+                          <dl className="mt-3 grid gap-1 text-sm text-black/60">
+                            <div className="flex flex-wrap gap-2">
+                              <dt className="plot-wire-label">Location</dt>
+                              <dd>{formatSceneLocation(item.city, item.state)}</dd>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <dt className="plot-wire-label">Members</dt>
+                              <dd>{item.memberCount.toLocaleString()}</dd>
+                            </div>
+                          </dl>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className={
+                              tunedSceneId === item.sceneId
+                                ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                                : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
+                            }
+                            disabled={!token || tuningSceneId === item.sceneId}
+                            onClick={() => void handleTuneSceneById(item.sceneId)}
                           >
-                            <p className="text-sm font-medium text-black">{artist.name}</p>
-                            <p className="text-xs text-black/60">
-                              {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
-                            </p>
-                            <p className="text-xs text-black/50">
-                              {formatCommunityIdentity(
-                                artist.homeSceneCity,
-                                artist.homeSceneState,
-                                artist.homeSceneMusicCommunity,
-                              )}
-                            </p>
-                          </Link>
-                        ) : (
-                          <>
-                            <p className="text-sm font-medium text-black">{artist.name}</p>
-                            <p className="text-xs text-black/60">
-                              {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
-                            </p>
-                            <p className="text-xs text-black/50">
-                              {formatCommunityIdentity(
-                                artist.homeSceneCity,
-                                artist.homeSceneState,
-                                artist.homeSceneMusicCommunity,
-                              )}
-                            </p>
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-              <section className="plot-wire-list-item">
-                <p className="plot-wire-label">Songs</p>
-                <h3 className="mt-1 text-sm font-semibold text-black">Songs</h3>
-                {localSearchResult.songs.length === 0 ? (
-                  <p className="mt-2 text-sm text-black/50">No songs matched this search.</p>
-                ) : (
-                  <ul className="mt-3 space-y-2">
-                    {localSearchResult.songs.map((song) => (
-                      <li key={song.trackId} className="plot-wire-card-muted px-3 py-3">
-                        {song.artistBandId && token ? (
-                          <Link
-                            href={`/artist-bands/${song.artistBandId}?trackId=${song.trackId}`}
-                            className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                            {tuningSceneId === item.sceneId ? 'Retuning...' : tunedSceneId === item.sceneId ? 'Listening' : 'Retune'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                            disabled={!token || savingUpriseSceneId === item.sceneId}
+                            onClick={() => void handleSaveUprise(item.sceneId)}
                           >
-                            <p className="text-sm font-medium text-black">{song.title}</p>
-                            <p className="text-xs text-black/60">
-                              {song.artist} • {song.playCount} plays • {song.likeCount} likes
-                            </p>
-                            <p className="text-xs text-black/50">
-                              {formatCommunityIdentity(
-                                song.communityCity,
-                                song.communityState,
-                                song.communityMusicCommunity,
-                              )}
-                            </p>
-                          </Link>
-                        ) : (
-                          <>
-                            <p className="text-sm font-medium text-black">{song.title}</p>
-                            <p className="text-xs text-black/60">
-                              {song.artist} • {song.playCount} plays • {song.likeCount} likes
-                            </p>
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
+                            {savingUpriseSceneId === item.sceneId ? 'Adding...' : 'Add'}
+                          </Button>
+                          {token ? (
+                            <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                              <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" disabled>
+                              Visit {item.name}
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                            disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
+                            onClick={() => void handleSetHomeScene(item)}
+                          >
+                            {savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}
+                          </Button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              {travelItems.some(isStateRollup) ? (
+                <div className="mt-4 space-y-3">
+                  {travelItems.filter(isStateRollup).map((item) => (
+                    <div key={item.state} className="plot-wire-list-item">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                          <p className="text-base font-semibold text-black">{item.state} {item.musicCommunity}</p>
+                          <p className="mt-1 text-sm text-black/60">
+                            {item.citySceneCount} city scenes • {item.totalMembers.toLocaleString()} total members
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                          onClick={() => {
+                            handleChangeTier('state');
+                            setLocationQuery(item.state);
+                          }}
+                        >
+                          Browse {item.state}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </div>
           ) : null}
-
-          <div className="mt-6 space-y-6">
-            {highlightsLoading ? <p className="text-sm text-black/60">Loading community highlights...</p> : null}
-            {highlightsError ? <p className="text-sm text-red-700">{highlightsError}</p> : null}
-
-            {highlights ? (
-              <>
-                <CarouselSection
-                  title="Recommendations"
-                  subtitle="Signals recommended by listeners in this community."
-                >
-                  {highlights.recommendations.length === 0 ? (
-                    <div className="plot-wire-card-muted min-w-[260px] border-dashed px-4 py-6 text-sm text-black/50">
-                      No recommended signals yet.
-                    </div>
-                  ) : (
-                    highlights.recommendations.map((signal) => (
-                      <article key={signal.signalId} className="plot-wire-list-item min-w-[260px]">
-                        <p className="plot-wire-label">Signal</p>
-                        <h4 className="mt-2 text-base font-semibold text-black">{String(signal.metadata?.title ?? signal.metadata?.name ?? signal.type)}</h4>
-                        <p className="mt-1 text-xs text-black/60">{signal.actionCounts.recommend} recommends</p>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
-                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
-                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
-                        </div>
-                      </article>
-                    ))
-                  )}
-                </CarouselSection>
-
-                <CarouselSection
-                  title="Trending"
-                  subtitle="Current signal momentum in this community, driven by blast counts."
-                >
-                  {highlights.trending.length === 0 ? (
-                    <div className="plot-wire-card-muted min-w-[260px] border-dashed px-4 py-6 text-sm text-black/50">
-                      No trending signals yet.
-                    </div>
-                  ) : (
-                    highlights.trending.map((signal) => (
-                      <article key={signal.signalId} className="plot-wire-list-item min-w-[260px]">
-                        <p className="plot-wire-label">Trending</p>
-                        <h4 className="mt-2 text-base font-semibold text-black">{String(signal.metadata?.title ?? signal.metadata?.name ?? signal.type)}</h4>
-                        <p className="mt-1 text-xs text-black/60">{signal.actionCounts.blast} blasts</p>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}>Add</Button>
-                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'blast', 'Signal blasted to your community.')}>Blast</Button>
-                          <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black" disabled={!token} onClick={() => void handleSignalAction(signal.signalId, 'recommend', 'Signal recommended.')}>Recommend</Button>
-                        </div>
-                      </article>
-                    ))
-                  )}
-                </CarouselSection>
-
-                <CarouselSection
-                  title="Top Artists"
-                  subtitle="Community-leading artists gathered from listener stats in this Uprise."
-                >
-                  {highlights.topArtists.length === 0 ? (
-                    <div className="plot-wire-card-muted min-w-[240px] border-dashed px-4 py-6 text-sm text-black/50">
-                      No top artists yet.
-                    </div>
-                  ) : (
-                    highlights.topArtists.map((artist) => (
-                      <article key={artist.artistBandId} className="plot-wire-list-item min-w-[240px]">
-                        <p className="plot-wire-label">Artist</p>
-                        {token ? (
-                          <Link
-                            href={`/artist-bands/${artist.artistBandId}`}
-                            className="mt-2 block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                          >
-                            <h4 className="text-base font-semibold text-black">{artist.name}</h4>
-                            <p className="mt-1 text-xs text-black/60">
-                              {artist.followCount} followers • {artist.memberCount} members
-                            </p>
-                            <p className="mt-1 text-xs text-black/50">
-                              {formatCommunityIdentity(
-                                artist.homeSceneCity,
-                                artist.homeSceneState,
-                                artist.homeSceneMusicCommunity,
-                              )}
-                            </p>
-                          </Link>
-                        ) : (
-                          <>
-                            <h4 className="mt-2 text-base font-semibold text-black">{artist.name}</h4>
-                            <p className="mt-1 text-xs text-black/60">
-                              {artist.followCount} followers • {artist.memberCount} members
-                            </p>
-                            <p className="mt-1 text-xs text-black/50">
-                              {formatCommunityIdentity(
-                                artist.homeSceneCity,
-                                artist.homeSceneState,
-                                artist.homeSceneMusicCommunity,
-                              )}
-                            </p>
-                          </>
-                        )}
-                      </article>
-                    ))
-                  )}
-                </CarouselSection>
-              </>
-            ) : null}
-          </div>
         </section>
       </div>
     </main>

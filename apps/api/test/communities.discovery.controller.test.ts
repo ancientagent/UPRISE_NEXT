@@ -170,7 +170,7 @@ describe('DiscoveryController', () => {
 
     const response = await (app.getHttpAdapter().getInstance() as any).inject({
       method: 'GET',
-      url: '/discover/communities/scene-1/search?query=signal&limit=5',
+      url: '/discover/communities/scene-1/search?query=signal&limit=5&tier=state',
       headers: {
         authorization: 'Bearer test-token',
       },
@@ -186,6 +186,7 @@ describe('DiscoveryController', () => {
       {
         query: 'signal',
         limit: 5,
+        tier: 'state',
       },
     );
   });
@@ -208,7 +209,7 @@ describe('DiscoveryController', () => {
 
     const response = await (app.getHttpAdapter().getInstance() as any).inject({
       method: 'GET',
-      url: '/discover/communities/scene-1/search?query=signal&limit=5',
+      url: '/discover/communities/scene-1/search?query=signal&limit=5&tier=city',
     });
 
     expect(response.statusCode).toBe(200);
@@ -218,6 +219,7 @@ describe('DiscoveryController', () => {
       {
         query: 'signal',
         limit: 5,
+        tier: 'city',
       },
     );
   });
@@ -246,14 +248,17 @@ describe('DiscoveryController', () => {
         tier: 'city',
         isActive: true,
       },
+      popularSingles: {
+        mostAdded: [],
+        supportedNow: [],
+        recentRises: [],
+      },
       recommendations: [],
-      trending: [],
-      topArtists: [],
     });
 
     const response = await (app.getHttpAdapter().getInstance() as any).inject({
       method: 'GET',
-      url: '/discover/communities/scene-1/highlights?limit=6',
+      url: '/discover/communities/scene-1/highlights?limit=6&tier=national',
       headers: {
         authorization: 'Bearer test-token',
       },
@@ -268,6 +273,7 @@ describe('DiscoveryController', () => {
       'scene-1',
       {
         limit: 6,
+        tier: 'national',
       },
     );
   });
@@ -283,14 +289,17 @@ describe('DiscoveryController', () => {
         tier: 'city',
         isActive: true,
       },
+      popularSingles: {
+        mostAdded: [],
+        supportedNow: [],
+        recentRises: [],
+      },
       recommendations: [],
-      trending: [],
-      topArtists: [],
     });
 
     const response = await (app.getHttpAdapter().getInstance() as any).inject({
       method: 'GET',
-      url: '/discover/communities/scene-1/highlights?limit=6',
+      url: '/discover/communities/scene-1/highlights?limit=6&tier=city',
     });
 
     expect(response.statusCode).toBe(200);
@@ -299,6 +308,7 @@ describe('DiscoveryController', () => {
       'scene-1',
       {
         limit: 6,
+        tier: 'city',
       },
     );
   });

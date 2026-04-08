@@ -172,6 +172,7 @@ export type PostDiscoverSetHomeSceneDto = z.infer<typeof PostDiscoverSetHomeScen
  */
 export const GetCommunityDiscoverSearchSchema = z.object({
   query: z.string().min(1),
+  tier: z.enum(['city', 'state', 'national']).optional().default('city'),
   limit: z.coerce.number().int().min(1).max(50).optional().default(12),
 });
 
@@ -181,6 +182,7 @@ export type GetCommunityDiscoverSearchDto = z.infer<typeof GetCommunityDiscoverS
  * Community Discover highlights query params
  */
 export const GetCommunityDiscoverHighlightsSchema = z.object({
+  tier: z.enum(['city', 'state', 'national']).optional().default('city'),
   limit: z.coerce.number().int().min(1).max(24).optional().default(8),
 });
 

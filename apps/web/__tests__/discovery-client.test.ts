@@ -222,7 +222,7 @@ describe('discovery client', () => {
     await searchCommunityDiscover('scene-1', 'signal');
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://localhost:4000/discover/communities/scene-1/search?query=signal',
+      'http://localhost:4000/discover/communities/scene-1/search?query=signal&tier=city',
       expect.objectContaining({
         method: 'GET',
         headers: expect.not.objectContaining({
@@ -247,9 +247,12 @@ describe('discovery client', () => {
             tier: 'city',
             isActive: true,
           },
+          popularSingles: {
+            mostAdded: [],
+            supportedNow: [],
+            recentRises: [],
+          },
           recommendations: [],
-          trending: [],
-          topArtists: [],
         },
       }),
     });
@@ -257,7 +260,7 @@ describe('discovery client', () => {
     await getCommunityDiscoverHighlights('scene-1');
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://localhost:4000/discover/communities/scene-1/highlights',
+      'http://localhost:4000/discover/communities/scene-1/highlights?tier=city',
       expect.objectContaining({
         method: 'GET',
         headers: expect.not.objectContaining({
@@ -764,10 +767,10 @@ describe('discovery client', () => {
       }),
     });
 
-    await searchCommunityDiscover('scene-1', ' signal ', 'token-search', 5);
+    await searchCommunityDiscover('scene-1', ' signal ', 'token-search', 5, 'state');
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://localhost:4000/discover/communities/scene-1/search?query=signal&limit=5',
+      'http://localhost:4000/discover/communities/scene-1/search?query=signal&tier=state&limit=5',
       expect.objectContaining({
         method: 'GET',
         headers: expect.objectContaining({
@@ -792,17 +795,20 @@ describe('discovery client', () => {
             tier: 'city',
             isActive: true,
           },
+          popularSingles: {
+            mostAdded: [],
+            supportedNow: [],
+            recentRises: [],
+          },
           recommendations: [],
-          trending: [],
-          topArtists: [],
         },
       }),
     });
 
-    await getCommunityDiscoverHighlights('scene-1', 'token-highlights', 6);
+    await getCommunityDiscoverHighlights('scene-1', 'token-highlights', 6, 'national');
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://localhost:4000/discover/communities/scene-1/highlights?limit=6',
+      'http://localhost:4000/discover/communities/scene-1/highlights?tier=national&limit=6',
       expect.objectContaining({
         method: 'GET',
         headers: expect.objectContaining({

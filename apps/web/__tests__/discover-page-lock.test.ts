@@ -27,11 +27,25 @@ describe('/discover current-community lock', () => {
 
     expect(discoverSource).toContain('const localContextReady = Boolean(activeSceneId || hasOriginContext);');
     expect(discoverSource).toContain('if (!localContextReady) {');
-    expect(discoverSource).toContain('getCommunityDiscoverHighlights(activeSceneId, token || undefined, 8)');
-    expect(discoverSource).toContain('searchCommunityDiscover(activeSceneId, query, token || undefined, 8)');
+    expect(discoverSource).toContain('getCommunityDiscoverHighlights(');
+    expect(discoverSource).toContain('searchCommunityDiscover(');
+    expect(discoverSource).toContain('tier,');
     expect(discoverSource).toContain('disabled={!localContextReady}');
     expect(discoverSource).toContain('setHighlights(emptyHighlights);');
     expect(discoverSource).not.toContain('Sign in is required to search this community and open its full Discover sections.');
+  });
+
+  it('locks Discover to one search bar, Popular Singles, Recommendations, and player-attached Travel', () => {
+    const discoverSource = readRepoFile('src/app/discover/page.tsx');
+
+    expect(discoverSource).toContain('Artist and song search');
+    expect(discoverSource).toContain('Popular Singles');
+    expect(discoverSource).toContain('Recommendations');
+    expect(discoverSource).toContain('Travel stays attached to the player.');
+    expect(discoverSource).toContain("{travelOpen ? 'Hide Travel' : 'Open Travel'}");
+    expect(discoverSource).toContain('Travel active. You are tuned to {activeSceneName} and can visit the community now.');
+    expect(discoverSource).not.toContain('Trending');
+    expect(discoverSource).not.toContain('Top Artists');
   });
 
   it('keeps signed-out discover destinations explicit instead of linking directly into auth-dead-end artist pages', () => {

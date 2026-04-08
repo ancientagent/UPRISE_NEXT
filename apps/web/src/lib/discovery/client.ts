@@ -107,9 +107,11 @@ export async function searchCommunityDiscover(
   query: string,
   token?: string,
   limit?: number,
+  tier: TierScope = 'city',
 ): Promise<CommunityDiscoverSearchResult> {
   const params = new URLSearchParams({
     query: query.trim(),
+    tier,
   });
 
   if (typeof limit === 'number') {
@@ -132,8 +134,11 @@ export async function getCommunityDiscoverHighlights(
   sceneId: string,
   token?: string,
   limit?: number,
+  tier: TierScope = 'city',
 ): Promise<CommunityDiscoverHighlights> {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams({
+    tier,
+  });
 
   if (typeof limit === 'number') {
     params.set('limit', String(limit));
