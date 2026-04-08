@@ -205,6 +205,11 @@ MVP lenses:
 - metric: propagation markers (`highestScopeReached`, `lastRiseAt`)
 - purpose: show singles that recently broke upward into the next listening scope
 - this is allowed in Discover because it is not the same thing as current in-mix RaDIYo momentum
+- MVP implementation rule:
+  - `Recent Rises` reads the most recent city-origin singles pulled into the `state` player
+  - `highestScopeReached = state`
+  - `lastRiseAt = enteredPoolAt` for that state-player promotion
+  - `national` rise tracking is deferred with the `national` Discover tier
 
 ### Explicit Exclusion
 - `Popular Now` is **not** a Discover lens

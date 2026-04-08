@@ -48,6 +48,14 @@ describe('/discover current-community lock', () => {
     expect(discoverSource).not.toContain('Top Artists');
   });
 
+  it('keeps MVP Discover tier controls at city/state and defers national scope', () => {
+    const discoverSource = readRepoFile('src/app/discover/page.tsx');
+
+    expect(discoverSource).toContain("const DISCOVER_TIER_OPTIONS: TierScope[] = ['city', 'state'];");
+    expect(discoverSource).toContain('National is deferred until population justifies it.');
+    expect(discoverSource).toContain("return tunedScene.tier === 'national' ? 'state' : tunedScene.tier;");
+  });
+
   it('keeps signed-out discover destinations explicit instead of linking directly into auth-dead-end artist pages', () => {
     const discoverSource = readRepoFile('src/app/discover/page.tsx');
 

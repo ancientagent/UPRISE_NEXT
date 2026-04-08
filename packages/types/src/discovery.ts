@@ -52,6 +52,9 @@ export const DiscoverSignalResultSchema = z.object({
   type: z.string(),
   metadata: z.record(z.string(), z.unknown()).nullable(),
   communityId: z.string().uuid().or(z.string().min(1)).nullable(),
+  communityCity: z.string().nullable().optional(),
+  communityState: z.string().nullable().optional(),
+  communityMusicCommunity: z.string().nullable().optional(),
   createdAt: z.string(),
   actionCounts: z.object({
     add: z.number().int().nonnegative(),

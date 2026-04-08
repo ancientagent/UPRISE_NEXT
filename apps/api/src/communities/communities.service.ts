@@ -332,6 +332,7 @@ export class CommunitiesService {
   private buildDiscoverScopeWhere(
     scene: {
       id: string;
+      tier?: string | null;
       state: string | null;
       musicCommunity: string | null;
     },
@@ -351,6 +352,56 @@ export class CommunitiesService {
     return {
       musicCommunity: scene.musicCommunity ?? undefined,
     };
+  }
+
+  private normalizeDiscoverSignalLookupPart(value: string | null | undefined) {
+    return value?.trim().toLowerCase() ?? '';
+  }
+
+  private buildDiscoverSignalLookupKey(parts: {
+    communityId?: string | null;
+    title?: string | null;
+    artist?: string | null;
+  }) {
+    return [
+      parts.communityId ?? '',
+      this.normalizeDiscoverSignalLookupPart(parts.title),
+      this.normalizeDiscoverSignalLookupPart(parts.artist),
+    ].join('::');
+  }
+
+  private extractSingleSignalTitle(signal: {
+    metadata: Prisma.JsonValue | null;
+  }) {
+    const metadata = (signal.metadata as Record<string, unknown> | null) ?? null;
+    const title = metadata?.title;
+    if (typeof title === 'string' && title.trim()) {
+      return title.trim();
+    }
+
+    const name = metadata?.name;
+    if (typeof name === 'string' && name.trim()) {
+      return name.trim();
+    }
+
+    return null;
+  }
+
+  private extractSingleSignalArtist(signal: {
+    metadata: Prisma.JsonValue | null;
+  }) {
+    const metadata = (signal.metadata as Record<string, unknown> | null) ?? null;
+    const artist = metadata?.artist;
+    if (typeof artist === 'string' && artist.trim()) {
+      return artist.trim();
+    }
+
+    const artistName = metadata?.artistName;
+    if (typeof artistName === 'string' && artistName.trim()) {
+      return artistName.trim();
+    }
+
+    return null;
   }
 
   private async resolveTrackArtistBand(
@@ -698,6 +749,13 @@ export class CommunitiesService {
           metadata: true,
           communityId: true,
           createdAt: true,
+          community: {
+            select: {
+              city: true,
+              state: true,
+              musicCommunity: true,
+            },
+          },
         },
       }),
       this.prisma.signalAction.findMany({
@@ -725,6 +783,13 @@ export class CommunitiesService {
               metadata: true,
               communityId: true,
               createdAt: true,
+              community: {
+                select: {
+                  city: true,
+                  state: true,
+                  musicCommunity: true,
+                },
+              },
             },
           },
         },
@@ -760,6 +825,11 @@ export class CommunitiesService {
         metadata: Prisma.JsonValue | null;
         communityId: string | null;
         createdAt: Date;
+        community?: {
+          city: string | null;
+          state: string | null;
+          musicCommunity: string | null;
+        } | null;
       },
       options?: {
         lensMetricValue?: number | null;
@@ -772,6 +842,9 @@ export class CommunitiesService {
       type: signal.type,
       metadata: (signal.metadata as Record<string, unknown> | null) ?? null,
       communityId: signal.communityId ?? null,
+      communityCity: signal.community?.city ?? null,
+      communityState: signal.community?.state ?? null,
+      communityMusicCommunity: signal.community?.musicCommunity ?? null,
       createdAt: signal.createdAt.toISOString(),
       actionCounts:
         signalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 },
@@ -813,7 +886,98 @@ export class CommunitiesService {
       })
       .slice(0, query.limit);
 
-    const recentRises: DiscoverSignalResult[] = [];
+    let recentRises: DiscoverSignalResult[] = [];
+
+    if (query.tier === 'state' && scene.state && scene.musicCommunity) {
+      const stateScene =
+        scene.tier === 'state'
+          ? { id: scene.id }
+          : await this.prisma.community.findFirst({
+              where: {
+                tier: 'state',
+                state: scene.state,
+                musicCommunity: scene.musicCommunity,
+                isActive: true,
+              },
+              select: {
+                id: true,
+              },
+            });
+
+      if (stateScene) {
+        const recentStateEntries = await this.prisma.rotationEntry.findMany({
+          where: {
+            sceneId: stateScene.id,
+          },
+          select: {
+            enteredPoolAt: true,
+            track: {
+              select: {
+                title: true,
+                artist: true,
+                communityId: true,
+              },
+            },
+          },
+          orderBy: [{ enteredPoolAt: 'desc' }, { id: 'asc' }],
+          take: Math.max(query.limit * 12, 24),
+        });
+
+        const signalsByTrackKey = new Map<string, typeof singleSignals[number]>();
+        const signalsByTitleKey = new Map<string, typeof singleSignals[number]>();
+        for (const signal of singleSignals) {
+          const title = this.extractSingleSignalTitle(signal);
+          if (!title) continue;
+
+          const artist = this.extractSingleSignalArtist(signal);
+          const exactKey = this.buildDiscoverSignalLookupKey({
+            communityId: signal.communityId,
+            title,
+            artist,
+          });
+          if (!signalsByTrackKey.has(exactKey)) {
+            signalsByTrackKey.set(exactKey, signal);
+          }
+
+          const fallbackKey = this.buildDiscoverSignalLookupKey({
+            communityId: signal.communityId,
+            title,
+          });
+          if (!signalsByTitleKey.has(fallbackKey)) {
+            signalsByTitleKey.set(fallbackKey, signal);
+          }
+        }
+
+        const seenSignalIds = new Set<string>();
+        recentRises = recentStateEntries.flatMap((entry) => {
+          const exactKey = this.buildDiscoverSignalLookupKey({
+            communityId: entry.track.communityId,
+            title: entry.track.title,
+            artist: entry.track.artist,
+          });
+          const fallbackKey = this.buildDiscoverSignalLookupKey({
+            communityId: entry.track.communityId,
+            title: entry.track.title,
+          });
+          const signal =
+            signalsByTrackKey.get(exactKey) ??
+            signalsByTitleKey.get(fallbackKey) ??
+            null;
+
+          if (!signal || seenSignalIds.has(signal.id)) {
+            return [];
+          }
+
+          seenSignalIds.add(signal.id);
+          return [
+            toSignalResult(signal, {
+              highestScopeReached: 'state',
+              lastRiseAt: entry.enteredPoolAt.toISOString(),
+            }),
+          ];
+        }).slice(0, query.limit);
+      }
+    }
 
     const recommendations: DiscoverRecommendationResult[] = Array.from(recommendationActionsByUser.values())
       .map((action) => ({

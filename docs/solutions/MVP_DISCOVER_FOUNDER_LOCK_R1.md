@@ -178,6 +178,8 @@ For MVP this means:
 - current tuned/home community matters
 - visitor/local status remains relevant
 - Discover is context-sensitive to the active player/listening state
+- Discover currently operates at `city` and `state` scope only
+- `national` Discover scope is deferred from MVP until population justifies it
 
 ## 6) Discover Core Structure
 Discover includes, top to bottom:
@@ -200,7 +202,7 @@ Discover does **not** use a split primary model where travel/community search is
 ### 7.2 Tier-aware search scope
 - If the player/listening context is `city`, Discover search is scoped to the current city/community context.
 - If the player/listening context is `state`, Discover search broadens to the current state-level listening scope for that same parent music-community context.
-- If the player/listening context is `national`, Discover search broadens to the national listening scope for that same parent music-community context.
+- `national` Discover search is deferred from MVP.
 
 ### 7.3 Search boundaries
 - Do not split travel search and local search into separate primary controls.
@@ -223,6 +225,10 @@ Discover does **not** use a split primary model where travel/community search is
 - Lens semantics are controlled by `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`.
 - `Popular Now` is intentionally excluded from Discover because it belongs to the sacred RaDIYo/broadcast engagement system.
 - `Recent Rises` is allowed in Discover because it surfaces signals that have already risen out of the current broadcast mix and helps users identify what has recently broken upward without duplicating what is currently in rotation.
+- MVP `Recent Rises` behavior:
+  - at `city` scope: no rail content is required
+  - at `state` scope: show the most recent singles that were pulled from city-origin communities into the state player
+  - preserve origin city/community identity on those surfaced singles so city communities benefit from the exposure
 
 ### 8.2 Recommendations Row / Carousel
 - Below `Popular Singles`, Discover shows a row/carousel of users and their active recommendations.

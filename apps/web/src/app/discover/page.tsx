@@ -42,6 +42,7 @@ import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
 
 type PopularSinglesLens = 'mostAdded' | 'supportedNow' | 'recentRises';
+const DISCOVER_TIER_OPTIONS: TierScope[] = ['city', 'state'];
 
 function formatSceneLocation(city: string | null, state: string | null) {
   if (city && state) return `${city}, ${state}`;
@@ -138,8 +139,32 @@ function formatCommunityIdentity(
 }
 
 function formatLensMetric(signal: DiscoverSignalResult) {
+  if (signal.highestScopeReached && signal.lastRiseAt) {
+    const riseDate = new Date(signal.lastRiseAt);
+    const formattedDate = Number.isNaN(riseDate.getTime())
+      ? signal.lastRiseAt
+      : new Intl.DateTimeFormat('en-US', {
+          month: 'short',
+          day: 'numeric',
+        }).format(riseDate);
+
+    return `Entered ${signal.highestScopeReached} player • ${formattedDate}`;
+  }
+
   if (!signal.lensMetricLabel) return null;
   return `${signal.lensMetricValue ?? 0} ${signal.lensMetricLabel}`;
+}
+
+function formatSignalOrigin(signal: DiscoverSignalResult) {
+  if (!signal.communityCity && !signal.communityState && !signal.communityMusicCommunity) {
+    return null;
+  }
+
+  return formatCommunityIdentity(
+    signal.communityCity ?? null,
+    signal.communityState ?? null,
+    signal.communityMusicCommunity ?? null,
+  );
 }
 
 function SearchResultsSection({
@@ -273,12 +298,14 @@ function SignalCard({
   const title = extractSignalTitle(signal);
   const subtitle = extractSignalSubtitle(signal);
   const metric = formatLensMetric(signal);
+  const origin = formatSignalOrigin(signal);
 
   return (
     <article className="plot-wire-list-item min-w-[260px]">
       <p className="plot-wire-label">Single</p>
       <h4 className="mt-2 text-base font-semibold text-black">{title}</h4>
       <p className="mt-1 text-xs text-black/60">{subtitle}</p>
+      {origin ? <p className="mt-1 text-xs text-black/50">{origin}</p> : null}
       {metric ? <p className="mt-2 text-xs text-black/55">{metric}</p> : null}
       <div className="mt-4 flex flex-wrap gap-2">
         <Button
@@ -410,7 +437,7 @@ export default function DiscoverPage() {
 
   const initialTier = useMemo<PlayerTier>(() => {
     if (tunedScene?.tier === 'state' || tunedScene?.tier === 'national') {
-      return tunedScene.tier;
+      return tunedScene.tier === 'national' ? 'state' : tunedScene.tier;
     }
     return 'city';
   }, [tunedScene?.tier]);
@@ -1018,6 +1045,9 @@ export default function DiscoverPage() {
               <p className="mt-1 text-sm text-black/60">
                 Descriptive signal discovery inside the current player scope. No `Popular Now`, no recommendation engine.
               </p>
+              <p className="mt-1 text-xs text-black/50">
+                MVP Discover currently widens from city to state. National is deferred until population justifies it.
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -1060,7 +1090,9 @@ export default function DiscoverPage() {
             {selectedPopularSingles.length === 0 ? (
               <div className="plot-wire-card-muted min-w-[280px] border-dashed px-4 py-6 text-sm text-black/50">
                 {selectedLens === 'recentRises'
-                  ? 'Recent rise markers are not available in this scope yet.'
+                  ? tier === 'state'
+                    ? 'No recent city-to-state promotions are available yet.'
+                    : 'Recent Rises appear when Discover is widened to the state scope.'
                   : 'No singles available for this lens yet.'}
               </div>
             ) : (
@@ -1175,7 +1207,7 @@ export default function DiscoverPage() {
                   />
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(['city', 'state', 'national'] as TierScope[]).map((value) => (
+                  {DISCOVER_TIER_OPTIONS.map((value) => (
                     <Button
                       key={value}
                       size="sm"
