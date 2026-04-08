@@ -2,7 +2,7 @@
 
 **Status:** `active`
 **Owner:** `founder + codex`
-**Last Updated:** `2026-04-07`
+**Last Updated:** `2026-04-08`
 
 ## Purpose
 Lock the MVP statistics contract that powers:
@@ -227,6 +227,38 @@ This is important because future revenue products may depend on:
 - promotion/event performance
 
 MVP does **not** need to surface all of that now, but the stats model should not foreclose it.
+
+## Retained But Not Surfaced Metrics
+Some metrics should remain part of the broader retained analytics layer even when they are not part of the current MVP surface contract.
+
+These metrics may exist:
+- per tier
+- platform-wide
+- as packaged analytics inputs for future add-ons
+
+Future analytics add-on targets may include:
+- artists
+- mixologists
+- venues
+- businesses
+- other valid later-version source domains
+
+Retained metrics confirmed from earlier product docs include:
+- `listenCountAllTime`
+- `mostListenedSignals`
+- `mostUpvotedSignals`
+- `mixtapeAppearanceCount`
+- `appearanceCountByTier`
+
+Handling rule:
+- these metrics are legitimate parts of the broader analytics foundation
+- they do **not** automatically become MVP Plot/Discover surface requirements
+- they may be retained, computed, and later packaged into analytics products without reopening the MVP display contract
+
+Packaging rule:
+- platform-wide metrics are allowed where they support internal reporting or future analytics packaging
+- tier-level metrics are allowed where they preserve the platform's locality/progression model
+- neither platform-wide nor tier-level packaging may bypass Fair Play, governance, or current MVP surface boundaries
 
 ## Explicit Non-Locks
 This document does **not** lock:
