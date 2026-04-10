@@ -263,6 +263,7 @@ Provisional candidate, not hard-locked yet:
 Once a realized sect is its own source:
 - people can follow it
 - followers receive sub-community updates from that sect
+- following a sect allows the user to add that sect's Uprise, because the Uprise is the signal carried by the sect source
 
 ### 9.4 Sect signal
 The sect's signal is the Uprise.

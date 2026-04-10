@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Clarified the sect source/signal relationship: once a sect is realized as a source, following that sect allows users to add its Uprise because the Uprise is the signal carried by the sect source.
 - Corrected the sect/tag reconciliation so Home Scene tag context remains part of system ordering for civic identity, voting rights, and visitor/local distinction; the lock now narrows only the idea that tag assignment alone realizes a sect.
 - Reconciled sect and community-information terminology: `The Scenery` now names the broader community-information surface direction, `Registrar` belongs inside it as a module with `Register` as the primary CTA, and sects are now documented as artist-facing civic motions whose active affinity/discovery layer should be follow-driven rather than tag-driven. See `docs/handoff/2026-04-10_scenery-and-sect-tag-reconciliation.md`.
 - Added the missing Fair Play runtime migration (`rotation_entries`, `track_votes`, `fair_play_config`) plus a reusable local dev fixture script that generates a tiny browser-served WAV and seeds city-tier RaDIYo rotation entries for end-to-end playback QA; verified live in Chrome DevTools on `/discover` and `/plot`. See `docs/handoff/2026-04-10_radiyo-dev-fixture-and-fair-play-migration.md`.

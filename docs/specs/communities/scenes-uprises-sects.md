@@ -37,6 +37,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Registrar sect-motion submit skeleton exists:
   - `POST /registrar/sect-motion` creates a Home Scene-scoped registrar entry (`type = sect_motion`, `status = submitted`).
   - Current primitive enforces scene locality guardrails; threshold validation/approval remains deferred.
+- Once a sect is realized as a source, its Uprise is the sect signal and followers of the sect must be able to add that Uprise from the sect surface.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
