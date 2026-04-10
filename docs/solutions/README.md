@@ -39,6 +39,7 @@ Start from: `docs/solutions/TEMPLATE.md`
 - `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_EXPLICIT_DEFERRED_LIST_R1.md`
 - `docs/solutions/MVP_WEB_UX_IMPLEMENTATION_BRIEF_R1.md`
 - `docs/solutions/MVP_UX_BATCH27_EXECUTION_PLAN.md`
 
