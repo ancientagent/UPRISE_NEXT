@@ -27,6 +27,8 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
   - `GET /events`
   - `GET /events/:id`
   - `GET /communities/:id/events` (scene-scoped listing for Plot Events surface)
+- Source-facing event write endpoint:
+  - `POST /print-shop/events`
 - Backing model:
   - `Event` with core metadata, location coordinates, `communityId`, `createdById`.
 
@@ -67,7 +69,6 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/print-shop/events` | required | Create event from Print Shop flow |
 | PATCH | `/events/:id` | required | Update owned event |
 | POST | `/events/:id/proof` | required | Submit attendance/support proof |
 | POST | `/events/:id/flyers/mint` | required | Mint attendance artifact after verification |
@@ -78,6 +79,7 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 - Event detail presentation remains API-backed read-only.
 - Event writes originate in Print Shop (web flow), not standalone mobile event creation.
 - Event write entry remains source-facing through Print Shop; listener-facing event surfaces are read/follow/attendance oriented.
+- `/print-shop` now carries the minimum creator-facing event-create form for the published write lane.
 - Flyer displays and redemption UI are deferred.
 
 ## Acceptance Tests / Test Plan

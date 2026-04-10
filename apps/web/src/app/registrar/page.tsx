@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
@@ -962,6 +963,13 @@ export default function RegistrarPage() {
             <Button size="sm" variant="outline" onClick={loadPromoterEntries} disabled={promoterEntriesLoading}>
               {promoterEntriesLoading ? 'Refreshing...' : 'Refresh'}
             </Button>
+            {latestPromoterEntry?.promoterCapability.granted ? (
+              <Link href="/print-shop">
+                <Button size="sm" variant="outline">
+                  Open Print Shop
+                </Button>
+              </Link>
+            ) : null}
           </div>
 
           {promoterEntriesError && (

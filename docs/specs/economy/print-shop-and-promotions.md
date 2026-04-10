@@ -29,7 +29,9 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Business promotion submission remains account-attached even when the business does not maintain a broader in-app source/profile surface.
 
 ### Implemented Now
-- No Print Shop API/domain model yet.
+- Minimal source-facing event-write lane:
+  - `POST /print-shop/events`
+  - creator-gated event creation through the Print Shop seam
 - Read-only Promotions surface endpoint:
   - `GET /communities/:id/promotions` (scene-scoped projection from promotion/offer signals).
 
@@ -74,7 +76,6 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/print-shop/runs` | required | Purchase/create issuance run |
-| POST | `/print-shop/events` | required | Create event via Print Shop flow |
 | POST | `/print-shop/runs/:id/mint` | required | Mint artifact within run capacity |
 | POST | `/offers` | required | Create offer signal |
 | POST | `/offers/:id/carry` | required | Carry offer into user context |
@@ -87,6 +88,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Print Shop remains source-facing only:
   - artists/promoters use it to create/manage event-related issuance flows,
   - listeners do not enter Print Shop to create events, purchase runs, or manage issuance.
+- `/print-shop` now provides the minimum creator-facing event form for the published event-write seam.
 - Promotional Pack setup requires explicit target scope selection (city/state/community).
 - Businesses submit promotions from a Print Shop-attached account even when they do not have a broader in-app profile/presence.
 - Business submission should be treated as part of a business-facing source dashboard, not as anonymous one-off intake.

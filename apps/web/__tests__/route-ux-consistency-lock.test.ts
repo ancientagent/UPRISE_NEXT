@@ -43,4 +43,14 @@ describe('cross-route UX consistency lock', () => {
     expect(usersSource).toContain('href={`/artist-bands/${entity.id}`}');
     expect(usersSource).toContain('Linked Artist/Band Entities');
   });
+
+  it('keeps print-shop event creation source-facing and auth-gated', () => {
+    const printShopSource = readRepoFile('src/app/print-shop/page.tsx');
+
+    expect(printShopSource).toContain('Source-Facing Event Creation');
+    expect(printShopSource).toContain('Print Shop stays source-facing.');
+    expect(printShopSource).toContain('Sign in is required before opening Print Shop creator tools.');
+    expect(printShopSource).toContain('Print Shop event creation requires active promoter capability or a linked Artist/Band source.');
+    expect(printShopSource).toContain('Create Event');
+  });
 });
