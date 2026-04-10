@@ -280,7 +280,11 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Add outbound delivery provider pipeline for queued `pending_email`/`queued` member invites.
 - See phased execution note: `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
 - Define Promoter capability registration and code exchange flow details under locked issuance policy (`system-only` issuer authority + `approved` issuance precondition).
-- Define business capability model for Promotions/Print Shop workflows.
+- Define business capability/account model for Promotions/Print Shop workflows.
+
+### Founder Lock (2026-04-10)
+- Business promotion submission should be attached to a business account in Print Shop even when the business does not maintain a broader in-app presence/profile.
+- Do not treat business promotion intake as anonymous/public-link submission going forward.
 
 ## References
 - `docs/canon/Master Identity and Philosohpy Canon.md`

@@ -52,6 +52,10 @@ Current source classes in active MVP understanding:
 - promoters
 - events
 
+Business submission boundary:
+- business promotion submission may remain narrower than a full in-app business presence
+- but it should still be account-attached through the source-facing Print Shop lane rather than anonymous listener/public submission
+
 Later-version source domains remain legitimate but are not widened here:
 - causes once official
 - ambassadors
