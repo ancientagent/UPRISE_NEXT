@@ -19,6 +19,7 @@ Recent founder decisions about source behavior, community-wide updates, follower
 - Plot feed is the primary live pulse of the scene
 - `cause` is the preferred product term; older `project` wording is now explicit terminology debt
 - causes begin in the Registrar as proposals and become sources only after enough registered backing
+- causes and sects now explicitly share the same motion/backing/threshold/officialization pattern, with sects using artist backing and causes using listener backing
 - events are sources and flyers are signals
 
 ## Explicitly not locked yet

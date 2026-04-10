@@ -183,6 +183,25 @@ After officialization:
 - its first community entry is announced by the community update layer
 - after that, its own announcements are follower-only like other sources
 
+### 8.4 Shared motion/backing system rule
+Causes and sects use the same formal civic process pattern:
+- motion
+- backing
+- threshold
+- officialization
+
+The difference is the backing threshold:
+- sects reach official realization through artist backing
+- causes reach official realization through listener backing
+
+Conceptual framing:
+- a sect is the community formation
+- the cause/motion layer is the formal process carrying it toward realization
+- when the threshold is satisfied, the sect can become an Uprise
+
+Do not treat sects and causes as unrelated systems.
+They are parallel expressions of the same underlying registrar-mediated motion/backing model, with different qualifying backers.
+
 ### 8.3 Cause actions after officialization
 Once official and public:
 - follow is available publicly
