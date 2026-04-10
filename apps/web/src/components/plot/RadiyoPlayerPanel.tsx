@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useMemo, useState } from 'react';
 import type { Track } from '@uprise/types';
 import { Button } from '@uprise/ui';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
@@ -19,10 +20,12 @@ interface RadiyoPlayerPanelProps {
   onTierChange: (tier: PlayerTier) => void;
   broadcastLabel: string;
   collectionTitle?: string | null;
+  trackQueue?: Track[];
   currentTrack?: Track | null;
   currentTrackCount?: number;
   isBroadcastLoading?: boolean;
   broadcastError?: string | null;
+  broadcastEmptyMessage?: string | null;
 }
 
 export default function RadiyoPlayerPanel({
@@ -35,26 +38,61 @@ export default function RadiyoPlayerPanel({
   onTierChange,
   broadcastLabel,
   collectionTitle,
+  trackQueue = [],
   currentTrack = null,
   currentTrackCount = 0,
   isBroadcastLoading = false,
   broadcastError = null,
+  broadcastEmptyMessage = null,
 }: RadiyoPlayerPanelProps) {
   const isRadiyoMode = mode === 'RADIYO';
   const wheelActions = getEngagementWheelActions(mode);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const radiyoTrackQueue = useMemo(
+    () => (trackQueue.length > 0 ? trackQueue : currentTrack ? [currentTrack] : []),
+    [currentTrack, trackQueue],
+  );
+  const activeTrack = isRadiyoMode ? radiyoTrackQueue[currentTrackIndex] ?? null : currentTrack;
+  const activeTrackCount = isRadiyoMode ? radiyoTrackQueue.length : currentTrackCount;
+
+  useEffect(() => {
+    setCurrentTrackIndex(0);
+  }, [
+    activeBroadcastTier,
+    isRadiyoMode,
+    rotationPool,
+    radiyoTrackQueue.map((track) => track.id).join('|'),
+  ]);
+
+  useEffect(() => {
+    if (currentTrackIndex < activeTrackCount) {
+      return;
+    }
+
+    setCurrentTrackIndex(0);
+  }, [activeTrackCount, currentTrackIndex]);
+
+  const handleTrackEnded = () => {
+    if (radiyoTrackQueue.length <= 1) {
+      return;
+    }
+
+    setCurrentTrackIndex((current) => (current + 1) % radiyoTrackQueue.length);
+  };
+
   const trackArtLabel = isRadiyoMode ? 'Current track art thumbnail' : 'Collection track art thumbnail';
   const trackSubtitle = isRadiyoMode
     ? isBroadcastLoading
       ? 'Loading current broadcast...'
-      : currentTrack
-        ? currentTrack.artist
-        : currentTrackCount > 0
+      : activeTrack
+        ? activeTrack.artist
+        : activeTrackCount > 0
           ? 'Select a tier to resume this broadcast.'
-          : 'No tracks are available in this rotation yet.'
+          : broadcastEmptyMessage ?? 'No tracks are available in this rotation yet.'
     : 'Selection-driven collection queue';
   const queueLabel = isRadiyoMode
-    ? currentTrackCount > 0
-      ? `${currentTrackCount} track${currentTrackCount === 1 ? '' : 's'} in this rotation`
+    ? activeTrackCount > 0
+      ? `Track ${Math.min(currentTrackIndex + 1, activeTrackCount)} of ${activeTrackCount} in this rotation`
       : 'Waiting for the rotation to populate'
     : 'Selection-driven collection queue';
 
@@ -97,7 +135,7 @@ export default function RadiyoPlayerPanel({
               {isRadiyoMode ? (
                 <>
                   <p className="truncate text-sm font-semibold">
-                    {currentTrack?.title ?? 'Now Broadcasting'}
+                    {activeTrack?.title ?? 'Now Broadcasting'}
                   </p>
                   <p className="mt-1 truncate text-[11px] text-white/68">{trackSubtitle}</p>
                 </>
@@ -149,15 +187,22 @@ export default function RadiyoPlayerPanel({
                       {broadcastError}
                     </p>
                   ) : null}
-                  {currentTrack ? (
-                    <audio className="w-full" controls autoPlay src={currentTrack.fileUrl}>
+                  {activeTrack ? (
+                    <audio
+                      key={`${activeTrack.id}-${currentTrackIndex}`}
+                      className="w-full"
+                      controls
+                      autoPlay
+                      src={activeTrack.fileUrl}
+                      onEnded={handleTrackEnded}
+                    >
                       Your browser does not support audio playback.
                     </audio>
                   ) : (
                     <p className="text-[11px] text-white/60">
                       {isBroadcastLoading
                         ? 'Loading broadcast audio...'
-                        : 'No broadcast audio is available for this tier and rotation yet.'}
+                        : broadcastEmptyMessage ?? 'No broadcast audio is available for this tier and rotation yet.'}
                     </p>
                   )}
                 </div>

@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Closed the next RaDIYo playback rough edges: the player now advances through queued rotation tracks on native audio `ended`, `/plot` and `/discover` treat missing state-scene playback as an intentional empty-state, and `GET /broadcast/rotation?tier=state` now returns an empty success payload instead of a `404` when no active state scene exists yet; see `docs/handoff/2026-04-10_radiyo-playback-closure-pass.md`.
 - Added `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md` and dated handoff `docs/handoff/2026-04-10_founder-decision-capture-hardening.md` so founder clarifications that change product truth, MVP boundary, terminology, or lifecycle behavior must be promoted into repo authority during the same working pass instead of being left in chat-only memory.
 - Clarified the sect source/signal relationship: once a sect is realized as a source, following that sect allows users to add its Uprise because the Uprise is the signal carried by the sect source.
 - Corrected the sect/tag reconciliation so Home Scene tag context remains part of system ordering for civic identity, voting rights, and visitor/local distinction; the lock now narrows only the idea that tag assignment alone realizes a sect.

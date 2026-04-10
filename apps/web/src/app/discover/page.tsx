@@ -13,6 +13,7 @@ import type {
   Track,
 } from '@uprise/types';
 import { getActiveBroadcastRotation } from '@/lib/broadcast/client';
+import { normalizeBroadcastRuntimeError } from '@/lib/broadcast/runtime';
 import RadiyoPlayerPanel, {
   type PlayerTier,
   type RotationPool,
@@ -452,6 +453,7 @@ export default function DiscoverPage() {
   const [broadcastMeta, setBroadcastMeta] = useState<BroadcastRotationMeta | null>(null);
   const [broadcastLoading, setBroadcastLoading] = useState(false);
   const [broadcastError, setBroadcastError] = useState<string | null>(null);
+  const [broadcastEmptyMessage, setBroadcastEmptyMessage] = useState<string | null>(null);
   const [locationQuery, setLocationQuery] = useState(
     getDefaultLocationQueryForTier(initialTier, homeScene, tunedScene),
   );
@@ -556,25 +558,42 @@ export default function DiscoverPage() {
         setBroadcastRotation(null);
         setBroadcastMeta(null);
         setBroadcastError(null);
+        setBroadcastEmptyMessage(null);
         setBroadcastLoading(false);
         return;
       }
 
       setBroadcastLoading(true);
       setBroadcastError(null);
+      setBroadcastEmptyMessage(null);
 
       try {
         const response = await getActiveBroadcastRotation(tier, token);
         if (!ignore) {
           setBroadcastRotation(response.data ?? { newReleases: [], mainRotation: [] });
           setBroadcastMeta(response.meta ?? null);
+          setBroadcastEmptyMessage(
+            tier === 'state' && response.meta?.sceneId.startsWith('state-unavailable:')
+              ? 'No state scene is active for this community yet.'
+              : null,
+          );
         }
       } catch (error: unknown) {
         if (!ignore) {
           const message = error instanceof Error ? error.message : 'Unable to load the active broadcast rotation.';
-          setBroadcastRotation(null);
-          setBroadcastMeta(null);
-          setBroadcastError(message);
+          const normalized = normalizeBroadcastRuntimeError(message, tier);
+
+          if (normalized.treatAsEmptyState) {
+            setBroadcastRotation({ newReleases: [], mainRotation: [] });
+            setBroadcastMeta(null);
+            setBroadcastError(null);
+            setBroadcastEmptyMessage(normalized.userMessage);
+          } else {
+            setBroadcastRotation(null);
+            setBroadcastMeta(null);
+            setBroadcastError(normalized.userMessage);
+            setBroadcastEmptyMessage(null);
+          }
         }
       } finally {
         if (!ignore) {
@@ -1200,10 +1219,12 @@ export default function DiscoverPage() {
             onTierChange={handleChangeTier}
             broadcastLabel={currentBroadcastLabel}
             collectionTitle={null}
+            trackQueue={currentRotationTracks}
             currentTrack={currentBroadcastTrack}
             currentTrackCount={currentRotationTracks.length}
             isBroadcastLoading={broadcastLoading}
             broadcastError={broadcastError}
+            broadcastEmptyMessage={broadcastEmptyMessage}
           />
 
           <div className="mt-[-1px] rounded-b-[1rem] border border-t-0 border-black bg-[#161616] px-4 py-4 text-white">

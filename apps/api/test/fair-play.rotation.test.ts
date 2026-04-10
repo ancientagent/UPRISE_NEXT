@@ -182,6 +182,49 @@ describe('FairPlayService.getActiveRotation', () => {
     });
   });
 
+  it('returns an empty rotation instead of throwing when no active state scene exists yet', async () => {
+    mockPrisma.user.findUnique
+      .mockResolvedValueOnce({
+        id: 'u1',
+        tunedSceneId: null,
+        homeSceneCity: 'Austin',
+        homeSceneState: 'TX',
+        homeSceneCommunity: 'Punk',
+      })
+      .mockResolvedValueOnce({
+        homeSceneState: 'TX',
+        homeSceneCommunity: 'Punk',
+      });
+    mockPrisma.community.findFirst
+      .mockResolvedValueOnce({
+        id: 'scene-home',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'city',
+      })
+      .mockResolvedValueOnce(null);
+
+    const result = await service.getActiveRotation('u1', 'state');
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual({
+      newReleases: [],
+      mainRotation: [],
+    });
+    expect(result.meta).toEqual(
+      expect.objectContaining({
+        requestedTier: 'state',
+        sceneTier: 'state',
+        sceneState: 'TX',
+        sceneMusicCommunity: 'Punk',
+        newReleasesCount: 0,
+        mainRotationCount: 0,
+      }),
+    );
+  });
+
   it('falls back to the home city scene when a city-tier broadcast is requested from a tuned state scene', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'u1',

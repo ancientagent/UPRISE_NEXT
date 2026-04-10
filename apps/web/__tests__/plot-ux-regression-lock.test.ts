@@ -97,13 +97,17 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('Collection mode stays selection-driven. Use eject to return to RADIYO.');
     expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");
     expect(playerSource).toContain('aria-pressed={activeBroadcastTier === tier}');
-    expect(playerSource).toContain('<audio className="w-full" controls autoPlay src={currentTrack.fileUrl}>');
+    expect(playerSource).toContain('<audio');
+    expect(playerSource).toContain('autoPlay');
+    expect(playerSource).toContain('onEnded={handleTrackEnded}');
+    expect(playerSource).toContain('trackQueue?: Track[];');
     expect(playerSource).not.toContain('aria-label="Play"');
     expect(playerSource).not.toContain('aria-label="Pause"');
     expect(playerSource).not.toContain('aria-label="Add to collection"');
     expect(playerSource).not.toContain('Back to RADIYO');
     expect(playerSource).toContain("const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];");
     expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
+    expect(plotPageSource).toContain('trackQueue={playerMode === \'RADIYO\' ? currentRotationTracks : []}');
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {

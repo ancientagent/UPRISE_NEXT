@@ -22,6 +22,37 @@ interface BroadcastSceneAnchor {
 export class FairPlayService {
   constructor(private prisma: PrismaService) {}
 
+  private buildEmptyRotationMeta(
+    scene: Pick<BroadcastSceneAnchor, 'id' | 'name' | 'city' | 'state' | 'musicCommunity' | 'tier'>,
+    requestedTier: BroadcastTier,
+  ) {
+    return {
+      sceneId: scene.id,
+      sceneName: scene.name,
+      sceneCity: scene.city,
+      sceneState: scene.state,
+      sceneMusicCommunity: scene.musicCommunity,
+      sceneTier: scene.tier,
+      requestedTier,
+      generatedAt: new Date().toISOString(),
+      newReleasesCount: 0,
+      mainRotationCount: 0,
+    };
+  }
+
+  private isMissingStateSceneError(error: unknown): boolean {
+    if (!(error instanceof NotFoundException)) {
+      return false;
+    }
+
+    const response = error.getResponse() as { error?: { message?: string } } | string;
+    if (typeof response === 'string') {
+      return response === 'State scene not found for the active community context';
+    }
+
+    return response.error?.message === 'State scene not found for the active community context';
+  }
+
   private async resolveBroadcastSceneForTier(
     userId: string,
     requestedTier?: BroadcastTier,
@@ -440,8 +471,44 @@ export class FairPlayService {
   }
 
   async getActiveRotation(userId: string, requestedTier?: BroadcastTier) {
-    const scene = await this.resolveBroadcastSceneForTier(userId, requestedTier);
-    return this.getRotation(scene.id, requestedTier);
+    try {
+      const scene = await this.resolveBroadcastSceneForTier(userId, requestedTier);
+      return this.getRotation(scene.id, requestedTier);
+    } catch (error) {
+      if (requestedTier === 'state' && this.isMissingStateSceneError(error)) {
+        const user = await this.prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            homeSceneState: true,
+            homeSceneCommunity: true,
+          },
+        });
+
+        const stateLabel = user?.homeSceneState ?? 'State';
+        const communityLabel = user?.homeSceneCommunity ?? 'Community';
+
+        return {
+          success: true,
+          data: {
+            newReleases: [],
+            mainRotation: [],
+          },
+          meta: this.buildEmptyRotationMeta(
+            {
+              id: `state-unavailable:${stateLabel}:${communityLabel}`,
+              name: `${stateLabel} ${communityLabel}`,
+              city: null,
+              state: user?.homeSceneState ?? null,
+              musicCommunity: user?.homeSceneCommunity ?? null,
+              tier: 'state',
+            },
+            'state',
+          ),
+        };
+      }
+
+      throw error;
+    }
   }
 
   async getMetrics(sceneId: string, asOf = new Date()) {

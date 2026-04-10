@@ -8,6 +8,7 @@ import { Button } from '@uprise/ui';
 import type { BroadcastRotation, BroadcastRotationMeta, Track } from '@uprise/types';
 import { api } from '@/lib/api';
 import { getActiveBroadcastRotation } from '@/lib/broadcast/client';
+import { normalizeBroadcastRuntimeError } from '@/lib/broadcast/runtime';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
@@ -154,6 +155,7 @@ export default function PlotPage() {
   const [broadcastMeta, setBroadcastMeta] = useState<BroadcastRotationMeta | null>(null);
   const [broadcastLoading, setBroadcastLoading] = useState(false);
   const [broadcastError, setBroadcastError] = useState<string | null>(null);
+  const [broadcastEmptyMessage, setBroadcastEmptyMessage] = useState<string | null>(null);
   const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists');
   const [selectedCollectionItem, setSelectedCollectionItem] = useState<{
     id: string;
@@ -275,12 +277,14 @@ export default function PlotPage() {
         setBroadcastRotation(null);
         setBroadcastMeta(null);
         setBroadcastError(null);
+        setBroadcastEmptyMessage(null);
         setBroadcastLoading(false);
         return;
       }
 
       setBroadcastLoading(true);
       setBroadcastError(null);
+      setBroadcastEmptyMessage(null);
 
       try {
         const response = await getActiveBroadcastRotation(activeBroadcastTier, token);
@@ -289,13 +293,28 @@ export default function PlotPage() {
 
         setBroadcastRotation(response.data ?? { newReleases: [], mainRotation: [] });
         setBroadcastMeta(response.meta ?? null);
+        setBroadcastEmptyMessage(
+          activeBroadcastTier === 'state' && response.meta?.sceneId.startsWith('state-unavailable:')
+            ? 'No state scene is active for this community yet.'
+            : null,
+        );
       } catch (error: unknown) {
         if (cancelled) return;
 
         const message = error instanceof Error ? error.message : 'Unable to load the active broadcast rotation.';
-        setBroadcastRotation(null);
-        setBroadcastMeta(null);
-        setBroadcastError(message);
+        const normalized = normalizeBroadcastRuntimeError(message, activeBroadcastTier);
+
+        if (normalized.treatAsEmptyState) {
+          setBroadcastRotation({ newReleases: [], mainRotation: [] });
+          setBroadcastMeta(null);
+          setBroadcastError(null);
+          setBroadcastEmptyMessage(normalized.userMessage);
+        } else {
+          setBroadcastRotation(null);
+          setBroadcastMeta(null);
+          setBroadcastError(normalized.userMessage);
+          setBroadcastEmptyMessage(null);
+        }
       } finally {
         if (!cancelled) {
           setBroadcastLoading(false);
@@ -853,10 +872,12 @@ export default function PlotPage() {
           onTierChange={handleTierChange}
           broadcastLabel={playerMode === 'RADIYO' ? currentBroadcastLabel : collectionBroadcastLabel}
           collectionTitle={selectedCollectionItem?.label ?? null}
+          trackQueue={playerMode === 'RADIYO' ? currentRotationTracks : []}
           currentTrack={playerMode === 'RADIYO' ? currentBroadcastTrack : null}
           currentTrackCount={currentRotationTracks.length}
           isBroadcastLoading={playerMode === 'RADIYO' ? broadcastLoading : false}
           broadcastError={playerMode === 'RADIYO' ? broadcastError : null}
+          broadcastEmptyMessage={playerMode === 'RADIYO' ? broadcastEmptyMessage : null}
         />
 
         {isProfileExpanded ? (
