@@ -14,7 +14,7 @@ Recent founder decisions about source behavior, community-wide updates, follower
 - first source entry into a community is a community/system-owned update
 - after first entry, source announcements are follower-only
 - support is reaction-level, not a standalone feed post
-- blast is singles-only by listeners
+- blast is a listener action on signals rather than sources; confirmed blastable signals now include singles and Uprises
 - backing is registrar-stage, not a source feature
 - Plot feed is the primary live pulse of the scene
 - `cause` is the preferred product term; older `project` wording is now explicit terminology debt

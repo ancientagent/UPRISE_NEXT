@@ -126,7 +126,10 @@ These do not become standalone public feed noise by default:
 Blast is not a universal source action.
 
 Blast rule:
-- blast is specific to singles
+- blast applies to signals, not sources
+- currently confirmed blastable signals include:
+  - singles
+  - Uprises
 - blast is performed by listeners
 
 ### 6.4 Backing

@@ -134,9 +134,11 @@ Different surfaces may lay this grammar out differently, but they must not inven
 - actor: user avatar
 - prop: boombox
 - balloon: blast-styled balloon
-- payload: song/single signal presentation
-- click target: song on the artist page
-- blast is specific to song/single signals
+- payload: blastable signal presentation
+- confirmed blastable signals include:
+  - song/single signals
+  - Uprise signals
+- click target: canonical destination for the blasted signal
 
 ### 4B.2 Recommendation grammar
 - actor: user avatar

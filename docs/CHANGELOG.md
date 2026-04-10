@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Corrected the blast boundary in the founder locks: blast is a listener action on signals, not sources, and confirmed blastable signals now include both singles and Uprises; updated `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md` and `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`.
 - Added `docs/solutions/MVP_EXPLICIT_DEFERRED_LIST_R1.md` as the single authority list for what is explicitly out of the current MVP, including broader social expansion, causes, active national surface scope, Top 40 / billboard-style lists, metrics-as-authority systems, later-version domain surfaces, and other non-core extension systems.
 - Clarified the current MVP boundary in `docs/solutions/MVP_CURRENT_EXECUTION_ROADMAP_R1.md`: the active MVP core is community creation/resolution/assignment, RaDIYo/listening-context systems, and the minimum revenue surfaces (artist promotion packages, event promotion packages, and the promo section), while the broader social layer is explicitly later-version scope; recorded in `docs/handoff/2026-04-10_mvp-core-vs-social-v2-boundary.md`.
 - Clarified the cause boundary: causes are legitimate registrar-mediated later-version entities, but they are not part of the current MVP surface and should be treated as later-version scope, likely V2, unless explicitly reactivated.
