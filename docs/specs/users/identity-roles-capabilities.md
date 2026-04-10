@@ -117,6 +117,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - UI supports explicit promoter follow-up reads:
     - registration detail,
     - capability audit summary.
+- Registrar capability-code web access rule (slice 122A):
+  - promoter capability code verify/redeem flows should remain accessible from the source-facing side of the platform.
+  - the current `/registrar` route is the MVP bridge for that flow, not the only intended long-term surface.
 - Registrar entry-list invite outcome enrichment (slice 70):
   - `GET /registrar/artist/entries` now includes `sentInviteCount` and `failedInviteCount` in per-entry invite lifecycle summaries.
   - Existing invite summary counts remain unchanged (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`).

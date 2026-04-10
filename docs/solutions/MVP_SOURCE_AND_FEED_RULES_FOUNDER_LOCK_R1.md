@@ -254,6 +254,7 @@ Current founder note:
 - the dry `Statistics` framing should give way to `The Scenery` as the broader community-information surface
 - `Registrar` should live inside `The Scenery` as a feature/module, not as its own peer default-screen section
 - the primary registrar CTA inside that surface should remain `Register`
+- registrar role/capability flows should also be accessible from the source-facing side of the platform rather than being trapped only in a listener/civic entry surface
 
 Provisional candidate, not hard-locked yet:
 - the sect profile may also carry its own calendar and upcoming events view

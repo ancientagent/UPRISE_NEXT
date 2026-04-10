@@ -17,6 +17,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 ## Functional Requirements
 - Registrar is a Home Scene civic surface (Activity Feed context in canon narrative).
 - Registrar records and tracks registration intent/status.
+- Registrar role/capability flows must remain accessible from the source-facing side of the platform.
 - V1 target functions:
   - Artist/Band registration initiation.
   - Promoter registration initiation.
@@ -184,6 +185,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
     - `POST /registrar/code/redeem`.
   - Verify/redeem remains user-driven; no auto-redeem behavior is introduced.
   - Redemption success refreshes promoter registrar status so capability-grant reads stay current on the same page.
+  - This capability lane should also remain reachable from the source-facing side of the platform; the current `/registrar` route is the MVP bridge, not the only intended long-term access surface.
 - Registrar web canonical member-sync action (slice 14):
   - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
   - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.
@@ -302,6 +304,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.
+- Registrar role/capability workflows should also be reachable from source-facing surfaces for artists/promoters operating in source context.
 - Users should be able to inspect registration state and required next actions.
 - Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
 - Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.
