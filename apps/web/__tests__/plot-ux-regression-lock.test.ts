@@ -48,7 +48,8 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
-    expect(plotPageSource).toContain("const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>('city')");
+    expect(plotPageSource).toContain("() => playerTier ?? getMvpPlayerTier(tunedScene?.tier)");
+    expect(plotPageSource).toContain("const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>(initialPlayerTier)");
     expect(playerSource).not.toContain("useState<PlayerMode>");
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
     expect(plotPageSource).toContain('activeBroadcastTier={activeBroadcastTier}');
@@ -71,6 +72,9 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('const handleTierChange = (tier: PlayerTier) => {');
     expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
     expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === nextTier ? null : nextTier));');
+    expect(plotPageSource).toContain('setSelectedTier(initialPlayerTier);');
+    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === null ? null : initialPlayerTier));');
+    expect(plotPageSource).toContain('setPlayerTier(nextTier);');
     expect(plotPageSource).toContain('mode={playerMode}');
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
@@ -108,6 +112,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain("const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];");
     expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
     expect(plotPageSource).toContain('trackQueue={playerMode === \'RADIYO\' ? currentRotationTracks : []}');
+    expect(plotPageSource).toContain("const [selectedTier, setSelectedTier] = useState<PlayerTier>(initialPlayerTier)");
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -236,7 +241,7 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain(
-      'const { homeScene, pioneerFollowUp, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();',
+      'playerTier,',
     );
     expect(plotPageSource).toContain("const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;");
     expect(plotPageSource).toContain("const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);");

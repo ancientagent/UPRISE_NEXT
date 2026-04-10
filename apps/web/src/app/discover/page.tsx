@@ -20,6 +20,7 @@ import RadiyoPlayerPanel, {
 } from '@/components/plot/RadiyoPlayerPanel';
 import SceneContextBadge from '@/components/plot/SceneContextBadge';
 import SceneMap from '@/components/plot/SceneMap';
+import { getMvpPlayerTier } from '@/components/plot/tier-guard';
 import {
   getCommunitySceneMap,
   type CommunitySceneMapResponse,
@@ -433,19 +434,16 @@ export default function DiscoverPage() {
   const { token } = useAuthStore();
   const {
     homeScene,
+    playerTier,
     tunedSceneId,
     tunedScene,
     isVisitor,
     setHomeScene,
     setDiscoveryContext,
+    setPlayerTier,
   } = useOnboardingStore();
 
-  const initialTier = useMemo<PlayerTier>(() => {
-    if (tunedScene?.tier === 'state' || tunedScene?.tier === 'national') {
-      return tunedScene.tier === 'national' ? 'state' : tunedScene.tier;
-    }
-    return 'city';
-  }, [tunedScene?.tier]);
+  const initialTier = useMemo<PlayerTier>(() => playerTier ?? getMvpPlayerTier(tunedScene?.tier), [playerTier, tunedScene?.tier]);
 
   const [tier, setTier] = useState<TierScope>(initialTier);
   const [rotationPool, setRotationPool] = useState<RotationPool>('main_rotation');
@@ -1010,8 +1008,11 @@ export default function DiscoverPage() {
   };
 
   const handleChangeTier = (nextTier: PlayerTier) => {
-    setTier(nextTier);
-    setLocationQuery(getDefaultLocationQueryForTier(nextTier, homeScene, tunedScene));
+    const persistedTier = nextTier === 'national' ? 'state' : nextTier;
+
+    setTier(persistedTier);
+    setPlayerTier(persistedTier);
+    setLocationQuery(getDefaultLocationQueryForTier(persistedTier, homeScene, tunedScene));
     setTravelError(null);
   };
 

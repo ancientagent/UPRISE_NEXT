@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type GpsStatus = 'unknown' | 'granted' | 'denied';
+export type PersistedPlayerTier = 'city' | 'state';
 
 export interface HomeSceneSelection {
   city: string;
@@ -30,6 +31,7 @@ interface OnboardingState {
   tunedSceneId: string | null;
   tunedScene: TunedSceneContext | null;
   isVisitor: boolean | null;
+  playerTier: PersistedPlayerTier | null;
   gpsStatus: GpsStatus;
   gpsCoords?: { latitude: number; longitude: number };
   votingEligible: boolean;
@@ -37,6 +39,7 @@ interface OnboardingState {
   setHomeScene: (homeScene: HomeSceneSelection) => void;
   setPioneerFollowUp: (followUp: PioneerFollowUp | null) => void;
   setTunedSceneId: (sceneId: string | null) => void;
+  setPlayerTier: (tier: PersistedPlayerTier | null) => void;
   setDiscoveryContext: (
     payload: { tunedSceneId: string | null; tunedScene: TunedSceneContext | null; isVisitor: boolean | null }
   ) => void;
@@ -53,6 +56,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       tunedSceneId: null,
       tunedScene: null,
       isVisitor: null,
+      playerTier: null,
       gpsStatus: 'unknown',
       gpsCoords: undefined,
       votingEligible: false,
@@ -60,6 +64,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       setHomeScene: (homeScene) => set({ homeScene, pioneerFollowUp: null }),
       setPioneerFollowUp: (pioneerFollowUp) => set({ pioneerFollowUp }),
       setTunedSceneId: (tunedSceneId) => set({ tunedSceneId }),
+      setPlayerTier: (playerTier) => set({ playerTier }),
       setDiscoveryContext: (payload) =>
         set({
           tunedSceneId: payload.tunedSceneId,
@@ -75,6 +80,7 @@ export const useOnboardingStore = create<OnboardingState>()(
           tunedSceneId: null,
           tunedScene: null,
           isVisitor: null,
+          playerTier: null,
           gpsStatus: 'unknown',
           gpsCoords: undefined,
           votingEligible: false,

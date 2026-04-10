@@ -53,7 +53,8 @@ describe('/discover current-community lock', () => {
 
     expect(discoverSource).toContain("const DISCOVER_TIER_OPTIONS: TierScope[] = ['city', 'state'];");
     expect(discoverSource).toContain('National is deferred until population justifies it.');
-    expect(discoverSource).toContain("return tunedScene.tier === 'national' ? 'state' : tunedScene.tier;");
+    expect(discoverSource).toContain("() => playerTier ?? getMvpPlayerTier(tunedScene?.tier)");
+    expect(discoverSource).toContain('setPlayerTier(persistedTier);');
   });
 
   it('keeps signed-out discover destinations explicit instead of linking directly into auth-dead-end artist pages', () => {

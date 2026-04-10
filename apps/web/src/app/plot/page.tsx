@@ -18,7 +18,11 @@ import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import RadiyoPlayerPanel, { type PlayerMode, type PlayerTier, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
-import { buildRadiyoBroadcastLabel, shouldUseTunedSceneAsDefaultPlotAnchor } from '@/components/plot/tier-guard';
+import {
+  buildRadiyoBroadcastLabel,
+  getMvpPlayerTier,
+  shouldUseTunedSceneAsDefaultPlotAnchor,
+} from '@/components/plot/tier-guard';
 import { getDiscoveryContext } from '@/lib/discovery/client';
 import { mergeDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
@@ -142,11 +146,24 @@ const formatPlotCommunityLabel = (community: Pick<CommunityWithDistance, 'city' 
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, pioneerFollowUp, tunedSceneId, tunedScene, isVisitor, setDiscoveryContext } = useOnboardingStore();
+  const {
+    homeScene,
+    pioneerFollowUp,
+    playerTier,
+    tunedSceneId,
+    tunedScene,
+    isVisitor,
+    setDiscoveryContext,
+    setPlayerTier,
+  } = useOnboardingStore();
   const { token, user } = useAuthStore();
+  const initialPlayerTier = useMemo<PlayerTier>(
+    () => playerTier ?? getMvpPlayerTier(tunedScene?.tier),
+    [playerTier, tunedScene?.tier],
+  );
   const [activeTab, setActiveTab] = useState<PlotTab>('Feed');
-  const [selectedTier, setSelectedTier] = useState<PlayerTier>('city');
-  const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>('city');
+  const [selectedTier, setSelectedTier] = useState<PlayerTier>(initialPlayerTier);
+  const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>(initialPlayerTier);
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
@@ -250,6 +267,11 @@ export default function PlotPage() {
 
     resolveDefaultCommunity();
   }, [selectedCommunity, token, homeScene, tunedSceneId, hasHomeScene]);
+
+  useEffect(() => {
+    setSelectedTier(initialPlayerTier);
+    setActiveBroadcastTier((current) => (current === null ? null : initialPlayerTier));
+  }, [initialPlayerTier]);
 
   useEffect(() => {
     async function loadExpandedProfileStats() {
@@ -467,6 +489,7 @@ export default function PlotPage() {
     const nextTier = tier === 'national' ? 'state' : tier;
 
     setSelectedTier(nextTier);
+    setPlayerTier(nextTier);
     setPlayerMode('RADIYO');
     setActiveBroadcastTier((current) => (current === nextTier ? null : nextTier));
   };

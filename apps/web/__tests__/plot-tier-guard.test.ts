@@ -1,5 +1,6 @@
 import {
   buildRadiyoBroadcastLabel,
+  getMvpPlayerTier,
   shouldFetchNearbyForTier,
   shouldUseTunedSceneAsDefaultPlotAnchor,
 } from '@/components/plot/tier-guard';
@@ -19,6 +20,13 @@ describe('Plot Tier Guard', () => {
     expect(shouldUseTunedSceneAsDefaultPlotAnchor({ tier: 'state' })).toBe(false);
     expect(shouldUseTunedSceneAsDefaultPlotAnchor({ tier: 'national' })).toBe(false);
     expect(shouldUseTunedSceneAsDefaultPlotAnchor(null)).toBe(false);
+  });
+
+  it('clamps tuned transport tiers to the MVP player tier set', () => {
+    expect(getMvpPlayerTier('city')).toBe('city');
+    expect(getMvpPlayerTier('state')).toBe('state');
+    expect(getMvpPlayerTier('national')).toBe('state');
+    expect(getMvpPlayerTier(null)).toBe('city');
   });
 
   it('keeps the parent music-community anchor stable across tier titles', () => {
