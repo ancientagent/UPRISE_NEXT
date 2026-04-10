@@ -34,10 +34,8 @@ const APP_REGISTRAR_PAGE = 'apps/web/src/app/registrar/page.tsx';
 const ACTION_GATED_API_AVAILABLE_NOTE = 'API available; web surface remains action-gated.';
 const ACTION_GATED_API_READ_IMPLEMENTED_NOTE =
   'API read path implemented; web surface remains action-gated with typed client scaffolding only.';
-const ACTION_GATED_ADMIN_READ_NOTE =
-  'API available; deferred admin-lifecycle read surface remains action-gated on web.';
-const ACTION_GATED_ADMIN_AUDIT_NOTE =
-  'API available; deferred admin-lifecycle audit read surface remains action-gated on web.';
+const IMPLEMENTED_WEB_INTAKE_NOTE = 'API available and consumed by the registrar web surface.';
+const IMPLEMENTED_WEB_READ_NOTE = 'API read path implemented and rendered by the registrar web surface.';
 
 export const MVP_FLOW_ROUTE_CONTRACTS: readonly MvpFlowRouteContract[] = [
   {
@@ -55,7 +53,7 @@ export const MVP_FLOW_ROUTE_CONTRACTS: readonly MvpFlowRouteContract[] = [
   {
     id: 'registrar_scene_actions',
     webRoute: '/registrar',
-    apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/registrar/artist'],
+    apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/registrar/artist', '/registrar/promoter'],
     notes: 'Registrar submit flow depends on scene-scoped onboarding + GPS eligibility context.',
   },
 ] as const;
@@ -119,40 +117,37 @@ export const REGISTRAR_WEB_ENDPOINT_CONTRACTS: readonly RegistrarWebEndpointCont
     id: 'registrar.promoter.submit',
     method: 'POST',
     pathTemplate: '/registrar/promoter',
-    status: 'gap',
-    webConsumerPath: null,
-    gapKind: 'web_surface_missing',
-    notes: ACTION_GATED_API_AVAILABLE_NOTE,
+    status: 'implemented',
+    webConsumerPath: APP_REGISTRAR_PAGE,
+    gapKind: null,
+    notes: IMPLEMENTED_WEB_INTAKE_NOTE,
   },
   {
     id: 'registrar.promoter.entries.list',
     method: 'GET',
     pathTemplate: '/registrar/promoter/entries',
-    status: 'gap',
-    webConsumerPath: null,
-    gapKind: 'web_surface_missing',
-    deferredAdminLifecycle: 'action_gated',
-    notes: ACTION_GATED_ADMIN_READ_NOTE,
+    status: 'implemented',
+    webConsumerPath: APP_REGISTRAR_PAGE,
+    gapKind: null,
+    notes: IMPLEMENTED_WEB_READ_NOTE,
   },
   {
     id: 'registrar.promoter.entry.detail',
     method: 'GET',
     pathTemplate: '/registrar/promoter/:entryId',
-    status: 'gap',
-    webConsumerPath: null,
-    gapKind: 'web_surface_missing',
-    deferredAdminLifecycle: 'action_gated',
-    notes: ACTION_GATED_ADMIN_READ_NOTE,
+    status: 'implemented',
+    webConsumerPath: APP_REGISTRAR_PAGE,
+    gapKind: null,
+    notes: IMPLEMENTED_WEB_READ_NOTE,
   },
   {
     id: 'registrar.promoter.entry.capability_audit',
     method: 'GET',
     pathTemplate: '/registrar/promoter/:entryId/capability-audit',
-    status: 'gap',
-    webConsumerPath: null,
-    gapKind: 'web_surface_missing',
-    deferredAdminLifecycle: 'action_gated',
-    notes: ACTION_GATED_ADMIN_AUDIT_NOTE,
+    status: 'implemented',
+    webConsumerPath: APP_REGISTRAR_PAGE,
+    gapKind: null,
+    notes: IMPLEMENTED_WEB_READ_NOTE,
   },
   {
     id: 'auth.invite.preview',

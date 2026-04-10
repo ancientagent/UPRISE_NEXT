@@ -169,6 +169,14 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
     - queue invites (`POST /registrar/artist/:entryId/dispatch-invites`),
     - read invite summary (`GET /registrar/artist/:entryId/invites`).
   - Displays per-entry invite lifecycle summary counts for submitter follow-up.
+- Registrar promoter web intake/status (slice 121):
+  - `/registrar` now exposes a `Promoter Registration` action alongside Artist/Band registration.
+  - Promoter intake submits `productionName` to `POST /registrar/promoter` using the same Home Scene resolution + GPS gating as other registrar civic submissions.
+  - `/registrar` now reads submitter-owned promoter registration history from `GET /registrar/promoter/entries`.
+  - Web surface supports explicit follow-up reads for:
+    - `GET /registrar/promoter/:entryId`,
+    - `GET /registrar/promoter/:entryId/capability-audit`.
+  - Registrar web surface now includes an eligibility snapshot clarifying that filings remain Home Scene-bound, visitor listening context does not change registrar scope, and promoter event creation remains blocked until capability is granted and the Print Shop event-write lane is published.
 - Registrar web canonical member-sync action (slice 14):
   - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
   - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.

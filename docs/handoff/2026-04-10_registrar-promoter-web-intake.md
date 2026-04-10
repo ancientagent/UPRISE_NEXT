@@ -9,10 +9,13 @@ Added the missing web-side promoter registrar slice so `/registrar` now supports
   - `Promoter Registration` action selection,
   - Home Scene + GPS-gated promoter submit form,
   - submitter-owned promoter registration history,
-  - on-demand promoter detail and capability-audit reads.
+  - on-demand promoter detail and capability-audit reads,
+  - eligibility snapshot explaining Home Scene scope, visitor-context non-authority, and promoter event-creation readiness.
+- Reconciled `apps/web/src/lib/registrar/contractInventory.ts` and `apps/web/__tests__/registrar-contract-inventory.test.ts` so promoter web intake/read endpoints are now tracked as implemented rather than stale web-surface gaps.
 - Added targeted web regression coverage in:
   - `apps/web/__tests__/registrar-client.test.ts`
   - `apps/web/__tests__/route-ux-consistency-lock.test.ts`
+  - `apps/web/__tests__/registrar-contract-inventory.test.ts`
 - Updated `docs/specs/users/identity-roles-capabilities.md` and `docs/CHANGELOG.md`.
 
 ## Browser QA
@@ -29,6 +32,7 @@ Chrome DevTools MCP on `http://127.0.0.1:9222`:
 
 ## Verification
 - `pnpm --filter web test -- registrar-client route-ux-consistency-lock`
+- `pnpm --filter web test -- registrar-contract-inventory route-ux-consistency-lock registrar-client`
 - `pnpm --filter web typecheck`
 - `pnpm run docs:lint`
 

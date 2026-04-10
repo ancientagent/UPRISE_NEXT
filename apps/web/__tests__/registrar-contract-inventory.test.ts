@@ -34,7 +34,7 @@ describe('registrar contract inventory', () => {
     expect(byId.get('registrar_scene_actions')).toEqual({
       id: 'registrar_scene_actions',
       webRoute: '/registrar',
-      apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/registrar/artist'],
+      apiDependencies: ['/onboarding/home-scene', '/onboarding/gps-verify', '/registrar/artist', '/registrar/promoter'],
       notes: 'Registrar submit flow depends on scene-scoped onboarding + GPS eligibility context.',
     });
   });
@@ -83,9 +83,6 @@ describe('registrar contract inventory', () => {
   it('captures expected unresolved endpoint gaps', () => {
     const gapIds = new Set(getRegistrarWebGapContracts().map((contract) => contract.id));
     const requiredGapIds = [
-      'registrar.promoter.submit',
-      'registrar.promoter.entries.list',
-      'registrar.promoter.entry.detail',
       'auth.invite.preview',
       'auth.invite.register',
       'registrar.project.submit',
@@ -122,12 +119,9 @@ describe('registrar contract inventory', () => {
     }
   });
 
-  it('keeps registrar read scaffolds explicitly marked as web-surface gaps', () => {
+  it('keeps remaining registrar read scaffolds explicitly marked as web-surface gaps', () => {
     const indexed = new Map(REGISTRAR_WEB_ENDPOINT_CONTRACTS.map((contract) => [contract.id, contract]));
     const expectedReadScaffoldGaps: Array<[string, string]> = [
-      ['registrar.promoter.entries.list', '/registrar/promoter/entries'],
-      ['registrar.promoter.entry.detail', '/registrar/promoter/:entryId'],
-      ['registrar.promoter.entry.capability_audit', '/registrar/promoter/:entryId/capability-audit'],
       ['registrar.project.entries.list', '/registrar/project/entries'],
       ['registrar.project.entry.detail', '/registrar/project/:entryId'],
       ['registrar.sect_motion.entries.list', '/registrar/sect-motion/entries'],
@@ -175,23 +169,20 @@ describe('registrar contract inventory', () => {
     }
   });
 
-  it('tracks deferred admin-lifecycle read surfaces as action-gated placeholders', () => {
+  it('keeps promoter registrar endpoints aligned to implemented web intake/read status', () => {
     const indexed = new Map(REGISTRAR_WEB_ENDPOINT_CONTRACTS.map((contract) => [contract.id, contract]));
-    const deferredAdminSurfaceIds = [
+    for (const id of [
+      'registrar.promoter.submit',
       'registrar.promoter.entries.list',
       'registrar.promoter.entry.detail',
       'registrar.promoter.entry.capability_audit',
-    ];
-
-    for (const id of deferredAdminSurfaceIds) {
-      const contract = indexed.get(id);
-      expect(contract).toEqual(
+    ]) {
+      expect(indexed.get(id)).toEqual(
         expect.objectContaining({
           id,
-          status: 'gap',
-          gapKind: 'web_surface_missing',
-          webConsumerPath: null,
-          deferredAdminLifecycle: 'action_gated',
+          status: 'implemented',
+          gapKind: null,
+          webConsumerPath: 'apps/web/src/app/registrar/page.tsx',
         }),
       );
     }
@@ -212,7 +203,6 @@ describe('registrar contract inventory', () => {
       'API read path implemented; web surface remains action-gated with typed client scaffolding only.';
 
     for (const id of [
-      'registrar.promoter.submit',
       'auth.invite.preview',
       'auth.invite.register',
       'registrar.project.submit',
@@ -232,8 +222,15 @@ describe('registrar contract inventory', () => {
       expect(byId.get(id)?.notes).toBe(apiReadImplemented);
     }
 
+    expect(byId.get('registrar.promoter.submit')?.notes).toBe('API available and consumed by the registrar web surface.');
+    expect(byId.get('registrar.promoter.entries.list')?.notes).toBe(
+      'API read path implemented and rendered by the registrar web surface.',
+    );
+    expect(byId.get('registrar.promoter.entry.detail')?.notes).toBe(
+      'API read path implemented and rendered by the registrar web surface.',
+    );
     expect(byId.get('registrar.promoter.entry.capability_audit')?.notes).toBe(
-      'API available; deferred admin-lifecycle audit read surface remains action-gated on web.',
+      'API read path implemented and rendered by the registrar web surface.',
     );
   });
 
@@ -311,14 +308,7 @@ describe('registrar contract inventory', () => {
     const deferredAdminContracts = REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter(
       (contract) => contract.deferredAdminLifecycle === 'action_gated',
     );
-    expect(deferredAdminContracts.length).toBeGreaterThan(0);
-
-    for (const contract of deferredAdminContracts) {
-      expect(contract.status).toBe('gap');
-      expect(contract.gapKind).toBe('web_surface_missing');
-      expect(contract.notes.toLowerCase()).toContain('deferred admin-lifecycle');
-      expect(contract.notes.toLowerCase()).toContain('action-gated');
-    }
+    expect(deferredAdminContracts.length).toBe(0);
 
     const nonDeferred = REGISTRAR_WEB_ENDPOINT_CONTRACTS.filter(
       (contract) => contract.deferredAdminLifecycle !== 'action_gated',
@@ -334,12 +324,12 @@ describe('registrar contract inventory', () => {
       'registrar.artist.submit',
       'registrar.artist.entries.list',
       'registrar.artist.entry.invites',
-    ];
-    const deferredActionGated = [
       'registrar.promoter.submit',
       'registrar.promoter.entries.list',
       'registrar.promoter.entry.detail',
       'registrar.promoter.entry.capability_audit',
+    ];
+    const deferredActionGated = [
       'registrar.project.submit',
       'registrar.sect_motion.submit',
       'registrar.code.verify',

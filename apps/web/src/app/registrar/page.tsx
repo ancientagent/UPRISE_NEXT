@@ -49,7 +49,7 @@ type HomeSceneResolution = {
 export default function RegistrarPage() {
   const router = useRouter();
   const { token, user } = useAuthStore();
-  const { homeScene } = useOnboardingStore();
+  const { homeScene, isVisitor, tunedScene } = useOnboardingStore();
 
   const [selectedAction, setSelectedAction] = useState<'artist_band' | 'promoter' | null>(null);
   const [entityType, setEntityType] = useState<RegistrarEntityType>('band');
@@ -83,6 +83,61 @@ export default function RegistrarPage() {
   const slugPreview = useMemo(() => normalizeArtistBandSlug(slugInput || name), [name, slugInput]);
 
   const gpsVerified = Boolean(user?.gpsVerified);
+  const latestPromoterEntry = promoterEntries[0] ?? null;
+  const eventEligibilitySummary = useMemo(() => {
+    if (!token) {
+      return {
+        label: 'Sign in required',
+        detail: 'Registrar and promoter event eligibility checks require an authenticated account.',
+      };
+    }
+
+    if (!homeScene?.city || !homeScene?.state || !homeScene?.musicCommunity) {
+      return {
+        label: 'Home Scene required',
+        detail: 'Registrar filings stay bound to your Home Scene civic identity before promoter capability can progress.',
+      };
+    }
+
+    if (!gpsVerified) {
+      return {
+        label: 'GPS verification required',
+        detail: 'Promoter registration remains blocked until your Home Scene civic verification is complete.',
+      };
+    }
+
+    if (!latestPromoterEntry) {
+      return {
+        label: 'Promoter registration required',
+        detail: 'Register a named production identity first. Event creation stays unavailable until that registrar path exists.',
+      };
+    }
+
+    if (latestPromoterEntry.promoterCapability.granted) {
+      return {
+        label: 'Capability granted',
+        detail:
+          'Your promoter capability is active. Event creation remains routed through Print Shop once that write flow is published.',
+      };
+    }
+
+    if (latestPromoterEntry.status === 'rejected') {
+      return {
+        label: 'Registration rejected',
+        detail: 'Promoter capability is not active. Review the latest registrar status and resubmit when the production identity is ready.',
+      };
+    }
+
+    return {
+      label: 'Registrar review pending',
+      detail:
+        'Your promoter registration is recorded, but event creation remains locked until capability is approved and the Print Shop event write flow is live.',
+    };
+  }, [gpsVerified, homeScene?.city, homeScene?.musicCommunity, homeScene?.state, latestPromoterEntry, token]);
+  const visitorRegistrarNotice =
+    isVisitor && tunedScene?.name
+      ? `You are currently visiting ${tunedScene.name}. Registrar actions still file against your Home Scene, not the scene you are visiting.`
+      : null;
 
   const loadEntries = async () => {
     if (!token) {
@@ -460,6 +515,14 @@ export default function RegistrarPage() {
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <h2 className="text-lg font-semibold text-black">Registration Actions</h2>
           <p className="mt-1 text-sm text-black/60">Choose a registrar action to begin.</p>
+          <div className="mt-4 rounded-xl border border-black/10 bg-black/[0.02] p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-black/50">Eligibility Snapshot</p>
+            <p className="mt-2 text-sm font-medium text-black">{eventEligibilitySummary.label}</p>
+            <p className="mt-1 text-sm text-black/60">{eventEligibilitySummary.detail}</p>
+            {visitorRegistrarNotice && (
+              <p className="mt-2 text-xs text-black/50">{visitorRegistrarNotice}</p>
+            )}
+          </div>
           {!token && (
             <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
               Sign in is required before opening registrar submission actions.

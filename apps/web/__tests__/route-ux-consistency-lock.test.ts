@@ -12,6 +12,8 @@ describe('cross-route UX consistency lock', () => {
     const registrarSource = readRepoFile('src/app/registrar/page.tsx');
 
     expect(registrarSource).toContain('Sign in is required before opening registrar submission actions.');
+    expect(registrarSource).toContain('Eligibility Snapshot');
+    expect(registrarSource).toContain('Registrar actions still file against your Home Scene');
     expect(registrarSource).toContain('disabled={!token}');
     expect(registrarSource).toContain("{selectedAction === 'artist_band' && token && (");
     expect(registrarSource).toContain("{selectedAction === 'promoter' && token && (");
