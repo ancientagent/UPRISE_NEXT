@@ -102,6 +102,7 @@ These remain legitimate product domains, but are not current-MVP-driving:
   - it is effectively a wall of JPEG-style business promos
   - businesses may post there from the web layer
   - businesses may not need listener accounts for that later surface
+  - sequencing rationale: wait until communities have populated enough that businesses have a real reason to join
 
 ## Handling Rule
 When a deferred item appears in canon, specs, or legacy docs:

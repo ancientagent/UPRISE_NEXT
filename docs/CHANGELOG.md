@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Clarified why the promo section / business promotions wall is deferred from the MVP core: the founder wants communities to populate first so businesses have a real reason to join before that surface becomes important.
 - Narrowed the current MVP core again: the promo section / business promotions wall is no longer treated as part of the active MVP core, and is now explicitly deferred as a later simple business surface while artist and event promotion packages remain in scope.
 - Clarified the blast rationale in the founder locks: Uprises remain blastable because inter-community Uprises exist, so blast cannot be narrowed to local-only single propagation.
 - Corrected the blast boundary in the founder locks: blast is a listener action on signals, not sources, and confirmed blastable signals now include both singles and Uprises; updated `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md` and `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`.

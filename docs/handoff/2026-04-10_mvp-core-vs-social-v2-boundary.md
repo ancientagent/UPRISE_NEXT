@@ -16,6 +16,7 @@ The current MVP should stay focused on:
 - keep causes outside the current MVP surface
 - keep implementation pressure on the core community + RaDIYo + revenue loop
 - do not treat the business-oriented promo section / promotions wall as required for the current MVP
+- rationale: wait until communities have enough population/activity to make business participation worthwhile
 
 ## Repo impact
 - `docs/solutions/MVP_CURRENT_EXECUTION_ROADMAP_R1.md` now explicitly states the active MVP core
