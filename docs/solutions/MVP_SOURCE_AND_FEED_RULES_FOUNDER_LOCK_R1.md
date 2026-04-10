@@ -132,6 +132,10 @@ Blast rule:
   - Uprises
 - blast is performed by listeners
 
+Rationale:
+- Uprises are not purely local-only signals
+- inter-community Uprises exist, so Uprises must remain eligible for explicit listener amplification
+
 ### 6.4 Backing
 Backing is not a source feature.
 

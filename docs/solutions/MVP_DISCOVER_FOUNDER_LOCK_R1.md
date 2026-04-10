@@ -140,6 +140,9 @@ Different surfaces may lay this grammar out differently, but they must not inven
   - Uprise signals
 - click target: canonical destination for the blasted signal
 
+Rationale:
+- Uprise signals are blastable because inter-community Uprises exist and must remain eligible for explicit listener amplification
+
 ### 4B.2 Recommendation grammar
 - actor: user avatar
 - balloon: fixed recommendation balloon
