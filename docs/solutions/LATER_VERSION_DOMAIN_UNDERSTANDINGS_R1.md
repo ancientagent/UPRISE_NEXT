@@ -18,6 +18,7 @@ This document exists to capture a simple rule:
 
 ## Domain Status Rule
 The following domains are legitimate UPRISE product domains:
+- causes
 - ambassadors
 - venues
 - mixologists
@@ -65,6 +66,15 @@ They should not be treated as:
 - Current rule:
   - preserve venue/business capability as part of broader product understanding
   - do not infer a fully locked standalone venue product system from legacy references alone
+
+### Causes
+- Legitimate later-version domain.
+- Current founder direction:
+  - causes are not part of the current MVP surface
+  - causes are likely V2 unless explicitly reactivated earlier
+- Current rule:
+  - preserve the registrar-mediated cause model in working understanding
+  - do not pull public cause surfaces, cause visibility, or cause runtime expansion into the active MVP slice unless explicitly requested
 
 ## Discover / Stats Boundary
 For the active Discover and Statistics MVP work:
@@ -131,7 +141,7 @@ Founder confirmation is required before:
 
 ## Practical Prompt Rule
 Future agents should use this framing:
-- keep ambassadors, venues, mixologists, and mixes in background product understanding
+- keep causes, ambassadors, venues, mixologists, and mixes in background product understanding
 - do not discard them as fake or obsolete
 - do not let them expand the current MVP slice unless the task or founder direction calls them back in
 

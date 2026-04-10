@@ -7,7 +7,7 @@
 
 ## [Unreleased]
 ### Added
-- Extended the source/feed/cause founder lock with a temporary MVP surface rule: for now, cause visibility can live inside the social/community update layer instead of requiring a dedicated public cause surface, while preserving the longer-term registrar-mediated cause model.
+- Clarified the cause boundary: causes are legitimate registrar-mediated later-version entities, but they are not part of the current MVP surface and should be treated as later-version scope, likely V2, unless explicitly reactivated.
 - Extended the realized-sect founder lock with minimum sect-profile contents: a basic community-like outline, participating bands/artists, and sect fan/community data are now required carry-forward truths, while sect-specific calendar/upcoming-events content remains explicitly provisional pending later confirmation.
 - Extended `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md` so realized sects are explicitly treated as source-like sub-communities with their own community-accessible profile, followable sub-community updates, and an Uprise signal that users can add, blast, and recommend from the sect profile; also flagged the required sect/runtime and community-information-surface follow-up work.
 - Added `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md` to durably lock the newly clarified source/feed/cause doctrine from the April 9 founder session, including the universal source feature model, shared source-profile structure, community-entry vs follower-only update ownership, support/backing/blast boundaries, Plot feed priority, `cause` terminology direction, and the explicitly queued follow-up work for terminology/runtime reconciliation.

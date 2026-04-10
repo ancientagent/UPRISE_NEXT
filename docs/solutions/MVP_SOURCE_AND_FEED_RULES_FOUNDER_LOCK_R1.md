@@ -51,9 +51,9 @@ Current source classes in active MVP understanding:
 - businesses
 - promoters
 - events
-- causes once official
 
 Later-version source domains remain legitimate but are not widened here:
+- causes once official
 - ambassadors
 - venues
 - mixologists
@@ -213,18 +213,18 @@ Once official and public:
 If someone is allowed to participate in the cause after it is public:
 - that allowance is controlled through the Registrar
 
-### 8.5 Temporary MVP surface rule
-For now, causes should be handled through the social update layer.
+### 8.5 MVP boundary
+Causes are not part of the current MVP surface.
 
 Interpretation:
 - do not require a dedicated public cause surface in the current MVP pass
-- cause visibility can live inside social/community update behavior for now
-- this is a temporary MVP surface simplification, not a denial of the underlying cause model
+- do not require cause visibility in the current MVP social/community update layer
+- treat causes as later-version scope, likely V2, unless explicitly reactivated
 
 Underlying carry-forward remains:
 - causes still belong to the registrar-mediated motion/backing system
 - causes may still become first-class sources later
-- this temporary rule only limits the current MVP surface expectation
+- this rule removes cause availability from the active MVP expectation rather than deleting the model
 
 ## 9) Sect Realization And Source Behavior Lock
 ### 9.1 Realization result
@@ -310,7 +310,7 @@ The following are now flagged for deliberate development/reconciliation work:
 - reconcile profile surfaces to the shared source-profile structure and donation-link exception
 
 4. Cause runtime alignment
-- reconcile current registrar `project` APIs/contracts to the locked cause lifecycle and backing boundary
+- reconcile current registrar `project` APIs/contracts to the locked cause lifecycle and backing boundary when causes are reactivated beyond later-version scope
 
 5. Sect realization/runtime alignment
 - reconcile sect motion/runtime surfaces so realized sects become source-like sub-community profiles with followable updates and Uprise signal access
