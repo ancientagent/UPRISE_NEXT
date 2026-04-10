@@ -20,6 +20,7 @@ Recent founder decisions about source behavior, community-wide updates, follower
 - `cause` is the preferred product term; older `project` wording is now explicit terminology debt
 - causes begin in the Registrar as proposals and become sources only after enough registered backing
 - causes and sects now explicitly share the same motion/backing/threshold/officialization pattern, with sects using artist backing and causes using listener backing
+- realized sects are now explicitly locked as source-like sub-communities with their own community-accessible profile, followable sub-community updates, and an Uprise signal that can be added/blasted/recommended from the sect profile
 - events are sources and flyers are signals
 
 ## Explicitly not locked yet
@@ -28,9 +29,11 @@ Recent founder decisions about source behavior, community-wide updates, follower
 - event paid promo package mechanics
 - milestone threshold formulas
 - full runtime/spec rename from `project` to `cause`
+- final rename of the community information area currently reached through `Statistics`
 
 ## Follow-up flagged
 1. reconcile registrar/spec/runtime terminology from `project` to `cause`
 2. align feed/update runtime to the locked community-wide vs follower-only ownership rules
 3. align source profile surfaces to the shared source-profile contract
-4. revisit unresolved event/flyer/promo promotion rules before implementing them
+4. align realized sect runtime/profile surfaces to the new sub-community source lock
+5. revisit unresolved event/flyer/promo promotion rules before implementing them

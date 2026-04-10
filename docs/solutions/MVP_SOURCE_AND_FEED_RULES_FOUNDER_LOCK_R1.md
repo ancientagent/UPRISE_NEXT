@@ -14,6 +14,7 @@ This document is the controlling lock for:
 - community-wide vs follower-owned update ownership
 - reaction/private-action boundaries
 - `cause` terminology and lifecycle direction
+- sect realization into sub-community source behavior
 - currently confirmed event/source ontology
 
 ## 2) Authority And Precedence
@@ -212,7 +213,40 @@ Once official and public:
 If someone is allowed to participate in the cause after it is public:
 - that allowance is controlled through the Registrar
 
-## 9) Event Ontology Lock
+## 9) Sect Realization And Source Behavior Lock
+### 9.1 Realization result
+When a sect completes its motion/backing/threshold process:
+- it becomes its own source
+- it becomes a sub-community / community source inside the parent community
+
+### 9.2 Sect profile presence
+Once realized as its own source:
+- the sect has its own profile within the community
+- that profile should be reachable from the current community information area
+
+Current founder note:
+- the current section people may think of first is `Statistics`
+- that section may later be renamed to something less dry and more community-informative
+- that rename is not locked here
+
+### 9.3 Sect follow behavior
+Once a realized sect is its own source:
+- people can follow it
+- followers receive sub-community updates from that sect
+
+### 9.4 Sect signal
+The sect's signal is the Uprise.
+
+Once the sect has formed, people should be able to reach that Uprise from the sect profile page and perform the normal signal actions:
+- add
+- blast
+- recommend
+
+### 9.5 System interpretation
+Realized sects do not remain only tag/statistical constructs.
+Once realized, they participate in the shared source system as sub-community/community sources.
+
+## 10) Event Ontology Lock
 Currently confirmed event ontology:
 - events are sources
 - flyers are signals
@@ -228,18 +262,19 @@ Not locked here:
 
 Those remain pending and must not be guessed.
 
-## 10) Do Not Infer Beyond This Lock
+## 11) Do Not Infer Beyond This Lock
 This document does not finalize:
 - promoter event/flyer/promo default emission rules after source entry
 - Print Shop runtime behavior
 - event paid-package execution rules
 - community-milestone threshold formulas
 - full cause runtime/contract rename from `project` to `cause`
+- final naming of the community information area currently reached through `Statistics`
 - broader feed-card rendering grammar beyond the rules above
 
 If implementation needs those details, extend founder lock coverage first.
 
-## 11) Required Follow-Up Flags
+## 12) Required Follow-Up Flags
 The following are now flagged for deliberate development/reconciliation work:
 
 1. Terminology migration
@@ -254,5 +289,11 @@ The following are now flagged for deliberate development/reconciliation work:
 4. Cause runtime alignment
 - reconcile current registrar `project` APIs/contracts to the locked cause lifecycle and backing boundary
 
-5. Event/source follow-up
+5. Sect realization/runtime alignment
+- reconcile sect motion/runtime surfaces so realized sects become source-like sub-community profiles with followable updates and Uprise signal access
+
+6. Community information-area follow-up
+- reconcile the current `Statistics` framing with the broader community-information role the founder described
+
+7. Event/source follow-up
 - return later to the unresolved event/flyer/promo promotion rules before building them
