@@ -30,6 +30,30 @@ Everything below is outside that core unless explicitly stated otherwise.
 - generic social-network behavior
 - social as a primary product pillar
 
+### What Counts As Social
+For current MVP boundary decisions, treat these as part of the broader social layer:
+- message boards
+- group or sect discussion channels
+- broader community discussion threads
+- listener-to-listener social posting
+- direct messaging
+- search parties
+- listening rooms
+- richer group-coordination / community-conversation tools
+- broader people-following / social-activity visibility systems
+- generic social-network behaviors
+
+Do not treat these as the broader social layer:
+- community creation / resolution / assignment
+- RaDIYo and listening-context systems
+- artist promotion packages
+- event promotion packages
+- the promo section / promotions surface
+- basic source follow as awareness
+- support reactions
+- lightweight discovery mechanics already locked for MVP
+- sect realization into Uprise/sub-community behavior already explicitly locked
+
 ### 2. Causes
 - causes are not part of the current MVP surface
 - causes are later-version scope, likely V2
