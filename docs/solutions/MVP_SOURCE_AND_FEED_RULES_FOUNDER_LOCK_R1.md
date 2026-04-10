@@ -224,10 +224,20 @@ Once realized as its own source:
 - the sect has its own profile within the community
 - that profile should be reachable from the current community information area
 
+Minimum MVP sect-profile posture:
+- a basic outline is enough for now
+- it should answer the same kinds of orienting questions that the community profile answers
+- it should list the bands/artists that are part of the sect
+- it should include fan/community data relevant to the sect
+
 Current founder note:
 - the current section people may think of first is `Statistics`
 - that section may later be renamed to something less dry and more community-informative
 - that rename is not locked here
+
+Provisional candidate, not hard-locked yet:
+- the sect profile may also carry its own calendar and upcoming events view
+- treat that as pending confirmation before building it as a required MVP surface
 
 ### 9.3 Sect follow behavior
 Once a realized sect is its own source:

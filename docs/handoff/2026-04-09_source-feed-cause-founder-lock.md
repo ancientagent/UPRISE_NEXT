@@ -21,6 +21,7 @@ Recent founder decisions about source behavior, community-wide updates, follower
 - causes begin in the Registrar as proposals and become sources only after enough registered backing
 - causes and sects now explicitly share the same motion/backing/threshold/officialization pattern, with sects using artist backing and causes using listener backing
 - realized sects are now explicitly locked as source-like sub-communities with their own community-accessible profile, followable sub-community updates, and an Uprise signal that can be added/blasted/recommended from the sect profile
+- the minimum MVP sect profile is now locked as a basic community-like outline that answers the same orienting questions as community profiles, includes participating bands/artists, and includes sect fan/community data; sect-specific calendar/upcoming-events content is retained as a provisional candidate rather than a hard requirement
 - events are sources and flyers are signals
 
 ## Explicitly not locked yet
