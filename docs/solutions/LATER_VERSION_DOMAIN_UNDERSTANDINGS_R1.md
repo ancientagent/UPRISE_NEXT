@@ -67,6 +67,15 @@ They should not be treated as:
   - preserve venue/business capability as part of broader product understanding
   - do not infer a fully locked standalone venue product system from legacy references alone
 
+### Business Deal-Making
+- Legitimate later-version business/artist domain.
+- Examples:
+  - deals between businesses and artists,
+  - richer commercial coordination beyond standard promotions/follower updates.
+- Current rule:
+  - preserve the domain in working understanding
+  - do not widen current MVP scope to include artist/business deal workflows unless explicitly requested
+
 ### Causes
 - Legitimate later-version domain.
 - Current founder direction:

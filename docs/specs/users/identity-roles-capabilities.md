@@ -172,6 +172,16 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - publish promotional messages publicly as production identity,
   - manage promoter web profile.
 
+### Business Policy (Locked Direction)
+- Business capability should remain account-attached rather than anonymous/public-link intake.
+- Business accounts follow the same underlying source/profile/update model as other sources.
+- Business-facing surface direction includes:
+  - create/manage promotions,
+  - read business analytics,
+  - publish outward follower-facing updates/actions.
+- A broader standalone business product system may remain narrower than artist/promoter presence in current MVP work, but the underlying source model is shared.
+- Artist/business deal-making workflows are legitimate later-version behavior and must not be silently widened into current MVP scope.
+
 ## Non-Functional Requirements
 - Clarity: role semantics must remain unambiguous in docs and API contracts.
 - Security: auth routes hash passwords and enforce credential validation.
@@ -285,6 +295,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 ### Founder Lock (2026-04-10)
 - Business promotion submission should be attached to a business account in Print Shop even when the business does not maintain a broader in-app presence/profile.
 - Do not treat business promotion intake as anonymous/public-link submission going forward.
+- Business accounts should be understood as source-facing dashboards, not one-off intake forms.
 
 ## References
 - `docs/canon/Master Identity and Philosohpy Canon.md`

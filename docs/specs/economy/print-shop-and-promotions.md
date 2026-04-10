@@ -89,6 +89,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
   - listeners do not enter Print Shop to create events, purchase runs, or manage issuance.
 - Promotional Pack setup requires explicit target scope selection (city/state/community).
 - Businesses submit promotions from a Print Shop-attached account even when they do not have a broader in-app profile/presence.
+- Business submission should be treated as part of a business-facing source dashboard, not as anonymous one-off intake.
 - Business promotion submissions auto-publish for current phase and are handled by post-publish moderation policy.
 - Artifact collections are visible on profiles.
 

@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Locked business-source interpretation more explicitly: business accounts still follow the shared source model, should be treated as source-facing dashboards for promotions/analytics/follower-facing actions, and should not be redesigned as anonymous one-off intake; richer artist/business deal workflows remain later-version scope.
 - Locked business promotion intake more explicitly: business submissions should attach to a business account through the source-facing Print Shop lane even when the business does not maintain a broader in-app presence/profile; anonymous public-link submission should no longer be treated as current truth.
 - Locked Print Shop boundary more explicitly: Print Shop is always source-facing infrastructure for creator/event issuance flows, not a listener-facing event-authoring surface; listener event interaction stays on discovery/follow/attendance paths.
 - Locked registrar access-surface direction more explicitly: registrar role/capability flows, including promoter capability-code completion, must remain reachable from the source-facing side of the platform, with the current `/registrar` route treated as the MVP bridge rather than the only intended long-term surface.

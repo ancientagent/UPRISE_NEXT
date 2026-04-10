@@ -56,6 +56,11 @@ Business submission boundary:
 - business promotion submission may remain narrower than a full in-app business presence
 - but it should still be account-attached through the source-facing Print Shop lane rather than anonymous listener/public submission
 
+Business source interpretation:
+- businesses still participate in the shared source system
+- business accounts should be treated as source dashboards with the same base profile/update structure as other sources
+- current business-facing actions may differ in content, but not in the underlying source model
+
 Later-version source domains remain legitimate but are not widened here:
 - causes once official
 - ambassadors
@@ -75,6 +80,12 @@ Shared profile rules:
 - all source profiles support links to 3rd-party sites
 - sources may place a donation link on their profile
 - businesses are the exception and should not expose a donation link by default
+
+Business-facing source dashboard expectation:
+- business accounts should be able to create/manage promotions
+- business accounts should be able to read their analytics
+- business accounts should be able to issue their outward follower-facing updates/actions through the same shared source-update model
+- do not invent a separate business-only profile/dashboard architecture
 
 ## 5) Source Update Ownership Rules
 ### 5.1 Community-wide updates
