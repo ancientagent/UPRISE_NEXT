@@ -177,6 +177,13 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
     - `GET /registrar/promoter/:entryId`,
     - `GET /registrar/promoter/:entryId/capability-audit`.
   - Registrar web surface now includes an eligibility snapshot clarifying that filings remain Home Scene-bound, visitor listening context does not change registrar scope, and promoter event creation remains blocked until capability is granted and the Print Shop event-write lane is published.
+- Registrar code verification/redemption web intake (slice 122):
+  - `/registrar` now exposes a `Promoter Capability Code` panel.
+  - Web surface supports explicit authenticated calls to:
+    - `POST /registrar/code/verify`,
+    - `POST /registrar/code/redeem`.
+  - Verify/redeem remains user-driven; no auto-redeem behavior is introduced.
+  - Redemption success refreshes promoter registrar status so capability-grant reads stay current on the same page.
 - Registrar web canonical member-sync action (slice 14):
   - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
   - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.

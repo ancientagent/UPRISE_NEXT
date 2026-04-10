@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added a web-side `Promoter Capability Code` lane inside `/registrar` so authenticated users can verify and redeem system-issued promoter capability codes without leaving the registrar surface; also reconciled the registrar contract inventory so `POST /registrar/code/verify` and `POST /registrar/code/redeem` are tracked as implemented web endpoints.
 - Added a registrar eligibility snapshot so `/registrar` now explains, in one place, the current Home Scene / GPS / promoter-registration / promoter-capability boundary for future event creation, and reminds visitor listeners that registrar filings still bind to their Home Scene; also reconciled the registrar web contract inventory so promoter intake/read endpoints are no longer reported as action-gated gaps.
 - Added the missing web-side promoter registrar intake/status slice: `/registrar` now exposes a Home Scene-scoped `Promoter Registration` action and submit flow backed by `POST /registrar/promoter`, plus a promoter-status panel that reads `GET /registrar/promoter/entries` and on-demand registration detail / capability audit reads; see `docs/handoff/2026-04-10_registrar-promoter-web-intake.md`.
 - Preserved active player-tier context across Discover and Plot by moving the MVP `city/state` tier into shared onboarding/player state; returning from Discover no longer snaps Plot playback back to `city` after a `state` listen. See `docs/handoff/2026-04-10_player-tier-context-continuity.md`.

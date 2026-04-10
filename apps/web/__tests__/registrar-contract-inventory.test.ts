@@ -92,8 +92,6 @@ describe('registrar contract inventory', () => {
       'registrar.sect_motion.entries.list',
       'registrar.sect_motion.entry.detail',
       'registrar.code.issue',
-      'registrar.code.verify',
-      'registrar.code.redeem',
     ];
     for (const requiredGapId of requiredGapIds) {
       expect(gapIds.has(requiredGapId)).toBe(true);
@@ -207,8 +205,6 @@ describe('registrar contract inventory', () => {
       'auth.invite.register',
       'registrar.project.submit',
       'registrar.sect_motion.submit',
-      'registrar.code.verify',
-      'registrar.code.redeem',
     ]) {
       expect(byId.get(id)?.notes).toBe(apiAvailable);
     }
@@ -223,6 +219,8 @@ describe('registrar contract inventory', () => {
     }
 
     expect(byId.get('registrar.promoter.submit')?.notes).toBe('API available and consumed by the registrar web surface.');
+    expect(byId.get('registrar.code.verify')?.notes).toBe('API available and consumed by the registrar web surface.');
+    expect(byId.get('registrar.code.redeem')?.notes).toBe('API available and consumed by the registrar web surface.');
     expect(byId.get('registrar.promoter.entries.list')?.notes).toBe(
       'API read path implemented and rendered by the registrar web surface.',
     );
@@ -328,12 +326,12 @@ describe('registrar contract inventory', () => {
       'registrar.promoter.entries.list',
       'registrar.promoter.entry.detail',
       'registrar.promoter.entry.capability_audit',
+      'registrar.code.verify',
+      'registrar.code.redeem',
     ];
     const deferredActionGated = [
       'registrar.project.submit',
       'registrar.sect_motion.submit',
-      'registrar.code.verify',
-      'registrar.code.redeem',
     ];
 
     for (const id of implementedNow) {

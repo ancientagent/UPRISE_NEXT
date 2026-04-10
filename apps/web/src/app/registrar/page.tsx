@@ -26,12 +26,16 @@ import {
   listPromoterRegistrations,
   loadArtistBandInviteStatus,
   materializeArtistBandRegistration,
+  redeemRegistrarCode,
   submitPromoterRegistration,
   submitArtistBandRegistration,
   syncArtistBandMembers,
+  verifyRegistrarCode,
   type RegistrarArtistEntry,
   type RegistrarArtistInviteStatusResponse,
   type RegistrarArtistRegistrationResult,
+  type RegistrarCodeRedeemRecord,
+  type RegistrarCodeVerifyRecord,
   type RegistrarPromoterCapabilityAuditResponse,
   type RegistrarPromoterEntry,
   type RegistrarPromoterRegistrationResult,
@@ -79,6 +83,11 @@ export default function RegistrarPage() {
   const [promoterAuditByEntryId, setPromoterAuditByEntryId] = useState<Record<string, RegistrarPromoterCapabilityAuditResponse>>(
     {},
   );
+  const [registrarCodeInput, setRegistrarCodeInput] = useState('');
+  const [registrarCodeError, setRegistrarCodeError] = useState<string | null>(null);
+  const [registrarCodeVerifyResult, setRegistrarCodeVerifyResult] = useState<RegistrarCodeVerifyRecord | null>(null);
+  const [registrarCodeRedeemResult, setRegistrarCodeRedeemResult] = useState<RegistrarCodeRedeemRecord | null>(null);
+  const [registrarCodeLoading, setRegistrarCodeLoading] = useState<'verify' | 'redeem' | null>(null);
 
   const slugPreview = useMemo(() => normalizeArtistBandSlug(slugInput || name), [name, slugInput]);
 
@@ -252,6 +261,62 @@ export default function RegistrarPage() {
     setSubmitError(null);
     setSubmitSuccess(null);
     setPromoterSubmitSuccess(null);
+  };
+
+  const handleVerifyRegistrarCode = async () => {
+    if (!token) {
+      setRegistrarCodeError('Sign in is required before verifying registrar codes.');
+      return;
+    }
+
+    const trimmedCode = registrarCodeInput.trim();
+    if (!trimmedCode) {
+      setRegistrarCodeError('Registrar code is required.');
+      return;
+    }
+
+    setRegistrarCodeLoading('verify');
+    setRegistrarCodeError(null);
+    setRegistrarCodeRedeemResult(null);
+
+    try {
+      const response = await verifyRegistrarCode(trimmedCode, token);
+      setRegistrarCodeVerifyResult(response);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Registrar code verification failed.';
+      setRegistrarCodeVerifyResult(null);
+      setRegistrarCodeError(message);
+    } finally {
+      setRegistrarCodeLoading(null);
+    }
+  };
+
+  const handleRedeemRegistrarCode = async () => {
+    if (!token) {
+      setRegistrarCodeError('Sign in is required before redeeming registrar codes.');
+      return;
+    }
+
+    const trimmedCode = registrarCodeInput.trim();
+    if (!trimmedCode) {
+      setRegistrarCodeError('Registrar code is required.');
+      return;
+    }
+
+    setRegistrarCodeLoading('redeem');
+    setRegistrarCodeError(null);
+
+    try {
+      const response = await redeemRegistrarCode(trimmedCode, token);
+      setRegistrarCodeRedeemResult(response);
+      await loadPromoterEntries();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Registrar code redemption failed.';
+      setRegistrarCodeRedeemResult(null);
+      setRegistrarCodeError(message);
+    } finally {
+      setRegistrarCodeLoading(null);
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -545,6 +610,67 @@ export default function RegistrarPage() {
               Promoter Registration
             </Button>
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <h2 className="text-lg font-semibold text-black">Promoter Capability Code</h2>
+          <p className="mt-1 text-sm text-black/60">
+            Verify and redeem a system-issued promoter capability code without leaving Registrar.
+          </p>
+          <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-end">
+            <label className="block flex-1 text-sm text-black/80">
+              Registrar Code
+              <input
+                className="mt-1 w-full rounded-lg border border-black/20 px-3 py-2 text-sm"
+                value={registrarCodeInput}
+                onChange={(event) => setRegistrarCodeInput(event.target.value)}
+                placeholder="PRC-XXXXXX"
+                maxLength={120}
+              />
+            </label>
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={handleVerifyRegistrarCode} disabled={registrarCodeLoading !== null}>
+                {registrarCodeLoading === 'verify' ? 'Verifying...' : 'Verify Code'}
+              </Button>
+              <Button
+                type="button"
+                onClick={handleRedeemRegistrarCode}
+                disabled={
+                  registrarCodeLoading !== null ||
+                  !registrarCodeVerifyResult?.redeemable ||
+                  registrarCodeVerifyResult?.id == null
+                }
+              >
+                {registrarCodeLoading === 'redeem' ? 'Redeeming...' : 'Redeem Code'}
+              </Button>
+            </div>
+          </div>
+
+          {registrarCodeError && (
+            <p className="mt-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {registrarCodeError}
+            </p>
+          )}
+
+          {registrarCodeVerifyResult && (
+            <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+              <p className="text-xs text-black/70">Verification Result</p>
+              <p className="mt-1 text-xs text-black/60">
+                Capability: {registrarCodeVerifyResult.capability} • status: {registrarCodeVerifyResult.status} • redeemable:{' '}
+                {registrarCodeVerifyResult.redeemable ? 'yes' : 'no'}
+              </p>
+            </div>
+          )}
+
+          {registrarCodeRedeemResult && (
+            <div className="mt-3 rounded-lg border border-emerald-300 bg-emerald-50 p-3">
+              <p className="text-xs text-emerald-800">Redemption Complete</p>
+              <p className="mt-1 text-xs text-emerald-700">
+                Capability: {registrarCodeRedeemResult.capability} • status: {registrarCodeRedeemResult.status} • redeemed at:{' '}
+                {registrarCodeRedeemResult.redeemedAt ?? 'pending'}
+              </p>
+            </div>
+          )}
         </section>
 
         {selectedAction === 'artist_band' && token && (

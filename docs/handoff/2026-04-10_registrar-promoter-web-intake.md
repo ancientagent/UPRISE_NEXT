@@ -10,8 +10,10 @@ Added the missing web-side promoter registrar slice so `/registrar` now supports
   - Home Scene + GPS-gated promoter submit form,
   - submitter-owned promoter registration history,
   - on-demand promoter detail and capability-audit reads,
-  - eligibility snapshot explaining Home Scene scope, visitor-context non-authority, and promoter event-creation readiness.
+  - eligibility snapshot explaining Home Scene scope, visitor-context non-authority, and promoter event-creation readiness,
+  - `Promoter Capability Code` panel with explicit verify/redeem actions.
 - Reconciled `apps/web/src/lib/registrar/contractInventory.ts` and `apps/web/__tests__/registrar-contract-inventory.test.ts` so promoter web intake/read endpoints are now tracked as implemented rather than stale web-surface gaps.
+- Reconciled registrar code verify/redeem inventory status so those endpoints are now tracked as implemented web intake rather than action-gated gaps.
 - Added targeted web regression coverage in:
   - `apps/web/__tests__/registrar-client.test.ts`
   - `apps/web/__tests__/route-ux-consistency-lock.test.ts`
@@ -29,6 +31,11 @@ Chrome DevTools MCP on `http://127.0.0.1:9222`:
   - GPS gate copy appears when `gpsVerified` is false
   - submit button remains disabled while GPS is unresolved/false
   - promoter history panel renders independently from artist history
+- Verified registrar code panel renders with:
+  - `Verify Code`
+  - `Redeem Code`
+- Triggered empty-code verify path and confirmed inline error:
+  - `Registrar code is required.`
 
 ## Verification
 - `pnpm --filter web test -- registrar-client route-ux-consistency-lock`

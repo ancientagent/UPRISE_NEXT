@@ -15,6 +15,9 @@ describe('cross-route UX consistency lock', () => {
     expect(registrarSource).toContain('Eligibility Snapshot');
     expect(registrarSource).toContain('Registrar actions still file against your Home Scene');
     expect(registrarSource).toContain('disabled={!token}');
+    expect(registrarSource).toContain('Promoter Capability Code');
+    expect(registrarSource).toContain('Verify Code');
+    expect(registrarSource).toContain('Redeem Code');
     expect(registrarSource).toContain("{selectedAction === 'artist_band' && token && (");
     expect(registrarSource).toContain("{selectedAction === 'promoter' && token && (");
     expect(registrarSource).toContain('Promoter Registration');
