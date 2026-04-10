@@ -27,7 +27,6 @@ The current MVP should stay focused on getting these systems working together:
 - the minimum paid revenue surfaces needed to prove the model:
   - artist promotion packages
   - event promotion packages
-  - the promo section / promotions surface
 
 ### Not yet true
 - The whole MVP is not yet assembled into a coherent founder-reviewed web flow.
