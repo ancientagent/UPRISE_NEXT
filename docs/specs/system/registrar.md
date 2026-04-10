@@ -18,6 +18,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar is a Home Scene civic surface (Activity Feed context in canon narrative).
 - Registrar records and tracks registration intent/status.
 - Registrar role/capability flows must remain accessible from the source-facing side of the platform.
+- Print Shop event-write access remains source-facing as well; registrar promoter capability exists to unlock that source-facing lane rather than to create a listener event-authoring flow.
 - V1 target functions:
   - Artist/Band registration initiation.
   - Promoter registration initiation.
@@ -257,6 +258,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar cannot bypass Fair Play, voting, or propagation constraints.
 - Registrar actions do not grant automatic visibility or authority.
 - Registrar must remain Scene-scoped to preserve structural locality.
+- Registrar promoter capability should be interpreted as gating a source-facing Print Shop/event lane, not a listener-facing event-creation surface.
 
 ## Data Models & Migrations
 ### Target Models (Planned)

@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Locked Print Shop boundary more explicitly: Print Shop is always source-facing infrastructure for creator/event issuance flows, not a listener-facing event-authoring surface; listener event interaction stays on discovery/follow/attendance paths.
 - Locked registrar access-surface direction more explicitly: registrar role/capability flows, including promoter capability-code completion, must remain reachable from the source-facing side of the platform, with the current `/registrar` route treated as the MVP bridge rather than the only intended long-term surface.
 - Added a web-side `Promoter Capability Code` lane inside `/registrar` so authenticated users can verify and redeem system-issued promoter capability codes without leaving the registrar surface; also reconciled the registrar contract inventory so `POST /registrar/code/verify` and `POST /registrar/code/redeem` are tracked as implemented web endpoints.
 - Added a registrar eligibility snapshot so `/registrar` now explains, in one place, the current Home Scene / GPS / promoter-registration / promoter-capability boundary for future event creation, and reminds visitor listeners that registrar filings still bind to their Home Scene; also reconciled the registrar web contract inventory so promoter intake/read endpoints are no longer reported as action-gated gaps.

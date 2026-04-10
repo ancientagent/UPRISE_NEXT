@@ -12,6 +12,7 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 - Promoters (registered capability) create and manage events via Print Shop.
 - Artists create events for shows and touring stops.
 - Listeners discover local events, follow event-related entities, and collect attendance artifacts after verification.
+- Event creation remains source-facing; listeners are discovery/follow/attendance participants rather than event creators through Print Shop.
 
 ## Functional Requirements
 - Events are Scene-bound objects with explicit locality context.
@@ -76,6 +77,7 @@ Defines Scene-bound events, event discovery surfaces, and attendance flyer artif
 - Plot Events tab now uses `/communities/:id/events` and selected community anchor from Statistics.
 - Event detail presentation remains API-backed read-only.
 - Event writes originate in Print Shop (web flow), not standalone mobile event creation.
+- Event write entry remains source-facing through Print Shop; listener-facing event surfaces are read/follow/attendance oriented.
 - Flyer displays and redemption UI are deferred.
 
 ## Acceptance Tests / Test Plan

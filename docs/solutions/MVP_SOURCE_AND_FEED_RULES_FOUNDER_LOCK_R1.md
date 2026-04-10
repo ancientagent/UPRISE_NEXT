@@ -295,6 +295,7 @@ Implementation boundary:
 Currently confirmed event ontology:
 - events are sources
 - flyers are signals
+- Print Shop remains source-facing; listener event interaction stays on the discovery/follow/attendance side rather than entering Print Shop itself
 
 Listener/event access boundary:
 - listeners can follow an event

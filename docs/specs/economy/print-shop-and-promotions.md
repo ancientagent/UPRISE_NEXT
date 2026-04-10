@@ -13,6 +13,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Promoters create events from Print Shop as the uniform event-creation entrypoint.
 - Businesses publish promotions via direct web form link without requiring account creation.
 - Listeners carry or redeem Offers explicitly.
+- Print Shop itself is source-facing infrastructure, not a listener-facing creation surface.
 
 ## Functional Requirements
 - Promotions displays local offers and paid placements within explicit scope.
@@ -49,6 +50,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Print Shop is an issuance infrastructure surface linked to Events/Promotions workflows.
 - Artifacts are participation records/signals, not commodities.
 - Paid distribution is explicit-scope ad infrastructure, not algorithmic recommendation.
+- Print Shop creation/manage flows belong to source operators (artists/promoters), not to listeners acting in ordinary discovery mode.
 
 ## Data Models & Migrations
 ### Planned Models
@@ -81,6 +83,9 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 ## Web UI / Client Behavior
 - Plot Promotions tab lists scene-scoped promotions/offers via `/communities/:id/promotions`.
 - Print Shop is web-first for creators and is the source of event creation + flier purchasing.
+- Print Shop remains source-facing only:
+  - artists/promoters use it to create/manage event-related issuance flows,
+  - listeners do not enter Print Shop to create events, purchase runs, or manage issuance.
 - Promotional Pack setup requires explicit target scope selection (city/state/community).
 - Businesses can submit promotions from a public web link (no account requirement in current phase).
 - Business promotion submissions auto-publish for current phase and are handled by post-publish moderation policy.
