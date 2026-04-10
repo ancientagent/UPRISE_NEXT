@@ -28,6 +28,10 @@ The current MVP should stay focused on getting these systems working together:
   - artist promotion packages
   - event promotion packages
 
+Explicitly not part of the current MVP core:
+- the promo wall/business promotions surface
+- business account/dashboard runtime
+
 ### Not yet true
 - The whole MVP is not yet assembled into a coherent founder-reviewed web flow.
 - Discover is not yet closed against the current player/scope/travel doctrine.

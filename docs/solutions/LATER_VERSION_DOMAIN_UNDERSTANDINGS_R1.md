@@ -19,6 +19,7 @@ This document exists to capture a simple rule:
 ## Domain Status Rule
 The following domains are legitimate UPRISE product domains:
 - causes
+- businesses / business dashboards
 - ambassadors
 - venues
 - mixologists
@@ -66,6 +67,15 @@ They should not be treated as:
 - Current rule:
   - preserve venue/business capability as part of broader product understanding
   - do not infer a fully locked standalone venue product system from legacy references alone
+
+### Businesses / Business Dashboards
+- Legitimate later-version domain.
+- Current founder direction:
+  - business accounts follow the shared source model in principle
+  - but business runtime is deferred while promos/business surfaces are deferred from MVP
+- Current rule:
+  - preserve the account-attached business/source understanding
+  - do not pull business dashboard, analytics, or follower-update runtime into the active MVP slice unless explicitly reactivated
 
 ### Business Deal-Making
 - Legitimate later-version business/artist domain.

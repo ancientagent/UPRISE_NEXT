@@ -100,9 +100,13 @@ These remain legitimate product domains, but are not current-MVP-driving:
 - treat it as a later simple business surface
 - current founder direction:
   - it is effectively a wall of JPEG-style business promos
-  - businesses may post there from the web layer
-  - businesses may not need listener accounts for that later surface
+  - businesses may post there later from a business-attached account/web layer
   - sequencing rationale: wait until communities have populated enough that businesses have a real reason to join
+
+### 11. Business accounts / business dashboard runtime
+- business accounts are deferred with the promo/business surface
+- do not treat business dashboards, business analytics, or business follower-update runtime as current MVP work
+- preserve the longer-term shared-source model for businesses, but do not widen current implementation scope around it
 
 ## Handling Rule
 When a deferred item appears in canon, specs, or legacy docs:

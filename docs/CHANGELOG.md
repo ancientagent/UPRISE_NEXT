@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Clarified the MVP boundary again: because promos/business surfaces are deferred, business accounts/dashboard runtime is also deferred from current MVP work even though the longer-term business model remains account-attached and source-shaped.
 - Locked business-source interpretation more explicitly: business accounts still follow the shared source model, should be treated as source-facing dashboards for promotions/analytics/follower-facing actions, and should not be redesigned as anonymous one-off intake; richer artist/business deal workflows remain later-version scope.
 - Locked business promotion intake more explicitly: business submissions should attach to a business account through the source-facing Print Shop lane even when the business does not maintain a broader in-app presence/profile; anonymous public-link submission should no longer be treated as current truth.
 - Locked Print Shop boundary more explicitly: Print Shop is always source-facing infrastructure for creator/event issuance flows, not a listener-facing event-authoring surface; listener event interaction stays on discovery/follow/attendance paths.

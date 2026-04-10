@@ -48,7 +48,6 @@ Universal source rule:
 Current source classes in active MVP understanding:
 - artists
 - communities
-- businesses
 - promoters
 - events
 
@@ -60,10 +59,12 @@ Business source interpretation:
 - businesses still participate in the shared source system
 - business accounts should be treated as source dashboards with the same base profile/update structure as other sources
 - current business-facing actions may differ in content, but not in the underlying source model
+- business runtime is currently deferred with the promo/business surface and should not be treated as active MVP implementation scope
 
 Later-version source domains remain legitimate but are not widened here:
 - causes once official
 - ambassadors
+- businesses while the promo/business surface remains deferred
 - venues
 - mixologists
 
@@ -109,8 +110,10 @@ After first entry, ongoing source-origin announcements go to followers only.
 This rule applies to sources generally, including:
 - artists
 - promoters
-- businesses
 - causes once official
+
+Later-version note:
+- business follower-update runtime remains deferred until the business surface is reactivated
 
 Follower updates may contain freeform source messaging.
 

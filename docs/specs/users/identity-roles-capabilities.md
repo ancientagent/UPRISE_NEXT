@@ -181,6 +181,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
   - publish outward follower-facing updates/actions.
 - A broader standalone business product system may remain narrower than artist/promoter presence in current MVP work, but the underlying source model is shared.
 - Artist/business deal-making workflows are legitimate later-version behavior and must not be silently widened into current MVP scope.
+- Current MVP boundary:
+  - business accounts/runtime are deferred while the promo/business surface is deferred.
 
 ## Non-Functional Requirements
 - Clarity: role semantics must remain unambiguous in docs and API contracts.
@@ -296,6 +298,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Business promotion submission should be attached to a business account in Print Shop even when the business does not maintain a broader in-app presence/profile.
 - Do not treat business promotion intake as anonymous/public-link submission going forward.
 - Business accounts should be understood as source-facing dashboards, not one-off intake forms.
+- That business account/dashboard model is retained for later implementation, but is not current-MVP runtime scope while promos remain deferred.
 
 ## References
 - `docs/canon/Master Identity and Philosohpy Canon.md`
