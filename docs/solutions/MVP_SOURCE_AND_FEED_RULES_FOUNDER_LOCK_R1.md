@@ -170,8 +170,8 @@ A cause begins in the Registrar as a proposal.
 
 Cause lifecycle:
 1. someone registers the cause in the Registrar
-2. people can register in support / second it
-3. once enough support is registered, it becomes official
+2. people can register backing / second it
+3. once enough backing is registered, it becomes official
 4. once official, it has its own identity within the community
 
 Before officialization:
