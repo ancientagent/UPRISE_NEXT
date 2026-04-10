@@ -20,6 +20,15 @@ This document is execution-only. Product behavior remains owned by `docs/specs/*
 - Local development uses Postgres + PostGIS.
 - Hosted production/staging DB target is Neon Postgres + PostGIS, but the hosted cutover has not been executed yet.
 
+### Active MVP core
+The current MVP should stay focused on getting these systems working together:
+- community creation / resolution / assignment
+- RaDIYo and listening-context systems
+- the minimum paid revenue surfaces needed to prove the model:
+  - artist promotion packages
+  - event promotion packages
+  - the promo section / promotions surface
+
 ### Not yet true
 - The whole MVP is not yet assembled into a coherent founder-reviewed web flow.
 - Discover is not yet closed against the current player/scope/travel doctrine.
@@ -146,6 +155,8 @@ Exit criteria:
 ## What Is Out of Scope For MVP
 - Mobile port as a primary execution target.
 - Generic social-network expansion.
+- The broader social layer as a product pillar; that belongs to a later version.
+- Causes and other civic-extension surfaces beyond what is already required for sect/Uprise realization.
 - Metrics-as-authority systems.
 - Finalized v2/community-extension features.
 - Any builder-generated architecture that overrides repo truth.

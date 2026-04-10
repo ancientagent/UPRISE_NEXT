@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Clarified the current MVP boundary in `docs/solutions/MVP_CURRENT_EXECUTION_ROADMAP_R1.md`: the active MVP core is community creation/resolution/assignment, RaDIYo/listening-context systems, and the minimum revenue surfaces (artist promotion packages, event promotion packages, and the promo section), while the broader social layer is explicitly later-version scope; recorded in `docs/handoff/2026-04-10_mvp-core-vs-social-v2-boundary.md`.
 - Clarified the cause boundary: causes are legitimate registrar-mediated later-version entities, but they are not part of the current MVP surface and should be treated as later-version scope, likely V2, unless explicitly reactivated.
 - Extended the realized-sect founder lock with minimum sect-profile contents: a basic community-like outline, participating bands/artists, and sect fan/community data are now required carry-forward truths, while sect-specific calendar/upcoming-events content remains explicitly provisional pending later confirmation.
 - Extended `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md` so realized sects are explicitly treated as source-like sub-communities with their own community-accessible profile, followable sub-community updates, and an Uprise signal that users can add, blast, and recommend from the sect profile; also flagged the required sect/runtime and community-information-surface follow-up work.
