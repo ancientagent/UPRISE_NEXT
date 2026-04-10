@@ -26,6 +26,7 @@ Start from: `docs/solutions/TEMPLATE.md`
 - `docs/solutions/UPRISE_AUTOHARNESS_R1.md` — founder-to-agent control harness for prompt shaping, drift review, and model-agnostic product-truth enforcement
 - `docs/solutions/UPRISE_DRIFT_TAXONOMY_R1.md` — recurring UPRISE-specific drift cases and correction directions for external models and agents
 - `docs/solutions/SEAMLESS_AGENT_CONTINUITY_PROTOCOL_R1.md` — standard handoff system for preserving canon, active working memory, and executable next steps across agents and sessions
+- `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md` — mandatory same-pass salvage rule for founder decisions that change product truth, scope, terminology, or lifecycle behavior
 - `docs/solutions/SURFACE_CONTRACT_HOME_R1.md` / `SURFACE_CONTRACT_PLOT_R1.md` / `SURFACE_CONTRACT_DISCOVER_R1.md` / `SURFACE_CONTRACT_COMMUNITY_R1.md` — minimum stable per-surface contracts for Home, Plot, Discover, and Community
 - `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — safe rollback/checkpoint flow
 - `docs/solutions/SESSION_STANDING_DIRECTIVES.md` — paste-ready session policy block
