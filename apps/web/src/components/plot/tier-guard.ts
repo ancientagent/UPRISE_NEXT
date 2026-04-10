@@ -12,6 +12,12 @@ export function shouldFetchNearbyForTier(tier: PlotTier): boolean {
   return tier === 'city';
 }
 
+export function shouldUseTunedSceneAsDefaultPlotAnchor(
+  tunedScene: { tier?: string | null } | null | undefined,
+): boolean {
+  return tunedScene?.tier === 'city';
+}
+
 function normalizeLabelPart(value?: string | null): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;

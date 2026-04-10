@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Guarded Plot’s default selected-community anchor so a tuned state scene no longer becomes the default city-scoped Plot community; `/plot` now only auto-anchors to tuned scenes when they are city-tier and otherwise falls back to the resolved Home Scene city anchor. See `docs/handoff/2026-04-10_plot-default-city-anchor-guard.md`.
 - Added the first real RaDIYo playback slice: `GET /broadcast/rotation` is now tier-aware for active `city`/`state` playback context, Plot and Discover fetch live rotation data through `apps/web/src/lib/broadcast/client.ts`, and `RadiyoPlayerPanel` now renders browser-native audio from the current track `fileUrl`; see `docs/handoff/2026-04-10_radiyo-playback-minimal-runtime.md`.
 - Clarified why the promo section / business promotions wall is deferred from the MVP core: the founder wants communities to populate first so businesses have a real reason to join before that surface becomes important.
 - Narrowed the current MVP core again: the promo section / business promotions wall is no longer treated as part of the active MVP core, and is now explicitly deferred as a later simple business surface while artist and event promotion packages remain in scope.

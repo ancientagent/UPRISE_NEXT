@@ -273,6 +273,7 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain('if (!token) return;');
+    expect(plotPageSource).toContain('shouldUseTunedSceneAsDefaultPlotAnchor(tunedScene)');
     expect(plotPageSource).toContain('const tunedResponse = await getCommunityById(tunedSceneId, token);');
     expect(plotPageSource).toContain('const homeResponse = await resolveHomeCommunity(');
     expect(plotPageSource).toContain('musicCommunity: homeScene.musicCommunity,');

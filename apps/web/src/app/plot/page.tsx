@@ -17,7 +17,7 @@ import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import RadiyoPlayerPanel, { type PlayerMode, type PlayerTier, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
-import { buildRadiyoBroadcastLabel } from '@/components/plot/tier-guard';
+import { buildRadiyoBroadcastLabel, shouldUseTunedSceneAsDefaultPlotAnchor } from '@/components/plot/tier-guard';
 import { getDiscoveryContext } from '@/lib/discovery/client';
 import { mergeDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
@@ -217,7 +217,7 @@ export default function PlotPage() {
       if (!token) return;
 
       try {
-        if (tunedSceneId) {
+        if (tunedSceneId && shouldUseTunedSceneAsDefaultPlotAnchor(tunedScene)) {
           const tunedResponse = await getCommunityById(tunedSceneId, token);
           if (tunedResponse) {
             setSelectedCommunity(tunedResponse);
