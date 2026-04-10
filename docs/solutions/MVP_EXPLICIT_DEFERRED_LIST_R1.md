@@ -37,6 +37,7 @@ For current MVP boundary decisions, treat these as part of the broader social la
 - broader community discussion threads
 - listener-to-listener social posting
 - direct messaging
+- vibe / taste match systems
 - search parties
 - listening rooms
 - richer group-coordination / community-conversation tools
