@@ -40,7 +40,7 @@ Use the following terms exactly as defined.
 **Locally Affiliated:** a Listener who has selected a Home Scene. GPS verification affects voting only.  
 **Visitor:** a Listener present in a Scene that is not their Home Scene. The term “Observer” is deprecated and must not be used.
 
-**Sect:** the sum of listeners and artists sharing a taste tag inside a Home Scene. A Sect becomes an Uprise only after meeting the support threshold and having sufficient committed artist catalog to sustain rotation.
+**Sect:** an artist-based civic motion inside a Home Scene that can mature into a sub-community Uprise. A Sect becomes an Uprise only after meeting the backing threshold and having sufficient committed artist catalog to sustain rotation.
 
 **The Plot:** the Home-side sectional dashboard surface inside `Home`. It is a civic interface, not a personalized feed.
 **Activity Feed (S.E.E.D Feed):** the default Plot surface. S.E.E.D stands for Support, Explore, Engage, Distribute. It reflects explicit community actions only and is identical for all listeners in the Home Scene.
@@ -52,7 +52,7 @@ Use the following terms exactly as defined.
 ## Architectural Boundaries
 - Canon is defined by `docs/canon/`. Specs must not introduce conflicting terms.
 - Structural language must use **Scene** and **Community** instead of genre/subgenre hierarchies.
-- “Genre/subgenre/microgenre” may appear only as optional **taste tags** or “other musical tastes (sub/microgenre)” and never as structural selectors.
+- “Genre/subgenre/microgenre” may appear only as descriptive musical language and never as the live sect-formation mechanism or structural selector.
 - UI labels must use **Music Community** for Home Scene selection and avoid “Genre Selection.”
 
 ## Data Models & Migrations

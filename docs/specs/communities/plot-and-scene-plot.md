@@ -45,10 +45,11 @@ Shell relationship lock:
   - users can also save events directly
   - calendar behavior may sync/export to Google / Apple calendars
 - Promotions are distinct from Activity Feed and remain in Promotions surfaces.
-- Registrar entry is part of Plot activity/civic workflow.
-- Statistics / Scene Map rule:
-  - Scene Map is inherent to the Scene and lives inside the Statistics surface.
-  - Statistics is its own dedicated page-level surface within The Plot (not a mini widget).
+- Registrar entry is part of Plot civic workflow and should be accessed from within The Scenery.
+- Scenery / Scene Map rule:
+  - Scene Map is inherent to the Scene and lives inside The Scenery surface.
+  - The Scenery is the dedicated community-information surface within The Plot (not a mini widget).
+  - Registrar lives within The Scenery as a feature/module, not as a separate peer default-screen section.
   - Current MVP Plot tier toggles expose `city` and `state` only.
   - The broader platform model may still retain `national`, but `national` is deferred from the live MVP Plot surface until population justifies it.
   - Parent community context remains anchored to the active community identity (`city + state + music community`) during tier toggles unless explicitly changed by user.
@@ -71,7 +72,7 @@ Shell relationship lock:
   - `GET /communities/active/events`
   - `GET /communities/active/promotions`
   - `GET /communities/active/statistics`
-- Statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor.
+- The current statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor; this remains implementation debt under the broader The Scenery section naming direction.
 - Plot player controls and Statistics surface now clamp active MVP tier selection to `city` and `state`.
 - Plot Scene Activity panel now integrates registrar status read context:
   - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,

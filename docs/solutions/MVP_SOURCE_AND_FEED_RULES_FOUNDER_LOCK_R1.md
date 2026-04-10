@@ -251,9 +251,9 @@ Minimum MVP sect-profile posture:
 - it should include fan/community data relevant to the sect
 
 Current founder note:
-- the current section people may think of first is `Statistics`
-- that section may later be renamed to something less dry and more community-informative
-- that rename is not locked here
+- the dry `Statistics` framing should give way to `The Scenery` as the broader community-information surface
+- `Registrar` should live inside `The Scenery` as a feature/module, not as its own peer default-screen section
+- the primary registrar CTA inside that surface should remain `Register`
 
 Provisional candidate, not hard-locked yet:
 - the sect profile may also carry its own calendar and upcoming events view
@@ -275,6 +275,18 @@ Once the sect has formed, people should be able to reach that Uprise from the se
 ### 9.5 System interpretation
 Realized sects do not remain only tag/statistical constructs.
 Once realized, they participate in the shared source system as sub-community/community sources.
+
+### 9.6 Sect motion origin and tag replacement
+Sects should be treated as artist-based civic motions.
+
+Locked interpretation:
+- sect initiation belongs to the artist-facing interface rather than a listener taste-tag manager
+- the older tag-based sect substrate should not drive new MVP sect work
+- follow relationships should replace taste-tag association as the active audience-affinity/discovery layer around sects
+
+Implementation boundary:
+- existing `SectTag`, `UserTag`, `homeSceneTag`, and `tasteTag` structures are now terminology/runtime debt unless explicitly retained for background analytics or migration purposes
+- do not build new sect creation, sect membership, or sect realization UX around tag assignment
 
 ## 10) Event Ontology Lock
 Currently confirmed event ontology:
