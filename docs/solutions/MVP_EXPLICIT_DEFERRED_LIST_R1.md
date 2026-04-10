@@ -20,7 +20,6 @@ The active MVP is focused on:
 - minimum revenue surfaces:
   - artist promotion packages
   - event promotion packages
-  - promo section / promotions surface
 
 Everything below is outside that core unless explicitly stated otherwise.
 
@@ -49,7 +48,6 @@ Do not treat these as the broader social layer:
 - RaDIYo and listening-context systems
 - artist promotion packages
 - event promotion packages
-- the promo section / promotions surface
 - basic source follow as awareness
 - support reactions
 - lightweight discovery mechanics already locked for MVP
@@ -96,6 +94,14 @@ These remain legitimate product domains, but are not current-MVP-driving:
 ### 9. Full Print Shop / artifact expansion
 - full Print Shop runtime as a complete surface/system
 - internal artifact issuance mechanics beyond what current MVP explicitly requires
+
+### 10. Promo section / business promotions wall
+- the promo section / promotions wall is not part of the current MVP core
+- treat it as a later simple business surface
+- current founder direction:
+  - it is effectively a wall of JPEG-style business promos
+  - businesses may post there from the web layer
+  - businesses may not need listener accounts for that later surface
 
 ## Handling Rule
 When a deferred item appears in canon, specs, or legacy docs:
