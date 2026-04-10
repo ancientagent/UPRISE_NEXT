@@ -1,4 +1,4 @@
-import { mkdirSync, existsSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PrismaClient, RotationPool } from '@prisma/client';
@@ -8,10 +8,42 @@ const __dirname = dirname(__filename);
 const prisma = new PrismaClient();
 
 const WEB_ORIGIN = process.env.UPRISE_DEV_WEB_ORIGIN || 'http://127.0.0.1:3000';
-const AUDIO_RELATIVE_PATH = '/dev-audio/qa-broadcast-tone.wav';
 const AUDIO_DURATION_SECONDS = 2;
 const AUDIO_SAMPLE_RATE = 22050;
-const AUDIO_FILE_PATH = resolve(__dirname, '../../web/public/dev-audio/qa-broadcast-tone.wav');
+const AUDIO_DIRECTORY = resolve(__dirname, '../../web/public/dev-audio');
+const QA_ARTIST = 'UPRISE QA';
+const QA_ALBUM = 'Dev Fixtures';
+
+const AUDIO_FIXTURES = [
+  {
+    title: 'QA Broadcast Tone A',
+    relativePath: '/dev-audio/qa-broadcast-tone-a.wav',
+    frequency: 440,
+  },
+  {
+    title: 'QA Broadcast Tone B',
+    relativePath: '/dev-audio/qa-broadcast-tone-b.wav',
+    frequency: 554.37,
+  },
+  {
+    title: 'QA Broadcast Tone C',
+    relativePath: '/dev-audio/qa-broadcast-tone-c.wav',
+    frequency: 659.25,
+  },
+  {
+    title: 'QA Broadcast Tone D',
+    relativePath: '/dev-audio/qa-broadcast-tone-d.wav',
+    frequency: 783.99,
+  },
+].map((fixture) => ({
+  ...fixture,
+  filePath: resolve(AUDIO_DIRECTORY, fixture.relativePath.replace('/dev-audio/', '')),
+  fileUrl: `${WEB_ORIGIN}${fixture.relativePath}`,
+}));
+
+function slugify(value) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
 function generateSineWaveWavBuffer({ durationSeconds, sampleRate, frequency }) {
   const channelCount = 1;
@@ -46,21 +78,20 @@ function generateSineWaveWavBuffer({ durationSeconds, sampleRate, frequency }) {
   return buffer;
 }
 
-function ensureAudioFixture() {
-  mkdirSync(dirname(AUDIO_FILE_PATH), { recursive: true });
-  if (existsSync(AUDIO_FILE_PATH)) {
-    return;
-  }
+function ensureAudioFixtures() {
+  mkdirSync(AUDIO_DIRECTORY, { recursive: true });
 
-  const wav = generateSineWaveWavBuffer({
-    durationSeconds: AUDIO_DURATION_SECONDS,
-    sampleRate: AUDIO_SAMPLE_RATE,
-    frequency: 440,
-  });
-  writeFileSync(AUDIO_FILE_PATH, wav);
+  for (const fixture of AUDIO_FIXTURES) {
+    const wav = generateSineWaveWavBuffer({
+      durationSeconds: AUDIO_DURATION_SECONDS,
+      sampleRate: AUDIO_SAMPLE_RATE,
+      frequency: fixture.frequency,
+    });
+    writeFileSync(fixture.filePath, wav);
+  }
 }
 
-async function resolveTargetScene() {
+async function resolveCityScene() {
   const preferredScene = await prisma.community.findFirst({
     where: {
       city: 'Austin',
@@ -71,6 +102,7 @@ async function resolveTargetScene() {
     select: {
       id: true,
       name: true,
+      slug: true,
       city: true,
       state: true,
       musicCommunity: true,
@@ -88,6 +120,7 @@ async function resolveTargetScene() {
     select: {
       id: true,
       name: true,
+      slug: true,
       city: true,
       state: true,
       musicCommunity: true,
@@ -115,10 +148,69 @@ async function resolveUploader() {
   return user;
 }
 
-async function upsertTrack({ title, sceneId, uploaderId }) {
-  const fileUrl = `${WEB_ORIGIN}${AUDIO_RELATIVE_PATH}`;
+async function ensureStateScene(cityScene, createdById) {
+  const existing = await prisma.community.findFirst({
+    where: {
+      tier: 'state',
+      state: cityScene.state,
+      musicCommunity: cityScene.musicCommunity,
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      city: true,
+      state: true,
+      musicCommunity: true,
+      isActive: true,
+    },
+  });
+
+  if (existing) {
+    if (!existing.isActive) {
+      return prisma.community.update({
+        where: { id: existing.id },
+        data: { isActive: true },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          city: true,
+          state: true,
+          musicCommunity: true,
+          isActive: true,
+        },
+      });
+    }
+    return existing;
+  }
+
+  return prisma.community.create({
+    data: {
+      name: `${cityScene.state} ${cityScene.musicCommunity}`,
+      slug: slugify(`${cityScene.state}-${cityScene.musicCommunity}-state-fixture`),
+      description: 'QA fixture state scene for RaDIYo playback verification.',
+      createdById,
+      state: cityScene.state,
+      musicCommunity: cityScene.musicCommunity,
+      tier: 'state',
+      isActive: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      city: true,
+      state: true,
+      musicCommunity: true,
+      isActive: true,
+    },
+  });
+}
+
+async function upsertTrack({ title, fileUrl, sceneId, uploaderId }) {
   const existing = await prisma.track.findFirst({
-    where: { title, artist: 'UPRISE QA', communityId: sceneId },
+    where: { title, artist: QA_ARTIST, album: QA_ALBUM, communityId: sceneId },
     select: { id: true },
   });
 
@@ -138,8 +230,8 @@ async function upsertTrack({ title, sceneId, uploaderId }) {
   return prisma.track.create({
     data: {
       title,
-      artist: 'UPRISE QA',
-      album: 'Dev Fixtures',
+      artist: QA_ARTIST,
+      album: QA_ALBUM,
       duration: AUDIO_DURATION_SECONDS,
       fileUrl,
       uploadedById: uploaderId,
@@ -150,61 +242,162 @@ async function upsertTrack({ title, sceneId, uploaderId }) {
   });
 }
 
-async function ensureRotationEntry({ trackId, sceneId, pool }) {
+async function upsertRotationEntry({ trackId, sceneId, pool, enteredPoolAt, recurrenceScore = 0 }) {
   const existing = await prisma.rotationEntry.findFirst({
     where: { trackId, sceneId },
-    select: { id: true, pool: true },
+    select: { id: true },
   });
 
   if (existing) {
-    if (existing.pool !== pool) {
-      await prisma.rotationEntry.update({
-        where: { id: existing.id },
-        data: { pool, enteredPoolAt: new Date() },
-      });
-    }
-    return;
+    return prisma.rotationEntry.update({
+      where: { id: existing.id },
+      data: { pool, enteredPoolAt, recurrenceScore },
+      select: { id: true, trackId: true, pool: true, enteredPoolAt: true },
+    });
   }
 
-  await prisma.rotationEntry.create({
+  return prisma.rotationEntry.create({
     data: {
       trackId,
       sceneId,
       pool,
-      enteredPoolAt: new Date(),
+      enteredPoolAt,
+      recurrenceScore,
     },
+    select: { id: true, trackId: true, pool: true, enteredPoolAt: true },
   });
 }
 
+async function pruneSceneQaFixture(sceneId, keepTrackIds) {
+  const keepIds = new Set(keepTrackIds);
+  const qaTracks = await prisma.track.findMany({
+    where: {
+      communityId: sceneId,
+      artist: QA_ARTIST,
+      album: QA_ALBUM,
+    },
+    select: { id: true },
+  });
+
+  for (const track of qaTracks) {
+    if (keepIds.has(track.id)) continue;
+
+    await prisma.rotationEntry.deleteMany({
+      where: {
+        sceneId,
+        trackId: track.id,
+      },
+    });
+  }
+}
+
+async function seedSceneRotation(scene, uploaderId, fixturesByPool) {
+  const seededTracks = [];
+  const now = Date.now();
+
+  for (const [pool, fixtureDefs] of Object.entries(fixturesByPool)) {
+    for (const [index, fixture] of fixtureDefs.entries()) {
+      const track = await upsertTrack({
+        title: fixture.title,
+        fileUrl: fixture.fileUrl,
+        sceneId: scene.id,
+        uploaderId,
+      });
+
+      seededTracks.push(track);
+      await upsertRotationEntry({
+        trackId: track.id,
+        sceneId: scene.id,
+        pool,
+        enteredPoolAt: new Date(now + (index * 1000)),
+        recurrenceScore: pool === RotationPool.MAIN_ROTATION ? fixtureDefs.length - index : 0,
+      });
+    }
+  }
+
+  await pruneSceneQaFixture(
+    scene.id,
+    seededTracks.map((track) => track.id),
+  );
+
+  return seededTracks;
+}
+
 async function main() {
-  ensureAudioFixture();
-  const scene = await resolveTargetScene();
+  ensureAudioFixtures();
+  const cityScene = await resolveCityScene();
   const uploader = await resolveUploader();
+  const stateScene = await ensureStateScene(cityScene, uploader.id);
 
-  const [newTrack, currentTrack] = await Promise.all([
-    upsertTrack({ title: 'QA Broadcast Tone (New)', sceneId: scene.id, uploaderId: uploader.id }),
-    upsertTrack({ title: 'QA Broadcast Tone (Current)', sceneId: scene.id, uploaderId: uploader.id }),
-  ]);
-
-  await ensureRotationEntry({
-    trackId: newTrack.id,
-    sceneId: scene.id,
-    pool: RotationPool.NEW_RELEASES,
+  const cityTracks = await seedSceneRotation(cityScene, uploader.id, {
+    [RotationPool.NEW_RELEASES]: [
+      {
+        title: 'QA Austin New 1',
+        fileUrl: AUDIO_FIXTURES[0].fileUrl,
+      },
+      {
+        title: 'QA Austin New 2',
+        fileUrl: AUDIO_FIXTURES[1].fileUrl,
+      },
+    ],
+    [RotationPool.MAIN_ROTATION]: [
+      {
+        title: 'QA Austin Current 1',
+        fileUrl: AUDIO_FIXTURES[2].fileUrl,
+      },
+      {
+        title: 'QA Austin Current 2',
+        fileUrl: AUDIO_FIXTURES[3].fileUrl,
+      },
+    ],
   });
-  await ensureRotationEntry({
-    trackId: currentTrack.id,
-    sceneId: scene.id,
-    pool: RotationPool.MAIN_ROTATION,
+
+  const stateTracks = await seedSceneRotation(stateScene, uploader.id, {
+    [RotationPool.NEW_RELEASES]: [
+      {
+        title: 'QA Texas New 1',
+        fileUrl: AUDIO_FIXTURES[1].fileUrl,
+      },
+      {
+        title: 'QA Texas New 2',
+        fileUrl: AUDIO_FIXTURES[2].fileUrl,
+      },
+    ],
+    [RotationPool.MAIN_ROTATION]: [
+      {
+        title: 'QA Texas Current 1',
+        fileUrl: AUDIO_FIXTURES[0].fileUrl,
+      },
+      {
+        title: 'QA Texas Current 2',
+        fileUrl: AUDIO_FIXTURES[3].fileUrl,
+      },
+    ],
   });
 
-  console.log(JSON.stringify({
-    success: true,
-    scene,
-    uploader,
-    tracks: [newTrack, currentTrack],
-    audioFilePath: AUDIO_FILE_PATH,
-    audioUrl: `${WEB_ORIGIN}${AUDIO_RELATIVE_PATH}`,
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        success: true,
+        uploader,
+        scenes: {
+          city: cityScene,
+          state: stateScene,
+        },
+        tracks: {
+          city: cityTracks,
+          state: stateTracks,
+        },
+        audioFixtures: AUDIO_FIXTURES.map((fixture) => ({
+          title: fixture.title,
+          filePath: fixture.filePath,
+          fileUrl: fixture.fileUrl,
+        })),
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 main()
