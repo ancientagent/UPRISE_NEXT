@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added the missing Fair Play runtime migration (`rotation_entries`, `track_votes`, `fair_play_config`) plus a reusable local dev fixture script that generates a tiny browser-served WAV and seeds city-tier RaDIYo rotation entries for end-to-end playback QA; verified live in Chrome DevTools on `/discover` and `/plot`. See `docs/handoff/2026-04-10_radiyo-dev-fixture-and-fair-play-migration.md`.
 - Guarded Plot’s default selected-community anchor so a tuned state scene no longer becomes the default city-scoped Plot community; `/plot` now only auto-anchors to tuned scenes when they are city-tier and otherwise falls back to the resolved Home Scene city anchor. See `docs/handoff/2026-04-10_plot-default-city-anchor-guard.md`.
 - Added the first real RaDIYo playback slice: `GET /broadcast/rotation` is now tier-aware for active `city`/`state` playback context, Plot and Discover fetch live rotation data through `apps/web/src/lib/broadcast/client.ts`, and `RadiyoPlayerPanel` now renders browser-native audio from the current track `fileUrl`; see `docs/handoff/2026-04-10_radiyo-playback-minimal-runtime.md`.
 - Clarified why the promo section / business promotions wall is deferred from the MVP core: the founder wants communities to populate first so businesses have a real reason to join before that surface becomes important.

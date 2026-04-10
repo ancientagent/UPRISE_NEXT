@@ -11,6 +11,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
+    "seed:radiyo-fixture": "node --env-file=.env scripts/seed-radiyo-dev-fixture.mjs",
     "test": "jest",
     "test:identity": "jest \"users.profile.collection.test.ts\" \"auth.invite-registration.service.test.ts\" \"registrar.service.test.ts\" \"artist-bands.service.test.ts\"",
     "test:db": "jest \"communities.test.ts\"",

@@ -58,3 +58,6 @@ prisma/migrations/**/migration.sql
 temp_*
 uploads_temp/
 recovery/
+
+# Local dev audio fixtures
+apps/web/public/dev-audio/
