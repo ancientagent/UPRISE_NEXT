@@ -52,7 +52,7 @@ Use the following terms exactly as defined.
 ## Architectural Boundaries
 - Canon is defined by `docs/canon/`. Specs must not introduce conflicting terms.
 - Structural language must use **Scene** and **Community** instead of genre/subgenre hierarchies.
-- “Genre/subgenre/microgenre” may appear only as descriptive musical language and never as the live sect-formation mechanism or structural selector.
+- “Genre/subgenre/microgenre” must not replace structural Home Scene identity, but Home Scene tag context may still be part of system ordering where current flows require it. Tag context alone does not realize a sect.
 - UI labels must use **Music Community** for Home Scene selection and avoid “Genre Selection.”
 
 ## Data Models & Migrations

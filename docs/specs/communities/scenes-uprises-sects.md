@@ -29,7 +29,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 ### Implemented Behavior (Current)
 - Home Scene selection currently resolves exact `{city, state, musicCommunity}` in `Community` (tier `city`).
 - If the city-tier community does not exist, the system creates it as inactive (`isActive=false`) and marks the user as pioneer.
-- Older `tasteTag` / `SectTag` / `UserTag` structures remain in runtime as legacy debt, but they should not drive new sect formation or realization work.
+- Home Scene affiliation/tag context remains part of system ordering where needed for civic identity, voting rights, and visitor/local distinction; older tag-era sect assignment alone should not drive sect realization.
 - User is auto-joined to the resolved Scene via `CommunityMember`.
 - Community profile read surface is available in web at `apps/web/src/app/community/[id]/page.tsx` using:
   - `GET /communities/:id` for profile metadata
@@ -40,7 +40,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
-- Reconcile/remove older taste-tag sect flow from onboarding and sect runtime.
+- Reconcile older tag-era sect assignment flows so they stop implying that tag selection alone realizes a sect.
 - Registrar motion threshold validation, approval workflow, and automatic Sect-to-Uprise activation.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
@@ -63,11 +63,11 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
   - Scene membership linkage (`userId`, `communityId`, `role`)
   - Unique membership constraint on `(userId, communityId)`
 - `SectTag` / `UserTag`
-  - legacy tag-era sect structures still present in schema
-  - should be treated as migration/runtime debt rather than the preferred sect model for new MVP work
+  - still participate in Home Scene/tag ordering and existing runtime identity structures
+  - must not be treated as sufficient by themselves to realize a sect into an Uprise
 - `User`
   - Home-scene affinity fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`, `gpsVerified`)
-  - `homeSceneTag` is not the preferred sect driver going forward
+  - `homeSceneTag` remains relevant to system-order identity where that context is required
 
 ### Migrations
 - `20260213154237_add_scene_and_sect_tags` (scene metadata + sect/user tag tables)
@@ -89,9 +89,9 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 
 ### Request/Response
 - `POST /onboarding/home-scene` request:
-  - `city`, `state`, `musicCommunity`, optional legacy `tasteTag`
+  - `city`, `state`, `musicCommunity`, optional `tasteTag` / Home Scene tag context where the current flow still uses it
 - `POST /onboarding/home-scene` response:
-  - user home-scene fields + `sceneId`, legacy `appliedTags[]`, `votingEligible`, `pioneer`
+  - user home-scene fields + `sceneId`, `appliedTags[]` where applicable, `votingEligible`, `pioneer`
 - `POST /onboarding/gps-verify` response:
   - `gpsVerified`, `votingEligible`, `distance`, optional reason:
     - `NO_HOME_SCENE`
@@ -101,8 +101,8 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 
 ## Web UI / Client Behavior
 - Onboarding prompts for **City**, **State**, **Music Community**.
-- Legacy taste-tag capture may still appear in old/runtime paths, but new sect UX should not rely on tag assignment.
-- Plot/community surfaces should move toward follow-driven and artist-motion-driven sect visibility rather than tag display.
+- Home Scene/tag context may still appear in onboarding/runtime because the system uses it for civic identity and ordering.
+- New sect realization UX should not rely on tag assignment alone; artist motion/backing still governs realization.
 
 ## Acceptance Tests / Test Plan
 - Doc review: Scene, Community, and Uprise definitions align to canon.
@@ -111,8 +111,9 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
   - Unknown city/community creates inactive pioneer Scene and auto-joins user.
   - Existing city/community resolves without duplicate membership.
   - GPS verify changes voting eligibility only.
-- Legacy tag behavior:
-  - if `tasteTag` still exists in old/runtime paths, it remains non-authoritative and should not be expanded into new sect behavior.
+- Tag behavior:
+  - if `tasteTag` exists in onboarding/runtime, it remains valid Home Scene/tag context
+  - but tag assignment alone does not realize a sect into an Uprise
 
 ## Future Work & Open Questions
 - Define formal Sect Uprise activation mechanics beyond the 45-minute artist playtime threshold (motion schema + approvals).

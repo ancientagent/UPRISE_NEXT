@@ -282,11 +282,12 @@ Sects should be treated as artist-based civic motions.
 Locked interpretation:
 - sect initiation belongs to the artist-facing interface rather than a listener taste-tag manager
 - the older tag-based sect substrate should not drive new MVP sect work
-- follow relationships should replace taste-tag association as the active audience-affinity/discovery layer around sects
+- follow relationships govern ongoing awareness/update behavior once a sect is realized as a source; they do not replace Home Scene affiliation or system-order identity
 
 Implementation boundary:
-- existing `SectTag`, `UserTag`, `homeSceneTag`, and `tasteTag` structures are now terminology/runtime debt unless explicitly retained for background analytics or migration purposes
-- do not build new sect creation, sect membership, or sect realization UX around tag assignment
+- `homeSceneTag` remains part of the system-order model where needed for Home Scene affiliation, voting-rights logic, and visitor/local distinction
+- older tag-era sect assignment flows should not be treated as sufficient by themselves for sect realization; realization still depends on artist-backing motion/backing rules
+- do not collapse Home Scene affiliation into follow relationships
 
 ## 10) Event Ontology Lock
 Currently confirmed event ontology:
