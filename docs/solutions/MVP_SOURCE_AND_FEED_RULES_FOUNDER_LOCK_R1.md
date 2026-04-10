@@ -213,6 +213,19 @@ Once official and public:
 If someone is allowed to participate in the cause after it is public:
 - that allowance is controlled through the Registrar
 
+### 8.5 Temporary MVP surface rule
+For now, causes should be handled through the social update layer.
+
+Interpretation:
+- do not require a dedicated public cause surface in the current MVP pass
+- cause visibility can live inside social/community update behavior for now
+- this is a temporary MVP surface simplification, not a denial of the underlying cause model
+
+Underlying carry-forward remains:
+- causes still belong to the registrar-mediated motion/backing system
+- causes may still become first-class sources later
+- this temporary rule only limits the current MVP surface expectation
+
 ## 9) Sect Realization And Source Behavior Lock
 ### 9.1 Realization result
 When a sect completes its motion/backing/threshold process:
