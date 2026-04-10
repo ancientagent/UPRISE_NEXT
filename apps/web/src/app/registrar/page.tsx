@@ -20,14 +20,21 @@ import {
 } from '@/lib/registrar/entryStatus';
 import {
   dispatchArtistBandInvites,
+  getPromoterCapabilityAudit,
+  getPromoterRegistration,
   listArtistBandRegistrations,
+  listPromoterRegistrations,
   loadArtistBandInviteStatus,
   materializeArtistBandRegistration,
+  submitPromoterRegistration,
   submitArtistBandRegistration,
   syncArtistBandMembers,
   type RegistrarArtistEntry,
   type RegistrarArtistInviteStatusResponse,
   type RegistrarArtistRegistrationResult,
+  type RegistrarPromoterCapabilityAuditResponse,
+  type RegistrarPromoterEntry,
+  type RegistrarPromoterRegistrationResult,
 } from '@/lib/registrar/client';
 
 type HomeSceneResolution = {
@@ -44,23 +51,32 @@ export default function RegistrarPage() {
   const { token, user } = useAuthStore();
   const { homeScene } = useOnboardingStore();
 
-  const [selectedAction, setSelectedAction] = useState<'artist_band' | null>(null);
+  const [selectedAction, setSelectedAction] = useState<'artist_band' | 'promoter' | null>(null);
   const [entityType, setEntityType] = useState<RegistrarEntityType>('band');
   const [name, setName] = useState('');
   const [slugInput, setSlugInput] = useState('');
   const [members, setMembers] = useState<RegistrarArtistMemberDraft[]>([createEmptyRegistrarArtistMember()]);
+  const [productionName, setProductionName] = useState('');
   const [sceneId, setSceneId] = useState<string | null>(null);
   const [sceneLabel, setSceneLabel] = useState<string>('');
   const [sceneLookupError, setSceneLookupError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<RegistrarArtistRegistrationResult | null>(null);
+  const [promoterSubmitSuccess, setPromoterSubmitSuccess] = useState<RegistrarPromoterRegistrationResult | null>(null);
   const [entries, setEntries] = useState<RegistrarArtistEntry[]>([]);
   const [entriesLoading, setEntriesLoading] = useState(false);
   const [entriesError, setEntriesError] = useState<string | null>(null);
+  const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
+  const [promoterEntriesLoading, setPromoterEntriesLoading] = useState(false);
+  const [promoterEntriesError, setPromoterEntriesError] = useState<string | null>(null);
   const [busyEntryId, setBusyEntryId] = useState<string | null>(null);
   const [entryMessageById, setEntryMessageById] = useState<Record<string, string>>({});
   const [inviteStatusByEntryId, setInviteStatusByEntryId] = useState<Record<string, RegistrarArtistInviteStatusResponse>>(
+    {},
+  );
+  const [promoterDetailByEntryId, setPromoterDetailByEntryId] = useState<Record<string, RegistrarPromoterEntry>>({});
+  const [promoterAuditByEntryId, setPromoterAuditByEntryId] = useState<Record<string, RegistrarPromoterCapabilityAuditResponse>>(
     {},
   );
 
@@ -86,6 +102,27 @@ export default function RegistrarPage() {
       setEntriesError(message);
     } finally {
       setEntriesLoading(false);
+    }
+  };
+
+  const loadPromoterEntries = async () => {
+    if (!token) {
+      setPromoterEntries([]);
+      setPromoterEntriesError(null);
+      setPromoterEntriesLoading(false);
+      return;
+    }
+
+    setPromoterEntriesLoading(true);
+    setPromoterEntriesError(null);
+    try {
+      const response = await listPromoterRegistrations(token);
+      setPromoterEntries(response.entries ?? []);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unable to load promoter registrar entries.';
+      setPromoterEntriesError(message);
+    } finally {
+      setPromoterEntriesLoading(false);
     }
   };
 
@@ -130,6 +167,10 @@ export default function RegistrarPage() {
     loadEntries();
   }, [token]);
 
+  useEffect(() => {
+    loadPromoterEntries();
+  }, [token]);
+
   const updateMember = (index: number, field: keyof RegistrarArtistMemberDraft, value: string) => {
     setMembers((current) =>
       current.map((member, memberIndex) =>
@@ -149,6 +190,13 @@ export default function RegistrarPage() {
 
   const addMember = () => {
     setMembers((current) => [...current, createEmptyRegistrarArtistMember()]);
+  };
+
+  const handleSelectAction = (action: 'artist_band' | 'promoter') => {
+    setSelectedAction(action);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    setPromoterSubmitSuccess(null);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -213,6 +261,53 @@ export default function RegistrarPage() {
       await loadEntries();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Registrar submission failed.';
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePromoterSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    setPromoterSubmitSuccess(null);
+
+    if (!token) {
+      setSubmitError('Sign in is required to submit Registrar registration.');
+      return;
+    }
+
+    if (!gpsVerified) {
+      setSubmitError('GPS verification is required before Promoter Registrar submission.');
+      return;
+    }
+
+    if (!sceneId) {
+      setSubmitError(sceneLookupError || 'Home Scene resolution is required before submission.');
+      return;
+    }
+
+    const trimmedProductionName = productionName.trim();
+    if (!trimmedProductionName) {
+      setSubmitError('Production identity is required.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await submitPromoterRegistration(
+        {
+          sceneId,
+          productionName: trimmedProductionName,
+        },
+        token,
+      );
+      setPromoterSubmitSuccess(response);
+      setProductionName('');
+      await loadPromoterEntries();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Promoter registrar submission failed.';
       setSubmitError(message);
     } finally {
       setIsSubmitting(false);
@@ -306,6 +401,46 @@ export default function RegistrarPage() {
     }
   };
 
+  const handleLoadPromoterDetail = async (entryId: string) => {
+    if (!token) return;
+
+    setBusyEntryId(entryId);
+    updateEntryMessage(entryId, '');
+    try {
+      const detail = await getPromoterRegistration(entryId, token);
+      setPromoterDetailByEntryId((current) => ({
+        ...current,
+        [entryId]: detail,
+      }));
+      updateEntryMessage(entryId, 'Promoter detail loaded.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Promoter detail load failed.';
+      updateEntryMessage(entryId, message);
+    } finally {
+      setBusyEntryId(null);
+    }
+  };
+
+  const handleLoadPromoterAudit = async (entryId: string) => {
+    if (!token) return;
+
+    setBusyEntryId(entryId);
+    updateEntryMessage(entryId, '');
+    try {
+      const audit = await getPromoterCapabilityAudit(entryId, token);
+      setPromoterAuditByEntryId((current) => ({
+        ...current,
+        [entryId]: audit,
+      }));
+      updateEntryMessage(entryId, 'Capability audit loaded.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Capability audit load failed.';
+      updateEntryMessage(entryId, message);
+    } finally {
+      setBusyEntryId(null);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-6 py-12">
       <div className="mx-auto max-w-4xl space-y-6">
@@ -334,9 +469,17 @@ export default function RegistrarPage() {
             <Button
               variant={selectedAction === 'artist_band' ? 'default' : 'outline'}
               disabled={!token}
-              onClick={() => setSelectedAction('artist_band')}
+              onClick={() => handleSelectAction('artist_band')}
             >
               Band / Artist Registration
+            </Button>
+            <Button
+              className="ml-2"
+              variant={selectedAction === 'promoter' ? 'default' : 'outline'}
+              disabled={!token}
+              onClick={() => handleSelectAction('promoter')}
+            >
+              Promoter Registration
             </Button>
           </div>
         </section>
@@ -474,6 +617,55 @@ export default function RegistrarPage() {
           </section>
         )}
 
+        {selectedAction === 'promoter' && token && (
+          <section className="rounded-2xl border border-black/10 bg-white p-6">
+            <h2 className="text-lg font-semibold text-black">Promoter Registration Form</h2>
+            <p className="mt-1 text-sm text-black/60">
+              Home Scene: {sceneId ? sceneLabel : sceneLookupError || 'Resolving...'}
+            </p>
+            <p className="mt-1 text-sm text-black/60">
+              Register the named production identity that will carry promoter capability once approved.
+            </p>
+            {!gpsVerified && (
+              <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                GPS verification is required before submitting Promoter registration.
+              </p>
+            )}
+
+            <form className="mt-4 space-y-5" onSubmit={handlePromoterSubmit}>
+              <label className="block text-sm text-black/80">
+                Production Name
+                <input
+                  className="mt-1 w-full rounded-lg border border-black/20 px-3 py-2 text-sm"
+                  value={productionName}
+                  onChange={(event) => setProductionName(event.target.value)}
+                  maxLength={140}
+                  required
+                />
+                <span className="mt-1 block text-xs text-black/50">
+                  This named production identity is tied to your Home Scene and does not grant promoter capability by itself.
+                </span>
+              </label>
+
+              {submitError && (
+                <p className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{submitError}</p>
+              )}
+              {promoterSubmitSuccess && (
+                <p className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                  Promoter submission recorded (Entry {promoterSubmitSuccess.id}) for{' '}
+                  {promoterSubmitSuccess.payload.productionName ?? 'Unnamed production'}.
+                </p>
+              )}
+
+              <div>
+                <Button type="submit" disabled={isSubmitting || !gpsVerified || !sceneId}>
+                  {isSubmitting ? 'Submitting...' : 'Submit Promoter Registration'}
+                </Button>
+              </div>
+            </form>
+          </section>
+        )}
+
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -563,6 +755,96 @@ export default function RegistrarPage() {
                         Total members: {inviteStatus.totalMembers} • queued: {inviteStatus.countsByStatus.queued ?? 0} •
                         claimed: {inviteStatus.countsByStatus.claimed ?? 0} • pending:{' '}
                         {inviteStatus.countsByStatus.pending_email ?? 0}
+                      </p>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-black">My Promoter Registrations</h2>
+              <p className="mt-1 text-sm text-black/60">Track production identity status and promoter capability progress.</p>
+            </div>
+            <Button size="sm" variant="outline" onClick={loadPromoterEntries} disabled={promoterEntriesLoading}>
+              {promoterEntriesLoading ? 'Refreshing...' : 'Refresh'}
+            </Button>
+          </div>
+
+          {promoterEntriesError && (
+            <p className="mt-4 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {promoterEntriesError}
+            </p>
+          )}
+
+          {!token && !promoterEntriesLoading && (
+            <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              Sign in is required to view promoter registrar history and capability status.
+            </p>
+          )}
+
+          {token && !promoterEntriesError && promoterEntries.length === 0 && !promoterEntriesLoading && (
+            <p className="mt-4 text-sm text-black/60">No promoter registrar entries yet.</p>
+          )}
+
+          <div className="mt-4 space-y-4">
+            {promoterEntries.map((entry) => {
+              const isBusy = busyEntryId === entry.id;
+              const detail = promoterDetailByEntryId[entry.id];
+              const audit = promoterAuditByEntryId[entry.id];
+
+              return (
+                <article key={entry.id} className="rounded-xl border border-black/15 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-black/50">{formatRegistrarEntryStatus(entry.status)}</p>
+                  <h3 className="mt-2 text-base font-semibold text-black">
+                    {entry.payload.productionName ?? 'Unnamed production'}
+                  </h3>
+                  {entry.scene && (
+                    <p className="text-sm text-black/60">
+                      {entry.scene.city}, {entry.scene.state} • {entry.scene.musicCommunity}
+                    </p>
+                  )}
+                  <p className="mt-1 text-xs text-black/50">
+                    Entry {entry.id} • codes issued {entry.promoterCapability.codeIssuedCount} • latest code status{' '}
+                    {entry.promoterCapability.latestCodeStatus ?? 'none'} • capability granted{' '}
+                    {entry.promoterCapability.granted ? 'yes' : 'no'}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleLoadPromoterDetail(entry.id)} disabled={isBusy}>
+                      Load Registration Detail
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleLoadPromoterAudit(entry.id)} disabled={isBusy}>
+                      Load Capability Audit
+                    </Button>
+                  </div>
+
+                  {entryMessageById[entry.id] && (
+                    <p className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2 text-xs text-black/70">
+                      {entryMessageById[entry.id]}
+                    </p>
+                  )}
+
+                  {detail && (
+                    <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+                      <p className="text-xs text-black/70">Registration Detail</p>
+                      <p className="mt-1 text-xs text-black/60">
+                        Production: {detail.payload.productionName ?? 'Unnamed'} • latest code issued:{' '}
+                        {detail.promoterCapability.latestCodeIssuedAt ?? 'none'} • latest code redeemed:{' '}
+                        {detail.promoterCapability.latestCodeRedeemedAt ?? 'none'}
+                      </p>
+                    </div>
+                  )}
+
+                  {audit && (
+                    <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+                      <p className="text-xs text-black/70">Capability Audit</p>
+                      <p className="mt-1 text-xs text-black/60">
+                        Events: {audit.total} • latest action: {audit.events[0]?.action ?? 'none'}
                       </p>
                     </div>
                   )}

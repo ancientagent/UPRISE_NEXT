@@ -181,6 +181,24 @@ export interface RegistrarPromoterEntriesResponse {
   entries: RegistrarPromoterEntry[];
 }
 
+export interface RegistrarPromoterRegistrationPayload {
+  sceneId: string;
+  productionName: string;
+}
+
+export interface RegistrarPromoterRegistrationResponse {
+  id: string;
+  type: 'promoter_registration';
+  status: RegistrarEntryStatus;
+  sceneId: string;
+  createdById: string;
+  payload: {
+    productionName: string | null;
+  };
+  createdAt: string;
+}
+export type RegistrarPromoterRegistrationResult = RegistrarPromoterRegistrationResponse;
+
 export interface RegistrarPromoterCapabilityAuditEvent {
   id: string;
   action: string;
@@ -256,6 +274,21 @@ export async function submitArtistBandRegistration(
   if (!response.data) {
     throw new Error('Registrar submission returned no data.');
   }
+  return response.data;
+}
+
+export async function submitPromoterRegistration(
+  payload: RegistrarPromoterRegistrationPayload,
+  token: string,
+): Promise<RegistrarPromoterRegistrationResponse> {
+  const response = await api.post<RegistrarPromoterRegistrationResponse>(registrarPromoterEndpoints.submit(), payload, {
+    token,
+  });
+
+  if (!response.data) {
+    throw new Error('Promoter registration response returned no data.');
+  }
+
   return response.data;
 }
 

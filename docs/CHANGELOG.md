@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added the missing web-side promoter registrar intake/status slice: `/registrar` now exposes a Home Scene-scoped `Promoter Registration` action and submit flow backed by `POST /registrar/promoter`, plus a promoter-status panel that reads `GET /registrar/promoter/entries` and on-demand registration detail / capability audit reads; see `docs/handoff/2026-04-10_registrar-promoter-web-intake.md`.
 - Preserved active player-tier context across Discover and Plot by moving the MVP `city/state` tier into shared onboarding/player state; returning from Discover no longer snaps Plot playback back to `city` after a `state` listen. See `docs/handoff/2026-04-10_player-tier-context-continuity.md`.
 - Expanded the local RaDIYo QA fixture into deterministic multi-track city/state rotations and verified live browser auto-advance across the seeded queues; see `docs/handoff/2026-04-10_radiyo-multitrack-fixture-proof.md`.
 - Closed the next RaDIYo playback rough edges: the player now advances through queued rotation tracks on native audio `ended`, `/plot` and `/discover` treat missing state-scene playback as an intentional empty-state, and `GET /broadcast/rotation?tier=state` now returns an empty success payload instead of a `404` when no active state scene exists yet; see `docs/handoff/2026-04-10_radiyo-playback-closure-pass.md`.

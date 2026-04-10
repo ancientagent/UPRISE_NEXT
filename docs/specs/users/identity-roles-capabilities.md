@@ -109,6 +109,14 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
     - queue member invites,
     - inspect invite status summary.
   - All actions remain API-backed and submitter-scoped.
+- Registrar promoter web intake/status (slice 121):
+  - `/registrar` now includes explicit `Promoter Registration` action selection alongside Artist/Band registration.
+  - Promoter form submits to `POST /registrar/promoter` with Home Scene-scoped `productionName`.
+  - Client flow uses the same Home Scene resolution + GPS verification gate as other registrar civic submissions.
+  - `/registrar` now loads submitter-owned promoter entries via `GET /registrar/promoter/entries`.
+  - UI supports explicit promoter follow-up reads:
+    - registration detail,
+    - capability audit summary.
 - Registrar entry-list invite outcome enrichment (slice 70):
   - `GET /registrar/artist/entries` now includes `sentInviteCount` and `failedInviteCount` in per-entry invite lifecycle summaries.
   - Existing invite summary counts remain unchanged (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`).

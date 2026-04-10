@@ -14,6 +14,10 @@ describe('cross-route UX consistency lock', () => {
     expect(registrarSource).toContain('Sign in is required before opening registrar submission actions.');
     expect(registrarSource).toContain('disabled={!token}');
     expect(registrarSource).toContain("{selectedAction === 'artist_band' && token && (");
+    expect(registrarSource).toContain("{selectedAction === 'promoter' && token && (");
+    expect(registrarSource).toContain('Promoter Registration');
+    expect(registrarSource).toContain('Submit Promoter Registration');
+    expect(registrarSource).toContain('My Promoter Registrations');
   });
 
   it('keeps community-to-plot scene handoff explicit instead of routing generically', () => {
