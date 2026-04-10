@@ -5,7 +5,9 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
+import type { BroadcastRotation, BroadcastRotationMeta, Track } from '@uprise/types';
 import { api } from '@/lib/api';
+import { getActiveBroadcastRotation } from '@/lib/broadcast/client';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
@@ -148,6 +150,10 @@ export default function PlotPage() {
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
   const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
+  const [broadcastRotation, setBroadcastRotation] = useState<BroadcastRotation | null>(null);
+  const [broadcastMeta, setBroadcastMeta] = useState<BroadcastRotationMeta | null>(null);
+  const [broadcastLoading, setBroadcastLoading] = useState(false);
+  const [broadcastError, setBroadcastError] = useState<string | null>(null);
   const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists');
   const [selectedCollectionItem, setSelectedCollectionItem] = useState<{
     id: string;
@@ -260,6 +266,49 @@ export default function PlotPage() {
 
     loadExpandedProfileStats();
   }, [selectedCommunity?.id, selectedTier, token]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadBroadcastRotation() {
+      if (!token || playerMode !== 'RADIYO' || !activeBroadcastTier) {
+        setBroadcastRotation(null);
+        setBroadcastMeta(null);
+        setBroadcastError(null);
+        setBroadcastLoading(false);
+        return;
+      }
+
+      setBroadcastLoading(true);
+      setBroadcastError(null);
+
+      try {
+        const response = await getActiveBroadcastRotation(activeBroadcastTier, token);
+
+        if (cancelled) return;
+
+        setBroadcastRotation(response.data ?? { newReleases: [], mainRotation: [] });
+        setBroadcastMeta(response.meta ?? null);
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load the active broadcast rotation.';
+        setBroadcastRotation(null);
+        setBroadcastMeta(null);
+        setBroadcastError(message);
+      } finally {
+        if (!cancelled) {
+          setBroadcastLoading(false);
+        }
+      }
+    }
+
+    loadBroadcastRotation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeBroadcastTier, playerMode, token]);
 
   useEffect(() => {
     let cancelled = false;
@@ -452,7 +501,14 @@ export default function PlotPage() {
     // This callback exists for potential future use
   };
   const isProfileExpanded = profilePanelState === 'expanded';
+  const currentRotationTracks =
+    rotationPool === 'new_releases'
+      ? broadcastRotation?.newReleases ?? []
+      : broadcastRotation?.mainRotation ?? [];
+  const currentBroadcastTrack: Track | null = currentRotationTracks[0] ?? null;
   const radiyoBroadcastLabel = buildRadiyoBroadcastLabel(selectedTier, selectedCommunity, homeScene);
+  const currentBroadcastLabel =
+    broadcastMeta?.sceneName ?? radiyoBroadcastLabel;
   const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Collection`;
   const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;
   const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
@@ -795,8 +851,12 @@ export default function PlotPage() {
           selectedTier={selectedTier}
           activeBroadcastTier={activeBroadcastTier}
           onTierChange={handleTierChange}
-          broadcastLabel={playerMode === 'RADIYO' ? radiyoBroadcastLabel : collectionBroadcastLabel}
+          broadcastLabel={playerMode === 'RADIYO' ? currentBroadcastLabel : collectionBroadcastLabel}
           collectionTitle={selectedCollectionItem?.label ?? null}
+          currentTrack={playerMode === 'RADIYO' ? currentBroadcastTrack : null}
+          currentTrackCount={currentRotationTracks.length}
+          isBroadcastLoading={playerMode === 'RADIYO' ? broadcastLoading : false}
+          broadcastError={playerMode === 'RADIYO' ? broadcastError : null}
         />
 
         {isProfileExpanded ? (

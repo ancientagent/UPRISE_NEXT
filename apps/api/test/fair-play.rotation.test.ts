@@ -122,6 +122,110 @@ describe('FairPlayService.getActiveRotation', () => {
     expect(mockPrisma.community.findFirst).toHaveBeenCalledTimes(1);
   });
 
+  it('resolves the active state scene when a state-tier broadcast is requested', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: null,
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.community.findFirst
+      .mockResolvedValueOnce({
+        id: 'scene-home',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'city',
+      })
+      .mockResolvedValueOnce({
+        id: 'scene-state',
+        name: 'Texas Punk',
+        city: null,
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'state',
+      });
+    mockPrisma.community.findUnique.mockResolvedValueOnce({
+      id: 'scene-state',
+      name: 'Texas Punk',
+      city: null,
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'state',
+    });
+    mockPrisma.rotationEntry.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+
+    const result = await service.getActiveRotation('u1', 'state');
+
+    expect(result.success).toBe(true);
+    expect(result.meta.sceneId).toBe('scene-state');
+    expect(result.meta.requestedTier).toBe('state');
+    expect(mockPrisma.community.findFirst).toHaveBeenNthCalledWith(2, {
+      where: {
+        tier: 'state',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        isActive: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+      },
+    });
+  });
+
+  it('falls back to the home city scene when a city-tier broadcast is requested from a tuned state scene', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      tunedSceneId: 'scene-state',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.community.findFirst.mockResolvedValueOnce({
+      id: 'scene-home',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+    });
+    mockPrisma.community.findUnique
+      .mockResolvedValueOnce({
+        id: 'scene-state',
+        name: 'Texas Punk',
+        city: null,
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'state',
+      })
+      .mockResolvedValueOnce({
+        id: 'scene-home',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        tier: 'city',
+      });
+    mockPrisma.rotationEntry.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+
+    const result = await service.getActiveRotation('u1', 'city');
+
+    expect(result.success).toBe(true);
+    expect(result.meta.sceneId).toBe('scene-home');
+    expect(result.meta.requestedTier).toBe('city');
+  });
+
   it('falls back to home scene when tuned scene id is absent', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'u1',

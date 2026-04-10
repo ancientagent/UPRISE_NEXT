@@ -7,9 +7,146 @@ const ROTATION_POOL = {
   MAIN_ROTATION: 'MAIN_ROTATION',
 } as const;
 
+type BroadcastTier = 'city' | 'state' | 'national';
+
+interface BroadcastSceneAnchor {
+  id: string;
+  name: string;
+  city: string | null;
+  state: string | null;
+  musicCommunity: string | null;
+  tier: string;
+}
+
 @Injectable()
 export class FairPlayService {
   constructor(private prisma: PrismaService) {}
+
+  private async resolveBroadcastSceneForTier(
+    userId: string,
+    requestedTier?: BroadcastTier,
+  ): Promise<BroadcastSceneAnchor> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        tunedSceneId: true,
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException({ success: false, error: { message: 'User not found' } });
+    }
+
+    const homeScene =
+      user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity
+        ? await this.prisma.community.findFirst({
+            where: {
+              city: user.homeSceneCity,
+              state: user.homeSceneState,
+              musicCommunity: user.homeSceneCommunity,
+              tier: 'city',
+            },
+            select: {
+              id: true,
+              name: true,
+              city: true,
+              state: true,
+              musicCommunity: true,
+              tier: true,
+            },
+          })
+        : null;
+
+    const tunedScene = user.tunedSceneId
+      ? await this.prisma.community.findUnique({
+          where: { id: user.tunedSceneId },
+          select: {
+            id: true,
+            name: true,
+            city: true,
+            state: true,
+            musicCommunity: true,
+            tier: true,
+          },
+        })
+      : null;
+
+    const normalizedTier =
+      requestedTier === 'national'
+        ? 'state'
+        : requestedTier;
+
+    if (!normalizedTier) {
+      const activeScene = tunedScene ?? homeScene;
+      if (!activeScene) {
+        throw new BadRequestException({
+          success: false,
+          error: { message: 'No active scene context available' },
+        });
+      }
+
+      return activeScene;
+    }
+
+    if (normalizedTier === 'city') {
+      const cityScene =
+        tunedScene?.tier === 'city'
+          ? tunedScene
+          : homeScene;
+
+      if (!cityScene) {
+        throw new BadRequestException({
+          success: false,
+          error: { message: 'No active city-scene context available' },
+        });
+      }
+
+      return cityScene;
+    }
+
+    const state = tunedScene?.state ?? homeScene?.state ?? null;
+    const musicCommunity = tunedScene?.musicCommunity ?? homeScene?.musicCommunity ?? null;
+    if (!state || !musicCommunity) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'No active state-scene context available' },
+      });
+    }
+
+    if (tunedScene?.tier === 'state') {
+      return tunedScene;
+    }
+
+    const stateScene = await this.prisma.community.findFirst({
+      where: {
+        tier: 'state',
+        state,
+        musicCommunity,
+        isActive: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+      },
+    });
+
+    if (!stateScene) {
+      throw new NotFoundException({
+        success: false,
+        error: { message: 'State scene not found for the active community context' },
+      });
+    }
+
+    return stateScene;
+  }
 
   private async getFairPlayConfigSnapshot() {
     const config = await this.prisma.fairPlayConfig.findUnique({
@@ -252,10 +389,17 @@ export class FairPlayService {
     }
   }
 
-  async getRotation(sceneId: string) {
+  async getRotation(sceneId: string, requestedTier?: BroadcastTier) {
     const scene = await this.prisma.community.findUnique({
       where: { id: sceneId },
-      select: { id: true },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+      },
     });
     if (!scene) {
       throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
@@ -282,6 +426,12 @@ export class FairPlayService {
       },
       meta: {
         sceneId,
+        sceneName: scene.name,
+        sceneCity: scene.city,
+        sceneState: scene.state,
+        sceneMusicCommunity: scene.musicCommunity,
+        sceneTier: scene.tier,
+        requestedTier: requestedTier ?? scene.tier,
         generatedAt: new Date().toISOString(),
         newReleasesCount: newEntries.length,
         mainRotationCount: mainEntries.length,
@@ -289,44 +439,9 @@ export class FairPlayService {
     };
   }
 
-  async getActiveRotation(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        tunedSceneId: true,
-        homeSceneCity: true,
-        homeSceneState: true,
-        homeSceneCommunity: true,
-      },
-    });
-    if (!user) {
-      throw new NotFoundException({ success: false, error: { message: 'User not found' } });
-    }
-
-    let homeSceneId: string | null = null;
-    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
-      const homeScene = await this.prisma.community.findFirst({
-        where: {
-          city: user.homeSceneCity,
-          state: user.homeSceneState,
-          musicCommunity: user.homeSceneCommunity,
-          tier: 'city',
-        },
-        select: { id: true },
-      });
-      homeSceneId = homeScene?.id ?? null;
-    }
-
-    const activeSceneId = user.tunedSceneId ?? homeSceneId;
-    if (!activeSceneId) {
-      throw new BadRequestException({
-        success: false,
-        error: { message: 'No active scene context available' },
-      });
-    }
-
-    return this.getRotation(activeSceneId);
+  async getActiveRotation(userId: string, requestedTier?: BroadcastTier) {
+    const scene = await this.resolveBroadcastSceneForTier(userId, requestedTier);
+    return this.getRotation(scene.id, requestedTier);
   }
 
   async getMetrics(sceneId: string, asOf = new Date()) {

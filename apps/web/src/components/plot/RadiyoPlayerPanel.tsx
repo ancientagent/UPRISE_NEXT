@@ -1,5 +1,6 @@
 'use client';
 
+import type { Track } from '@uprise/types';
 import { Button } from '@uprise/ui';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 
@@ -18,6 +19,10 @@ interface RadiyoPlayerPanelProps {
   onTierChange: (tier: PlayerTier) => void;
   broadcastLabel: string;
   collectionTitle?: string | null;
+  currentTrack?: Track | null;
+  currentTrackCount?: number;
+  isBroadcastLoading?: boolean;
+  broadcastError?: string | null;
 }
 
 export default function RadiyoPlayerPanel({
@@ -30,9 +35,28 @@ export default function RadiyoPlayerPanel({
   onTierChange,
   broadcastLabel,
   collectionTitle,
+  currentTrack = null,
+  currentTrackCount = 0,
+  isBroadcastLoading = false,
+  broadcastError = null,
 }: RadiyoPlayerPanelProps) {
   const isRadiyoMode = mode === 'RADIYO';
   const wheelActions = getEngagementWheelActions(mode);
+  const trackArtLabel = isRadiyoMode ? 'Current track art thumbnail' : 'Collection track art thumbnail';
+  const trackSubtitle = isRadiyoMode
+    ? isBroadcastLoading
+      ? 'Loading current broadcast...'
+      : currentTrack
+        ? currentTrack.artist
+        : currentTrackCount > 0
+          ? 'Select a tier to resume this broadcast.'
+          : 'No tracks are available in this rotation yet.'
+    : 'Selection-driven collection queue';
+  const queueLabel = isRadiyoMode
+    ? currentTrackCount > 0
+      ? `${currentTrackCount} track${currentTrackCount === 1 ? '' : 's'} in this rotation`
+      : 'Waiting for the rotation to populate'
+    : 'Selection-driven collection queue';
 
   return (
     <section
@@ -62,18 +86,20 @@ export default function RadiyoPlayerPanel({
           <div data-slot="player-track-row" className="mt-3 grid gap-2 sm:grid-cols-[70px_minmax(0,1fr)]">
             <div
               className="flex h-[70px] w-[70px] items-center justify-center rounded-[0.95rem] border border-white/18 bg-[linear-gradient(135deg,#111_0%,#444_100%)]"
-              aria-label={isRadiyoMode ? 'Current track art thumbnail' : 'Collection track art thumbnail'}
+              aria-label={trackArtLabel}
             >
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/66">Art</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/66">
+                {isRadiyoMode && currentTrack?.coverArt ? 'Cover' : 'Art'}
+              </span>
             </div>
 
             <div className="min-w-0 rounded-[0.95rem] border border-white/12 bg-black/20 px-3 py-2">
               {isRadiyoMode ? (
                 <>
-                  <p className="truncate text-sm font-semibold">Now Broadcasting</p>
-                  <p className="mt-1 truncate text-[11px] text-white/68">
-                    {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
+                  <p className="truncate text-sm font-semibold">
+                    {currentTrack?.title ?? 'Now Broadcasting'}
                   </p>
+                  <p className="mt-1 truncate text-[11px] text-white/68">{trackSubtitle}</p>
                 </>
               ) : (
                 <>
@@ -110,9 +136,32 @@ export default function RadiyoPlayerPanel({
                   <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b8d63b]">
                     {activeBroadcastTier ? 'Live' : 'Stopped'}
                   </span>
-                  <p className="truncate text-[11px] text-white/72">{broadcastLabel}</p>
+                  <p className="truncate text-[11px] text-white/72">
+                    {isRadiyoMode ? queueLabel : broadcastLabel}
+                  </p>
                 </div>
               </div>
+
+              {isRadiyoMode ? (
+                <div className="mt-3 space-y-2">
+                  {broadcastError ? (
+                    <p className="rounded-lg border border-red-400/40 bg-red-950/30 px-3 py-2 text-[11px] text-red-100">
+                      {broadcastError}
+                    </p>
+                  ) : null}
+                  {currentTrack ? (
+                    <audio className="w-full" controls autoPlay src={currentTrack.fileUrl}>
+                      Your browser does not support audio playback.
+                    </audio>
+                  ) : (
+                    <p className="text-[11px] text-white/60">
+                      {isBroadcastLoading
+                        ? 'Loading broadcast audio...'
+                        : 'No broadcast audio is available for this tier and rotation yet.'}
+                    </p>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

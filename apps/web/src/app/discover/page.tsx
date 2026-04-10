@@ -4,11 +4,15 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
 import type {
+  BroadcastRotation,
+  BroadcastRotationMeta,
   CommunityDiscoverHighlights,
   CommunityDiscoverSearchResult,
   DiscoverRecommendationResult,
   DiscoverSignalResult,
+  Track,
 } from '@uprise/types';
+import { getActiveBroadcastRotation } from '@/lib/broadcast/client';
 import RadiyoPlayerPanel, {
   type PlayerTier,
   type RotationPool,
@@ -444,6 +448,10 @@ export default function DiscoverPage() {
 
   const [tier, setTier] = useState<TierScope>(initialTier);
   const [rotationPool, setRotationPool] = useState<RotationPool>('main_rotation');
+  const [broadcastRotation, setBroadcastRotation] = useState<BroadcastRotation | null>(null);
+  const [broadcastMeta, setBroadcastMeta] = useState<BroadcastRotationMeta | null>(null);
+  const [broadcastLoading, setBroadcastLoading] = useState(false);
+  const [broadcastError, setBroadcastError] = useState<string | null>(null);
   const [locationQuery, setLocationQuery] = useState(
     getDefaultLocationQueryForTier(initialTier, homeScene, tunedScene),
   );
@@ -528,11 +536,58 @@ export default function DiscoverPage() {
 
   const popularSingles = highlights?.popularSingles ?? emptyHighlights.popularSingles;
   const selectedPopularSingles = popularSingles[selectedLens];
+  const currentRotationTracks =
+    rotationPool === 'new_releases'
+      ? broadcastRotation?.newReleases ?? []
+      : broadcastRotation?.mainRotation ?? [];
+  const currentBroadcastTrack: Track | null = currentRotationTracks[0] ?? null;
+  const currentBroadcastLabel = broadcastMeta?.sceneName ?? `${activeSceneName} • ${tier}`;
 
   useEffect(() => {
     setTier(initialTier);
     setLocationQuery(getDefaultLocationQueryForTier(initialTier, homeScene, tunedScene));
   }, [homeScene, initialTier, tunedScene]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchBroadcastRotation() {
+      if (!token) {
+        setBroadcastRotation(null);
+        setBroadcastMeta(null);
+        setBroadcastError(null);
+        setBroadcastLoading(false);
+        return;
+      }
+
+      setBroadcastLoading(true);
+      setBroadcastError(null);
+
+      try {
+        const response = await getActiveBroadcastRotation(tier, token);
+        if (!ignore) {
+          setBroadcastRotation(response.data ?? { newReleases: [], mainRotation: [] });
+          setBroadcastMeta(response.meta ?? null);
+        }
+      } catch (error: unknown) {
+        if (!ignore) {
+          const message = error instanceof Error ? error.message : 'Unable to load the active broadcast rotation.';
+          setBroadcastRotation(null);
+          setBroadcastMeta(null);
+          setBroadcastError(message);
+        }
+      } finally {
+        if (!ignore) {
+          setBroadcastLoading(false);
+        }
+      }
+    }
+
+    void fetchBroadcastRotation();
+    return () => {
+      ignore = true;
+    };
+  }, [tier, token]);
 
   useEffect(() => {
     async function fetchContext() {
@@ -1143,8 +1198,12 @@ export default function DiscoverPage() {
             selectedTier={tier}
             activeBroadcastTier={tier}
             onTierChange={handleChangeTier}
-            broadcastLabel={`${activeSceneName} • ${tier}`}
+            broadcastLabel={currentBroadcastLabel}
             collectionTitle={null}
+            currentTrack={currentBroadcastTrack}
+            currentTrackCount={currentRotationTracks.length}
+            isBroadcastLoading={broadcastLoading}
+            broadcastError={broadcastError}
           />
 
           <div className="mt-[-1px] rounded-b-[1rem] border border-t-0 border-black bg-[#161616] px-4 py-4 text-white">

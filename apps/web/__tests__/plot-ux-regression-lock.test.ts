@@ -97,6 +97,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('Collection mode stays selection-driven. Use eject to return to RADIYO.');
     expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");
     expect(playerSource).toContain('aria-pressed={activeBroadcastTier === tier}');
+    expect(playerSource).toContain('<audio className="w-full" controls autoPlay src={currentTrack.fileUrl}>');
     expect(playerSource).not.toContain('aria-label="Play"');
     expect(playerSource).not.toContain('aria-label="Pause"');
     expect(playerSource).not.toContain('aria-label="Add to collection"');
