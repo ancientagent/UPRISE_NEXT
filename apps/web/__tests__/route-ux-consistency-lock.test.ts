@@ -53,4 +53,12 @@ describe('cross-route UX consistency lock', () => {
     expect(printShopSource).toContain('Print Shop event creation requires active promoter capability or a linked Artist/Band source.');
     expect(printShopSource).toContain('Create Event');
   });
+
+  it('keeps an artist-facing route into Print Shop for linked members only', () => {
+    const artistSource = readRepoFile('src/app/artist-bands/[id]/page.tsx');
+
+    expect(artistSource).toContain('const viewerCanOpenPrintShop = useMemo(() => {');
+    expect(artistSource).toContain("profile.members.some((member) => member.userId === user.id)");
+    expect(artistSource).toContain('<Link href="/print-shop">Open Print Shop</Link>');
+  });
 });

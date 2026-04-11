@@ -35,7 +35,7 @@ export default function ArtistBandProfilePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
 
   const [profile, setProfile] = useState<ArtistBandProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,6 +83,11 @@ export default function ArtistBandProfilePage() {
     if (!profile || !selectedTrackId) return null;
     return profile.tracks.find((track) => track.id === selectedTrackId) ?? null;
   }, [profile, selectedTrackId]);
+
+  const viewerCanOpenPrintShop = useMemo(() => {
+    if (!profile || !user?.id) return false;
+    return profile.members.some((member) => member.userId === user.id);
+  }, [profile, user?.id]);
 
   async function runAction(
     action: 'follow' | 'add' | 'blast' | 'support',
@@ -175,6 +180,16 @@ export default function ArtistBandProfilePage() {
             </div>
 
             <div className="flex flex-wrap gap-2">
+              {viewerCanOpenPrintShop ? (
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                >
+                  <Link href="/print-shop">Open Print Shop</Link>
+                </Button>
+              ) : null}
               <Button
                 size="sm"
                 variant="outline"
