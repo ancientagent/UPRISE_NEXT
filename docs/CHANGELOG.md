@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added a Home-side creator path into Print Shop: Plot’s `Registrar Access` panel now shows `Open Print Shop` whenever the signed-in account already has an active promoter capability or a linked Artist/Band source, so creator event flow is reachable from Home as well as source pages; see `docs/handoff/2026-04-11_plot-registrar-print-shop-bridge.md`.
 - Added an artist-facing source entry into Print Shop: linked Artist/Band members now see `Open Print Shop` on their source profile, so creator-side event creation no longer depends on manually typing `/print-shop`; see `docs/handoff/2026-04-11_artist-source-print-shop-entrypoint.md`.
 - Added a reusable local Print Shop creator-fixture seed helper (`apps/api/scripts/seed-print-shop-creator-user.mjs`) plus `pnpm --filter api run seed:print-shop-creator`, so an existing dev user can be given a linked Artist/Band source for source-facing event-creation QA without weakening the live permission boundary; see `docs/handoff/2026-04-11_print-shop-creator-fixture-seed.md`.
 - Added the first real source-facing Print Shop event write seam: `POST /print-shop/events` now creates scene-bound events for creator-eligible users (active promoter capability or linked Artist/Band source), `/print-shop` provides the minimum creator-facing event form, and `/registrar` now exposes `Open Print Shop` when promoter capability is active; see `docs/handoff/2026-04-10_print-shop-event-write-lane.md`.

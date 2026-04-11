@@ -571,6 +571,7 @@ export default function PlotPage() {
       kind: 'track' as const,
     })) ?? [];
   const latestPromoterEntry = promoterEntries[0] ?? null;
+  const canOpenPrintShop = Boolean(latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0);
   const bandStatusCard =
     managedArtistBands.length > 0 || (registrarSummary?.totalEntries ?? 0) > 0
       ? {
@@ -1231,9 +1232,16 @@ export default function PlotPage() {
                   )}
 
                   <div className="mt-4">
-                    <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/registrar')}>
-                      Open Registrar
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/registrar')}>
+                        Open Registrar
+                      </Button>
+                      {canOpenPrintShop ? (
+                        <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/print-shop')}>
+                          Open Print Shop
+                        </Button>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
 
