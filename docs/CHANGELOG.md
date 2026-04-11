@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added a reusable local Print Shop creator-fixture seed helper (`apps/api/scripts/seed-print-shop-creator-user.mjs`) plus `pnpm --filter api run seed:print-shop-creator`, so an existing dev user can be given a linked Artist/Band source for source-facing event-creation QA without weakening the live permission boundary; see `docs/handoff/2026-04-11_print-shop-creator-fixture-seed.md`.
 - Added the first real source-facing Print Shop event write seam: `POST /print-shop/events` now creates scene-bound events for creator-eligible users (active promoter capability or linked Artist/Band source), `/print-shop` provides the minimum creator-facing event form, and `/registrar` now exposes `Open Print Shop` when promoter capability is active; see `docs/handoff/2026-04-10_print-shop-event-write-lane.md`.
 - Clarified the MVP boundary again: because promos/business surfaces are deferred, business accounts/dashboard runtime is also deferred from current MVP work even though the longer-term business model remains account-attached and source-shaped.
 - Locked business-source interpretation more explicitly: business accounts still follow the shared source model, should be treated as source-facing dashboards for promotions/analytics/follower-facing actions, and should not be redesigned as anonymous one-off intake; richer artist/business deal workflows remain later-version scope.
