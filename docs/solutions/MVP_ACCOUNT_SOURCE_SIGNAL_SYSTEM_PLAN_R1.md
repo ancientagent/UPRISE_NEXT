@@ -136,6 +136,8 @@ Deliver:
   - `Source Profile`
   - `Print Shop`
   - `Registrar`
+  - next creator tool:
+    - `Release Deck`
 
 ### Phase C — Signals System Consolidation
 Goal:
@@ -184,6 +186,7 @@ Deliver:
 1. promotion-package runtime
 2. richer source analytics
 3. broader source domains as later-version scope returns
+4. artist-side release deck with locked `3` music slots + `1` paid attached-ad slot
 
 ## 7) Guardrails
 - do not reintroduce separate-app thinking

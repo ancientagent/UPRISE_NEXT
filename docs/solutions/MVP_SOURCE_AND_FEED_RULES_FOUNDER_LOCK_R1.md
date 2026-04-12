@@ -107,6 +107,23 @@ Implementation interpretation:
 - current routes such as `/artist-bands/[id]`, `/plot`, `/registrar`, and `/print-shop` may bridge into that system during MVP
 - but product language and future implementation should treat Print Shop as living inside the source dashboard, not as a random public utility route
 
+## 4.2) Artist Release Deck Rule
+Artist-side music release must be treated as a source-dashboard system, not a generic upload utility.
+
+Release deck rule:
+- the release deck has `4` slots total
+- `3` slots are for music
+- `1` slot is a paid slot behind a paywall
+
+Paid slot rule:
+- the paid slot is for recording a `10` second ad
+- that ad is attached to the new release
+- do not treat the ad slot as an extra music slot
+
+Current authority note:
+- older canon may still mention an early-beta `3` song release deck
+- for current implementation direction, this founder lock controls until canon is intentionally reconciled
+
 ## 5) Source Update Ownership Rules
 ### 5.1 Community-wide updates
 Community-wide updates are emitted by the community/system layer, not by the source itself.

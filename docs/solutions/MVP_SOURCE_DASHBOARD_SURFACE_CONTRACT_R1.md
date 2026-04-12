@@ -69,6 +69,20 @@ Current MVP live cards:
 No placeholder tool cards.
 Do not add fake analytics, billing, or growth modules.
 
+### 4.5 Next Creator Tool In Scope
+The next artist-side creator tool should be `Release Deck`.
+
+Current locked direction:
+- Release Deck belongs inside Source Dashboard
+- it should not be modeled as a listener/public upload path
+- it should expose `4` slots total:
+  - `3` music slots
+  - `1` paid slot for a `10` second ad attached to the new release
+
+Implementation note:
+- this defines source-dashboard ownership and slot structure
+- it does not yet widen billing/media-pipeline mechanics beyond the already published ingestion seam
+
 ## 5) Route/Tool Relationship
 ### Source Profile
 - public/source-facing identity page

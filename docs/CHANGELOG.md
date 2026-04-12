@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Locked the artist-side `Release Deck` structure more explicitly: current implementation direction is a `4` slot deck inside Source Dashboard with `3` music slots and `1` paid slot for a `10` second ad attached to the new release; this overrides older early-beta `3` song implementation assumptions until canon is intentionally reconciled. See `docs/handoff/2026-04-12_release-deck-reconciliation.md`.
 - Added the first explicit source-side shell: `/source-dashboard` now groups active source context, Source Profile, Print Shop, and Registrar under one source-facing dashboard, Plot’s `Source Accounts` switcher now routes into that shell, and `/print-shop` now shows the active source operating context without falsely claiming persisted source ownership on event writes; see `docs/handoff/2026-04-12_source-dashboard-and-signal-contract.md`.
 - Added `docs/solutions/MVP_SOURCE_DASHBOARD_SURFACE_CONTRACT_R1.md` to define the current MVP Source Dashboard surface contract and stop source tools from drifting back into route-by-route assumptions.
 - Added `docs/solutions/MVP_SIGNAL_SYSTEM_CONTRACT_R1.md` to consolidate the current MVP signal-system rules: sources vs signals stay separate, current signal classes remain `single` / `Uprise` / `flyer`, and action applicability must stay signal-specific rather than universal-by-default.

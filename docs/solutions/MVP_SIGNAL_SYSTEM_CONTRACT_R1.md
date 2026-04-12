@@ -43,6 +43,11 @@ Do not:
 - realized sect/sub-community source carries its `Uprise` signal
 - event source carries `flyer` signals
 
+Artist release-deck clarification:
+- artist-side release workflow belongs to the source dashboard system
+- the paid `10` second ad attached to a new release must not be assumed to be a separate music signal slot
+- do not widen that ad attachment into a general independent signal class without a dedicated lock
+
 ### Later-version / not widened here
 - mixes
 - broader discourse/social signals
