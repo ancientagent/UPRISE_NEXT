@@ -75,9 +75,10 @@ The next artist-side creator tool should be `Release Deck`.
 Current locked direction:
 - Release Deck belongs inside Source Dashboard
 - it should not be modeled as a listener/public upload path
-- it should expose `4` slots total:
-  - `3` music slots
-  - `1` paid slot for a `10` second ad attached to the new release
+- it should expose `3` music upload slots
+- it should also expose a `4th` paid ad-attachment slot inside the same Release Deck interface
+- the paid slot is for a `10` second ad attached to the current new release
+- the paid slot does not increase music upload capacity
 
 Implementation note:
 - this defines source-dashboard ownership and slot structure

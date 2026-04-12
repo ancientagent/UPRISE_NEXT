@@ -26,7 +26,7 @@
 
 Citywide Uprise:
 -All music enters the RaDIYo Broadcast Network from the citywide community. 
--Singles are submitted through artist account by uploading to the Play Deck located in the Artist's management dashboard. 
+-Singles are submitted through artist account by uploading to the Play Deck located in the Artist's management dashboard. During early beta, music upload capacity remains capped at 3 songs even where the same interface also contains a paid attached-ad slot.
 
 Statewide Uprise:
  a rotation consisting of the top songs upvoted by the citywide music communities within a state.

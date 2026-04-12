@@ -111,18 +111,22 @@ Implementation interpretation:
 Artist-side music release must be treated as a source-dashboard system, not a generic upload utility.
 
 Release deck rule:
-- the release deck has `4` slots total
-- `3` slots are for music
-- `1` slot is a paid slot behind a paywall
+- the release deck exposes `3` music upload slots
+- the same release-deck interface also includes a `4th` paid slot for ad attachment
+- the paid slot is interface capacity, not additional music capacity
 
 Paid slot rule:
 - the paid slot is for recording a `10` second ad
 - that ad is attached to the new release
 - do not treat the ad slot as an extra music slot
+- do not treat the ad as its own song
+- do not treat the ad as its own rotation entry
 
 Current authority note:
-- older canon may still mention an early-beta `3` song release deck
-- for current implementation direction, this founder lock controls until canon is intentionally reconciled
+- canon language should be read as:
+  - `3` song slots for music upload capacity
+  - `4th` slot in the same interface for a paid attached ad
+- if older passages read as if `3` and `4` are competing totals, that is wording debt rather than a product conflict
 
 ## 5) Source Update Ownership Rules
 ### 5.1 Community-wide updates

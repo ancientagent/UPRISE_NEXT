@@ -53,12 +53,14 @@ Active Slot (working definition): A song occupying an Artist’s limited capacit
 the Citywide broadcast.
 Limited Capacity (concise): An artist may have only a finite number of songs occupying the Rotation Stack
 at the same time, so no single artist can flood the broadcast.
-Release Deck (Clarification): - Artists may maintain a small release deck (e.g., up to 3 songs during early
-beta) representing songs they wish to bring into broadcast circulation. - Capacity of the release deck may
-expand or contract over time, but broadcast exposure remains constrained by slot pressure and pacing
-rules.
+Release Deck (Clarification): - Artists may maintain a small release deck representing songs they wish to
+bring into broadcast circulation. - During early beta, music upload capacity is up to 3 songs. - The Release
+Deck interface may also contain a separate paid ad-attachment slot without increasing song capacity. -
+Capacity of the release deck may expand or contract over time, but broadcast exposure remains constrained
+by slot pressure and pacing rules.
 EARLY BETA LOCK (Canonical): - During early beta, each artist may maintain a release deck of up to 3
-songs. - At any given time, only 1 song per artist may be treated as a “new release” within the Release
+songs for music upload capacity. - A separate paid ad-attachment slot may exist in the same Release Deck
+interface without changing that music cap. - At any given time, only 1 song per artist may be treated as a “new release” within the Release
 Cycle.
 2
 

@@ -96,15 +96,14 @@ Responsibilities:
 ### Already true
 - one login/account model
 - additive source relationships via `managedArtistBands`
+- a first explicit `/source-dashboard` route and shell
 - source-facing Print Shop event creation
 - artist-source and Plot bridges into Print Shop
 - registrar source-facing bridge direction
 
 ### Not yet true
-- a first-class source dashboard route/system
 - a full account-context switcher across the web shell
 - explicit source-mode shell treatment
-- a centralized signals system surface/contract
 - promotion-package runtime
 
 ## 5) Implementation Phases
@@ -186,7 +185,7 @@ Deliver:
 1. promotion-package runtime
 2. richer source analytics
 3. broader source domains as later-version scope returns
-4. artist-side release deck with locked `3` music slots + `1` paid attached-ad slot
+4. artist-side release deck with locked `3` music upload slots + `1` paid attached-ad slot in the same interface
 
 ## 7) Guardrails
 - do not reintroduce separate-app thinking

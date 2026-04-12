@@ -79,6 +79,7 @@ The 4th Release Deck Slot (Ad Slot):
 • Every artist is allowed up to 3 songs in their Release Deck at a given time (slots 1-3)
 • The 4th slot exists within the Artist Management Release Deck interface and is reserved for
 recording 10-second promotional ads
+• This 4th slot is an attached-ad slot in the same interface, not an increase in song-upload capacity
 • A Release Deck slot determines what may enter the Uprise’s rotation stack; it is not itself a position
 within the rotation stack
 • This promotional slot does not alter Fair Play ordering, weighting, or tier progression
