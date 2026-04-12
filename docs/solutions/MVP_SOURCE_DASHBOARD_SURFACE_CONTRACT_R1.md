@@ -62,6 +62,7 @@ Must explain:
 
 ### 4.4 Live Tool Cards
 Current MVP live cards:
+- `Release Deck`
 - `Source Profile`
 - `Print Shop`
 - `Registrar`
@@ -69,8 +70,9 @@ Current MVP live cards:
 No placeholder tool cards.
 Do not add fake analytics, billing, or growth modules.
 
-### 4.5 Next Creator Tool In Scope
-The next artist-side creator tool should be `Release Deck`.
+### 4.5 Release Deck Runtime Slice
+Current artist-side creator tool now live:
+- `Release Deck`
 
 Current locked direction:
 - Release Deck belongs inside Source Dashboard
@@ -81,8 +83,9 @@ Current locked direction:
 - the paid slot does not increase music upload capacity
 
 Implementation note:
-- this defines source-dashboard ownership and slot structure
-- it does not yet widen billing/media-pipeline mechanics beyond the already published ingestion seam
+- current runtime uses the existing `/tracks` ingestion seam from active source context
+- current runtime shows the latest ready singles for the three visible music slots
+- current runtime does not yet widen billing/media-pipeline mechanics or paid ad-slot tooling
 
 ## 5) Route/Tool Relationship
 ### Source Profile

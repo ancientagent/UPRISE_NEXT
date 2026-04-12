@@ -70,7 +70,20 @@ describe('cross-route UX consistency lock', () => {
 
     expect(dashboardSource).toContain('Select a source account');
     expect(dashboardSource).toContain('Source-facing tools live here.');
+    expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
     expect(dashboardSource).toContain('Return to Listener Account');
     expect(dashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
+  });
+
+  it('keeps release deck source-facing and tied to active source context', () => {
+    const releaseDeckSource = readRepoFile('src/app/source-dashboard/release-deck/page.tsx');
+
+    expect(releaseDeckSource).toContain('Sign in is required before opening Release Deck.');
+    expect(releaseDeckSource).toContain('Select a source account before opening Release Deck.');
+    expect(releaseDeckSource).toContain('Release Deck');
+    expect(releaseDeckSource).toContain('Current Music Slots');
+    expect(releaseDeckSource).toContain('Release Single');
+    expect(releaseDeckSource).toContain('Release Deck is the source-side lane for singles entering the citywide Uprise.');
+    expect(releaseDeckSource).toContain('paid ad slot stays outside the current runtime');
   });
 });

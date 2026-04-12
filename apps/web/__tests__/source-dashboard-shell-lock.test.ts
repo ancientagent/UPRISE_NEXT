@@ -13,10 +13,12 @@ describe('source dashboard shell lock', () => {
 
     expect(dashboardSource).toContain('Source Dashboard');
     expect(dashboardSource).toContain('Source-facing tools live here.');
+    expect(dashboardSource).toContain('Release Deck');
     expect(dashboardSource).toContain('Source Profile');
     expect(dashboardSource).toContain('Print Shop');
     expect(dashboardSource).toContain('Registrar');
     expect(dashboardSource).toContain('Return to Listener Account');
+    expect(dashboardSource).toContain('Open Release Deck');
     expect(dashboardSource).toContain("Link href=\"/print-shop\"");
   });
 });

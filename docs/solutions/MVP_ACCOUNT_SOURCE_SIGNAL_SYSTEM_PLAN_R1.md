@@ -97,6 +97,7 @@ Responsibilities:
 - one login/account model
 - additive source relationships via `managedArtistBands`
 - a first explicit `/source-dashboard` route and shell
+- a first explicit `/source-dashboard/release-deck` source tool using the existing `/tracks` ingestion seam
 - source-facing Print Shop event creation
 - artist-source and Plot bridges into Print Shop
 - registrar source-facing bridge direction

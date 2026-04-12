@@ -175,7 +175,18 @@ export default function SourceDashboardPage() {
               </div>
             </section>
 
-            <section className="grid gap-4 md:grid-cols-3">
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="plot-wire-card p-6">
+                <p className="plot-wire-label">Release Deck</p>
+                <h2 className="mt-2 text-lg font-semibold text-black">Release singles from this source</h2>
+                <p className="mt-2 text-sm text-black/65">
+                  Open the source-side release lane for the current artist/band and manage the active music slots.
+                </p>
+                <Button asChild size="sm" variant="outline" className="mt-4 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                  <Link href="/source-dashboard/release-deck">Open Release Deck</Link>
+                </Button>
+              </div>
+
               <div className="plot-wire-card p-6">
                 <p className="plot-wire-label">Source Profile</p>
                 <h2 className="mt-2 text-lg font-semibold text-black">View public source page</h2>
