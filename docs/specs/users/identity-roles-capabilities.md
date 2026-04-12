@@ -169,6 +169,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Source-facing tools should still be understood as belonging to the source dashboard/tool layer rather than as isolated public utilities.
 - Users who are attached to artist/band or other source entities should be able to switch into those managed source accounts/entities from the same signed-in web app.
 - This should be treated as an in-app account-context switch, not as a second login or a separate application.
+- Current MVP runtime shell for that model is `/source-dashboard`, which groups active source-side access to Source Profile, Print Shop, and Registrar.
 - Promoters operate named Production entities for public promotional actions.
 - Promoters can:
   - create/manage events (via Print Shop flow),

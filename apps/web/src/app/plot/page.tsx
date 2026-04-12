@@ -1201,7 +1201,7 @@ export default function PlotPage() {
                   <SourceAccountSwitcher
                     sources={managedArtistBands}
                     onSelectListener={() => router.push('/plot')}
-                    onSelectSource={(source) => router.push(`/artist-bands/${source.id}`)}
+                    onSelectSource={() => router.push('/source-dashboard')}
                   />
                 ) : null}
 

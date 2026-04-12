@@ -120,6 +120,8 @@ Deliver:
 
 Current first slice:
 - Plot-side source-account switcher
+- `/source-dashboard` shell as the first explicit source-side operating surface
+- active source-context visibility on `/print-shop`
 
 ### Phase B — Source Dashboard Emergence
 Goal:
@@ -130,6 +132,10 @@ Deliver:
 - source-summary header
 - source tools/modules list
 - source-profile access from the same dashboard system
+- current MVP contract:
+  - `Source Profile`
+  - `Print Shop`
+  - `Registrar`
 
 ### Phase C — Signals System Consolidation
 Goal:
@@ -141,6 +147,8 @@ Deliver:
 - signal-action matrix
 - shelf mapping audit
 - route/runtime cleanup where source and signal behavior are mixed
+- current contract docs:
+  - `docs/solutions/MVP_SIGNAL_SYSTEM_CONTRACT_R1.md`
 
 ### Phase D — Registrar / Source Integration
 Goal:

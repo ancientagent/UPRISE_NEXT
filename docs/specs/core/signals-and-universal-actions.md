@@ -3,10 +3,15 @@
 **ID:** `CORE-SIGNALS`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-04-12`
 
 ## Overview & Purpose
 Defines Signals as atomic units of interaction and the universal actions applied to them. This spec covers implemented contracts and the canonical constraints that prohibit algorithmic interpretation.
+
+Signals must remain distinct from sources:
+- follows subscribe to source/entity updates
+- signal actions apply to the carried signal object
+- not every signal exposes every action
 
 ## User Roles & Use Cases
 - Listeners create signals (where allowed) and perform ADD, BLAST, and SUPPORT.
@@ -20,10 +25,20 @@ Defines Signals as atomic units of interaction and the universal actions applied
   - `BLAST`: explicit public amplification action
   - `SUPPORT`: explicit support action
   - `FOLLOW`: awareness subscription to an entity
+- Source/signal boundary:
+  - `FOLLOW` applies to the source/entity, not the signal
+  - `ADD`, `BLAST`, and `SUPPORT` apply to signals only where that signal type supports them
 - Action application is idempotent at user/signal/action scope.
 - Collections are profile-bound and separate from Fair Play.
 - Public collection visibility is opt-in (`collectionDisplayEnabled`).
 - Signal propagation is explicit only; no algorithmic surfacing or recommendation.
+- Current confirmed signal classes:
+  - `single`
+  - `Uprise`
+  - `flyer`
+- Current confirmed blastable signals:
+  - `single`
+  - `Uprise`
 
 ## Non-Functional Requirements
 - Signals are descriptive, not authoritative.
@@ -34,6 +49,8 @@ Defines Signals as atomic units of interaction and the universal actions applied
 - Platform must not interpret, score, or rank signals.
 - Signals and follows are awareness interactions; they do not grant civic authority.
 - Signal actions must not affect Fair Play tier progression.
+- Do not treat every source object as a blastable or addable signal.
+- Do not widen flyer/event signal actions beyond current locks without an explicit contract update.
 
 ## Data Models & Migrations
 ### Prisma Models
@@ -75,12 +92,14 @@ Defines Signals as atomic units of interaction and the universal actions applied
 - Collections render as typed shelves on user profile.
 - Other users only see shelves when profile display toggle is enabled.
 - Follow actions subscribe users to future entity updates without changing ranking/placement logic.
+- Active source-side tools remain separate from signal actions; source dashboard/Print Shop behavior must not be mistaken for signal interaction grammar.
 
 ## Acceptance Tests / Test Plan
 - `POST /signals` creates signal rows with optional metadata/community.
 - Repeating `ADD`/`BLAST`/`SUPPORT` for same user/signal returns idempotent result (no duplicate rows).
 - Repeating `FOLLOW` for same user/entity returns idempotent result.
 - ADD maps signals to fixed shelves (`singles`, `uprises`, `posters`, `fliers`, merch shelves) and links `CollectionItem`.
+- Blast coverage is validated only for currently blastable signal classes (`single`, `Uprise`) until additional signal-specific rules are locked.
 
 ## Future Work & Open Questions
 - Add discourse signals (post/thread) service contracts (currently spec-level only).

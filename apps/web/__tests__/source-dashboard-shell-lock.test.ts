@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+const repoRoot = path.resolve(__dirname, '..');
+
+function readRepoFile(relativePath: string): string {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+describe('source dashboard shell lock', () => {
+  it('keeps source dashboard as the explicit source-side shell', () => {
+    const dashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
+
+    expect(dashboardSource).toContain('Source Dashboard');
+    expect(dashboardSource).toContain('Source-facing tools live here.');
+    expect(dashboardSource).toContain('Source Profile');
+    expect(dashboardSource).toContain('Print Shop');
+    expect(dashboardSource).toContain('Registrar');
+    expect(dashboardSource).toContain('Return to Listener Account');
+    expect(dashboardSource).toContain("Link href=\"/print-shop\"");
+  });
+});

@@ -48,7 +48,9 @@ describe('cross-route UX consistency lock', () => {
     const printShopSource = readRepoFile('src/app/print-shop/page.tsx');
 
     expect(printShopSource).toContain('Source-Facing Event Creation');
+    expect(printShopSource).toContain('Source Context');
     expect(printShopSource).toContain('Print Shop stays source-facing.');
+    expect(printShopSource).toContain('Source Dashboard');
     expect(printShopSource).toContain('Sign in is required before opening Print Shop creator tools.');
     expect(printShopSource).toContain('Print Shop event creation requires active promoter capability or a linked Artist/Band source.');
     expect(printShopSource).toContain('Create Event');
@@ -59,6 +61,16 @@ describe('cross-route UX consistency lock', () => {
 
     expect(artistSource).toContain('const viewerCanOpenPrintShop = useMemo(() => {');
     expect(artistSource).toContain("profile.members.some((member) => member.userId === user.id)");
+    expect(artistSource).toContain('<Link href="/source-dashboard">Source Dashboard</Link>');
     expect(artistSource).toContain('<Link href="/print-shop">Open Print Shop</Link>');
+  });
+
+  it('keeps a dedicated source dashboard route for source-side tools', () => {
+    const dashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
+
+    expect(dashboardSource).toContain('Select a source account');
+    expect(dashboardSource).toContain('Source-facing tools live here.');
+    expect(dashboardSource).toContain('Return to Listener Account');
+    expect(dashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
   });
 });

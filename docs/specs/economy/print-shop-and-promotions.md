@@ -91,6 +91,8 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Print Shop remains source-facing only:
   - artists/promoters use it to create/manage event-related issuance flows,
   - listeners do not enter Print Shop to create events, purchase runs, or manage issuance.
+- `/source-dashboard` is the first explicit source-side shell for current MVP runtime.
+- `/print-shop` should present the current source operating context when one has been selected from that dashboard/switcher layer.
 - `/print-shop` now provides the minimum creator-facing event form for the published event-write seam.
 - linked Artist/Band members can reach `/print-shop` directly from their artist-facing source page via `Open Print Shop`.
 - Promotional Pack setup requires explicit target scope selection (city/state/community).

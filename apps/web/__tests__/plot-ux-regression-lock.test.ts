@@ -275,6 +275,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('const canOpenPrintShop = Boolean(latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0);');
     expect(plotPageSource).toContain('SourceAccountSwitcher');
     expect(plotPageSource).toContain('Registrar Access');
+    expect(plotPageSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
     expect(plotPageSource).toContain('Sign in to view registrar status and continue registration work.');
     expect(plotPageSource).toContain('No Artist/Band registrar entries yet.');
     expect(plotPageSource).toContain('Open Registrar');

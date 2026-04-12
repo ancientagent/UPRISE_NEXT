@@ -181,14 +181,24 @@ export default function ArtistBandProfilePage() {
 
             <div className="flex flex-wrap gap-2">
               {viewerCanOpenPrintShop ? (
-                <Button
-                  asChild
-                  size="sm"
-                  variant="outline"
-                  className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                >
-                  <Link href="/print-shop">Open Print Shop</Link>
-                </Button>
+                <>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                  >
+                    <Link href="/source-dashboard">Source Dashboard</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                  >
+                    <Link href="/print-shop">Open Print Shop</Link>
+                  </Button>
+                </>
               ) : null}
               <Button
                 size="sm"

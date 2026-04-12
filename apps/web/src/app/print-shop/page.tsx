@@ -8,19 +8,11 @@ import { api } from '@/lib/api';
 import { resolveHomeCommunity } from '@/lib/communities/client';
 import { listPromoterRegistrations } from '@/lib/registrar/client';
 import { createPrintShopEvent } from '@/lib/print-shop/client';
+import type { CurrentUserSourceProfile } from '@/lib/source/types';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
-
-type CurrentUserProfile = {
-  user: { id: string; hasArtistBand?: boolean };
-  managedArtistBands: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    entityType: string;
-    membershipRole: string | null;
-  }>;
-};
+import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
+import { useSourceAccountStore } from '@/store/source-account';
 
 type HomeSceneResolution = {
   id: string;
@@ -45,12 +37,13 @@ const emptyForm: Omit<CreatePrintShopEvent, 'communityId'> = {
 export default function PrintShopPage() {
   const { token, user } = useAuthStore();
   const { homeScene } = useOnboardingStore();
+  const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
 
   const [form, setForm] = useState(emptyForm);
   const [maxAttendeesInput, setMaxAttendeesInput] = useState('');
   const [homeSceneResolution, setHomeSceneResolution] = useState<HomeSceneResolution | null>(null);
   const [homeSceneError, setHomeSceneError] = useState<string | null>(null);
-  const [profile, setProfile] = useState<CurrentUserProfile | null>(null);
+  const [profile, setProfile] = useState<CurrentUserSourceProfile | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [promoterGranted, setPromoterGranted] = useState(false);
   const [promoterError, setPromoterError] = useState<string | null>(null);
@@ -117,7 +110,7 @@ export default function PrintShopPage() {
       }
 
       try {
-        const response = await api.get<CurrentUserProfile>(`/users/${user.id}/profile`, { token });
+        const response = await api.get<CurrentUserSourceProfile>(`/users/${user.id}/profile`, { token });
         if (cancelled) return;
         setProfile(response.data ?? { user: { id: user.id }, managedArtistBands: [] });
         setProfileError(null);
@@ -163,6 +156,7 @@ export default function PrintShopPage() {
   }, [token]);
 
   const managedArtistBands = profile?.managedArtistBands ?? [];
+  const activeSource = managedArtistBands.find((entity) => entity.id === activeSourceId) ?? null;
   const canCreateEvent = promoterGranted || managedArtistBands.length > 0;
 
   const eligibilityMessage = useMemo(() => {
@@ -179,6 +173,13 @@ export default function PrintShopPage() {
   const homeSceneLabel = homeSceneResolution
     ? `${homeSceneResolution.city}, ${homeSceneResolution.state} • ${homeSceneResolution.musicCommunity}`
     : 'Unavailable';
+
+  useEffect(() => {
+    if (!activeSourceId) return;
+    if (managedArtistBands.length === 0) return;
+    if (activeSource) return;
+    clearActiveSourceId();
+  }, [activeSource, activeSourceId, clearActiveSourceId, managedArtistBands.length]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -233,6 +234,15 @@ export default function PrintShopPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
+              <Link href="/source-dashboard">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                >
+                  Source Dashboard
+                </Button>
+              </Link>
               <Link href="/registrar">
                 <Button
                   size="sm"
@@ -253,6 +263,40 @@ export default function PrintShopPage() {
               </Link>
             </div>
           </div>
+        </section>
+
+        <section className="plot-wire-card p-6">
+          <p className="plot-wire-label">Source Context</p>
+          {activeSource ? (
+            <div className="mt-2 rounded-[1rem] border border-black bg-[#f7f1df] px-4 py-4 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.18)]">
+              <p className="font-medium text-black">{activeSource.name}</p>
+              <p className="mt-1 text-xs text-black/65">
+                {formatArtistBandEntityType(activeSource.entityType)}
+                {activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}
+              </p>
+              <p className="mt-3 text-sm text-black/70">
+                Print Shop is being operated from your active source dashboard context. Event writes are still
+                checked by creator eligibility today, so this identifies the operating source rather than a stored
+                event-owner field.
+              </p>
+            </div>
+          ) : managedArtistBands.length > 0 ? (
+            <div className="mt-2 rounded-[1rem] border border-black/10 bg-white px-4 py-4 text-sm text-black">
+              <p className="font-medium text-black">No active source account selected</p>
+              <p className="mt-2 text-sm text-black/65">
+                You can still create from a valid creator lane, but source-facing tools are meant to be entered from
+                the source dashboard when you want to operate as a specific managed source.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-2 rounded-[1rem] border border-black/10 bg-white px-4 py-4 text-sm text-black">
+              <p className="font-medium text-black">Promoter capability lane</p>
+              <p className="mt-2 text-sm text-black/65">
+                This creator lane is currently available through promoter capability rather than an active managed
+                source account.
+              </p>
+            </div>
+          )}
         </section>
 
         <section className="plot-wire-card p-6">
