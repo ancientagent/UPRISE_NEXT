@@ -166,6 +166,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Base user identity remains listener/supporter/fan.
 - Promoter is an additive capability, not a separate account tree.
 - Web account management stays unified across listener/artist/promoter capability holders.
+- Source-facing tools should still be understood as belonging to the source dashboard/tool layer rather than as isolated public utilities.
 - Promoters operate named Production entities for public promotional actions.
 - Promoters can:
   - create/manage events (via Print Shop flow),

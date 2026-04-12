@@ -85,6 +85,9 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 ## Web UI / Client Behavior
 - Plot Promotions tab lists scene-scoped promotions/offers via `/communities/:id/promotions`.
 - Print Shop is web-first for creators and is the source of event creation + flier purchasing.
+- Print Shop should be understood as a source-dashboard tool:
+  - creators reach it from the source-facing side of the platform,
+  - it lives conceptually inside the source dashboard/tool layer rather than as a listener/public utility surface.
 - Print Shop remains source-facing only:
   - artists/promoters use it to create/manage event-related issuance flows,
   - listeners do not enter Print Shop to create events, purchase runs, or manage issuance.

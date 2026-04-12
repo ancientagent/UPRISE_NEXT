@@ -88,6 +88,19 @@ Business-facing source dashboard expectation:
 - business accounts should be able to issue their outward follower-facing updates/actions through the same shared source-update model
 - do not invent a separate business-only profile/dashboard architecture
 
+## 4.1) Source Dashboard System Rule
+Source-facing capabilities should be understood as part of a source dashboard system, not as disconnected route tools.
+
+System model:
+- a user signs into one account
+- from that account they can access any source accounts/entities they are attached to
+- each source account exposes its tools and features through a source-facing dashboard layer
+- Print Shop is one item/tool inside that source-dashboard system
+
+Implementation interpretation:
+- current routes such as `/artist-bands/[id]`, `/plot`, `/registrar`, and `/print-shop` may bridge into that system during MVP
+- but product language and future implementation should treat Print Shop as living inside the source dashboard, not as a random public utility route
+
 ## 5) Source Update Ownership Rules
 ### 5.1 Community-wide updates
 Community-wide updates are emitted by the community/system layer, not by the source itself.

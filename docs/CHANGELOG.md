@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Locked clearer top-down source-dashboard language: source-facing tools now explicitly live under the source dashboard system, with Print Shop treated as one creator tool inside that layer rather than a random route-first/public utility surface; see `docs/handoff/2026-04-11_source-dashboard-print-shop-language-lock.md`.
 - Added a Home-side creator path into Print Shop: Plot’s `Registrar Access` panel now shows `Open Print Shop` whenever the signed-in account already has an active promoter capability or a linked Artist/Band source, so creator event flow is reachable from Home as well as source pages; see `docs/handoff/2026-04-11_plot-registrar-print-shop-bridge.md`.
 - Added an artist-facing source entry into Print Shop: linked Artist/Band members now see `Open Print Shop` on their source profile, so creator-side event creation no longer depends on manually typing `/print-shop`; see `docs/handoff/2026-04-11_artist-source-print-shop-entrypoint.md`.
 - Added a reusable local Print Shop creator-fixture seed helper (`apps/api/scripts/seed-print-shop-creator-user.mjs`) plus `pnpm --filter api run seed:print-shop-creator`, so an existing dev user can be given a linked Artist/Band source for source-facing event-creation QA without weakening the live permission boundary; see `docs/handoff/2026-04-11_print-shop-creator-fixture-seed.md`.
