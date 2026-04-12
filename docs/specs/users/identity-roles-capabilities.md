@@ -167,6 +167,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Promoter is an additive capability, not a separate account tree.
 - Web account management stays unified across listener/artist/promoter capability holders.
 - Source-facing tools should still be understood as belonging to the source dashboard/tool layer rather than as isolated public utilities.
+- Users who are attached to artist/band or other source entities should be able to switch into those managed source accounts/entities from the same signed-in web app.
+- This should be treated as an in-app account-context switch, not as a second login or a separate application.
 - Promoters operate named Production entities for public promotional actions.
 - Promoters can:
   - create/manage events (via Print Shop flow),

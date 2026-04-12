@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Locked the one-web-app account-context model more explicitly: listeners attached to bands/sources should be able to switch into managed source accounts/entities from the same signed-in platform session, rather than treating source use as a separate login/app; see `docs/handoff/2026-04-11_source-account-context-switch-lock.md`.
 - Locked clearer top-down source-dashboard language: source-facing tools now explicitly live under the source dashboard system, with Print Shop treated as one creator tool inside that layer rather than a random route-first/public utility surface; see `docs/handoff/2026-04-11_source-dashboard-print-shop-language-lock.md`.
 - Added a Home-side creator path into Print Shop: Plot’s `Registrar Access` panel now shows `Open Print Shop` whenever the signed-in account already has an active promoter capability or a linked Artist/Band source, so creator event flow is reachable from Home as well as source pages; see `docs/handoff/2026-04-11_plot-registrar-print-shop-bridge.md`.
 - Added an artist-facing source entry into Print Shop: linked Artist/Band members now see `Open Print Shop` on their source profile, so creator-side event creation no longer depends on manually typing `/print-shop`; see `docs/handoff/2026-04-11_artist-source-print-shop-entrypoint.md`.

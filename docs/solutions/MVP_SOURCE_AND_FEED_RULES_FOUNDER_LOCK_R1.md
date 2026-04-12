@@ -96,6 +96,12 @@ System model:
 - from that account they can access any source accounts/entities they are attached to
 - each source account exposes its tools and features through a source-facing dashboard layer
 - Print Shop is one item/tool inside that source-dashboard system
+- listeners who are attached to bands/sources should be able to switch into those source accounts/entities from the same signed-in web app
+
+Account-context interpretation:
+- do not treat listener and source use as separate app logins
+- treat source access as an account-context switch inside one web platform
+- the mental model is closer to switching into a managed business/page account than opening a different product
 
 Implementation interpretation:
 - current routes such as `/artist-bands/[id]`, `/plot`, `/registrar`, and `/print-shop` may bridge into that system during MVP
