@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 ### Added
+- Added the first real source-account switching runtime slice: Plot now renders a persistent `Source Accounts` switcher backed by `apps/web/src/store/source-account.ts`, allowing a signed-in listener with managed Artist/Band entities to switch account context and jump into that source from the Home shell; see `docs/handoff/2026-04-12_source-account-switcher-runtime.md`.
+- Added `docs/solutions/MVP_ACCOUNT_SOURCE_SIGNAL_SYSTEM_PLAN_R1.md`, the top-down implementation plan for rebuilding UPRISE as one web platform with a base user account, listener layer, source dashboard system, signals system, Registrar, and Print Shop instead of relying on the old mobile-listener / web-source split.
 - Locked the one-web-app account-context model more explicitly: listeners attached to bands/sources should be able to switch into managed source accounts/entities from the same signed-in platform session, rather than treating source use as a separate login/app; see `docs/handoff/2026-04-11_source-account-context-switch-lock.md`.
 - Locked clearer top-down source-dashboard language: source-facing tools now explicitly live under the source dashboard system, with Print Shop treated as one creator tool inside that layer rather than a random route-first/public utility surface; see `docs/handoff/2026-04-11_source-dashboard-print-shop-language-lock.md`.
 - Added a Home-side creator path into Print Shop: Plot’s `Registrar Access` panel now shows `Open Print Shop` whenever the signed-in account already has an active promoter capability or a linked Artist/Band source, so creator event flow is reachable from Home as well as source pages; see `docs/handoff/2026-04-11_plot-registrar-print-shop-bridge.md`.

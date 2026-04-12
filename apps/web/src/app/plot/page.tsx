@@ -17,6 +17,7 @@ import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
 import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import RadiyoPlayerPanel, { type PlayerMode, type PlayerTier, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
+import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 import {
   buildRadiyoBroadcastLabel,
@@ -1196,6 +1197,14 @@ export default function PlotPage() {
 
               {/* Right Panel - Selected Community Info */}
               <div className="space-y-4">
+                {token && managedArtistBands.length > 0 ? (
+                  <SourceAccountSwitcher
+                    sources={managedArtistBands}
+                    onSelectListener={() => router.push('/plot')}
+                    onSelectSource={(source) => router.push(`/artist-bands/${source.id}`)}
+                  />
+                ) : null}
+
                 <div className="plot-wire-panel">
                   <h3 className="mb-2 font-semibold text-black">Registrar Access</h3>
                   <p className="text-sm text-black/65">
