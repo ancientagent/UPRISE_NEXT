@@ -13,6 +13,10 @@ describe('registrar source-context lock', () => {
 
     expect(registrarSource).toContain('Source Context');
     expect(registrarSource).toContain('Source Dashboard');
+    expect(registrarSource).toContain('Return to Listener Account');
+    expect(registrarSource).toContain('Open Release Deck');
+    expect(registrarSource).toContain('Open Print Shop');
+    expect(registrarSource).toContain("Promoter capability: {latestPromoterEntry?.promoterCapability.granted ? 'active' : 'inactive'}");
     expect(registrarSource).toContain('Registrar is being operated from your active source-side context.');
     expect(registrarSource).toContain('Filings still stay Home Scene bound');
     expect(registrarSource).toContain('No active source account selected');

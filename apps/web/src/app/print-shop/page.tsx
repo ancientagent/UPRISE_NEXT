@@ -234,6 +234,17 @@ export default function PrintShopPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
+              {activeSource ? (
+                <Link href="/plot" onClick={() => clearActiveSourceId()}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                  >
+                    Return to Listener Account
+                  </Button>
+                </Link>
+              ) : null}
               <Link href="/source-dashboard">
                 <Button
                   size="sm"
@@ -243,6 +254,17 @@ export default function PrintShopPage() {
                   Source Dashboard
                 </Button>
               </Link>
+              {activeSource ? (
+                <Link href="/source-dashboard/release-deck">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                  >
+                    Open Release Deck
+                  </Button>
+                </Link>
+              ) : null}
               <Link href="/registrar">
                 <Button
                   size="sm"
@@ -274,6 +296,10 @@ export default function PrintShopPage() {
                 {formatArtistBandEntityType(activeSource.entityType)}
                 {activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}
               </p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs text-black/60">
+                <span className="plot-wire-chip">Home Scene: {homeSceneLabel}</span>
+                <span className="plot-wire-chip">Promoter capability: {promoterGranted ? 'active' : 'inactive'}</span>
+              </div>
               <p className="mt-3 text-sm text-black/70">
                 Print Shop is being operated from your active source dashboard context. Event writes are still
                 checked by creator eligibility today, so this identifies the operating source rather than a stored

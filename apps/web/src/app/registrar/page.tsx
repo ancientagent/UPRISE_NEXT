@@ -619,9 +619,32 @@ export default function RegistrarPage() {
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {managedSources.length > 0 ? (
-              <Button size="sm" variant="outline" onClick={() => router.push('/source-dashboard')}>
-                Source Dashboard
-              </Button>
+              <>
+                {activeSource ? (
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                  >
+                    <Link href="/plot" onClick={() => clearActiveSourceId()}>
+                      Return to Listener Account
+                    </Link>
+                  </Button>
+                ) : null}
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/source-dashboard">Source Dashboard</Link>
+                </Button>
+                {activeSource ? (
+                  <>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="/source-dashboard/release-deck">Open Release Deck</Link>
+                    </Button>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="/print-shop">Open Print Shop</Link>
+                    </Button>
+                  </>
+                ) : null}
+              </>
             ) : null}
             <Button size="sm" variant="outline" onClick={() => router.push('/plot')}>
               Back to Plot
@@ -640,6 +663,19 @@ export default function RegistrarPage() {
                 {formatArtistBandEntityType(activeSource.entityType)}
                 {activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}
               </p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs text-black/60">
+                <span className="plot-wire-chip">
+                  Home Scene: {sceneLabel || (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
+                    ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
+                    : 'Home Scene unresolved')}
+                </span>
+                <span className="plot-wire-chip">
+                  GPS: {gpsVerified ? 'verified' : 'pending'}
+                </span>
+                <span className="plot-wire-chip">
+                  Promoter capability: {latestPromoterEntry?.promoterCapability.granted ? 'active' : 'inactive'}
+                </span>
+              </div>
               <p className="mt-3 text-sm text-black/65">
                 Registrar is being operated from your active source-side context. Filings still stay Home Scene bound,
                 so source context identifies the operating side rather than changing civic scope.

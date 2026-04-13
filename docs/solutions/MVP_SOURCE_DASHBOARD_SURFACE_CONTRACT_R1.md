@@ -102,12 +102,20 @@ Implementation note:
 - remains source-facing
 - remains conceptually inside the source dashboard system even if `/print-shop` is still a direct route
 - current Source Dashboard card copy may reflect creator-lane state such as linked source membership, promoter capability, and GPS-gated promoter progression as long as it does not invent unsupported actions
+- current route shell should preserve source-side operating continuity:
+  - direct return to listener mode when active source context is set
+  - direct handoff to Source Dashboard
+  - Release Deck / Registrar links when source context makes them actionable
 
 ### Registrar
 - remains a separate civic/formalization system
 - but must stay reachable from the same source-side operating context
 - current MVP runtime should surface active source-context visibility on `/registrar` without changing Home Scene filing scope
 - current Source Dashboard card copy should reflect source-attached civic follow-up work when a managed source is active (for example registration status, member sync, capability-code progress)
+- current route shell should preserve source-side operating continuity:
+  - direct return to listener mode when active source context is set
+  - direct handoff to Source Dashboard
+  - Release Deck / Print Shop links when source context makes them actionable
 
 ## 6) Explicit Non-Goals For Current MVP
 Do not widen Source Dashboard into:

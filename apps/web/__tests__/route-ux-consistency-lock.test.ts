@@ -14,6 +14,10 @@ describe('cross-route UX consistency lock', () => {
     expect(registrarSource).toContain('Sign in is required before opening registrar submission actions.');
     expect(registrarSource).toContain('Source Context');
     expect(registrarSource).toContain('Source Dashboard');
+    expect(registrarSource).toContain('Return to Listener Account');
+    expect(registrarSource).toContain('Open Release Deck');
+    expect(registrarSource).toContain('Open Print Shop');
+    expect(registrarSource).toContain("GPS: {gpsVerified ? 'verified' : 'pending'}");
     expect(registrarSource).toContain('Registrar is being operated from your active source-side context.');
     expect(registrarSource).toContain('Eligibility Snapshot');
     expect(registrarSource).toContain('Registrar actions still file against your Home Scene');
@@ -54,6 +58,8 @@ describe('cross-route UX consistency lock', () => {
     expect(printShopSource).toContain('Source Context');
     expect(printShopSource).toContain('Print Shop stays source-facing.');
     expect(printShopSource).toContain('Source Dashboard');
+    expect(printShopSource).toContain('Return to Listener Account');
+    expect(printShopSource).toContain('Open Release Deck');
     expect(printShopSource).toContain('Sign in is required before opening Print Shop creator tools.');
     expect(printShopSource).toContain('Print Shop event creation requires active promoter capability or a linked Artist/Band source.');
     expect(printShopSource).toContain('Create Event');
