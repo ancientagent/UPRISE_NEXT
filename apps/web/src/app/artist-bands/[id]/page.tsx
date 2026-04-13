@@ -14,6 +14,7 @@ import {
 } from '@/lib/artist-bands/client';
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
 import { useAuthStore } from '@/store/auth';
+import { useSourceAccountStore } from '@/store/source-account';
 
 function formatCommunityIdentity(
   city: string | null,
@@ -36,6 +37,7 @@ export default function ArtistBandProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { token, user } = useAuthStore();
+  const { activeSourceId, setActiveSourceId } = useSourceAccountStore();
 
   const [profile, setProfile] = useState<ArtistBandProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,6 +90,7 @@ export default function ArtistBandProfilePage() {
     if (!profile || !user?.id) return false;
     return profile.members.some((member) => member.userId === user.id);
   }, [profile, user?.id]);
+  const sourceContextMatchesProfile = activeSourceId === profile?.id;
 
   async function runAction(
     action: 'follow' | 'add' | 'blast' | 'support',
@@ -188,7 +191,9 @@ export default function ArtistBandProfilePage() {
                     variant="outline"
                     className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                   >
-                    <Link href="/source-dashboard">Source Dashboard</Link>
+                    <Link href="/source-dashboard" onClick={() => setActiveSourceId(profile.id)}>
+                      Source Dashboard
+                    </Link>
                   </Button>
                   <Button
                     asChild
@@ -196,7 +201,9 @@ export default function ArtistBandProfilePage() {
                     variant="outline"
                     className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                   >
-                    <Link href="/print-shop">Open Print Shop</Link>
+                    <Link href="/source-dashboard/release-deck" onClick={() => setActiveSourceId(profile.id)}>
+                      Open Release Deck
+                    </Link>
                   </Button>
                   <Button
                     asChild
@@ -204,7 +211,19 @@ export default function ArtistBandProfilePage() {
                     variant="outline"
                     className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                   >
-                    <Link href="/registrar">Open Registrar</Link>
+                    <Link href="/print-shop" onClick={() => setActiveSourceId(profile.id)}>
+                      Open Print Shop
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                  >
+                    <Link href="/registrar" onClick={() => setActiveSourceId(profile.id)}>
+                      Open Registrar
+                    </Link>
                   </Button>
                 </>
               ) : null}
@@ -272,6 +291,13 @@ export default function ArtistBandProfilePage() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2 text-sm text-black/60">
+            {viewerCanOpenPrintShop ? (
+              <span className="plot-wire-chip">
+                {sourceContextMatchesProfile
+                  ? 'Source tools are aligned to this source account.'
+                  : 'Opening source tools here will switch into this source account.'}
+              </span>
+            ) : null}
             <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
               <Link href="/discover">Back to Discover</Link>
             </Button>

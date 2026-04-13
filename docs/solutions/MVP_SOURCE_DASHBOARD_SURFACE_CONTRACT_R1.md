@@ -38,6 +38,9 @@ Current MVP entrypoints:
 - linked artist/band source page
 - direct navigation when a valid source context is already known
 
+Entry-point rule:
+- when a managed source page sends a user into source tools, it should set that source as the active source context instead of relying on whichever source was previously active
+
 ## 4) Current MVP Surface Structure
 ### 4.1 Header
 Must show:
