@@ -122,6 +122,7 @@ Current first slice:
 - Plot-side source-account switcher
 - `/source-dashboard` shell as the first explicit source-side operating surface
 - active source-context visibility on `/print-shop`
+- active source-context visibility on `/registrar`
 
 ### Phase B — Source Dashboard Emergence
 Goal:

@@ -187,6 +187,10 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Verify/redeem remains user-driven; no auto-redeem behavior is introduced.
   - Redemption success refreshes promoter registrar status so capability-grant reads stay current on the same page.
   - This capability lane should also remain reachable from the source-facing side of the platform; the current `/registrar` route is the MVP bridge, not the only intended long-term access surface.
+- Registrar source-context visibility bridge (slice 124):
+  - `/registrar` now surfaces current source-side operating context when the signed-in user has a managed source selected.
+  - Source context does not alter filing scope; Registrar submissions remain Home Scene-bound.
+  - Source Dashboard remains a return path from Registrar for source-attached users.
 - Registrar web canonical member-sync action (slice 14):
   - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
   - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.

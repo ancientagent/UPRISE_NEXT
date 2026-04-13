@@ -99,6 +99,7 @@ Implementation note:
 ### Registrar
 - remains a separate civic/formalization system
 - but must stay reachable from the same source-side operating context
+- current MVP runtime should surface active source-context visibility on `/registrar` without changing Home Scene filing scope
 
 ## 6) Explicit Non-Goals For Current MVP
 Do not widen Source Dashboard into:

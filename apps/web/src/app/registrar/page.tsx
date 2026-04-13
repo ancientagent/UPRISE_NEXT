@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
+import type { CurrentUserSourceProfile } from '@/lib/source/types';
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
+import { useSourceAccountStore } from '@/store/source-account';
 import {
   buildArtistBandRegistrationPayload,
   createEmptyRegistrarArtistMember,
@@ -41,6 +43,7 @@ import {
   type RegistrarPromoterEntry,
   type RegistrarPromoterRegistrationResult,
 } from '@/lib/registrar/client';
+import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
 
 type HomeSceneResolution = {
   id: string;
@@ -55,6 +58,7 @@ export default function RegistrarPage() {
   const router = useRouter();
   const { token, user } = useAuthStore();
   const { homeScene, isVisitor, tunedScene } = useOnboardingStore();
+  const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
 
   const [selectedAction, setSelectedAction] = useState<'artist_band' | 'promoter' | null>(null);
   const [entityType, setEntityType] = useState<RegistrarEntityType>('band');
@@ -72,6 +76,8 @@ export default function RegistrarPage() {
   const [entries, setEntries] = useState<RegistrarArtistEntry[]>([]);
   const [entriesLoading, setEntriesLoading] = useState(false);
   const [entriesError, setEntriesError] = useState<string | null>(null);
+  const [profile, setProfile] = useState<CurrentUserSourceProfile | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
   const [promoterEntriesLoading, setPromoterEntriesLoading] = useState(false);
   const [promoterEntriesError, setPromoterEntriesError] = useState<string | null>(null);
@@ -91,6 +97,11 @@ export default function RegistrarPage() {
   const [registrarCodeLoading, setRegistrarCodeLoading] = useState<'verify' | 'redeem' | null>(null);
 
   const slugPreview = useMemo(() => normalizeArtistBandSlug(slugInput || name), [name, slugInput]);
+  const managedSources = profile?.managedArtistBands ?? [];
+  const activeSource = useMemo(
+    () => managedSources.find((source) => source.id === activeSourceId) ?? null,
+    [activeSourceId, managedSources],
+  );
 
   const gpsVerified = Boolean(user?.gpsVerified);
   const latestPromoterEntry = promoterEntries[0] ?? null;
@@ -148,6 +159,41 @@ export default function RegistrarPage() {
     isVisitor && tunedScene?.name
       ? `You are currently visiting ${tunedScene.name}. Registrar actions still file against your Home Scene, not the scene you are visiting.`
       : null;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCurrentProfile() {
+      if (!token || !user?.id) {
+        setProfile(null);
+        setProfileError(null);
+        return;
+      }
+
+      try {
+        const response = await api.get<CurrentUserSourceProfile>(`/users/${user.id}/profile`, { token });
+        if (cancelled) return;
+        setProfile(response.data ?? { user: { id: user.id }, managedArtistBands: [] });
+        setProfileError(null);
+      } catch (error: unknown) {
+        if (cancelled) return;
+        setProfile(null);
+        setProfileError(error instanceof Error ? error.message : 'Unable to load source dashboard context.');
+      }
+    }
+
+    void loadCurrentProfile();
+    return () => {
+      cancelled = true;
+    };
+  }, [token, user?.id]);
+
+  useEffect(() => {
+    if (!activeSourceId) return;
+    if (managedSources.length === 0) return;
+    if (activeSource) return;
+    clearActiveSourceId();
+  }, [activeSource, activeSourceId, clearActiveSourceId, managedSources.length]);
 
   const loadEntries = async () => {
     if (!token) {
@@ -571,12 +617,52 @@ export default function RegistrarPage() {
           <p className="mt-2 text-sm text-black/60">
             Registrar submissions are Home Scene bound and require explicit action intent.
           </p>
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap gap-2">
+            {managedSources.length > 0 ? (
+              <Button size="sm" variant="outline" onClick={() => router.push('/source-dashboard')}>
+                Source Dashboard
+              </Button>
+            ) : null}
             <Button size="sm" variant="outline" onClick={() => router.push('/plot')}>
               Back to Plot
             </Button>
           </div>
         </header>
+
+        <section className="rounded-2xl border border-black/10 bg-white p-6">
+          <h2 className="text-lg font-semibold text-black">Source Context</h2>
+          {profileError ? (
+            <p className="mt-2 text-sm text-red-700">{profileError}</p>
+          ) : activeSource ? (
+            <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-4">
+              <p className="font-medium text-black">{activeSource.name}</p>
+              <p className="mt-1 text-xs text-black/60">
+                {formatArtistBandEntityType(activeSource.entityType)}
+                {activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}
+              </p>
+              <p className="mt-3 text-sm text-black/65">
+                Registrar is being operated from your active source-side context. Filings still stay Home Scene bound,
+                so source context identifies the operating side rather than changing civic scope.
+              </p>
+            </div>
+          ) : managedSources.length > 0 ? (
+            <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-4">
+              <p className="font-medium text-black">No active source account selected</p>
+              <p className="mt-2 text-sm text-black/65">
+                Registrar remains available here, but source-facing capability work is clearer when you enter from
+                Source Dashboard and select the source account you are operating.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-4">
+              <p className="font-medium text-black">Listener civic context</p>
+              <p className="mt-2 text-sm text-black/65">
+                No managed source accounts are attached to this user yet. Registrar still handles Home Scene civic
+                filings and capability completion from the same signed-in account.
+              </p>
+            </div>
+          )}
+        </section>
 
         <section className="rounded-2xl border border-black/10 bg-white p-6">
           <h2 className="text-lg font-semibold text-black">Registration Actions</h2>
