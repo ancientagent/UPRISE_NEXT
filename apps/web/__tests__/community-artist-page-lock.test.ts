@@ -32,6 +32,8 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('Open Print Shop');
     expect(artistSource).toContain('Open Registrar');
     expect(artistSource).toContain("Opening source tools here will switch into this source account.");
+    expect(artistSource).toContain('Source-owned release');
+    expect(artistSource).toContain('Source-owned event');
     expect(artistSource).toContain('Songs / Releases');
     expect(artistSource).toContain('Identity');
     expect(artistSource).toContain('Lineup');

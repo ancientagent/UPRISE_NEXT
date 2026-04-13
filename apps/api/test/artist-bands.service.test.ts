@@ -76,6 +76,7 @@ describe('ArtistBandsService', () => {
     mockPrisma.track.findMany.mockResolvedValue([
       {
         id: 'track-1',
+        artistBandId: 'artist-1',
         title: 'Broken Tower',
         artist: 'Signal Static',
         album: null,
@@ -91,6 +92,7 @@ describe('ArtistBandsService', () => {
     mockPrisma.event.findMany.mockResolvedValue([
       {
         id: 'event-1',
+        artistBandId: 'artist-1',
         title: 'Warehouse Set',
         description: 'All ages.',
         startDate: new Date('2026-04-01T01:00:00.000Z'),
@@ -109,6 +111,8 @@ describe('ArtistBandsService', () => {
     expect(result.actionCounts).toEqual({ add: 3, blast: 5, support: 2 });
     expect(result.tracks).toHaveLength(1);
     expect(result.events).toHaveLength(1);
+    expect(result.tracks[0]?.artistBandId).toBe('artist-1');
+    expect(result.events[0]?.artistBandId).toBe('artist-1');
     expect(mockPrisma.track.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({

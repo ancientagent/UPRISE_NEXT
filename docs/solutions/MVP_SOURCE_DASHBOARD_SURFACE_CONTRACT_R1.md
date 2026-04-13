@@ -100,6 +100,7 @@ Implementation note:
 - reachable from Source Dashboard
 - current runtime should prefer explicit source ownership on profile tracks/events when stored `artistBandId` is present
 - legacy creator/name/uploader fallback may remain only for older rows where `artistBandId` is still null
+- current runtime may surface restrained ownership cues on source-owned releases/events so the page does not visually flatten explicit source-owned rows back into generic profile items
 
 ### Print Shop
 - remains source-facing

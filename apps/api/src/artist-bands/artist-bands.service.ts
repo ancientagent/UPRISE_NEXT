@@ -182,6 +182,7 @@ export class ArtistBandsService {
         },
         select: {
           id: true,
+          artistBandId: true,
           title: true,
           artist: true,
           album: true,
@@ -274,6 +275,7 @@ export class ArtistBandsService {
       actionCounts: counts,
       tracks: tracks.map((track) => ({
         id: track.id,
+        artistBandId: track.artistBandId ?? null,
         title: track.title,
         artist: track.artist,
         album: track.album ?? null,
@@ -287,6 +289,7 @@ export class ArtistBandsService {
       })),
       events: events.map((event) => ({
         id: event.id,
+        artistBandId: event.artistBandId ?? null,
         title: event.title,
         description: event.description ?? null,
         startDate: event.startDate.toISOString(),

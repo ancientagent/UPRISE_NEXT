@@ -26,6 +26,7 @@ export const ArtistBandHomeSceneSchema = z.object({
 
 export const ArtistBandTrackSummarySchema = z.object({
   id: z.string().uuid().or(z.string().min(1)),
+  artistBandId: z.string().uuid().or(z.string().min(1)).nullable().optional(),
   title: z.string(),
   artist: z.string(),
   album: z.string().nullable(),
@@ -40,6 +41,7 @@ export const ArtistBandTrackSummarySchema = z.object({
 
 export const ArtistBandEventSummarySchema = z.object({
   id: z.string().uuid().or(z.string().min(1)),
+  artistBandId: z.string().uuid().or(z.string().min(1)).nullable().optional(),
   title: z.string(),
   description: z.string().nullable(),
   startDate: z.string(),

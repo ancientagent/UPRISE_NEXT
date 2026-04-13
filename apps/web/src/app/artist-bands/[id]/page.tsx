@@ -344,11 +344,19 @@ export default function ArtistBandProfilePage() {
               <ul className="mt-4 space-y-3">
                 {profile.tracks.map((track) => {
                   const isSelected = selectedTrack?.id === track.id;
+                  const isSourceOwnedTrack = track.artistBandId === profile.id;
                   return (
                     <li key={track.id} className="plot-wire-list-item">
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <div>
-                          <p className="text-base font-medium text-black">{track.title}</p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-base font-medium text-black">{track.title}</p>
+                            {isSourceOwnedTrack ? (
+                              <span className="plot-wire-chip text-[10px] uppercase tracking-[0.2em] text-black/65">
+                                Source-owned release
+                              </span>
+                            ) : null}
+                          </div>
                           <p className="mt-1 text-sm text-black/60">
                             {track.artist} • {formatDuration(track.duration)} • {track.playCount} plays • {track.likeCount} likes
                           </p>
@@ -432,7 +440,14 @@ export default function ArtistBandProfilePage() {
                 <ul className="mt-4 space-y-3">
                   {profile.events.map((event) => (
                     <li key={event.id} className="plot-wire-list-item">
-                      <p className="text-sm font-medium text-black">{event.title}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-medium text-black">{event.title}</p>
+                        {event.artistBandId === profile.id ? (
+                          <span className="plot-wire-chip text-[10px] uppercase tracking-[0.2em] text-black/65">
+                            Source-owned event
+                          </span>
+                        ) : null}
+                      </div>
                       <p className="mt-1 text-xs text-black/60">
                         {new Date(event.startDate).toLocaleString()} • {event.locationName}
                       </p>

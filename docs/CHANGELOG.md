@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Extended the artist/source profile contract so `artist-bands` profile responses now carry optional `artistBandId` on track/event summaries and the artist page surfaces restrained `Source-owned release` / `Source-owned event` cues for explicitly owned rows; see `docs/handoff/2026-04-13_artist-profile-source-ownership-cues.md`.
 - Tightened artist/source profile reads so `artist-bands` track/event queries now prefer explicit stored `artistBandId` ownership and only fall back to older creator/name/uploader inference when `artistBandId` is still null; see `docs/handoff/2026-04-13_artist-profile-source-ownership-precedence.md`.
 - Carried explicit `Release Deck` ownership through the shared feed: community feed track reads now return optional source details for `track_release` items, so new source-owned releases display as source-owned in Plot while older creator-only rows remain compatible; see `docs/handoff/2026-04-13_track-source-attribution-feed.md`.
 - Carried explicit `Print Shop` event ownership through the main read surfaces: community feed/event reads now return optional source details for source-owned events, Plot feed/event rows prefer source attribution when `artistBandId` is present, and older creator-only rows remain compatible; see `docs/handoff/2026-04-13_event-source-attribution-read-paths.md`.
