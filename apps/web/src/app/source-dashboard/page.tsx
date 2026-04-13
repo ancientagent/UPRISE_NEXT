@@ -227,8 +227,9 @@ export default function SourceDashboardPage() {
                   </span>
                 </div>
                 <p className="mt-3 text-sm text-black/70">
-                  Tools below operate from this source context. Event writes are still validated by creator
-                  eligibility today, so this dashboard is an operator context rather than a persisted event-owner field.
+                  Tools below operate from this source context. Creator routes still validate eligibility, but new
+                  source-side releases and events can now attach directly to the active source account while your
+                  signed-in user remains the actor.
                 </p>
               </div>
             </section>

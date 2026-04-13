@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Hardened new event ownership from `Print Shop`: `Event` now supports an optional explicit `artistBandId`, new source-side event writes attach directly to the managed source account after API ownership validation, and artist/band event reads resolve explicit source linkage before falling back to older creator inference; see `docs/handoff/2026-04-13_event-ownership-hardening.md`.
 - Tightened source-tool ring parity on `Print Shop` and `Registrar`: both routes now expose `Return to Listener Account` from active source mode, mirror the `Release Deck` handoff where relevant, and surface readiness chips inside their source-context panels; see `docs/handoff/2026-04-13_print-shop-registrar-tool-ring-parity.md`.
 - Hardened new track ownership from `Release Deck`: `Track` now supports an optional explicit `artistBandId`, new source-side releases attach directly to the managed source account after API ownership validation, and older inferred tracks remain compatible; see `docs/handoff/2026-04-13_track-ownership-hardening.md`.
 - Tightened managed source-page continuity so source-side CTAs on `apps/web/src/app/artist-bands/[id]/page.tsx` now switch into the correct source account before routing into `Source Dashboard`, `Release Deck`, `Print Shop`, or `Registrar`; see `docs/handoff/2026-04-13_artist-page-source-context-handoff.md`.

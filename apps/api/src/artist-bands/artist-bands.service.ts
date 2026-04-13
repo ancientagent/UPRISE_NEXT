@@ -197,9 +197,16 @@ export class ArtistBandsService {
       this.prisma.event.findMany({
         where: {
           ...(artistBand.homeSceneId ? { communityId: artistBand.homeSceneId } : {}),
-          createdById: {
-            in: memberUserIds.length > 0 ? memberUserIds : [artistBand.createdById],
-          },
+          OR: [
+            {
+              artistBandId: artistBand.id,
+            },
+            {
+              createdById: {
+                in: memberUserIds.length > 0 ? memberUserIds : [artistBand.createdById],
+              },
+            },
+          ],
         },
         select: {
           id: true,
@@ -210,6 +217,7 @@ export class ArtistBandsService {
           locationName: true,
           address: true,
           attendeeCount: true,
+          artistBandId: true,
           createdAt: true,
         },
         orderBy: [{ startDate: 'asc' }, { createdAt: 'desc' }],

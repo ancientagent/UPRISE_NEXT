@@ -16,6 +16,7 @@ export const EventSchema = z.object({
   }),
   communityId: z.string().uuid(),
   createdById: z.string().uuid(),
+  artistBandId: z.string().uuid().nullable().optional(),
   attendeeCount: z.number().int().nonnegative().default(0),
   maxAttendees: z.number().int().positive().optional(),
   createdAt: z.date(),

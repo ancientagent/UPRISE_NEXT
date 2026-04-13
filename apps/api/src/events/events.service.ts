@@ -24,6 +24,38 @@ export class EventsService {
   }
 
   async createFromPrintShop(userId: string, dto: CreatePrintShopEventDto) {
+    let managedArtistBand:
+      | {
+          id: string;
+          name: string;
+          homeSceneId: string | null;
+        }
+      | null = null;
+
+    if (dto.artistBandId) {
+      managedArtistBand = await this.prisma.artistBand.findFirst({
+        where: {
+          id: dto.artistBandId,
+          OR: [{ createdById: userId }, { members: { some: { userId } } }],
+        },
+        select: {
+          id: true,
+          name: true,
+          homeSceneId: true,
+        },
+      });
+
+      if (!managedArtistBand) {
+        throw new ForbiddenException(
+          'Print Shop event creation requires a managed Artist/Band source when artistBandId is provided',
+        );
+      }
+
+      if (managedArtistBand.homeSceneId && managedArtistBand.homeSceneId !== dto.communityId) {
+        throw new BadRequestException('Event community must match the managed source Home Scene');
+      }
+    }
+
     const [community, activePromoterGrant, artistBandMembership] = await Promise.all([
       this.prisma.community.findUnique({
         where: { id: dto.communityId },
@@ -78,6 +110,7 @@ export class EventsService {
         longitude: dto.longitude,
         communityId: dto.communityId,
         createdById: userId,
+        artistBandId: managedArtistBand?.id ?? null,
         maxAttendees: dto.maxAttendees ?? null,
       },
     });
@@ -95,6 +128,7 @@ export class EventsService {
       longitude: created.longitude,
       communityId: created.communityId,
       createdById: created.createdById,
+      artistBandId: created.artistBandId ?? null,
       attendeeCount: created.attendeeCount,
       maxAttendees: created.maxAttendees ?? null,
       createdAt: created.createdAt.toISOString(),

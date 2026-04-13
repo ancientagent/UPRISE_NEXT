@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: Founder + product engineering  
-Last updated: 2026-04-12
+Last updated: 2026-04-13
 
 ## 1) Purpose
 Define the first explicit Source Dashboard surface for the one-account web MVP so source-side tools stop feeling like detached routes.
@@ -102,6 +102,9 @@ Implementation note:
 - remains source-facing
 - remains conceptually inside the source dashboard system even if `/print-shop` is still a direct route
 - current Source Dashboard card copy may reflect creator-lane state such as linked source membership, promoter capability, and GPS-gated promoter progression as long as it does not invent unsupported actions
+- current runtime now passes an explicit optional `artistBandId` for new events created from active source context
+- current runtime now validates that the signed-in user actually manages the submitted Artist/Band before persisting that link
+- current runtime still falls back to creator-eligibility validation when no explicit source link is supplied
 - current route shell should preserve source-side operating continuity:
   - direct return to listener mode when active source context is set
   - direct handoff to Source Dashboard

@@ -11,6 +11,7 @@ export const CreatePrintShopEventSchema = z.object({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   communityId: z.string().uuid(),
+  artistBandId: z.string().uuid().optional(),
   maxAttendees: z.number().int().positive().optional(),
 });
 
@@ -29,6 +30,7 @@ export const PrintShopEventRecordSchema = z.object({
   longitude: z.number().min(-180).max(180),
   communityId: z.string().uuid(),
   createdById: z.string().uuid(),
+  artistBandId: z.string().uuid().nullable().optional(),
   attendeeCount: z.number().int().nonnegative(),
   maxAttendees: z.number().int().positive().nullable(),
   createdAt: z.string(),

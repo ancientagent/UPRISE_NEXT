@@ -77,6 +77,7 @@ model ArtistBand {
   members   ArtistBandMember[]
   registrarEntries RegistrarEntry[]
   tracks    Track[]
+  events    Event[]
 
   @@index([homeSceneId])
   @@index([createdById])
@@ -485,6 +486,7 @@ model Event {
   longitude     Float
   communityId   String
   createdById   String
+  artistBandId  String?
   attendeeCount Int      @default(0)
   maxAttendees  Int?
   createdAt     DateTime @default(now())
@@ -492,7 +494,9 @@ model Event {
 
   community Community @relation(fields: [communityId], references: [id])
   createdBy User      @relation(fields: [createdById], references: [id])
+  artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
 
+  @@index([artistBandId])
   @@map("events")
 }
 

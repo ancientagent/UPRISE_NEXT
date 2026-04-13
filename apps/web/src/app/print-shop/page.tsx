@@ -198,6 +198,7 @@ export default function PrintShopPage() {
         locationName: form.locationName.trim(),
         address: form.address.trim(),
         communityId: homeSceneResolution.id,
+        artistBandId: activeSource?.id,
         maxAttendees: maxAttendeesInput.trim() ? Number(maxAttendeesInput.trim()) : undefined,
       };
 
@@ -302,8 +303,8 @@ export default function PrintShopPage() {
               </div>
               <p className="mt-3 text-sm text-black/70">
                 Print Shop is being operated from your active source dashboard context. Event writes are still
-                checked by creator eligibility today, so this identifies the operating source rather than a stored
-                event-owner field.
+                checked by creator eligibility today, but new events from this lane now attach directly to the active
+                source account instead of relying only on creator-side inference.
               </p>
             </div>
           ) : managedArtistBands.length > 0 ? (

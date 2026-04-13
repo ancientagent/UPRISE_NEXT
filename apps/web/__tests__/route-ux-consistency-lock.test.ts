@@ -60,6 +60,8 @@ describe('cross-route UX consistency lock', () => {
     expect(printShopSource).toContain('Source Dashboard');
     expect(printShopSource).toContain('Return to Listener Account');
     expect(printShopSource).toContain('Open Release Deck');
+    expect(printShopSource).toContain('artistBandId: activeSource?.id');
+    expect(printShopSource).toContain('new events from this lane now attach directly to the active');
     expect(printShopSource).toContain('Sign in is required before opening Print Shop creator tools.');
     expect(printShopSource).toContain('Print Shop event creation requires active promoter capability or a linked Artist/Band source.');
     expect(printShopSource).toContain('Create Event');
@@ -90,6 +92,7 @@ describe('cross-route UX consistency lock', () => {
     expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
     expect(dashboardSource).toContain('Return to Listener Account');
     expect(dashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
+    expect(dashboardSource).toContain('source-side releases and events can now attach directly');
     expect(dashboardSource).toContain('member sync work, and capability-code progress');
     expect(dashboardSource).toContain('Open the source-facing Print Shop lane through your linked artist/band membership.');
   });
