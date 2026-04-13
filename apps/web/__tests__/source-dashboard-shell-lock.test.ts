@@ -16,6 +16,9 @@ describe('source dashboard shell lock', () => {
     expect(dashboardSource).toContain('Release Deck');
     expect(dashboardSource).toContain('Source Profile');
     expect(dashboardSource).toContain('Print Shop');
+    expect(dashboardSource).toContain('Home Scene: {homeSceneLabel}');
+    expect(dashboardSource).toContain("GPS: {gpsVerified ? 'verified' : 'pending'}");
+    expect(dashboardSource).toContain("Promoter capability: {promoterCapabilityGranted ? 'active' : 'inactive'}");
     expect(dashboardSource).toContain('Promoter capability is active');
     expect(dashboardSource).toContain('GPS verification is still required before promoter capability can progress in Registrar.');
     expect(dashboardSource).toContain('Registrar');

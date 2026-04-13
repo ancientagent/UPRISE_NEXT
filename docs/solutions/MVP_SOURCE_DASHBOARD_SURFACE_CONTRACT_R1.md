@@ -59,6 +59,7 @@ Must explain:
 - which source account is active
 - that source tools are being operated from that context
 - that source context is operator context even where backend ownership fields are not yet fully modeled
+- current Home Scene / GPS / promoter-capability readiness may be surfaced there as descriptive state, not as a separate admin module
 
 ### 4.4 Live Tool Cards
 Current MVP live cards:

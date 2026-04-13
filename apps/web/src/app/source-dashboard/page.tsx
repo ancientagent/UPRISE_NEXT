@@ -8,6 +8,7 @@ import { api } from '@/lib/api';
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
 import { listPromoterRegistrations, type RegistrarPromoterEntry } from '@/lib/registrar/client';
 import { useAuthStore } from '@/store/auth';
+import { useOnboardingStore } from '@/store/onboarding';
 import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
 import { useSourceAccountStore } from '@/store/source-account';
 import type { CurrentUserSourceProfile } from '@/lib/source/types';
@@ -15,6 +16,7 @@ import type { CurrentUserSourceProfile } from '@/lib/source/types';
 export default function SourceDashboardPage() {
   const router = useRouter();
   const { token, user } = useAuthStore();
+  const { homeScene } = useOnboardingStore();
   const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
 
   const [profile, setProfile] = useState<CurrentUserSourceProfile | null>(null);
@@ -66,6 +68,17 @@ export default function SourceDashboardPage() {
   const latestPromoterEntry = promoterEntries[0] ?? null;
   const promoterCapabilityGranted = Boolean(latestPromoterEntry?.promoterCapability.granted);
   const gpsVerified = Boolean(user?.gpsVerified);
+  const homeSceneLabel = useMemo(() => {
+    if (user?.homeSceneCity && user?.homeSceneState && user?.homeSceneCommunity) {
+      return `${user.homeSceneCity}, ${user.homeSceneState} • ${user.homeSceneCommunity}`;
+    }
+
+    if (homeScene?.city && homeScene?.state && homeScene?.musicCommunity) {
+      return `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`;
+    }
+
+    return 'Home Scene unresolved';
+  }, [homeScene?.city, homeScene?.musicCommunity, homeScene?.state, user?.homeSceneCity, user?.homeSceneCommunity, user?.homeSceneState]);
   const registrarCardTitle = activeSource
     ? `Review ${formatArtistBandEntityType(activeSource.entityType)} filings`
     : 'Review filings and capability state';
@@ -212,6 +225,13 @@ export default function SourceDashboardPage() {
                   {formatArtistBandEntityType(activeSource.entityType)}
                   {activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}
                 </p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-black/60">
+                  <span className="plot-wire-chip">Home Scene: {homeSceneLabel}</span>
+                  <span className="plot-wire-chip">GPS: {gpsVerified ? 'verified' : 'pending'}</span>
+                  <span className="plot-wire-chip">
+                    Promoter capability: {promoterCapabilityGranted ? 'active' : 'inactive'}
+                  </span>
+                </div>
                 <p className="mt-3 text-sm text-black/70">
                   Tools below operate from this source context. Event writes are still validated by creator
                   eligibility today, so this dashboard is an operator context rather than a persisted event-owner field.

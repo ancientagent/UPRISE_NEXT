@@ -75,6 +75,10 @@ describe('cross-route UX consistency lock', () => {
     expect(dashboardSource).toContain('Select a source account');
     expect(dashboardSource).toContain('Source-facing tools live here.');
     expect(dashboardSource).toContain('listPromoterRegistrations(token)');
+    expect(dashboardSource).toContain('useOnboardingStore');
+    expect(dashboardSource).toContain("if (homeScene?.city && homeScene?.state && homeScene?.musicCommunity)");
+    expect(dashboardSource).toContain('Home Scene: {homeSceneLabel}');
+    expect(dashboardSource).toContain("GPS: {gpsVerified ? 'verified' : 'pending'}");
     expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
     expect(dashboardSource).toContain('Return to Listener Account');
     expect(dashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
