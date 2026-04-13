@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Hardened new track ownership from `Release Deck`: `Track` now supports an optional explicit `artistBandId`, new source-side releases attach directly to the managed source account after API ownership validation, and older inferred tracks remain compatible; see `docs/handoff/2026-04-13_track-ownership-hardening.md`.
 - Tightened managed source-page continuity so source-side CTAs on `apps/web/src/app/artist-bands/[id]/page.tsx` now switch into the correct source account before routing into `Source Dashboard`, `Release Deck`, `Print Shop`, or `Registrar`; see `docs/handoff/2026-04-13_artist-page-source-context-handoff.md`.
 - Tightened Release Deck shell continuity so `/source-dashboard/release-deck` now surfaces active source context, preserves direct return paths to Source Dashboard / Registrar / listener mode, and makes the current source-recognition ownership model explicit; see `docs/handoff/2026-04-13_release-deck-source-context-continuity.md`.
 - Tightened Source Dashboard readiness state so the current-context panel now surfaces Home Scene, GPS, and promoter-capability chips using onboarding Home Scene fallback when auth payload fields are absent; see `docs/handoff/2026-04-13_source-dashboard-readiness-fallback.md`.

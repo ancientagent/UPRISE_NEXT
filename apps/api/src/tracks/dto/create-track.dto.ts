@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const CreateTrackSchema = z.object({
   title: z.string().min(1).max(200),
   artist: z.string().min(1).max(200),
+  artistBandId: z.string().uuid().optional(),
   album: z.string().max(200).optional(),
   duration: z.number().positive(),
   fileUrl: z.string().url(),

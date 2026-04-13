@@ -18,9 +18,10 @@ describe('release deck shell lock', () => {
     expect(releaseDeckSource).toContain('Current Context');
     expect(releaseDeckSource).toContain('Music slots: 3');
     expect(releaseDeckSource).toContain('Paid ad slot: defined, not active here');
-    expect(releaseDeckSource).toContain('Release Deck operates from this source context.');
+    expect(releaseDeckSource).toContain('attach directly to the active source account');
     expect(releaseDeckSource).toContain('Release Single');
     expect(releaseDeckSource).toContain('Audio File URL');
+    expect(releaseDeckSource).toContain('artistBandId: activeSource.id');
     expect(releaseDeckSource).toContain('createTrack(payload, token)');
   });
 });

@@ -5,6 +5,7 @@ export const TrackSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(200),
   artist: z.string().min(1).max(200),
+  artistBandId: z.string().uuid().nullable().optional(),
   album: z.string().max(200).optional(),
   duration: z.number().positive(), // in seconds
   fileUrl: z.string().url(),
@@ -33,6 +34,7 @@ export type UploadTrack = z.infer<typeof UploadTrackSchema>;
 export const CreateTrackInputSchema = z.object({
   title: z.string().min(1).max(200),
   artist: z.string().min(1).max(200),
+  artistBandId: z.string().uuid().optional(),
   album: z.string().max(200).optional(),
   duration: z.number().positive(),
   fileUrl: z.string().url(),

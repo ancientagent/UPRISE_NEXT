@@ -76,6 +76,7 @@ model ArtistBand {
   homeScene Community? @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
   members   ArtistBandMember[]
   registrarEntries RegistrarEntry[]
+  tracks    Track[]
 
   @@index([homeSceneId])
   @@index([createdById])
@@ -315,6 +316,7 @@ model Track {
   id            String   @id @default(uuid())
   title         String
   artist        String
+  artistBandId  String?
   album         String?
   duration      Float // in seconds
   fileUrl       String
@@ -329,11 +331,13 @@ model Track {
   updatedAt     DateTime @updatedAt
 
   uploadedBy    User             @relation(fields: [uploadedById], references: [id])
+  artistBand    ArtistBand?      @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
   community     Community?       @relation(fields: [communityId], references: [id])
   engagements   TrackEngagement[]
   rotationEntries RotationEntry[]
   trackVotes    TrackVote[]
 
+  @@index([artistBandId])
   @@map("tracks")
 }
 

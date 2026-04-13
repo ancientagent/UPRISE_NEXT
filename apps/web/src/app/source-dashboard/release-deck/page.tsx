@@ -141,6 +141,7 @@ export default function ReleaseDeckPage() {
       const payload: CreateTrackInput = {
         title: form.title.trim(),
         artist: activeSource.name,
+        artistBandId: activeSource.id,
         album: form.album.trim() || undefined,
         duration,
         fileUrl: form.fileUrl.trim(),
@@ -248,8 +249,9 @@ export default function ReleaseDeckPage() {
               <span className="plot-wire-chip">Paid ad slot: defined, not active here</span>
             </div>
             <p className="mt-3 text-sm text-black/70">
-              Release Deck operates from this source context. Tracks are still created by the signed-in user and recognized
-              through the active source context until explicit source-owned track linkage is hardened further.
+              Release Deck operates from this source context. Tracks are still created by the signed-in user, but new
+              releases from this lane now attach directly to the active source account instead of relying only on artist-name
+              recognition.
             </p>
           </div>
         </section>
@@ -297,7 +299,8 @@ export default function ReleaseDeckPage() {
             <p className="plot-wire-label">Release Single</p>
             <h2 className="mt-2 text-lg font-semibold text-black">Create a new single from this source context</h2>
             <p className="mt-2 text-sm text-black/65">
-              This MVP slice uses a hosted audio file URL. The track is written under your signed-in user, tagged to the active source name, and attached to the source Home Scene.
+              This MVP slice uses a hosted audio file URL. The track is written under your signed-in user, linked to the
+              active source account, and attached to the source Home Scene.
             </p>
 
             <form className="mt-5 space-y-3" onSubmit={handleSubmit}>

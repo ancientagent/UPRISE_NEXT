@@ -159,6 +159,9 @@ export class ArtistBandsService {
           ...(artistBand.homeSceneId ? { communityId: artistBand.homeSceneId } : {}),
           OR: [
             {
+              artistBandId: artistBand.id,
+            },
+            {
               artist: {
                 equals: artistBand.name,
                 mode: 'insensitive',

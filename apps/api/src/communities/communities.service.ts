@@ -405,10 +405,25 @@ export class CommunitiesService {
   }
 
   private async resolveTrackArtistBand(
+    artistBandId: string | null,
     communityId: string | null,
     uploadedById: string,
     artistName: string,
   ): Promise<{ id: string; name: string } | null> {
+    if (artistBandId) {
+      const exactArtistBand = await this.prisma.artistBand.findUnique({
+        where: { id: artistBandId },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      if (exactArtistBand) {
+        return exactArtistBand;
+      }
+    }
+
     const trimmedArtistName = artistName.trim();
     if (!trimmedArtistName) return null;
 
@@ -640,6 +655,7 @@ export class CommunitiesService {
           id: true,
           title: true,
           artist: true,
+          artistBandId: true,
           coverArt: true,
           playCount: true,
           likeCount: true,
@@ -698,6 +714,7 @@ export class CommunitiesService {
     const songs: DiscoverSongResult[] = [];
     for (const track of tracks) {
       const artistBand = await this.resolveTrackArtistBand(
+        track.artistBandId ?? null,
         track.communityId ?? null,
         track.uploadedById,
         track.artist,
