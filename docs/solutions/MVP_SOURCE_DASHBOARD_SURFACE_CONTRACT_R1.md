@@ -100,6 +100,7 @@ Implementation note:
 - remains a separate civic/formalization system
 - but must stay reachable from the same source-side operating context
 - current MVP runtime should surface active source-context visibility on `/registrar` without changing Home Scene filing scope
+- current Source Dashboard card copy should reflect source-attached civic follow-up work when a managed source is active (for example registration status, member sync, capability-code progress)
 
 ## 6) Explicit Non-Goals For Current MVP
 Do not widen Source Dashboard into:

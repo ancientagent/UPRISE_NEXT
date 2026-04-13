@@ -61,6 +61,12 @@ export default function SourceDashboardPage() {
     () => managedSources.find((source) => source.id === activeSourceId) ?? null,
     [activeSourceId, managedSources],
   );
+  const registrarCardTitle = activeSource
+    ? `Review ${formatArtistBandEntityType(activeSource.entityType)} filings`
+    : 'Review filings and capability state';
+  const registrarCardDescription = activeSource
+    ? `Track ${formatArtistBandEntityType(activeSource.entityType).toLowerCase()} registration status, member sync work, and capability-code progress from the same source-side operating shell.`
+    : 'Registrar stays separate from source tools, but it remains reachable from the same operating side.';
 
   useEffect(() => {
     if (!activeSourceId) return;
@@ -211,9 +217,9 @@ export default function SourceDashboardPage() {
 
               <div className="plot-wire-card p-6">
                 <p className="plot-wire-label">Registrar</p>
-                <h2 className="mt-2 text-lg font-semibold text-black">Review filings and capability state</h2>
+                <h2 className="mt-2 text-lg font-semibold text-black">{registrarCardTitle}</h2>
                 <p className="mt-2 text-sm text-black/65">
-                  Registrar stays separate from source tools, but it remains reachable from the same operating side.
+                  {registrarCardDescription}
                 </p>
                 <Button asChild size="sm" variant="outline" className="mt-4 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
                   <Link href="/registrar">Open Registrar</Link>

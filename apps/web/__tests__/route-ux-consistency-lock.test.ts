@@ -76,6 +76,7 @@ describe('cross-route UX consistency lock', () => {
     expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
     expect(dashboardSource).toContain('Return to Listener Account');
     expect(dashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
+    expect(dashboardSource).toContain('member sync work, and capability-code progress');
   });
 
   it('keeps release deck source-facing and tied to active source context', () => {

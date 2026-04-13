@@ -17,6 +17,8 @@ describe('source dashboard shell lock', () => {
     expect(dashboardSource).toContain('Source Profile');
     expect(dashboardSource).toContain('Print Shop');
     expect(dashboardSource).toContain('Registrar');
+    expect(dashboardSource).toContain('Review ${formatArtistBandEntityType(activeSource.entityType)} filings');
+    expect(dashboardSource).toContain('member sync work, and capability-code progress');
     expect(dashboardSource).toContain('Return to Listener Account');
     expect(dashboardSource).toContain('Open Release Deck');
     expect(dashboardSource).toContain("Link href=\"/print-shop\"");
