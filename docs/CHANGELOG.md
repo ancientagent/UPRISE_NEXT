@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Made Source Dashboard card copy capability-aware for creator tooling: the `Print Shop` card now reflects linked source access, promoter capability, and GPS-gated promoter progression instead of staying static; see `docs/handoff/2026-04-13_source-dashboard-capability-aware-cards.md`.
 - Extended source-side civic continuity onto linked artist pages: managed source members now see `Open Registrar` next to `Source Dashboard` and `Open Print Shop` on `apps/web/src/app/artist-bands/[id]/page.tsx`; see `docs/handoff/2026-04-13_artist-page-registrar-entrypoint.md`.
 - Tightened the Source Dashboard `Registrar` tool card so active artist/band sources now see source-aware civic follow-up copy (registration status, member sync, capability-code progress) instead of a generic registrar description; see `docs/handoff/2026-04-13_source-dashboard-registrar-card-context.md`.
 - Added source-context continuity to `/registrar`: source-attached users now see the active source operating context and a Source Dashboard return path on the Registrar route, while filings remain explicitly Home Scene-bound; see `docs/handoff/2026-04-13_registrar-source-context-bridge.md`.

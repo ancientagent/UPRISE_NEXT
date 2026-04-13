@@ -74,10 +74,12 @@ describe('cross-route UX consistency lock', () => {
 
     expect(dashboardSource).toContain('Select a source account');
     expect(dashboardSource).toContain('Source-facing tools live here.');
+    expect(dashboardSource).toContain('listPromoterRegistrations(token)');
     expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
     expect(dashboardSource).toContain('Return to Listener Account');
     expect(dashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
     expect(dashboardSource).toContain('member sync work, and capability-code progress');
+    expect(dashboardSource).toContain('Open the source-facing Print Shop lane through your linked artist/band membership.');
   });
 
   it('keeps release deck source-facing and tied to active source context', () => {

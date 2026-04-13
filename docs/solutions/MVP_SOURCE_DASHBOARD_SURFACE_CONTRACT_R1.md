@@ -95,6 +95,7 @@ Implementation note:
 ### Print Shop
 - remains source-facing
 - remains conceptually inside the source dashboard system even if `/print-shop` is still a direct route
+- current Source Dashboard card copy may reflect creator-lane state such as linked source membership, promoter capability, and GPS-gated promoter progression as long as it does not invent unsupported actions
 
 ### Registrar
 - remains a separate civic/formalization system

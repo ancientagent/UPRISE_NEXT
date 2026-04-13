@@ -16,6 +16,8 @@ describe('source dashboard shell lock', () => {
     expect(dashboardSource).toContain('Release Deck');
     expect(dashboardSource).toContain('Source Profile');
     expect(dashboardSource).toContain('Print Shop');
+    expect(dashboardSource).toContain('Promoter capability is active');
+    expect(dashboardSource).toContain('GPS verification is still required before promoter capability can progress in Registrar.');
     expect(dashboardSource).toContain('Registrar');
     expect(dashboardSource).toContain('Review ${formatArtistBandEntityType(activeSource.entityType)} filings');
     expect(dashboardSource).toContain('member sync work, and capability-code progress');

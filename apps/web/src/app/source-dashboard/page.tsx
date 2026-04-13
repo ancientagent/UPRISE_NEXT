@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
+import { listPromoterRegistrations, type RegistrarPromoterEntry } from '@/lib/registrar/client';
 import { useAuthStore } from '@/store/auth';
 import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
 import { useSourceAccountStore } from '@/store/source-account';
@@ -17,6 +18,7 @@ export default function SourceDashboardPage() {
   const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
 
   const [profile, setProfile] = useState<CurrentUserSourceProfile | null>(null);
+  const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,12 +63,23 @@ export default function SourceDashboardPage() {
     () => managedSources.find((source) => source.id === activeSourceId) ?? null,
     [activeSourceId, managedSources],
   );
+  const latestPromoterEntry = promoterEntries[0] ?? null;
+  const promoterCapabilityGranted = Boolean(latestPromoterEntry?.promoterCapability.granted);
+  const gpsVerified = Boolean(user?.gpsVerified);
   const registrarCardTitle = activeSource
     ? `Review ${formatArtistBandEntityType(activeSource.entityType)} filings`
     : 'Review filings and capability state';
   const registrarCardDescription = activeSource
     ? `Track ${formatArtistBandEntityType(activeSource.entityType).toLowerCase()} registration status, member sync work, and capability-code progress from the same source-side operating shell.`
     : 'Registrar stays separate from source tools, but it remains reachable from the same operating side.';
+  const printShopCardTitle = promoterCapabilityGranted
+    ? 'Create scene-bound events with promoter capability'
+    : 'Create scene-bound events';
+  const printShopCardDescription = promoterCapabilityGranted
+    ? 'Promoter capability is active, so Print Shop can operate from both your source membership and promoter lane.'
+    : gpsVerified
+      ? 'Open the source-facing Print Shop lane through your linked artist/band membership. Promoter capability can still be added through Registrar.'
+      : 'Open the source-facing Print Shop lane through your linked artist/band membership. GPS verification is still required before promoter capability can progress in Registrar.';
 
   useEffect(() => {
     if (!activeSourceId) return;
@@ -74,6 +87,31 @@ export default function SourceDashboardPage() {
     if (activeSource) return;
     clearActiveSourceId();
   }, [activeSource, activeSourceId, clearActiveSourceId, managedSources.length]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPromoterEntries() {
+      if (!token) {
+        setPromoterEntries([]);
+        return;
+      }
+
+      try {
+        const response = await listPromoterRegistrations(token);
+        if (cancelled) return;
+        setPromoterEntries(response.entries ?? []);
+      } catch {
+        if (cancelled) return;
+        setPromoterEntries([]);
+      }
+    }
+
+    void loadPromoterEntries();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   if (loading) {
     return (
@@ -206,9 +244,9 @@ export default function SourceDashboardPage() {
 
               <div className="plot-wire-card p-6">
                 <p className="plot-wire-label">Print Shop</p>
-                <h2 className="mt-2 text-lg font-semibold text-black">Create scene-bound events</h2>
+                <h2 className="mt-2 text-lg font-semibold text-black">{printShopCardTitle}</h2>
                 <p className="mt-2 text-sm text-black/65">
-                  Open the source-facing Print Shop lane for creator event work tied to your current community.
+                  {printShopCardDescription}
                 </p>
                 <Button asChild size="sm" variant="outline" className="mt-4 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
                   <Link href="/print-shop">Open Print Shop</Link>
