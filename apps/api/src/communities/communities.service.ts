@@ -142,6 +142,12 @@ interface CommunityEventItem {
     displayName: string;
     avatar: string | null;
   } | null;
+  artistBand: {
+    id: string;
+    name: string;
+    slug: string;
+    entityType: string;
+  } | null;
 }
 
 interface CommunityPromotionItem {
@@ -1781,6 +1787,9 @@ export class CommunitiesService {
           createdBy: {
             select: { id: true, username: true, displayName: true, avatar: true },
           },
+          artistBand: {
+            select: { id: true, name: true, slug: true, entityType: true },
+          },
         },
       }),
       this.prisma.signal.findMany({
@@ -1829,6 +1838,14 @@ export class CommunitiesService {
           title: event.title,
           startDate: event.startDate.toISOString(),
           locationName: event.locationName,
+          artistBand: event.artistBand
+            ? {
+                id: event.artistBand.id,
+                name: event.artistBand.name,
+                slug: event.artistBand.slug,
+                entityType: event.artistBand.entityType,
+              }
+            : null,
         },
       })),
       ...signalCreates.map((signal: any) => ({
@@ -1889,6 +1906,9 @@ export class CommunitiesService {
         createdBy: {
           select: { id: true, username: true, displayName: true, avatar: true },
         },
+        artistBand: {
+          select: { id: true, name: true, slug: true, entityType: true },
+        },
       },
     });
 
@@ -1904,6 +1924,14 @@ export class CommunitiesService {
       maxAttendees: event.maxAttendees,
       createdAt: event.createdAt.toISOString(),
       createdBy: event.createdBy ?? null,
+      artistBand: event.artistBand
+        ? {
+            id: event.artistBand.id,
+            name: event.artistBand.name,
+            slug: event.artistBand.slug,
+            entityType: event.artistBand.entityType,
+          }
+        : null,
     }));
 
     return {

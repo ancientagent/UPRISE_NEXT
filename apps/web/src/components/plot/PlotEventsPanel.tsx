@@ -43,6 +43,11 @@ function EventsSkeletonRows() {
   );
 }
 
+function publishedByLabel(item: CommunityEventItem): string {
+  if (item.artistBand?.name) return item.artistBand.name;
+  return item.createdBy?.displayName || item.createdBy?.username || 'Scene organizer';
+}
+
 export default function PlotEventsPanel({ communityId, communityLabel }: PlotEventsPanelProps) {
   const { token } = useAuthStore();
   const [items, setItems] = useState<CommunityEventItem[]>([]);
@@ -148,7 +153,15 @@ export default function PlotEventsPanel({ communityId, communityLabel }: PlotEve
                 <span className="plot-wire-chip bg-[#d8e79a]">{formatEventStatus(item.startDate, item.endDate)}</span>
               </div>
               <p className="mt-2 text-xs text-black/55">
-                Published by {item.createdBy?.displayName || item.createdBy?.username || 'Scene organizer'} • {new Date(item.createdAt).toLocaleDateString()}
+                Published by{' '}
+                {item.artistBand ? (
+                  <a className="underline underline-offset-2" href={`/artist-bands/${item.artistBand.id}`}>
+                    {publishedByLabel(item)}
+                  </a>
+                ) : (
+                  publishedByLabel(item)
+                )}{' '}
+                • {new Date(item.createdAt).toLocaleDateString()}
               </p>
               <p className="mt-1 text-xs text-black/50">
                 {item.attendeeCount}

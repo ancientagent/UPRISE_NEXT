@@ -53,6 +53,12 @@ export interface CommunityEventItem {
     displayName: string;
     avatar: string | null;
   } | null;
+  artistBand: {
+    id: string;
+    name: string;
+    slug: string;
+    entityType: string;
+  } | null;
 }
 
 export interface CommunityPromotionItem {

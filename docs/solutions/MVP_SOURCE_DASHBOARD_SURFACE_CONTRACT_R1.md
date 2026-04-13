@@ -105,6 +105,7 @@ Implementation note:
 - current runtime now passes an explicit optional `artistBandId` for new events created from active source context
 - current runtime now validates that the signed-in user actually manages the submitted Artist/Band before persisting that link
 - current runtime still falls back to creator-eligibility validation when no explicit source link is supplied
+- current read-side event surfaces should prefer explicit source attribution when a stored `artistBandId` is present, instead of falling back to creator-user attribution
 - current route shell should preserve source-side operating continuity:
   - direct return to listener mode when active source context is set
   - direct handoff to Source Dashboard

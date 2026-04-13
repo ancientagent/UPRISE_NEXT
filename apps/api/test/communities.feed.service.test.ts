@@ -58,6 +58,7 @@ describe('CommunitiesService.getFeed', () => {
         locationName: 'Venue 1',
         createdAt: twoMinutesAgo,
         createdBy: { id: 'u3', username: 'c', displayName: 'C', avatar: null },
+        artistBand: { id: 'band-1', name: 'Event Source', slug: 'event-source', entityType: 'artist' },
       },
     ]);
     mockPrisma.signal.findMany.mockResolvedValue([
@@ -76,6 +77,12 @@ describe('CommunitiesService.getFeed', () => {
     expect(result.items[0].type).toBe('blast');
     expect(result.items[1].type).toBe('track_release');
     expect(result.items[2].type).toBe('event_created');
+    expect(result.items[2].metadata?.artistBand).toEqual({
+      id: 'band-1',
+      name: 'Event Source',
+      slug: 'event-source',
+      entityType: 'artist',
+    });
     expect(result.nextCursor).toBe(twoMinutesAgo.toISOString());
   });
 });

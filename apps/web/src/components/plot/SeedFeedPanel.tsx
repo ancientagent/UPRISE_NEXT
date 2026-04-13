@@ -39,6 +39,17 @@ function formatActor(actor: CommunityFeedActor | null): string {
   return actor.displayName || actor.username || 'Community';
 }
 
+function sourceFromMetadata(item: CommunityFeedItem): { id: string; name: string } | null {
+  const artistBand = item.metadata?.artistBand;
+  if (!artistBand || typeof artistBand !== 'object') return null;
+
+  const id = 'id' in artistBand && typeof artistBand.id === 'string' ? artistBand.id : null;
+  const name = 'name' in artistBand && typeof artistBand.name === 'string' ? artistBand.name : null;
+
+  if (!id || !name) return null;
+  return { id, name };
+}
+
 function FeedSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
@@ -166,32 +177,40 @@ export default function SeedFeedPanel({
         </div>
       ) : token ? (
         <ul className="space-y-2">
-          {items.map((item) => (
-            <li key={item.id} className="plot-wire-list-item">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm text-black">
-                    <span className="font-medium">{formatTypeLabel(item.type)}</span>
-                    <span className="text-black/60">
-                      {' '}
-                      by{' '}
-                      {item.actor ? (
-                        <Link className="underline underline-offset-2" href={`/users/${item.actor.id}`}>
-                          {formatActor(item.actor)}
-                        </Link>
-                      ) : (
-                        formatActor(item.actor)
-                      )}
-                    </span>
-                  </p>
-                  <p className="mt-1 text-xs text-black/50">
-                    {new Date(item.occurredAt).toLocaleString()} • {item.entity.type}
-                  </p>
+          {items.map((item) => {
+            const source = sourceFromMetadata(item);
+
+            return (
+              <li key={item.id} className="plot-wire-list-item">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-black">
+                      <span className="font-medium">{formatTypeLabel(item.type)}</span>
+                      <span className="text-black/60">
+                        {' '}
+                        by{' '}
+                        {source ? (
+                          <Link className="underline underline-offset-2" href={`/artist-bands/${source.id}`}>
+                            {source.name}
+                          </Link>
+                        ) : item.actor ? (
+                          <Link className="underline underline-offset-2" href={`/users/${item.actor.id}`}>
+                            {formatActor(item.actor)}
+                          </Link>
+                        ) : (
+                          formatActor(item.actor)
+                        )}
+                      </span>
+                    </p>
+                    <p className="mt-1 text-xs text-black/50">
+                      {new Date(item.occurredAt).toLocaleString()} • {item.entity.type}
+                    </p>
+                  </div>
+                  <span className="plot-wire-chip shrink-0">{formatTypeLabel(item.type)}</span>
                 </div>
-                <span className="plot-wire-chip shrink-0">{formatTypeLabel(item.type)}</span>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       ) : null}
 

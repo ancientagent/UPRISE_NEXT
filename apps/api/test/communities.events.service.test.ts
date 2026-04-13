@@ -38,6 +38,7 @@ describe('CommunitiesService.getEvents', () => {
         maxAttendees: 100,
         createdAt: new Date('2026-02-18T10:00:00.000Z'),
         createdBy: { id: 'u1', username: 'promoter1', displayName: 'Promoter 1', avatar: null },
+        artistBand: { id: 'band-1', name: 'DIY Source', slug: 'diy-source', entityType: 'artist' },
       },
     ]);
 
@@ -48,6 +49,12 @@ describe('CommunitiesService.getEvents', () => {
     expect(result.items).toHaveLength(1);
     expect(result.items[0].title).toBe('DIY Night');
     expect(result.items[0].startDate).toBe('2026-02-21T20:00:00.000Z');
+    expect(result.items[0].artistBand).toEqual({
+      id: 'band-1',
+      name: 'DIY Source',
+      slug: 'diy-source',
+      entityType: 'artist',
+    });
     expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         take: 10,

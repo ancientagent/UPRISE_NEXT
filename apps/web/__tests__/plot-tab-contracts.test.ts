@@ -21,7 +21,8 @@ describe('plot tab contract locks', () => {
     const eventsSource = readRepoFile('src/components/plot/PlotEventsPanel.tsx');
 
     expect(eventsSource).toContain("function formatEventStatus(startDate: string, endDate: string): 'Upcoming' | 'Live now' | 'Ended'");
-    expect(eventsSource).toContain('Published by {item.createdBy?.displayName || item.createdBy?.username || \'Scene organizer\'}');
+    expect(eventsSource).toContain('function publishedByLabel(item: CommunityEventItem): string');
+    expect(eventsSource).toContain("href={`/artist-bands/${item.artistBand.id}`}");
     expect(eventsSource).toContain('{formatEventStatus(item.startDate, item.endDate)}');
   });
 
