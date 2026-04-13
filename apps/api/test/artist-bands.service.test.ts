@@ -119,6 +119,94 @@ describe('ArtistBandsService', () => {
     );
   });
 
+  it('keeps explicit source ownership ahead of legacy fallback on profile reads', async () => {
+    mockPrisma.artistBand.findUnique.mockResolvedValue({
+      id: 'artist-1',
+      name: 'Signal Static',
+      slug: 'signal-static',
+      entityType: 'band',
+      registrarEntryRef: null,
+      homeSceneId: 'scene-1',
+      createdById: 'user-1',
+      createdAt: new Date('2026-03-20T00:00:00.000Z'),
+      updatedAt: new Date('2026-03-21T00:00:00.000Z'),
+      createdBy: {
+        id: 'user-1',
+        username: 'signalstatic',
+        displayName: 'Signal Static',
+        bio: null,
+        avatar: null,
+        coverImage: null,
+      },
+      homeScene: null,
+      members: [
+        {
+          userId: 'user-2',
+          role: 'member',
+          createdAt: new Date('2026-03-20T00:00:00.000Z'),
+          user: {
+            id: 'user-2',
+            username: 'signalmate',
+            displayName: 'Signal Mate',
+            avatar: null,
+          },
+        },
+      ],
+    });
+    mockPrisma.signal.findFirst.mockResolvedValue(null);
+    mockPrisma.follow.count.mockResolvedValue(0);
+    mockPrisma.signalAction.groupBy.mockResolvedValue([]);
+    mockPrisma.track.findMany.mockResolvedValue([]);
+    mockPrisma.event.findMany.mockResolvedValue([]);
+
+    await service.findProfile('artist-1');
+
+    expect(mockPrisma.track.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          status: 'ready',
+          communityId: 'scene-1',
+          OR: [
+            {
+              artistBandId: 'artist-1',
+            },
+            {
+              artistBandId: null,
+              artist: {
+                equals: 'Signal Static',
+                mode: 'insensitive',
+              },
+            },
+            {
+              artistBandId: null,
+              uploadedById: {
+                in: ['user-2'],
+              },
+            },
+          ],
+        },
+      }),
+    );
+    expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          communityId: 'scene-1',
+          OR: [
+            {
+              artistBandId: 'artist-1',
+            },
+            {
+              artistBandId: null,
+              createdById: {
+                in: ['user-2'],
+              },
+            },
+          ],
+        },
+      }),
+    );
+  });
+
   it('creates a stable artist signal before recording blast actions', async () => {
     mockPrisma.artistBand.findUnique.mockResolvedValue({
       id: 'artist-1',

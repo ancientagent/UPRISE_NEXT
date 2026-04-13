@@ -162,6 +162,7 @@ export class ArtistBandsService {
               artistBandId: artistBand.id,
             },
             {
+              artistBandId: null,
               artist: {
                 equals: artistBand.name,
                 mode: 'insensitive',
@@ -170,6 +171,7 @@ export class ArtistBandsService {
             ...(memberUserIds.length > 0
               ? [
                   {
+                    artistBandId: null,
                     uploadedById: {
                       in: memberUserIds,
                     },
@@ -202,6 +204,7 @@ export class ArtistBandsService {
               artistBandId: artistBand.id,
             },
             {
+              artistBandId: null,
               createdById: {
                 in: memberUserIds.length > 0 ? memberUserIds : [artistBand.createdById],
               },

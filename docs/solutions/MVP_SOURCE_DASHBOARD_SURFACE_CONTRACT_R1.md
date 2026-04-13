@@ -98,6 +98,8 @@ Implementation note:
 ### Source Profile
 - public/source-facing identity page
 - reachable from Source Dashboard
+- current runtime should prefer explicit source ownership on profile tracks/events when stored `artistBandId` is present
+- legacy creator/name/uploader fallback may remain only for older rows where `artistBandId` is still null
 
 ### Print Shop
 - remains source-facing
