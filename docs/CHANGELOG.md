@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Carried explicit `Release Deck` ownership through the shared feed: community feed track reads now return optional source details for `track_release` items, so new source-owned releases display as source-owned in Plot while older creator-only rows remain compatible; see `docs/handoff/2026-04-13_track-source-attribution-feed.md`.
 - Carried explicit `Print Shop` event ownership through the main read surfaces: community feed/event reads now return optional source details for source-owned events, Plot feed/event rows prefer source attribution when `artistBandId` is present, and older creator-only rows remain compatible; see `docs/handoff/2026-04-13_event-source-attribution-read-paths.md`.
 - Hardened new event ownership from `Print Shop`: `Event` now supports an optional explicit `artistBandId`, new source-side event writes attach directly to the managed source account after API ownership validation, and artist/band event reads resolve explicit source linkage before falling back to older creator inference; see `docs/handoff/2026-04-13_event-ownership-hardening.md`.
 - Tightened source-tool ring parity on `Print Shop` and `Registrar`: both routes now expose `Return to Listener Account` from active source mode, mirror the `Release Deck` handoff where relevant, and surface readiness chips inside their source-context panels; see `docs/handoff/2026-04-13_print-shop-registrar-tool-ring-parity.md`.

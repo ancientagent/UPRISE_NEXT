@@ -1777,6 +1777,9 @@ export class CommunitiesService {
           uploadedBy: {
             select: { id: true, username: true, displayName: true, avatar: true },
           },
+          artistBand: {
+            select: { id: true, name: true, slug: true, entityType: true },
+          },
         },
       }),
       this.prisma.event.findMany({
@@ -1826,6 +1829,14 @@ export class CommunitiesService {
           title: track.title,
           artist: track.artist,
           duration: track.duration,
+          artistBand: track.artistBand
+            ? {
+                id: track.artistBand.id,
+                name: track.artistBand.name,
+                slug: track.artistBand.slug,
+                entityType: track.artistBand.entityType,
+              }
+            : null,
         },
       })),
       ...eventCreates.map((event: any) => ({

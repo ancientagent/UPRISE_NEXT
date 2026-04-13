@@ -91,6 +91,7 @@ Implementation note:
 - current runtime now passes an explicit optional `artistBandId` for new releases created from `Release Deck`
 - current runtime shows the latest ready singles for the three visible music slots
 - current runtime does not yet widen billing/media-pipeline mechanics or paid ad-slot tooling
+- community read surfaces should prefer explicit source attribution for new Release Deck tracks when a stored `artistBandId` is present
 - current runtime should preserve source-side shell continuity by surfacing active source context and return paths back to Source Dashboard / Registrar / listener mode
 
 ## 5) Route/Tool Relationship
