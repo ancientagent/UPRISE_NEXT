@@ -87,6 +87,7 @@ Implementation note:
 - current runtime uses the existing `/tracks` ingestion seam from active source context
 - current runtime shows the latest ready singles for the three visible music slots
 - current runtime does not yet widen billing/media-pipeline mechanics or paid ad-slot tooling
+- current runtime should preserve source-side shell continuity by surfacing active source context and return paths back to Source Dashboard / Registrar / listener mode
 
 ## 5) Route/Tool Relationship
 ### Source Profile

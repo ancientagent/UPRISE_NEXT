@@ -93,8 +93,11 @@ describe('cross-route UX consistency lock', () => {
     expect(releaseDeckSource).toContain('Select a source account before opening Release Deck.');
     expect(releaseDeckSource).toContain('Release Deck');
     expect(releaseDeckSource).toContain('Current Music Slots');
+    expect(releaseDeckSource).toContain('Current Context');
     expect(releaseDeckSource).toContain('Release Single');
     expect(releaseDeckSource).toContain('Release Deck is the source-side lane for singles entering the citywide Uprise.');
     expect(releaseDeckSource).toContain('paid ad slot stays outside the current runtime');
+    expect(releaseDeckSource).toContain('Tracks are still created by the signed-in user and recognized');
+    expect(releaseDeckSource).toContain('<Link href="/registrar">Open Registrar</Link>');
   });
 });

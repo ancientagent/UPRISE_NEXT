@@ -184,16 +184,10 @@ export default function SourceDashboardPage() {
                 <Link href="/plot">Back to Plot</Link>
               </Button>
               {activeSource ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                  onClick={() => {
-                    clearActiveSourceId();
-                    router.push('/plot');
-                  }}
-                >
-                  Return to Listener Account
+                <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                  <Link href="/plot" onClick={() => clearActiveSourceId()}>
+                    Return to Listener Account
+                  </Link>
                 </Button>
               ) : null}
             </div>

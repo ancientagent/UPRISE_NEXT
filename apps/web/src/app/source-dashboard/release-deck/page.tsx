@@ -217,12 +217,40 @@ export default function ReleaseDeckPage() {
 
             <div className="flex flex-wrap gap-2">
               <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                <Link href="/plot" onClick={() => clearActiveSourceId()}>
+                  Return to Listener Account
+                </Link>
+              </Button>
+              <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
                 <Link href="/source-dashboard">Back to Source Dashboard</Link>
               </Button>
               <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
                 <Link href={`/artist-bands/${activeSource.id}`}>View Source Profile</Link>
               </Button>
+              <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                <Link href="/registrar">Open Registrar</Link>
+              </Button>
             </div>
+          </div>
+        </section>
+
+        <section className="plot-wire-card p-6">
+          <p className="plot-wire-label">Current Context</p>
+          <div className="mt-2 rounded-[1rem] border border-black bg-[#f7f1df] px-4 py-4 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.18)]">
+            <p className="font-medium text-black">{activeSource.name}</p>
+            <p className="mt-1 text-xs text-black/65">
+              {formatArtistBandEntityType(activeSource.entityType)} • @{activeSource.slug}
+              {activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-xs text-black/60">
+              <span className="plot-wire-chip">Home Scene: {homeSceneLabel}</span>
+              <span className="plot-wire-chip">Music slots: 3</span>
+              <span className="plot-wire-chip">Paid ad slot: defined, not active here</span>
+            </div>
+            <p className="mt-3 text-sm text-black/70">
+              Release Deck operates from this source context. Tracks are still created by the signed-in user and recognized
+              through the active source context until explicit source-owned track linkage is hardened further.
+            </p>
           </div>
         </section>
 

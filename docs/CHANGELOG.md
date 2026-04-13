@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Tightened Release Deck shell continuity so `/source-dashboard/release-deck` now surfaces active source context, preserves direct return paths to Source Dashboard / Registrar / listener mode, and makes the current source-recognition ownership model explicit; see `docs/handoff/2026-04-13_release-deck-source-context-continuity.md`.
 - Tightened Source Dashboard readiness state so the current-context panel now surfaces Home Scene, GPS, and promoter-capability chips using onboarding Home Scene fallback when auth payload fields are absent; see `docs/handoff/2026-04-13_source-dashboard-readiness-fallback.md`.
 - Made Source Dashboard card copy capability-aware for creator tooling: the `Print Shop` card now reflects linked source access, promoter capability, and GPS-gated promoter progression instead of staying static; see `docs/handoff/2026-04-13_source-dashboard-capability-aware-cards.md`.
 - Extended source-side civic continuity onto linked artist pages: managed source members now see `Open Registrar` next to `Source Dashboard` and `Open Print Shop` on `apps/web/src/app/artist-bands/[id]/page.tsx`; see `docs/handoff/2026-04-13_artist-page-registrar-entrypoint.md`.
