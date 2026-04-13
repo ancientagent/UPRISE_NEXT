@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Extended source-side civic continuity onto linked artist pages: managed source members now see `Open Registrar` next to `Source Dashboard` and `Open Print Shop` on `apps/web/src/app/artist-bands/[id]/page.tsx`; see `docs/handoff/2026-04-13_artist-page-registrar-entrypoint.md`.
 - Tightened the Source Dashboard `Registrar` tool card so active artist/band sources now see source-aware civic follow-up copy (registration status, member sync, capability-code progress) instead of a generic registrar description; see `docs/handoff/2026-04-13_source-dashboard-registrar-card-context.md`.
 - Added source-context continuity to `/registrar`: source-attached users now see the active source operating context and a Source Dashboard return path on the Registrar route, while filings remain explicitly Home Scene-bound; see `docs/handoff/2026-04-13_registrar-source-context-bridge.md`.
 - Added an `external-audit` lane to the existing agent-control queue plus a Claw-specific auditor prompt and bridge runbook, so external CLI auditors can participate through the repo’s existing claim/complete/report workflow instead of relying on manual relay; see `docs/solutions/EXTERNAL_AUDITOR_QUEUE_BRIDGE_R1.md` and `docs/handoff/2026-04-12_external-auditor-queue-bridge.md`.

@@ -26,7 +26,9 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('plot-wire-card');
     expect(artistSource).toContain('const viewerCanOpenPrintShop = useMemo(() => {');
     expect(artistSource).toContain("profile.members.some((member) => member.userId === user.id)");
+    expect(artistSource).toContain('Source Dashboard');
     expect(artistSource).toContain('Open Print Shop');
+    expect(artistSource).toContain('Open Registrar');
     expect(artistSource).toContain('Songs / Releases');
     expect(artistSource).toContain('Identity');
     expect(artistSource).toContain('Lineup');

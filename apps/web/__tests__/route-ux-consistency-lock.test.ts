@@ -66,6 +66,7 @@ describe('cross-route UX consistency lock', () => {
     expect(artistSource).toContain("profile.members.some((member) => member.userId === user.id)");
     expect(artistSource).toContain('<Link href="/source-dashboard">Source Dashboard</Link>');
     expect(artistSource).toContain('<Link href="/print-shop">Open Print Shop</Link>');
+    expect(artistSource).toContain('<Link href="/registrar">Open Registrar</Link>');
   });
 
   it('keeps a dedicated source dashboard route for source-side tools', () => {
