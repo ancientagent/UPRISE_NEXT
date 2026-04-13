@@ -51,6 +51,7 @@ Start from: `docs/solutions/TEMPLATE.md`
 - `docs/solutions/NEXT_FONT_GOOGLE_FONTS_BUILD_FAIL.md`
 - `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md`
 - `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`
+- `docs/solutions/EXTERNAL_AUDITOR_QUEUE_BRIDGE_R1.md`
 - `docs/solutions/RELIANT_WORKFLOW_PILOT.md`
 - `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md`
 - `docs/solutions/MVP_CURRENT_EXECUTION_ROADMAP_R1.md`

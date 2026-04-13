@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added an `external-audit` lane to the existing agent-control queue plus a Claw-specific auditor prompt and bridge runbook, so external CLI auditors can participate through the repo’s existing claim/complete/report workflow instead of relying on manual relay; see `docs/solutions/EXTERNAL_AUDITOR_QUEUE_BRIDGE_R1.md` and `docs/handoff/2026-04-12_external-auditor-queue-bridge.md`.
 - Added the first real `Release Deck` runtime slice inside Source Dashboard: `/source-dashboard/release-deck` now uses active source context plus the existing `/tracks` seam to create singles from source-side context, while keeping the paid ad slot defined but out of current runtime. See `docs/handoff/2026-04-12_release-deck-runtime-slice.md`.
 - Reconciled Release Deck wording across founder-lock and canon docs so `3` music upload slots and the separate `4th` paid ad-attachment slot are treated as one coherent rule instead of competing totals; also corrected the system plan to reflect that `/source-dashboard` is now a live route/shell. See `docs/handoff/2026-04-12_release-deck-slot-wording-reconciliation.md`.
 - Locked the artist-side `Release Deck` structure more explicitly: current implementation direction is a `4` slot deck inside Source Dashboard with `3` music slots and `1` paid slot for a `10` second ad attached to the new release; this overrides older early-beta `3` song implementation assumptions until canon is intentionally reconciled. See `docs/handoff/2026-04-12_release-deck-reconciliation.md`.

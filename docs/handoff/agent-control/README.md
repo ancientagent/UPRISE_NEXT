@@ -14,6 +14,7 @@ Allow one orchestrator agent to assign tasks directly to lane agents, and let la
 - `queue.json`: machine-readable task queue and state.
 - `results/`: optional per-task result artifacts linked from queue rows.
 - `AGENT_DIRECTIVES.md`: lane-specialized prompt templates and parallel guardrails.
+- `CLAW_AUDITOR_PROMPT.md`: standing external-auditor prompt for Claw/Abacus-style repo audits.
 
 ## Command Interface
 Use the root command:
@@ -34,6 +35,14 @@ Main commands:
 - `status`: list queue summary + tasks.
 - `poll`: show review-required, blocked, and in-progress tasks.
 
+Common lane ids:
+- `api-schema`
+- `web-contracts`
+- `qa-ci`
+- `docs-program`
+- `review-risk`
+- `external-audit`
+
 `assign` supports queue guardrail metadata:
 - `--parent-id`: mark task as child of an existing task.
 - `--allow-spawn`: allow controlled child task creation from this task.
@@ -52,6 +61,25 @@ Main commands:
 3. Publish report/handoff file.
 4. Run `complete` with branch/commit/PR/report.
 5. If blocked, run `block` with exact reason.
+
+## External Auditor Workflow (`external-audit`)
+Use this lane when an external repo auditor such as Claw CLI is available but should remain read-heavy and non-authoritative.
+
+Recommended pattern:
+1. Orchestrator assigns a narrow audit task into `external-audit`.
+2. Claw CLI claims the task with an external-auditor identity.
+3. Claw reads current repo truth, compares runtime/spec/canon/founder locks, and writes a report under:
+   - `docs/handoff/agent-control/results/`
+4. Claw completes the task with that report path.
+5. Codex/orchestrator reviews the report, decides what is real, and either:
+   - acknowledges it, or
+   - requeues a corrected/narrower task.
+
+Guardrails:
+- External auditor is not product authority.
+- It should not invent behavior or widen MVP scope.
+- It should prefer report artifacts over code edits.
+- If repo/workspace access is missing, it should block with the exact missing dependency.
 
 ## Example
 Assign task:
