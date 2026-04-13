@@ -274,7 +274,12 @@ export default function ReleaseDeckPage() {
                     <p className="plot-wire-label">Slot {index + 1}</p>
                     {track ? (
                       <>
-                        <p className="mt-2 font-medium text-black">{track.title}</p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <p className="font-medium text-black">{track.title}</p>
+                          <span className="plot-wire-chip text-[10px] uppercase tracking-[0.2em] text-black/65">
+                            {track.artistBandId === activeSource.id ? 'Source-owned release' : 'Legacy carry-forward'}
+                          </span>
+                        </div>
                         <p className="mt-1 text-xs text-black/65">{track.album ?? 'Single release'}</p>
                         <p className="mt-3 text-xs text-black/65">
                           {Math.floor(track.duration / 60)}:{String(Math.floor(track.duration % 60)).padStart(2, '0')} • {track.status}
@@ -293,6 +298,9 @@ export default function ReleaseDeckPage() {
                 Source profile currently has {sourceProfile.tracks.length} ready tracks. Release Deck view is showing the latest three for this MVP slice.
               </p>
             ) : null}
+            <p className="mt-3 text-xs text-black/55">
+              Explicit source-owned rows stay marked here. Older compatible tracks without stored source linkage remain visible but labeled as legacy carry-forward.
+            </p>
           </div>
 
           <div className="plot-wire-card p-6">

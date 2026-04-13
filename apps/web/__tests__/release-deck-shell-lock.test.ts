@@ -23,5 +23,7 @@ describe('release deck shell lock', () => {
     expect(releaseDeckSource).toContain('Audio File URL');
     expect(releaseDeckSource).toContain('artistBandId: activeSource.id');
     expect(releaseDeckSource).toContain('createTrack(payload, token)');
+    expect(releaseDeckSource).toContain('Source-owned release');
+    expect(releaseDeckSource).toContain('Legacy carry-forward');
   });
 });
