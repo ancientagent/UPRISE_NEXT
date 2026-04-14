@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: product engineering  
-Last updated: 2026-03-22
+Last updated: 2026-04-14
 
 ## 1) Purpose
 Capture the current state of artist-profile documentation so future sessions stop treating mixed narrative summaries, external synthesis, and under-specified product behavior as settled canon.
@@ -42,7 +42,11 @@ Sources:
 
 ### 3.2 Core actions and follow semantics
 - `FOLLOW` exists and is an awareness subscription to an entity.
-- `ADD`, `BLAST`, `SUPPORT`, and `FOLLOW` are explicit universal actions.
+- Current repo runtime exposes `ADD`, `BLAST`, `SUPPORT`, and `FOLLOW`, but the controlling action matrix now treats that as terminology debt rather than final doctrine.
+- Intended public model is:
+  - source pages: `Follow`
+  - music-distribution signals surfaced on artist pages: `Collect`, `Blast`, and `Recommend` once genuinely held
+  - social post surfaces: `React`
 - Repo canon/spec does not support treating follow as automatic ranked feed-channel creation.
 
 Sources:
@@ -160,7 +164,7 @@ Sources:
 ## 7) Practical Carry-Forward Rules For Future Sessions
 - Treat additive capability + unified identity as settled.
 - Treat Home Scene anchoring as settled.
-- Treat explicit universal actions as settled.
+- Treat the action split in `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md` as the controlling authority when artist-page action wording conflicts with older `ADD`/`SUPPORT` language.
 - Treat release-deck slot constraints and descriptive analytics as settled.
 - Treat Print Shop / Runs / issuance as event/promotions-linked infrastructure, not artist-profile commerce by default.
 - Do not answer artist-page UX questions by inventing a full section list from memory.

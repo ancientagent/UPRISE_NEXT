@@ -20,6 +20,10 @@ This pass was needed because older active docs were no longer coherent with the 
 - Added explicit precedence/reconciliation notes to:
   - `docs/solutions/MVP_SIGNAL_SYSTEM_CONTRACT_R1.md`
   - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
+- Reconciled older active planning docs that were still teaching the stale `ADD` / `SUPPORT`-first grammar:
+  - `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md`
+  - `docs/solutions/MVP_DISCOVER_CONTRACT_CHECKLIST_R1.md`
+  - `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md`
 
 ## Locked Direction
 ### Direct live actions

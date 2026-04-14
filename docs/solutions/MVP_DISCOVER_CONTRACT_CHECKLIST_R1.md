@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: product engineering  
-Last updated: 2026-03-23
+Last updated: 2026-04-14
 
 ## 1) Purpose
 Provide a concrete contract checklist for finishing Discover without guessing. This document separates:
@@ -16,6 +16,7 @@ This is an implementation-prep artifact, not a replacement for the founder lock.
 ## 2) Controlling Inputs
 - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
 - `docs/specs/core/signals-and-universal-actions.md`
 - `docs/specs/users/identity-roles-capabilities.md`
 - `docs/specs/communities/scenes-uprises-sects.md`
@@ -56,11 +57,21 @@ Current web wrappers:
 - `POST /signals/:id/add`
 - `POST /signals/:id/blast`
 - `POST /signals/:id/support`
+- `POST /signals/:id/recommend`
 - `POST /follow`
 
 Current server implementation:
 - `apps/api/src/signals/signals.controller.ts`
 - `apps/api/src/signals/signals.service.ts`
+
+Important terminology note:
+- current runtime still exposes `ADD` and `SUPPORT`
+- the controlling action matrix now frames intended listener grammar as:
+  - `Collect` / runtime `ADD`
+  - `Blast`
+  - `Recommend` once genuinely held
+  - `Follow`
+  - `React` on post surfaces, not as a signal action
 
 ### 3.4 Collection shelf support for Uprises
 The signal-to-shelf mapping already supports `uprises`:
@@ -108,21 +119,18 @@ Missing:
 - a typed payload for artist-card/list items
 
 ### 4.6 Proper saved-Uprise acquisition contract
-The repo has generic signal actions, but it does not yet expose a direct, Uprise-keyed save/add contract.
+The repo has generic signal actions, but it does not yet expose a direct, Uprise-keyed collect/save contract.
 
 Missing one of:
 - a dedicated endpoint for saving an existing Uprise/community to the user’s `uprises` shelf
-- or an explicit canonical contract that defines how an existing community becomes a stable `Signal` for add/blast/support without creating duplicate ad hoc signal rows
+- or an explicit canonical contract that defines how an existing community becomes a stable `Signal` for collect/blast/recommend behavior without creating duplicate ad hoc signal rows
 
-### 4.7 Recommend as an implemented action
-Founder lock references `Recommend`, but current implemented signal actions are:
-- `ADD`
-- `BLAST`
-- `SUPPORT`
-- `FOLLOW`
+### 4.7 Recommend eligibility and held-state semantics
+The repo now implements `POST /signals/:id/recommend`, but Discover still needs a clean held-state contract so recommendation only appears when the listener already genuinely holds the target.
 
 Missing:
-- a Recommend contract and endpoint if `Recommend` is intended to be a real implemented action in Discover
+- a stable read contract telling Discover whether the current user already holds the signal/Uprise
+- a UI rule for when recommendation is shown or hidden without implying fake possession
 
 ## 5) Must Add Now (Before Full Discover Build)
 These are the minimum additions required to build full Discover honestly in one integrated pass.
@@ -143,14 +151,13 @@ These do not need speculative formulas beyond what is already locked, but they d
 
 ### 5.3 Saved-Uprise contract
 Add:
-- a clean save/add contract for Uprises that writes to the `uprises` collection shelf without relying on duplicate one-off signal creation semantics
+- a clean collect/save contract for Uprises that writes to the `uprises` collection shelf without relying on duplicate one-off signal creation semantics
 
 ### 5.4 Action vocabulary reconciliation
-Decide and implement:
-- whether Discover ships with only currently implemented actions (`Add`, `Blast`, `Support`, `Follow`)
-- or whether `Recommend` is being promoted to a real backend contract in this same pass
-
-This must be resolved before UI implementation so the action surface does not drift.
+Discover implementation must honor the controlling matrix:
+- surface `Collect`/runtime `ADD`, `Blast`, and gated `Recommend` on signal cards
+- avoid introducing direct `Support` UI for signals
+- keep `React` on feed/post surfaces rather than Discover signal cards
 
 ## 6) Safe To Defer
 These items can remain out of the first full contract pass if needed.
