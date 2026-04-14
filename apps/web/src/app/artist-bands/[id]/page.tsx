@@ -6,10 +6,8 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import type { ArtistBandProfile } from '@uprise/types';
 import {
-  addArtistBandSignal,
   followArtistBand,
   getArtistBandProfile,
-  supportArtistBandSignal,
 } from '@/lib/artist-bands/client';
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
 import { useAuthStore } from '@/store/auth';
@@ -42,7 +40,7 @@ export default function ArtistBandProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
-  const [busyAction, setBusyAction] = useState<'follow' | 'add' | 'support' | null>(null);
+  const [busyAction, setBusyAction] = useState<'follow' | null>(null);
 
   const artistBandId = useMemo(() => (typeof params?.id === 'string' ? params.id : ''), [params]);
   const selectedTrackId = searchParams.get('trackId');
@@ -92,7 +90,7 @@ export default function ArtistBandProfilePage() {
   const sourceContextMatchesProfile = activeSourceId === profile?.id;
 
   async function runAction(
-    action: 'follow' | 'add' | 'support',
+    action: 'follow',
     runner: () => Promise<unknown>,
     successMessage: string,
   ) {
@@ -241,36 +239,6 @@ export default function ArtistBandProfilePage() {
               >
                 {busyAction === 'follow' ? 'Following...' : 'Follow'}
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                disabled={!token || busyAction === 'add'}
-                onClick={() =>
-                  void runAction(
-                    'add',
-                    () => addArtistBandSignal(profile.id, token as string),
-                    `${profile.name} added.`,
-                  )
-                }
-              >
-                {busyAction === 'add' ? 'Adding...' : 'Add'}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                disabled={!token || busyAction === 'support'}
-                onClick={() =>
-                  void runAction(
-                    'support',
-                    () => supportArtistBandSignal(profile.id, token as string),
-                    `${profile.name} supported.`,
-                  )
-                }
-              >
-                {busyAction === 'support' ? 'Supporting...' : 'Support'}
-              </Button>
             </div>
           </div>
 
@@ -387,12 +355,6 @@ export default function ArtistBandProfilePage() {
                           profile.homeScene.musicCommunity,
                         )
                       : 'Not set'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-medium text-black">Action counts</dt>
-                  <dd>
-                    Add {profile.actionCounts.add} • Support {profile.actionCounts.support}
                   </dd>
                 </div>
               </dl>

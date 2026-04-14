@@ -3,10 +3,14 @@
 **ID:** `CORE-SIGNALS`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-12`
+**Last Updated:** `2026-04-14`
 
 ## Overview & Purpose
-Defines Signals as carried content units and the universal actions applied to them. This spec covers implemented contracts and the canonical constraints that prohibit algorithmic interpretation.
+Defines Signals as carried content units and the actions applied to them. This spec covers implemented contracts, intended action grammar, and the canonical constraints that prohibit algorithmic interpretation.
+
+Precedence note:
+- for the broader action/class matrix, use `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md` first
+- this spec keeps the live signal API in scope while calling out known naming/runtime debt
 
 Signals must remain distinct from sources:
 - follows subscribe to source/entity updates
@@ -14,20 +18,25 @@ Signals must remain distinct from sources:
 - not every signal exposes every action
 
 ## User Roles & Use Cases
-- Listeners create signals (where allowed) and perform ADD, BLAST, and SUPPORT.
+- Listeners create signals (where allowed) and perform current live signal actions.
 - Users FOLLOW entities for awareness.
-- Users save signals to typed collection shelves on their profile.
+- Users keep signals in typed collection shelves on their profile.
 
 ## Functional Requirements
 - A Signal is a discrete unit created or propagated through explicit user action.
-- Universal actions:
-  - `ADD`: save to personal collection
-  - `BLAST`: explicit public amplification action for currently locked music-distribution signals
-  - `SUPPORT`: explicit support action
-  - `FOLLOW`: awareness subscription to an entity
-- Source/signal boundary:
+- Signal-facing actions in the intended model:
+  - `Collect`: keep/save a signal in the listener's collection
+  - `Blast`: explicit public amplification action for currently locked music-distribution signals
+  - `Recommend`: direct recommendation only when the listener already genuinely holds the signal
+- Current runtime endpoint debt:
+  - live signal endpoints still use `/signals/:id/add`
+  - live signal action rows still use `ADD`
+  - live signal runtime still exposes `SUPPORT`, but intended product direction is to move lightweight social response toward `React` and treat `Support` as a derived backing state rather than a direct signal button
+- Source-facing action boundary:
   - `FOLLOW` applies to the source/entity, not the signal
-  - `ADD`, `BLAST`, and `SUPPORT` apply to signals only where that signal type supports them
+- Source/signal boundary:
+  - signal actions apply only to signal objects
+  - do not treat source pages as addable, blastable, or supportable signals
 - Action application is idempotent at user/signal/action scope.
 - Collections are profile-bound and separate from Fair Play.
 - Public collection visibility is opt-in (`collectionDisplayEnabled`).
@@ -35,7 +44,6 @@ Signals must remain distinct from sources:
 - Current confirmed signal classes:
   - `single`
   - `Uprise`
-  - `flyer`
 - Current confirmed blastable signals:
   - `single`
   - `Uprise`
@@ -51,7 +59,7 @@ Signals must remain distinct from sources:
 - Signal actions must not affect Fair Play tier progression.
 - Do not treat every source object as a blastable or addable signal.
 - Do not treat artist pages, event pages, or flyer artifacts as blast targets unless a later contract explicitly widens blast semantics.
-- Do not widen flyer/event signal actions beyond current locks without an explicit contract update.
+- Do not treat event-bound flyer artifacts as default signal classes under the current founder lock.
 
 ## Data Models & Migrations
 ### Prisma Models
@@ -73,9 +81,10 @@ Signals must remain distinct from sources:
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/signals` | required | Create a signal |
-| POST | `/signals/:id/add` | required | Add signal to typed shelf + record ADD action |
+| POST | `/signals/:id/add` | required | Current runtime collect/save endpoint for signals |
 | POST | `/signals/:id/blast` | required | Record BLAST action |
 | POST | `/signals/:id/support` | required | Record SUPPORT action |
+| POST | `/signals/:id/recommend` | required | Record RECOMMEND action |
 | POST | `/follow` | required | Follow an entity by type/id |
 
 ### Request/Response
@@ -87,6 +96,8 @@ Signals must remain distinct from sources:
   - `entityType: string`
   - `entityId: string`
 - Action endpoints are idempotent via upsert and return existing or newly created records.
+- Naming debt note:
+  - the runtime route `/signals/:id/add` currently implements the action that the founder lock now frames as `Collect`
 
 ## Web UI / Client Behavior
 - Feed surfaces only explicit community actions.
@@ -94,17 +105,20 @@ Signals must remain distinct from sources:
 - Other users only see shelves when profile display toggle is enabled.
 - Follow actions subscribe users to future entity updates without changing ranking/placement logic.
 - Active source-side tools remain separate from signal actions; source dashboard/Print Shop behavior must not be mistaken for signal interaction grammar.
+- Artist/source pages must not surface synthetic source-level signal actions.
 
 ## Acceptance Tests / Test Plan
 - `POST /signals` creates signal rows with optional metadata/community.
 - Repeating `ADD`/`BLAST`/`SUPPORT` for same user/signal returns idempotent result (no duplicate rows).
+- Repeating `RECOMMEND` for same user/signal returns idempotent result (no duplicate rows).
 - Repeating `FOLLOW` for same user/entity returns idempotent result.
 - ADD maps signals to fixed shelves (`singles`, `uprises`, `posters`, `fliers`, merch shelves) and links `CollectionItem`.
 - Blast coverage is validated only for currently blastable music-distribution signal classes (`single`, `Uprise`) until additional signal-specific rules are locked.
 
 ## Future Work & Open Questions
 - Add discourse signals (post/thread) service contracts (currently spec-level only).
-- Add proof-of-support verification signal contracts.
+- Reconcile `ADD` naming to intended `Collect` grammar.
+- Reconcile direct `SUPPORT` signal runtime against intended `React` / derived-support split.
 - Add feed projection endpoints for scene-scoped S.E.E.D rendering.
 
 ## References

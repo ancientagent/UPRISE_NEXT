@@ -1,8 +1,6 @@
 import {
-  addArtistBandSignal,
   followArtistBand,
   getArtistBandProfile,
-  supportArtistBandSignal,
 } from '../src/lib/artist-bands/client';
 
 describe('artist band client', () => {
@@ -42,23 +40,19 @@ describe('artist band client', () => {
     );
   });
 
-  it('posts artist page actions to their dedicated endpoints', async () => {
+  it('posts artist follows through the shared follow endpoint', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({
         success: true,
-        data: { signalId: 'signal-artist-1' },
+        data: { entityId: 'artist-1' },
       }),
     });
 
-    await addArtistBandSignal('artist-1', 'token-artist');
-    await supportArtistBandSignal('artist-1', 'token-artist');
     await followArtistBand('artist-1', 'token-artist');
 
-    expect((global.fetch as jest.Mock).mock.calls[0][0]).toBe('http://localhost:4000/artist-bands/artist-1/add');
-    expect((global.fetch as jest.Mock).mock.calls[1][0]).toBe('http://localhost:4000/artist-bands/artist-1/support');
-    expect((global.fetch as jest.Mock).mock.calls[2][0]).toBe('http://localhost:4000/follow');
-    expect((global.fetch as jest.Mock).mock.calls[2][1]).toEqual(
+    expect((global.fetch as jest.Mock).mock.calls[0][0]).toBe('http://localhost:4000/follow');
+    expect((global.fetch as jest.Mock).mock.calls[0][1]).toEqual(
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ entityType: 'artistBand', entityId: 'artist-1' }),

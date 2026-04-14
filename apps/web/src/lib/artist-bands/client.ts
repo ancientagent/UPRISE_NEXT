@@ -9,22 +9,6 @@ export async function getArtistBandProfile(id: string, token: string): Promise<A
   return response.data;
 }
 
-export async function addArtistBandSignal(id: string, token: string) {
-  const response = await api.post<{ signalId: string }>(`/artist-bands/${id}/add`, {}, { token });
-  if (!response.data) {
-    throw new Error('Artist add response was empty.');
-  }
-  return response.data;
-}
-
-export async function supportArtistBandSignal(id: string, token: string) {
-  const response = await api.post<{ signalId: string }>(`/artist-bands/${id}/support`, {}, { token });
-  if (!response.data) {
-    throw new Error('Artist support response was empty.');
-  }
-  return response.data;
-}
-
 export async function followArtistBand(id: string, token: string) {
   const response = await api.post<{ entityId: string }>(
     '/follow',

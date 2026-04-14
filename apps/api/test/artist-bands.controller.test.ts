@@ -19,8 +19,6 @@ describe('ArtistBandsController', () => {
   const artistBandsServiceMock = {
     findProfile: jest.fn(),
     findOne: jest.fn(),
-    addArtistBand: jest.fn(),
-    supportArtistBand: jest.fn(),
     findByUserId: jest.fn(),
   };
 
@@ -64,22 +62,5 @@ describe('ArtistBandsController', () => {
       data: { id: 'artist-1', name: 'Signal Static' },
     });
     expect(artistBandsServiceMock.findProfile).toHaveBeenCalledWith('artist-1');
-  });
-
-  it('delegates POST /artist-bands/:id/support with the signed-in user id', async () => {
-    artistBandsServiceMock.supportArtistBand.mockResolvedValue({ signalId: 'signal-1', action: { id: 'support-1' } });
-
-    const response = await (app.getHttpAdapter().getInstance() as any).inject({
-      method: 'POST',
-      url: '/artist-bands/artist-1/support',
-      headers: { authorization: 'Bearer test-token' },
-    });
-
-    expect(response.statusCode).toBe(201);
-    expect(response.json()).toEqual({
-      success: true,
-      data: { signalId: 'signal-1', action: { id: 'support-1' } },
-    });
-    expect(artistBandsServiceMock.supportArtistBand).toHaveBeenCalledWith('user-1', 'artist-1');
   });
 });

@@ -42,12 +42,12 @@ Do not:
 ### Active MVP / current locked ontology
 - `single`
 - `Uprise`
-- `flyer`
 
 ### Relationship to sources
 - artist/band source carries `single` signals
 - realized sect/sub-community source carries its `Uprise` signal
-- event source carries `flyer` signals
+- event pages are object surfaces, not source pages
+- flyers are event-bound artifacts, not default current MVP signal classes
 
 Artist release-deck clarification:
 - artist-side release workflow belongs to the source dashboard system
@@ -67,20 +67,14 @@ Action availability depends on signal type and locked product semantics.
 
 ### Confirmed now
 #### Singles
-- `Add`
+- `Collect` (runtime endpoint debt still uses `ADD`)
 - `Blast`
-- `Support`
 - `Recommend`
 
 #### Uprises
-- `Add`
+- `Collect` (runtime endpoint debt still uses `ADD`)
 - `Blast`
 - `Recommend`
-
-#### Flyers
-- signal ontology is locked
-- listener action grammar is not yet fully widened in current MVP runtime
-- do not invent full flyer action parity without a dedicated lock
 
 ## 5) Follows vs Signal Actions
 Follow applies to the source/entity.
@@ -90,7 +84,7 @@ Implication:
 - users do not follow the signal itself as the default relationship
 
 Current explicit example:
-- following a realized sect allows the listener to reach and add that sect's Uprise because the Uprise is the signal carried by the sect source
+- following a realized sect allows the listener to reach and collect that sect's Uprise because the Uprise is the signal carried by the sect source
 
 ## 6) Blast Rule
 Blast applies to signals, not sources.
@@ -106,7 +100,7 @@ Rationale already locked:
 - Uprises must remain eligible for explicit listener amplification
 - artist pages are source pages, not blast targets
 - event pages are event surfaces, not blast targets
-- flyers remain artifacts/signals without current blast parity
+- flyers remain artifacts without current blast parity
 
 ## 7) Recommendation Rule
 Recommendation is a user-to-signal relationship.
@@ -117,8 +111,8 @@ It is:
 - not algorithmic personalization
 
 Current confirmed recommendation targets:
-- singles
-- Uprises
+- held singles
+- held Uprises
 
 ## 8) Shelf Mapping Rule
 Signals map into collection shelves.
@@ -144,5 +138,6 @@ When implementing a surface:
 The next runtime reconciliations should use this contract to:
 - keep Source Dashboard separate from signal actions
 - keep Print Shop and event creation source-facing
-- keep artist profiles on `Follow` / `Add` / `Support` rather than reintroducing source-level blast
-- avoid treating flyers as fully action-complete before those semantics are locked
+- keep artist profiles on source actions only rather than synthetic source-level signal buttons
+- avoid treating flyers as signal classes or blast targets
+- reconcile runtime `ADD`/`SUPPORT` debt to the intended `Collect` / derived-support model

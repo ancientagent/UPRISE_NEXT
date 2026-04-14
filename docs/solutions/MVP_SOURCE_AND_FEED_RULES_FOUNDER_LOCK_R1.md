@@ -44,7 +44,7 @@ Universal source capabilities:
 - follower updates
 - first-entry community announcement
 - posts/announcements
-- support on posts
+- reactions on posts
 
 Universal source rule:
 - the shared system behavior is the same across source types
@@ -54,7 +54,8 @@ Current source classes in active MVP understanding:
 - artists
 - communities
 - promoters
-- events
+- organizing groups
+- businesses
 
 Business submission boundary:
 - business promotion submission may remain narrower than a full in-app business presence
@@ -155,7 +156,6 @@ After first entry, ongoing source-origin announcements go to followers only.
 This rule applies to sources generally, including:
 - artists
 - promoters
-- causes once official
 
 Later-version note:
 - business follower-update runtime remains deferred until the business surface is reactivated
@@ -169,20 +169,20 @@ When a source joins or enters the community for the first time:
 - after that initial entry, the source behaves like an artist announcement model: follower-only updates
 
 ## 6) Feed Action Boundaries
-### 6.1 Support
-Support is reaction-level behavior on posts.
+### 6.1 React
+React is the lightweight response behavior on posts/comments/replies.
 
-Support rules:
-- support is not a standalone feed post
-- support behaves like reaction/like behavior on the object itself
-- multiple icon types may exist
-- support contributes to metrics
+React rules:
+- react is not a standalone feed post
+- react behaves like lightweight response behavior on the object itself
+- multiple icon types may exist later
+- this is distinct from `Support`, which should be treated as a derived backing state rather than a direct feed button
 
 ### 6.2 Private / non-feed actions
 These do not become standalone public feed noise by default:
-- add a single to collection
+- collect a signal
 - tune/start listening
-- save an event
+- add an event to calendar
 - follow a source
 
 ### 6.3 Blast
@@ -206,8 +206,8 @@ Backing is not a source feature.
 Backing applies to registrar-stage entities, not public source profiles.
 
 Current registrar-stage entities called out in-session:
-- Uprisings
-- causes
+- uprisings
+- other civic prerequisites when active
 
 ## 7) Plot Feed Priority
 Current Plot tab priority order is:
@@ -230,6 +230,10 @@ Allowed feed-composition behavior:
 - local ads/promotions may appear as a recurring carousel inside the feed
 
 ## 8) Cause Terminology And Lifecycle Lock
+Current status:
+- broader cause/civic runtime remains later-version and is not part of the active MVP surface
+- do not use this section to reintroduce public cause runtime into the current MVP
+
 ### 8.1 Terminology
 Use `cause` as the product term going forward.
 
@@ -357,13 +361,13 @@ Implementation boundary:
 
 ## 10) Event Ontology Lock
 Currently confirmed event ontology:
-- events are sources
-- flyers are signals
-- Print Shop remains source-facing; listener event interaction stays on the discovery/follow/attendance side rather than entering Print Shop itself
+- events are objects
+- flyers are event-bound artifacts
+- Print Shop remains source-facing; listener event interaction stays on the discovery/add-to-calendar/attendance side rather than entering Print Shop itself
 
 Listener/event access boundary:
-- listeners can follow an event
-- only the promoter and artists operate/manage the event source from their listener account
+- listeners add events to calendar
+- only the promoter and artists operate/manage the source account that emits/owns the event lane from their listener account
 
 Not locked here:
 - paid event promo package details

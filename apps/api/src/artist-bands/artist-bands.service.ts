@@ -55,51 +55,6 @@ export class ArtistBandsService {
     return artistBand;
   }
 
-  private async findArtistBandSignal(artistBandId: string) {
-    return this.prisma.signal.findFirst({
-      where: {
-        type: 'artist_band',
-        metadata: {
-          path: ['artistBandId'],
-          equals: artistBandId,
-        } as any,
-      },
-      select: {
-        id: true,
-      },
-      orderBy: [{ createdAt: 'asc' }],
-    });
-  }
-
-  private async getOrCreateArtistBandSignalId(artistBandId: string) {
-    const artistBand = await this.getArtistBandOrThrow(artistBandId);
-    const existing = await this.findArtistBandSignal(artistBandId);
-    if (existing) {
-      return existing.id;
-    }
-
-    const created = await this.prisma.signal.create({
-      data: {
-        type: 'artist_band',
-        communityId: artistBand.homeSceneId ?? null,
-        createdById: artistBand.createdById,
-        metadata: {
-          kind: 'artist_band',
-          artistBandId: artistBand.id,
-          name: artistBand.name,
-          slug: artistBand.slug,
-          entityType: artistBand.entityType,
-          homeSceneId: artistBand.homeSceneId,
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    return created.id;
-  }
-
   async findOne(id: string) {
     const artistBand = await this.getArtistBandOrThrow(id);
 
@@ -131,9 +86,7 @@ export class ArtistBandsService {
     const artistBand = await this.getArtistBandOrThrow(id);
     const memberUserIds = artistBand.members.map((member) => member.userId);
 
-    const signal = await this.findArtistBandSignal(id);
-
-    const [followCount, actionCounts, tracks, events] = await Promise.all([
+    const [followCount, tracks, events] = await Promise.all([
       this.prisma.follow.count({
         where: {
           entityType: {
@@ -142,17 +95,6 @@ export class ArtistBandsService {
           entityId: artistBand.id,
         },
       }),
-      signal
-        ? this.prisma.signalAction.groupBy({
-            by: ['type'],
-            where: {
-              signalId: signal.id,
-            },
-            _count: {
-              type: true,
-            },
-          })
-        : Promise.resolve([]),
       this.prisma.track.findMany({
         where: {
           status: 'ready',
@@ -229,13 +171,6 @@ export class ArtistBandsService {
       }),
     ]);
 
-    const counts = { add: 0, support: 0 };
-    for (const row of actionCounts) {
-      const key = row.type.trim().toUpperCase();
-      if (key === 'ADD') counts.add = row._count.type;
-      if (key === 'SUPPORT') counts.support = row._count.type;
-    }
-
     return {
       id: artistBand.id,
       name: artistBand.name,
@@ -271,7 +206,6 @@ export class ArtistBandsService {
       })),
       memberCount: artistBand.members.length,
       followCount,
-      actionCounts: counts,
       tracks: tracks.map((track) => ({
         id: track.id,
         artistBandId: track.artistBandId ?? null,
@@ -299,52 +233,6 @@ export class ArtistBandsService {
         createdAt: event.createdAt.toISOString(),
       })),
     };
-  }
-
-  async addArtistBand(userId: string, artistBandId: string) {
-    await this.getArtistBandOrThrow(artistBandId);
-    const signalId = await this.getOrCreateArtistBandSignalId(artistBandId);
-
-    const action = await this.prisma.signalAction.upsert({
-      where: {
-        userId_signalId_type: {
-          userId,
-          signalId,
-          type: 'ADD',
-        },
-      },
-      update: {},
-      create: {
-        userId,
-        signalId,
-        type: 'ADD',
-      },
-    });
-
-    return { signalId, action };
-  }
-
-  async supportArtistBand(userId: string, artistBandId: string) {
-    await this.getArtistBandOrThrow(artistBandId);
-    const signalId = await this.getOrCreateArtistBandSignalId(artistBandId);
-
-    const action = await this.prisma.signalAction.upsert({
-      where: {
-        userId_signalId_type: {
-          userId,
-          signalId,
-          type: 'SUPPORT',
-        },
-      },
-      update: {},
-      create: {
-        userId,
-        signalId,
-        type: 'SUPPORT',
-      },
-    });
-
-    return { signalId, action };
   }
 
   async findByUserId(userId: string) {

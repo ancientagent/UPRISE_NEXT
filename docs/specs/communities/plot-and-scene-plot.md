@@ -41,8 +41,8 @@ Shell relationship lock:
   - followed-source updates must surface through the same feed grammar rather than a separate algorithmic notification feed
 - Calendar rule:
   - calendar is a real MVP organizational layer
-  - following an artist, promoter, or event automatically adds that source's events to the user's calendar/collection
-  - users can also save events directly
+  - users add events directly to calendar
+  - following a source is awareness subscription, not automatic event-calendar population under the intended action model
   - calendar behavior may sync/export to Google / Apple calendars
 - Promotions are distinct from Activity Feed and remain in Promotions surfaces.
 - Registrar entry is part of Plot civic workflow and should be accessed from within The Scenery.

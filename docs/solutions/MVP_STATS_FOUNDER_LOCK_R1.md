@@ -198,7 +198,10 @@ MVP lenses:
 #### Supported Now
 - object: `single` signals only
 - metric: `supportCountNow`
-- support comes from surfaced post/balloon expressions carrying that single
+- current runtime naming debt note:
+  - this lens still uses `supportCountNow`
+  - the founder direction is that lightweight expression belongs closer to `React` than a direct single-page support button
+- support/react volume here comes from surfaced post/balloon expressions carrying that single
 - support is **not** part of the playback engagement wheel
 - if support is later enabled directly on the artist/single page, that can feed the same stat without changing the lens meaning
 

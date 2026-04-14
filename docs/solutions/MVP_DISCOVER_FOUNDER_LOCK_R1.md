@@ -160,7 +160,7 @@ Rationale:
 - actor: promoter avatar
 - prop: megaphone
 - balloon: promotion-styled balloon
-- payload: promo or flyer signal
+- payload: promo artifact or flyer artifact
 
 ### 4B.4 Community update grammar
 - actor: UPRISE system/antenna
