@@ -20,7 +20,6 @@ describe('ArtistBandsController', () => {
     findProfile: jest.fn(),
     findOne: jest.fn(),
     addArtistBand: jest.fn(),
-    blastArtistBand: jest.fn(),
     supportArtistBand: jest.fn(),
     findByUserId: jest.fn(),
   };

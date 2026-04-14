@@ -31,6 +31,7 @@ Do not:
 - blast a source
 - treat follow as a signal action
 - treat backing as a source-profile action
+- widen blast onto artist pages, event pages, or flyer artifacts
 
 ## 3) Current Confirmed Signal Classes
 ### Active MVP / current locked ontology
@@ -89,6 +90,8 @@ Current explicit example:
 ## 6) Blast Rule
 Blast applies to signals, not sources.
 
+Blast is the public carry/spread action for currently locked music-distribution signals.
+
 Current confirmed blastable signals:
 - singles
 - Uprises
@@ -96,6 +99,9 @@ Current confirmed blastable signals:
 Rationale already locked:
 - inter-community Uprises exist
 - Uprises must remain eligible for explicit listener amplification
+- artist pages are source pages, not blast targets
+- event pages are event surfaces, not blast targets
+- flyers remain artifacts/signals without current blast parity
 
 ## 7) Recommendation Rule
 Recommendation is a user-to-signal relationship.
@@ -133,4 +139,5 @@ When implementing a surface:
 The next runtime reconciliations should use this contract to:
 - keep Source Dashboard separate from signal actions
 - keep Print Shop and event creation source-facing
+- keep artist profiles on `Follow` / `Add` / `Support` rather than reintroducing source-level blast
 - avoid treating flyers as fully action-complete before those semantics are locked

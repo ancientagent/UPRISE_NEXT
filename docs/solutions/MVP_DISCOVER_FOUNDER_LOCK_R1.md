@@ -138,6 +138,7 @@ Different surfaces may lay this grammar out differently, but they must not inven
 - confirmed blastable signals include:
   - song/single signals
   - Uprise signals
+- blast does not widen to source-profile, event-page, or flyer-surface actions under this lock
 - click target: canonical destination for the blasted signal
 
 Rationale:

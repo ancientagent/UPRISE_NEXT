@@ -1,6 +1,5 @@
 import {
   addArtistBandSignal,
-  blastArtistBandSignal,
   followArtistBand,
   getArtistBandProfile,
   supportArtistBandSignal,
@@ -53,15 +52,13 @@ describe('artist band client', () => {
     });
 
     await addArtistBandSignal('artist-1', 'token-artist');
-    await blastArtistBandSignal('artist-1', 'token-artist');
     await supportArtistBandSignal('artist-1', 'token-artist');
     await followArtistBand('artist-1', 'token-artist');
 
     expect((global.fetch as jest.Mock).mock.calls[0][0]).toBe('http://localhost:4000/artist-bands/artist-1/add');
-    expect((global.fetch as jest.Mock).mock.calls[1][0]).toBe('http://localhost:4000/artist-bands/artist-1/blast');
-    expect((global.fetch as jest.Mock).mock.calls[2][0]).toBe('http://localhost:4000/artist-bands/artist-1/support');
-    expect((global.fetch as jest.Mock).mock.calls[3][0]).toBe('http://localhost:4000/follow');
-    expect((global.fetch as jest.Mock).mock.calls[3][1]).toEqual(
+    expect((global.fetch as jest.Mock).mock.calls[1][0]).toBe('http://localhost:4000/artist-bands/artist-1/support');
+    expect((global.fetch as jest.Mock).mock.calls[2][0]).toBe('http://localhost:4000/follow');
+    expect((global.fetch as jest.Mock).mock.calls[2][1]).toEqual(
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ entityType: 'artistBand', entityId: 'artist-1' }),

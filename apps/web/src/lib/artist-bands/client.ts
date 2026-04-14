@@ -17,14 +17,6 @@ export async function addArtistBandSignal(id: string, token: string) {
   return response.data;
 }
 
-export async function blastArtistBandSignal(id: string, token: string) {
-  const response = await api.post<{ signalId: string }>(`/artist-bands/${id}/blast`, {}, { token });
-  if (!response.data) {
-    throw new Error('Artist blast response was empty.');
-  }
-  return response.data;
-}
-
 export async function supportArtistBandSignal(id: string, token: string) {
   const response = await api.post<{ signalId: string }>(`/artist-bands/${id}/support`, {}, { token });
   if (!response.data) {

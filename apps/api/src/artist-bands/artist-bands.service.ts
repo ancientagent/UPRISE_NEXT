@@ -229,11 +229,10 @@ export class ArtistBandsService {
       }),
     ]);
 
-    const counts = { add: 0, blast: 0, support: 0 };
+    const counts = { add: 0, support: 0 };
     for (const row of actionCounts) {
       const key = row.type.trim().toUpperCase();
       if (key === 'ADD') counts.add = row._count.type;
-      if (key === 'BLAST') counts.blast = row._count.type;
       if (key === 'SUPPORT') counts.support = row._count.type;
     }
 
@@ -319,29 +318,6 @@ export class ArtistBandsService {
         userId,
         signalId,
         type: 'ADD',
-      },
-    });
-
-    return { signalId, action };
-  }
-
-  async blastArtistBand(userId: string, artistBandId: string) {
-    await this.getArtistBandOrThrow(artistBandId);
-    const signalId = await this.getOrCreateArtistBandSignalId(artistBandId);
-
-    const action = await this.prisma.signalAction.upsert({
-      where: {
-        userId_signalId_type: {
-          userId,
-          signalId,
-          type: 'BLAST',
-        },
-      },
-      update: {},
-      create: {
-        userId,
-        signalId,
-        type: 'BLAST',
       },
     });
 

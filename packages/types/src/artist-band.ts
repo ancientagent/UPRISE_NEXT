@@ -70,7 +70,6 @@ export const ArtistBandProfileSchema = z.object({
   followCount: z.number().int().nonnegative(),
   actionCounts: z.object({
     add: z.number().int().nonnegative(),
-    blast: z.number().int().nonnegative(),
     support: z.number().int().nonnegative(),
   }),
   tracks: z.array(ArtistBandTrackSummarySchema),

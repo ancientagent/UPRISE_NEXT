@@ -6,7 +6,7 @@
 **Last Updated:** `2026-04-12`
 
 ## Overview & Purpose
-Defines Signals as atomic units of interaction and the universal actions applied to them. This spec covers implemented contracts and the canonical constraints that prohibit algorithmic interpretation.
+Defines Signals as carried content units and the universal actions applied to them. This spec covers implemented contracts and the canonical constraints that prohibit algorithmic interpretation.
 
 Signals must remain distinct from sources:
 - follows subscribe to source/entity updates
@@ -22,7 +22,7 @@ Signals must remain distinct from sources:
 - A Signal is a discrete unit created or propagated through explicit user action.
 - Universal actions:
   - `ADD`: save to personal collection
-  - `BLAST`: explicit public amplification action
+  - `BLAST`: explicit public amplification action for currently locked music-distribution signals
   - `SUPPORT`: explicit support action
   - `FOLLOW`: awareness subscription to an entity
 - Source/signal boundary:
@@ -50,6 +50,7 @@ Signals must remain distinct from sources:
 - Signals and follows are awareness interactions; they do not grant civic authority.
 - Signal actions must not affect Fair Play tier progression.
 - Do not treat every source object as a blastable or addable signal.
+- Do not treat artist pages, event pages, or flyer artifacts as blast targets unless a later contract explicitly widens blast semantics.
 - Do not widen flyer/event signal actions beyond current locks without an explicit contract update.
 
 ## Data Models & Migrations
@@ -99,7 +100,7 @@ Signals must remain distinct from sources:
 - Repeating `ADD`/`BLAST`/`SUPPORT` for same user/signal returns idempotent result (no duplicate rows).
 - Repeating `FOLLOW` for same user/entity returns idempotent result.
 - ADD maps signals to fixed shelves (`singles`, `uprises`, `posters`, `fliers`, merch shelves) and links `CollectionItem`.
-- Blast coverage is validated only for currently blastable signal classes (`single`, `Uprise`) until additional signal-specific rules are locked.
+- Blast coverage is validated only for currently blastable music-distribution signal classes (`single`, `Uprise`) until additional signal-specific rules are locked.
 
 ## Future Work & Open Questions
 - Add discourse signals (post/thread) service contracts (currently spec-level only).

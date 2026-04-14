@@ -12,7 +12,7 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 - Listeners participate in Scene-wide public discussions.
 - Group members coordinate privately (for example Search Parties in V2).
 - Artists, businesses, events, and promoters can publish one-way updates to followers.
-- Users use BLAST to publicly carry signals into Scene activity surfaces.
+- Users use BLAST to publicly carry music-distribution signals into Scene activity surfaces.
 
 ## Functional Requirements
 - Public communication is restricted to Scene-bound boards/threads.
@@ -23,6 +23,9 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 - User-to-user DM is allowed only when both users follow each other.
 - Artist accounts cannot receive direct DMs; artist messaging is public follower-facing broadcast only.
 - BLAST is an explicit signal propagation action and appears in S.E.E.D activity context.
+- Current blastable signal classes remain locked to:
+  - `single`
+  - `Uprise`
 
 ### Implemented Now
 - BLAST action persistence exists:
@@ -82,6 +85,7 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 - Current Plot shell includes a Social tab placeholder only.
 - Future Social tab hosts boards, threads, and group access.
 - BLAST-origin activity is visible through shared activity surfaces (non-personalized).
+- BLAST must not be repurposed as a generic source-profile or event-page action.
 
 ## Acceptance Tests / Test Plan
 - BLAST action is idempotent per user/signal/action type.

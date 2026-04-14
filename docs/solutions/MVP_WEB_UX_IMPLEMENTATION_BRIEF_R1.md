@@ -80,7 +80,7 @@ But this pass does not need to finish the fuller map/exploration buildout.
 ## 6) Artist-Page Constraints For This Pass
 This pass must respect the current artist founder lock:
 - artist page uses a familiar profile-page structure
-- core actions are `Follow`, `Add`, `Blast`, `Support`
+- core actions are `Follow`, `Add`, `Support`
 - artist-link entry keeps RaDIYo playing until user selects a single
 - single/signal-link entry routes to artist page, auto-streams the selected single, and stops RaDIYo
 

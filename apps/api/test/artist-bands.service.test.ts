@@ -108,7 +108,7 @@ describe('ArtistBandsService', () => {
 
     expect(result.name).toBe('Signal Static');
     expect(result.followCount).toBe(14);
-    expect(result.actionCounts).toEqual({ add: 3, blast: 5, support: 2 });
+    expect(result.actionCounts).toEqual({ add: 3, support: 2 });
     expect(result.tracks).toHaveLength(1);
     expect(result.events).toHaveLength(1);
     expect(result.tracks[0]?.artistBandId).toBe('artist-1');
@@ -211,7 +211,7 @@ describe('ArtistBandsService', () => {
     );
   });
 
-  it('creates a stable artist signal before recording blast actions', async () => {
+  it('creates a stable artist signal before recording support actions', async () => {
     mockPrisma.artistBand.findUnique.mockResolvedValue({
       id: 'artist-1',
       name: 'Signal Static',
@@ -235,9 +235,9 @@ describe('ArtistBandsService', () => {
     });
     mockPrisma.signal.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: 'signal-artist-1' });
     mockPrisma.signal.create.mockResolvedValue({ id: 'signal-artist-1' });
-    mockPrisma.signalAction.upsert.mockResolvedValue({ id: 'blast-action-1' });
+    mockPrisma.signalAction.upsert.mockResolvedValue({ id: 'support-action-1' });
 
-    const result = await service.blastArtistBand('user-2', 'artist-1');
+    const result = await service.supportArtistBand('user-2', 'artist-1');
 
     expect(result.signalId).toBe('signal-artist-1');
     expect(mockPrisma.signal.create).toHaveBeenCalledWith(
@@ -255,7 +255,7 @@ describe('ArtistBandsService', () => {
         create: expect.objectContaining({
           userId: 'user-2',
           signalId: 'signal-artist-1',
-          type: 'BLAST',
+          type: 'SUPPORT',
         }),
       }),
     );

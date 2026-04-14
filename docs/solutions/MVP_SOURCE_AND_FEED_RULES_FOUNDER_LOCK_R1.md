@@ -189,6 +189,7 @@ Blast rule:
   - singles
   - Uprises
 - blast is performed by listeners
+- blast is reserved for the public spread of music-related broadcast signals, not for source pages or event pages
 
 Rationale:
 - Uprises are not purely local-only signals

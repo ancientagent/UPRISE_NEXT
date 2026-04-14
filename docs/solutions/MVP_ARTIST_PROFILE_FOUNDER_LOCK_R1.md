@@ -54,7 +54,6 @@ The page should organize the already-supported artist items in a recognizable pr
 The must-have artist-page actions are:
 - `Follow`
 - `Add`
-- `Blast`
 - `Support`
 
 These are the primary user actions the surface must expose.
@@ -102,6 +101,7 @@ Legacy carry-forward rule:
 ## 9) Implementation Guardrails
 - Do not redesign the artist page as an unusual bespoke surface.
 - Do not turn it into a passive dead-end bio page.
+- Do not reintroduce source-level `Blast` on the artist page; blast remains locked to `single` and `Uprise` signals.
 - Do not auto-play anything on artist-link entry.
 - Do not keep RaDIYo running when the user enters from a single/signal link that should auto-stream from the page.
 - Do not import external schema/API summaries as implementation authority.

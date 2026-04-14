@@ -25,12 +25,6 @@ export class ArtistBandsController {
     return { success: true, data: result };
   }
 
-  @Post(':id/blast')
-  async blastArtistBand(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
-    const result = await this.artistBandsService.blastArtistBand(req.user.userId, id);
-    return { success: true, data: result };
-  }
-
   @Post(':id/support')
   async supportArtistBand(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
     const result = await this.artistBandsService.supportArtistBand(req.user.userId, id);

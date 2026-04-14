@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Locked `Blast` back down to music-distribution signals only (`single`, `Uprise`), removed the source-level `Blast` action from artist pages and `/artist-bands/:id/blast`, and clarified that artist pages use `Follow` / `Add` / `Support` while event pages and flyer artifacts are not blast targets under the current contract; see `docs/handoff/2026-04-14_blast-music-only-lock.md`.
 - Tightened `Release Deck` slot visibility so the current three-slot surface now marks explicitly attached source-owned releases separately from older compatible carry-forward tracks; see `docs/handoff/2026-04-13_release-deck-ownership-cues.md`.
 - Extended the artist/source profile contract so `artist-bands` profile responses now carry optional `artistBandId` on track/event summaries and the artist page surfaces restrained `Source-owned release` / `Source-owned event` cues for explicitly owned rows; see `docs/handoff/2026-04-13_artist-profile-source-ownership-cues.md`.
 - Tightened artist/source profile reads so `artist-bands` track/event queries now prefer explicit stored `artistBandId` ownership and only fall back to older creator/name/uploader inference when `artistBandId` is still null; see `docs/handoff/2026-04-13_artist-profile-source-ownership-precedence.md`.

@@ -7,7 +7,6 @@ import { Button } from '@uprise/ui';
 import type { ArtistBandProfile } from '@uprise/types';
 import {
   addArtistBandSignal,
-  blastArtistBandSignal,
   followArtistBand,
   getArtistBandProfile,
   supportArtistBandSignal,
@@ -43,7 +42,7 @@ export default function ArtistBandProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
-  const [busyAction, setBusyAction] = useState<'follow' | 'add' | 'blast' | 'support' | null>(null);
+  const [busyAction, setBusyAction] = useState<'follow' | 'add' | 'support' | null>(null);
 
   const artistBandId = useMemo(() => (typeof params?.id === 'string' ? params.id : ''), [params]);
   const selectedTrackId = searchParams.get('trackId');
@@ -93,7 +92,7 @@ export default function ArtistBandProfilePage() {
   const sourceContextMatchesProfile = activeSourceId === profile?.id;
 
   async function runAction(
-    action: 'follow' | 'add' | 'blast' | 'support',
+    action: 'follow' | 'add' | 'support',
     runner: () => Promise<unknown>,
     successMessage: string,
   ) {
@@ -261,21 +260,6 @@ export default function ArtistBandProfilePage() {
                 size="sm"
                 variant="outline"
                 className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                disabled={!token || busyAction === 'blast'}
-                onClick={() =>
-                  void runAction(
-                    'blast',
-                    () => blastArtistBandSignal(profile.id, token as string),
-                    `${profile.name} blasted.`,
-                  )
-                }
-              >
-                {busyAction === 'blast' ? 'Blasting...' : 'Blast'}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                 disabled={!token || busyAction === 'support'}
                 onClick={() =>
                   void runAction(
@@ -408,7 +392,7 @@ export default function ArtistBandProfilePage() {
                 <div>
                   <dt className="font-medium text-black">Action counts</dt>
                   <dd>
-                    Add {profile.actionCounts.add} • Blast {profile.actionCounts.blast} • Support {profile.actionCounts.support}
+                    Add {profile.actionCounts.add} • Support {profile.actionCounts.support}
                   </dd>
                 </div>
               </dl>
