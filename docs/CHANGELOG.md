@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md` as the new founder-level action/classification matrix covering source families, signal/artifact/event boundaries, listener action grammar, Registrar-only prerequisites, support as derived backing state, and current-vs-later known instances; also cross-linked the older signal/source founder locks and recorded the reconciliation note in `docs/handoff/2026-04-14_action-system-matrix-reconciliation.md`.
 - Locked `Blast` back down to music-distribution signals only (`single`, `Uprise`), removed the source-level `Blast` action from artist pages and `/artist-bands/:id/blast`, and clarified that artist pages use `Follow` / `Add` / `Support` while event pages and flyer artifacts are not blast targets under the current contract; see `docs/handoff/2026-04-14_blast-music-only-lock.md`.
 - Tightened `Release Deck` slot visibility so the current three-slot surface now marks explicitly attached source-owned releases separately from older compatible carry-forward tracks; see `docs/handoff/2026-04-13_release-deck-ownership-cues.md`.
 - Extended the artist/source profile contract so `artist-bands` profile responses now carry optional `artistBandId` on track/event summaries and the artist page surfaces restrained `Source-owned release` / `Source-owned event` cues for explicitly owned rows; see `docs/handoff/2026-04-13_artist-profile-source-ownership-cues.md`.

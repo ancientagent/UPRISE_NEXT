@@ -10,6 +10,11 @@ Define the current MVP signal system explicitly so source behavior and signal be
 This contract does not replace canon or `docs/specs/core/signals-and-universal-actions.md`.
 It narrows current MVP implementation truth using the founder locks already established this week.
 
+Precedence note:
+- for the broader action grammar and class taxonomy, use `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md` first
+- this document now reflects a narrower music-signal lock and contains known terminology debt around `ADD`, `SUPPORT`, and `flyer`
+- reconciliation is pending rather than complete
+
 ## 2) Core Rule
 Sources and signals are different systems.
 

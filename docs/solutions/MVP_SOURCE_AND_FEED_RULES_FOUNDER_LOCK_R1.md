@@ -7,6 +7,11 @@ Last updated: 2026-04-09
 ## 1) Purpose
 Capture founder-confirmed source, profile, feed, and registrar-entity rules so future sessions stop re-deriving them from chat fragments.
 
+Precedence note:
+- for the newer system-wide action/class matrix, use `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md` first
+- this document still carries older transitional assumptions around causes, events-as-sources, flyer classification, and registrar/source ownership
+- reconciliation is pending rather than complete
+
 This document is the controlling lock for:
 - universal source rules
 - shared source profile structure
