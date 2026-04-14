@@ -53,7 +53,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
   - sect membership density
   - sect threshold progress (descriptive)
 - Activity:
-  - explicit signal action counts (`ADD`, `BLAST`, `FOLLOW`, `SUPPORT`)
+  - explicit action counts (`Collect`/runtime `ADD`, `BLAST`, `FOLLOW`, current `SUPPORT` debt)
   - scene activity score (when Activity Points engine ships)
 - Broadcast health (descriptive):
   - active tracks
