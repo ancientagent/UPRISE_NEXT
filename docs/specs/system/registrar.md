@@ -19,7 +19,7 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Registrar records and tracks registration intent/status.
 - Registrar actor rule:
   - Registrar belongs to the listener/base identity side
-  - source-facing routes may bridge into Registrar during current MVP runtime, but that does not change the actor model
+  - source-facing routes may still expose transitional links into `/registrar` during current MVP runtime, but that bridge does not change the actor model or make Registrar a source-side tool
 - Print Shop event-write access remains source-facing as well; registrar promoter capability exists to unlock that source-facing lane rather than to create a listener event-authoring flow.
 - V1 target functions:
   - Artist/Band registration initiation.
@@ -188,11 +188,11 @@ Defines the Registrar as the listener-side civic registration surface inside The
     - `POST /registrar/code/redeem`.
   - Verify/redeem remains user-driven; no auto-redeem behavior is introduced.
   - Redemption success refreshes promoter registrar status so capability-grant reads stay current on the same page.
-  - This capability lane should also remain reachable from the source-facing side of the platform; the current `/registrar` route is the MVP bridge, not the only intended long-term access surface.
+  - Current source-facing surfaces may still link people back into `/registrar` as a transitional bridge, but the capability lane itself remains listener-owned rather than a standalone source-side workflow.
 - Registrar source-context visibility bridge (slice 124):
-  - `/registrar` now surfaces current source-side operating context when the signed-in user has a managed source selected.
-  - Source context does not alter filing scope; Registrar submissions remain Home Scene-bound and listener-owned.
-  - Source Dashboard remains a return path from Registrar for source-attached users.
+  - `/registrar` may surface current source-side operating context when the signed-in user has a managed source selected.
+  - That source context is informational only; Registrar submissions remain Home Scene-bound and listener-owned.
+  - Source Dashboard may remain a return path for source-attached users without changing Registrar into a source-side operating surface.
 - Registrar web canonical member-sync action (slice 14):
   - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
   - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.
@@ -312,7 +312,7 @@ Defines the Registrar as the listener-side civic registration surface inside The
 
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.
-- Registrar role/capability workflows should also be reachable from source-facing surfaces for artists/promoters operating in source context.
+- Source-facing surfaces may expose transitional links back into `/registrar`, but the actual Registrar workflow remains listener-side rather than a source-dashboard-native tool.
 - Users should be able to inspect registration state and required next actions.
 - Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
 - Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.

@@ -118,8 +118,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
     - registration detail,
     - capability audit summary.
 - Registrar capability-code web access rule (slice 122A):
-  - promoter capability code verify/redeem flows should remain accessible from the source-facing side of the platform.
-  - the current `/registrar` route is the MVP bridge for that flow, not the only intended long-term surface.
+  - promoter capability code verify/redeem flows may still be linked from source-facing surfaces during the current MVP bridge period.
+  - the actual capability verify/redeem workflow remains listener-owned inside `/registrar`; source-facing entrypoints are transitional routing aids, not a separate source-side registrar surface.
 - Registrar entry-list invite outcome enrichment (slice 70):
   - `GET /registrar/artist/entries` now includes `sentInviteCount` and `failedInviteCount` in per-entry invite lifecycle summaries.
   - Existing invite summary counts remain unchanged (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`).
@@ -169,7 +169,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Source-facing tools should still be understood as belonging to the source dashboard/tool layer rather than as isolated public utilities.
 - Users who are attached to artist/band or other source entities should be able to switch into those managed source accounts/entities from the same signed-in web app.
 - This should be treated as an in-app account-context switch, not as a second login or a separate application.
-- Current MVP runtime shell for that model is `/source-dashboard`, which groups active source-side access to Source Profile, Print Shop, and Registrar.
+- Current MVP runtime shell for that model is `/source-dashboard`, which groups active source-side access to Source Profile and Print Shop; Registrar may still be linked as a transitional bridge, but it remains listener-side in the intended actor model.
 - Promoters operate named Production entities for public promotional actions.
 - Promoters can:
   - create/manage events (via Print Shop flow),
