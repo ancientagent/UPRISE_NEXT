@@ -29,7 +29,9 @@ Signals must remain distinct from sources:
   - `Blast`: explicit public amplification action for currently locked music-distribution signals
   - `Recommend`: direct recommendation only when the listener already genuinely holds the signal
 - Current runtime endpoint debt:
-  - live signal endpoints still use `/signals/:id/add`
+  - the public collect verb now has a compatibility bridge:
+    - preferred endpoint: `/signals/:id/collect`
+    - legacy compatibility endpoint: `/signals/:id/add`
   - live signal action rows still use `ADD`
   - direct `SUPPORT` is no longer part of the live signal API contract
   - `Support` should be treated as a derived backing state rather than a direct signal button
@@ -82,7 +84,8 @@ Signals must remain distinct from sources:
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/signals` | required | Create a signal |
-| POST | `/signals/:id/add` | required | Current runtime collect/save endpoint for signals |
+| POST | `/signals/:id/collect` | required | Preferred current collect/save endpoint for signals |
+| POST | `/signals/:id/add` | required | Legacy compatibility alias for collect/save |
 | POST | `/signals/:id/blast` | required | Record BLAST action |
 | POST | `/signals/:id/recommend` | required | Record RECOMMEND action |
 | POST | `/follow` | required | Follow an entity by type/id |
@@ -97,7 +100,7 @@ Signals must remain distinct from sources:
   - `entityId: string`
 - Action endpoints are idempotent via upsert and return existing or newly created records.
 - Naming debt note:
-  - the runtime route `/signals/:id/add` currently implements the action that the founder lock now frames as `Collect`
+  - signal action rows still persist `ADD` while the public-facing verb is now `Collect`
 
 ## Web UI / Client Behavior
 - Feed surfaces only explicit community actions.

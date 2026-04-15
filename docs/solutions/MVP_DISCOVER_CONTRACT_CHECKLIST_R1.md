@@ -54,6 +54,7 @@ Current web wrappers:
 
 ### 3.3 Universal actions infrastructure
 - `POST /signals`
+- `POST /signals/:id/collect`
 - `POST /signals/:id/add`
 - `POST /signals/:id/blast`
 - `POST /signals/:id/recommend`
@@ -64,7 +65,7 @@ Current server implementation:
 - `apps/api/src/signals/signals.service.ts`
 
 Important terminology note:
-- current runtime still exposes `ADD`
+- current runtime now exposes a public `Collect` endpoint plus legacy `ADD` compatibility
 - the controlling action matrix now frames intended listener grammar as:
   - `Collect` / runtime `ADD`
   - `Blast`

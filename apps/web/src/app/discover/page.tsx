@@ -100,7 +100,7 @@ function isStateRollup(item: DiscoverItem): item is DiscoverStateRollupItem {
 
 async function postSignalAction(
   signalId: string,
-  action: 'add' | 'blast' | 'recommend',
+  action: 'collect' | 'blast' | 'recommend',
   token: string,
 ) {
   const response = await api.post<{ id: string }>(`/signals/${signalId}/${action}`, {}, { token });
@@ -297,7 +297,7 @@ function SignalCard({
   token: string | null;
   onSignalAction: (
     signalId: string,
-    action: 'add' | 'blast' | 'recommend',
+    action: 'collect' | 'blast' | 'recommend',
     successMessage: string,
   ) => void;
 }) {
@@ -319,9 +319,9 @@ function SignalCard({
           variant="outline"
           className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
           disabled={!token}
-          onClick={() => void onSignalAction(signal.signalId, 'add', 'Signal added to your collection.')}
+          onClick={() => void onSignalAction(signal.signalId, 'collect', 'Signal collected.')}
         >
-          Add
+          Collect
         </Button>
         <Button
           size="sm"
@@ -355,7 +355,7 @@ function RecommendationCard({
   token: string | null;
   onSignalAction: (
     signalId: string,
-    action: 'add' | 'blast' | 'recommend',
+    action: 'collect' | 'blast' | 'recommend',
     successMessage: string,
   ) => void;
 }) {
@@ -382,9 +382,9 @@ function RecommendationCard({
           variant="outline"
           className="plot-wire-chip h-auto rounded-full bg-white px-3 py-2 text-[11px] text-black"
           disabled={!token}
-          onClick={() => void onSignalAction(recommendation.signal.signalId, 'add', 'Signal added to your collection.')}
+          onClick={() => void onSignalAction(recommendation.signal.signalId, 'collect', 'Signal collected.')}
         >
-          Add
+          Collect
         </Button>
         <Button
           size="sm"
@@ -990,7 +990,7 @@ export default function DiscoverPage() {
 
   const handleSignalAction = async (
     signalId: string,
-    action: 'add' | 'blast' | 'recommend',
+    action: 'collect' | 'blast' | 'recommend',
     successMessage: string,
   ) => {
     if (!token) return;

@@ -22,6 +22,12 @@ export class SignalsController {
     return { success: true, data: result };
   }
 
+  @Post('signals/:id/collect')
+  async collectSignal(@Param('id') id: string, @Request() req: any) {
+    const result = await this.signalsService.addToCollection(req.user.userId, id);
+    return { success: true, data: result };
+  }
+
   @Post('signals/:id/blast')
   async blastSignal(@Param('id') id: string, @Request() req: any) {
     const action = await this.signalsService.blastSignal(req.user.userId, id);
