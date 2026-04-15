@@ -75,6 +75,17 @@ describe('CommunitiesService.getStatistics', () => {
         }),
       })
     );
+    expect(mockPrisma.signalAction.count).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          signal: expect.objectContaining({
+            type: {
+              not: 'flyer',
+            },
+          }),
+        }),
+      }),
+    );
   });
 
   it('uses state-scoped city pool for aggregation', async () => {

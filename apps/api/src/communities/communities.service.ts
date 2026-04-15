@@ -786,6 +786,9 @@ export class CommunitiesService {
           type: 'RECOMMEND',
           signal: {
             community: scopeWhere,
+            type: {
+              not: 'flyer',
+            },
           },
         },
         select: {
@@ -822,6 +825,7 @@ export class CommunitiesService {
 
     const recommendationActionsByUser = new Map<string, (typeof recommendationActions)[number]>();
     for (const action of recommendationActions) {
+      if (action.signal.type === 'flyer') continue;
       if (!recommendationActionsByUser.has(action.user.id)) {
         recommendationActionsByUser.set(action.user.id, action);
       }
@@ -2078,6 +2082,9 @@ export class CommunitiesService {
                 createdAt: { gte: windowStart },
                 signal: {
                   communityId: { in: scopeCommunityIds },
+                  type: {
+                    not: 'flyer',
+                  },
                 },
               },
             }),

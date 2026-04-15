@@ -529,6 +529,23 @@ describe('CommunitiesService.discoverScenes', () => {
           createdAt: new Date('2026-03-23T10:00:00.000Z'),
         },
       },
+      {
+        id: 'recommend-flyer',
+        createdAt: new Date('2026-03-24T13:00:00.000Z'),
+        user: {
+          id: 'u3',
+          username: 'flyerlistener',
+          displayName: 'Flyer Listener',
+          avatar: null,
+        },
+        signal: {
+          id: 'flyer-1',
+          type: 'flyer',
+          metadata: { title: 'Show Flyer' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T09:00:00.000Z'),
+        },
+      },
     ]);
     mockPrisma.signalAction.groupBy
       .mockResolvedValueOnce([
@@ -584,6 +601,7 @@ describe('CommunitiesService.discoverScenes', () => {
         }),
       }),
     ]);
+    expect(result.recommendations).toHaveLength(1);
 
     expect(mockPrisma.signal.findMany).toHaveBeenCalledWith(
       expect.not.objectContaining({
@@ -591,8 +609,14 @@ describe('CommunitiesService.discoverScenes', () => {
       }),
     );
     expect(mockPrisma.signalAction.findMany).toHaveBeenCalledWith(
-      expect.not.objectContaining({
-        take: expect.any(Number),
+      expect.objectContaining({
+        where: expect.objectContaining({
+          signal: expect.objectContaining({
+            type: {
+              not: 'flyer',
+            },
+          }),
+        }),
       }),
     );
   });
