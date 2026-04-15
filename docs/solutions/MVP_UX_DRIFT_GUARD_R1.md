@@ -40,7 +40,7 @@ Process stop rule:
 
 ## Action Wheel Lock
 - Trigger: center UPRISE logo in bottom nav.
-- RADIYO actions: Report, Skip, Blast, Add, Upvote.
+- RADIYO actions: Report, Skip, Blast, Collect, Upvote.
 - Collection actions:
   - 9:00 Back
   - 10:00 Pause

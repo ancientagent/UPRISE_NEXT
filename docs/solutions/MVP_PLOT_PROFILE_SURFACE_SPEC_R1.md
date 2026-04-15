@@ -92,7 +92,7 @@ RADIYO wheel actions:
 - Report
 - Skip
 - Blast
-- Add
+- Collect
 - Upvote
 
 Collection wheel actions:

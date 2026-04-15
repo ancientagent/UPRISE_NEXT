@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Reconciled visible RADIYO wheel/save language from `Add` to `Collect` across the active player implementation, regression lock, and current UX/spec authority so live player copy matches the current public action matrix while preserving `Upvote` as the propagation action; see `docs/handoff/2026-04-15_radiyo-wheel-collect-language-reconciliation.md`.
 - Added a public `POST /signals/:id/collect` compatibility alias, switched active Discover signal copy from `Add` to `Collect`, and documented legacy `/signals/:id/add` as row/runtime compatibility debt rather than the intended public verb; see `docs/handoff/2026-04-15_signal-collect-alias-and-discover-copy.md`.
 - Removed direct signal `SUPPORT` from the live signal contract, aligned shared signal/discovery/admin types to that narrower action grammar, and dropped Discover's `Supported Now` singles lens so runtime/public docs now treat `Support` as derived-state language rather than a signal button; see `docs/handoff/2026-04-15_signal-support-runtime-removal.md`.
 - Tightened community Discover/statistics signal lenses so flyer-typed rows no longer leak into recommendations or community activity-score counts, keeping flyers on the artifact side of the action matrix; see `docs/handoff/2026-04-15_flyer-artifact-metric-filtering.md`.

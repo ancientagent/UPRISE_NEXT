@@ -93,6 +93,7 @@ Hard constraints:
 
 ## Propagation / Tier Advancement
 - Upvotes are the only advancement signal.
+- Public-facing wheel/save language should use `Collect`, not `Add`, when listeners keep a song in profile-bound shelves or playlists.
 - Threshold model is configurable and must support:
   - minimum unique eligible listeners
   - rate-based thresholding
