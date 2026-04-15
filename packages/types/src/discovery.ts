@@ -59,7 +59,6 @@ export const DiscoverSignalResultSchema = z.object({
   actionCounts: z.object({
     add: z.number().int().nonnegative(),
     blast: z.number().int().nonnegative(),
-    support: z.number().int().nonnegative(),
     recommend: z.number().int().nonnegative(),
   }),
   lensMetricValue: z.number().int().nonnegative().nullable().optional(),
@@ -90,7 +89,6 @@ export type DiscoverRecommendationResult = z.infer<typeof DiscoverRecommendation
 
 export const DiscoverPopularSinglesSchema = z.object({
   mostAdded: z.array(DiscoverSignalResultSchema),
-  supportedNow: z.array(DiscoverSignalResultSchema),
   recentRises: z.array(DiscoverSignalResultSchema),
 });
 

@@ -552,11 +552,6 @@ describe('CommunitiesService.discoverScenes', () => {
         { signalId: 's1', type: 'RECOMMEND', _count: { type: 4 } },
         { signalId: 's1', type: 'ADD', _count: { type: 6 } },
         { signalId: 's2', type: 'ADD', _count: { type: 3 } },
-        { signalId: 's2', type: 'SUPPORT', _count: { type: 5 } },
-      ])
-      .mockResolvedValueOnce([
-        { signalId: 's1', type: 'SUPPORT', _count: { type: 2 } },
-        { signalId: 's2', type: 'SUPPORT', _count: { type: 5 } },
       ]);
 
     const result = await service.getCommunityDiscoverHighlights('u1', 'c1', { limit: 8 });
@@ -571,18 +566,6 @@ describe('CommunitiesService.discoverScenes', () => {
         signalId: 's2',
         lensMetricValue: 3,
         lensMetricLabel: 'All-time adds',
-      }),
-    ]);
-    expect(result.popularSingles.supportedNow).toEqual([
-      expect.objectContaining({
-        signalId: 's2',
-        lensMetricValue: 5,
-        lensMetricLabel: 'Supports in the last 7 days',
-      }),
-      expect.objectContaining({
-        signalId: 's1',
-        lensMetricValue: 2,
-        lensMetricLabel: 'Supports in the last 7 days',
       }),
     ]);
     expect(result.popularSingles.recentRises).toEqual([]);

@@ -32,7 +32,6 @@ describe('AdminAnalyticsService', () => {
     mockPrisma.signalAction.groupBy.mockResolvedValue([
       { type: 'ADD', _count: { type: 20 } },
       { type: 'BLAST', _count: { type: 8 } },
-      { type: 'SUPPORT', _count: { type: 14 } },
       { type: 'RECOMMEND', _count: { type: 6 } },
     ]);
     mockPrisma.track.aggregate.mockResolvedValue({
@@ -81,7 +80,6 @@ describe('AdminAnalyticsService', () => {
     expect(result.data.signalActionTotals).toEqual({
       add: 20,
       blast: 8,
-      support: 14,
       recommend: 6,
       upvote: 17,
     });

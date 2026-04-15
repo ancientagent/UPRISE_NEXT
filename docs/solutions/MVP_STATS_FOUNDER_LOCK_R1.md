@@ -2,7 +2,7 @@
 
 **Status:** `active`
 **Owner:** `founder + codex`
-**Last Updated:** `2026-04-08`
+**Last Updated:** `2026-04-15`
 
 ## Purpose
 Lock the MVP statistics contract that powers:
@@ -98,7 +98,6 @@ These describe how users are acting on signals.
 
 MVP signal action stats:
 - `addCountAllTime`
-- `supportCountNow`
 - `recommendationCountNow`
 - `blastCountNow`
 
@@ -141,10 +140,9 @@ Default MVP current window:
 - `last 7 days`
 
 MVP current-window stats:
-- `supportCountNow`
 - `recommendationCountNow`
 - `blastCountNow`
-- community support/recommendation/blast volume
+- community recommendation/blast volume
 
 ### Event-Based Stats
 Use these for structural movement, not rolling totals.
@@ -161,7 +159,6 @@ MVP core community stats for Plot:
 - `activeSects`
 - `activeSources`
 - `activeSignals`
-- `supportVolumeNow`
 - `recommendationVolumeNow`
 - `blastVolumeNow`
 - `recentRisesCount`
@@ -187,23 +184,12 @@ Discover uses a narrower stats read than Plot.
 
 MVP lenses:
 - `Most Added`
-- `Supported Now`
 - `Recent Rises`
 
 #### Most Added
 - object: `single` signals only
 - metric: `addCountAllTime`
 - purpose: show durable library preference, not current hype
-
-#### Supported Now
-- object: `single` signals only
-- metric: `supportCountNow`
-- current runtime naming debt note:
-  - this lens still uses `supportCountNow`
-  - the founder direction is that lightweight expression belongs closer to `React` than a direct single-page support button
-- support/react volume here comes from surfaced post/balloon expressions carrying that single
-- support is **not** part of the playback engagement wheel
-- if support is later enabled directly on the artist/single page, that can feed the same stat without changing the lens meaning
 
 #### Recent Rises
 - object: `single` signals only

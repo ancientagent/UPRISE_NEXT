@@ -250,7 +250,6 @@ describe('DiscoveryController', () => {
       },
       popularSingles: {
         mostAdded: [],
-        supportedNow: [],
         recentRises: [],
       },
       recommendations: [],
@@ -291,7 +290,6 @@ describe('DiscoveryController', () => {
       },
       popularSingles: {
         mostAdded: [],
-        supportedNow: [],
         recentRises: [],
       },
       recommendations: [],

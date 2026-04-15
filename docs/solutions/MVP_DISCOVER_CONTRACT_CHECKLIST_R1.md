@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: product engineering  
-Last updated: 2026-04-14
+Last updated: 2026-04-15
 
 ## 1) Purpose
 Provide a concrete contract checklist for finishing Discover without guessing. This document separates:
@@ -56,7 +56,6 @@ Current web wrappers:
 - `POST /signals`
 - `POST /signals/:id/add`
 - `POST /signals/:id/blast`
-- `POST /signals/:id/support`
 - `POST /signals/:id/recommend`
 - `POST /follow`
 
@@ -65,7 +64,7 @@ Current server implementation:
 - `apps/api/src/signals/signals.service.ts`
 
 Important terminology note:
-- current runtime still exposes `ADD` and `SUPPORT`
+- current runtime still exposes `ADD`
 - the controlling action matrix now frames intended listener grammar as:
   - `Collect` / runtime `ADD`
   - `Blast`
@@ -157,6 +156,7 @@ Add:
 Discover implementation must honor the controlling matrix:
 - surface `Collect`/runtime `ADD`, `Blast`, and gated `Recommend` on signal cards
 - avoid introducing direct `Support` UI for signals
+- do not rebuild a `Supported Now` signal lens
 - keep `React` on feed/post surfaces rather than Discover signal cards
 
 ## 6) Safe To Defer

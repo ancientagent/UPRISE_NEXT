@@ -47,7 +47,7 @@ import {
 import { useAuthStore } from '@/store/auth';
 import { useOnboardingStore } from '@/store/onboarding';
 
-type PopularSinglesLens = 'mostAdded' | 'supportedNow' | 'recentRises';
+type PopularSinglesLens = 'mostAdded' | 'recentRises';
 const DISCOVER_TIER_OPTIONS: TierScope[] = ['city', 'state'];
 
 function formatSceneLocation(city: string | null, state: string | null) {
@@ -515,7 +515,6 @@ export default function DiscoverPage() {
       },
       popularSingles: {
         mostAdded: [],
-        supportedNow: [],
         recentRises: [],
       },
       recommendations: [],
@@ -1134,16 +1133,6 @@ export default function DiscoverPage() {
                 onClick={() => setSelectedLens('mostAdded')}
               >
                 Most Added
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className={selectedLens === 'supportedNow'
-                  ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
-                  : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'}
-                onClick={() => setSelectedLens('supportedNow')}
-              >
-                Supported Now
               </Button>
               <Button
                 size="sm"

@@ -60,14 +60,6 @@ export class SignalsService {
     });
   }
 
-  async supportSignal(userId: string, signalId: string) {
-    return this.prisma.signalAction.upsert({
-      where: { userId_signalId_type: { userId, signalId, type: 'SUPPORT' } },
-      update: {},
-      create: { userId, signalId, type: 'SUPPORT' },
-    });
-  }
-
   async recommendSignal(userId: string, signalId: string) {
     return this.prisma.signalAction.upsert({
       where: { userId_signalId_type: { userId, signalId, type: 'RECOMMEND' } },

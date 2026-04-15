@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Removed direct signal `SUPPORT` from the live signal contract, aligned shared signal/discovery/admin types to that narrower action grammar, and dropped Discover's `Supported Now` singles lens so runtime/public docs now treat `Support` as derived-state language rather than a signal button; see `docs/handoff/2026-04-15_signal-support-runtime-removal.md`.
 - Tightened community Discover/statistics signal lenses so flyer-typed rows no longer leak into recommendations or community activity-score counts, keeping flyers on the artifact side of the action matrix; see `docs/handoff/2026-04-15_flyer-artifact-metric-filtering.md`.
 - Reconciled Registrar doctrine back to the listener-side actor model locked in `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`: active identity/registrar specs now describe source-facing Registrar entrypoints as transitional bridges only, not true source-side tooling; see `docs/handoff/2026-04-15_registrar-listener-side-bridge-cleanup.md`.
 - Reconciled older active planning/audit docs to the new action-system matrix so they no longer present `ADD` / `SUPPORT` as the final intended public grammar for UX or Discover planning; updated `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md`, `docs/solutions/MVP_DISCOVER_CONTRACT_CHECKLIST_R1.md`, and `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md`, with the change recorded in `docs/handoff/2026-04-14_action-system-matrix-reconciliation.md`.

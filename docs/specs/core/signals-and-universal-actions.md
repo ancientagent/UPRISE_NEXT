@@ -3,7 +3,7 @@
 **ID:** `CORE-SIGNALS`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-14`
+**Last Updated:** `2026-04-15`
 
 ## Overview & Purpose
 Defines Signals as carried content units and the actions applied to them. This spec covers implemented contracts, intended action grammar, and the canonical constraints that prohibit algorithmic interpretation.
@@ -31,7 +31,8 @@ Signals must remain distinct from sources:
 - Current runtime endpoint debt:
   - live signal endpoints still use `/signals/:id/add`
   - live signal action rows still use `ADD`
-  - live signal runtime still exposes `SUPPORT`, but intended product direction is to move lightweight social response toward `React` and treat `Support` as a derived backing state rather than a direct signal button
+  - direct `SUPPORT` is no longer part of the live signal API contract
+  - `Support` should be treated as a derived backing state rather than a direct signal button
 - Source-facing action boundary:
   - `FOLLOW` applies to the source/entity, not the signal
 - Source/signal boundary:
@@ -83,7 +84,6 @@ Signals must remain distinct from sources:
 | POST | `/signals` | required | Create a signal |
 | POST | `/signals/:id/add` | required | Current runtime collect/save endpoint for signals |
 | POST | `/signals/:id/blast` | required | Record BLAST action |
-| POST | `/signals/:id/support` | required | Record SUPPORT action |
 | POST | `/signals/:id/recommend` | required | Record RECOMMEND action |
 | POST | `/follow` | required | Follow an entity by type/id |
 
@@ -109,7 +109,7 @@ Signals must remain distinct from sources:
 
 ## Acceptance Tests / Test Plan
 - `POST /signals` creates signal rows with optional metadata/community.
-- Repeating `ADD`/`BLAST`/`SUPPORT` for same user/signal returns idempotent result (no duplicate rows).
+- Repeating `ADD`/`BLAST` for same user/signal returns idempotent result (no duplicate rows).
 - Repeating `RECOMMEND` for same user/signal returns idempotent result (no duplicate rows).
 - Repeating `FOLLOW` for same user/entity returns idempotent result.
 - ADD maps signals to fixed shelves (`singles`, `uprises`, `posters`, `fliers`, merch shelves) and links `CollectionItem`.
@@ -118,7 +118,7 @@ Signals must remain distinct from sources:
 ## Future Work & Open Questions
 - Add discourse signals (post/thread) service contracts (currently spec-level only).
 - Reconcile `ADD` naming to intended `Collect` grammar.
-- Reconcile direct `SUPPORT` signal runtime against intended `React` / derived-support split.
+- Reconcile remaining stats/docs debt that still refers to historical `support` terminology.
 - Add feed projection endpoints for scene-scoped S.E.E.D rendering.
 
 ## References

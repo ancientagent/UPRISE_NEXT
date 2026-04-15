@@ -15,7 +15,6 @@ export class AdminAnalyticsService {
     const totals = {
       add: 0,
       blast: 0,
-      support: 0,
       recommend: 0,
     };
 
@@ -23,7 +22,6 @@ export class AdminAnalyticsService {
       const key = row.type.trim().toUpperCase();
       if (key === 'ADD') totals.add = row._count.type ?? 0;
       if (key === 'BLAST') totals.blast = row._count.type ?? 0;
-      if (key === 'SUPPORT') totals.support = row._count.type ?? 0;
       if (key === 'RECOMMEND') totals.recommend = row._count.type ?? 0;
     }
 

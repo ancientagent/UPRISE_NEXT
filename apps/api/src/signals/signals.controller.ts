@@ -28,12 +28,6 @@ export class SignalsController {
     return { success: true, data: action };
   }
 
-  @Post('signals/:id/support')
-  async supportSignal(@Param('id') id: string, @Request() req: any) {
-    const action = await this.signalsService.supportSignal(req.user.userId, id);
-    return { success: true, data: action };
-  }
-
   @Post('signals/:id/recommend')
   async recommendSignal(@Param('id') id: string, @Request() req: any) {
     const action = await this.signalsService.recommendSignal(req.user.userId, id);

@@ -246,13 +246,12 @@ export class CommunitiesService {
       _count: { type: number };
     }>
   ) {
-    const initial = { add: 0, blast: 0, support: 0, recommend: 0 };
+    const initial = { add: 0, blast: 0, recommend: 0 };
 
     for (const entry of actionCounts) {
       const key = entry.type.trim().toUpperCase();
       if (key === 'ADD') initial.add = entry._count.type;
       if (key === 'BLAST') initial.blast = entry._count.type;
-      if (key === 'SUPPORT') initial.support = entry._count.type;
       if (key === 'RECOMMEND') initial.recommend = entry._count.type;
     }
 
@@ -261,7 +260,7 @@ export class CommunitiesService {
 
   private async getSignalActionCounts(signalIds: string[]) {
     if (signalIds.length === 0) {
-      return new Map<string, { add: number; blast: number; support: number; recommend: number }>();
+      return new Map<string, { add: number; blast: number; recommend: number }>();
     }
 
     const rows = await this.prisma.signalAction.groupBy({
@@ -278,56 +277,14 @@ export class CommunitiesService {
 
     const counts = new Map<
       string,
-      { add: number; blast: number; support: number; recommend: number }
+      { add: number; blast: number; recommend: number }
     >();
 
     for (const row of rows) {
-      const current = counts.get(row.signalId) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
+      const current = counts.get(row.signalId) ?? { add: 0, blast: 0, recommend: 0 };
       const key = row.type.trim().toUpperCase();
       if (key === 'ADD') current.add = row._count.type;
       if (key === 'BLAST') current.blast = row._count.type;
-      if (key === 'SUPPORT') current.support = row._count.type;
-      if (key === 'RECOMMEND') current.recommend = row._count.type;
-      counts.set(row.signalId, current);
-    }
-
-    return counts;
-  }
-
-  private async getSignalActionCountsSince(
-    signalIds: string[],
-    since: Date,
-  ) {
-    if (signalIds.length === 0) {
-      return new Map<string, { add: number; blast: number; support: number; recommend: number }>();
-    }
-
-    const rows = await this.prisma.signalAction.groupBy({
-      by: ['signalId', 'type'],
-      where: {
-        signalId: {
-          in: signalIds,
-        },
-        createdAt: {
-          gte: since,
-        },
-      },
-      _count: {
-        type: true,
-      },
-    });
-
-    const counts = new Map<
-      string,
-      { add: number; blast: number; support: number; recommend: number }
-    >();
-
-    for (const row of rows) {
-      const current = counts.get(row.signalId) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
-      const key = row.type.trim().toUpperCase();
-      if (key === 'ADD') current.add = row._count.type;
-      if (key === 'BLAST') current.blast = row._count.type;
-      if (key === 'SUPPORT') current.support = row._count.type;
       if (key === 'RECOMMEND') current.recommend = row._count.type;
       counts.set(row.signalId, current);
     }
@@ -840,10 +797,7 @@ export class CommunitiesService {
         ...recommendationSignalIds,
       ]),
     );
-    const [signalCounts, currentWindowSignalCounts] = await Promise.all([
-      this.getSignalActionCounts(candidateSignalIds),
-      this.getSignalActionCountsSince(candidateSignalIds, windowStart),
-    ]);
+    const signalCounts = await this.getSignalActionCounts(candidateSignalIds);
 
     const toSignalResult = (
       signal: {
@@ -874,7 +828,7 @@ export class CommunitiesService {
       communityMusicCommunity: signal.community?.musicCommunity ?? null,
       createdAt: signal.createdAt.toISOString(),
       actionCounts:
-        signalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 },
+        signalCounts.get(signal.id) ?? { add: 0, blast: 0, recommend: 0 },
       lensMetricValue: options?.lensMetricValue ?? null,
       lensMetricLabel: options?.lensMetricLabel ?? null,
       highestScopeReached: options?.highestScopeReached ?? null,
@@ -883,7 +837,7 @@ export class CommunitiesService {
 
     const mostAdded = singleSignals
       .map((signal) => {
-        const counts = signalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
+        const counts = signalCounts.get(signal.id) ?? { add: 0, blast: 0, recommend: 0 };
         return toSignalResult(signal, {
           lensMetricValue: counts.add,
           lensMetricLabel: 'All-time adds',
@@ -892,23 +846,6 @@ export class CommunitiesService {
       .sort((left, right) => {
         const primaryDiff = (right.lensMetricValue ?? 0) - (left.lensMetricValue ?? 0);
         if (primaryDiff !== 0) return primaryDiff;
-        return left.signalId.localeCompare(right.signalId);
-      })
-      .slice(0, query.limit);
-
-    const supportedNow = singleSignals
-      .map((signal) => {
-        const counts = currentWindowSignalCounts.get(signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 };
-        return toSignalResult(signal, {
-          lensMetricValue: counts.support,
-          lensMetricLabel: 'Supports in the last 7 days',
-        });
-      })
-      .sort((left, right) => {
-        const primaryDiff = (right.lensMetricValue ?? 0) - (left.lensMetricValue ?? 0);
-        if (primaryDiff !== 0) return primaryDiff;
-        const secondaryDiff = right.actionCounts.support - left.actionCounts.support;
-        if (secondaryDiff !== 0) return secondaryDiff;
         return left.signalId.localeCompare(right.signalId);
       })
       .slice(0, query.limit);
@@ -1018,7 +955,7 @@ export class CommunitiesService {
         },
         signal: toSignalResult(action.signal, {
           lensMetricValue:
-            (signalCounts.get(action.signal.id) ?? { add: 0, blast: 0, support: 0, recommend: 0 })
+            (signalCounts.get(action.signal.id) ?? { add: 0, blast: 0, recommend: 0 })
               .recommend,
           lensMetricLabel: 'Active recommendations',
         }),
@@ -1029,7 +966,6 @@ export class CommunitiesService {
       community: this.toSceneSummary(scene),
       popularSingles: {
         mostAdded,
-        supportedNow,
         recentRises,
       },
       recommendations,

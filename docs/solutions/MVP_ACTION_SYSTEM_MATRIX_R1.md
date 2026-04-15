@@ -188,9 +188,9 @@ Current version note:
  - collected and rocked gear/artifacts
  - other verified participation and backing signals
 
- Current runtime note:
- - the repo still contains direct `SUPPORT` actions and counters
- - that is terminology/runtime debt against this lock
+Current runtime note:
+- the repo previously contained direct `SUPPORT` actions and counters
+- the live signal contract has now removed direct signal `SUPPORT`, but historical/support-derived metric language still remains to reconcile in some docs and analytics notes
 
  ## 11) Artifact Rules
 
@@ -306,7 +306,7 @@ Current version note:
  ## 17) Current Repo Drift Audit
  These are the biggest known mismatches between current intended truth and existing repo surfaces/contracts.
 
- 1. `support` is still implemented as a direct runtime action in multiple places.
+1. historical `support` terminology still remains in some stats/docs even though direct live signal `SUPPORT` has been removed.
  2. active signal docs still describe `flyer` as a confirmed signal class.
  3. older docs still describe events as sources in some places.
  4. older founder locks still carry the earlier `cause` lifecycle framing.

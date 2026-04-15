@@ -249,7 +249,6 @@ describe('discovery client', () => {
           },
           popularSingles: {
             mostAdded: [],
-            supportedNow: [],
             recentRises: [],
           },
           recommendations: [],
@@ -797,7 +796,6 @@ describe('discovery client', () => {
           },
           popularSingles: {
             mostAdded: [],
-            supportedNow: [],
             recentRises: [],
           },
           recommendations: [],

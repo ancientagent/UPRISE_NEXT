@@ -30,7 +30,6 @@ export const AdminAnalyticsQueryDataSchema = z.object({
   signalActionTotals: z.object({
     add: z.number(),
     blast: z.number(),
-    support: z.number(),
     recommend: z.number(),
     upvote: z.number(),
   }),

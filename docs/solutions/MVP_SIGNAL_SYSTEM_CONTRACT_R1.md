@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: Founder + product engineering  
-Last updated: 2026-04-12
+Last updated: 2026-04-15
 
 ## 1) Purpose
 Define the current MVP signal system explicitly so source behavior and signal behavior stop getting mixed in runtime and review.
@@ -12,7 +12,7 @@ It narrows current MVP implementation truth using the founder locks already esta
 
 Precedence note:
 - for the broader action grammar and class taxonomy, use `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md` first
-- this document now reflects a narrower music-signal lock and contains known terminology debt around `ADD`, `SUPPORT`, and `flyer`
+- this document now reflects a narrower music-signal lock and contains known terminology debt around `ADD` and `flyer`
 - reconciliation is pending rather than complete
 
 ## 2) Core Rule
@@ -140,4 +140,4 @@ The next runtime reconciliations should use this contract to:
 - keep Print Shop and event creation source-facing
 - keep artist profiles on source actions only rather than synthetic source-level signal buttons
 - avoid treating flyers as signal classes or blast targets
-- reconcile runtime `ADD`/`SUPPORT` debt to the intended `Collect` / derived-support model
+- reconcile remaining runtime `ADD` debt to the intended `Collect` model
