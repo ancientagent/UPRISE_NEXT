@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Track } from '@uprise/types';
 import { Button } from '@uprise/ui';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
@@ -26,6 +26,7 @@ interface RadiyoPlayerPanelProps {
   isBroadcastLoading?: boolean;
   broadcastError?: string | null;
   broadcastEmptyMessage?: string | null;
+  radiyoFooter?: ReactNode;
 }
 
 export default function RadiyoPlayerPanel({
@@ -44,6 +45,7 @@ export default function RadiyoPlayerPanel({
   isBroadcastLoading = false,
   broadcastError = null,
   broadcastEmptyMessage = null,
+  radiyoFooter = null,
 }: RadiyoPlayerPanelProps) {
   const isRadiyoMode = mode === 'RADIYO';
   const wheelActions = getEngagementWheelActions(mode);
@@ -250,16 +252,20 @@ export default function RadiyoPlayerPanel({
         )}
       </div>
 
-      <div className="border-t border-white/12 bg-[#161616] px-3 py-2.5 text-[11px] text-white/64">
-        <p>
-          {isRadiyoMode
-            ? 'Tap City or State to start that broadcast. Tap the active tier again to stop.'
-            : 'Collection mode stays selection-driven. Use eject to return to RADIYO.'}
-        </p>
-        <p className="mt-1">
-          Wheel: {wheelActions.map((action) => (action.position ? `${action.position} ${action.label}` : action.label)).join(' • ')}
-        </p>
-      </div>
+      {isRadiyoMode && radiyoFooter ? (
+        <div className="border-t border-white/12 bg-[#161616] px-3 py-3 text-[11px] text-white/64">{radiyoFooter}</div>
+      ) : (
+        <div className="border-t border-white/12 bg-[#161616] px-3 py-2.5 text-[11px] text-white/64">
+          <p>
+            {isRadiyoMode
+              ? 'Tap City or State to start that broadcast. Tap the active tier again to stop.'
+              : 'Collection mode stays selection-driven. Use eject to return to RADIYO.'}
+          </p>
+          <p className="mt-1">
+            Wheel: {wheelActions.map((action) => (action.position ? `${action.position} ${action.label}` : action.label)).join(' • ')}
+          </p>
+        </div>
+      )}
     </section>
   );
 }

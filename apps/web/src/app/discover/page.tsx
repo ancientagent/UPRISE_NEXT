@@ -1016,18 +1016,259 @@ export default function DiscoverPage() {
   };
 
   const currentCityScenes = travelItems.filter(isCityScene);
+  const currentStateRollups = travelItems.filter(isStateRollup);
+  const discoverTravelFooter = (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/52">Travel</p>
+        <p className="mt-1 text-sm text-white/82">
+          Open travel to drop the map and retune controls directly under the current city/state marquee.
+        </p>
+      </div>
+      <Button
+        size="sm"
+        variant="outline"
+        className="h-auto rounded-full border-white/18 bg-white/8 px-4 py-2 text-[11px] text-white hover:bg-white/12"
+        onClick={() => setTravelOpen((value) => !value)}
+        disabled={!hasOriginContext}
+      >
+        {travelOpen ? 'Hide Travel' : 'Open Travel'}
+      </Button>
+    </div>
+  );
+  const discoverTravelPanel = travelOpen ? (
+    <div className="mt-[-1px] rounded-b-[1.2rem] border border-t-0 border-black bg-[#efefe2] p-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="max-w-2xl">
+          <p className="plot-wire-label">Travel Panel</p>
+          <h2 className="mt-1 text-lg font-semibold text-black">Move the scope without breaking community identity</h2>
+          <p className="mt-1 text-sm text-black/60">
+            Travel keeps the parent music community fixed and changes geography under the current player tier.
+          </p>
+        </div>
+        <div className="plot-wire-toolbar min-w-[260px]">
+          <p className="plot-wire-label">Origin Community</p>
+          <p className="mt-1 text-sm text-black/70">
+            {formatCommunityIdentity(
+              originScene?.city ?? null,
+              originScene?.state ?? null,
+              originMusicCommunity,
+            )}
+          </p>
+        </div>
+      </div>
+
+      {!hasOriginContext ? (
+        <div className="mt-4 rounded-[1rem] border border-black bg-[#f5e8bf] px-4 py-3 text-sm text-black">
+          Discover travel needs an active community context so the city, state, and music community are already known.
+        </div>
+      ) : null}
+
+      <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="plot-wire-toolbar">
+          <p className="plot-wire-label">Travel Search</p>
+          <input
+            value={locationQuery}
+            onChange={(event) => setLocationQuery(event.target.value)}
+            placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
+            className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
+            disabled={!hasOriginContext}
+          />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {DISCOVER_TIER_OPTIONS.map((value) => (
+            <Button
+              key={value}
+              size="sm"
+              variant="outline"
+              className={
+                tier === value
+                  ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-3 text-[11px] text-black'
+                  : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-3 text-[11px] text-black'
+              }
+              onClick={() => handleChangeTier(value)}
+              disabled={!hasOriginContext}
+            >
+              {value}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="plot-wire-card-muted plot-wire-grid-bg mt-5 p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="plot-wire-label">Map View</p>
+            <p className="mt-1 text-xs text-black/55">
+              The visual map drops from the player marquee and follows the same player scope.
+            </p>
+          </div>
+          {sceneMapError ? <p className="text-xs text-red-700">{sceneMapError}</p> : null}
+        </div>
+        <div className="h-56">
+          <SceneMap
+            points={sceneMap?.points ?? []}
+            selectedPointId={activeSceneId}
+            onSelectPoint={(point) => {
+              if (point.kind === 'community') {
+                void handleTuneSceneById(point.id);
+              }
+            }}
+          />
+        </div>
+      </div>
+
+      {travelLoading ? <p className="mt-4 text-sm text-black/60">Loading Uprises for this scope...</p> : null}
+      {travelError ? <p className="mt-4 text-sm text-red-700">{travelError}</p> : null}
+      {token && isVisitor && activeSceneId ? (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[1rem] border border-black bg-[#b8d63b] px-4 py-3 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.2)]">
+          <p>
+            Travel active. You are tuned to {activeSceneName} and can visit the community now.
+          </p>
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+          >
+            <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
+          </Button>
+        </div>
+      ) : null}
+
+      {currentCityScenes.length > 0 ? (
+        <ul className="mt-4 space-y-3">
+          {currentCityScenes.map((item) => (
+            <li key={item.sceneId} className="plot-wire-list-item">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="max-w-2xl">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-base font-semibold text-black">{item.name}</p>
+                    <span className="plot-wire-chip">{getCitySceneStatusLabel(item, tunedSceneId)}</span>
+                    <span className="plot-wire-chip">{formatMusicCommunityLabel(item.musicCommunity, originMusicCommunity)}</span>
+                  </div>
+                  <dl className="mt-3 grid gap-1 text-sm text-black/60">
+                    <div className="flex flex-wrap gap-2">
+                      <dt className="plot-wire-label">Location</dt>
+                      <dd>{formatSceneLocation(item.city, item.state)}</dd>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <dt className="plot-wire-label">Members</dt>
+                      <dd>{item.memberCount.toLocaleString()}</dd>
+                    </div>
+                  </dl>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={
+                      tunedSceneId === item.sceneId
+                        ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
+                        : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
+                    }
+                    disabled={!token || tuningSceneId === item.sceneId}
+                    onClick={() => void handleTuneSceneById(item.sceneId)}
+                  >
+                    {tuningSceneId === item.sceneId ? 'Retuning...' : tunedSceneId === item.sceneId ? 'Listening' : 'Retune'}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                    disabled={!token || savingUpriseSceneId === item.sceneId}
+                    onClick={() => void handleSaveUprise(item.sceneId)}
+                  >
+                    {savingUpriseSceneId === item.sceneId ? 'Adding...' : 'Add'}
+                  </Button>
+                  {token ? (
+                    <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                      <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" disabled>
+                      Visit {item.name}
+                    </Button>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                    disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
+                    onClick={() => void handleSetHomeScene(item)}
+                  >
+                    {savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}
+                  </Button>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {currentStateRollups.length > 0 ? (
+        <div className="mt-4 space-y-3">
+          {currentStateRollups.map((item) => (
+            <div key={item.state} className="plot-wire-list-item">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-base font-semibold text-black">{item.state} {item.musicCommunity}</p>
+                  <p className="mt-1 text-sm text-black/60">
+                    {item.citySceneCount} city scenes • {item.totalMembers.toLocaleString()} total members
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                  onClick={() => {
+                    handleChangeTier('state');
+                    setLocationQuery(item.state);
+                  }}
+                >
+                  Browse {item.state}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  ) : null;
 
   return (
     <main className="plot-wire-page pb-10">
       <div className="plot-wire-frame max-w-6xl space-y-5">
-        <header className="plot-wire-card p-6">
+        <section className="space-y-0">
+          <RadiyoPlayerPanel
+            mode="RADIYO"
+            onCollectionEject={() => undefined}
+            rotationPool={rotationPool}
+            onRotationPoolChange={setRotationPool}
+            selectedTier={tier}
+            activeBroadcastTier={tier}
+            onTierChange={handleChangeTier}
+            broadcastLabel={currentBroadcastLabel}
+            collectionTitle={null}
+            trackQueue={currentRotationTracks}
+            currentTrack={currentBroadcastTrack}
+            currentTrackCount={currentRotationTracks.length}
+            isBroadcastLoading={broadcastLoading}
+            broadcastError={broadcastError}
+            broadcastEmptyMessage={broadcastEmptyMessage}
+            radiyoFooter={discoverTravelFooter}
+          />
+          {discoverTravelPanel}
+        </section>
+
+        <header className="plot-wire-panel p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-3xl">
               <p className="plot-wire-label">Discover</p>
-              <h1 className="mt-2 text-3xl font-semibold text-black">Discover Uprises, Artists, and Songs</h1>
+              <h1 className="mt-2 text-2xl font-semibold text-black">Community snippets under the current player scope</h1>
               <p className="mt-2 text-sm text-black/60">
-                One listening scope governs search, Popular Singles, Recommendations, and Travel. Change the player
-                tier when you want the scope to widen.
+                Discover stays read-only and descriptive here. The player marquee defines the city/state scope, and the rest
+                of the page surfaces snippets inside that same broadcast context.
               </p>
             </div>
             <div className="plot-wire-toolbar min-w-[240px]">
@@ -1198,245 +1439,6 @@ export default function DiscoverPage() {
           </HorizontalRail>
         </section>
 
-        <section className="space-y-0">
-          <RadiyoPlayerPanel
-            mode="RADIYO"
-            onCollectionEject={() => undefined}
-            rotationPool={rotationPool}
-            onRotationPoolChange={setRotationPool}
-            selectedTier={tier}
-            activeBroadcastTier={tier}
-            onTierChange={handleChangeTier}
-            broadcastLabel={currentBroadcastLabel}
-            collectionTitle={null}
-            trackQueue={currentRotationTracks}
-            currentTrack={currentBroadcastTrack}
-            currentTrackCount={currentRotationTracks.length}
-            isBroadcastLoading={broadcastLoading}
-            broadcastError={broadcastError}
-            broadcastEmptyMessage={broadcastEmptyMessage}
-          />
-
-          <div className="mt-[-1px] rounded-b-[1rem] border border-t-0 border-black bg-[#161616] px-4 py-4 text-white">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/52">Travel</p>
-                <p className="mt-1 text-sm text-white/82">
-                  Travel stays attached to the player. Open it when you want the map and retune controls to drop below the current scope.
-                </p>
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-auto rounded-full border-white/18 bg-white/8 px-4 py-2 text-[11px] text-white hover:bg-white/12"
-                onClick={() => setTravelOpen((value) => !value)}
-                disabled={!hasOriginContext}
-              >
-                {travelOpen ? 'Hide Travel' : 'Open Travel'}
-              </Button>
-            </div>
-          </div>
-
-          {travelOpen ? (
-            <div className="mt-[-1px] rounded-b-[1.2rem] border border-t-0 border-black bg-[#efefe2] p-4">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="max-w-2xl">
-                  <p className="plot-wire-label">Travel Panel</p>
-                  <h2 className="mt-1 text-lg font-semibold text-black">Move the scope without breaking community identity</h2>
-                  <p className="mt-1 text-sm text-black/60">
-                    Travel keeps the parent music community fixed and changes geography under the current player tier.
-                  </p>
-                </div>
-                <div className="plot-wire-toolbar min-w-[260px]">
-                  <p className="plot-wire-label">Origin Community</p>
-                  <p className="mt-1 text-sm text-black/70">
-                    {formatCommunityIdentity(
-                      originScene?.city ?? null,
-                      originScene?.state ?? null,
-                      originMusicCommunity,
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              {!hasOriginContext ? (
-                <div className="mt-4 rounded-[1rem] border border-black bg-[#f5e8bf] px-4 py-3 text-sm text-black">
-                  Discover travel needs an active community context so the city, state, and music community are already known.
-                </div>
-              ) : null}
-
-              <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
-                <div className="plot-wire-toolbar">
-                  <p className="plot-wire-label">Travel Search</p>
-                  <input
-                    value={locationQuery}
-                    onChange={(event) => setLocationQuery(event.target.value)}
-                    placeholder={tier === 'city' ? 'Search city' : tier === 'state' ? 'Search state' : 'Browse nationwide'}
-                    className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
-                    disabled={!hasOriginContext}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {DISCOVER_TIER_OPTIONS.map((value) => (
-                    <Button
-                      key={value}
-                      size="sm"
-                      variant="outline"
-                      className={
-                        tier === value
-                          ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-3 text-[11px] text-black'
-                          : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-3 text-[11px] text-black'
-                      }
-                      onClick={() => handleChangeTier(value)}
-                      disabled={!hasOriginContext}
-                    >
-                      {value}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="plot-wire-card-muted plot-wire-grid-bg mt-5 p-4">
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="plot-wire-label">Map View</p>
-                    <p className="mt-1 text-xs text-black/55">
-                      The visual map drops from the Travel bar and follows the same player scope.
-                    </p>
-                  </div>
-                  {sceneMapError ? <p className="text-xs text-red-700">{sceneMapError}</p> : null}
-                </div>
-                <div className="h-56">
-                  <SceneMap
-                    points={sceneMap?.points ?? []}
-                    selectedPointId={activeSceneId}
-                    onSelectPoint={(point) => {
-                      if (point.kind === 'community') {
-                        void handleTuneSceneById(point.id);
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-
-              {travelLoading ? <p className="mt-4 text-sm text-black/60">Loading Uprises for this scope...</p> : null}
-              {travelError ? <p className="mt-4 text-sm text-red-700">{travelError}</p> : null}
-              {token && isVisitor && activeSceneId ? (
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[1rem] border border-black bg-[#b8d63b] px-4 py-3 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.2)]">
-                  <p>
-                    Travel active. You are tuned to {activeSceneName} and can visit the community now.
-                  </p>
-                  <Button
-                    asChild
-                    size="sm"
-                    variant="outline"
-                    className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                  >
-                    <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
-                  </Button>
-                </div>
-              ) : null}
-
-              {currentCityScenes.length > 0 ? (
-                <ul className="mt-4 space-y-3">
-                  {currentCityScenes.map((item) => (
-                    <li key={item.sceneId} className="plot-wire-list-item">
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div className="max-w-2xl">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-base font-semibold text-black">{item.name}</p>
-                            <span className="plot-wire-chip">{getCitySceneStatusLabel(item, tunedSceneId)}</span>
-                            <span className="plot-wire-chip">{formatMusicCommunityLabel(item.musicCommunity, originMusicCommunity)}</span>
-                          </div>
-                          <dl className="mt-3 grid gap-1 text-sm text-black/60">
-                            <div className="flex flex-wrap gap-2">
-                              <dt className="plot-wire-label">Location</dt>
-                              <dd>{formatSceneLocation(item.city, item.state)}</dd>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              <dt className="plot-wire-label">Members</dt>
-                              <dd>{item.memberCount.toLocaleString()}</dd>
-                            </div>
-                          </dl>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className={
-                              tunedSceneId === item.sceneId
-                                ? 'plot-wire-chip h-auto rounded-full bg-[#b8d63b] px-4 py-2 text-[11px] text-black'
-                                : 'plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black'
-                            }
-                            disabled={!token || tuningSceneId === item.sceneId}
-                            onClick={() => void handleTuneSceneById(item.sceneId)}
-                          >
-                            {tuningSceneId === item.sceneId ? 'Retuning...' : tunedSceneId === item.sceneId ? 'Listening' : 'Retune'}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                            disabled={!token || savingUpriseSceneId === item.sceneId}
-                            onClick={() => void handleSaveUprise(item.sceneId)}
-                          >
-                            {savingUpriseSceneId === item.sceneId ? 'Adding...' : 'Add'}
-                          </Button>
-                          {token ? (
-                            <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
-                              <Link href={`/community/${item.sceneId}`}>Visit {item.name}</Link>
-                            </Button>
-                          ) : (
-                            <Button size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" disabled>
-                              Visit {item.name}
-                            </Button>
-                          )}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                            disabled={!token || item.isHomeScene || savingHomeSceneId === item.sceneId}
-                            onClick={() => void handleSetHomeScene(item)}
-                          >
-                            {savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}
-                          </Button>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-
-              {travelItems.some(isStateRollup) ? (
-                <div className="mt-4 space-y-3">
-                  {travelItems.filter(isStateRollup).map((item) => (
-                    <div key={item.state} className="plot-wire-list-item">
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div>
-                          <p className="text-base font-semibold text-black">{item.state} {item.musicCommunity}</p>
-                          <p className="mt-1 text-sm text-black/60">
-                            {item.citySceneCount} city scenes • {item.totalMembers.toLocaleString()} total members
-                          </p>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
-                          onClick={() => {
-                            handleChangeTier('state');
-                            setLocationQuery(item.state);
-                          }}
-                        >
-                          Browse {item.state}
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-        </section>
       </div>
     </main>
   );

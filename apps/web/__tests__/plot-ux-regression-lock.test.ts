@@ -97,6 +97,8 @@ describe('/plot UX regression lock', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
+    expect(playerSource).toContain('radiyoFooter?: ReactNode;');
+    expect(playerSource).toContain('isRadiyoMode && radiyoFooter ? (');
     expect(playerSource).toContain('Tap City or State to start that broadcast. Tap the active tier again to stop.');
     expect(playerSource).toContain('Collection mode stays selection-driven. Use eject to return to RADIYO.');
     expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");

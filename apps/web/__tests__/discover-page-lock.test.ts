@@ -35,13 +35,20 @@ describe('/discover current-community lock', () => {
     expect(discoverSource).not.toContain('Sign in is required to search this community and open its full Discover sections.');
   });
 
-  it('locks Discover to one search bar, Popular Singles, Recommendations, and player-attached Travel', () => {
+  it('locks Discover to a top player marquee with player-attached Travel and snippets below', () => {
     const discoverSource = readRepoFile('src/app/discover/page.tsx');
+    const playerIndex = discoverSource.indexOf('<RadiyoPlayerPanel');
+    const searchIndex = discoverSource.indexOf('Artist and song search');
 
+    expect(playerIndex).toBeGreaterThan(-1);
+    expect(searchIndex).toBeGreaterThan(-1);
+    expect(playerIndex).toBeLessThan(searchIndex);
+    expect(discoverSource).toContain('radiyoFooter={discoverTravelFooter}');
+    expect(discoverSource).toContain('Open travel to drop the map and retune controls directly under the current city/state marquee.');
     expect(discoverSource).toContain('Artist and song search');
     expect(discoverSource).toContain('Popular Singles');
     expect(discoverSource).toContain('Recommendations');
-    expect(discoverSource).toContain('Travel stays attached to the player.');
+    expect(discoverSource).toContain('The visual map drops from the player marquee and follows the same player scope.');
     expect(discoverSource).toContain("{travelOpen ? 'Hide Travel' : 'Open Travel'}");
     expect(discoverSource).toContain('Travel active. You are tuned to {activeSceneName} and can visit the community now.');
     expect(discoverSource).not.toContain('Trending');
