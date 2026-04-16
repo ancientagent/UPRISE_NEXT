@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added `apps/api/scripts/seed-artist-fixture-roster.mjs` plus `pnpm --filter api run seed:artist-fixture-roster`, providing a deterministic 10-account artist QA roster with linked `ArtistBand` sources for local feed/profile/discovery testing; see `docs/handoff/2026-04-16_artist-fixture-roster-seed.md`.
 - Deferred live Discover for the local-community-only MVP: `/discover` now renders as a `Coming Soon` placeholder, shell entrypoints are disabled, and useful discovery/statistics material is explicitly redirected to occasional inserted feed moments rather than a fixed destination; see `docs/handoff/2026-04-16_discover-deferred-local-only-mvp.md`.
 - Removed local artist/song search from Discover and locked the route back to a passive community-reading surface, with community-native lookup explicitly deferred to the community page instead; see `docs/handoff/2026-04-16_discover-passive-surface-no-search.md`.
 - Moved Discover to a top-anchored player marquee and folded the travel trigger into the player footer area so travel now occupies the old broadcast-prompt slot instead of appearing as a separate glued-on bar below the player; see `docs/handoff/2026-04-16_discover-top-player-travel-implementation.md`.
