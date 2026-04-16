@@ -9,6 +9,7 @@
 Defines explicit, non-algorithmic discovery flows for changing listening context across Scenes and tiers. Discovery is user-initiated only and does not alter civic authority unless the user explicitly changes Home Scene.
 
 Community identity is represented by `city + state + music community`.
+This spec governs scene-switching and travel rules inside Discover, not the full visual hierarchy of the Discover page. Discover remains a broader player-anchored discovery surface under current founder locks.
 
 ## User Roles & Use Cases
 - Listener explores other Scenes via explicit controls (swipe, manual map selection, tier toggle).
@@ -22,10 +23,8 @@ Community identity is represented by `city + state + music community`.
   - Manual Scene selection in Discover map/list.
   - Tier toggling (city/state/national).
 - No recommendation feed, ranking, or personalization in discovery flows.
-- Discovery search scope is scene/community only for MVP:
-  - no artist search entry
-  - no band search entry
-  - no artist/band result-state contract in MVP
+- Discovery search remains bounded by the inherited current player/community scope for MVP.
+- Discover may include artist/song discovery inside that inherited scope as long as it does not create a second independent context model.
 - Discovery does not imply “join” semantics:
   - User can visit/tune to a Scene.
   - User can set Home Scene only through explicit state change action.
@@ -53,8 +52,11 @@ Community identity is represented by `city + state + music community`.
   - action is separate from tune transport context
 - API endpoint `POST /discover/tune` persists tuned-scene transport context on the user record.
 - Web discovery surface is implemented at `apps/web/src/app/discover/page.tsx`:
+  - one dominant player/title card anchoring the page
   - explicit scope toggle (`city/state/national`)
   - inherited current-community context (`city + state + music community`) for travel
+  - artist/song search inside the current Discover/player scope
+  - community discovery snippets materialized below the top player/title card
   - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
   - Home Scene action requires explicit confirmation copy
   - read-only context chip shows Home Scene, Tuned Scene, and Visitor/Local status
@@ -131,10 +133,12 @@ Community identity is represented by `city + state + music community`.
 
 ## Web UI / Client Behavior
 - Discover surface must show:
+  - one dominant top player/title card that establishes the current community scope
   - inherited current community identity (`city + state + music community`)
   - scope toggle (`city/state/national`)
   - current tuned Scene vs Home Scene badges
   - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status
+- Search and snippet content must remain subordinate to the player/title card and inherit the same current scope.
 - Access-limit/entitlement messaging is deferred in MVP until pricing/entitlement contracts are locked in canon/spec.
 - If a Discover subsection/header uses `Recommended`, it must not imply predictive personalization or system-personalized recommendation behavior.
 - Tune action:

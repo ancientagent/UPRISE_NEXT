@@ -188,19 +188,18 @@ For MVP this means:
 - `national` Discover scope is deferred from MVP until population justifies it
 
 ## 6) Discover Core Structure
-Discover includes, top to bottom:
-1. one top search bar
-2. `Popular Singles`
-3. `Recommendations`
-4. the persistent player
-5. a `Travel` control attached to the bottom of the player
+Discover is anchored by one dominant top card:
+1. an expanded `community player card` that also acts as the current community title card
+2. player-attached `Travel` at the bottom edge of that card
+3. a downward-materializing stack of contextual discovery snippets under the player/title card
 
 Discover does **not** use a split primary model where travel/community search is one top section and local artist/song search is another independent top section.
+Discover does **not** treat search, recommendations, and signal rails as peer headers competing with the player. The player/title card owns the page hierarchy, and everything else is secondary to that anchor.
 
 ## 7) Search Model
 ### 7.1 One search bar
-- Discover uses one top search bar.
-- That search bar is for artist/song search in the current listening scope.
+- Discover uses one search entry inside the top player/title card.
+- That search entry is for artist/song search in the current listening scope.
 - Search results are tier-aware and must follow the current player/listening tier.
 - Search is not a generic global search.
 - Search does not discard current community context.
@@ -217,7 +216,7 @@ Discover does **not** use a split primary model where travel/community search is
 
 ## 8) Content Sections
 ### 8.1 Popular Singles
-- `Popular Singles` appears directly under search.
+- `Popular Singles` appears as a secondary snippet below the top player/title card.
 - It is the primary music-discovery rail in Discover.
 - It surfaces high-engagement single/song signals in the current Discover/player scope.
 - It is signal-level surfacing, not source-level popularity and not recommendation-object surfacing.
@@ -237,7 +236,7 @@ Discover does **not** use a split primary model where travel/community search is
   - preserve origin city/community identity on those surfaced singles so city communities benefit from the exposure
 
 ### 8.2 Recommendations Row / Carousel
-- Below `Popular Singles`, Discover shows a row/carousel of users and their active recommendations.
+- Below `Popular Singles`, Discover shows a row/carousel of users and their active recommendations as another contextual snippet.
 - This row reuses the canonical recommendation grammar (avatar + `Check out "signal"` balloon).
 - This is a listener-to-listener discovery surface, not a social leaderboard and not a separate recommendation card system.
 - It helps the user understand what people in the current scope are explicitly pointing at.
@@ -259,6 +258,7 @@ This lock does **not** ban founder-defined recommendation or signal sections tha
 ## 9) Player And Travel Lock
 ### 9.1 Player persistence
 - The player persists on Discover.
+- The player/title card is the dominant top object on Discover.
 - The player ties the user to the tier they are currently listening to.
 - Discover must respect that tier instead of creating an unrelated parallel tier/travel model.
 
@@ -270,6 +270,8 @@ This lock does **not** ban founder-defined recommendation or signal sections tha
 
 ### 9.3 Travel expansion behavior
 - When the user activates `Travel`, the map expands downward from the bottom of the player.
+- The map expansion is part of the top player/title card experience, not a detached module.
+- Snippet content remains materially below that top expansion instead of competing for top-of-page ownership.
 - The map scope/zoom is determined by the current player/listening tier.
 - If the user is listening at `city` tier:
   - the travel map expands to the state-level geography around that current context.

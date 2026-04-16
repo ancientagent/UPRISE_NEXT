@@ -22,27 +22,31 @@ Define the stable contract for `Discover` as the right-side bottom-nav destinati
 - Search scope is bounded by the current player tier/context.
 - Travel is attached to the bottom of the player.
 - The map expands downward from the bottom of the player.
+- The top player card doubles as the current community title card for Discover.
+- Everything below the player/title card is a secondary snippet or preview within that current community discovery scope.
 
 ## Core Structure
 Top to bottom:
-1. one top artist/song search
-2. `Popular Signals`
-3. active participants with avatar + text bubble recommendations
-4. persistent player
-5. player-attached `Travel`
-6. downward-expanding map
+1. one dominant `community player card` at the top
+2. one artist/song search entry inside that player/title card
+3. player-attached `Travel`
+4. downward-expanding map from that card
+5. `Popular Signals` and other community discovery snippets materialized below
+6. active participants with avatar + text bubble recommendations below as snippet content
 
 ## What Must Remain True
 - Discover remains a separate bottom-nav destination from Home.
 - Discover remains tied to the player.
 - Discover does not split into separate primary travel search and local search systems.
 - Search / Popular Signals / active participants / map share the same current Discover/player scope.
+- The player/title card remains the visual and structural page anchor rather than one module among many co-equal sections.
 
 ## What Discover Must Not Become
 - not a generic global search surface
 - not a streaming-clone browse page
 - not a second Home/Plot system
 - not a detached map tool unrelated to player context
+- not a flat stack of equal-weight cards where the player competes with other section headers for ownership of the page
 
 ## Known Drift Patterns
 - separate travel search
