@@ -1,9 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, RotationPool } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 const DEFAULT_PASSWORD = process.env.UPRISE_ARTIST_FIXTURE_PASSWORD || 'ArtistFixture123!';
 const DEFAULT_COUNT = 10;
+const DEV_AUDIO_URL = process.env.UPRISE_DEV_AUDIO_URL || 'http://127.0.0.1:3000/dev-audio/qa-broadcast-tone-a.wav';
 
 const ARTIST_FIXTURE_ROSTER = [
   { displayName: 'Signal Static', stageName: 'Signal Static' },
@@ -16,6 +17,63 @@ const ARTIST_FIXTURE_ROSTER = [
   { displayName: 'Midnight Lease', stageName: 'Midnight Lease' },
   { displayName: 'Rust Choir', stageName: 'Rust Choir' },
   { displayName: 'Velvet Circuit', stageName: 'Velvet Circuit' },
+];
+
+const SINGLE_SIGNAL_FIXTURES = [
+  {
+    ownerIndex: 0,
+    title: 'Static on the Southside',
+    addUserIndexes: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    blastUserIndexes: [2, 5, 8],
+    recommendUserIndexes: [3, 7],
+    riseEnteredPoolAt: '2026-04-15T20:00:00.000Z',
+  },
+  {
+    ownerIndex: 1,
+    title: 'Mercy Circuit',
+    addUserIndexes: [0, 2, 3, 4, 5, 6, 7, 8],
+    blastUserIndexes: [0, 4, 6],
+    recommendUserIndexes: [5],
+    riseEnteredPoolAt: '2026-04-14T20:00:00.000Z',
+  },
+  {
+    ownerIndex: 2,
+    title: 'Ashline Signal',
+    addUserIndexes: [0, 1, 3, 4, 5, 6, 7],
+    blastUserIndexes: [1, 6],
+    recommendUserIndexes: [4],
+  },
+  {
+    ownerIndex: 3,
+    title: 'Youth Frequency',
+    addUserIndexes: [0, 1, 2, 4, 5, 6],
+    blastUserIndexes: [2, 5],
+    recommendUserIndexes: [],
+  },
+  {
+    ownerIndex: 4,
+    title: 'Bloom Relay',
+    addUserIndexes: [0, 1, 2, 3, 5],
+    blastUserIndexes: [1],
+    recommendUserIndexes: [],
+  },
+];
+
+const UPRISE_SIGNAL_FIXTURES = [
+  {
+    ownerIndex: 5,
+    title: 'Austin Punk Uprise Dispatch',
+    addUserIndexes: [0, 1, 2, 3],
+    blastUserIndexes: [4, 7],
+    recommendUserIndexes: [8],
+  },
+  {
+    ownerIndex: 6,
+    title: 'State Line Uprise Call',
+    addUserIndexes: [2, 3, 4],
+    blastUserIndexes: [0, 5],
+    recommendUserIndexes: [1],
+  },
 ];
 
 function parseArgs(argv) {
@@ -107,6 +165,51 @@ async function resolveCityScene({ communityId, city, state, musicCommunity }) {
   }
 
   return fallback;
+}
+
+async function ensureStateScene(scene, createdById) {
+  if (!scene.state || !scene.musicCommunity) {
+    return null;
+  }
+
+  const existing = await prisma.community.findFirst({
+    where: {
+      tier: 'state',
+      state: scene.state,
+      musicCommunity: scene.musicCommunity,
+    },
+    select: {
+      id: true,
+      name: true,
+      city: true,
+      state: true,
+      musicCommunity: true,
+      tier: true,
+    },
+  });
+
+  if (existing) return existing;
+
+  return prisma.community.create({
+    data: {
+      name: `${scene.state} ${scene.musicCommunity}`,
+      slug: slugify(`${scene.state}-${scene.musicCommunity}-fixture-state`),
+      description: 'Fixture state scene for artist signal activity QA.',
+      createdById,
+      state: scene.state,
+      musicCommunity: scene.musicCommunity,
+      tier: 'state',
+      isActive: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      city: true,
+      state: true,
+      musicCommunity: true,
+      tier: true,
+    },
+  });
 }
 
 async function upsertFixtureUser({ entry, index, passwordHash, scene, domain }) {
@@ -230,6 +333,325 @@ async function ensureArtistBand({ user, entry, scene }) {
   return { artistBand, created: true };
 }
 
+async function upsertSignal({ type, title, ownerUserId, ownerArtistBandId, ownerArtistBandName, scene }) {
+  const existing = await prisma.signal.findFirst({
+    where: {
+      type,
+      communityId: scene.id,
+      createdById: ownerUserId,
+    },
+    select: {
+      id: true,
+      metadata: true,
+    },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  const metadata = {
+    title,
+    artist: ownerArtistBandName,
+    artistBandId: ownerArtistBandId,
+    kind: type,
+  };
+
+  if (existing) {
+    return prisma.signal.update({
+      where: { id: existing.id },
+      data: {
+        metadata,
+      },
+      select: {
+        id: true,
+        type: true,
+        metadata: true,
+        communityId: true,
+      },
+    });
+  }
+
+  return prisma.signal.create({
+    data: {
+      type,
+      communityId: scene.id,
+      createdById: ownerUserId,
+      metadata,
+    },
+    select: {
+      id: true,
+      type: true,
+      metadata: true,
+      communityId: true,
+    },
+  });
+}
+
+async function ensureTrackForSingle({ title, artistName, uploaderUserId, artistBandId, scene }) {
+  const existing = await prisma.track.findFirst({
+    where: {
+      title,
+      artist: artistName,
+      communityId: scene.id,
+      artistBandId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (existing) {
+    return prisma.track.update({
+      where: { id: existing.id },
+      data: {
+        status: 'ready',
+        fileUrl: DEV_AUDIO_URL,
+        duration: 180,
+      },
+      select: { id: true, title: true, artist: true },
+    });
+  }
+
+  return prisma.track.create({
+    data: {
+      title,
+      artist: artistName,
+      artistBandId,
+      album: 'Fixture Singles',
+      duration: 180,
+      fileUrl: DEV_AUDIO_URL,
+      uploadedById: uploaderUserId,
+      communityId: scene.id,
+      status: 'ready',
+    },
+    select: { id: true, title: true, artist: true },
+  });
+}
+
+async function ensureRotationEntry({ trackId, sceneId, enteredPoolAt }) {
+  const existing = await prisma.rotationEntry.findFirst({
+    where: { trackId, sceneId },
+    select: { id: true },
+  });
+
+  if (existing) {
+    return prisma.rotationEntry.update({
+      where: { id: existing.id },
+      data: {
+        pool: RotationPool.MAIN_ROTATION,
+        enteredPoolAt,
+        recurrenceScore: 0,
+        graduatedAt: null,
+      },
+      select: { id: true },
+    });
+  }
+
+  return prisma.rotationEntry.create({
+    data: {
+      trackId,
+      sceneId,
+      pool: RotationPool.MAIN_ROTATION,
+      enteredPoolAt,
+      recurrenceScore: 0,
+    },
+    select: { id: true },
+  });
+}
+
+async function ensureCollectionAdd({ userId, signalId, shelf }) {
+  const collection = await prisma.collection.upsert({
+    where: { userId_name: { userId, name: shelf } },
+    update: {},
+    create: { userId, name: shelf },
+    select: { id: true },
+  });
+
+  await prisma.collectionItem.upsert({
+    where: {
+      collectionId_signalId: {
+        collectionId: collection.id,
+        signalId,
+      },
+    },
+    update: {},
+    create: {
+      collectionId: collection.id,
+      signalId,
+    },
+  });
+
+  return prisma.signalAction.upsert({
+    where: {
+      userId_signalId_type: {
+        userId,
+        signalId,
+        type: 'ADD',
+      },
+    },
+    update: {},
+    create: {
+      userId,
+      signalId,
+      type: 'ADD',
+    },
+    select: { id: true },
+  });
+}
+
+async function ensureSignalAction({ userId, signalId, type }) {
+  return prisma.signalAction.upsert({
+    where: {
+      userId_signalId_type: {
+        userId,
+        signalId,
+        type,
+      },
+    },
+    update: {},
+    create: {
+      userId,
+      signalId,
+      type,
+    },
+    select: { id: true, type: true },
+  });
+}
+
+async function seedSignalActivity({ roster, cityScene, stateScene }) {
+  const signalSummaries = [];
+
+  for (const fixture of SINGLE_SIGNAL_FIXTURES) {
+    const owner = roster[fixture.ownerIndex];
+    if (!owner) continue;
+
+    const signal = await upsertSignal({
+      type: 'single',
+      title: fixture.title,
+      ownerUserId: owner.user.id,
+      ownerArtistBandId: owner.artistBand.id,
+      ownerArtistBandName: owner.artistBand.name,
+      scene: cityScene,
+    });
+
+    for (const userIndex of fixture.addUserIndexes) {
+      const account = roster[userIndex];
+      if (!account) continue;
+      await ensureCollectionAdd({
+        userId: account.user.id,
+        signalId: signal.id,
+        shelf: 'singles',
+      });
+    }
+
+    for (const userIndex of fixture.blastUserIndexes) {
+      const account = roster[userIndex];
+      if (!account) continue;
+      await ensureSignalAction({
+        userId: account.user.id,
+        signalId: signal.id,
+        type: 'BLAST',
+      });
+    }
+
+    for (const userIndex of fixture.recommendUserIndexes) {
+      const account = roster[userIndex];
+      if (!account) continue;
+      await ensureSignalAction({
+        userId: account.user.id,
+        signalId: signal.id,
+        type: 'RECOMMEND',
+      });
+    }
+
+    let rise = null;
+    if (stateScene && fixture.riseEnteredPoolAt) {
+      const track = await ensureTrackForSingle({
+        title: fixture.title,
+        artistName: owner.artistBand.name,
+        uploaderUserId: owner.user.id,
+        artistBandId: owner.artistBand.id,
+        scene: cityScene,
+      });
+      await ensureRotationEntry({
+        trackId: track.id,
+        sceneId: stateScene.id,
+        enteredPoolAt: new Date(fixture.riseEnteredPoolAt),
+      });
+      rise = {
+        stateSceneId: stateScene.id,
+        enteredPoolAt: fixture.riseEnteredPoolAt,
+        trackId: track.id,
+      };
+    }
+
+    signalSummaries.push({
+      signalId: signal.id,
+      type: signal.type,
+      title: fixture.title,
+      ownerArtistBandId: owner.artistBand.id,
+      adds: fixture.addUserIndexes.length,
+      blasts: fixture.blastUserIndexes.length,
+      recommends: fixture.recommendUserIndexes.length,
+      rise,
+    });
+  }
+
+  for (const fixture of UPRISE_SIGNAL_FIXTURES) {
+    const owner = roster[fixture.ownerIndex];
+    if (!owner) continue;
+
+    const signal = await upsertSignal({
+      type: 'uprise',
+      title: fixture.title,
+      ownerUserId: owner.user.id,
+      ownerArtistBandId: owner.artistBand.id,
+      ownerArtistBandName: owner.artistBand.name,
+      scene: cityScene,
+    });
+
+    for (const userIndex of fixture.addUserIndexes) {
+      const account = roster[userIndex];
+      if (!account) continue;
+      await ensureCollectionAdd({
+        userId: account.user.id,
+        signalId: signal.id,
+        shelf: 'uprises',
+      });
+    }
+
+    for (const userIndex of fixture.blastUserIndexes) {
+      const account = roster[userIndex];
+      if (!account) continue;
+      await ensureSignalAction({
+        userId: account.user.id,
+        signalId: signal.id,
+        type: 'BLAST',
+      });
+    }
+
+    for (const userIndex of fixture.recommendUserIndexes) {
+      const account = roster[userIndex];
+      if (!account) continue;
+      await ensureSignalAction({
+        userId: account.user.id,
+        signalId: signal.id,
+        type: 'RECOMMEND',
+      });
+    }
+
+    signalSummaries.push({
+      signalId: signal.id,
+      type: signal.type,
+      title: fixture.title,
+      ownerArtistBandId: owner.artistBand.id,
+      adds: fixture.addUserIndexes.length,
+      blasts: fixture.blastUserIndexes.length,
+      recommends: fixture.recommendUserIndexes.length,
+    });
+  }
+
+  return signalSummaries;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const count = Math.max(1, Math.min(DEFAULT_COUNT, Number.parseInt(args.count ?? String(DEFAULT_COUNT), 10) || DEFAULT_COUNT));
@@ -260,6 +682,13 @@ async function main() {
     });
   }
 
+  const stateScene = await ensureStateScene(scene, results[0]?.user.id ?? null);
+  const signals = await seedSignalActivity({
+    roster: results,
+    cityScene: scene,
+    stateScene,
+  });
+
   console.log(
     JSON.stringify(
       {
@@ -270,8 +699,17 @@ async function main() {
           state: scene.state,
           musicCommunity: scene.musicCommunity,
         },
+        stateScene: stateScene
+          ? {
+              id: stateScene.id,
+              name: stateScene.name,
+              state: stateScene.state,
+              musicCommunity: stateScene.musicCommunity,
+            }
+          : null,
         password: args.password ?? DEFAULT_PASSWORD,
         accounts: results,
+        signals,
       },
       null,
       2,
