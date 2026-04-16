@@ -22,35 +22,39 @@ describe('/discover current-community lock', () => {
     expect(discoverSource).toContain('isVisitor: Boolean(');
   });
 
-  it('does not hard-gate current-community reads on auth when active scene context exists', () => {
+  it('does not hard-gate passive current-community reads on auth when active scene context exists', () => {
     const discoverSource = readRepoFile('src/app/discover/page.tsx');
 
     expect(discoverSource).toContain('const localContextReady = Boolean(activeSceneId || hasOriginContext);');
     expect(discoverSource).toContain('if (!localContextReady) {');
     expect(discoverSource).toContain('getCommunityDiscoverHighlights(');
-    expect(discoverSource).toContain('searchCommunityDiscover(');
     expect(discoverSource).toContain('tier,');
-    expect(discoverSource).toContain('disabled={!localContextReady}');
+    expect(discoverSource).toContain('Community-native lookup belongs on the community page instead of this surface.');
     expect(discoverSource).toContain('setHighlights(emptyHighlights);');
+    expect(discoverSource).not.toContain('searchCommunityDiscover(');
     expect(discoverSource).not.toContain('Sign in is required to search this community and open its full Discover sections.');
   });
 
-  it('locks Discover to a top player marquee with player-attached Travel and snippets below', () => {
+  it('locks Discover to a top player marquee with player-attached Travel and passive snippets below', () => {
     const discoverSource = readRepoFile('src/app/discover/page.tsx');
     const playerIndex = discoverSource.indexOf('<RadiyoPlayerPanel');
-    const searchIndex = discoverSource.indexOf('Artist and song search');
+    const snippetsIndex = discoverSource.indexOf('Community snippets under the current player scope');
 
     expect(playerIndex).toBeGreaterThan(-1);
-    expect(searchIndex).toBeGreaterThan(-1);
-    expect(playerIndex).toBeLessThan(searchIndex);
+    expect(snippetsIndex).toBeGreaterThan(-1);
+    expect(playerIndex).toBeLessThan(snippetsIndex);
     expect(discoverSource).toContain('radiyoFooter={discoverTravelFooter}');
     expect(discoverSource).toContain('Open travel to drop the map and retune controls directly under the current city/state marquee.');
-    expect(discoverSource).toContain('Artist and song search');
+    expect(discoverSource).toContain('Discover stays passive here');
+    expect(discoverSource).toContain('Community-native lookup belongs on the community page instead of this surface.');
     expect(discoverSource).toContain('Popular Singles');
     expect(discoverSource).toContain('Recommendations');
     expect(discoverSource).toContain('The visual map drops from the player marquee and follows the same player scope.');
     expect(discoverSource).toContain("{travelOpen ? 'Hide Travel' : 'Open Travel'}");
     expect(discoverSource).toContain('Travel active. You are tuned to {activeSceneName} and can visit the community now.');
+    expect(discoverSource).toContain('Open community page');
+    expect(discoverSource).not.toContain('Artist and song search');
+    expect(discoverSource).not.toContain('Search Bar');
     expect(discoverSource).not.toContain('Trending');
     expect(discoverSource).not.toContain('Top Artists');
   });
@@ -64,11 +68,11 @@ describe('/discover current-community lock', () => {
     expect(discoverSource).toContain('setPlayerTier(persistedTier);');
   });
 
-  it('keeps signed-out discover destinations explicit instead of linking directly into auth-dead-end artist pages', () => {
+  it('keeps signed-out discover destinations explicit without routing people into missing lookup flows', () => {
     const discoverSource = readRepoFile('src/app/discover/page.tsx');
 
-    expect(discoverSource).toContain('Sign in is required to open artist pages and change Home Scene from Discover.');
-    expect(discoverSource).toContain("{song.artistBandId && token ? (");
+    expect(discoverSource).toContain('Sign in is required to open artist pages and change Home Scene from community-native surfaces.');
+    expect(discoverSource).toContain('Open community page');
     expect(discoverSource).toContain("{savingHomeSceneId === item.sceneId ? 'Saving...' : item.isHomeScene ? 'Home Scene' : 'Set as Home Scene'}");
   });
 });

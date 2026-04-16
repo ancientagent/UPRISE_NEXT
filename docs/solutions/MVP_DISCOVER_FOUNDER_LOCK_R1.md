@@ -9,7 +9,7 @@ Capture founder-confirmed Discover behavior so future sessions stop reinterpreti
 
 This document is the controlling lock for:
 - Discover structure and entry model
-- Discover search behavior
+- Discover lookup boundary
 - Discover/player relationship
 - Discover ontology (`sources`, `signals`, `recommendations`, `support`)
 - Discover statistics lenses
@@ -196,23 +196,24 @@ Discover is anchored by one dominant top card:
 Discover does **not** use a split primary model where travel/community search is one top section and local artist/song search is another independent top section.
 Discover does **not** treat search, recommendations, and signal rails as peer headers competing with the player. The player/title card owns the page hierarchy, and everything else is secondary to that anchor.
 
-## 7) Search Model
-### 7.1 One search bar
-- Discover uses one search entry inside the top player/title card.
-- That search entry is for artist/song search in the current listening scope.
-- Search results are tier-aware and must follow the current player/listening tier.
-- Search is not a generic global search.
-- Search does not discard current community context.
+## 7) Community Lookup Boundary
+### 7.1 Discover is passive-first
+- Discover should not depend on prior artist/song knowledge.
+- Discover is for passive community reading first:
+  - the current player/marquee
+  - what is popular
+  - what is rising/performing
+  - what people are explicitly saying/recommending
 
-### 7.2 Tier-aware search scope
-- If the player/listening context is `city`, Discover search is scoped to the current city/community context.
-- If the player/listening context is `state`, Discover search broadens to the current state-level listening scope for that same parent music-community context.
-- `national` Discover search is deferred from MVP.
+### 7.2 Lookup belongs to community-native context
+- Community-native artist/source lookup belongs on the `community` page, not Discover.
+- That keeps lookup in a place where locals and visitors already understand the current community they are inside.
+- Registrar may remain adjacent on the community side, but Discover itself should not become the lookup surface.
 
-### 7.3 Search boundaries
-- Do not split travel search and local search into separate primary controls.
-- Do not ask the user to redefine known music-community context.
-- Do not turn Discover search into a generic all-things omnibox detached from the player.
+### 7.3 Boundary rules
+- Do not split Discover into passive discovery plus a separate primary lookup/search mode.
+- Do not ask the user to know names before Discover can succeed.
+- Do not turn Discover into a generic all-things omnibox detached from the player/community anchor.
 
 ## 8) Content Sections
 ### 8.1 Popular Singles
@@ -342,11 +343,11 @@ This document does not define:
 - vibe-score coupling, recommendation attribution rewards, or influence-map metrics packages
 
 ## 15) Implementation Guardrails
-- Do not re-split Discover into separate primary travel-search and local-search systems.
+- Do not re-split Discover into separate primary travel and local lookup systems.
 - Do not detach Discover from the active player context.
 - Do not add a second competing tier/context control when the player already establishes it.
 - Do not treat Travel as a separate top-level search surface.
-- Do not remove artist/song search from Discover.
+- Do not turn Discover back into a name-first lookup surface.
 - Do not treat the presence of recommendation-like sections as equivalent to banned algorithmic personalization.
 - Do not auto-enter a community page immediately on retune; entry remains explicit.
 - Do not add `Join Community` semantics to Discover travel.

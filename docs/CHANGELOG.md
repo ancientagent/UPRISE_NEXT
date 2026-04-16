@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Removed local artist/song search from Discover and locked the route back to a passive community-reading surface, with community-native lookup explicitly deferred to the community page instead; see `docs/handoff/2026-04-16_discover-passive-surface-no-search.md`.
 - Moved Discover to a top-anchored player marquee and folded the travel trigger into the player footer area so travel now occupies the old broadcast-prompt slot instead of appearing as a separate glued-on bar below the player; see `docs/handoff/2026-04-16_discover-top-player-travel-implementation.md`.
 - Reconciled active Discover doctrine around a single dominant player/title card: Discover now explicitly treats the top player card as the current community title card, keeps search inside that card, and treats rails/recommendations as secondary snippets materializing below it; see `docs/handoff/2026-04-16_discover-player-title-card-layout-lock.md`.
 - Added a future-facing product note for cross-device listening presence so website listening can later surface passive artist/source profile expansion in the app without inventing a recommendation engine; see `docs/handoff/2026-04-15_cross-device-listening-presence-note.md`.

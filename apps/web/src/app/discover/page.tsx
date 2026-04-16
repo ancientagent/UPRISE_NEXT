@@ -7,7 +7,6 @@ import type {
   BroadcastRotation,
   BroadcastRotationMeta,
   CommunityDiscoverHighlights,
-  CommunityDiscoverSearchResult,
   DiscoverRecommendationResult,
   DiscoverSignalResult,
   Track,
@@ -30,7 +29,6 @@ import {
   getDiscoveryContext,
   listDiscoverScenes,
   saveDiscoverUprise,
-  searchCommunityDiscover,
   setDiscoverHomeScene,
   tuneDiscoverScene,
   type DiscoverCitySceneItem,
@@ -170,121 +168,6 @@ function formatSignalOrigin(signal: DiscoverSignalResult) {
     signal.communityCity ?? null,
     signal.communityState ?? null,
     signal.communityMusicCommunity ?? null,
-  );
-}
-
-function SearchResultsSection({
-  localSearchResult,
-  localSearchLoading,
-  localSearchError,
-  token,
-}: {
-  localSearchResult: CommunityDiscoverSearchResult | null;
-  localSearchLoading: boolean;
-  localSearchError: string | null;
-  token: string | null;
-}) {
-  if (localSearchLoading) {
-    return <p className="mt-4 text-sm text-black/60">Searching this listening scope...</p>;
-  }
-
-  if (localSearchError) {
-    return <p className="mt-4 text-sm text-red-700">{localSearchError}</p>;
-  }
-
-  if (!localSearchResult) {
-    return null;
-  }
-
-  return (
-    <div className="mt-4 grid gap-4 lg:grid-cols-2">
-      <section className="plot-wire-list-item">
-        <p className="plot-wire-label">Artists</p>
-        <h3 className="mt-1 text-sm font-semibold text-black">Artists</h3>
-        {localSearchResult.artists.length === 0 ? (
-          <p className="mt-2 text-sm text-black/50">No artists matched this search.</p>
-        ) : (
-          <ul className="mt-3 space-y-2">
-            {localSearchResult.artists.map((artist) => (
-              <li key={artist.artistBandId} className="plot-wire-card-muted px-3 py-3">
-                {token ? (
-                  <Link
-                    href={`/artist-bands/${artist.artistBandId}`}
-                    className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                  >
-                    <p className="text-sm font-medium text-black">{artist.name}</p>
-                    <p className="text-xs text-black/60">
-                      {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
-                    </p>
-                    <p className="text-xs text-black/50">
-                      {formatCommunityIdentity(
-                        artist.homeSceneCity,
-                        artist.homeSceneState,
-                        artist.homeSceneMusicCommunity,
-                      )}
-                    </p>
-                  </Link>
-                ) : (
-                  <>
-                    <p className="text-sm font-medium text-black">{artist.name}</p>
-                    <p className="text-xs text-black/60">
-                      {artist.entityType} • {artist.followCount} followers • {artist.memberCount} members
-                    </p>
-                    <p className="text-xs text-black/50">
-                      {formatCommunityIdentity(
-                        artist.homeSceneCity,
-                        artist.homeSceneState,
-                        artist.homeSceneMusicCommunity,
-                      )}
-                    </p>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="plot-wire-list-item">
-        <p className="plot-wire-label">Songs</p>
-        <h3 className="mt-1 text-sm font-semibold text-black">Songs</h3>
-        {localSearchResult.songs.length === 0 ? (
-          <p className="mt-2 text-sm text-black/50">No songs matched this search.</p>
-        ) : (
-          <ul className="mt-3 space-y-2">
-            {localSearchResult.songs.map((song) => (
-              <li key={song.trackId} className="plot-wire-card-muted px-3 py-3">
-                {song.artistBandId && token ? (
-                  <Link
-                    href={`/artist-bands/${song.artistBandId}?trackId=${song.trackId}`}
-                    className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
-                  >
-                    <p className="text-sm font-medium text-black">{song.title}</p>
-                    <p className="text-xs text-black/60">
-                      {song.artist} • {song.playCount} plays • {song.likeCount} likes
-                    </p>
-                    <p className="text-xs text-black/50">
-                      {formatCommunityIdentity(
-                        song.communityCity,
-                        song.communityState,
-                        song.communityMusicCommunity,
-                      )}
-                    </p>
-                  </Link>
-                ) : (
-                  <>
-                    <p className="text-sm font-medium text-black">{song.title}</p>
-                    <p className="text-xs text-black/60">
-                      {song.artist} • {song.playCount} plays • {song.likeCount} likes
-                    </p>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </div>
   );
 }
 
@@ -464,10 +347,6 @@ export default function DiscoverPage() {
   const [savingUpriseSceneId, setSavingUpriseSceneId] = useState<string | null>(null);
   const [sceneMap, setSceneMap] = useState<CommunitySceneMapResponse | null>(null);
   const [sceneMapError, setSceneMapError] = useState<string | null>(null);
-  const [localSearchQuery, setLocalSearchQuery] = useState('');
-  const [localSearchLoading, setLocalSearchLoading] = useState(false);
-  const [localSearchError, setLocalSearchError] = useState<string | null>(null);
-  const [localSearchResult, setLocalSearchResult] = useState<CommunityDiscoverSearchResult | null>(null);
   const [highlights, setHighlights] = useState<CommunityDiscoverHighlights | null>(null);
   const [highlightsLoading, setHighlightsLoading] = useState(false);
   const [highlightsError, setHighlightsError] = useState<string | null>(null);
@@ -496,11 +375,11 @@ export default function DiscoverPage() {
   const activeSceneName =
     tunedScene?.name ??
     (homeScene ? `${homeScene.city}, ${homeScene.state} ${homeScene.musicCommunity}` : 'current community');
-  const localDiscoverLockedReason = !localContextReady
-    ? 'Home Scene or tuned community context is required to search locally.'
+  const localDiscoverContextMessage = !localContextReady
+    ? 'Home Scene or tuned community context is required before Discover can present scoped community snippets.'
     : !activeSceneId
-      ? 'This Home Scene does not have a live city-scene anchor yet. Local discovery is available in empty-state mode until the scene resolves.'
-      : 'Search, Popular Singles, and Recommendations all follow the current player scope.';
+      ? 'This Home Scene does not have a live city-scene anchor yet. Discover remains in empty-state mode until the scene resolves.'
+      : 'Popular Singles and Recommendations follow the current player scope. Community-native lookup belongs on the community page.';
 
   const emptyHighlights: CommunityDiscoverHighlights = useMemo(
     () => ({
@@ -843,70 +722,6 @@ export default function DiscoverPage() {
       ignore = true;
     };
   }, [activeSceneId, tier, token, travelOpen]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function fetchLocalSearch() {
-      if (!localContextReady) {
-        setLocalSearchResult(null);
-        setLocalSearchError(null);
-        setLocalSearchLoading(false);
-        return;
-      }
-
-      const query = localSearchQuery.trim();
-      if (!query) {
-        setLocalSearchResult(null);
-        setLocalSearchError(null);
-        setLocalSearchLoading(false);
-        return;
-      }
-
-      if (!activeSceneId) {
-        setLocalSearchResult({
-          community: emptyHighlights.community,
-          query,
-          artists: [],
-          songs: [],
-        });
-        setLocalSearchError(null);
-        setLocalSearchLoading(false);
-        return;
-      }
-
-      setLocalSearchLoading(true);
-      setLocalSearchError(null);
-
-      try {
-        const response = await searchCommunityDiscover(
-          activeSceneId,
-          query,
-          token || undefined,
-          8,
-          tier,
-        );
-        if (!ignore) {
-          setLocalSearchResult(response);
-        }
-      } catch (e) {
-        if (!ignore) {
-          setLocalSearchError(e instanceof Error ? e.message : 'Unable to search this listening scope.');
-          setLocalSearchResult(null);
-        }
-      } finally {
-        if (!ignore) {
-          setLocalSearchLoading(false);
-        }
-      }
-    }
-
-    const timer = window.setTimeout(fetchLocalSearch, 250);
-    return () => {
-      ignore = true;
-      window.clearTimeout(timer);
-    };
-  }, [activeSceneId, emptyHighlights.community, localContextReady, localSearchQuery, tier, token]);
 
   const handleTuneSceneById = async (sceneId: string) => {
     if (!token) return;
@@ -1303,53 +1118,32 @@ export default function DiscoverPage() {
 
         <section className="plot-wire-panel">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="max-w-2xl">
-              <p className="plot-wire-label">Search</p>
-              <h2 className="mt-1 text-lg font-semibold text-black">Artist and song search</h2>
+            <div className="max-w-3xl">
+              <p className="plot-wire-label">Community Context</p>
+              <h2 className="mt-1 text-lg font-semibold text-black">Discover stays passive here</h2>
               <p className="mt-1 text-sm text-black/60">
-                The single Discover search bar stays anchored to the current player scope.
+                Visitors and natives should be able to read the community immediately: the player, what is popular, what performs,
+                and what people are saying. Community-native lookup belongs on the community page instead of this surface.
               </p>
             </div>
             <div className="plot-wire-toolbar min-w-[280px]">
               <p className="plot-wire-label">Scope State</p>
               <p className="text-sm text-black/70">Visitor mode: {isVisitor ? 'Active' : 'Off'}</p>
-              <p className="mt-2 text-sm text-black/70">{localDiscoverLockedReason}</p>
+              <p className="mt-2 text-sm text-black/70">{localDiscoverContextMessage}</p>
             </div>
           </div>
-
-          <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
-            <div className="plot-wire-toolbar">
-              <p className="plot-wire-label">Search Bar</p>
-              <input
-                value={localSearchQuery}
-                onChange={(event) => setLocalSearchQuery(event.target.value)}
-                placeholder={
-                  localContextReady
-                    ? `Search artists and songs in the current ${tier} listening scope`
-                    : 'Home Scene or tuned community required'
-                }
-                className="mt-2 w-full border-0 bg-transparent px-0 py-0 text-base text-black placeholder:text-black/35 focus:outline-none focus:ring-0"
-                disabled={!localContextReady}
-              />
-            </div>
+          <div className="mt-4 flex flex-wrap gap-2">
             {activeSceneId ? (
               <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-3 text-[11px] text-black">
-                <Link href={`/community/${activeSceneId}`}>Visit {activeSceneName}</Link>
+                <Link href={`/community/${activeSceneId}`}>Open community page</Link>
               </Button>
             ) : null}
+            {!token ? (
+              <p className="text-xs text-black/50">
+                Sign in is required to open artist pages and change Home Scene from community-native surfaces.
+              </p>
+            ) : null}
           </div>
-          {!token ? (
-            <p className="mt-3 text-xs text-black/50">
-              Sign in is required to open artist pages and change Home Scene from Discover.
-            </p>
-          ) : null}
-
-          <SearchResultsSection
-            localSearchResult={localSearchResult}
-            localSearchLoading={localSearchLoading}
-            localSearchError={localSearchError}
-            token={token}
-          />
         </section>
 
         <section className="plot-wire-panel">

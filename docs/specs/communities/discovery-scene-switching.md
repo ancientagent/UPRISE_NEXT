@@ -23,8 +23,8 @@ This spec governs scene-switching and travel rules inside Discover, not the full
   - Manual Scene selection in Discover map/list.
   - Tier toggling (city/state/national).
 - No recommendation feed, ranking, or personalization in discovery flows.
-- Discovery search remains bounded by the inherited current player/community scope for MVP.
-- Discover may include artist/song discovery inside that inherited scope as long as it does not create a second independent context model.
+- Discover remains bounded by the inherited current player/community scope for MVP.
+- Community-native lookup should live on the `community` page rather than inside Discover itself.
 - Discovery does not imply “join” semantics:
   - User can visit/tune to a Scene.
   - User can set Home Scene only through explicit state change action.
@@ -55,7 +55,6 @@ This spec governs scene-switching and travel rules inside Discover, not the full
   - one dominant player/title card anchoring the page
   - explicit scope toggle (`city/state/national`)
   - inherited current-community context (`city + state + music community`) for travel
-  - artist/song search inside the current Discover/player scope
   - community discovery snippets materialized below the top player/title card
   - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
   - Home Scene action requires explicit confirmation copy
@@ -138,7 +137,8 @@ This spec governs scene-switching and travel rules inside Discover, not the full
   - scope toggle (`city/state/national`)
   - current tuned Scene vs Home Scene badges
   - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status
-- Search and snippet content must remain subordinate to the player/title card and inherit the same current scope.
+- Snippet content must remain subordinate to the player/title card and inherit the same current scope.
+- Community-native lookup belongs on the `community` page, not Discover.
 - Access-limit/entitlement messaging is deferred in MVP until pricing/entitlement contracts are locked in canon/spec.
 - If a Discover subsection/header uses `Recommended`, it must not imply predictive personalization or system-personalized recommendation behavior.
 - Tune action:

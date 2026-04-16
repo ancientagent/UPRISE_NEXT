@@ -14,31 +14,30 @@ Define the stable contract for `Discover` as the right-side bottom-nav destinati
 - Discover is player-anchored and tier-aware.
 
 ## Primary Job
-- Provide artist/song discovery and contextual scene signal amplification within the current listening scope.
+- Provide passive community discovery and contextual scene signal amplification within the current listening scope.
 - Allow explicit travel through the player-attached travel control.
 
 ## Governing Context
 - Discover inherits current player/listening context.
-- Search scope is bounded by the current player tier/context.
 - Travel is attached to the bottom of the player.
 - The map expands downward from the bottom of the player.
 - The top player card doubles as the current community title card for Discover.
 - Everything below the player/title card is a secondary snippet or preview within that current community discovery scope.
+- Community-native lookup belongs on the `community` page rather than this route.
 
 ## Core Structure
 Top to bottom:
 1. one dominant `community player card` at the top
-2. one artist/song search entry inside that player/title card
-3. player-attached `Travel`
-4. downward-expanding map from that card
-5. `Popular Signals` and other community discovery snippets materialized below
-6. active participants with avatar + text bubble recommendations below as snippet content
+2. player-attached `Travel`
+3. downward-expanding map from that card
+4. `Popular Signals` and other community discovery snippets materialized below
+5. active participants with avatar + text bubble recommendations below as snippet content
 
 ## What Must Remain True
 - Discover remains a separate bottom-nav destination from Home.
 - Discover remains tied to the player.
-- Discover does not split into separate primary travel search and local search systems.
-- Search / Popular Signals / active participants / map share the same current Discover/player scope.
+- Discover does not split into separate primary travel and lookup systems.
+- Popular Signals / active participants / map share the same current Discover/player scope.
 - The player/title card remains the visual and structural page anchor rather than one module among many co-equal sections.
 
 ## What Discover Must Not Become
