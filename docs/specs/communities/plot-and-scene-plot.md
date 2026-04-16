@@ -1,8 +1,8 @@
 # The Plot and Scene Dashboard
 
-**ID:** `COMM-PLOT`  
-**Status:** `active`  
-**Owner:** `platform`  
+**ID:** `COMM-PLOT`
+**Status:** `active`
+**Owner:** `platform`
 **Last Updated:** `2026-04-16`
 
 ## Overview & Purpose
@@ -45,6 +45,8 @@ Current MVP shell note:
   - followed-source updates must surface through the same feed grammar rather than a separate algorithmic notification feed
   - stats-driven discovery material may surface intermittently as inserted feed carousels while `Discover` remains deferred
   - these insertions are not fixed feed furniture and should appear as occasional scoped informational moments
+  - inserted discovery carousels are read-only launch surfaces, not inline action strips
+  - clicking an inserted discovery card should pause `RADIYO` and hand the user into artist-profile demo listening on the selected song
 - Calendar rule:
   - calendar is a real MVP organizational layer
   - users add events directly to calendar
@@ -101,6 +103,7 @@ Current MVP shell note:
 - Promotions are non-governing signals and must not affect Fair Play.
 - Web tier may not import DB/server modules directly; data flows through API endpoints.
 - If deferred discovery material is surfaced in Plot/feed during MVP, it must remain scene-scoped, deterministic, and intermittent rather than becoming a second fixed discovery route.
+- Deferred discovery inserts must use read-only titled horizontal carousels with no inline `Collect`, `Blast`, or `Follow` actions on the cards themselves.
 
 ## Data Models & Migrations
 ### Data Dependencies
@@ -136,6 +139,7 @@ Current MVP shell note:
 - Profile strip includes notification icon + settings (`...`) on the right side.
 - Pioneer onboarding message is discoverable from the notification icon (not as an always-visible blocking modal).
 - Feed uses explicit scene actions and followed-source updates from API; it does not rank or personalize.
+- When intermittent discovery inserts appear in feed, they should present read-only song/artist squares with arrow-based horizontal browsing and artist-profile click handoff rather than direct card actions.
 - Events uses scene-scoped API listings from selected community anchor.
 - Promotions uses scene-scoped API listings from selected community anchor.
 - Social remains hidden in MVP until endpoint + surface contract ship.

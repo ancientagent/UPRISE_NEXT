@@ -1,12 +1,13 @@
 # 📜 CHANGELOG.md — UPRISE Monorepo
 
-**Repository:** `music-community-platform`  
+**Repository:** `music-community-platform`
 **Policy:** Auto-updated via CI from PR titles & labels. Manual edits allowed for summaries.
 
 ---
 
 ## [Unreleased]
 ### Added
+- Re-locked current MVP discovery/listening doctrine before further UI work: live `/discover` stays deferred while borders remain closed, discovery/statistics value currently lands as intermittent read-only feed inserts, and clicking those inserts should pause `RADIYO`, open artist-profile demo listening, allow `Collect` from the profile, and keep `Blast` exclusive to `RADIYO` / `Collection`; see `docs/handoff/2026-04-16_discover-feed-insert-and-artist-demo-lock.md`.
 - Added `apps/api/scripts/seed-artist-fixture-roster.mjs` plus `pnpm --filter api run seed:artist-fixture-roster`, providing a deterministic 10-account artist QA roster with linked `ArtistBand` sources, seeded `single`/`uprise` signal rows, qualifying `ADD`/`BLAST`/`RECOMMEND` counts, and a small state-rise shape for local feed/profile/discovery testing; see `docs/handoff/2026-04-16_artist-fixture-roster-seed.md`.
 - Deferred live Discover for the local-community-only MVP: `/discover` now renders as a `Coming Soon` placeholder, shell entrypoints are disabled, and useful discovery/statistics material is explicitly redirected to occasional inserted feed moments rather than a fixed destination; see `docs/handoff/2026-04-16_discover-deferred-local-only-mvp.md`.
 - Removed local artist/song search from Discover and locked the route back to a passive community-reading surface, with community-native lookup explicitly deferred to the community page instead; see `docs/handoff/2026-04-16_discover-passive-surface-no-search.md`.

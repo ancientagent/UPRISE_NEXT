@@ -220,7 +220,7 @@ Feed is not just the default-selected tab.
 Feed is the primary live pulse of the scene.
 
 Current MVP border note:
-- while borders remain closed and `Discover` is deferred, stats-driven discovery material may appear intermittently inside the feed
+- while borders remain closed and `Discover` is deferred, stats-driven discovery material should appear intermittently inside the feed
 - these are occasional inserted informational surfaces, not fixed permanent rails
 - the same insertion logic may later apply to paid placement promos when that surface is activated
 
@@ -233,6 +233,35 @@ Allowed feed-composition behavior:
 - the main feed can include inserted summary modules
 - upcoming events may appear as a recurring carousel inside the feed
 - local ads/promotions may appear as a recurring carousel inside the feed
+
+### 7.1 Discovery insert behavior
+While Discover is deferred, intermittent discovery inserts in feed should behave as read-only launch surfaces.
+
+That means:
+- they are horizontally scrolling titled sections
+- they use read-only squares/cards rather than inline action strips
+- they summarize current stats/recommendation-derived community information such as:
+  - what is popular
+  - what is rising
+  - what people are saying/recommending
+
+### 7.2 No inline card-action rule
+Inserted discovery squares/cards should not expose:
+- `Collect`
+- `Blast`
+- `Follow`
+- wheel controls
+
+The feed insert is discovery/browse context, not the final action surface.
+
+### 7.3 Click handoff rule
+Clicking a discovery square/card should hand the user into artist-profile demo listening.
+
+That means:
+- `RADIYO` pauses
+- the selected song is demoed from the artist-profile context
+- collection decisions happen there
+- blast remains unavailable from the feed insert itself
 
 ## 8) Cause Terminology And Lifecycle Lock
 Current status:

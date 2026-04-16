@@ -1,8 +1,8 @@
 # MVP Artist Profile Documentation Audit R1
 
-Status: Active  
-Owner: product engineering  
-Last updated: 2026-04-14
+Status: Active
+Owner: product engineering
+Last updated: 2026-04-16
 
 ## 1) Purpose
 Capture the current state of artist-profile documentation so future sessions stop treating mixed narrative summaries, external synthesis, and under-specified product behavior as settled canon.
@@ -41,11 +41,11 @@ Sources:
 - `docs/specs/users/README.md:7`
 
 ### 3.2 Core actions and follow semantics
-- `FOLLOW` exists and is an awareness subscription to an entity.
-- Current repo runtime exposes `ADD`, `BLAST`, `SUPPORT`, and `FOLLOW`, but the controlling action matrix now treats that as terminology debt rather than final doctrine.
-- Intended public model is:
-  - source pages: `Follow`
-  - music-distribution signals surfaced on artist pages: `Collect`, `Blast`, and `Recommend` once genuinely held
+- `FOLLOW` exists and is an awareness subscription to a source.
+- Current repo runtime still contains historical `ADD` / `SUPPORT` debt in places, but the controlling action matrix and current founder lock now narrow the intended public model to:
+  - source pages: `Follow` (and donation link when actually configured)
+  - artist-profile song rows: demo listening + `Collect`
+  - `Blast`: available only from `RADIYO` / `Collection`, not from the artist profile
   - social post surfaces: `React`
 - Repo canon/spec does not support treating follow as automatic ranked feed-channel creation.
 
@@ -136,12 +136,10 @@ Sources:
 - founder correction in this session
 
 ## 5) Not Sufficiently Locked In Active Docs
-These items may be plausible, but are not bulletproof enough in active repo docs to treat as settled artist-page behavior:
-- exact public artist-page section inventory (bio, photos, videos, contact, events, links, songs, etc.)
-- exact artist-page playback handoff behavior when arriving from a single/signal
-- exact artist-page action rail / button inventory
+These items may be plausible, but are not bulletproof enough in active repo docs to treat as settled artist-page behavior unless the founder lock below is also consulted:
+- exact public artist-page section inventory outside the locked header + 3-song demo area
 - exact event/calendar behavior triggered by following an artist
-- exact external support-link set (website, Bandcamp, merch, donation)
+- exact external support-link set beyond a source donation/support link when configured
 - exact public prohibition text for comments/reviews on artist pages
 - exact public song ordering rules on artist page
 - exact direct relationship between artist page and Print Shop purchase entry
@@ -175,25 +173,23 @@ Sources:
   - not sufficiently locked
   - founder decision needed
 
-## 8) Founder Lock Needed
-A dedicated founder lock is still needed for:
-- public artist-page composition
-- artist-page actions and CTA order
-- song list/display structure on artist page
-- playback handoff on artist-page entry and song selection
-- event/calendar surface behavior on artist page
-- external support-link behavior
-- artifact/display rules on the artist profile surface
-
-Recommended next artifact:
+## 8) Founder Lock Status
+A dedicated founder lock now exists at:
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+
+Use that file for current controlling decisions on:
+- public artist-profile composition
+- artist-profile song-row demo listening
+- collect/blast boundaries
+- playback handoff from discovery/feed into the artist profile
+
+This audit remains useful as background documentation inventory, but it is no longer the place to derive current artist-profile action grammar.
 
 ## 9) Bottom Line
 The repo already supports the architecture around artists better than recent narrow working assumptions suggested.
 
-But the full artist-page UX contract is still underlocked.
-
-The safe position is:
+The current safe position is:
 - architecture/capability/issuance/slot constraints = largely supported
-- full artist-page UX = not yet bulletproof
-- do not implement the full artist-page surface from mixed summaries alone
+- current artist-profile demo-listen and collect boundary = founder-locked in `MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+- remaining layout/detail polish beyond that lock is still not bulletproof enough to invent ad hoc
+- do not implement the artist-profile surface from mixed summaries alone

@@ -38,48 +38,40 @@ If older docs imply that stats must wait on the full Activity Points engine, thi
 
 ## Canonical Stats Vocabulary
 ### Sources
-Sources are followable origin objects.
+Use the source families and subtypes from `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`.
 
-Current source classes:
-- artists
-- communities
-- businesses
-- promoters
-- events
+Current MVP source families relevant to stats:
+- `creator`
+- `organizer`
+- `entity`
+- `scene body`
 
-Future source classes:
-- ambassadors
-- venues
-- mixologists
+Important boundary:
+- events are not sources
 
 ### Signals
-Signals are canonical objects users receive, add, and act on.
+Current MVP signal classes relevant to the stats surfaces in scope here:
+- `single`
+- `Uprise`
 
-Current signal classes:
-- singles
-- Uprises
-- promos
-- flyers
-
-Future signal classes:
-- mixes
+Important boundary:
+- flyers are artifacts, not signals
+- promos/business offer runtime remains deferred
 
 ### Recommendations
-Recommendations are explicit user-to-signal relationships.
+Recommendations are explicit listener recommendation relationships.
 
 They are:
 - not sources
 - not signals
-- their own stats-bearing object class when needed
+- a separate relationship/projection layer when surfaced
 
 ### Support
-Support is a lightweight reaction/counter on a post or surfaced expression.
+`Support` is not a current direct MVP stats button.
 
-It is:
-- not an Activity Point
-- not a source
-- not a signal
-- not a recommendation
+Treat support as:
+- a later derived backing/activity state
+- separate from the direct signal and feed metrics locked here
 
 ## Stats Domains
 ### 1. Structural / Community Stats
@@ -171,16 +163,19 @@ Deferred from MVP surface priority:
 
 These may remain future statistics surfaces once population justifies them, but they are not part of the current MVP Plot statistics contract.
 
-## Discover Stats Contract
-Discover uses a narrower stats read than Plot.
+## Discover / Interim Discovery Stats Contract
+Current MVP note:
+- live `/discover` is deferred while borders remain closed
+- the stats contract below presently powers intermittent feed-insert discovery moments rather than a full live Discover page
 
-### Recommendations Row
+### Recommendations / People Are Saying
 - recommendation objects are surfaced directly
 - this is **not** a stats lens
-- this is users + their active recommendations
+- this is listeners + their active recommendations
+- recommendation surfacing should reflect genuine listener-held relationships rather than fabricated source-side activity
 
 ### Popular Singles
-`Popular Singles` is the primary stats-driven Discover rail.
+`Popular Singles` is the primary stats-driven music-discovery rail.
 
 MVP lenses:
 - `Most Added`
@@ -189,23 +184,30 @@ MVP lenses:
 #### Most Added
 - object: `single` signals only
 - metric: `addCountAllTime`
-- purpose: show durable library preference, not current hype
+- purpose: show durable collection preference, not current hype
 
 #### Recent Rises
 - object: `single` signals only
 - metric: propagation markers (`highestScopeReached`, `lastRiseAt`)
 - purpose: show singles that recently broke upward into the next listening scope
-- this is allowed in Discover because it is not the same thing as current in-mix RaDIYo momentum
+- this is allowed because it is not the same thing as current in-mix `RADIYO` momentum
 - MVP implementation rule:
   - `Recent Rises` reads the most recent city-origin singles pulled into the `state` player
   - `highestScopeReached = state`
   - `lastRiseAt = enteredPoolAt` for that state-player promotion
   - `national` rise tracking is deferred with the `national` Discover tier
 
+### Insert presentation boundary
+When these stats are surfaced during current MVP:
+- they should appear as intermittent feed inserts
+- they should use read-only horizontal discovery carousels
+- the cards should not expose inline `Collect`, `Blast`, or `Follow` actions
+- clicking a card should hand the user into artist-profile demo listening on the selected song
+
 ### Explicit Exclusion
-- `Popular Now` is **not** a Discover lens
-- current RaDIYo / broadcast engagement score remains sacred to the broadcast system
-- Discover must not mirror or compete with that system
+- `Popular Now` is **not** an interim discovery lens
+- current `RADIYO` / broadcast engagement score remains sacred to the broadcast system
+- interim discovery must not mirror or compete with that system
 
 ## Financial Foundation Rule
 The MVP display layer can stay narrow while the retained stats layer stays broader.

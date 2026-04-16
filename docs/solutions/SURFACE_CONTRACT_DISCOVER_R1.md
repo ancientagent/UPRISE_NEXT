@@ -6,65 +6,50 @@
 
 ## Current MVP State
 - `Discover` is currently deferred as a live MVP surface.
-- the route may exist as a `Coming Soon` placeholder, but the active product behavior is local-community-only listening
+- the route may exist as a disabled / `Coming Soon` placeholder, but the active product behavior is local-community-only listening
 - while borders remain closed, useful discovery/statistics material should surface intermittently inside the feed rather than as a fixed Discover destination
 
 ## Purpose
-Define the stable contract for `Discover` as the right-side bottom-nav destination and player-anchored discovery surface.
+Define the stable contract for `Discover` across two phases:
+1. current MVP deferred-route behavior
+2. later-phase reactivation once borders intentionally open
 
-## Core Rule
-- `Discover` is the **right** bottom-nav destination.
-- Discover is not Home.
-- Discover does not contain Plot.
-- Discover is player-anchored and tier-aware.
+## Current MVP Contract
+### Route state
+- `Discover` remains the right-side bottom-nav conceptually
+- the live route is deferred while borders remain closed
+- it must not pretend the richer travel/discovery system is already active MVP
 
-## Primary Job
-- Provide passive community discovery and contextual scene signal amplification within the current listening scope.
-- Allow explicit travel through the player-attached travel control.
+### Interim discovery delivery
+- discovery material currently lives as intermittent feed inserts, not as the main `/discover` experience
+- those inserts are scene-scoped, deterministic, and occasional rather than fixed furniture
+- they are horizontally scrolling titled sections with read-only squares/cards
+- card clicks hand the user into artist-profile demo listening and pause `RADIYO`
+- cards do not expose inline `Collect`, `Blast`, or `Follow` actions
 
-Current MVP note:
-- this is the later-phase Discover contract once borders open
-- it is not the active live MVP route behavior today
-
-## Governing Context
-- Discover inherits current player/listening context.
-- Travel is attached to the bottom of the player.
-- The map expands downward from the bottom of the player.
-- The top player card doubles as the current community title card for Discover.
-- Everything below the player/title card is a secondary snippet or preview within that current community discovery scope.
-- Community-native lookup belongs on the `community` page rather than this route.
-
-## Core Structure
-Top to bottom:
-1. one dominant `community player card` at the top
-2. player-attached `Travel`
-3. downward-expanding map from that card
-4. `Popular Signals` and other community discovery snippets materialized below
-5. active participants with avatar + text bubble recommendations below as snippet content
+## Later-Phase Discover Contract
+Once borders open intentionally, Discover may resume as:
+- a separate bottom-nav destination from Home
+- a player-anchored and tier-aware surface
+- one dominant top player/title card
+- player-attached travel
+- downward-expanding map from that card
+- secondary snippet content below the player/title anchor
+- community-native lookup remaining on the `community` page rather than Discover
 
 ## What Must Remain True
-- Discover remains a separate bottom-nav destination from Home.
-- Discover remains tied to the player.
-- Discover does not split into separate primary travel and lookup systems.
-- Popular Signals / active participants / map share the same current Discover/player scope.
-- The player/title card remains the visual and structural page anchor rather than one module among many co-equal sections.
+- current MVP does not treat Discover as the active discovery engine
+- deferred feed inserts must not mutate into a second fixed Discover route by accident
+- later-phase Discover, when reopened, must remain player-anchored and separate from Home/Plot
+- community-native lookup belongs on the `community` page, not Discover
 
-## What Discover Must Not Become
-- not a generic global search surface
-- not a streaming-clone browse page
-- not a second Home/Plot system
-- not a detached map tool unrelated to player context
-- not a flat stack of equal-weight cards where the player competes with other section headers for ownership of the page
-
-## Known Drift Patterns
-- separate travel search
-- map detached from player
-- track-by-track scope changes
-- generic `For You` or algorithmic recommendation drift
-- Discover treated as a pure scene-switch utility only
+## What Must Not Happen
+- do not rebuild open-borders travel as if it were active MVP now
+- do not turn feed inserts into inline action grids
+- do not confuse artist-profile demo listening with `RADIYO` or `Collection`
+- do not split future Discover into separate primary travel and lookup systems
 
 ## References
 - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
 - `docs/specs/communities/discovery-scene-switching.md`
-- `docs/solutions/UPRISE_AUTOHARNESS_R1.md`
-- `docs/solutions/UPRISE_DRIFT_TAXONOMY_R1.md`
+- `docs/specs/communities/plot-and-scene-plot.md`

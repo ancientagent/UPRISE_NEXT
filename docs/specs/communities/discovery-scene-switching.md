@@ -1,8 +1,8 @@
 # Scene Discovery and Switching
 
-**ID:** `COMM-DISCOVERY`  
-**Status:** `active`  
-**Owner:** `platform`  
+**ID:** `COMM-DISCOVERY`
+**Status:** `active`
+**Owner:** `platform`
 **Last Updated:** `2026-04-16`
 
 ## Overview & Purpose
@@ -14,6 +14,8 @@ Current live MVP note:
 - the `/discover` route is presently reduced to a `Coming Soon` placeholder while borders remain closed
 - active MVP listening stays inside the listener's own community while communities settle
 - useful discovery/statistics material should appear only as intermittent inserted feed moments during MVP, not as fixed Discover furniture
+- those interim feed moments should use read-only horizontal discovery carousels rather than inline action strips
+- clicking an interim discovery card should pause `RADIYO` and hand the user into artist-profile demo listening on the selected song
 - the richer cross-community discovery surface described below is deferred until communities settle and borders open
 
 ## User Roles & Use Cases
@@ -59,6 +61,7 @@ Current live MVP note:
 - API endpoint `POST /discover/tune` persists tuned-scene transport context on the user record.
 - Current web `/discover` route is reduced to a `Coming Soon` placeholder.
 - Current MVP feed may carry intermittent inserted discovery/statistics moments instead of a live Discover destination.
+- Those interim feed inserts are read-only discovery launchers; they do not expose inline `Collect`, `Blast`, or `Follow` actions on the cards themselves.
 - Discovery route calls and typed client wrappers remain in the repo for the deferred later-phase surface:
   - `apps/web/src/lib/discovery/client.ts`
   - `apps/web/src/lib/discovery/context.ts`

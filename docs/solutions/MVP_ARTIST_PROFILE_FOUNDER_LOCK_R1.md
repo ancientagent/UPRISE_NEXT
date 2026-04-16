@@ -1,112 +1,214 @@
 # MVP Artist Profile Founder Lock R1
 
-Status: Active  
-Owner: Founder + product engineering  
-Last updated: 2026-04-08
+Status: Active
+Owner: Founder + product engineering
+Last updated: 2026-04-16
 
 ## 1) Purpose
-Capture founder-confirmed artist-page behavior so future sessions stop guessing about the artist surface from mixed narrative summaries, partial specs, or external synthesis.
+Capture the current founder-confirmed artist-profile behavior so future sessions stop mixing:
+- older source-page action assumptions (`Add`, `Support`)
+- broadcast/player-wheel behavior
+- and the newer artist-profile demo-listen flow.
 
 This document is the controlling lock for:
-- artist-page structure
-- artist-page core actions
-- artist-page playback handoff behavior
-- artist-page implementation guardrails
+- artist-profile structure
+- artist-profile playback mode
+- artist-profile song-row controls
+- collect/blast boundary on the artist profile
+- handoff behavior from feed/discovery into artist-profile listening
 
 ## 2) Authority And Precedence
-For artist-page implementation and review, apply this order:
+For artist-profile implementation and review, apply this order:
 1. Direct founder-confirmed behavior captured in this document
-2. `docs/canon/*`
-3. `docs/specs/*`
-4. `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md`
-5. Other `docs/solutions/*`
-6. `docs/legacy/*` (reference only)
+2. `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+3. `docs/canon/*`
+4. `docs/specs/*`
+5. `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md`
+6. other active founder locks in `docs/solutions/*`
+7. dated handoffs
 
-This document resolves the current artist-page lock gap identified in `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md`.
+If older artist-page docs still say the page action grammar is `Follow / Add / Support`, this document wins.
 
 ## 3) Source Context Used
-- Founder confirmations in this session on 2026-03-22
-- `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md`
+- Founder clarifications in-session on 2026-04-16
+- `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+- `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
 - `docs/specs/core/signals-and-universal-actions.md`
-- `docs/specs/users/identity-roles-capabilities.md`
-- `docs/specs/communities/scenes-uprises-sects.md`
-- `docs/canon/Master Application Surfaces, Capabilities & Lifecycle Canon.md`
-- `docs/canon/Master Narrative Canon.md`
-- `docs/canon/Legacy Narrative plus Context .md`
-
-## 4) Artist Page Structure Lock
-The artist page should use a familiar mainstream profile-page structure.
-
-Interpretation rule:
-- familiar in layout recognizability
-- not a custom or experimental page model
-- do not import non-canon platform mechanics just because the structure is familiar
-
-The page should organize the already-supported artist items in a recognizable profile pattern, including:
-- profile header
-- artist identity/info
-- media/content areas
-- songs/releases
-- events
-- support/action links
-
-## 5) Core Actions On The Artist Page
-The must-have artist-page actions are:
-- `Follow`
-- `Add`
-- `Support`
-
-These are the primary user actions the surface must expose.
-
-## 6) Playback Handoff Lock
-### 6.1 Entry from artist link
-When the user lands on the artist page from an artist link:
-- RaDIYo continues playing uninterrupted
-- nothing auto-plays from the artist page
-- playback changes only if the user selects a single on the artist page
-
-### 6.2 Entry from single/signal link
-When the user lands on the artist page from a single/signal link:
-- the route resolves to the artist page
-- the selected single streams automatically from that page
-- RaDIYo stops
-
-## 7) Existing Architectural Carry-Forward Used By This Lock
-This lock assumes, and does not redefine:
-- additive capability / unified identity model
-- Home Scene anchoring
-- release-deck slot constraints
-- descriptive analytics posture
-- Print Shop / Runs / issuance boundaries
-
-Those remain governed by:
 - `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md`
-- supporting canon/spec sources cited there
+- `docs/canon/Master Application Surfaces, Capabilities & Lifecycle Canon.md`
 
-## 8) Explicit Non-Locks / Still Deferred
+## 4) Artist Profile Purpose Lock
+The artist profile is the public source page for the artist and the direct demo-listen surface for sampling that artist's songs.
+
+It should not be confused with:
+- `RADIYO` broadcast mode
+- `Collection` playback mode
+- a dead-end bio page
+- a second wheel-driven listening surface
+
+Current intended interpretation:
+- the profile is where the user can discover the artist, sample a small set of songs, and decide whether to collect one
+
+## 5) Artist Profile Structure Lock
+The artist profile should still use a familiar profile-page structure.
+
+But for current MVP listening behavior it should clearly include:
+- profile header / identity
+- artist info / context
+- a short song demo area
+- supporting details / links / events where appropriate
+
+Current MVP demo expectation:
+- the artist profile presents `3` songs
+- each song is rendered as its own playback row
+
+## 6) Page-Level Action Boundary
+Artist profiles are source pages.
+
+That means page-level actions should remain source actions only, such as:
+- `Follow`
+- donation link / support-the-source link when the source actually has one configured
+
+Do not treat the source page itself as if it were a signal card.
+
+That means:
+- no source-level `Collect`
+- no source-level `Blast`
+- no source-level `Support` button
+
+## 7) Song-Row Demo Playback Lock
+Each of the `3` songs on the artist profile should behave as a direct demo-listen row.
+
+Each row should provide:
+- song title
+- `Play/Pause`
+- a timeline / progress bar
+- optional elapsed / duration display
+- `Collect` in the profile listening context
+
+The row should not carry:
+- wheel actions
+- blast controls
+- broadcast framing
+- collection framing
+
+## 8) No-Wheel Rule On Artist Profile
+The artist profile does not use the engagement wheel.
+
+Reason:
+- the user is essentially demoing/sampling the song there
+- this surface should not be confused with `RADIYO` or `Collection`
+
+Guardrail:
+- do not surface wheel actions on artist-profile song rows
+- do not make artist-profile listening feel like a broadcast-control surface
+
+## 9) Playback Mode Separation Lock
+The product should keep these listening modes legible:
+
+### 9.1 `RADIYO`
+- broadcast mode
+- wheel allowed
+
+### 9.2 `Collection`
+- owned listening mode
+- wheel allowed
+
+### 9.3 `Artist profile`
+- demo/listen mode
+- no wheel
+- row-based playback controls only
+
+This separation matters because users should not confuse:
+- demo listening on the artist profile
+- listening to broadcast
+- listening from owned collection
+
+## 10) Playback Handoff Rules
+### 10.1 Entry from artist link
+When the user lands on the artist profile from an artist/source link:
+- nothing auto-plays
+- `RADIYO` keeps playing until the user explicitly selects one of the profile's song rows
+
+### 10.2 Entry from discovery/feed song square or single/signal entry
+When the user enters the artist profile from a song-driven discovery handoff:
+- the route resolves to the artist profile
+- the selected song begins demo listening there
+- `RADIYO` pauses
+
+User-facing interpretation:
+- it should feel like the song is playing from the artist profile
+
+## 11) Shared Audio-State Rule
+The artist profile may use the shared playback system under the hood.
+
+But the surface should still read as a separate artist-profile listening shell.
+
+Interpretation:
+- do not build a second unrelated audio engine just for the artist profile
+- do build separate artist-profile playback chrome so the user experiences it as profile-based demo listening
+
+## 12) Collect Boundary On Artist Profile
+If the user likes a song while demo listening on the artist profile:
+- they may `Collect` it there
+
+This is the intended collection entry point for the demo flow.
+
+Meaning:
+- collection does not happen on the feed/discovery square itself
+- collection happens after entering the artist-profile listening context
+
+## 13) Blast Boundary On Artist Profile
+`Blast` is not available from the artist profile.
+
+`Blast` remains tied to the approved listening contexts:
+- `RADIYO`
+- `Collection`
+
+That means:
+- no blast on feed/discovery squares
+- no blast on artist-profile song rows
+- no wheel on artist profile
+
+## 14) Explicit Non-Locks / Deferred Items
 This document does not yet finalize:
-- exact section order within the artist page body
-- exact visual composition of the header
-- exact song-list ordering rules
-- exact event/calendar interaction behavior on the page
-- exact external-link inventory
-- exact artifact/display rules on the profile
-- artist-facing dashboard/management internals
+- exact section order outside the locked demo-song area
+- exact header composition
+- exact event/calendar layout on the artist profile
+- exact visual styling of the song rows
+- exact artwork fallback hierarchy beyond logo/release-art intent
+- later richer profile-wall / artifact display behavior
 
-Legacy carry-forward rule:
-- richer artist profile data inventories from older product documents remain valid future-profile understanding
-- they are preserved in `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md`
-- they do not automatically expand the current MVP artist-page contract
+## 15) Implementation Guardrails
+- Do not reintroduce `Add` / `Support` as source-page core actions.
+- Do not put the engagement wheel on the artist profile.
+- Do not let artist-profile listening masquerade as `RADIYO` or `Collection` mode.
+- Do not put `Collect`, `Blast`, or `Follow` directly on feed/discovery carousel squares.
+- Do not auto-play anything on plain artist-link entry.
+- Do not keep `RADIYO` running when the user enters through a song-driven artist-profile handoff.
 
-## 9) Implementation Guardrails
-- Do not redesign the artist page as an unusual bespoke surface.
-- Do not turn it into a passive dead-end bio page.
-- Do not reintroduce source-level `Blast` on the artist page; blast remains locked to `single` and `Uprise` signals.
-- Do not auto-play anything on artist-link entry.
-- Do not keep RaDIYo running when the user enters from a single/signal link that should auto-stream from the page.
-- Do not import external schema/API summaries as implementation authority.
-- If more artist-page detail is required beyond this lock, extend founder lock coverage before implementation.
+## 16) Implementation Slices
+### Slice A — documentation lock
+- lock artist-profile demo/listen purpose
+- lock no-wheel boundary
+- lock collect-vs-blast separation
 
-## 10) Follow-Up Needed
-- Reconcile future artist-page implementation work against this founder lock and `docs/solutions/MVP_ARTIST_PROFILE_DOC_AUDIT_R1.md` together.
-- If additional page-detail decisions are needed, extend this file instead of re-inventing the surface in code.
+### Slice B — profile song rows
+- render `3` song rows with play/pause + timeline
+- keep row controls local to demo listening
+
+### Slice C — discovery handoff
+- clicking a discovery/feed song square pauses `RADIYO`
+- artist profile opens with the selected song in demo listening
+
+### Slice D — collection entry
+- allow `Collect` from the artist-profile listening context
+- keep `Blast` unavailable there
+
+### Slice E — later profile refinement
+- refine header/details/events/artwork layout without changing the mode/action boundaries above
+
+## 17) Follow-Up Needed
+- reconcile any remaining active implementation briefs or UX docs that still describe artist-page core actions as `Follow / Add / Support`
+- implement the artist-profile song-row shell before widening later visual polish
+- keep blast/runtime wheel work out of artist-profile implementation slices unless the founder explicitly reopens that boundary
