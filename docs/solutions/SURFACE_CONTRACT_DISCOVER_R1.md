@@ -2,7 +2,12 @@
 
 **Status:** `active`
 **Owner:** `founder + codex`
-**Last Updated:** `2026-04-05`
+**Last Updated:** `2026-04-16`
+
+## Current MVP State
+- `Discover` is currently deferred as a live MVP surface.
+- the route may exist as a `Coming Soon` placeholder, but the active product behavior is local-community-only listening
+- while borders remain closed, useful discovery/statistics material should surface intermittently inside the feed rather than as a fixed Discover destination
 
 ## Purpose
 Define the stable contract for `Discover` as the right-side bottom-nav destination and player-anchored discovery surface.
@@ -16,6 +21,10 @@ Define the stable contract for `Discover` as the right-side bottom-nav destinati
 ## Primary Job
 - Provide passive community discovery and contextual scene signal amplification within the current listening scope.
 - Allow explicit travel through the player-attached travel control.
+
+Current MVP note:
+- this is the later-phase Discover contract once borders open
+- it is not the active live MVP route behavior today
 
 ## Governing Context
 - Discover inherits current player/listening context.

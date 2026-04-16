@@ -701,12 +701,15 @@ export default function PlotPage() {
             UPRISE
           </button>
 
-          <Link
-            href="/discover"
-            className="plot-wire-nav-button inline-flex min-h-11 items-center justify-center px-4"
+          <button
+            type="button"
+            className="plot-wire-nav-button inline-flex min-h-11 items-center justify-center gap-2 px-4 opacity-55"
+            aria-disabled="true"
+            title="Discover is coming soon while MVP stays local-community-only."
           >
-            Discover
-          </Link>
+            <span>Discover</span>
+            <span className="plot-wire-chip bg-[#d9d9d1] text-black/70">Soon</span>
+          </button>
         </div>
       </nav>
     </>

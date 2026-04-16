@@ -132,9 +132,6 @@ export default function ArtistBandProfilePage() {
             <p className="mt-2 text-sm text-red-700">{error ?? 'Artist profile not found.'}</p>
           </div>
           <div className="mt-4 flex gap-3">
-            <Button variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" onClick={() => router.push('/discover')}>
-              Back to Discover
-            </Button>
             <Button variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black" onClick={() => router.push('/plot')}>
               Back to Plot
             </Button>
@@ -251,7 +248,7 @@ export default function ArtistBandProfilePage() {
               </span>
             ) : null}
             <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
-              <Link href="/discover">Back to Discover</Link>
+              <Link href="/plot">Back to Plot</Link>
             </Button>
             {profile.homeScene ? (
               <Button asChild variant="outline" size="sm" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">

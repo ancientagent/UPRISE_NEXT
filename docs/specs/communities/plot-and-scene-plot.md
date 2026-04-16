@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-08`
+**Last Updated:** `2026-04-16`
 
 ## Overview & Purpose
 Defines The Plot as the Home-side sectional system inside the `Home` surface where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
@@ -12,6 +12,10 @@ Shell relationship lock:
 - `Home` is the left bottom-nav destination.
 - `Discover` is the right bottom-nav destination.
 - `Plot` lives inside `Home`; it is not a peer route to `Home`.
+
+Current MVP shell note:
+- the right-side `Discover` slot may be visibly disabled / `Coming Soon` while MVP remains local-community-only
+- active MVP listening stays inside the user's own community until borders open later
 
 ## User Roles & Use Cases
 - Listeners view community activity and access civic actions.
@@ -39,6 +43,8 @@ Shell relationship lock:
   - identical for all listeners in the same Home Scene
   - no ranking, personalization, or recommendation inference
   - followed-source updates must surface through the same feed grammar rather than a separate algorithmic notification feed
+  - stats-driven discovery material may surface intermittently as inserted feed carousels while `Discover` remains deferred
+  - these insertions are not fixed feed furniture and should appear as occasional scoped informational moments
 - Calendar rule:
   - calendar is a real MVP organizational layer
   - users add events directly to calendar
@@ -94,6 +100,7 @@ Shell relationship lock:
 - Plot is a civic interface, not a recommendation surface.
 - Promotions are non-governing signals and must not affect Fair Play.
 - Web tier may not import DB/server modules directly; data flows through API endpoints.
+- If deferred discovery material is surfaced in Plot/feed during MVP, it must remain scene-scoped, deterministic, and intermittent rather than becoming a second fixed discovery route.
 
 ## Data Models & Migrations
 ### Data Dependencies

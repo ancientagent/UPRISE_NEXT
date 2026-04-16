@@ -3,17 +3,22 @@
 **ID:** `COMM-DISCOVERY`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-25`
+**Last Updated:** `2026-04-16`
 
 ## Overview & Purpose
-Defines explicit, non-algorithmic discovery flows for changing listening context across Scenes and tiers. Discovery is user-initiated only and does not alter civic authority unless the user explicitly changes Home Scene.
+Defines explicit, non-algorithmic discovery flows for changing listening context across Scenes and tiers once borders open. Discovery is user-initiated only and does not alter civic authority unless the user explicitly changes Home Scene.
 
 Community identity is represented by `city + state + music community`.
-This spec governs scene-switching and travel rules inside Discover, not the full visual hierarchy of the Discover page. Discover remains a broader player-anchored discovery surface under current founder locks.
+This spec governs later-phase scene-switching and travel rules inside Discover, not the full visual hierarchy of the Discover page.
+Current live MVP note:
+- the `/discover` route is presently reduced to a `Coming Soon` placeholder while borders remain closed
+- active MVP listening stays inside the listener's own community while communities settle
+- useful discovery/statistics material should appear only as intermittent inserted feed moments during MVP, not as fixed Discover furniture
+- the richer cross-community discovery surface described below is deferred until communities settle and borders open
 
 ## User Roles & Use Cases
-- Listener explores other Scenes via explicit controls (swipe, manual map selection, tier toggle).
-- Listener tunes into another Scene broadcast as a visitor.
+- Listener explores other Scenes via explicit controls (swipe, manual map selection, tier toggle) after borders open.
+- Listener tunes into another Scene broadcast as a visitor once cross-community travel is live.
 - Listener can set a new Home Scene explicitly (outside passive discovery).
 - Artist/listener travels Discover across city/state/national scopes while keeping the current community context inherited from the active Home Scene or tuned community.
 
@@ -23,7 +28,8 @@ This spec governs scene-switching and travel rules inside Discover, not the full
   - Manual Scene selection in Discover map/list.
   - Tier toggling (city/state/national).
 - No recommendation feed, ranking, or personalization in discovery flows.
-- Discover remains bounded by the inherited current player/community scope for MVP.
+- Current MVP does not expose active cross-community discovery on the live `/discover` route.
+- Discovery remains bounded by the inherited current player/community scope when later-phase travel reopens.
 - Community-native lookup should live on the `community` page rather than inside Discover itself.
 - Discovery does not imply “join” semantics:
   - User can visit/tune to a Scene.
@@ -51,16 +57,11 @@ This spec governs scene-switching and travel rules inside Discover, not the full
   - cross-state switches are rejected when the user already has a Home Scene state
   - action is separate from tune transport context
 - API endpoint `POST /discover/tune` persists tuned-scene transport context on the user record.
-- Web discovery surface is implemented at `apps/web/src/app/discover/page.tsx`:
-  - one dominant player/title card anchoring the page
-  - explicit scope toggle (`city/state/national`)
-  - inherited current-community context (`city + state + music community`) for travel
-  - community discovery snippets materialized below the top player/title card
-  - city-scene rows expose `Open Scene`, `Tune to Scene`, and `Set as Home Scene` actions
-  - Home Scene action requires explicit confirmation copy
-  - read-only context chip shows Home Scene, Tuned Scene, and Visitor/Local status
-  - no “Join Community” language or behavior
-  - discovery route calls are consumed through typed web client wrappers (`apps/web/src/lib/discovery/client.ts`) to keep endpoint contracts centralized.
+- Current web `/discover` route is reduced to a `Coming Soon` placeholder.
+- Current MVP feed may carry intermittent inserted discovery/statistics moments instead of a live Discover destination.
+- Discovery route calls and typed client wrappers remain in the repo for the deferred later-phase surface:
+  - `apps/web/src/lib/discovery/client.ts`
+  - `apps/web/src/lib/discovery/context.ts`
 - Discovery context store patching is centralized via `apps/web/src/lib/discovery/context.ts` for consistent tuned-scene fallback behavior across Discover and Plot.
 - Plot surface consumes persisted discovery context for default scene selection.
   - read-only context chip is rendered in Plot header for visibility of transport vs authority context
@@ -131,7 +132,7 @@ This spec governs scene-switching and travel rules inside Discover, not the full
   - falls back to Home Scene when tuned scene has not been set
 
 ## Web UI / Client Behavior
-- Discover surface must show:
+- Later-phase Discover surface must show:
   - one dominant top player/title card that establishes the current community scope
   - inherited current community identity (`city + state + music community`)
   - scope toggle (`city/state/national`)

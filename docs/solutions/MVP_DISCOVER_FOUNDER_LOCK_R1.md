@@ -2,10 +2,17 @@
 
 Status: Active  
 Owner: Founder + product engineering  
-Last updated: 2026-04-06
+Last updated: 2026-04-16
 
 ## 1) Purpose
 Capture founder-confirmed Discover behavior so future sessions stop reinterpreting Discover from partial specs, stale implementation shape, legacy layout memory, or philosophy-derived narrowing.
+
+Current MVP border rule:
+- MVP is local-community-only.
+- listeners primarily listen to their own community while communities settle
+- `Discover` is not a live active MVP surface yet and should present as `Coming Soon`
+- cross-community travel / open-borders discovery is deferred until communities are stable enough to open borders intentionally
+- useful stats-driven discovery material should surface intermittently inside the feed in the meantime instead of relying on a separate Discover route
 
 This document is the controlling lock for:
 - Discover structure and entry model

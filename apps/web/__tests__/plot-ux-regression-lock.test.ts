@@ -215,11 +215,14 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('aria-label="Plot bottom navigation"');
     expect(plotPageSource).toContain('data-slot="plot-bottom-nav"');
     expect(plotPageSource).toContain('href="/plot"');
-    expect(plotPageSource).toContain('href="/discover"');
     expect(plotPageSource).toContain('plot-wire-nav-button');
     expect(plotPageSource).toContain('plot-wire-nav-center');
     expect(plotPageSource).toContain('Open UPRISE engagement wheel');
     expect(plotPageSource).toContain('UPRISE Wheel');
+    expect(plotPageSource).toContain('Discover');
+    expect(plotPageSource).toContain('Discover is coming soon while MVP stays local-community-only.');
+    expect(plotPageSource).toContain('Soon');
+    expect(plotPageSource).toContain('aria-disabled="true"');
     expect(plotPageSource).toContain('getEngagementWheelActions(playerMode)');
     expect(plotPageSource).toContain('renderBottomNav()');
   });

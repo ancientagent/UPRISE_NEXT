@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Deferred live Discover for the local-community-only MVP: `/discover` now renders as a `Coming Soon` placeholder, shell entrypoints are disabled, and useful discovery/statistics material is explicitly redirected to occasional inserted feed moments rather than a fixed destination; see `docs/handoff/2026-04-16_discover-deferred-local-only-mvp.md`.
 - Removed local artist/song search from Discover and locked the route back to a passive community-reading surface, with community-native lookup explicitly deferred to the community page instead; see `docs/handoff/2026-04-16_discover-passive-surface-no-search.md`.
 - Moved Discover to a top-anchored player marquee and folded the travel trigger into the player footer area so travel now occupies the old broadcast-prompt slot instead of appearing as a separate glued-on bar below the player; see `docs/handoff/2026-04-16_discover-top-player-travel-implementation.md`.
 - Reconciled active Discover doctrine around a single dominant player/title card: Discover now explicitly treats the top player card as the current community title card, keeps search inside that card, and treats rails/recommendations as secondary snippets materializing below it; see `docs/handoff/2026-04-16_discover-player-title-card-layout-lock.md`.

@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: Founder + product engineering
-Last updated: 2026-04-09
+Last updated: 2026-04-16
 
 ## 1) Purpose
 Capture founder-confirmed source, profile, feed, and registrar-entity rules so future sessions stop re-deriving them from chat fragments.
@@ -218,6 +218,11 @@ Current Plot tab priority order is:
 
 Feed is not just the default-selected tab.
 Feed is the primary live pulse of the scene.
+
+Current MVP border note:
+- while borders remain closed and `Discover` is deferred, stats-driven discovery material may appear intermittently inside the feed
+- these are occasional inserted informational surfaces, not fixed permanent rails
+- the same insertion logic may later apply to paid placement promos when that surface is activated
 
 Feed purpose:
 - live update of what is happening in the scene
