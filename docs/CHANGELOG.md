@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added an external-assistant setup pack for Abacus CoWork/Desktop: a repo-aware rules file at `.deepagent-desktop/rules/uprise_next_rules.md` plus `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md` so external tools can produce docs/emails/briefings from current repo truth instead of mixed historical assumptions; see `docs/handoff/2026-04-17_abacus-external-assistant-briefing.md`.
 - Added a standing external-memory sync rule: when doctrine, active surface behavior, action grammar, or major runtime shape changes materially, the same slice must also update the active NotebookLM briefing or add a dated sync note so external memory stays aligned with the repo; see `docs/AGENT_STRATEGY_AND_HANDOFF.md` and `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md`.
 - Added a NotebookLM-ready artist-profile/source-dashboard briefing that curates the last month of doctrine/runtime changes, separates current active locks from legacy carry-forward, and explicitly reconciles a mixed-era NotebookLM answer against the newer founder locks; see `docs/handoff/2026-04-16_notebooklm_artist-profile-and-dashboard_briefing.md`.
 - Expanded `seed:artist-fixture-roster` so the deterministic Austin/Punk QA pack now also creates 5 listener-only fixtures and uses those listener accounts, not the artist owners, to generate seeded `ADD` / `BLAST` / `RECOMMEND` activity; this gives artist-profile QA and recommendation/feed metrics the correct account-type shape for local testing; see `docs/handoff/2026-04-16_artist-fixture-roster-seed.md`.
