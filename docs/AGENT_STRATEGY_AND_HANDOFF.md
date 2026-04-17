@@ -38,6 +38,7 @@ Load only the materials directly needed for the current task:
 - Do not inherit product behavior from prior chat memory when current code/specs disagree.
 - Keep context lean: prefer concise summaries over transcript dumps, salvage dense threads early, and use `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` when a thread is starting to bloat.
 - When founder clarification changes product truth or MVP boundary, promote it in the same pass using `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md`; do not leave it in chat-only memory.
+- When a slice materially changes product doctrine, active surface behavior, or major runtime shape, also update the current external-memory bridge for NotebookLM or add a dated NotebookLM sync note in the same pass. Do not let NotebookLM drift a month behind the repo.
 
 ## Multi-Agent Operating Protocol
 ### One implementation owner

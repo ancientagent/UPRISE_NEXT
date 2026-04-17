@@ -60,6 +60,15 @@ Add a short `docs/handoff/YYYY-MM-DD_*.md` note when:
 ### 4. Update `docs/CHANGELOG.md`
 Every meaningful promotion gets a concise unreleased entry.
 
+### 5. Keep external memory in sync
+If the team is using NotebookLM or another external memory layer, update the active briefing pack or add a dated sync note in the same pass whenever the slice changes:
+- founder doctrine
+- active surface behavior
+- action grammar
+- major runtime shape
+
+Do not assume external memory will infer the change from raw repo state on its own.
+
 ## Capture Standard
 Every promoted founder decision should answer these questions plainly:
 1. What changed?
@@ -86,6 +95,7 @@ Minimum salvage package:
 - founder lock update or new lock
 - `docs/CHANGELOG.md` entry
 - dated handoff note if reconciliation/follow-up exists
+- NotebookLM/external-memory sync note or briefing update when the change is large enough to affect future answers
 
 Do not wait until the end of the day or the end of the thread if the thread is already creating durable product truth.
 
