@@ -19,43 +19,51 @@ const ARTIST_FIXTURE_ROSTER = [
   { displayName: 'Velvet Circuit', stageName: 'Velvet Circuit' },
 ];
 
+const LISTENER_FIXTURE_ROSTER = [
+  { displayName: 'Mara Vale' },
+  { displayName: 'Dion Pike' },
+  { displayName: 'Nina South' },
+  { displayName: 'Ezra Bloom' },
+  { displayName: 'Tess Relay' },
+];
+
 const SINGLE_SIGNAL_FIXTURES = [
   {
     ownerIndex: 0,
     title: 'Static on the Southside',
-    addUserIndexes: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    blastUserIndexes: [2, 5, 8],
-    recommendUserIndexes: [3, 7],
+    addListenerIndexes: [0, 1, 2, 3, 4],
+    blastListenerIndexes: [0, 2, 4],
+    recommendListenerIndexes: [1, 3],
     riseEnteredPoolAt: '2026-04-15T20:00:00.000Z',
   },
   {
     ownerIndex: 1,
     title: 'Mercy Circuit',
-    addUserIndexes: [0, 2, 3, 4, 5, 6, 7, 8],
-    blastUserIndexes: [0, 4, 6],
-    recommendUserIndexes: [5],
+    addListenerIndexes: [0, 1, 2, 3],
+    blastListenerIndexes: [1, 3],
+    recommendListenerIndexes: [2],
     riseEnteredPoolAt: '2026-04-14T20:00:00.000Z',
   },
   {
     ownerIndex: 2,
     title: 'Ashline Signal',
-    addUserIndexes: [0, 1, 3, 4, 5, 6, 7],
-    blastUserIndexes: [1, 6],
-    recommendUserIndexes: [4],
+    addListenerIndexes: [0, 1, 2],
+    blastListenerIndexes: [0, 2],
+    recommendListenerIndexes: [4],
   },
   {
     ownerIndex: 3,
     title: 'Youth Frequency',
-    addUserIndexes: [0, 1, 2, 4, 5, 6],
-    blastUserIndexes: [2, 5],
-    recommendUserIndexes: [],
+    addListenerIndexes: [0, 2, 3],
+    blastListenerIndexes: [1],
+    recommendListenerIndexes: [],
   },
   {
     ownerIndex: 4,
     title: 'Bloom Relay',
-    addUserIndexes: [0, 1, 2, 3, 5],
-    blastUserIndexes: [1],
-    recommendUserIndexes: [],
+    addListenerIndexes: [1, 3],
+    blastListenerIndexes: [4],
+    recommendListenerIndexes: [],
   },
 ];
 
@@ -63,16 +71,16 @@ const UPRISE_SIGNAL_FIXTURES = [
   {
     ownerIndex: 5,
     title: 'Austin Punk Uprise Dispatch',
-    addUserIndexes: [0, 1, 2, 3],
-    blastUserIndexes: [4, 7],
-    recommendUserIndexes: [8],
+    addListenerIndexes: [0, 1, 2],
+    blastListenerIndexes: [3, 4],
+    recommendListenerIndexes: [1],
   },
   {
     ownerIndex: 6,
     title: 'State Line Uprise Call',
-    addUserIndexes: [2, 3, 4],
-    blastUserIndexes: [0, 5],
-    recommendUserIndexes: [1],
+    addListenerIndexes: [1, 2, 4],
+    blastListenerIndexes: [0, 2],
+    recommendListenerIndexes: [3],
   },
 ];
 
@@ -255,6 +263,49 @@ async function upsertFixtureUser({ entry, index, passwordHash, scene, domain }) 
   });
 
   return user;
+}
+
+async function upsertListenerFixtureUser({ entry, index, passwordHash, scene, domain }) {
+  const suffix = String(index + 1).padStart(2, '0');
+  const username = `${slugify(entry.displayName).replace(/-/g, '')}listener${suffix}`.slice(0, 30);
+  const email = `${slugify(entry.displayName).replace(/-/g, '.')}+listener${suffix}@${domain}`;
+
+  return prisma.user.upsert({
+    where: { email },
+    update: {
+      username,
+      displayName: entry.displayName,
+      password: passwordHash,
+      bio: `${entry.displayName} listener fixture account for local community QA.`,
+      city: scene.city ?? undefined,
+      homeSceneCity: scene.city ?? undefined,
+      homeSceneState: scene.state ?? undefined,
+      homeSceneCommunity: scene.musicCommunity ?? undefined,
+      collectionDisplayEnabled: true,
+    },
+    create: {
+      email,
+      username,
+      displayName: entry.displayName,
+      password: passwordHash,
+      bio: `${entry.displayName} listener fixture account for local community QA.`,
+      city: scene.city ?? undefined,
+      homeSceneCity: scene.city ?? undefined,
+      homeSceneState: scene.state ?? undefined,
+      homeSceneCommunity: scene.musicCommunity ?? undefined,
+      collectionDisplayEnabled: true,
+      gpsVerified: false,
+    },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      displayName: true,
+      homeSceneCity: true,
+      homeSceneState: true,
+      homeSceneCommunity: true,
+    },
+  });
 }
 
 async function ensureArtistBand({ user, entry, scene }) {
@@ -516,11 +567,11 @@ async function ensureSignalAction({ userId, signalId, type }) {
   });
 }
 
-async function seedSignalActivity({ roster, cityScene, stateScene }) {
+async function seedSignalActivity({ artistRoster, listenerRoster, cityScene, stateScene }) {
   const signalSummaries = [];
 
   for (const fixture of SINGLE_SIGNAL_FIXTURES) {
-    const owner = roster[fixture.ownerIndex];
+    const owner = artistRoster[fixture.ownerIndex];
     if (!owner) continue;
 
     const signal = await upsertSignal({
@@ -532,8 +583,8 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       scene: cityScene,
     });
 
-    for (const userIndex of fixture.addUserIndexes) {
-      const account = roster[userIndex];
+    for (const userIndex of fixture.addListenerIndexes) {
+      const account = listenerRoster[userIndex];
       if (!account) continue;
       await ensureCollectionAdd({
         userId: account.user.id,
@@ -542,8 +593,8 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       });
     }
 
-    for (const userIndex of fixture.blastUserIndexes) {
-      const account = roster[userIndex];
+    for (const userIndex of fixture.blastListenerIndexes) {
+      const account = listenerRoster[userIndex];
       if (!account) continue;
       await ensureSignalAction({
         userId: account.user.id,
@@ -552,8 +603,8 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       });
     }
 
-    for (const userIndex of fixture.recommendUserIndexes) {
-      const account = roster[userIndex];
+    for (const userIndex of fixture.recommendListenerIndexes) {
+      const account = listenerRoster[userIndex];
       if (!account) continue;
       await ensureSignalAction({
         userId: account.user.id,
@@ -588,15 +639,15 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       type: signal.type,
       title: fixture.title,
       ownerArtistBandId: owner.artistBand.id,
-      adds: fixture.addUserIndexes.length,
-      blasts: fixture.blastUserIndexes.length,
-      recommends: fixture.recommendUserIndexes.length,
+      adds: fixture.addListenerIndexes.length,
+      blasts: fixture.blastListenerIndexes.length,
+      recommends: fixture.recommendListenerIndexes.length,
       rise,
     });
   }
 
   for (const fixture of UPRISE_SIGNAL_FIXTURES) {
-    const owner = roster[fixture.ownerIndex];
+    const owner = artistRoster[fixture.ownerIndex];
     if (!owner) continue;
 
     const signal = await upsertSignal({
@@ -608,8 +659,8 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       scene: cityScene,
     });
 
-    for (const userIndex of fixture.addUserIndexes) {
-      const account = roster[userIndex];
+    for (const userIndex of fixture.addListenerIndexes) {
+      const account = listenerRoster[userIndex];
       if (!account) continue;
       await ensureCollectionAdd({
         userId: account.user.id,
@@ -618,8 +669,8 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       });
     }
 
-    for (const userIndex of fixture.blastUserIndexes) {
-      const account = roster[userIndex];
+    for (const userIndex of fixture.blastListenerIndexes) {
+      const account = listenerRoster[userIndex];
       if (!account) continue;
       await ensureSignalAction({
         userId: account.user.id,
@@ -628,8 +679,8 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       });
     }
 
-    for (const userIndex of fixture.recommendUserIndexes) {
-      const account = roster[userIndex];
+    for (const userIndex of fixture.recommendListenerIndexes) {
+      const account = listenerRoster[userIndex];
       if (!account) continue;
       await ensureSignalAction({
         userId: account.user.id,
@@ -643,9 +694,9 @@ async function seedSignalActivity({ roster, cityScene, stateScene }) {
       type: signal.type,
       title: fixture.title,
       ownerArtistBandId: owner.artistBand.id,
-      adds: fixture.addUserIndexes.length,
-      blasts: fixture.blastUserIndexes.length,
-      recommends: fixture.recommendUserIndexes.length,
+      adds: fixture.addListenerIndexes.length,
+      blasts: fixture.blastListenerIndexes.length,
+      recommends: fixture.recommendListenerIndexes.length,
     });
   }
 
@@ -663,7 +714,8 @@ async function main() {
     musicCommunity: args['music-community'],
   });
   const passwordHash = await bcrypt.hash(args.password ?? DEFAULT_PASSWORD, 10);
-  const results = [];
+  const artistResults = [];
+  const listenerResults = [];
 
   for (const [index, entry] of ARTIST_FIXTURE_ROSTER.slice(0, count).entries()) {
     const user = await upsertFixtureUser({
@@ -675,16 +727,29 @@ async function main() {
     });
     const { artistBand, created } = await ensureArtistBand({ user, entry, scene });
 
-    results.push({
+    artistResults.push({
       user,
       artistBand,
       artistBandCreated: created,
     });
   }
 
-  const stateScene = await ensureStateScene(scene, results[0]?.user.id ?? null);
+  for (const [index, entry] of LISTENER_FIXTURE_ROSTER.entries()) {
+    const user = await upsertListenerFixtureUser({
+      entry,
+      index,
+      passwordHash,
+      scene,
+      domain,
+    });
+
+    listenerResults.push({ user });
+  }
+
+  const stateScene = await ensureStateScene(scene, artistResults[0]?.user.id ?? null);
   const signals = await seedSignalActivity({
-    roster: results,
+    artistRoster: artistResults,
+    listenerRoster: listenerResults,
     cityScene: scene,
     stateScene,
   });
@@ -708,7 +773,8 @@ async function main() {
             }
           : null,
         password: args.password ?? DEFAULT_PASSWORD,
-        accounts: results,
+        artistAccounts: artistResults,
+        listenerAccounts: listenerResults,
         signals,
       },
       null,
