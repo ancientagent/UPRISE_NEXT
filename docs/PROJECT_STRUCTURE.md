@@ -14,6 +14,7 @@ apps/
   socket/                 # Socket.IO (Fly.io / App Runner)
   workers/
     transcoder/           # FFmpeg worker (AWS Fargate / Fly.io)
+art/                      # Non-production design/art department workspace
 packages/
   ui/                     # Shared UI components (Tailwind + shadcn/ui)
   types/                  # Zod schemas; emits OpenAPI

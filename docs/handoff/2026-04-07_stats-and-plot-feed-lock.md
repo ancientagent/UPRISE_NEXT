@@ -2,7 +2,7 @@
 
 Date: 2026-04-07
 Owner: Codex
-Status: Active carry-forward note
+Status: Partially active carry-forward note (historical on live Discover positioning)
 
 ## What Changed
 - Added `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md` as the shared descriptive stats contract for MVP.
@@ -21,7 +21,8 @@ Status: Active carry-forward note
 - The notification icon is for system/state-change/inbox-style notices.
 - Calendar auto-add behavior remains part of MVP organizational behavior.
 - Top 40 / billboard-style statistics are deferred from MVP until population justifies them.
-- MVP Discover statistics read from the shared stats contract, not from the RaDIYo momentum system.
+- current feed-insert discovery moments read from the shared stats contract, not from the RaDIYo momentum system.
+- if live Discover returns later, it should still inherit this shared stats contract rather than inventing a new one.
 
 ## What Remains Open
 - Exact notification taxonomy beyond the locked split (which specific notice classes appear in the icon).
@@ -31,5 +32,5 @@ Status: Active carry-forward note
 
 ## Next Recommended Move
 1. Reconcile any remaining prompt packs or solution docs that still imply Top 40 is active MVP behavior.
-2. Turn the Discover and stats locks into an `apps/web` implementation plan.
+2. Turn the feed-insert discovery/stats locks into an `apps/web` implementation plan.
 3. If needed, add a dedicated founder lock for notification taxonomy.

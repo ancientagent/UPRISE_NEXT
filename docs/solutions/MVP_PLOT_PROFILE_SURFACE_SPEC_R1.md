@@ -1,5 +1,13 @@
 # MVP Plot + Profile Surface Spec R1
 
+Status: Historical reference
+
+Historical note:
+- This screenshot-derived Plot/Profile spec belongs to an older UX phase.
+- Some control maps and surface assumptions here are no longer current MVP authority.
+- Use recent founder locks and authority docs first.
+
+
 Purpose: deterministic implementation contract for the screenshot-derived mobile UX architecture.
 
 ## 1) Route and State Model

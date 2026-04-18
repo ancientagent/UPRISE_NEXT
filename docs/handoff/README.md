@@ -19,9 +19,13 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
-- [`2026-03-24_session-context-reconciliation.md`](./2026-03-24_session-context-reconciliation.md) — merged carry-forward correction layer from the recent multi-agent UX/discovery work.
-- [`2026-03-24_SLICE-UXQAREV-885A.md`](./2026-03-24_SLICE-UXQAREV-885A.md) — Batch27 closeout QA result.
-- Recent Plot/Onboarding/Discover route fixes are under the `2026-03-24_*` and `2026-03-23_*` notes.
+- [`2026-04-18_handoff-staleness-reconciliation.md`](./2026-04-18_handoff-staleness-reconciliation.md) — current guide to which older handoffs are historical-only versus still useful carry-forward.
+- [`2026-04-18_repo-authority-map-and-wiki-steering.md`](./2026-04-18_repo-authority-map-and-wiki-steering.md) — current repo authority and generated-wiki steering layer for external assistants.
+- [`2026-04-18_art-department-structure.md`](./2026-04-18_art-department-structure.md) — current art/design workspace structure.
+- [`2026-04-17_abacus-external-assistant-briefing.md`](./2026-04-17_abacus-external-assistant-briefing.md) — current external-assistant setup context.
+- [`2026-04-16_notebooklm_artist-profile-and-dashboard_briefing.md`](./2026-04-16_notebooklm_artist-profile-and-dashboard_briefing.md) — current curated briefing for artist-profile/source-dashboard questions.
+- [`2026-04-16_discover-feed-insert-and-artist-demo-lock.md`](./2026-04-16_discover-feed-insert-and-artist-demo-lock.md) — current discovery-to-artist-profile demo-listen lock.
+- [`2026-04-16_discover-deferred-local-only-mvp.md`](./2026-04-16_discover-deferred-local-only-mvp.md) — current MVP Discover deferment and feed-insert position.
 
 ## Finding Relevant Notes
 Use search instead of reading large historical batches by default.

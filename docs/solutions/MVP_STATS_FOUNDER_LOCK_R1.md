@@ -7,14 +7,14 @@
 ## Purpose
 Lock the MVP statistics contract that powers:
 - the `Statistics` section inside `Plot`
-- Discover's `Popular Singles` lenses
+- current feed-insert `Popular Singles` lenses and future discovery surfaces
 - future analytics and paid metrics products
 
 This document exists to separate:
 - the stats system we need now
 - from the Activity Points / Activity Score system that can be finalized later
 
-It also exists to keep Plot, Discover, and future paid analytics on one shared stats vocabulary instead of allowing each surface to invent a different one.
+It also exists to keep Plot, current feed-insert discovery moments, and future paid analytics on one shared stats vocabulary instead of allowing each surface to invent a different one.
 
 ## Core Rules
 - Statistics are **descriptive only**.
@@ -167,6 +167,7 @@ These may remain future statistics surfaces once population justifies them, but 
 Current MVP note:
 - live `/discover` is deferred while borders remain closed
 - the stats contract below presently powers intermittent feed-insert discovery moments rather than a full live Discover page
+- future reopened discovery surfaces should still use this same stats vocabulary instead of inventing a parallel one
 
 ### Recommendations / People Are Saying
 - recommendation objects are surfaced directly
@@ -175,7 +176,7 @@ Current MVP note:
 - recommendation surfacing should reflect genuine listener-held relationships rather than fabricated source-side activity
 
 ### Popular Singles
-`Popular Singles` is the primary stats-driven music-discovery rail.
+`Popular Singles` is the primary stats-driven music-discovery rail for the current feed-insert system and any later reopened discovery surface.
 
 MVP lenses:
 - `Most Added`
@@ -195,7 +196,7 @@ MVP lenses:
   - `Recent Rises` reads the most recent city-origin singles pulled into the `state` player
   - `highestScopeReached = state`
   - `lastRiseAt = enteredPoolAt` for that state-player promotion
-  - `national` rise tracking is deferred with the `national` Discover tier
+  - `national` rise tracking stays deferred until a later discovery/border-opening phase
 
 ### Insert presentation boundary
 When these stats are surfaced during current MVP:
@@ -245,7 +246,7 @@ Retained metrics confirmed from earlier product docs include:
 
 Handling rule:
 - these metrics are legitimate parts of the broader analytics foundation
-- they do **not** automatically become MVP Plot/Discover surface requirements
+- they do **not** automatically become MVP Plot/feed-insert surface requirements
 - they may be retained, computed, and later packaged into analytics products without reopening the MVP display contract
 - they should be available to Super Admin even when hidden from current user-facing MVP surfaces
 
@@ -271,7 +272,7 @@ This document does **not** lock:
 - vibe score
 - influence map formulas
 - paid analytics package structure
-- final UI card count/order per Discover lens
+- final UI card count/order per feed-insert discovery lens
 - `Top 40` / billboard ranking semantics
 
 Those can be layered later on top of this stats contract.

@@ -139,7 +139,7 @@ Purpose: convert the provided legacy-style screenshot into a deterministic build
 - Plus/minus dial as active control: V2 (unless founder re-locks).
 
 ## D) Prompt-Ready Replication Block (Use in Uizard)
-Use `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md` as base, then append:
+Use the current founder locks and authority map as base instead of the historical Uizard pack, then append:
 
 1) Treat legacy screenshot as layout reference only.
 2) Keep all MVP locks from strict pack.
@@ -148,7 +148,7 @@ Use `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md` as base, then append:
    - instrument/registrar profile fields
    - ambassador/mixologist role surfaces
    - avatar surfaces
-4) Keep action wheel behavior and tab/menu order exactly as locked.
+4) Resolve active actions and tab/menu order from the latest founder locks, not from historical prompt packs.
 5) Do not add controls not listed.
 
 Acceptance gate:

@@ -1,0 +1,137 @@
+{
+  "repo_notes": [
+    {
+      "author": "product engineering",
+      "content": "UPRISE_NEXT is a pnpm monorepo. The primary authority order is AGENTS.md, then docs/canon, then active docs/specs, then active founder locks/execution docs in docs/solutions, then current branch runtime/code evidence, then dated handoffs. The generated wiki must not treat legacy docs, stale prompt packs, or historical handoffs as equal authority."
+    },
+    {
+      "author": "product engineering",
+      "content": "This repo contains both current active MVP doctrine and a large amount of legacy/historical documentation. Deprioritize docs/legacy/** and older mixed-era prompt packs unless a newer doc explicitly points back to them. When sources conflict, separate current active MVP lock, current runtime reality, and legacy/later-version carry-forward instead of flattening them."
+    },
+    {
+      "author": "product engineering",
+      "content": "Prioritize the current MVP action grammar and surface doctrine from docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md, MVP_DISCOVER_FOUNDER_LOCK_R1.md, MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md, MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md, and MVP_STATS_FOUNDER_LOCK_R1.md. Recent carry-forward is concentrated in docs/handoff/2026-04-16_notebooklm_artist-profile-and-dashboard_briefing.md and related 2026-04-16/2026-04-17 handoffs."
+    },
+    {
+      "author": "product engineering",
+      "content": "Key architecture areas: apps/web is the Next.js web client and must respect WEB_TIER_BOUNDARY.md; apps/api is the NestJS API; packages/types contains shared public contracts and is important for generated documentation; apps/socket exists for realtime transport. Current MVP is local-community-first, with live Discover deferred and discovery/statistics currently flowing through intermittent feed inserts rather than a full live discover destination."
+    },
+    {
+      "author": "product engineering",
+      "content": "Treat external models as separate departments, not separate authorities. Design agents can explore layout but cannot redefine action grammar. Writing/briefing agents can summarize and draft but cannot invent doctrine. Coding agents must implement from locks/specs/runtime. The wiki should help those departments orient quickly without letting any of them replace repo truth."
+    }
+  ],
+  "pages": [
+    {
+      "title": "UPRISE_NEXT Overview",
+      "purpose": "Explain what the UPRISE_NEXT repo is, how the monorepo is organized, and what the current active MVP focus is.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Use docs/architecture/UPRISE_OVERVIEW.md, docs/PROJECT_STRUCTURE.md, and docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md as primary inputs. Mention apps/web, apps/api, apps/socket, and packages/types explicitly."
+        }
+      ]
+    },
+    {
+      "title": "Authority And Documentation Rules",
+      "purpose": "Document the repo's authority order, how to read docs safely, what outranks what, and how to separate current locks from runtime and legacy material.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Anchor this page on AGENTS.md, docs/AGENT_STRATEGY_AND_HANDOFF.md, and docs/solutions/REPO_AUTHORITY_MAP_R1.md. This page should make it hard for agents to treat stale docs as current truth."
+        }
+      ]
+    },
+    {
+      "title": "Architecture And Tier Boundaries",
+      "purpose": "Document the system architecture, app/package boundaries, and especially the web-tier boundary and shared contract layers.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Prioritize apps/web/WEB_TIER_BOUNDARY.md, docs/architecture/UPRISE_OVERVIEW.md, docs/PROJECT_STRUCTURE.md, packages/types, apps/web/src, and apps/api/src."
+        }
+      ]
+    },
+    {
+      "title": "Current MVP Action Grammar",
+      "purpose": "Explain the current active action system, including what actions exist now, what they apply to, and which older action terms are stale or derived-state only.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Use docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md as the primary authority. Make sure this page distinguishes direct actions from derived state and reflects current founder-lock doctrine rather than old prompt-pack language."
+        }
+      ]
+    },
+    {
+      "title": "Listening Modes And Surface Separation",
+      "purpose": "Document the current separation between broadcast listening, personal collection listening, artist-profile demo listening, and deferred discovery surfaces.",
+      "parent": "Current MVP Action Grammar",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Use docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md, docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md, docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md, and docs/specs/communities/plot-and-scene-plot.md."
+        }
+      ]
+    },
+    {
+      "title": "Web Routes And Surface Contracts",
+      "purpose": "Explain the main web surfaces, their roles, and where current route behavior is locked versus deferred.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Prioritize Plot, Discover, Community, and Artist Profile route behavior. Use docs/solutions/SURFACE_CONTRACT_DISCOVER_R1.md and current founder locks instead of stale route descriptions."
+        }
+      ]
+    },
+    {
+      "title": "Artist Profile And Source Surfaces",
+      "purpose": "Document the current intended artist-profile behavior, current runtime lag, and how source surfaces differ from broadcast and collection listening contexts.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Use docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md, docs/handoff/2026-04-16_notebooklm_artist-profile-and-dashboard_briefing.md, and apps/web/src/app/artist-bands/[id]/page.tsx. Distinguish locked doctrine from current live implementation."
+        }
+      ]
+    },
+    {
+      "title": "API And Shared Contracts",
+      "purpose": "Document where shared types and public contracts live, how the API and web coordinate, and which packages are central to agent understanding.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Focus on packages/types, apps/api/src, and apps/web clients. Make clear that shared types and API contracts matter more than inferred UI text when documenting runtime behavior."
+        }
+      ]
+    },
+    {
+      "title": "Fixture And QA Setup",
+      "purpose": "Explain how deterministic fixtures and QA setup currently work for artist profiles, feed/discovery stats, and account-type testing.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Use apps/api/scripts/seed-artist-fixture-roster.mjs and docs/handoff/2026-04-16_artist-fixture-roster-seed.md. Mention that listener-only fixtures exist and why they matter."
+        }
+      ]
+    },
+    {
+      "title": "Deferred And Legacy Domains",
+      "purpose": "Make clear which parts of the repo are intentionally deferred, which are later-version carry-forward, and which directories/docs are legacy reference only.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "This page should explicitly call out docs/legacy/** and older prompt packs as lower-priority reference material. It should also explain that some current doctrine is locked before implementation is complete."
+        }
+      ]
+    },
+    {
+      "title": "External Assistant Operating Model",
+      "purpose": "Document how external assistants such as Abacus, NotebookLM, and design agents should be used against this repo and how they are divided into departmental roles.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Use docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md, docs/solutions/REPO_AUTHORITY_MAP_R1.md, and docs/solutions/AGENT_WIKI_STEERING_R1.md. Emphasize department-style usage without granting them authority over repo truth."
+        }
+      ]
+    }
+  ]
+}

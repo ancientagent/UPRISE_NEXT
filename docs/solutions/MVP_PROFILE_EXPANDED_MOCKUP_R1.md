@@ -1,5 +1,12 @@
 # MVP Profile Mockup R1
 
+Status: Historical reference
+
+Historical note:
+- This mockup doc predates later founder-lock changes and should not be treated as current authority on active profile composition.
+- Use current founder locks and recent handoffs for active artist-profile/source/profile behavior.
+
+
 ## Scope
 Mobile `/plot` profile behavior and expanded-profile information architecture.
 

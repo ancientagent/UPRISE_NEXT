@@ -1,13 +1,28 @@
 # MVP Design Platform Pack R1
 
+Status: Historical workflow reference
+
+Historical note:
+- This file documents an older cross-tool UX generation workflow.
+- It is not current authority for product behavior, action grammar, or active MVP surface scope.
+- Use current founder locks and the authority map first:
+  - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
+  - `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+  - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
+
+
 Purpose: keep one UX contract across multiple design tools (Uizard, Figma, Penpot, Balsamiq) without drift.
 
 ## Source Lock (Always Reference)
-- `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md`
-- `docs/solutions/MVP_UX_DRIFT_GUARD_R1.md`
-- `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md`
+- `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
+- `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+- `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
 
-If any platform output conflicts with these files, the output is wrong.
+If any platform output conflicts with those newer files, the output is wrong. This document itself is historical workflow guidance, not current product authority.
 
 ---
 

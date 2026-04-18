@@ -1,5 +1,17 @@
 # MVP Uizard Prompt Pack R1
 
+Status: Historical reference only (superseded)
+
+Historical note:
+- This prompt pack predates the later founder locks and action-matrix reconciliation.
+- It should not be used as current authority for player actions, Discover behavior, or profile composition.
+- Use current founder locks and the authority map first:
+  - `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+  - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
+
+
 Use these prompts directly in Uizard to generate mobile mockups aligned to current UPRISE decisions.
 
 ## 0) Global Setup Prompt (paste first)

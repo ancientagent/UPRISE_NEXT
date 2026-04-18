@@ -1,5 +1,18 @@
 # New Chat Bootstrap Prompt (UX R1)
 
+Status: Historical bootstrap prompt
+
+Historical note:
+- This bootstrap prompt targets an older UX/tooling phase.
+- Do not use it as the default entrypoint for current UPRISE surface/design work.
+- Current assistants should instead read:
+  - `AGENTS.md`
+  - `.deepagent-desktop/rules/uprise_next_rules.md`
+  - `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`
+  - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
+  - task-relevant current founder locks and specs
+
+
 Paste this into a brand-new chat/session.
 
 ---

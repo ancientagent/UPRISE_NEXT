@@ -1,5 +1,21 @@
 # MVP Uizard Prompt Pack R2 (Strict)
 
+Status: Historical reference only (pre-2026-04 plot/profile pack)
+
+Historical note:
+- This document reflects an older Plot/Profile/Discover generation phase.
+- Do not use it as the current authority for action grammar, live Discover behavior, or artist-profile behavior.
+- Current authority now lives in:
+  - `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+  - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
+
+Use this file only as historical reference for a prior mobile mockup phase.
+
+
 Use this pack for deterministic mobile mockup generation with minimal drift.
 
 ## How To Use

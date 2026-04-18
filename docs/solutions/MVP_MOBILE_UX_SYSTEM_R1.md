@@ -1,5 +1,17 @@
 # MVP Mobile UX System (R1)
-Status: Active planning artifact (mobile-first UX source of truth)  
+Status: Historical reference (older mobile-first Plot/Profile system doc)
+
+Historical note:
+- This file documents an earlier Plot/Profile architecture phase.
+- Some interaction and composition assumptions here have since been superseded by April 2026 founder locks and carry-forward notes.
+- Use it for historical rationale only, not as current authority.
+- Current authority now lives in:
+  - `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+  - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
+  - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
+
 Owner: Founder + product engineering  
 Last updated: 2026-03-01
 

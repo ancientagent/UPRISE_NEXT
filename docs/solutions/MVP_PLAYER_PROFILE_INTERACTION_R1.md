@@ -1,5 +1,12 @@
 # MVP Player + Profile Expansion Interaction (R1)
 
+Status: Historical interaction reference
+
+Historical note:
+- This file reflects an earlier Plot/Profile interaction model.
+- It remains useful for historical rationale but should not override newer founder locks, current action grammar, or current route/surface doctrine.
+
+
 ## Status
 - `R1 draft`
 - Source of truth for implementation slices: this doc + in-thread founder direction.
