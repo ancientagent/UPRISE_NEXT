@@ -23,7 +23,7 @@ export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction[] = [
   { label: 'Upvote' },
 ];
 
-export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction[] = [
+export const SPACE_WHEEL_ACTIONS: EngagementWheelAction[] = [
   { label: 'Back', position: '9:00' },
   { label: 'Pause', position: '10:00' },
   { label: 'Blast', position: '12:00' },
@@ -32,5 +32,5 @@ export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction[] = [
 ];
 
 export function getEngagementWheelActions(mode: PlayerMode): EngagementWheelAction[] {
-  return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : COLLECTION_WHEEL_ACTIONS;
+  return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : SPACE_WHEEL_ACTIONS;
 }

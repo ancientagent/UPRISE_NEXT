@@ -478,7 +478,7 @@ export default function PlotPage() {
 
   const handleCollectionSelection = (item: { id: string; label: string; kind: 'track' | 'playlist' }) => {
     setSelectedCollectionItem(item);
-    setPlayerMode('Collection');
+    setPlayerMode('SPACE');
   };
 
   const handleCollectionEject = () => {
@@ -552,7 +552,7 @@ export default function PlotPage() {
   const radiyoBroadcastLabel = buildRadiyoBroadcastLabel(selectedTier, selectedCommunity, homeScene);
   const currentBroadcastLabel =
     broadcastMeta?.sceneName ?? radiyoBroadcastLabel;
-  const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Collection`;
+  const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Space`;
   const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;
   const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
   const collectionShelves = plotProfile?.collectionShelves ?? [];
@@ -649,7 +649,7 @@ export default function PlotPage() {
                 <p className="mt-1 text-sm text-black/70">
                   {playerMode === 'RADIYO'
                     ? 'RADIYO actions stay deterministic for the current scene context.'
-                    : 'Collection actions stay deterministic for the selected collection context.'}
+                    : 'SPACE actions stay deterministic for the selected listening context.'}
                 </p>
               </div>
               <Button
@@ -958,7 +958,7 @@ export default function PlotPage() {
             <div className="plot-wire-card-muted p-4">
               <p className="plot-wire-label">Player Context</p>
               <p className="mt-1 text-sm font-medium text-black">
-                {playerMode} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
+                {playerMode === 'RADIYO' ? 'RADIYO' : 'SPACE'} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
               </p>
             </div>
 
@@ -1024,9 +1024,9 @@ export default function PlotPage() {
                               <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
                                 selectedCollectionItem?.id === collectionItem.id ? 'text-white/75' : 'text-black/55'
                               }`}>
-                                {selectedCollectionItem?.id === collectionItem.id && playerMode === 'Collection'
-                                  ? 'Live in player'
-                                  : 'Select to enter Collection mode'}
+                                {selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'
+                                  ? 'Live in space'
+                                  : 'Select to enter your space'}
                               </span>
                             </button>
                           );

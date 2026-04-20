@@ -99,7 +99,7 @@ The artist profile is:
 - a public source page for the artist
 - the direct-listen and discovery surface for that artist's music outside `RADIYO`
 - not `RADIYO`
-- not `Collection`
+- not the personal player / `SPACE`
 - not a wheel surface
 - a place to learn about the artist and reach official artist-controlled outbound links when configured
 
@@ -144,8 +144,8 @@ This is a separate direct-listen mode:
 - `Collect` happens from the artist-profile listening context
 - `Blast` does not happen on the artist profile
 - `Blast` remains tied to:
-  - `RADIYO`
-  - `Collection`
+  - personal player / user space
+  - current web MVP `SPACE` mode as the visible stand-in
 
 ### What is still not fully locked on the profile
 - exact section order outside the locked song-row area
@@ -274,8 +274,8 @@ If NotebookLM is asked again, the safer answer pattern is:
 - seeded listener fixtures now exist for valid artist-profile QA
 
 ### What is not yet implemented to match the newest lock
-- the artist profile does not yet render the full final direct-listen/discovery shape even though the basic `3` song rows exist
-- feed-insert discovery handoff into artist-profile listening is not yet fully implemented
+- the artist profile now renders the basic direct-listen rows, `Collect`, and optional official links, but it still does not represent the full final information/discovery layout
+- Plot-side song handoff into artist-profile listening now exists for Top 40 rows and `track_release` feed items, but broader intermittent feed-insert modules are still not implemented
 - current live artist profile is still older than the newest lock
 
 ## Suggested NotebookLM Prompt

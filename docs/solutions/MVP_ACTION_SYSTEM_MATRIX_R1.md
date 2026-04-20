@@ -209,6 +209,10 @@ Meaning:
 - `Upvote` remains the propagation / tier-advancement action
 - `Blast` is no longer a `RADIYO` wheel action and should be treated as the hosted social-moment action from the listener's own player/space
 
+Current web MVP note:
+- the visible owned-listening shell on `/plot` now reads as `SPACE`
+- treat `SPACE` as the current web stand-in for the personal player / user space
+
  ## 11) Artifact Rules
 
  ### 11.1 General artifact rule

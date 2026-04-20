@@ -5,7 +5,7 @@ import type { Track } from '@uprise/types';
 import { Button } from '@uprise/ui';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 
-export type PlayerMode = 'RADIYO' | 'Collection';
+export type PlayerMode = 'RADIYO' | 'SPACE';
 export type RotationPool = 'new_releases' | 'main_rotation';
 export type PlayerTier = 'city' | 'state' | 'national';
 const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];
@@ -82,7 +82,7 @@ export default function RadiyoPlayerPanel({
     setCurrentTrackIndex((current) => (current + 1) % radiyoTrackQueue.length);
   };
 
-  const trackArtLabel = isRadiyoMode ? 'Current track art thumbnail' : 'Collection track art thumbnail';
+  const trackArtLabel = isRadiyoMode ? 'Current track art thumbnail' : 'Space track art thumbnail';
   const trackSubtitle = isRadiyoMode
     ? isBroadcastLoading
       ? 'Loading current broadcast...'
@@ -91,12 +91,12 @@ export default function RadiyoPlayerPanel({
         : activeTrackCount > 0
           ? 'Select a tier to resume this broadcast.'
           : broadcastEmptyMessage ?? 'No tracks are available in this rotation yet.'
-    : 'Selection-driven collection queue';
+    : 'Selection-driven space queue';
   const queueLabel = isRadiyoMode
     ? activeTrackCount > 0
       ? `Track ${Math.min(currentTrackIndex + 1, activeTrackCount)} of ${activeTrackCount} in this rotation`
       : 'Waiting for the rotation to populate'
-    : 'Selection-driven collection queue';
+    : 'Selection-driven space queue';
 
   return (
     <section
@@ -108,7 +108,7 @@ export default function RadiyoPlayerPanel({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/52">
-                {isRadiyoMode ? 'Now Playing' : 'Collection Deck'}
+                {isRadiyoMode ? 'Now Playing' : 'Your Space'}
               </p>
               <p className="mt-1 truncate text-sm font-semibold leading-tight text-white">{broadcastLabel}</p>
               <p className="mt-1 text-[11px] text-white/68">
@@ -143,8 +143,8 @@ export default function RadiyoPlayerPanel({
                 </>
               ) : (
                 <>
-                  <p className="truncate text-sm font-semibold">{collectionTitle ?? 'Collection Player'}</p>
-                  <p className="mt-1 truncate text-[11px] text-white/68">Selection-driven collection queue</p>
+                  <p className="truncate text-sm font-semibold">{collectionTitle ?? 'Space Player'}</p>
+                  <p className="mt-1 truncate text-[11px] text-white/68">Selection-driven space queue</p>
                 </>
               )}
 
@@ -169,7 +169,7 @@ export default function RadiyoPlayerPanel({
                     </Button>
                   </>
                 ) : (
-                  <p className="text-[11px] font-medium text-white/62">Selection-driven queue</p>
+                  <p className="text-[11px] font-medium text-white/62">Selection-driven space queue</p>
                 )}
 
                 <div className="min-w-0 rounded-full border border-white/18 bg-white/6 px-3 py-1.5">
@@ -236,7 +236,7 @@ export default function RadiyoPlayerPanel({
             <button
               type="button"
               className="rounded-[1rem] border border-white/18 bg-[#2a2a2a] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white hover:bg-white/10"
-              aria-label="Eject to RADIYO"
+              aria-label="Return to RADIYO"
               onClick={onCollectionEject}
             >
               Eject
@@ -244,7 +244,7 @@ export default function RadiyoPlayerPanel({
             <button
               type="button"
               className="rounded-[1rem] border border-white/18 bg-[#2a2a2a] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white hover:bg-white/10"
-              aria-label="Shuffle collection"
+              aria-label="Shuffle space"
             >
               Shuffle
             </button>
@@ -259,7 +259,7 @@ export default function RadiyoPlayerPanel({
           <p>
             {isRadiyoMode
               ? 'Tap City or State to start that broadcast. Tap the active tier again to stop.'
-              : 'Collection mode stays selection-driven. Use eject to return to RADIYO.'}
+              : 'SPACE stays selection-driven. Use return to go back to RADIYO.'}
           </p>
           <p className="mt-1">
             Wheel: {wheelActions.map((action) => (action.position ? `${action.position} ${action.label}` : action.label)).join(' • ')}

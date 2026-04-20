@@ -73,7 +73,7 @@ Important:
 ### 3) Artist profile
 - artist profile is a public source page and direct-listen/discovery surface outside `RADIYO`
 - it is not `RADIYO`
-- it is not `Collection`
+- it is not the personal player / `SPACE`
 - it does not use the wheel
 - the intended current lock is:
   - `3` song rows
@@ -98,8 +98,8 @@ Important:
 
 ## Current Repo/Runtime Reality To Keep Separate From Locks
 - some newer doctrine is locked but not fully implemented yet
-- current live artist profile is still older than the full direct-listen/discovery lock
-- feed-insert click handoff into artist-profile listening is locked but not fully built yet
+- current live artist profile now has basic direct listening, `Collect`, and optional official links, but it is not fully polished to the complete page vision yet
+- Plot song handoff into artist-profile listening now exists for Top 40 rows and `track_release` feed items, but broader intermittent feed-insert modules are still pending
 - source dashboard / release deck / print shop / registrar bridges are already live in some form
 
 External assistants should clearly label answers as one of:

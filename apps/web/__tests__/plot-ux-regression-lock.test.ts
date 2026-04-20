@@ -8,11 +8,11 @@ function readRepoFile(relativePath: string): string {
 }
 
 describe('/plot UX regression lock', () => {
-  it('locks player mode labels to explicit RADIYO vs Collection copy', () => {
+  it('locks player mode labels to explicit RADIYO vs SPACE copy', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
     expect(playerSource).toContain('RADIYO');
-    expect(playerSource).toContain('Collection');
+    expect(playerSource).toContain('SPACE');
   });
 
   it('locks panel-state ownership to the /plot route container', () => {
@@ -39,11 +39,11 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('data-slot="player-track-row"');
     expect(playerSource).toContain('data-slot="player-tier-stack"');
     expect(playerSource).toContain('Current track art thumbnail');
-    expect(playerSource).toContain('Collection track art thumbnail');
+    expect(playerSource).toContain('Space track art thumbnail');
     expect(playerSource).not.toContain("{isRadiyoMode ? 'RAD' : 'COL'}");
   });
 
-  it('locks collection mode to selection entry and explicit eject return', () => {
+  it('locks SPACE mode to selection entry and explicit return to RADIYO', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
@@ -54,19 +54,19 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
     expect(plotPageSource).toContain('activeBroadcastTier={activeBroadcastTier}');
     expect(plotPageSource).toContain("const collectionBroadcastLabel = selectedCollectionItem?.label ??");
-    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'Collection'");
+    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'");
     expect(plotPageSource).toContain("const handleCollectionEject = () => {");
-    expect(playerSource).not.toContain('Switch to Collection mode');
+    expect(playerSource).not.toContain('Switch to SPACE mode');
     expect(playerSource).toContain('Eject');
-    expect(playerSource).toContain('aria-label="Eject to RADIYO"');
+    expect(playerSource).toContain('aria-label="Return to RADIYO"');
     expect(playerSource).toContain('onCollectionEject');
-    expect(playerSource).toContain('Selection-driven collection queue');
-    expect(playerSource).toContain('aria-label="Shuffle collection"');
+    expect(playerSource).toContain('Selection-driven space queue');
+    expect(playerSource).toContain('aria-label="Shuffle space"');
     expect(plotPageSource).toContain('selectedCollectionItem?.label');
     expect(playerSource).not.toContain('onModeChange');
     expect(plotPageSource).toContain('const handleCollectionSelection =');
     expect(plotPageSource).toContain('const handleCollectionEject =');
-    expect(plotPageSource).toContain("setPlayerMode('Collection')");
+    expect(plotPageSource).toContain("setPlayerMode('SPACE')");
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
     expect(plotPageSource).toContain('setActiveBroadcastTier((current) => current ?? selectedTier);');
     expect(plotPageSource).toContain('const handleTierChange = (tier: PlayerTier) => {');
@@ -79,7 +79,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
     expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
-    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'Collection'");
+    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'");
     expect(plotPageSource).toContain("setSelectedCollectionItem(item)");
     expect(playerSource).not.toContain('Back to RADIYO');
   });
@@ -100,7 +100,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('radiyoFooter?: ReactNode;');
     expect(playerSource).toContain('isRadiyoMode && radiyoFooter ? (');
     expect(playerSource).toContain('Tap City or State to start that broadcast. Tap the active tier again to stop.');
-    expect(playerSource).toContain('Collection mode stays selection-driven. Use eject to return to RADIYO.');
+    expect(playerSource).toContain('SPACE stays selection-driven. Use return to go back to RADIYO.');
     expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");
     expect(playerSource).toContain('aria-pressed={activeBroadcastTier === tier}');
     expect(playerSource).toContain('<audio');
@@ -125,10 +125,10 @@ describe('/plot UX regression lock', () => {
       /export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Report' \},\s*\{ label: 'Skip' \},\s*\{ label: 'Play It Loud' \},\s*\{ label: 'Collect' \},\s*\{ label: 'Upvote' \},\s*\];/
     );
     expect(wheelSource).toMatch(
-      /export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Back', position: '9:00' \},\s*\{ label: 'Pause', position: '10:00' \},\s*\{ label: 'Blast', position: '12:00' \},\s*\{ label: 'Recommend', position: '1:00' \},\s*\{ label: 'Next', position: '3:00' \},\s*\];/
+      /export const SPACE_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Back', position: '9:00' \},\s*\{ label: 'Pause', position: '10:00' \},\s*\{ label: 'Blast', position: '12:00' \},\s*\{ label: 'Recommend', position: '1:00' \},\s*\{ label: 'Next', position: '3:00' \},\s*\];/
     );
     expect(wheelSource).toContain('export const RADIYO_WHEEL_ACTIONS');
-    expect(wheelSource).toContain('export const COLLECTION_WHEEL_ACTIONS');
+    expect(wheelSource).toContain('export const SPACE_WHEEL_ACTIONS');
     expect(wheelSource).toContain("{ label: 'Report' }");
     expect(wheelSource).toContain("{ label: 'Skip' }");
     expect(wheelSource).toContain("{ label: 'Play It Loud' }");
@@ -141,7 +141,7 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
     expect(playerSource).toContain('Wheel: {wheelActions.map');
-    expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : COLLECTION_WHEEL_ACTIONS;");
+    expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : SPACE_WHEEL_ACTIONS;");
     expect(wheelSource).toContain("label:");
     expect(wheelSource).toContain("'Play It Loud'");
     expect(wheelSource).toContain("'Blast'");

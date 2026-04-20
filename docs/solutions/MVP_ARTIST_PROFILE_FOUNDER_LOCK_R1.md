@@ -42,7 +42,7 @@ The artist profile is the public source page for the artist and the direct-liste
 
 It should not be confused with:
 - `RADIYO` broadcast mode
-- `Collection` playback mode
+- personal-player / `SPACE` playback mode
 - a dead-end bio page
 - a second wheel-driven listening surface
 
@@ -107,7 +107,7 @@ The artist profile does not use the engagement wheel.
 
 Reason:
 - the user is listening to the song directly from the artist page
-- this surface should not be confused with `RADIYO` or `Collection`
+- this surface should not be confused with `RADIYO` or personal-player / `SPACE` listening
 
 Guardrail:
 - do not surface wheel actions on artist-profile song rows
@@ -120,7 +120,7 @@ The product should keep these listening modes legible:
 - broadcast mode
 - wheel allowed
 
-### 9.2 `Collection`
+### 9.2 Personal player / `SPACE`
 - owned listening mode
 - wheel allowed
 
@@ -132,7 +132,7 @@ The product should keep these listening modes legible:
 This separation matters because users should not confuse:
 - direct listening on the artist profile
 - listening to broadcast
-- listening from owned collection
+- listening from their own personal player / `SPACE`
 
 ## 10) Playback Handoff Rules
 ### 10.1 Entry from artist link
@@ -174,7 +174,7 @@ Meaning:
 
 `Blast` remains tied to the approved listening contexts:
 - personal player / user space
-- current web MVP `Collection` mode as the visible personal-player stand-in
+- current web MVP `SPACE` mode as the visible personal-player stand-in
 
 That means:
 - no blast on feed/discovery squares
@@ -194,7 +194,7 @@ This document does not yet finalize:
 ## 15) Implementation Guardrails
 - Do not reintroduce `Add` / `Support` as source-page core actions.
 - Do not put the engagement wheel on the artist profile.
-- Do not let artist-profile listening masquerade as `RADIYO` or `Collection` mode.
+- Do not let artist-profile listening masquerade as `RADIYO` or personal-player / `SPACE` mode.
 - Do not put `Collect`, `Blast`, or `Follow` directly on feed/discovery carousel squares.
 - Do not auto-play anything on plain artist-link entry.
 - Do not keep `RADIYO` running when the user enters through a song-driven artist-profile handoff.
