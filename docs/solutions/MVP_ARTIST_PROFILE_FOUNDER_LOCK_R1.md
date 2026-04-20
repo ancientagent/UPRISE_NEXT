@@ -51,6 +51,7 @@ Current intended interpretation:
 - listen to songs directly from the page
 - learn about the artist
 - share artist information
+- share the artist page itself
 - decide whether to collect a song
 - reach official artist-controlled off-platform destinations when configured
 
@@ -73,6 +74,7 @@ Artist profiles are source pages.
 
 That means page-level actions should remain source actions only, such as:
 - `Follow`
+- share/copy artist-page information
 - official artist-controlled outbound links when configured, such as:
   - merch
   - album purchase
@@ -95,6 +97,7 @@ Each row should provide:
 - a timeline / progress bar
 - optional elapsed / duration display
 - `Collect` in the profile listening context
+- `Recommend` only after the listener genuinely holds the song
 
 The row should not carry:
 - wheel actions
@@ -158,9 +161,10 @@ Interpretation:
 - do not build a second unrelated audio engine just for the artist profile
 - do build separate artist-profile playback chrome so the user experiences it as profile-based listening
 
-## 12) Collect Boundary On Artist Profile
+## 12) Collect And Recommend Boundary On Artist Profile
 If the user likes a song while listening on the artist profile:
 - they may `Collect` it there
+- once they genuinely hold it, they may `Recommend` it there
 
 This is the intended collection entry point for the artist-page listening flow.
 
@@ -168,6 +172,7 @@ Meaning:
 - collection does not happen on the feed/discovery square itself
 - collection happens after entering the artist-profile listening context
 - the artist page remains a valid discovery/listening/recommendation context outside `RADIYO`
+- recommendation must not be available as a drive-by action before collection/holding
 
 ## 13) Blast Boundary On Artist Profile
 `Blast` is not available from the artist profile.

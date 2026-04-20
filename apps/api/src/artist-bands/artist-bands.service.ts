@@ -82,7 +82,7 @@ export class ArtistBandsService {
     };
   }
 
-  async findProfile(id: string) {
+  async findProfile(id: string, viewerUserId?: string) {
     const artistBand = await this.getArtistBandOrThrow(id);
     const memberUserIds = artistBand.members.map((member) => member.userId);
     const signalAuthorIds = Array.from(new Set([artistBand.createdById, ...memberUserIds]));
@@ -211,6 +211,44 @@ export class ArtistBandsService {
       }
     }
 
+    const trackSignalIds = tracks
+      .map((track) => signalIdByTrackKey.get(`${track.title.toLowerCase()}::${track.artistBandId ?? artistBand.id}`) ?? null)
+      .filter((signalId): signalId is string => Boolean(signalId));
+
+    const [viewerCollections, viewerRecommendations] =
+      viewerUserId && trackSignalIds.length > 0
+        ? await Promise.all([
+            this.prisma.collectionItem.findMany({
+              where: {
+                signalId: {
+                  in: trackSignalIds,
+                },
+                collection: {
+                  userId: viewerUserId,
+                },
+              },
+              select: {
+                signalId: true,
+              },
+            }),
+            this.prisma.signalAction.findMany({
+              where: {
+                userId: viewerUserId,
+                signalId: {
+                  in: trackSignalIds,
+                },
+                type: 'RECOMMEND',
+              },
+              select: {
+                signalId: true,
+              },
+            }),
+          ])
+        : [[], []];
+
+    const viewerCollectedSignalIds = new Set(viewerCollections.map((item) => item.signalId));
+    const viewerRecommendedSignalIds = new Set(viewerRecommendations.map((action) => action.signalId));
+
     return {
       id: artistBand.id,
       name: artistBand.name,
@@ -251,10 +289,20 @@ export class ArtistBandsService {
       memberCount: artistBand.members.length,
       followCount,
       tracks: tracks.map((track) => ({
-        id: track.id,
         signalId:
           signalIdByTrackKey.get(`${track.title.toLowerCase()}::${track.artistBandId ?? artistBand.id}`) ??
           null,
+        viewerHasCollected: Boolean(
+          viewerCollectedSignalIds.has(
+            signalIdByTrackKey.get(`${track.title.toLowerCase()}::${track.artistBandId ?? artistBand.id}`) ?? '',
+          ),
+        ),
+        viewerHasRecommended: Boolean(
+          viewerRecommendedSignalIds.has(
+            signalIdByTrackKey.get(`${track.title.toLowerCase()}::${track.artistBandId ?? artistBand.id}`) ?? '',
+          ),
+        ),
+        id: track.id,
         artistBandId: track.artistBandId ?? null,
         title: track.title,
         artist: track.artist,

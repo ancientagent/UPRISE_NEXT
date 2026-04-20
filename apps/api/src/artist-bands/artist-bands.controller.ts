@@ -8,8 +8,8 @@ export class ArtistBandsController {
   constructor(private artistBandsService: ArtistBandsService) {}
 
   @Get(':id/profile')
-  async findProfile(@Param('id') id: string) {
-    const artistBand = await this.artistBandsService.findProfile(id);
+  async findProfile(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
+    const artistBand = await this.artistBandsService.findProfile(id, req.user.userId);
     return { success: true, data: artistBand };
   }
 

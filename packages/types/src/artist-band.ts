@@ -28,6 +28,8 @@ export const ArtistBandTrackSummarySchema = z.object({
   id: z.string().uuid().or(z.string().min(1)),
   signalId: z.string().uuid().or(z.string().min(1)).nullable().optional(),
   artistBandId: z.string().uuid().or(z.string().min(1)).nullable().optional(),
+  viewerHasCollected: z.boolean().optional(),
+  viewerHasRecommended: z.boolean().optional(),
   title: z.string(),
   artist: z.string(),
   album: z.string().nullable(),

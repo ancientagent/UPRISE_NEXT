@@ -105,6 +105,8 @@ Signals must remain distinct from sources:
 - Action endpoints are idempotent via upsert and return existing or newly created records.
 - Naming debt note:
   - signal action rows still persist `ADD` while the public-facing verb is now `Collect`
+- Recommendation gate note:
+  - `POST /signals/:id/recommend` now rejects users who do not already hold the signal in one of their collections
 
 ## Web UI / Client Behavior
 - Feed surfaces only explicit community actions.

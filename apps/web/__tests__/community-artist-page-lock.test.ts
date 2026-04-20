@@ -33,6 +33,7 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('Open Release Deck');
     expect(artistSource).toContain('Open Print Shop');
     expect(artistSource).toContain('Open Registrar');
+    expect(artistSource).toContain('Share Artist Page');
     expect(artistSource).toContain("Opening source tools here will switch into this source account.");
     expect(artistSource).toContain('Source-owned release');
     expect(artistSource).toContain('Source-owned event');
@@ -42,6 +43,9 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('Listen Here');
     expect(artistSource).toContain("{isPlaying ? 'Pause' : 'Play'}");
     expect(artistSource).toContain('Collect');
+    expect(artistSource).toContain('Recommend');
+    expect(artistSource).toContain('track.viewerHasCollected');
+    expect(artistSource).toContain('track.viewerHasRecommended');
     expect(artistSource).toContain('Playback timeline for');
     expect(artistSource).not.toContain('Play Single');
     expect(artistSource).toContain('Identity');

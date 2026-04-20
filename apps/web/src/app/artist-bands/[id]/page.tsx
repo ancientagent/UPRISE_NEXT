@@ -7,7 +7,7 @@ import { Button } from '@uprise/ui';
 import type { ArtistBandProfile, ArtistBandTrackSummary } from '@uprise/types';
 import { followArtistBand, getArtistBandProfile } from '@/lib/artist-bands/client';
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
-import { collectSignal } from '@/lib/signals/client';
+import { collectSignal, recommendSignal } from '@/lib/signals/client';
 import { useAuthStore } from '@/store/auth';
 import { useSourceAccountStore } from '@/store/source-account';
 
@@ -68,10 +68,13 @@ export default function ArtistBandProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<'follow' | null>(null);
+  const [sharing, setSharing] = useState(false);
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [collectingTrackId, setCollectingTrackId] = useState<string | null>(null);
+  const [recommendingTrackId, setRecommendingTrackId] = useState<string | null>(null);
   const [collectedSignalIds, setCollectedSignalIds] = useState<Record<string, true>>({});
+  const [recommendedSignalIds, setRecommendedSignalIds] = useState<Record<string, true>>({});
   const [trackTimes, setTrackTimes] = useState<Record<string, number>>({});
   const [trackDurations, setTrackDurations] = useState<Record<string, number>>({});
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
@@ -269,6 +272,62 @@ export default function ArtistBandProfilePage() {
     }
   }
 
+  async function handleRecommendTrack(track: ArtistBandTrackSummary) {
+    if (!token || !track.signalId) {
+      return;
+    }
+
+    setRecommendingTrackId(track.id);
+    setActionMessage(null);
+    setError(null);
+
+    try {
+      await recommendSignal(track.signalId, token);
+      setRecommendedSignalIds((current) => ({ ...current, [track.signalId as string]: true }));
+      setActionMessage(`${track.title} recommended.`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unable to recommend this song.');
+    } finally {
+      setRecommendingTrackId(null);
+    }
+  }
+
+  async function handleShareArtistPage() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    setSharing(true);
+    setActionMessage(null);
+    setError(null);
+
+    const shareUrl = window.location.href;
+    const shareTitle = `${profile?.name ?? 'Artist'} on UPRISE`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: shareTitle,
+          text: `Take a look at ${profile?.name ?? 'this artist'} on UPRISE.`,
+          url: shareUrl,
+        });
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        throw new Error('Sharing is not available on this device.');
+      }
+
+      setActionMessage(`${profile?.name ?? 'Artist'} page ready to share.`);
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        return;
+      }
+      setError(e instanceof Error ? e.message : 'Unable to share this artist page.');
+    } finally {
+      setSharing(false);
+    }
+  }
+
   if (loading) {
     return (
       <main className="plot-wire-page pb-10">
@@ -384,6 +443,15 @@ export default function ArtistBandProfilePage() {
                 size="sm"
                 variant="outline"
                 className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                disabled={sharing}
+                onClick={() => void handleShareArtistPage()}
+              >
+                {sharing ? 'Sharing...' : 'Share Artist Page'}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                 disabled={!token || busyAction === 'follow'}
                 onClick={() =>
                   void runAction(
@@ -440,7 +508,7 @@ export default function ArtistBandProfilePage() {
                 <p className="plot-wire-label">Songs / Releases</p>
                 <h2 className="mt-2 text-lg font-semibold text-black">Listen Here</h2>
                 <p className="mt-1 text-sm text-black/60">
-                  Pick a song to pause RADIYO and listen here. Collect it from this artist page if you want to keep it.
+                  Pick a song to pause RADIYO and listen here. Collect it here if you want to keep it, then recommend it once it is yours.
                 </p>
               </div>
               <p className="plot-wire-chip">{demoTracks.length} of {profile.tracks.length} tracks</p>
@@ -456,7 +524,12 @@ export default function ArtistBandProfilePage() {
                   const isSourceOwnedTrack = track.artistBandId === profile.id;
                   const duration = trackDurations[track.id] ?? track.duration;
                   const currentTime = trackTimes[track.id] ?? 0;
-                  const isCollected = track.signalId ? Boolean(collectedSignalIds[track.signalId]) : false;
+                  const isCollected = track.signalId
+                    ? Boolean(track.viewerHasCollected || collectedSignalIds[track.signalId])
+                    : false;
+                  const isRecommended = track.signalId
+                    ? Boolean(track.viewerHasRecommended || recommendedSignalIds[track.signalId])
+                    : false;
 
                   return (
                     <li key={track.id} className="plot-wire-list-item">
@@ -509,6 +582,26 @@ export default function ArtistBandProfilePage() {
                                 : collectingTrackId === track.id
                                   ? 'Collecting...'
                                   : 'Collect'}
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                              disabled={
+                                !track.signalId ||
+                                !token ||
+                                !isCollected ||
+                                isRecommended ||
+                                recommendingTrackId === track.id
+                              }
+                              onClick={() => void handleRecommendTrack(track)}
+                            >
+                              {isRecommended
+                                ? 'Recommended'
+                                : recommendingTrackId === track.id
+                                  ? 'Recommending...'
+                                  : 'Recommend'}
                             </Button>
                           </div>
                         </div>
