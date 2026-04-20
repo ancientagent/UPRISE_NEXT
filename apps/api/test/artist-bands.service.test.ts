@@ -7,6 +7,7 @@ describe('ArtistBandsService', () => {
     follow: { count: jest.fn() },
     track: { findMany: jest.fn() },
     event: { findMany: jest.fn() },
+    signal: { findMany: jest.fn() },
   };
 
   let service: ArtistBandsService;
@@ -95,6 +96,16 @@ describe('ArtistBandsService', () => {
         createdAt: new Date('2026-03-21T00:00:00.000Z'),
       },
     ]);
+    mockPrisma.signal.findMany.mockResolvedValue([
+      {
+        id: 'signal-1',
+        createdById: 'user-1',
+        metadata: {
+          title: 'Broken Tower',
+          artistBandId: 'artist-1',
+        },
+      },
+    ]);
 
     const result = await service.findProfile('artist-1');
 
@@ -103,6 +114,7 @@ describe('ArtistBandsService', () => {
     expect(result.tracks).toHaveLength(1);
     expect(result.events).toHaveLength(1);
     expect(result.tracks[0]?.artistBandId).toBe('artist-1');
+    expect(result.tracks[0]?.signalId).toBe('signal-1');
     expect(result.events[0]?.artistBandId).toBe('artist-1');
     expect(mockPrisma.track.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -151,6 +163,7 @@ describe('ArtistBandsService', () => {
     mockPrisma.follow.count.mockResolvedValue(0);
     mockPrisma.track.findMany.mockResolvedValue([]);
     mockPrisma.event.findMany.mockResolvedValue([]);
+    mockPrisma.signal.findMany.mockResolvedValue([]);
 
     await service.findProfile('artist-1');
 

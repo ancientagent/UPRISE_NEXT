@@ -85,8 +85,9 @@ export class ArtistBandsService {
   async findProfile(id: string) {
     const artistBand = await this.getArtistBandOrThrow(id);
     const memberUserIds = artistBand.members.map((member) => member.userId);
+    const signalAuthorIds = Array.from(new Set([artistBand.createdById, ...memberUserIds]));
 
-    const [followCount, tracks, events] = await Promise.all([
+    const [followCount, tracks, events, signals] = await Promise.all([
       this.prisma.follow.count({
         where: {
           entityType: {
@@ -169,7 +170,46 @@ export class ArtistBandsService {
         orderBy: [{ startDate: 'asc' }, { createdAt: 'desc' }],
         take: 12,
       }),
+      this.prisma.signal.findMany({
+        where: {
+          type: 'single',
+          ...(artistBand.homeSceneId ? { communityId: artistBand.homeSceneId } : {}),
+          ...(signalAuthorIds.length > 0
+            ? {
+                createdById: {
+                  in: signalAuthorIds,
+                },
+              }
+            : {}),
+        },
+        select: {
+          id: true,
+          createdById: true,
+          metadata: true,
+        },
+      }),
     ]);
+
+    const signalIdByTrackKey = new Map<string, string>();
+    for (const signal of signals) {
+      const metadata = (signal.metadata as Record<string, unknown> | null) ?? null;
+      const signalTitle = typeof metadata?.title === 'string' ? metadata.title : null;
+      const metadataArtistBandId =
+        typeof metadata?.artistBandId === 'string' ? metadata.artistBandId : null;
+
+      if (!signalTitle) {
+        continue;
+      }
+
+      if (metadataArtistBandId && metadataArtistBandId !== artistBand.id) {
+        continue;
+      }
+
+      const key = `${signalTitle.toLowerCase()}::${metadataArtistBandId ?? artistBand.id}`;
+      if (!signalIdByTrackKey.has(key)) {
+        signalIdByTrackKey.set(key, signal.id);
+      }
+    }
 
     return {
       id: artistBand.id,
@@ -208,6 +248,9 @@ export class ArtistBandsService {
       followCount,
       tracks: tracks.map((track) => ({
         id: track.id,
+        signalId:
+          signalIdByTrackKey.get(`${track.title.toLowerCase()}::${track.artistBandId ?? artistBand.id}`) ??
+          null,
         artistBandId: track.artistBandId ?? null,
         title: track.title,
         artist: track.artist,

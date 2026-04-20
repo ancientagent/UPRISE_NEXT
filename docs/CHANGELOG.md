@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Implemented the artist-profile basics as demo-listen rows: profile tracks now resolve optional `signalId` values, the artist page renders up to three `Play Demo` rows with local timelines, and `Collect` now works from the artist-profile listening context when a matching signal exists; see `docs/handoff/2026-04-20_artist-profile-demo-rows-and-collect.md`.
 - Re-split the listening action grammar so `Blast` no longer sits on the `RADIYO` wheel: active docs and the web wheel helper now use `Play It Loud` for `RADIYO`, keep `Blast` on the personal-player / `Collection` side, and record the change in `docs/handoff/2026-04-20_radiyo-play-it-loud-and-blast-split.md`.
 - Added a Paperclip evaluation note so the repo has an explicit position on AI-department orchestration: `docs/handoff/2026-04-18_paperclip-evaluation-note.md` records Paperclip as a later candidate for launch/marketing and cross-department agent coordination, not a current repo-authority or MVP implementation tool.
 - Added an A2UI evaluation note so the repo has an explicit position on where agent-generated UI belongs: `docs/handoff/2026-04-18_a2ui-evaluation-note.md` records A2UI as a later candidate for internal agent/admin tooling, not a current adoption target for core end-user UPRISE surfaces.

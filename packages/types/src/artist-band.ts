@@ -26,6 +26,7 @@ export const ArtistBandHomeSceneSchema = z.object({
 
 export const ArtistBandTrackSummarySchema = z.object({
   id: z.string().uuid().or(z.string().min(1)),
+  signalId: z.string().uuid().or(z.string().min(1)).nullable().optional(),
   artistBandId: z.string().uuid().or(z.string().min(1)).nullable().optional(),
   title: z.string(),
   artist: z.string(),
