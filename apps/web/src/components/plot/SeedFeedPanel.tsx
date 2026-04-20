@@ -50,6 +50,15 @@ function sourceFromMetadata(item: CommunityFeedItem): { id: string; name: string
   return { id, name };
 }
 
+function artistTrackHref(item: CommunityFeedItem): string | null {
+  if (item.type !== 'track_release') return null;
+
+  const source = sourceFromMetadata(item);
+  if (!source) return null;
+
+  return `/artist-bands/${source.id}?trackId=${item.entity.id}`;
+}
+
 function FeedSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
@@ -179,35 +188,47 @@ export default function SeedFeedPanel({
         <ul className="space-y-2">
           {items.map((item) => {
             const source = sourceFromMetadata(item);
+            const trackHref = artistTrackHref(item);
+            const content = (
+              <>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-black">
+                    <span className="font-medium">{formatTypeLabel(item.type)}</span>
+                    <span className="text-black/60">
+                      {' '}
+                      by{' '}
+                      {trackHref && source ? (
+                        source.name
+                      ) : source ? (
+                        <Link className="underline underline-offset-2" href={`/artist-bands/${source.id}`}>
+                          {source.name}
+                        </Link>
+                      ) : item.actor && !trackHref ? (
+                        <Link className="underline underline-offset-2" href={`/users/${item.actor.id}`}>
+                          {formatActor(item.actor)}
+                        </Link>
+                      ) : (
+                        formatActor(item.actor)
+                      )}
+                    </span>
+                  </p>
+                  <p className="mt-1 text-xs text-black/50">
+                    {new Date(item.occurredAt).toLocaleString()} • {item.entity.type}
+                  </p>
+                </div>
+                <span className="plot-wire-chip shrink-0">{formatTypeLabel(item.type)}</span>
+              </>
+            );
 
             return (
               <li key={item.id} className="plot-wire-list-item">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm text-black">
-                      <span className="font-medium">{formatTypeLabel(item.type)}</span>
-                      <span className="text-black/60">
-                        {' '}
-                        by{' '}
-                        {source ? (
-                          <Link className="underline underline-offset-2" href={`/artist-bands/${source.id}`}>
-                            {source.name}
-                          </Link>
-                        ) : item.actor ? (
-                          <Link className="underline underline-offset-2" href={`/users/${item.actor.id}`}>
-                            {formatActor(item.actor)}
-                          </Link>
-                        ) : (
-                          formatActor(item.actor)
-                        )}
-                      </span>
-                    </p>
-                    <p className="mt-1 text-xs text-black/50">
-                      {new Date(item.occurredAt).toLocaleString()} • {item.entity.type}
-                    </p>
-                  </div>
-                  <span className="plot-wire-chip shrink-0">{formatTypeLabel(item.type)}</span>
-                </div>
+                {trackHref ? (
+                  <Link href={trackHref} className="flex items-start justify-between gap-3">
+                    {content}
+                  </Link>
+                ) : (
+                  <div className="flex items-start justify-between gap-3">{content}</div>
+                )}
               </li>
             );
           })}

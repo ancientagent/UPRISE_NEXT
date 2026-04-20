@@ -46,6 +46,7 @@ describe('CommunitiesService.getStatistics', () => {
     mockPrisma.track.findMany.mockResolvedValue([
       {
         id: 't1',
+        artistBandId: 'artist-1',
         title: 'Track 1',
         artist: 'Band 1',
         duration: 120,
@@ -66,6 +67,7 @@ describe('CommunitiesService.getStatistics', () => {
     expect(result.metrics.activityScore).toBe(33);
     expect(result.topSongs).toHaveLength(1);
     expect(result.topSongs[0].trackId).toBe('t1');
+    expect(result.topSongs[0].artistBandId).toBe('artist-1');
     expect(mockPrisma.user.count).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({

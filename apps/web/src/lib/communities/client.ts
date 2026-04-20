@@ -98,6 +98,7 @@ export interface CommunityStatisticsResponse {
   };
   topSongs: Array<{
     trackId: string;
+    artistBandId: string | null;
     title: string;
     artist: string;
     duration: number;

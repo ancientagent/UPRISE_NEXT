@@ -74,6 +74,7 @@ export interface CommunityStatistics {
   };
   topSongs: Array<{
     trackId: string;
+    artistBandId: string | null;
     title: string;
     artist: string;
     duration: number;
@@ -1993,6 +1994,7 @@ export class CommunitiesService {
       scopeCommunityIds.length === 0
         ? [0, 0, 0, 0, [] as Array<{
             id: string;
+            artistBandId: string | null;
             title: string;
             artist: string;
             duration: number;
@@ -2037,6 +2039,7 @@ export class CommunitiesService {
               },
               select: {
                 id: true,
+                artistBandId: true,
                 title: true,
                 artist: true,
                 duration: true,
@@ -2090,6 +2093,7 @@ export class CommunitiesService {
       },
       topSongs: topSongs.map((song: {
         id: string;
+        artistBandId: string | null;
         title: string;
         artist: string;
         duration: number;
@@ -2098,6 +2102,7 @@ export class CommunitiesService {
         community: { name: string } | null;
       }) => ({
         trackId: song.id,
+        artistBandId: song.artistBandId ?? null,
         title: song.title,
         artist: song.artist,
         duration: song.duration,

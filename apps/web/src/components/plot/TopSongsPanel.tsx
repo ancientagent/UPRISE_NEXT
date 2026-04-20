@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 
@@ -8,6 +9,7 @@ type TierScope = 'city' | 'state' | 'national';
 
 interface StatisticsTopSong {
   trackId: string;
+  artistBandId: string | null;
   title: string;
   artist: string;
   duration: number;
@@ -122,18 +124,33 @@ export default function TopSongsPanel({ communityId, selectedTier }: TopSongsPan
 
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
         {tracks.map((track, index) => (
-          <div
-            key={track.trackId}
-            className="plot-wire-list-item flex items-center gap-3"
-          >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black bg-[#e3e3d2] text-xs font-medium text-black/70">
-              {index + 1}
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-black">{track.title || 'Untitled Track'}</p>
-              <p className="truncate text-xs text-black/60">{track.artist || 'Unknown Artist'}</p>
-            </div>
-            <span className="shrink-0 text-xs text-black/50">{formatDuration(track.duration)}</span>
+          <div key={track.trackId} className="plot-wire-list-item">
+            {track.artistBandId ? (
+              <Link
+                href={`/artist-bands/${track.artistBandId}?trackId=${track.trackId}`}
+                className="flex items-center gap-3"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black bg-[#e3e3d2] text-xs font-medium text-black/70">
+                  {index + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-black">{track.title || 'Untitled Track'}</p>
+                  <p className="truncate text-xs text-black/60">{track.artist || 'Unknown Artist'}</p>
+                </div>
+                <span className="shrink-0 text-xs text-black/50">{formatDuration(track.duration)}</span>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-3">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black bg-[#e3e3d2] text-xs font-medium text-black/70">
+                  {index + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-black">{track.title || 'Untitled Track'}</p>
+                  <p className="truncate text-xs text-black/60">{track.artist || 'Unknown Artist'}</p>
+                </div>
+                <span className="shrink-0 text-xs text-black/50">{formatDuration(track.duration)}</span>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -309,6 +309,17 @@ describe('/plot UX regression lock', () => {
     expect(topSongsSource).toContain("setLoading(false);");
     expect(topSongsSource).toContain("Sign in is required to load Top 40 songs for this scene context.");
     expect(topSongsSource).toContain('{ token }');
+    expect(topSongsSource).toContain('artistBandId: string | null;');
+    expect(topSongsSource).toContain('href={`/artist-bands/${track.artistBandId}?trackId=${track.trackId}`}');
+  });
+
+  it('keeps track-release feed items wired into artist-page listening without adding inline card actions', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain("if (item.type !== 'track_release') return null;");
+    expect(seedFeedSource).toContain('return `/artist-bands/${source.id}?trackId=${item.entity.id}`;');
+    expect(seedFeedSource).toContain('{trackHref ? (');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
   });
 
   it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
