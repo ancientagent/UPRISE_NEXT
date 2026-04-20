@@ -9,9 +9,12 @@ import type {
   DiscoverSignalResult,
 } from '@uprise/types';
 import {
+  getActiveCommunityEvents,
   getActiveCommunityFeed,
+  getCommunityEvents,
   getCommunityFeed,
   type CommunityFeedActor,
+  type CommunityEventItem,
   type CommunityFeedItem,
 } from '@/lib/communities/client';
 import { getCommunityDiscoverHighlights } from '@/lib/discovery/client';
@@ -330,6 +333,96 @@ function FeedSkeletonRows() {
   );
 }
 
+function UpcomingEventsInsert({ items }: { items: CommunityEventItem[] }) {
+  const railRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollByDirection = (direction: 'left' | 'right') => {
+    if (!railRef.current) return;
+    railRef.current.scrollBy({
+      left: direction === 'left' ? -260 : 260,
+      behavior: 'smooth',
+    });
+  };
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <section data-slot="plot-feed-upcoming-events-insert" className="plot-wire-card-muted space-y-4 bg-[#efefe2] p-4">
+      <div>
+        <p className="plot-wire-label">Inserted Scene Moment</p>
+        <h3 className="mt-1 text-lg font-semibold text-black">Upcoming Events</h3>
+        <p className="mt-1 text-sm text-black/65">
+          Read-only event snapshots from the current scene context.
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-black">Upcoming this week</p>
+          <p className="text-xs text-black/55">Read-only event squares with no inline calendar actions.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-full border-black bg-white text-xs"
+            aria-label="Scroll Upcoming Events left"
+            onClick={() => scrollByDirection('left')}
+          >
+            ←
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-full border-black bg-white text-xs"
+            aria-label="Scroll Upcoming Events right"
+            onClick={() => scrollByDirection('right')}
+          >
+            →
+          </Button>
+        </div>
+      </div>
+
+      <div ref={railRef} className="flex gap-3 overflow-x-auto pb-1">
+        {items.map((item) => (
+          <div key={item.id} className="w-[12rem] min-w-[12rem] shrink-0">
+            <div className="flex h-full flex-col rounded-[1rem] border border-black bg-white p-3">
+              <div className="flex items-start justify-between gap-2">
+                <span className="plot-wire-chip bg-[#d8e79a] text-black">Event</span>
+                <span className="text-[10px] uppercase tracking-[0.14em] text-black/45">
+                  {new Date(item.startDate).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="mt-3 flex h-24 items-center justify-center rounded-[0.8rem] border border-black/10 bg-[linear-gradient(135deg,#e6e6d8_0%,#d2d2bd_100%)]">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/50">
+                  Flyer / Poster
+                </span>
+              </div>
+              <div className="mt-3 min-w-0">
+                <p className="line-clamp-2 text-sm font-medium leading-tight text-black">{item.title}</p>
+                <p className="mt-1 truncate text-xs font-semibold uppercase tracking-[0.12em] text-black/55">
+                  {item.locationName}
+                </p>
+                <p className="mt-2 text-xs text-black/55">
+                  {item.artistBand?.name
+                    ? `Published by ${item.artistBand.name}`
+                    : item.createdBy?.displayName || item.createdBy?.username
+                      ? `Published by ${item.createdBy?.displayName || item.createdBy?.username}`
+                      : 'Scene organizer event'}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function SeedFeedPanel({
   communityId,
   communityLabel,
@@ -341,6 +434,8 @@ export default function SeedFeedPanel({
   const [resolvedSceneId, setResolvedSceneId] = useState<string | null>(communityId);
   const [highlights, setHighlights] = useState<CommunityDiscoverHighlights | null>(null);
   const [highlightsError, setHighlightsError] = useState<string | null>(null);
+  const [upcomingEvents, setUpcomingEvents] = useState<CommunityEventItem[]>([]);
+  const [upcomingEventsError, setUpcomingEventsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -442,6 +537,47 @@ export default function SeedFeedPanel({
     };
   }, [resolvedSceneId, selectedTier, token]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadUpcomingEvents() {
+      if (!token) {
+        setUpcomingEvents([]);
+        setUpcomingEventsError(null);
+        return;
+      }
+
+      try {
+        const response = resolvedSceneId
+          ? await getCommunityEvents(
+              resolvedSceneId,
+              { limit: 6, includePast: false },
+              token,
+            )
+          : await getActiveCommunityEvents(
+              { limit: 6, includePast: false },
+              token,
+            );
+
+        if (cancelled) return;
+        setUpcomingEvents(response.slice(0, 6));
+        setUpcomingEventsError(null);
+      } catch (e) {
+        if (cancelled) return;
+        const message =
+          e instanceof Error ? e.message : 'Unable to load upcoming events for this scene.';
+        setUpcomingEvents([]);
+        setUpcomingEventsError(message);
+      }
+    }
+
+    void loadUpcomingEvents();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedSceneId, token]);
+
   return (
     <div className="space-y-4">
       <header className="plot-wire-card-muted bg-[#efefe2] px-4 py-3">
@@ -484,6 +620,7 @@ export default function SeedFeedPanel({
           </div>
           {highlights ? <PopularSinglesInsert highlights={highlights} /> : null}
           {highlights ? <RecommendationsInsert highlights={highlights} /> : null}
+          <UpcomingEventsInsert items={upcomingEvents} />
         </div>
       ) : token ? (
         <ul className="space-y-2">
@@ -542,6 +679,11 @@ export default function SeedFeedPanel({
                     <RecommendationsInsert highlights={highlights} />
                   </li>
                 ) : null}
+                {index === 7 && upcomingEvents.length > 0 ? (
+                  <li className="list-none">
+                    <UpcomingEventsInsert items={upcomingEvents} />
+                  </li>
+                ) : null}
               </Fragment>
             );
           })}
@@ -552,12 +694,19 @@ export default function SeedFeedPanel({
         <div className="space-y-4">
           <PopularSinglesInsert highlights={highlights} />
           <RecommendationsInsert highlights={highlights} />
+          <UpcomingEventsInsert items={upcomingEvents} />
         </div>
       ) : null}
 
       {token && !error && items.length > 0 && !highlights && highlightsError ? (
         <div className="rounded-[1rem] border border-black/10 bg-white px-4 py-3 text-sm text-black/60">
           Popular Singles is unavailable right now. {highlightsError}
+        </div>
+      ) : null}
+
+      {token && !error && items.length > 0 && upcomingEvents.length === 0 && upcomingEventsError ? (
+        <div className="rounded-[1rem] border border-black/10 bg-white px-4 py-3 text-sm text-black/60">
+          Upcoming Events is unavailable right now. {upcomingEventsError}
         </div>
       ) : null}
 

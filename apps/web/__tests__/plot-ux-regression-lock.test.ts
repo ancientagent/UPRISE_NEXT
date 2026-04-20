@@ -356,6 +356,23 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).not.toContain('Follow artist');
   });
 
+  it('keeps upcoming-events as a read-only feed insert without inline calendar actions', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain('plot-feed-upcoming-events-insert');
+    expect(seedFeedSource).toContain('Upcoming Events');
+    expect(seedFeedSource).toContain('Read-only event snapshots from the current scene context.');
+    expect(seedFeedSource).toContain('Upcoming this week');
+    expect(seedFeedSource).toContain('Read-only event squares with no inline calendar actions.');
+    expect(seedFeedSource).toContain('aria-label="Scroll Upcoming Events left"');
+    expect(seedFeedSource).toContain('aria-label="Scroll Upcoming Events right"');
+    expect(seedFeedSource).toContain('getCommunityEvents(');
+    expect(seedFeedSource).toContain('getActiveCommunityEvents(');
+    expect(seedFeedSource).not.toContain('Add to calendar');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
+    expect(seedFeedSource).not.toContain('Blast this track');
+  });
+
   it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 

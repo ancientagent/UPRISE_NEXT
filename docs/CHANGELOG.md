@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added the first read-only `Upcoming Events` feed insert: Plot feed now pulls a small set of upcoming scene events into an informational horizontal carousel with no inline calendar or engagement actions, leaving the full event surface in the Events tab; see `docs/handoff/2026-04-20_plot-feed-upcoming-events-insert.md`.
 - Added the recommendation-driven `People Are Saying` feed insert: Plot feed now uses the existing highlights payload to render read-only listener recommendation squares that identify who recommended the song and hand clicks into artist-page listening through `signalId`, without adding inline actions; see `docs/handoff/2026-04-20_plot-feed-people-are-saying-insert.md`.
 - Added the first real intermittent discovery insert inside Plot feed: `SeedFeedPanel` now reads the existing highlights payload, renders a read-only `Popular Singles` module with `Most Added` and `Recent Rises` horizontal song squares, and hands clicks into artist-page listening via `signalId` instead of adding inline actions; see `docs/handoff/2026-04-20_plot-feed-popular-singles-insert.md`.
 - Renamed the current web personal-player shell from `Collection` mode to `SPACE` across `/plot`: the compact player, wheel helper, and active doctrine now treat `SPACE` as the visible personal-player stand-in so `Blast` has a cleaner home distinct from `RADIYO` and artist-page listening; see `docs/handoff/2026-04-20_space-mode-personal-player-foundation.md`.
