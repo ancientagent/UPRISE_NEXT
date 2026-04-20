@@ -32,6 +32,9 @@ No automatic switching.
 - Upvotes affect propagation/tier advancement only.
 - Upvotes never affect recurrence.
 - Engagement never advances tier.
+- `Play It Loud` is the positive `RADIYO` wheel action for the currently playing broadcast song.
+- `Play It Loud` is not `Upvote` and must not be treated as propagation or hosted-room creation.
+- `Blast` belongs to the personal player / user-space listening context, not the `RADIYO` wheel.
 
 ## Song Lifecycle
 1. Upload:
@@ -94,6 +97,7 @@ Hard constraints:
 ## Propagation / Tier Advancement
 - Upvotes are the only advancement signal.
 - Public-facing wheel/save language should use `Collect`, not `Add`, when listeners keep a song in profile-bound shelves or playlists.
+- The positive `RADIYO` wheel action is `Play It Loud`, not `Blast`.
 - Threshold model is configurable and must support:
   - minimum unique eligible listeners
   - rate-based thresholding

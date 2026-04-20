@@ -84,7 +84,8 @@ Important:
 ### 4) Action grammar
 - `Collect` = keep/save for signals and artifacts
 - `Add` = events/calendar only
-- `Blast` = music-distribution signals only
+- `Play It Loud` = positive `RADIYO` listening action for the current broadcast song
+- `Blast` = hosted social-moment action from the personal player / user space
 - `React` = posts/comments/replies
 - `Support` = derived backing state, not a direct public button
 

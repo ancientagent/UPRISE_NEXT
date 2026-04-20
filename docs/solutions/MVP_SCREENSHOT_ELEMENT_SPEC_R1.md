@@ -85,7 +85,7 @@ Purpose: convert the provided legacy-style screenshot into a deterministic build
 ### A6. Action wheel (opened from center UPRISE button)
 - Trigger: center UPRISE button.
 - RADIYO actions (locked):
-  - Report, Skip, Blast, Collect, Upvote
+  - Report, Skip, Play It Loud, Collect, Upvote
 - Collection actions (locked positions):
   - 9:00 Back
   - 10:00 Pause

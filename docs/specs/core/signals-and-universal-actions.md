@@ -26,8 +26,9 @@ Signals must remain distinct from sources:
 - A Signal is a discrete unit created or propagated through explicit user action.
 - Signal-facing actions in the intended model:
   - `Collect`: keep/save a signal in the listener's collection
-  - `Blast`: explicit public amplification action for currently locked music-distribution signals
+  - `Blast`: hosted amplification action for currently locked music-distribution signals from the listener's personal-player context
   - `Recommend`: direct recommendation only when the listener already genuinely holds the signal
+  - `Play It Loud`: belongs to `RADIYO` listening context and is not part of the signal API contract yet
 - Current runtime endpoint debt:
   - the public collect verb now has a compatibility bridge:
     - preferred endpoint: `/signals/:id/collect`
@@ -50,6 +51,9 @@ Signals must remain distinct from sources:
 - Current confirmed blastable signals:
   - `single`
   - `Uprise`
+- Current listening-context split:
+  - `RADIYO` wheel uses `Play It Loud`
+  - personal player / user space uses `Blast`
 
 ## Non-Functional Requirements
 - Signals are descriptive, not authoritative.
@@ -117,6 +121,7 @@ Signals must remain distinct from sources:
 - Repeating `FOLLOW` for same user/entity returns idempotent result.
 - ADD maps signals to fixed shelves (`singles`, `uprises`, `posters`, `fliers`, merch shelves) and links `CollectionItem`.
 - Blast coverage is validated only for currently blastable music-distribution signal classes (`single`, `Uprise`) until additional signal-specific rules are locked.
+- `Play It Loud` is a player-context action only; no signal endpoint is locked for it in this spec yet.
 
 ## Future Work & Open Questions
 - Add discourse signals (post/thread) service contracts (currently spec-level only).

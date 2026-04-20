@@ -100,7 +100,7 @@ When sources conflict, answers must separate these categories explicitly:
 Do not flatten them into one blended answer.
 
 ### Example
-If a design prompt says `Blast` belongs on `RADIYO`, but the latest founder lock changes that split:
+If a design prompt says `Blast` belongs on `RADIYO`, but the latest founder lock changes that split to `Play It Loud` on `RADIYO` and `Blast` in the personal player:
 - report the newer founder lock as current doctrine
 - report the older prompt as stale
 - report the runtime separately if it still reflects the old behavior

@@ -162,8 +162,8 @@ Meaning:
 `Blast` is not available from the artist profile.
 
 `Blast` remains tied to the approved listening contexts:
-- `RADIYO`
-- `Collection`
+- personal player / user space
+- current web MVP `Collection` mode as the visible personal-player stand-in
 
 That means:
 - no blast on feed/discovery squares

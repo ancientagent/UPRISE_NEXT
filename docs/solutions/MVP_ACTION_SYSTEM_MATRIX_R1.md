@@ -148,9 +148,10 @@
  | --- | --- | --- | --- | --- |
  | `Follow` | sources | direct live action | no | Source action only. |
  | `Donate` | source pages | direct live action | no | Donation belongs to the source page, not the event page. |
- | `Collect` | signals, artifacts | direct live action | no | General keep/save action. Acquisition method may vary by class or subtype. |
- | `Blast` | music-distribution signals | direct live action | no | Current blastable classes are `single` and `Uprise` only. |
- | `Recommend` | anything recommendable that the listener already genuinely holds in the system | direct live action | yes | For example: collected signals/artifacts, added events, followed sources where recommendation is allowed. No drive-by recommendation. |
+| `Collect` | signals, artifacts | direct live action | no | General keep/save action. Acquisition method may vary by class or subtype. |
+| `Play It Loud` | currently playing `RADIYO` signal | direct live action | no | Positive broadcast-side listener action. This belongs to the `RADIYO` wheel, not the hosted-room system. Intended behavior is an immediate in-app volume spike/max-out for the current song, while remaining distinct from `Upvote`. |
+| `Blast` | held music-distribution signals in the personal player / user space | direct live action | yes | Hosted shared-moment action. Current blastable classes remain `single` and `Uprise`, but the action now belongs to personal-player listening, not the `RADIYO` wheel. |
+| `Recommend` | anything recommendable that the listener already genuinely holds in the system | direct live action | yes | For example: collected signals/artifacts, added events, followed sources where recommendation is allowed. No drive-by recommendation. |
  | `Rock` | collected displayable artifacts | direct live action | yes | Means public display on avatar/body or wall/grid, not mere possession. |
  | `Add` | events | direct live action | no | Event-specific only. Means add to calendar. |
  | `React` | posts, comments, replies | direct live action | no | Lightweight social response. Not a signal action. Not a source action. |
@@ -191,6 +192,22 @@ Current version note:
 Current runtime note:
 - the repo previously contained direct `SUPPORT` actions and counters
 - the live signal contract has now removed direct signal `SUPPORT`, but historical/support-derived metric language still remains to reconcile in some docs and analytics notes
+
+## 10.1) RADIYO vs personal-player action split
+- `RADIYO` keeps:
+  - `Report`
+  - `Skip`
+  - `Play It Loud`
+  - `Collect`
+  - `Upvote`
+- personal player / user space keeps:
+  - `Blast`
+  - any later hosted-room presence and social moment behavior
+
+Meaning:
+- `Play It Loud` is the immediate positive `RADIYO` gesture for the currently playing broadcast track
+- `Upvote` remains the propagation / tier-advancement action
+- `Blast` is no longer a `RADIYO` wheel action and should be treated as the hosted social-moment action from the listener's own player/space
 
  ## 11) Artifact Rules
 

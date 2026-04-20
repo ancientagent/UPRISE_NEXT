@@ -45,7 +45,7 @@ Sources:
 - Current repo runtime still contains historical `ADD` / `SUPPORT` debt in places, but the controlling action matrix and current founder lock now narrow the intended public model to:
   - source pages: `Follow` (and donation link when actually configured)
   - artist-profile song rows: demo listening + `Collect`
-  - `Blast`: available only from `RADIYO` / `Collection`, not from the artist profile
+  - `Blast`: available only from the personal player / user space (currently surfaced through `Collection` mode in the web MVP), not from the artist profile
   - social post surfaces: `React`
 - Repo canon/spec does not support treating follow as automatic ranked feed-channel creation.
 

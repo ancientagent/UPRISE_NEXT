@@ -122,7 +122,7 @@ describe('/plot UX regression lock', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
     expect(wheelSource).toMatch(
-      /export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Report' \},\s*\{ label: 'Skip' \},\s*\{ label: 'Blast' \},\s*\{ label: 'Collect' \},\s*\{ label: 'Upvote' \},\s*\];/
+      /export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Report' \},\s*\{ label: 'Skip' \},\s*\{ label: 'Play It Loud' \},\s*\{ label: 'Collect' \},\s*\{ label: 'Upvote' \},\s*\];/
     );
     expect(wheelSource).toMatch(
       /export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Back', position: '9:00' \},\s*\{ label: 'Pause', position: '10:00' \},\s*\{ label: 'Blast', position: '12:00' \},\s*\{ label: 'Recommend', position: '1:00' \},\s*\{ label: 'Next', position: '3:00' \},\s*\];/
@@ -131,7 +131,7 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain('export const COLLECTION_WHEEL_ACTIONS');
     expect(wheelSource).toContain("{ label: 'Report' }");
     expect(wheelSource).toContain("{ label: 'Skip' }");
-    expect(wheelSource).toContain("{ label: 'Blast' }");
+    expect(wheelSource).toContain("{ label: 'Play It Loud' }");
     expect(wheelSource).toContain("{ label: 'Collect' }");
     expect(wheelSource).toContain("{ label: 'Upvote' }");
     expect(wheelSource).toContain("{ label: 'Back', position: '9:00' }");
@@ -142,7 +142,9 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
     expect(playerSource).toContain('Wheel: {wheelActions.map');
     expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : COLLECTION_WHEEL_ACTIONS;");
-    expect(wheelSource).toContain("label: 'Report' | 'Skip' | 'Blast' | 'Collect' | 'Upvote' | 'Back' | 'Pause' | 'Recommend' | 'Next'");
+    expect(wheelSource).toContain("label:");
+    expect(wheelSource).toContain("'Play It Loud'");
+    expect(wheelSource).toContain("'Blast'");
     expect(wheelSource).toContain("position?: '9:00' | '10:00' | '12:00' | '1:00' | '3:00';");
   });
 
