@@ -37,10 +37,10 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).not.toContain('blastArtistBandSignal');
     expect(artistSource).not.toContain("{busyAction === 'blast' ? 'Blasting...' : 'Blast'}");
     expect(artistSource).toContain('Songs / Releases');
-    expect(artistSource).toContain('Demo Songs');
-    expect(artistSource).toContain('Play Demo');
+    expect(artistSource).toContain('Listen Here');
+    expect(artistSource).toContain("{isPlaying ? 'Pause' : 'Play'}");
     expect(artistSource).toContain('Collect');
-    expect(artistSource).toContain('Demo timeline for');
+    expect(artistSource).toContain('Playback timeline for');
     expect(artistSource).not.toContain('Play Single');
     expect(artistSource).toContain('Identity');
     expect(artistSource).toContain('Lineup');

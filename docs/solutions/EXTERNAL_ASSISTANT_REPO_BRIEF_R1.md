@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: product engineering
-Last updated: 2026-04-17
+Last updated: 2026-04-20
 
 ## Purpose
 Give external assistants such as Abacus CoWork/Desktop a controlled understanding of the UPRISE_NEXT repo so they can help with:
@@ -71,7 +71,7 @@ Important:
 - no inline `Collect`, `Blast`, `Follow`, or wheel actions on those cards
 
 ### 3) Artist profile
-- artist profile is a public source page and demo-listen surface
+- artist profile is a public source page and direct-listen/discovery surface outside `RADIYO`
 - it is not `RADIYO`
 - it is not `Collection`
 - it does not use the wheel
@@ -79,6 +79,7 @@ Important:
   - `3` song rows
   - play/pause + timeline
   - `Collect` from profile listening context
+  - official artist-controlled outbound links when configured
   - no `Blast` there
 
 ### 4) Action grammar
@@ -97,8 +98,8 @@ Important:
 
 ## Current Repo/Runtime Reality To Keep Separate From Locks
 - some newer doctrine is locked but not fully implemented yet
-- current live artist profile is still older than the newest demo-row lock
-- feed-insert click handoff into artist-profile demo listening is locked but not fully built yet
+- current live artist profile is still older than the full direct-listen/discovery lock
+- feed-insert click handoff into artist-profile listening is locked but not fully built yet
 - source dashboard / release deck / print shop / registrar bridges are already live in some form
 
 External assistants should clearly label answers as one of:

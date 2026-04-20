@@ -49,7 +49,7 @@ Important:
 - `c3a2eaa` `docs: lock discover feed inserts and artist demo flow`
   - live `/discover` deferred while borders remain closed
   - discovery value currently comes through intermittent feed inserts
-  - clicking an insert should pause `RADIYO` and open artist-profile demo listening
+  - clicking an insert should pause `RADIYO` and open artist-profile listening
   - collect happens on the profile
   - blast stays out of the profile
 - `977697d` `feat: seed artist signal activity fixtures`
@@ -97,10 +97,11 @@ Important:
 ### What is currently locked
 The artist profile is:
 - a public source page for the artist
-- the direct demo-listen surface for sampling that artist's songs
+- the direct-listen and discovery surface for that artist's music outside `RADIYO`
 - not `RADIYO`
 - not `Collection`
 - not a wheel surface
+- a place to learn about the artist and reach official artist-controlled outbound links when configured
 
 #### Page-level actions
 Current intended page-level action grammar:
@@ -124,7 +125,7 @@ Current intended song area:
   - `Collect`
 
 #### Artist-profile listening mode
-This is a separate demo/listen mode:
+This is a separate direct-listen mode:
 - no wheel
 - no blast controls
 - no broadcast framing
@@ -136,7 +137,7 @@ This is a separate demo/listen mode:
   - `RADIYO` keeps playing until the user explicitly selects a song row
 - from a song-driven discovery handoff:
   - artist profile opens
-  - selected song begins demo listening there
+  - selected song begins playing there
   - `RADIYO` pauses
 
 #### Collect vs Blast on profile
@@ -147,12 +148,13 @@ This is a separate demo/listen mode:
   - `Collection`
 
 ### What is still not fully locked on the profile
-- exact section order outside the locked demo-song area
+- exact section order outside the locked song-row area
 - exact header composition
 - exact event/calendar layout
 - exact visual styling of the song rows
 - exact artwork fallback hierarchy
 - richer profile-wall / artifact-display behavior
+- exact layout/grouping of official outbound links
 
 ## Current Artist Dashboard / Source Dashboard Requirements
 ### Current controlling docs
@@ -227,11 +229,12 @@ The pasted answer is stale or incomplete on these points:
 - It under-describes the current founder lock.
 - Current lock is not just “follow and catalogue stats.”
 - The newer lock explicitly adds:
-  - artist-profile demo listening
+  - artist-profile direct listening
   - `3` song rows
   - `Collect` from profile
   - no wheel
   - no blast on profile
+  - official artist-controlled outbound links
 
 2. Dashboard analytics detail
 - The very granular premium analytics described there may be valid legacy/product carry-forward, but they should not be stated as current MVP implementation requirements without qualification.
@@ -246,9 +249,9 @@ The pasted answer is stale or incomplete on these points:
 ### Current safest answer pattern
 If NotebookLM is asked again, the safer answer pattern is:
 - public artist profile:
-  - source page + demo-listen surface
+  - source page + direct-listen/discovery surface
   - `Follow`
-  - `3` demo song rows
+  - `3` song rows
   - `Collect` from profile
   - no wheel / no blast there
 - artist dashboard/source dashboard:
@@ -271,8 +274,8 @@ If NotebookLM is asked again, the safer answer pattern is:
 - seeded listener fixtures now exist for valid artist-profile QA
 
 ### What is not yet implemented to match the newest lock
-- the artist profile does not yet render the final `3` demo rows with play/pause + timeline + collect
-- feed-insert discovery handoff into artist-profile demo listening is not yet fully implemented
+- the artist profile does not yet render the full final direct-listen/discovery shape even though the basic `3` song rows exist
+- feed-insert discovery handoff into artist-profile listening is not yet fully implemented
 - current live artist profile is still older than the newest lock
 
 ## Suggested NotebookLM Prompt

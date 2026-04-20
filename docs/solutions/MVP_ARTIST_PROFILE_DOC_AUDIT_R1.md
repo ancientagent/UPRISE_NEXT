@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: product engineering
-Last updated: 2026-04-16
+Last updated: 2026-04-20
 
 ## 1) Purpose
 Capture the current state of artist-profile documentation so future sessions stop treating mixed narrative summaries, external synthesis, and under-specified product behavior as settled canon.
@@ -44,7 +44,7 @@ Sources:
 - `FOLLOW` exists and is an awareness subscription to a source.
 - Current repo runtime still contains historical `ADD` / `SUPPORT` debt in places, but the controlling action matrix and current founder lock now narrow the intended public model to:
   - source pages: `Follow` (and donation link when actually configured)
-  - artist-profile song rows: demo listening + `Collect`
+  - artist-profile song rows: direct listening + `Collect`
   - `Blast`: available only from the personal player / user space (currently surfaced through `Collection` mode in the web MVP), not from the artist profile
   - social post surfaces: `React`
 - Repo canon/spec does not support treating follow as automatic ranked feed-channel creation.
@@ -137,9 +137,9 @@ Sources:
 
 ## 5) Not Sufficiently Locked In Active Docs
 These items may be plausible, but are not bulletproof enough in active repo docs to treat as settled artist-page behavior unless the founder lock below is also consulted:
-- exact public artist-page section inventory outside the locked header + 3-song demo area
+- exact public artist-page section inventory outside the locked header + 3-song listening area
 - exact event/calendar behavior triggered by following an artist
-- exact external support-link set beyond a source donation/support link when configured
+- exact layout and grouping of the official outbound-link area
 - exact public prohibition text for comments/reviews on artist pages
 - exact public song ordering rules on artist page
 - exact direct relationship between artist page and Print Shop purchase entry
@@ -179,8 +179,9 @@ A dedicated founder lock now exists at:
 
 Use that file for current controlling decisions on:
 - public artist-profile composition
-- artist-profile song-row demo listening
+- artist-profile song-row direct listening
 - collect/blast boundaries
+- official artist-controlled outbound links on the profile
 - playback handoff from discovery/feed into the artist profile
 
 This audit remains useful as background documentation inventory, but it is no longer the place to derive current artist-profile action grammar.
@@ -190,6 +191,6 @@ The repo already supports the architecture around artists better than recent nar
 
 The current safe position is:
 - architecture/capability/issuance/slot constraints = largely supported
-- current artist-profile demo-listen and collect boundary = founder-locked in `MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+- current artist-profile direct-listen and collect boundary = founder-locked in `MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
 - remaining layout/detail polish beyond that lock is still not bulletproof enough to invent ad hoc
 - do not implement the artist-profile surface from mixed summaries alone

@@ -138,7 +138,7 @@ export default function ArtistBandProfilePage() {
     });
 
     void targetAudio.play().catch(() => {
-      setError('Unable to start demo playback.');
+      setError('Unable to start playback.');
     });
   }, [selectedTrackId, demoTracks]);
 
@@ -196,7 +196,7 @@ export default function ArtistBandProfilePage() {
     try {
       await audio.play();
     } catch {
-      setError('Unable to start demo playback.');
+      setError('Unable to start playback.');
     }
   }
 
@@ -399,9 +399,9 @@ export default function ArtistBandProfilePage() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="plot-wire-label">Songs / Releases</p>
-                <h2 className="mt-2 text-lg font-semibold text-black">Demo Songs</h2>
+                <h2 className="mt-2 text-lg font-semibold text-black">Listen Here</h2>
                 <p className="mt-1 text-sm text-black/60">
-                  Pick a song to pause RADIYO and demo it here. Collect from this listening context only.
+                  Pick a song to pause RADIYO and listen here. Collect it from this artist page if you want to keep it.
                 </p>
               </div>
               <p className="plot-wire-chip">{demoTracks.length} of {profile.tracks.length} tracks</p>
@@ -433,7 +433,7 @@ export default function ArtistBandProfilePage() {
                               ) : null}
                               {isSelected ? (
                                 <span className="plot-wire-chip text-[10px] uppercase tracking-[0.2em] text-black/65">
-                                  Demo selected
+                                  Selected
                                 </span>
                               ) : null}
                             </div>
@@ -455,7 +455,7 @@ export default function ArtistBandProfilePage() {
                               }
                               onClick={() => void handleToggleTrack(track)}
                             >
-                              {isPlaying ? 'Pause Demo' : 'Play Demo'}
+                              {isPlaying ? 'Pause' : 'Play'}
                             </Button>
                             <Button
                               type="button"
@@ -477,7 +477,7 @@ export default function ArtistBandProfilePage() {
                         <div className="rounded-[1rem] border border-black/10 bg-white/70 px-4 py-3">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="text-xs font-medium uppercase tracking-[0.16em] text-black/55">
-                              {isPlaying ? 'Now demoing' : isSelected ? 'Ready to demo' : 'Demo row'}
+                              {isPlaying ? 'Playing here' : isSelected ? 'Ready to play' : 'Song row'}
                             </span>
                             <span className="text-xs text-black/45">
                               {formatDuration(currentTime)} / {formatDuration(duration)}
@@ -491,7 +491,7 @@ export default function ArtistBandProfilePage() {
                             value={Math.min(currentTime, Math.max(duration, 1))}
                             onChange={(event) => handleSeekTrack(track.id, Number(event.target.value))}
                             className="mt-3 h-2 w-full accent-black"
-                            aria-label={`Demo timeline for ${track.title}`}
+                            aria-label={`Playback timeline for ${track.title}`}
                           />
                           <audio
                             ref={(element) => setAudioRef(track.id, element)}

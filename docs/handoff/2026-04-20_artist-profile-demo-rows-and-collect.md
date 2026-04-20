@@ -1,7 +1,7 @@
-# 2026-04-20 — Artist Profile Demo Rows And Collect
+# 2026-04-20 — Artist Profile Listening Rows And Collect
 
 ## Summary
-Implemented the first artist-profile basics so the page now behaves like a demo-listen surface instead of a simple release list.
+Implemented the first artist-profile listening basics so the page now behaves like a direct-listen surface instead of a simple release list.
 
 ## What changed
 - `apps/api/src/artist-bands/artist-bands.service.ts`
@@ -11,10 +11,10 @@ Implemented the first artist-profile basics so the page now behaves like a demo-
 - `apps/web/src/lib/signals/client.ts`
   - added a focused web helper for `POST /signals/:id/collect`
 - `apps/web/src/app/artist-bands/[id]/page.tsx`
-  - replaced the old `Play Single` list behavior with demo rows
-  - artist page now shows up to `3` demo songs
+  - replaced the old `Play Single` list behavior with listening rows
+  - artist page now shows up to `3` songs in the listening area
   - each row has:
-    - `Play Demo` / `Pause Demo`
+    - `Play` / `Pause`
     - a timeline slider
     - time elapsed / duration
     - `Collect` when a signal id is available
@@ -22,14 +22,14 @@ Implemented the first artist-profile basics so the page now behaves like a demo-
 - `apps/api/test/artist-bands.service.test.ts`
   - added coverage for returning `signalId` in profile tracks
 - `apps/web/__tests__/community-artist-page-lock.test.ts`
-  - tightened the artist-page lock around `Demo Songs`, `Play Demo`, `Collect`, and the row timeline
+  - tightened the artist-page lock around the listening area, `Collect`, and the row timeline
 
 ## Result
-The artist profile is now a real demo-listen surface with profile-local song rows and collection entry from the profile page.
+The artist profile is now a real direct-listen surface with profile-local song rows and collection entry from the profile page.
 
 ## Remaining gaps
-- The current runtime still shows only however many released tracks actually exist; the lock says `3` demo songs, but fixture/content availability still determines what appears.
-- The page does not yet route feed-insert clicks into this demo mode automatically; that handoff remains a follow-on slice.
+- The current runtime still shows only however many released tracks actually exist; the lock says `3` songs in the listening area, but fixture/content availability still determines what appears.
+- The page does not yet route feed-insert clicks into this listening mode automatically; that handoff remains a follow-on slice.
 - `Collect` only appears when a matching `single` signal can be resolved for the track.
 
 ## Verification
