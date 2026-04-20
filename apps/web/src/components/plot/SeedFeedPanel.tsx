@@ -3,7 +3,11 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
-import type { CommunityDiscoverHighlights, DiscoverSignalResult } from '@uprise/types';
+import type {
+  CommunityDiscoverHighlights,
+  DiscoverRecommendationResult,
+  DiscoverSignalResult,
+} from '@uprise/types';
 import {
   getActiveCommunityFeed,
   getCommunityFeed,
@@ -213,6 +217,106 @@ function PopularSinglesInsert({ highlights }: { highlights: CommunityDiscoverHig
   );
 }
 
+function RecommendationsInsert({ highlights }: { highlights: CommunityDiscoverHighlights }) {
+  if (highlights.recommendations.length === 0) {
+    return null;
+  }
+
+  const railRef = useRef<HTMLDivElement | null>(null);
+  const scrollByDirection = (direction: 'left' | 'right') => {
+    if (!railRef.current) return;
+    railRef.current.scrollBy({
+      left: direction === 'left' ? -260 : 260,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <section data-slot="plot-feed-people-are-saying-insert" className="plot-wire-card-muted space-y-4 bg-[#efefe2] p-4">
+      <div>
+        <p className="plot-wire-label">Inserted Discovery Moment</p>
+        <h3 className="mt-1 text-lg font-semibold text-black">People Are Saying</h3>
+        <p className="mt-1 text-sm text-black/65">
+          Listener recommendations from this community, surfaced without inline actions.
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-black">Community recommendations</p>
+          <p className="text-xs text-black/55">Read-only listener recommendation squares.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-full border-black bg-white text-xs"
+            aria-label="Scroll People Are Saying left"
+            onClick={() => scrollByDirection('left')}
+          >
+            ←
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-full border-black bg-white text-xs"
+            aria-label="Scroll People Are Saying right"
+            onClick={() => scrollByDirection('right')}
+          >
+            →
+          </Button>
+        </div>
+      </div>
+
+      <div ref={railRef} className="flex gap-3 overflow-x-auto pb-1">
+        {highlights.recommendations.map((recommendation: DiscoverRecommendationResult) => {
+          const href = discoverSignalHref(recommendation.signal);
+          const body = (
+            <div className="flex h-full flex-col rounded-[1rem] border border-black bg-white p-3">
+              <div className="flex items-start justify-between gap-2">
+                <span className="plot-wire-chip bg-[#d8e79a] text-black">Recommended</span>
+                <span className="text-[10px] uppercase tracking-[0.14em] text-black/45">
+                  {new Date(recommendation.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="mt-3 flex h-24 items-center justify-center rounded-[0.8rem] border border-black/10 bg-[linear-gradient(135deg,#e6e6d8_0%,#d2d2bd_100%)]">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/50">
+                  Art / Logo
+                </span>
+              </div>
+              <div className="mt-3 min-w-0">
+                <p className="truncate text-xs font-semibold uppercase tracking-[0.12em] text-black/55">
+                  {discoverSignalArtist(recommendation.signal)}
+                </p>
+                <p className="mt-1 line-clamp-2 text-sm font-medium leading-tight text-black">
+                  {discoverSignalTitle(recommendation.signal)}
+                </p>
+                <p className="mt-2 text-xs text-black/55">
+                  Recommended by {recommendation.actor.displayName || recommendation.actor.username}
+                </p>
+              </div>
+            </div>
+          );
+
+          return (
+            <div key={recommendation.recommendationId} className="w-[11rem] min-w-[11rem] shrink-0">
+              {href ? (
+                <Link href={href} className="block h-full">
+                  {body}
+                </Link>
+              ) : (
+                body
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function FeedSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
@@ -379,6 +483,7 @@ export default function SeedFeedPanel({
             </p>
           </div>
           {highlights ? <PopularSinglesInsert highlights={highlights} /> : null}
+          {highlights ? <RecommendationsInsert highlights={highlights} /> : null}
         </div>
       ) : token ? (
         <ul className="space-y-2">
@@ -432,6 +537,11 @@ export default function SeedFeedPanel({
                     <PopularSinglesInsert highlights={highlights} />
                   </li>
                 ) : null}
+                {index === 4 && highlights ? (
+                  <li className="list-none">
+                    <RecommendationsInsert highlights={highlights} />
+                  </li>
+                ) : null}
               </Fragment>
             );
           })}
@@ -439,7 +549,10 @@ export default function SeedFeedPanel({
       ) : null}
 
       {token && !error && items.length > 0 && items.length < 2 && highlights ? (
-        <PopularSinglesInsert highlights={highlights} />
+        <div className="space-y-4">
+          <PopularSinglesInsert highlights={highlights} />
+          <RecommendationsInsert highlights={highlights} />
+        </div>
       ) : null}
 
       {token && !error && items.length > 0 && !highlights && highlightsError ? (

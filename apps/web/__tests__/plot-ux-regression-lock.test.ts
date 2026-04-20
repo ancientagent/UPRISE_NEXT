@@ -339,6 +339,23 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).not.toContain('Follow artist');
   });
 
+  it('keeps people-are-saying as a read-only recommendation insert with artist-page signal handoff', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain('plot-feed-people-are-saying-insert');
+    expect(seedFeedSource).toContain('People Are Saying');
+    expect(seedFeedSource).toContain('Listener recommendations from this community, surfaced without inline actions.');
+    expect(seedFeedSource).toContain('Community recommendations');
+    expect(seedFeedSource).toContain('Read-only listener recommendation squares.');
+    expect(seedFeedSource).toContain('aria-label="Scroll People Are Saying left"');
+    expect(seedFeedSource).toContain('aria-label="Scroll People Are Saying right"');
+    expect(seedFeedSource).toContain('Recommended by {recommendation.actor.displayName || recommendation.actor.username}');
+    expect(seedFeedSource).toContain('const href = discoverSignalHref(recommendation.signal);');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
+    expect(seedFeedSource).not.toContain('Blast this track');
+    expect(seedFeedSource).not.toContain('Follow artist');
+  });
+
   it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
