@@ -50,6 +50,7 @@ export type DiscoverSongResult = z.infer<typeof DiscoverSongResultSchema>;
 export const DiscoverSignalResultSchema = z.object({
   signalId: z.string().uuid().or(z.string().min(1)),
   type: z.string(),
+  artistBandId: z.string().uuid().or(z.string().min(1)).nullable().optional(),
   metadata: z.record(z.string(), z.unknown()).nullable(),
   communityId: z.string().uuid().or(z.string().min(1)).nullable(),
   communityCity: z.string().nullable().optional(),

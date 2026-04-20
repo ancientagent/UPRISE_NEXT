@@ -322,6 +322,23 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).not.toContain('Collect from this listening context');
   });
 
+  it('keeps the first feed insert as a read-only Popular Singles carousel with artist-page signal handoff', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain('getCommunityDiscoverHighlights');
+    expect(seedFeedSource).toContain('plot-feed-popular-singles-insert');
+    expect(seedFeedSource).toContain('Popular Singles');
+    expect(seedFeedSource).toContain('Most Added');
+    expect(seedFeedSource).toContain('Recent Rises');
+    expect(seedFeedSource).toContain('Read-only artist/song launch squares.');
+    expect(seedFeedSource).toContain("aria-label={`Scroll ${title} left`}");
+    expect(seedFeedSource).toContain("aria-label={`Scroll ${title} right`}");
+    expect(seedFeedSource).toContain('return `/artist-bands/${artistBandId}?signalId=${signal.signalId}`;');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
+    expect(seedFeedSource).not.toContain('Blast this track');
+    expect(seedFeedSource).not.toContain('Follow artist');
+  });
+
   it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 

@@ -78,6 +78,7 @@ export default function ArtistBandProfilePage() {
 
   const artistBandId = useMemo(() => (typeof params?.id === 'string' ? params.id : ''), [params]);
   const selectedTrackId = searchParams.get('trackId');
+  const selectedSignalId = searchParams.get('signalId');
   const officialLinks = useMemo(() => (profile ? getOfficialLinks(profile) : []), [profile]);
 
   async function loadProfile() {
@@ -118,7 +119,9 @@ export default function ArtistBandProfilePage() {
 
     const selectedTrack = selectedTrackId
       ? profile.tracks.find((track) => track.id === selectedTrackId) ?? null
-      : null;
+      : selectedSignalId
+        ? profile.tracks.find((track) => track.signalId === selectedSignalId) ?? null
+        : null;
     const baseTracks = profile.tracks.slice(0, 3);
 
     if (selectedTrack && !baseTracks.some((track) => track.id === selectedTrack.id)) {
@@ -152,17 +155,23 @@ export default function ArtistBandProfilePage() {
   }, [activeTrackId, demoTracks, selectedTrackId]);
 
   useEffect(() => {
-    if (!selectedTrackId) {
+    const targetTrackId =
+      selectedTrackId ??
+      (selectedSignalId
+        ? demoTracks.find((track) => track.signalId === selectedSignalId)?.id ?? null
+        : null);
+
+    if (!targetTrackId) {
       return;
     }
 
-    const targetAudio = audioRefs.current[selectedTrackId];
+    const targetAudio = audioRefs.current[targetTrackId];
     if (!targetAudio) {
       return;
     }
 
     Object.entries(audioRefs.current).forEach(([trackId, audio]) => {
-      if (trackId !== selectedTrackId && audio && !audio.paused) {
+      if (trackId !== targetTrackId && audio && !audio.paused) {
         audio.pause();
       }
     });
@@ -170,7 +179,7 @@ export default function ArtistBandProfilePage() {
     void targetAudio.play().catch(() => {
       setError('Unable to start playback.');
     });
-  }, [selectedTrackId, demoTracks]);
+  }, [selectedSignalId, selectedTrackId, demoTracks]);
 
   async function runAction(
     action: 'follow',

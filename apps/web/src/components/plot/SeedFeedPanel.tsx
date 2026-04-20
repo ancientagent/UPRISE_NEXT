@@ -1,14 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@uprise/ui';
+import type { CommunityDiscoverHighlights, DiscoverSignalResult } from '@uprise/types';
 import {
   getActiveCommunityFeed,
   getCommunityFeed,
   type CommunityFeedActor,
   type CommunityFeedItem,
 } from '@/lib/communities/client';
+import { getCommunityDiscoverHighlights } from '@/lib/discovery/client';
 import { useAuthStore } from '@/store/auth';
 
 type FeedItemType = CommunityFeedItem['type'];
@@ -59,6 +61,158 @@ function artistTrackHref(item: CommunityFeedItem): string | null {
   return `/artist-bands/${source.id}?trackId=${item.entity.id}`;
 }
 
+function discoverSignalArtistBandId(signal: DiscoverSignalResult): string | null {
+  if (signal.artistBandId) return signal.artistBandId;
+  const metadata = signal.metadata;
+  if (!metadata || typeof metadata !== 'object') return null;
+  const artistBandId = (metadata as Record<string, unknown>).artistBandId;
+  return typeof artistBandId === 'string' && artistBandId.trim() ? artistBandId.trim() : null;
+}
+
+function discoverSignalTitle(signal: DiscoverSignalResult): string {
+  const metadata = signal.metadata;
+  if (metadata && typeof metadata === 'object') {
+    const title = (metadata as Record<string, unknown>).title;
+    if (typeof title === 'string' && title.trim()) return title.trim();
+    const name = (metadata as Record<string, unknown>).name;
+    if (typeof name === 'string' && name.trim()) return name.trim();
+  }
+
+  return 'Untitled song';
+}
+
+function discoverSignalArtist(signal: DiscoverSignalResult): string {
+  const metadata = signal.metadata;
+  if (metadata && typeof metadata === 'object') {
+    const artist = (metadata as Record<string, unknown>).artist;
+    if (typeof artist === 'string' && artist.trim()) return artist.trim();
+    const artistName = (metadata as Record<string, unknown>).artistName;
+    if (typeof artistName === 'string' && artistName.trim()) return artistName.trim();
+  }
+
+  return 'Unknown artist';
+}
+
+function discoverSignalHref(signal: DiscoverSignalResult): string | null {
+  const artistBandId = discoverSignalArtistBandId(signal);
+  if (!artistBandId) return null;
+  return `/artist-bands/${artistBandId}?signalId=${signal.signalId}`;
+}
+
+function HorizontalSignalRail({
+  title,
+  signals,
+}: {
+  title: string;
+  signals: DiscoverSignalResult[];
+}) {
+  const railRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollByDirection = (direction: 'left' | 'right') => {
+    if (!railRef.current) return;
+    railRef.current.scrollBy({
+      left: direction === 'left' ? -260 : 260,
+      behavior: 'smooth',
+    });
+  };
+
+  if (signals.length === 0) return null;
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-black">{title}</p>
+          <p className="text-xs text-black/55">Read-only artist/song launch squares.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-full border-black bg-white text-xs"
+            aria-label={`Scroll ${title} left`}
+            onClick={() => scrollByDirection('left')}
+          >
+            ←
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-full border-black bg-white text-xs"
+            aria-label={`Scroll ${title} right`}
+            onClick={() => scrollByDirection('right')}
+          >
+            →
+          </Button>
+        </div>
+      </div>
+
+      <div ref={railRef} className="flex gap-3 overflow-x-auto pb-1">
+        {signals.map((signal) => {
+          const href = discoverSignalHref(signal);
+          const body = (
+            <div className="flex h-full flex-col rounded-[1rem] border border-black bg-white p-3">
+              <div className="flex h-24 items-center justify-center rounded-[0.8rem] border border-black/10 bg-[linear-gradient(135deg,#e6e6d8_0%,#d2d2bd_100%)]">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/50">
+                  Art / Logo
+                </span>
+              </div>
+              <div className="mt-3 min-w-0">
+                <p className="truncate text-xs font-semibold uppercase tracking-[0.12em] text-black/55">
+                  {discoverSignalArtist(signal)}
+                </p>
+                <p className="mt-1 line-clamp-2 text-sm font-medium leading-tight text-black">
+                  {discoverSignalTitle(signal)}
+                </p>
+              </div>
+            </div>
+          );
+
+          return (
+            <div key={signal.signalId} className="w-[11rem] min-w-[11rem] shrink-0">
+              {href ? (
+                <Link href={href} className="block h-full">
+                  {body}
+                </Link>
+              ) : (
+                body
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function PopularSinglesInsert({ highlights }: { highlights: CommunityDiscoverHighlights }) {
+  const hasMostAdded = highlights.popularSingles.mostAdded.length > 0;
+  const hasRecentRises = highlights.popularSingles.recentRises.length > 0;
+
+  if (!hasMostAdded && !hasRecentRises) {
+    return null;
+  }
+
+  return (
+    <section data-slot="plot-feed-popular-singles-insert" className="plot-wire-card-muted space-y-4 bg-[#efefe2] p-4">
+      <div>
+        <p className="plot-wire-label">Inserted Discovery Moment</p>
+        <h3 className="mt-1 text-lg font-semibold text-black">Popular Singles</h3>
+        <p className="mt-1 text-sm text-black/65">
+          A read-only community snapshot pulled from current signal stats.
+        </p>
+      </div>
+
+      <HorizontalSignalRail title="Most Added" signals={highlights.popularSingles.mostAdded} />
+      {hasRecentRises ? (
+        <HorizontalSignalRail title="Recent Rises" signals={highlights.popularSingles.recentRises} />
+      ) : null}
+    </section>
+  );
+}
+
 function FeedSkeletonRows() {
   return (
     <div className="mt-4 space-y-2" aria-hidden="true">
@@ -81,6 +235,8 @@ export default function SeedFeedPanel({
   const [items, setItems] = useState<CommunityFeedItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [resolvedSceneId, setResolvedSceneId] = useState<string | null>(communityId);
+  const [highlights, setHighlights] = useState<CommunityDiscoverHighlights | null>(null);
+  const [highlightsError, setHighlightsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -145,6 +301,43 @@ export default function SeedFeedPanel({
     fetchPage(null);
   }, [communityId, fetchPage]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadHighlights() {
+      if (!token || !resolvedSceneId) {
+        setHighlights(null);
+        setHighlightsError(null);
+        return;
+      }
+
+      try {
+        const response = await getCommunityDiscoverHighlights(
+          resolvedSceneId,
+          token,
+          6,
+          selectedTier,
+        );
+
+        if (cancelled) return;
+        setHighlights(response);
+        setHighlightsError(null);
+      } catch (e) {
+        if (cancelled) return;
+        const message =
+          e instanceof Error ? e.message : 'Unable to load Popular Singles for this scene.';
+        setHighlights(null);
+        setHighlightsError(message);
+      }
+    }
+
+    void loadHighlights();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedSceneId, selectedTier, token]);
+
   return (
     <div className="space-y-4">
       <header className="plot-wire-card-muted bg-[#efefe2] px-4 py-3">
@@ -178,15 +371,18 @@ export default function SeedFeedPanel({
       {token && !error && loading && items.length === 0 ? <FeedSkeletonRows /> : null}
 
       {token && !error && items.length === 0 && !loading ? (
-        <div className="plot-wire-card-muted border-dashed p-4">
-          <p className="text-sm font-medium text-black">No current scene activity for this context.</p>
-          <p className="mt-1 text-xs text-black/55">
-            When explicit community actions land here, every listener in the same scene sees the same feed.
-          </p>
+        <div className="space-y-4">
+          <div className="plot-wire-card-muted border-dashed p-4">
+            <p className="text-sm font-medium text-black">No current scene activity for this context.</p>
+            <p className="mt-1 text-xs text-black/55">
+              When explicit community actions land here, every listener in the same scene sees the same feed.
+            </p>
+          </div>
+          {highlights ? <PopularSinglesInsert highlights={highlights} /> : null}
         </div>
       ) : token ? (
         <ul className="space-y-2">
-          {items.map((item) => {
+          {items.map((item, index) => {
             const source = sourceFromMetadata(item);
             const trackHref = artistTrackHref(item);
             const content = (
@@ -221,18 +417,35 @@ export default function SeedFeedPanel({
             );
 
             return (
-              <li key={item.id} className="plot-wire-list-item">
-                {trackHref ? (
-                  <Link href={trackHref} className="flex items-start justify-between gap-3">
-                    {content}
-                  </Link>
-                ) : (
-                  <div className="flex items-start justify-between gap-3">{content}</div>
-                )}
-              </li>
+              <Fragment key={item.id}>
+                <li key={item.id} className="plot-wire-list-item">
+                  {trackHref ? (
+                    <Link href={trackHref} className="flex items-start justify-between gap-3">
+                      {content}
+                    </Link>
+                  ) : (
+                    <div className="flex items-start justify-between gap-3">{content}</div>
+                  )}
+                </li>
+                {index === 1 && highlights ? (
+                  <li className="list-none">
+                    <PopularSinglesInsert highlights={highlights} />
+                  </li>
+                ) : null}
+              </Fragment>
             );
           })}
         </ul>
+      ) : null}
+
+      {token && !error && items.length > 0 && items.length < 2 && highlights ? (
+        <PopularSinglesInsert highlights={highlights} />
+      ) : null}
+
+      {token && !error && items.length > 0 && !highlights && highlightsError ? (
+        <div className="rounded-[1rem] border border-black/10 bg-white px-4 py-3 text-sm text-black/60">
+          Popular Singles is unavailable right now. {highlightsError}
+        </div>
       ) : null}
 
       <div className="flex items-center gap-2">

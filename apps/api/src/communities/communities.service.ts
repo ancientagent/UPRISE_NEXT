@@ -368,6 +368,18 @@ export class CommunitiesService {
     return null;
   }
 
+  private extractSingleSignalArtistBandId(signal: {
+    metadata: Prisma.JsonValue | null;
+  }) {
+    const metadata = (signal.metadata as Record<string, unknown> | null) ?? null;
+    const artistBandId = metadata?.artistBandId;
+    if (typeof artistBandId === 'string' && artistBandId.trim()) {
+      return artistBandId.trim();
+    }
+
+    return null;
+  }
+
   private async resolveTrackArtistBand(
     artistBandId: string | null,
     communityId: string | null,
@@ -822,6 +834,7 @@ export class CommunitiesService {
     ): DiscoverSignalResult => ({
       signalId: signal.id,
       type: signal.type,
+      artistBandId: this.extractSingleSignalArtistBandId(signal),
       metadata: (signal.metadata as Record<string, unknown> | null) ?? null,
       communityId: signal.communityId ?? null,
       communityCity: signal.community?.city ?? null,

@@ -499,14 +499,14 @@ describe('CommunitiesService.discoverScenes', () => {
         {
           id: 's1',
           type: 'single',
-          metadata: { title: 'Signal Fire' },
+          metadata: { title: 'Signal Fire', artistBandId: 'ab1' },
           communityId: 'c1',
           createdAt: new Date('2026-03-23T10:00:00.000Z'),
         },
         {
           id: 's2',
           type: 'single',
-          metadata: { title: 'City Burn' },
+          metadata: { title: 'City Burn', artistBandId: 'ab2' },
           communityId: 'c1',
           createdAt: new Date('2026-03-23T11:00:00.000Z'),
         },
@@ -524,7 +524,7 @@ describe('CommunitiesService.discoverScenes', () => {
         signal: {
           id: 's1',
           type: 'single',
-          metadata: { title: 'Signal Fire' },
+          metadata: { title: 'Signal Fire', artistBandId: 'ab1' },
           communityId: 'c1',
           createdAt: new Date('2026-03-23T10:00:00.000Z'),
         },
@@ -559,11 +559,13 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.popularSingles.mostAdded).toEqual([
       expect.objectContaining({
         signalId: 's1',
+        artistBandId: 'ab1',
         lensMetricValue: 6,
         lensMetricLabel: 'All-time adds',
       }),
       expect.objectContaining({
         signalId: 's2',
+        artistBandId: 'ab2',
         lensMetricValue: 3,
         lensMetricLabel: 'All-time adds',
       }),
@@ -578,6 +580,7 @@ describe('CommunitiesService.discoverScenes', () => {
         }),
         signal: expect.objectContaining({
           signalId: 's1',
+          artistBandId: 'ab1',
           lensMetricValue: 4,
           lensMetricLabel: 'Active recommendations',
           actionCounts: expect.objectContaining({ recommend: 4 }),
@@ -618,7 +621,7 @@ describe('CommunitiesService.discoverScenes', () => {
       {
         id: 'single-1',
         type: 'single',
-        metadata: { title: 'Signal Fire', artist: 'Signal Rise' },
+        metadata: { title: 'Signal Fire', artist: 'Signal Rise', artistBandId: 'ab1' },
         communityId: 'city-1',
         community: {
           city: 'Austin',
@@ -630,7 +633,7 @@ describe('CommunitiesService.discoverScenes', () => {
       {
         id: 'single-2',
         type: 'single',
-        metadata: { title: 'City Burn', artist: 'Static Signal' },
+        metadata: { title: 'City Burn', artist: 'Static Signal', artistBandId: 'ab2' },
         communityId: 'city-2',
         community: {
           city: 'Dallas',
@@ -680,6 +683,7 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.popularSingles.recentRises).toEqual([
       expect.objectContaining({
         signalId: 'single-2',
+        artistBandId: 'ab2',
         highestScopeReached: 'state',
         lastRiseAt: '2026-03-25T09:00:00.000Z',
         communityCity: 'Dallas',
@@ -688,6 +692,7 @@ describe('CommunitiesService.discoverScenes', () => {
       }),
       expect.objectContaining({
         signalId: 'single-1',
+        artistBandId: 'ab1',
         highestScopeReached: 'state',
         lastRiseAt: '2026-03-24T09:00:00.000Z',
         communityCity: 'Austin',

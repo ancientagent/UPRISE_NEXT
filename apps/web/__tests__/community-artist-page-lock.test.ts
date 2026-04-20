@@ -27,6 +27,8 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('const viewerCanOpenPrintShop = useMemo(() => {');
     expect(artistSource).toContain("profile.members.some((member) => member.userId === user.id)");
     expect(artistSource).toContain('const sourceContextMatchesProfile = activeSourceId === profile?.id;');
+    expect(artistSource).toContain("const selectedSignalId = searchParams.get('signalId');");
+    expect(artistSource).toContain("profile.tracks.find((track) => track.signalId === selectedSignalId)");
     expect(artistSource).toContain('Source Dashboard');
     expect(artistSource).toContain('Open Release Deck');
     expect(artistSource).toContain('Open Print Shop');
