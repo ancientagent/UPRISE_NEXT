@@ -27,6 +27,35 @@ function formatDuration(seconds: number) {
   return `${minutes}:${String(remainder).padStart(2, '0')}`;
 }
 
+function getOfficialLinks(profile: ArtistBandProfile) {
+  return [
+    {
+      key: 'website',
+      label: 'Official Site',
+      href: profile.officialWebsiteUrl,
+      helper: 'Artist-controlled home base',
+    },
+    {
+      key: 'music',
+      label: 'Buy Music',
+      href: profile.musicUrl,
+      helper: 'Albums, releases, and direct music support',
+    },
+    {
+      key: 'merch',
+      label: 'Merch',
+      href: profile.merchUrl,
+      helper: 'Shirts, patches, buttons, and more',
+    },
+    {
+      key: 'donation',
+      label: 'Donate',
+      href: profile.donationUrl,
+      helper: 'Direct support for the artist',
+    },
+  ].filter((link) => Boolean(link.href));
+}
+
 export default function ArtistBandProfilePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -49,6 +78,7 @@ export default function ArtistBandProfilePage() {
 
   const artistBandId = useMemo(() => (typeof params?.id === 'string' ? params.id : ''), [params]);
   const selectedTrackId = searchParams.get('trackId');
+  const officialLinks = useMemo(() => (profile ? getOfficialLinks(profile) : []), [profile]);
 
   async function loadProfile() {
     if (!artistBandId) {
@@ -557,6 +587,37 @@ export default function ArtistBandProfilePage() {
                   </dd>
                 </div>
               </dl>
+            </section>
+
+            <section className="plot-wire-panel">
+              <p className="plot-wire-label">Official Links</p>
+              <h2 className="mt-2 text-lg font-semibold text-black">Go Deeper</h2>
+              {officialLinks.length === 0 ? (
+                <p className="mt-4 text-sm text-black/60">
+                  No official artist links have been shared here yet.
+                </p>
+              ) : (
+                <ul className="mt-4 space-y-3">
+                  {officialLinks.map((link) => (
+                    <li key={link.key} className="plot-wire-list-item">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium text-black">{link.label}</p>
+                          <p className="mt-1 text-xs text-black/60">{link.helper}</p>
+                        </div>
+                        <Link
+                          href={link.href as string}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="plot-wire-chip inline-flex h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                        >
+                          Visit
+                        </Link>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
 
             <section className="plot-wire-panel">

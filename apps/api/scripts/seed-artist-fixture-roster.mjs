@@ -109,6 +109,16 @@ function slugify(value) {
     .slice(0, 48);
 }
 
+function buildArtistLinks(stageName) {
+  const slug = slugify(stageName);
+  return {
+    officialWebsiteUrl: `https://${slug}.uprise.test`,
+    merchUrl: `https://${slug}.uprise.test/merch`,
+    musicUrl: `https://${slug}.uprise.test/music`,
+    donationUrl: `https://${slug}.uprise.test/support`,
+  };
+}
+
 async function resolveCityScene({ communityId, city, state, musicCommunity }) {
   if (communityId) {
     const exact = await prisma.community.findUnique({
@@ -335,7 +345,12 @@ async function ensureArtistBand({ user, entry, scene }) {
       where: { id: existingMembership.artistBand.id },
       data: {
         name: entry.stageName,
-        homeSceneId: scene.id,
+        homeScene: {
+          connect: {
+            id: scene.id,
+          },
+        },
+        ...buildArtistLinks(entry.stageName),
       },
       select: {
         id: true,
@@ -364,7 +379,12 @@ async function ensureArtistBand({ user, entry, scene }) {
       slug,
       entityType: 'artist',
       createdById: user.id,
-      homeSceneId: scene.id,
+      homeScene: {
+        connect: {
+          id: scene.id,
+        },
+      },
+      ...buildArtistLinks(entry.stageName),
       members: {
         create: {
           userId: user.id,

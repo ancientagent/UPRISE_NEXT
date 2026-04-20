@@ -69,6 +69,10 @@ model ArtistBand {
   registrarEntryRef String?
   homeSceneId      String?
   createdById      String
+  officialWebsiteUrl String?
+  merchUrl         String?
+  musicUrl         String?
+  donationUrl      String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 

@@ -30,6 +30,10 @@ describe('ArtistBandsService', () => {
       slug: 'signal-static',
       entityType: 'band',
       registrarEntryRef: null,
+      officialWebsiteUrl: 'https://signalstatic.example.com',
+      merchUrl: 'https://signalstatic.example.com/merch',
+      musicUrl: 'https://signalstatic.example.com/music',
+      donationUrl: 'https://signalstatic.example.com/support',
       homeSceneId: 'scene-1',
       createdById: 'user-1',
       createdAt: new Date('2026-03-20T00:00:00.000Z'),
@@ -111,6 +115,10 @@ describe('ArtistBandsService', () => {
 
     expect(result.name).toBe('Signal Static');
     expect(result.followCount).toBe(14);
+    expect(result.officialWebsiteUrl).toBe('https://signalstatic.example.com');
+    expect(result.merchUrl).toBe('https://signalstatic.example.com/merch');
+    expect(result.musicUrl).toBe('https://signalstatic.example.com/music');
+    expect(result.donationUrl).toBe('https://signalstatic.example.com/support');
     expect(result.tracks).toHaveLength(1);
     expect(result.events).toHaveLength(1);
     expect(result.tracks[0]?.artistBandId).toBe('artist-1');
@@ -133,6 +141,10 @@ describe('ArtistBandsService', () => {
       slug: 'signal-static',
       entityType: 'band',
       registrarEntryRef: null,
+      officialWebsiteUrl: null,
+      merchUrl: null,
+      musicUrl: null,
+      donationUrl: null,
       homeSceneId: 'scene-1',
       createdById: 'user-1',
       createdAt: new Date('2026-03-20T00:00:00.000Z'),

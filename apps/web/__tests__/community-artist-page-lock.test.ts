@@ -43,6 +43,12 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('Playback timeline for');
     expect(artistSource).not.toContain('Play Single');
     expect(artistSource).toContain('Identity');
+    expect(artistSource).toContain('Official Links');
+    expect(artistSource).toContain('Go Deeper');
+    expect(artistSource).toContain('Official Site');
+    expect(artistSource).toContain('Buy Music');
+    expect(artistSource).toContain('Merch');
+    expect(artistSource).toContain('Donate');
     expect(artistSource).toContain('Lineup');
     expect(artistSource).toContain('Upcoming and recent');
   });
