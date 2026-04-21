@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` and wired it into the repo's external-assistant workflow layer so Abacus/delegation/design tools now inherit explicit context-acquisition, critical-decision pause, verification, anti-trope, and originality rules without importing third-party system prompts wholesale; see `docs/handoff/2026-04-21_external-agent-hardening-patterns.md`.
 - Added a source-level share entry on the artist page: listeners can now trigger native share or clipboard copy from the page header, which matches the founder lock that the artist page should help people share artist information without turning it into a signal-action surface; see `docs/handoff/2026-04-20_artist-profile-share-entry.md`.
 - Added a real artist-page recommendation path: artist-profile track rows now render viewer-specific collected/recommended state, allow `Recommend` only after the listener genuinely holds the song, and the signal API now rejects recommendation attempts for uncollected songs; see `docs/handoff/2026-04-20_artist-profile-recommendation-gate.md`.
 - Added the first read-only `Upcoming Events` feed insert: Plot feed now pulls a small set of upcoming scene events into an informational horizontal carousel with no inline calendar or engagement actions, leaving the full event surface in the Events tab; see `docs/handoff/2026-04-20_plot-feed-upcoming-events-insert.md`.

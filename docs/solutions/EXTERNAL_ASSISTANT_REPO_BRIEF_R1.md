@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: product engineering
-Last updated: 2026-04-20
+Last updated: 2026-04-21
 
 ## Purpose
 Give external assistants such as Abacus CoWork/Desktop a controlled understanding of the UPRISE_NEXT repo so they can help with:
@@ -14,6 +14,9 @@ Give external assistants such as Abacus CoWork/Desktop a controlled understandin
 - planning artifacts
 
 This document is not a replacement for the controlling docs. It is a context bridge so external tools do not have to infer the repo from raw file sprawl.
+
+External assistants should also follow:
+- `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
 
 ## Repo Identity
 - Repo: `UPRISE_NEXT`
@@ -39,6 +42,13 @@ Use this authority order:
 Important:
 - newer founder locks and the action matrix override older mixed implementation briefs
 - legacy canon can contain valuable carry-forward detail, but it must not be mistaken for active MVP runtime truth without confirmation
+- do not copy external vendor system prompts into UPRISE workflows; extract only reusable operating patterns
+
+## Required External-Assistant Habits
+- acquire context first
+- pause before critical decisions, before edits, and before completion
+- verify outputs before declaring work complete
+- separate lock vs runtime vs historical in every substantive answer
 
 ## Read-First Pack For External Assistants
 ### Core orientation
@@ -98,8 +108,8 @@ Important:
 
 ## Current Repo/Runtime Reality To Keep Separate From Locks
 - some newer doctrine is locked but not fully implemented yet
-- current live artist profile now has basic direct listening, `Collect`, and optional official links, but it is not fully polished to the complete page vision yet
-- Plot song handoff into artist-profile listening now exists for Top 40 rows and `track_release` feed items, but broader intermittent feed-insert modules are still pending
+- current live artist profile now has direct listening, `Collect`, recommendation gated by actual holding, optional official links, and source-level share, but it is not fully polished to the complete page vision yet
+- Plot feed now includes live intermittent inserts for `Popular Singles`, `People Are Saying`, and `Upcoming Events`, with song handoff into artist-profile listening
 - source dashboard / release deck / print shop / registrar bridges are already live in some form
 
 External assistants should clearly label answers as one of:
@@ -147,4 +157,5 @@ When sources conflict, separate:
 Do not flatten those into one answer.
 Do not use older implementation briefs as current authority.
 Cite exact repo files whenever making product or system claims.
+Acquire context first, pause before critical decisions, and verify outputs before reporting completion.
 ```

@@ -1,7 +1,7 @@
 # UPRISE Agent Strategy And Handoff
 **Document ID:** `AGENT_STRATEGY_AND_HANDOFF`
 **Status:** `active`
-**Last Updated:** `2026-03-24`
+**Last Updated:** `2026-04-21`
 
 This document complements `AGENTS.md`. If any guidance here conflicts with `AGENTS.md`, `AGENTS.md` wins.
 
@@ -39,11 +39,17 @@ Load only the materials directly needed for the current task:
 - Keep context lean: prefer concise summaries over transcript dumps, salvage dense threads early, and use `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` when a thread is starting to bloat.
 - When founder clarification changes product truth or MVP boundary, promote it in the same pass using `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md`; do not leave it in chat-only memory.
 - When a slice materially changes product doctrine, active surface behavior, or major runtime shape, also update the current external-memory bridge for NotebookLM or add a dated NotebookLM sync note in the same pass. Do not let NotebookLM drift a month behind the repo.
+- For external assistants and delegation products, also apply `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` so context acquisition, verification, and anti-trope rules stay explicit.
 
 ## Multi-Agent Operating Protocol
 ### One implementation owner
 - Default to one coding agent owning the write path for a branch slice.
 - Other agents should stay read-only unless file ownership is explicitly split.
+
+### External-delegation pattern
+- Use external/swarm assistants primarily for design, communications, research, and synthesis unless a repo-controlled coding workflow is explicitly intended.
+- Keep one shared fact base for multi-deliverable work so outputs do not drift from each other.
+- Treat vendor prompt leaks as pattern references only, never as content to import wholesale.
 
 ### Checkpoint-before-audit
 - Do not run QA or ask other agents for findings against a mixed uncommitted worktree.

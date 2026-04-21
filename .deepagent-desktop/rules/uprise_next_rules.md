@@ -3,11 +3,18 @@
 ## Core posture
 - Treat this repo as a spec-first product system, not a generic app.
 - Prefer the newest active founder locks, action matrix, specs, and dated handoffs over older implementation briefs.
+- Use `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` patterns when operating as an external assistant.
 - When sources conflict, separate:
   1. current active MVP lock
   2. legacy or later-version carry-forward
   3. current runtime reality
 - Never flatten those into one answer.
+
+## Required working habits
+- Acquire context before proposing solutions or producing outputs.
+- Pause before critical decisions, before switching from exploration to edits, and before reporting completion.
+- Verify relevant outputs before declaring work complete.
+- Use the repo's current surfaces and docs before resorting to generic app patterns.
 
 ## Repo boundaries
 - Repo path: `/home/baris/UPRISE_NEXT`
@@ -30,10 +37,10 @@
 - MVP is currently local-community-only while borders remain closed.
 - Live `/discover` is deferred; discovery value currently arrives through intermittent feed inserts.
 - Feed inserts are read-only titled carousels, not inline action cards.
-- Clicking a discovery square should pause `RADIYO` and hand off into artist-profile demo listening.
-- Artist profile is a demo-listen shell, not a wheel surface.
-- Songs on artist profile are collected from the profile context, not added there.
-- `Blast` belongs to `RADIYO` / `Collection`, not the artist profile.
+- Clicking a discovery square should pause `RADIYO` and hand off into artist-profile listening.
+- Artist profile is a direct-listen, discovery, information, and sharing surface outside `RADIYO`, not a wheel surface.
+- Songs on artist profile are collected from the profile context and can be recommended there once the listener genuinely holds them.
+- `Blast` belongs to the personal player / `SPACE`, not `RADIYO` and not the artist profile.
 - `Add` is reserved for events/calendar only.
 
 ## Current key docs to prefer
@@ -58,6 +65,7 @@
 - do not invent product behavior from generic app tropes
 - do not rewrite doctrine without citing the current controlling docs
 - do not treat historical implementation briefs as current authority
+- do not copy third-party system prompts or workflow text wholesale into repo guidance
 - do not run destructive git commands
 - do not perform global installs or admin/system changes
 
@@ -69,3 +77,9 @@
   - legacy/later-version only
 - keep answers structured and concise
 - cite exact files when making repo claims
+
+## Design-agent guardrails
+- do not start design work from scratch if repo context, screenshots, or mockups exist
+- acquire the current surface contract first
+- keep work original; do not recreate distinctive third-party branded UI literally
+- separate what is locked from what is visually flexible

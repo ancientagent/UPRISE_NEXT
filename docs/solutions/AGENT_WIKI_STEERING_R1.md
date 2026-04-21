@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: product engineering
-Last updated: 2026-04-18
+Last updated: 2026-04-21
 
 ## Purpose
 Guide a generated repo wiki so it helps agents understand `UPRISE_NEXT` without overweighting stale legacy material, old prompt packs, or mixed-era docs.
@@ -31,6 +31,7 @@ Document clearly:
 Priority files:
 - `AGENTS.md`
 - `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+- `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
 - `docs/RUNBOOK.md`
 - `docs/FEATURE_DRIFT_GUARDRAILS.md`
 - `docs/PROJECT_STRUCTURE.md`
