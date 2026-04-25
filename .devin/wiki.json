@@ -19,6 +19,10 @@
     {
       "author": "product engineering",
       "content": "Treat external models as separate departments, not separate authorities. Design agents can explore layout but cannot redefine action grammar. Writing/briefing agents can summarize and draft but cannot invent doctrine. Coding agents must implement from locks/specs/runtime. The wiki should help those departments orient quickly without letting any of them replace repo truth."
+    },
+    {
+      "author": "product engineering",
+      "content": "For section-specific work, generated wiki pages should point agents to docs/agent-briefs/ first. Section briefs are routers: read the matching brief, then selectively load only the code/spec/lock files needed for the task. Do not make agents bulk-read every doc that mentions the same surface."
     }
   ],
   "pages": [
@@ -38,7 +42,17 @@
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Anchor this page on AGENTS.md, docs/AGENT_STRATEGY_AND_HANDOFF.md, and docs/solutions/REPO_AUTHORITY_MAP_R1.md. This page should make it hard for agents to treat stale docs as current truth."
+          "content": "Anchor this page on AGENTS.md, docs/AGENT_STRATEGY_AND_HANDOFF.md, docs/agent-briefs/README.md, and docs/solutions/REPO_AUTHORITY_MAP_R1.md. This page should make it hard for agents to treat stale docs as current truth or to bulk-load every related document by default."
+        }
+      ]
+    },
+    {
+      "title": "Section-Specific Agent Briefs",
+      "purpose": "Explain how agents should use docs/agent-briefs as narrow task routers instead of bulk-loading every related solution, handoff, or design document.",
+      "page_notes": [
+        {
+          "author": "product engineering",
+          "content": "Use docs/agent-briefs/README.md, docs/agent-briefs/UI_CURRENT.md, docs/agent-briefs/ACTIONS_AND_SIGNALS.md, docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md, docs/agent-briefs/EVENTS_ARCHIVE.md, and docs/AGENT_STRATEGY_AND_HANDOFF.md. Emphasize brief-first loading, selective linked reads, and the rule that section briefs summarize active working truth without replacing owning specs or founder locks."
         }
       ]
     },
@@ -79,7 +93,7 @@
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Prioritize Plot, Discover, Community, and Artist Profile route behavior. Use docs/solutions/SURFACE_CONTRACT_DISCOVER_R1.md and current founder locks instead of stale route descriptions."
+          "content": "Prioritize docs/agent-briefs/UI_CURRENT.md for current UI orientation, then Plot, Discover, Community, and Artist Profile route behavior as needed. Use active surface contracts and current founder locks instead of stale route descriptions."
         }
       ]
     },
@@ -129,7 +143,7 @@
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Use docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md, docs/solutions/REPO_AUTHORITY_MAP_R1.md, and docs/solutions/AGENT_WIKI_STEERING_R1.md. Emphasize department-style usage without granting them authority over repo truth."
+          "content": "Use docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md, docs/solutions/REPO_AUTHORITY_MAP_R1.md, docs/solutions/AGENT_WIKI_STEERING_R1.md, and docs/agent-briefs/README.md. Emphasize department-style usage, brief-first task routing, and no authority over repo truth."
         }
       ]
     }

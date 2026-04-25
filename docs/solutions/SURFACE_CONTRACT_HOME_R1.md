@@ -39,6 +39,23 @@ Home contains:
 
 Home does not require a separate top-level tab set that competes with Plot.
 
+## Current Founder-Corrected Home Composition
+For current MVP composition, the Home-side shell should read top-to-bottom like this:
+1. user avatar bust
+   - with a text bubble showing the listener's current recommendation
+2. `UPRISE <CITY>` identity text
+3. top-right controls
+   - notifications
+   - settings menu
+4. the avatar should visually sit on top of the player, as if standing behind it
+5. the player sits directly below that top identity layer
+6. `Plot` sits below the player as the tabbed system inside Home
+7. pulling the player down opens the user's profile / collection workspace in-place
+8. while that profile workspace is open, the player relocates to the bottom and may render as full controls or a compact marquee strip depending on screen space
+9. while that profile workspace is open, Plot tabs are replaced and restored on collapse
+
+This is more specific than the older generic shell wording and should be used for current design-facing explanations.
+
 ## What Must Remain True
 - The left nav destination is `Home`.
 - Home is the container for the Home-side participation system.

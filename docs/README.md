@@ -13,6 +13,7 @@ This folder contains operational docs, architecture references, specifications, 
 ## Read Only What You Need Next
 - Spec work: [`specs/README.md`](./specs/README.md)
 - Legacy spec IDs / older references: [`Specifications/README.md`](./Specifications/README.md)
+- Section-specific agent context: [`agent-briefs/README.md`](./agent-briefs/README.md)
 - Recurring issue playbooks: [`solutions/README.md`](./solutions/README.md)
 - Dated execution notes and carry-forward context: [`handoff/README.md`](./handoff/README.md)
 - Active recovery snapshot + salvage protocol: `docs/state/`
@@ -27,6 +28,7 @@ This folder contains operational docs, architecture references, specifications, 
 
 ## Multi-Agent Workflow
 - Use current specs/code/runtime before dated handoffs.
+- For section work such as UI, load the matching `docs/agent-briefs/` packet first; use linked docs selectively instead of making agents read every related file.
 - Audit only committed branch state, not mixed worktrees.
 - Prefer a single reconciliation note over parallel memory docs.
 - Use [`solutions/AGENT_WORKFLOW_PROTOCOL_R1.md`](./solutions/AGENT_WORKFLOW_PROTOCOL_R1.md) for the current recommended operating protocol.

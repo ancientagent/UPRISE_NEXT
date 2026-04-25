@@ -19,6 +19,8 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-04-25_section-briefs-and-stale-term-guard.md`](./2026-04-25_section-briefs-and-stale-term-guard.md) — current section-brief expansion and targeted stale-term docs lint guard for active agent-facing context.
+- [`2026-04-25_agent-section-briefs.md`](./2026-04-25_agent-section-briefs.md) — current section-specific agent brief system and maintenance rule.
 - [`2026-04-18_handoff-staleness-reconciliation.md`](./2026-04-18_handoff-staleness-reconciliation.md) — current guide to which older handoffs are historical-only versus still useful carry-forward.
 - [`2026-04-18_repo-authority-map-and-wiki-steering.md`](./2026-04-18_repo-authority-map-and-wiki-steering.md) — current repo authority and generated-wiki steering layer for external assistants.
 - [`2026-04-18_art-department-structure.md`](./2026-04-18_art-department-structure.md) — current art/design workspace structure.

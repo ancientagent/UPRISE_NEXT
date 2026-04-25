@@ -23,21 +23,31 @@ Use this precedence when evaluating what to trust:
 
 ## Reading Model
 ### Core set
-Every coding agent should read only the core set from `AGENTS.md` before touching code.
+Every coding agent should start from `AGENTS.md` and the minimum core protocol it names. Do not expand that into every active solution, handoff, or design document by default.
 
 ### Task-specific loading
 Load only the materials directly needed for the current task:
+- Section-specific work: load the matching brief in `docs/agent-briefs/` first. Treat that brief as the section router; follow only the code/spec/lock links that match the files or surface being changed.
 - Web route/UI work: `apps/web/WEB_TIER_BOUNDARY.md` + route specs/founder locks
 - API/runtime work: relevant module specs + shared types/contracts
 - Doc/spec work: `docs/README.md`, `docs/specs/README.md`, and the exact canon/spec files in scope
 - Recurring incident work: relevant `docs/solutions/` playbook only
 
+### Section brief rule
+- Section briefs are read-first packets, not mandates to load every linked document.
+- Keep the current section truth in the brief; keep full detail in the owning spec/founder lock.
+- If a task only needs orientation or a design prompt, the section brief can be sufficient.
+- If a task edits runtime behavior, load the matching route/component files and the specific lock that authorizes the change.
+- If a task edits canon/specs, load the exact canon/spec file being changed and any directly referenced authority.
+
 ### What not to do
 - Do not bulk-load old batch plans, old phase notes, or large handoff sets by default.
+- Do not make agents read every document that mentions a surface just because they are working in that area.
 - Do not treat every dated handoff as equally authoritative.
 - Do not inherit product behavior from prior chat memory when current code/specs disagree.
 - Keep context lean: prefer concise summaries over transcript dumps, salvage dense threads early, and use `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` when a thread is starting to bloat.
 - When founder clarification changes product truth or MVP boundary, promote it in the same pass using `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md`; do not leave it in chat-only memory.
+- When founder clarification changes a section's active workflow or screen truth, patch the matching `docs/agent-briefs/` file in the same pass so future agents start from repo-visible section context instead of chat memory.
 - When a slice materially changes product doctrine, active surface behavior, or major runtime shape, also update the current external-memory bridge for NotebookLM or add a dated NotebookLM sync note in the same pass. Do not let NotebookLM drift a month behind the repo.
 - For external assistants and delegation products, also apply `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` so context acquisition, verification, and anti-trope rules stay explicit.
 

@@ -109,7 +109,7 @@ Important:
 ## Current Repo/Runtime Reality To Keep Separate From Locks
 - some newer doctrine is locked but not fully implemented yet
 - current live artist profile now has direct listening, `Collect`, recommendation gated by actual holding, optional official links, and source-level share, but it is not fully polished to the complete page vision yet
-- Plot feed now includes live intermittent inserts for `Popular Singles`, `People Are Saying`, and `Upcoming Events`, with song handoff into artist-profile listening
+- Plot feed now includes live intermittent inserts for `Popular Singles`, `Buzz`, and `Upcoming Events`, with song handoff into artist-profile listening
 - source dashboard / release deck / print shop / registrar bridges are already live in some form
 
 External assistants should clearly label answers as one of:

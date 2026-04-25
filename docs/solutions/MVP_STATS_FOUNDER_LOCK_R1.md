@@ -169,7 +169,7 @@ Current MVP note:
 - the stats contract below presently powers intermittent feed-insert discovery moments rather than a full live Discover page
 - future reopened discovery surfaces should still use this same stats vocabulary instead of inventing a parallel one
 
-### Recommendations / People Are Saying
+### Recommendations / Buzz
 - recommendation objects are surfaced directly
 - this is **not** a stats lens
 - this is listeners + their active recommendations

@@ -15,7 +15,6 @@ import { useAuthStore } from '@/store/auth';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
-import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
 import RadiyoPlayerPanel, { type PlayerMode, type PlayerTier, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
 import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
@@ -56,7 +55,7 @@ const StatisticsPanel = dynamic(
   }
 );
 
-const tabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;
+const tabs = ['Feed', 'Events', 'Archive'] as const;
 type PlotTab = (typeof tabs)[number];
 const expandedProfileSections = [
   'Singles/Playlists',
@@ -625,18 +624,16 @@ export default function PlotPage() {
   }).format(new Date());
   const activityScore = expandedProfileStats?.metrics.activityScore ?? 0;
   const eventsThisWeek = expandedProfileStats?.metrics.eventsThisWeek ?? 0;
-  const plotTabHeading = activeTab === 'Statistics' ? 'Scene Statistics' : activeTab;
+  const plotTabHeading = activeTab === 'Archive' ? 'Scene Archive' : activeTab;
   const wheelActions = getEngagementWheelActions(playerMode);
   const plotTabDescription =
     activeTab === 'Feed'
       ? 'Community actions appear here.'
       : activeTab === 'Events'
         ? 'Scene events listing from your selected community anchor.'
-        : activeTab === 'Promotions'
-          ? 'Scene-scoped promotions and offers from your selected anchor.'
-          : activeTab === 'Statistics'
-            ? null
-            : 'Message boards and listening rooms.';
+        : activeTab === 'Archive'
+          ? null
+          : 'Message boards and listening rooms.';
 
   const renderBottomNav = () => (
     <>
@@ -716,7 +713,7 @@ export default function PlotPage() {
   );
 
   const renderPrimaryPlotTabBody = () => {
-    if (activeTab === 'Statistics') {
+    if (activeTab === 'Archive') {
       return (
         <div className="space-y-4">
           <StatisticsPanel
@@ -729,7 +726,7 @@ export default function PlotPage() {
           <div className="rounded-2xl border border-black/10 bg-white p-6">
             <h3 className="mb-2 font-semibold text-black">Scene Activity Snapshot</h3>
             <p className="text-sm text-black/60">
-              Descriptive context for the current statistics scope. This is not a ranking or authority signal.
+              Descriptive context for the current archive scope. This is not a ranking or authority signal.
             </p>
             <p className="mt-2 text-xs text-black/50">
               Current tier: <span className="capitalize">{selectedTier}</span>
@@ -759,15 +756,6 @@ export default function PlotPage() {
       );
     }
 
-    if (activeTab === 'Promotions') {
-      return (
-        <PlotPromotionsPanel
-          communityId={selectedCommunity?.id ?? null}
-          communityLabel={selectedCommunityLabel}
-        />
-      );
-    }
-
     return null;
   };
 
@@ -789,7 +777,7 @@ export default function PlotPage() {
           <section className="plot-wire-panel plot-wire-grid-bg p-6">
             <h2 className="text-lg font-semibold text-black">Plot surfaces unlock after Home Scene resolution</h2>
             <p className="mt-2 max-w-2xl text-sm text-black/65">
-              Feed, Events, Promotions, Statistics, and scene-scoped profile context remain unavailable until your
+              Feed, Events, Archive, and scene-scoped profile context remain unavailable until your
               Home Scene is set.
             </p>
           </section>
@@ -1178,16 +1166,16 @@ export default function PlotPage() {
 
             {/* Main Content Grid */}
             <section className="grid gap-4 border border-black bg-[#d8d8c8] p-3 lg:grid-cols-[minmax(0,1.75fr)_300px]">
-              {/* Left Panel - Statistics & Map */}
+              {/* Left Panel - Archive & Map */}
               <div className="plot-wire-panel">
                 <div className="mb-4 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
                   <p className="plot-wire-label">Active Surface</p>
                   <h2 className="mt-1 text-lg font-semibold text-black">{plotTabHeading}</h2>
                   <p className="mt-1 text-sm text-black/65">
                     {plotTabDescription}
-                    {activeTab === 'Statistics' && (
+                    {activeTab === 'Archive' && (
                       <>
-                        Scene metrics and activity from{' '}
+                        Descriptive scene history and activity from{' '}
                         <span className="capitalize">{selectedTier}</span> tier
                         {!homeScene && '. Complete onboarding to see your local scene.'}
                       </>

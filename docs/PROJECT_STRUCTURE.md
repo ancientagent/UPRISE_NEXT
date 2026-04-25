@@ -15,6 +15,7 @@ apps/
   workers/
     transcoder/           # FFmpeg worker (AWS Fargate / Fly.io)
 art/                      # Non-production design/art department workspace
+docs/agent-briefs/        # Section-specific agent context packets
 packages/
   ui/                     # Shared UI components (Tailwind + shadcn/ui)
   types/                  # Zod schemas; emits OpenAPI

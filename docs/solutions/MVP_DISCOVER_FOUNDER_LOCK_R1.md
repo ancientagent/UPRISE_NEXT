@@ -80,7 +80,7 @@ This same insertion pattern may later be reused for:
 Current intended interim discovery families include:
 - `Popular Singles`
 - `Recent Rises`
-- `People Are Saying` / recommendation-driven discovery moments
+- `Buzz` / recommendation-driven discovery moments
 
 Interpretation:
 - these are read surfaces derived from current stats/recommendation projections

@@ -194,11 +194,11 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).not.toContain('Tier Snapshot');
   });
 
-  it('locks Top Songs + Scene Activity to statistics-only placement', () => {
+  it('locks Top Songs + Scene Activity to archive-only placement', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toMatch(
-      /activeTab === 'Statistics'[\s\S]*TopSongsPanel[\s\S]*Scene Activity Snapshot/
+      /activeTab === 'Archive'[\s\S]*TopSongsPanel[\s\S]*Scene Activity Snapshot/
     );
   });
 
@@ -229,18 +229,20 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('renderBottomNav()');
   });
 
-  it('locks primary Plot tab ownership to explicit Feed/Events/Promotions/Statistics bodies', () => {
+  it('locks primary Plot tab ownership to explicit Feed/Events/Archive bodies', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain("const tabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;");
+    expect(plotPageSource).toContain("const tabs = ['Feed', 'Events', 'Archive'] as const;");
     expect(plotPageSource).not.toContain('Social');
     expect(plotPageSource).toContain("if (activeTab === 'Feed')");
     expect(plotPageSource).toContain('SeedFeedPanel');
     expect(plotPageSource).toContain("if (activeTab === 'Events')");
     expect(plotPageSource).toContain('PlotEventsPanel');
-    expect(plotPageSource).toContain("if (activeTab === 'Promotions')");
-    expect(plotPageSource).toContain('PlotPromotionsPanel');
-    expect(plotPageSource).toContain("if (activeTab === 'Statistics')");
+    expect(plotPageSource).toContain("if (activeTab === 'Archive')");
+    expect(plotPageSource).toContain('StatisticsPanel');
+    expect(plotPageSource).not.toContain("if (activeTab === 'Promotions')");
+    expect(plotPageSource).not.toContain('PlotPromotionsPanel');
+    expect(plotPageSource).not.toContain("if (activeTab === 'Statistics')");
     expect(plotPageSource).toContain('renderPrimaryPlotTabBody()');
   });
 
@@ -339,16 +341,16 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).not.toContain('Follow artist');
   });
 
-  it('keeps people-are-saying as a read-only recommendation insert with artist-page signal handoff', () => {
+  it('keeps buzz as a read-only recommendation insert with artist-page signal handoff', () => {
     const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
 
-    expect(seedFeedSource).toContain('plot-feed-people-are-saying-insert');
-    expect(seedFeedSource).toContain('People Are Saying');
+    expect(seedFeedSource).toContain('plot-feed-buzz-insert');
+    expect(seedFeedSource).toContain('Buzz');
     expect(seedFeedSource).toContain('Listener recommendations from this community, surfaced without inline actions.');
-    expect(seedFeedSource).toContain('Community recommendations');
+    expect(seedFeedSource).toContain('Community buzz');
     expect(seedFeedSource).toContain('Read-only listener recommendation squares.');
-    expect(seedFeedSource).toContain('aria-label="Scroll People Are Saying left"');
-    expect(seedFeedSource).toContain('aria-label="Scroll People Are Saying right"');
+    expect(seedFeedSource).toContain('aria-label="Scroll Buzz left"');
+    expect(seedFeedSource).toContain('aria-label="Scroll Buzz right"');
     expect(seedFeedSource).toContain('Recommended by {recommendation.actor.displayName || recommendation.actor.username}');
     expect(seedFeedSource).toContain('const href = discoverSignalHref(recommendation.signal);');
     expect(seedFeedSource).not.toContain('Collect from this listening context');

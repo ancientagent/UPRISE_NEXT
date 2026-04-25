@@ -19,8 +19,7 @@ Define the minimum stable contract for `Plot` as the Home-side sectional system.
 ## Current MVP Tabs
 - `Feed`
 - `Events`
-- `Promotions`
-- `Statistics`
+- `Archive`
 
 ## Governing Context
 - Plot inherits Home-side player context.
@@ -31,10 +30,11 @@ Define the minimum stable contract for `Plot` as the Home-side sectional system.
 
 ## What Must Remain True
 - Plot remains a tabbed sectional system.
-- The current MVP tab set is `Feed`, `Events`, `Promotions`, `Statistics`.
+- The current MVP tab set is `Feed`, `Events`, `Archive`.
 - Plot does not become Home itself.
 - Plot does not become a generic social dashboard.
 - Feed remains the primary place where followed-source updates appear.
+- `Archive` is the descriptive archive/stats lane for current MVP. Do not describe it as a separate `Statistics` tab in current design or planning language.
 
 ## What Plot Must Not Become
 - not a peer route to Home
@@ -42,6 +42,7 @@ Define the minimum stable contract for `Plot` as the Home-side sectional system.
 - not a vanity/social tab hub
 - not a second Discover surface
 - not a place to introduce unapproved tabs like `Social` or `Messages`
+- not a place to keep stale `Promotions` / `Statistics` tab language alive once the founder-corrected MVP tab set is `Feed`, `Events`, `Archive`
 
 ## Known Drift Patterns
 - calling Plot the user’s home page

@@ -235,10 +235,10 @@ function RecommendationsInsert({ highlights }: { highlights: CommunityDiscoverHi
   };
 
   return (
-    <section data-slot="plot-feed-people-are-saying-insert" className="plot-wire-card-muted space-y-4 bg-[#efefe2] p-4">
+    <section data-slot="plot-feed-buzz-insert" className="plot-wire-card-muted space-y-4 bg-[#efefe2] p-4">
       <div>
         <p className="plot-wire-label">Inserted Discovery Moment</p>
-        <h3 className="mt-1 text-lg font-semibold text-black">People Are Saying</h3>
+        <h3 className="mt-1 text-lg font-semibold text-black">Buzz</h3>
         <p className="mt-1 text-sm text-black/65">
           Listener recommendations from this community, surfaced without inline actions.
         </p>
@@ -246,7 +246,7 @@ function RecommendationsInsert({ highlights }: { highlights: CommunityDiscoverHi
 
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-black">Community recommendations</p>
+          <p className="text-sm font-semibold text-black">Community buzz</p>
           <p className="text-xs text-black/55">Read-only listener recommendation squares.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -255,7 +255,7 @@ function RecommendationsInsert({ highlights }: { highlights: CommunityDiscoverHi
             size="sm"
             variant="outline"
             className="h-8 rounded-full border-black bg-white text-xs"
-            aria-label="Scroll People Are Saying left"
+            aria-label="Scroll Buzz left"
             onClick={() => scrollByDirection('left')}
           >
             ←
@@ -265,7 +265,7 @@ function RecommendationsInsert({ highlights }: { highlights: CommunityDiscoverHi
             size="sm"
             variant="outline"
             className="h-8 rounded-full border-black bg-white text-xs"
-            aria-label="Scroll People Are Saying right"
+            aria-label="Scroll Buzz right"
             onClick={() => scrollByDirection('right')}
           >
             →
