@@ -33,6 +33,7 @@ Priority files:
 - `AGENTS.md`
 - `docs/AGENT_STRATEGY_AND_HANDOFF.md`
 - `docs/agent-briefs/README.md`
+- `docs/agent-briefs/CONTEXT_ROUTER.md`
 - `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
 - `docs/RUNBOOK.md`
 - `docs/FEATURE_DRIFT_GUARDRAILS.md`
@@ -40,12 +41,14 @@ Priority files:
 
 ### 2) Section-specific agent context
 Document clearly:
+- agents should identify the active focus lane with `docs/agent-briefs/CONTEXT_ROUTER.md` first
 - agents should load the matching `docs/agent-briefs/` packet first for section work
 - section briefs are routers, not mandatory full-document reading lists
 - linked docs should be loaded only when the task touches that exact surface, route, spec, or runtime behavior
 - current section truth should live in the brief, with full detail in the owning spec/founder lock
 
 Priority files:
+- `docs/agent-briefs/CONTEXT_ROUTER.md`
 - `docs/agent-briefs/README.md`
 - `docs/agent-briefs/UI_CURRENT.md`
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`
@@ -135,6 +138,7 @@ If the generator supports explicit page steering, prioritize pages like:
 - Repo Overview
 - Authority and Operating Rules
 - Section-Specific Agent Briefs
+- Context Router And Focus Lanes
 - Architecture and Tier Boundaries
 - Web Routes and Surface Contracts
 - API and Shared Contracts
@@ -150,6 +154,7 @@ The wiki should help different external assistant departments stay in their lane
 
 ### Design agents
 Need:
+- the current focus lane from `docs/agent-briefs/CONTEXT_ROUTER.md`
 - the matching section brief first, usually `docs/agent-briefs/UI_CURRENT.md`
 - current surface contracts
 - current action grammar

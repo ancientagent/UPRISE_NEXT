@@ -33,6 +33,10 @@ Examples:
 - Web-tier violations (DB access, secrets, server-only imports).
 - Placeholder CTAs for unapproved capabilities (e.g., `Coming Soon` action buttons that imply unsupported workflows).
 
+Approved placeholder exception:
+- A disabled placeholder is allowed only when a current active spec or founder lock explicitly authorizes that exact deferred state.
+- Current example: the deferred Discover surface may use disabled / `Coming Soon` language under `docs/solutions/SURFACE_CONTRACT_DISCOVER_R1.md`.
+
 If it’s unclear whether something is “new behavior”, treat it as drift and stop.
 
 ---

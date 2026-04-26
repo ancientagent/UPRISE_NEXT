@@ -6,6 +6,11 @@ Freeze how the `/plot` prototype maps into the mobile-first UX contract so later
 
 This document is mapping-only. It does not authorize new product behavior.
 
+Current tab-language note:
+- newer 2026-04 Home/Plot locks supersede older prototype tab labels
+- current MVP Plot tabs are `Feed`, `Events`, and `Archive`
+- `Promotions` is not a current MVP tab and `Statistics` is not the user-facing tab label
+
 ## Canon Anchors
 
 - `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`
@@ -19,7 +24,7 @@ This document is mapping-only. It does not authorize new product behavior.
 
 - Collapsed profile strip remains at top of `/plot`.
 - Player remains persistent and outside Plot tab content ownership.
-- Plot tabs remain the content switcher for Feed, Events, Promotions, Statistics.
+- Plot tabs remain the content switcher for Feed, Events, and Archive.
 - Bottom nav remains fixed inside the mobile viewport shell.
 
 ### 2) Player Ownership and Mode

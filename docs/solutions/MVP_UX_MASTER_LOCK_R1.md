@@ -1,8 +1,8 @@
 # MVP UX Master Lock (R1)
 
-Status: Active  
-Owner: Founder + product engineering  
-Last updated: 2026-03-12
+Status: Active
+Owner: Founder + product engineering
+Last updated: 2026-04-25
 
 ## 1) Purpose
 Provide one deterministic UX source for current MVP implementation so agents do not drift across legacy references, partial docs, or conflicting prior drafts.
@@ -12,6 +12,10 @@ This document is the execution lock for:
 - Plot route structure and tab ownership
 - Player/profile interaction model
 - Explicit MVP vs deferred boundaries
+
+Current note:
+- the Plot tab language in this file has been reconciled to the newer 2026-04 Home/Plot locks
+- older linked mobile/prototype docs may preserve historical tab names for reference, but current MVP user-facing tabs are `Feed`, `Events`, and `Archive`
 
 ## 2) Precedence Rule (Authoritative)
 If documents conflict, apply this order:
@@ -63,20 +67,20 @@ Expanded profile (same route) includes:
 ### 4.4 Player contract
 Modes:
 - `RADIYO`
-- `Collection`
+- `SPACE`
 
 Tier context:
-- `City`, `State`, `National`
+- `City`, `State`
 
 RADIYO:
 - Tier controls select playback context
 - Tapping active tier stops playback
 - Rotation/source control exists (`New`/`Current` naming may vary by UI token, semantics must match locked source-rotation behavior)
 
-Collection:
+SPACE:
 - Enter via collection selection path
 - Exit via explicit eject return path to `RADIYO`
-- Tier stack hidden in Collection mode
+- Tier stack hidden in `SPACE` mode
 
 ### 4.5 Bottom nav + engagement wheel
 Bottom nav:
@@ -90,14 +94,13 @@ Shell relationship:
 
 Engagement wheel:
 - Triggered from center UPRISE button
-- RADIYO and Collection action sets are mode-specific and deterministic
+- RADIYO and SPACE action sets are mode-specific and deterministic
 
 ### 4.6 Plot tabs (collapsed view)
 Primary tabs:
 - Feed
 - Events
-- Promos/Promotions
-- Statistics
+- Archive
 
 Social:
 - Deferred for MVP unless explicitly unlocked by spec update.

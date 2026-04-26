@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: Founder + product engineering
-Last updated: 2026-04-16
+Last updated: 2026-04-25
 
 ## 1) Purpose
 Capture founder-confirmed source, profile, feed, and registrar-entity rules so future sessions stop re-deriving them from chat fragments.
@@ -210,11 +210,12 @@ Current registrar-stage entities called out in-session:
 - other civic prerequisites when active
 
 ## 7) Plot Feed Priority
-Current Plot tab priority order is:
+Current MVP Plot tab order is:
 1. Feed
 2. Events
-3. Promotions
-4. Statistics
+3. Archive
+
+`Archive` is the current user-facing descriptive stats/history lane. Older `Promotions` / `Statistics` tab language is superseded for current MVP planning.
 
 Feed is not just the default-selected tab.
 Feed is the primary live pulse of the scene.
@@ -222,7 +223,7 @@ Feed is the primary live pulse of the scene.
 Current MVP border note:
 - while borders remain closed and `Discover` is deferred, stats-driven discovery material should appear intermittently inside the feed
 - these are occasional inserted informational surfaces, not fixed permanent rails
-- the same insertion logic may later apply to paid placement promos when that surface is activated
+- the same insertion logic may later apply to paid placement promos when that surface is explicitly activated
 
 Feed purpose:
 - live update of what is happening in the scene
@@ -232,7 +233,7 @@ Feed purpose:
 Allowed feed-composition behavior:
 - the main feed can include inserted summary modules
 - upcoming events may appear as a recurring carousel inside the feed
-- local ads/promotions may appear as a recurring carousel inside the feed
+- local ads/promotions may appear as a recurring carousel inside the feed only after that surface is explicitly activated
 
 ### 7.1 Discovery insert behavior
 While Discover is deferred, intermittent discovery inserts in feed should behave as read-only launch surfaces.

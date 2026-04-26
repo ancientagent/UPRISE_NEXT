@@ -23,6 +23,14 @@
     {
       "author": "product engineering",
       "content": "For section-specific work, generated wiki pages should point agents to docs/agent-briefs/ first. Section briefs are routers: read the matching brief, then selectively load only the code/spec/lock files needed for the task. Do not make agents bulk-read every doc that mentions the same surface."
+    },
+    {
+      "author": "product engineering",
+      "content": "Generated wiki pages should treat docs/agent-briefs/CONTEXT_ROUTER.md as the work-lane map. Use it to select the active focus lane first, then load only the lane brief and companion briefs touched by the task."
+    },
+    {
+      "author": "product engineering",
+      "content": "For canon-sensitive work, generated wiki pages should not bulk-load every canon file. Use docs/agent-briefs/CONTEXT_ROUTER.md to select the exact canon anchor for the domain: narrative mechanics, glossary, identity/philosophy, surfaces/capabilities, revenue, voice/messaging, or project orientation."
     }
   ],
   "pages": [
@@ -42,17 +50,17 @@
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Anchor this page on AGENTS.md, docs/AGENT_STRATEGY_AND_HANDOFF.md, docs/agent-briefs/README.md, and docs/solutions/REPO_AUTHORITY_MAP_R1.md. This page should make it hard for agents to treat stale docs as current truth or to bulk-load every related document by default."
+          "content": "Anchor this page on AGENTS.md, docs/AGENT_STRATEGY_AND_HANDOFF.md, docs/agent-briefs/CONTEXT_ROUTER.md, docs/agent-briefs/README.md, docs/canon/, and docs/solutions/REPO_AUTHORITY_MAP_R1.md. This page should make it hard for agents to treat stale docs as current truth, bulk-load every related document by default, or miss the relevant canon anchor."
         }
       ]
     },
     {
-      "title": "Section-Specific Agent Briefs",
-      "purpose": "Explain how agents should use docs/agent-briefs as narrow task routers instead of bulk-loading every related solution, handoff, or design document.",
+      "title": "Context Router And Section Briefs",
+      "purpose": "Explain how agents should use docs/agent-briefs/CONTEXT_ROUTER.md and section briefs as narrow work-lane routers instead of bulk-loading every related solution, handoff, or design document.",
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Use docs/agent-briefs/README.md, docs/agent-briefs/UI_CURRENT.md, docs/agent-briefs/ACTIONS_AND_SIGNALS.md, docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md, docs/agent-briefs/EVENTS_ARCHIVE.md, and docs/AGENT_STRATEGY_AND_HANDOFF.md. Emphasize brief-first loading, selective linked reads, and the rule that section briefs summarize active working truth without replacing owning specs or founder locks."
+          "content": "Use docs/agent-briefs/CONTEXT_ROUTER.md, docs/agent-briefs/README.md, docs/agent-briefs/UI_CURRENT.md, docs/agent-briefs/ACTIONS_AND_SIGNALS.md, docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md, docs/agent-briefs/EVENTS_ARCHIVE.md, docs/canon/, and docs/AGENT_STRATEGY_AND_HANDOFF.md. Emphasize active focus lanes, exact canon anchors, brief-first loading, selective companion reads, and the rule that section briefs summarize active working truth without replacing owning specs or founder locks."
         }
       ]
     },
@@ -93,7 +101,7 @@
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Prioritize docs/agent-briefs/UI_CURRENT.md for current UI orientation, then Plot, Discover, Community, and Artist Profile route behavior as needed. Use active surface contracts and current founder locks instead of stale route descriptions."
+          "content": "Prioritize docs/agent-briefs/CONTEXT_ROUTER.md to identify the active work lane, then docs/agent-briefs/UI_CURRENT.md for current UI orientation, then Plot, Discover, Community, and Artist Profile route behavior as needed. Use active surface contracts and current founder locks instead of stale route descriptions."
         }
       ]
     },
@@ -143,7 +151,7 @@
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Use docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md, docs/solutions/REPO_AUTHORITY_MAP_R1.md, docs/solutions/AGENT_WIKI_STEERING_R1.md, and docs/agent-briefs/README.md. Emphasize department-style usage, brief-first task routing, and no authority over repo truth."
+          "content": "Use docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md, docs/solutions/REPO_AUTHORITY_MAP_R1.md, docs/solutions/AGENT_WIKI_STEERING_R1.md, docs/agent-briefs/CONTEXT_ROUTER.md, and docs/agent-briefs/README.md. Emphasize department-style usage, focus-lane routing, brief-first task loading, and no authority over repo truth."
         }
       ]
     }

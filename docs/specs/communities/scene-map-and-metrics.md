@@ -3,10 +3,10 @@
 **ID:** `COMM-SCENEMAP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-08`
+**Last Updated:** `2026-04-25`
 
 ## Overview & Purpose
-Defines the Scene Map and Statistics contract as an inherent Scene surface inside The Plot. The map is not a separate product; it is the descriptive structural view of a Scene and its community activity.
+Defines the Scene Map and statistics contract as an inherent descriptive surface inside The Plot. The current user-facing Plot tab label is `Archive`; internal API/component names may still use statistics terminology. The map is not a separate product; it is the descriptive structural view of a Scene and its community activity.
 
 ## User Roles & Use Cases
 - Listeners inspect Scene structure and activity health.
@@ -16,13 +16,13 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 
 ## Functional Requirements
 - The Scene Map is inherent to the currently selected Scene context.
-- The Statistics surface is Scene-scoped and descriptive only.
+- The Archive/statistics surface is Scene-scoped and descriptive only.
 - Parent context rule:
   - Users operate within a parent music-community context anchored to the active community identity (`city + state + music community`).
   - When the current community is already known, the parent music-community context is inherited rather than re-selected.
   - Tier toggles keep the same parent context.
-  - Current MVP Plot Statistics exposes only `city` and `state` tier toggles.
-  - The broader platform model may still retain `national`, but `national` is deferred from the live MVP Plot Statistics surface until population justifies it.
+  - Current MVP Plot Archive/statistics exposure uses only `city` and `state` tier toggles.
+  - The broader platform model may still retain `national`, but `national` is deferred from the live MVP Plot Archive/statistics surface until population justifies it.
   - Toggling tiers changes aggregation scope only; it does not switch parent context.
 - Map + metrics do not change ranking, Fair Play rotation, or governance authority.
 
@@ -71,14 +71,14 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
   - retained for later broader-scope analytics/modeling, not current MVP Plot UI
 
 ### Implemented Now
-- Plot shell includes a Statistics tab in `apps/web/src/app/plot/page.tsx`.
+- Plot shell includes an `Archive` tab backed by the existing statistics/map implementation in `apps/web/src/app/plot/page.tsx`.
 - `GET /communities/:id/statistics?tier=city|state|national` is implemented and returns:
   - tier-scoped metrics (`members`, `activeSects`, `eventsThisWeek`, `activityScore`, `activeTracks`)
   - rollup metadata (`tierScope`, `rollupUnit`, `timeWindow`)
 - `GET /communities/:id/scene-map?tier=city|state|national` is implemented and returns:
   - `points[]` with tier-scoped markers/rollups (`community` at city scope, city rollups at state scope, state rollups at national scope)
   - `center` and rollup metadata (`tierScope`, `rollupUnit`, `timeWindow`)
-- Web Statistics panel consumes the statistics endpoint for metrics across tiers.
+- Web Archive/statistics panel consumes the statistics endpoint for metrics across tiers.
 - Web Scene Map now consumes `/communities/:id/scene-map` for the active Plot scope, with MVP UI currently clamped to `city/state`.
 - Any existing `topSongs` payload remains implementation detail / future scaffolding until Top 40 is explicitly re-locked for MVP or later.
 
@@ -86,7 +86,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - Activity Points engine integration into scene-level score semantics.
 - Final geo aggregation/privacy floor policy locks from `docs/specs/DECISIONS_REQUIRED.md`.
 - Advanced clustering and pagination controls for very large national map payloads.
-- Live Plot Statistics exposure of `national` tier.
+- Live Plot Archive/statistics exposure of `national` tier.
 
 ## Non-Functional Requirements
 - No personalization or recommendation behavior.
@@ -94,7 +94,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - Descriptive analytics only; no conversion into authority signals.
 
 ## Architectural Boundaries
-- Scene Map is a Plot Statistics surface, not a feed.
+- Scene Map is a Plot Archive/statistics surface, not a feed.
 - Metrics must not influence Fair Play outcomes.
 - Parent context persistence across tier toggle is mandatory.
 - Web tier consumes stats/map through API only.
@@ -131,7 +131,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 - `rollupUnit`: one of `local_sect`, `city`, `state`
 
 ## Web UI / Client Behavior
-- Statistics tab renders Scene Map + metrics together.
+- Archive tab renders Scene Map + metrics together.
 - Tier toggle updates scope while preserving parent context.
 - Parent context changes only via explicit user selection.
 - City view emphasizes sect/local structure.
@@ -140,7 +140,7 @@ Defines the Scene Map and Statistics contract as an inherent Scene surface insid
 
 ## Acceptance Tests / Test Plan
 - Tier toggle keeps parent context unchanged.
-- Statistics/map values change by scope only (`city` vs `state`) in current MVP Plot UI.
+- Archive/statistics/map values change by scope only (`city` vs `state`) in current MVP Plot UI.
 - City map renders sect/local detail; state maps render macro rollups in current MVP Plot UI.
 - No stats value affects voting authority or rotation ordering.
 - Metrics remain visible as descriptive-only labels in UI.

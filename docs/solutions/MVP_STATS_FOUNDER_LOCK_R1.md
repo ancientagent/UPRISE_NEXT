@@ -6,7 +6,7 @@
 
 ## Purpose
 Lock the MVP statistics contract that powers:
-- the `Statistics` section inside `Plot`
+- the descriptive statistics/history lane inside `Plot` (user-facing tab label: `Archive`)
 - current feed-insert `Popular Singles` lenses and future discovery surfaces
 - future analytics and paid metrics products
 

@@ -27,13 +27,14 @@ Every coding agent should start from `AGENTS.md` and the minimum core protocol i
 
 ### Task-specific loading
 Load only the materials directly needed for the current task:
-- Section-specific work: load the matching brief in `docs/agent-briefs/` first. Treat that brief as the section router; follow only the code/spec/lock links that match the files or surface being changed.
+- Section-specific work: load `docs/agent-briefs/CONTEXT_ROUTER.md` first, then the matching focus-lane brief in `docs/agent-briefs/`. Treat those briefs as routers; follow only the code/spec/lock links that match the files or surface being changed.
 - Web route/UI work: `apps/web/WEB_TIER_BOUNDARY.md` + route specs/founder locks
 - API/runtime work: relevant module specs + shared types/contracts
 - Doc/spec work: `docs/README.md`, `docs/specs/README.md`, and the exact canon/spec files in scope
 - Recurring incident work: relevant `docs/solutions/` playbook only
 
 ### Section brief rule
+- Route by the active work lane, not by the whole platform.
 - Section briefs are read-first packets, not mandates to load every linked document.
 - Keep the current section truth in the brief; keep full detail in the owning spec/founder lock.
 - If a task only needs orientation or a design prompt, the section brief can be sufficient.

@@ -1,7 +1,7 @@
 # MVP Current Execution Roadmap (R1)
 
 **Status:** Active execution roadmap
-**Last Updated:** 2026-04-05
+**Last Updated:** 2026-04-25
 **Owner:** Founder + Codex control layer
 
 ## Purpose
@@ -16,7 +16,7 @@ This document is execution-only. Product behavior remains owned by `docs/specs/*
 - `Home` is the left bottom-nav destination.
 - `Discover` is the right bottom-nav destination.
 - `Plot` lives inside `Home` as the Home-side sectional participation system.
-- Current MVP Plot tabs are `Feed`, `Events`, `Promotions`, and `Statistics`.
+- Current MVP Plot tabs are `Feed`, `Events`, and `Archive`; older `Promotions` / `Statistics` tab language is superseded for current MVP planning.
 - Local development uses Postgres + PostGIS.
 - Hosted production/staging DB target is Neon Postgres + PostGIS, but the hosted cutover has not been executed yet.
 
@@ -78,25 +78,22 @@ Exit criteria:
 - No route contradicts the rule that `Home` is the left destination, `Plot` lives inside `Home`, and `Discover` is the right destination.
 - Player persistence rules are not broken by surface navigation.
 
-## Phase 2 — Discover Closure
-**Goal:** close Discover as a player-anchored MVP surface.
+## Phase 2 — Deferred Discover / Feed-Insert Closure
+**Goal:** keep live Discover deferred while preserving useful discovery/statistics moments through player-aware feed inserts.
 
 Execution focus:
-- Unified Discover/player scope is implemented and stable.
-- Search, Popular Signals, Active Participants, and Map share one current scope.
-- Travel is attached to the player and is the explicit scope-change action.
-- Map expands downward from the player.
+- Live `/discover` remains disabled/deferred for the local-community-first MVP.
+- Stats-driven discovery material appears as intermittent read-only feed inserts.
+- Feed inserts hand into Artist Profile direct listening where appropriate.
 - No invented global search, recommendation, or travel systems.
 
 Founder decisions that still constrain this phase:
-- Popular Signals metric/window/count.
-- Active Participants qualification/count.
-- Map visualization for each approved structural scope.
+- Reopening live Discover requires explicit founder direction and updated surface contracts.
 
 Exit criteria:
-- Discover works as a coherent MVP surface under the current doctrine.
-- Founder accepts the first-pass deferred list explicitly.
-- No unresolved contradictions remain between player, scope, travel, and map behavior.
+- Discover deferment remains explicit and non-confusing in the shell.
+- Feed-insert discovery moments do not become a second fixed discovery route.
+- No unresolved contradictions remain between player, feed inserts, Artist Profile handoff, and deferred travel behavior.
 
 ## Phase 3 — Core Participation Loop Closure
 **Goal:** make the MVP core loop actually usable end-to-end.
