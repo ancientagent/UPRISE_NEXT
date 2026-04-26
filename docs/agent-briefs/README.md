@@ -35,10 +35,13 @@ Current briefs:
 - `ACTIONS_AND_SIGNALS.md` - listener actions, signal/action boundaries, engagement wheel split, and stale `Add` / `Support` wording.
 - `ARTIST_PROFILE_SOURCE_DASHBOARD.md` - public Artist Profile, Source Dashboard, Release Deck, Print Shop, and source account switching.
 - `EVENTS_ARCHIVE.md` - Plot Events, Archive, event calendar behavior, event-bound artifacts, and descriptive stats/history boundaries.
+- `BUSINESS_MONETIZATION.md` - business accounts, promos/coupons/offers, paid ad slots, revenue constraints, premium analytics, and launch monetization boundaries.
+- `ONBOARDING_HOME_SCENE.md` - onboarding, Home Scene tuple resolution, GPS/voting eligibility, pioneer fallback, and first-run authority boundaries.
+- `REGISTRAR_GOVERNANCE.md` - Registrar actor model, capability filings, promoter capability, backing/procedural actions, and governance gates.
+- `EXTERNAL_TOOLS.md` - Cloud Codex, NotebookLM, Claude Designer, Stitch, Abacus, generated wiki, and cross-agent handoff rules.
 
 Planned brief families:
-- `ONBOARDING_HOME_SCENE.md` - onboarding, Home Scene resolution, GPS/pioneer fallback, registrar questions.
-- `EXTERNAL_TOOLS.md` - NotebookLM, Claude Designer, Abacus, Stitch, and other assistant handoff rules.
+- Add new families here only after a recurring work lane appears in `CONTEXT_ROUTER.md`.
 
 ## Maintenance Rule
 Whenever a founder correction changes a section's active truth:

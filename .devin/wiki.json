@@ -60,7 +60,7 @@
       "page_notes": [
         {
           "author": "product engineering",
-          "content": "Use docs/agent-briefs/CONTEXT_ROUTER.md, docs/agent-briefs/README.md, docs/agent-briefs/UI_CURRENT.md, docs/agent-briefs/ACTIONS_AND_SIGNALS.md, docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md, docs/agent-briefs/EVENTS_ARCHIVE.md, docs/canon/, and docs/AGENT_STRATEGY_AND_HANDOFF.md. Emphasize active focus lanes, exact canon anchors, brief-first loading, selective companion reads, and the rule that section briefs summarize active working truth without replacing owning specs or founder locks."
+          "content": "Use docs/agent-briefs/CONTEXT_ROUTER.md, docs/agent-briefs/README.md, docs/agent-briefs/UI_CURRENT.md, docs/agent-briefs/ACTIONS_AND_SIGNALS.md, docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md, docs/agent-briefs/EVENTS_ARCHIVE.md, docs/agent-briefs/BUSINESS_MONETIZATION.md, docs/agent-briefs/ONBOARDING_HOME_SCENE.md, docs/agent-briefs/REGISTRAR_GOVERNANCE.md, docs/agent-briefs/EXTERNAL_TOOLS.md, docs/canon/, and docs/AGENT_STRATEGY_AND_HANDOFF.md. Emphasize active focus lanes, exact canon anchors, brief-first loading, selective companion reads, and the rule that section briefs summarize active working truth without replacing owning specs or founder locks."
         }
       ]
     },

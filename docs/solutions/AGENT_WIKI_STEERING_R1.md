@@ -54,6 +54,10 @@ Priority files:
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`
 - `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`
 - `docs/agent-briefs/EVENTS_ARCHIVE.md`
+- `docs/agent-briefs/BUSINESS_MONETIZATION.md`
+- `docs/agent-briefs/ONBOARDING_HOME_SCENE.md`
+- `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`
+- `docs/agent-briefs/EXTERNAL_TOOLS.md`
 - `docs/AGENT_STRATEGY_AND_HANDOFF.md`
 
 ### 3) Monorepo architecture

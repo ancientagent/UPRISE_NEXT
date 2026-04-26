@@ -97,7 +97,7 @@ Load only if touched:
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md` when actions/wheel/buttons are visible
 - `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` when Artist Profile or source tools are on screen
 - `docs/agent-briefs/EVENTS_ARCHIVE.md` when Events, Archive, calendar, flyers, or stats/history are on screen
-- `docs/agent-briefs/EXTERNAL_TOOLS.md` once created, when writing prompts for Claude/Stitch/NotebookLM/Abacus
+- `docs/agent-briefs/EXTERNAL_TOOLS.md` when writing prompts for Claude/Stitch/NotebookLM/Abacus
 
 Do not load by default:
 - business model detail
@@ -170,7 +170,7 @@ Load only if touched:
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md` when visible actions are involved
 - `docs/agent-briefs/UI_CURRENT.md` when layout/screen behavior is involved
 - `docs/agent-briefs/EVENTS_ARCHIVE.md` when source-owned events/flyers are involved
-- `BUSINESS_MONETIZATION` brief once created, when business source behavior, promos, coupons, pricing, or merchant surfaces are involved
+- `docs/agent-briefs/BUSINESS_MONETIZATION.md` when business source behavior, promos, coupons, pricing, or merchant surfaces are involved
 
 Do not load by default:
 - listener profile / collection workspace detail unless the task compares it with Artist Profile
@@ -205,7 +205,7 @@ Load only if touched:
 - `docs/agent-briefs/UI_CURRENT.md` when placement/layout is involved
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md` when event `Add`, artifact `Collect`, or action placement is involved
 - `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` when source-owned events or Print Shop are involved
-- `BUSINESS_MONETIZATION` brief once created, when promos/coupons/offers attach to events
+- `docs/agent-briefs/BUSINESS_MONETIZATION.md` when promos/coupons/offers attach to events
 
 Do not load by default:
 - full artist/source dashboard detail
@@ -234,7 +234,7 @@ Use when working on:
 - paid analytics products
 
 Default load:
-- `docs/agent-briefs/BUSINESS_MONETIZATION.md` once created
+- `docs/agent-briefs/BUSINESS_MONETIZATION.md`
 
 Load only if touched:
 - `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` when business operates as a source account
@@ -268,12 +268,12 @@ Use when working on:
 - registrar questions tied to onboarding
 
 Default load:
-- `docs/agent-briefs/ONBOARDING_HOME_SCENE.md` once created
+- `docs/agent-briefs/ONBOARDING_HOME_SCENE.md`
 
 Load only if touched:
 - `docs/agent-briefs/UI_CURRENT.md` when onboarding affects Home/Plot layout
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md` when onboarding gates actions
-- Registrar/Governance brief once created, when filing/capability rules are in scope
+- `docs/agent-briefs/REGISTRAR_GOVERNANCE.md` when filing/capability rules are in scope
 
 Do not load by default:
 - business monetization
@@ -300,10 +300,10 @@ Use when working on:
 - community governance rules
 
 Default load:
-- `docs/agent-briefs/REGISTRAR_GOVERNANCE.md` once created
+- `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`
 
 Load only if touched:
-- `docs/agent-briefs/ONBOARDING_HOME_SCENE.md` once created, when Home Scene/GPS gates are involved
+- `docs/agent-briefs/ONBOARDING_HOME_SCENE.md` when Home Scene/GPS gates are involved
 - `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` when source-side access is involved
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md` when procedural actions such as `Back` need distinction from public actions
 
@@ -332,8 +332,7 @@ Use when working on:
 - cross-agent handoffs
 
 Default load:
-- `docs/agent-briefs/EXTERNAL_TOOLS.md` once created
-- until then: `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`, `docs/solutions/AGENT_WIKI_STEERING_R1.md`, `.devin/wiki.json`
+- `docs/agent-briefs/EXTERNAL_TOOLS.md`
 
 Load only if touched:
 - the active product lane brief for the subject being handed off
@@ -396,10 +395,10 @@ Exit criteria:
 | Artist Profile, source pages, Release Deck, Print Shop | `ARTIST_PROFILE_SOURCE_DASHBOARD.md` |
 | Events, Archive, calendar, flyers, stats/history | `EVENTS_ARCHIVE.md` |
 | Home/Plot/player/profile layout | `UI_CURRENT.md` |
-| business, promo, coupon, offer, paid ad, monetization | `BUSINESS_MONETIZATION.md` once created |
-| onboarding, GPS, Home Scene, first-run | `ONBOARDING_HOME_SCENE.md` once created |
-| registrar, capability, backing, governance | `REGISTRAR_GOVERNANCE.md` once created |
-| external assistants or design prompts | `EXTERNAL_TOOLS.md` once created |
+| business, promo, coupon, offer, paid ad, monetization | `BUSINESS_MONETIZATION.md` |
+| onboarding, GPS, Home Scene, first-run | `ONBOARDING_HOME_SCENE.md` |
+| registrar, capability, backing, governance | `REGISTRAR_GOVERNANCE.md` |
+| external assistants or design prompts | `EXTERNAL_TOOLS.md` |
 | deployment, CI, environment, web boundary | infra/runtime docs only |
 
 ## Minimal Agent Start Prompt
