@@ -171,6 +171,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Users who are attached to artist/band or other source entities should be able to operate those managed source entities from a separate source-management web surface/domain.
 - The listener app/profile remains the base community identity for everyone who has onboarded; source management is not part of that listener profile space.
 - Current MVP runtime shell for that model is `/source-dashboard` inside this monorepo, but it should be treated as the current implementation stand-in for a separate source/admin web surface that the listener app reads from.
+- Current `/source-dashboard` work should be preserved and evolved; the future separate-domain model is a routing/deployment direction, not a restart.
+- Registrar approval/materialization should eventually expose the managed source dashboard URL/domain for that artist/band/source entity.
 - Registrar may still be linked as a transitional bridge, but it remains listener-side civic/formalization infrastructure in the intended actor model.
 - Promoters operate named Production entities for public promotional actions.
 - Promoters can:

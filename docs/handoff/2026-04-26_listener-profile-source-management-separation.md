@@ -15,6 +15,9 @@ Artists, bands, promoters, and future business-style identities are separate sou
 - The listener app/mobile app pulls source data from that source-management system.
 - Current `/source-dashboard` is the monorepo MVP implementation stand-in for that source-management website/domain.
 - Do not treat `/source-dashboard` as proof that source management belongs inside the listener profile or Home/Plot community shell.
+- Do not throw away current `/source-dashboard`, Release Deck, Print Shop, or source-context work just because the source-management surface is not physically on a separate domain yet.
+- Future direction: once Registrar approves/materializes a source entity, the operator receives a source-dashboard URL/domain for that entity and manages the source from there.
+- Exact dashboard domain/subdomain format is not locked yet.
 
 ## Source Capabilities
 For current source management, artists/sources mainly need to:

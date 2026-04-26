@@ -34,6 +34,13 @@ Product model:
 Current MVP implementation note:
 - `/source-dashboard` is currently implemented as a route in this web app.
 - Treat that route as the current monorepo implementation stand-in for the separate source-management website/domain, not as proof that source tools belong inside the listener profile/community shell.
+- Do not discard the current `/source-dashboard` work because it is not physically split onto a separate domain yet; preserve it as the working source-management shell and evolve its entry/routing model.
+
+Future routing direction:
+- after Registrar approves/materializes a source entity, the operator should receive a source-dashboard URL/domain for that entity
+- clicking that URL/domain opens the managed source dashboard for the approved artist/band/source
+- the source-dashboard URL/domain is the source management entry, not the listener profile
+- exact domain/subdomain format is deferred until routing/deployment work is scoped
 
 ## 3) MVP Entry Rule
 The dashboard is available only to signed-in users who manage one or more source entities.
@@ -43,6 +50,10 @@ Current managed-source runtime:
 
 Current MVP route / stand-in:
 - `/source-dashboard`
+
+Future entry model:
+- Registrar materialization/approval should be able to expose the managed source dashboard URL/domain.
+- Source operators should enter management through that source-dashboard URL/domain instead of hunting for tools inside the listener app.
 
 Current MVP entrypoints:
 - Plot `Source Accounts` switcher

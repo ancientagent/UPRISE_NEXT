@@ -60,6 +60,8 @@ Tests / verification files:
 - Source Dashboard is not part of the listener Home/Plot community space.
 - Product direction is a separate source/admin web surface/domain that the listener app reads from.
 - Current `/source-dashboard` runtime is the monorepo implementation stand-in for that separate management surface.
+- Do not throw away current `/source-dashboard` work because it is not physically on a separate domain yet.
+- Future direction: once Registrar materializes/approves a source entity, the operator receives a source-dashboard URL/domain for that entity.
 - Authorized users can operate managed source entities linked to their base user identity.
 - Current managed-source runtime is artist/band entities.
 - Current Source Dashboard live tool cards are `Release Deck`, `Source Profile`, `Print Shop`, and `Registrar`.
@@ -80,6 +82,7 @@ Tests / verification files:
 - Do not put listener collection workspace behavior on Artist Profile.
 - Do not put source-management tools inside the listener user profile / collection workspace.
 - Do not make source management feel like ordinary Home/Plot community participation.
+- Do not interpret “separate source-management website/domain” as permission to discard the existing Source Dashboard, Release Deck, or Print Shop work.
 - Do not add source-level `Collect`, source-level `Blast`, or source-level `Support`.
 - Do not add fake source-dashboard cards such as analytics, billing, growth, or upgrade modules unless explicitly activated.
 - Do not model Print Shop as a listener-facing event-authoring utility.
