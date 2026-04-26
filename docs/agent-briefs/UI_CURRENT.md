@@ -1,7 +1,7 @@
 # UI Current Agent Brief
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-04-26
 
 ## Use When
 Use this brief when the task is about:
@@ -69,6 +69,8 @@ Recent handoffs to use only after the locks above:
 - Feed inserts are `Popular Singles`, `Buzz`, and `Upcoming Events`.
 - Feed inserts are read-only launch points, not inline action cards.
 - Artist Profile is direct-listen, discovery, information, and sharing outside `RADIYO`.
+- User profile means the listener profile / collection workspace for everyone who has onboarded into the app.
+- Source management is separate from the listener profile and should be treated as source/admin web tooling that the app reads from.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
 - `RADIYO` uses `Play It Loud` and `Upvote`.
@@ -104,6 +106,8 @@ Purpose: listener-owned identity and collection workspace opened from the Home-s
 
 This is not the same surface as Artist Profile.
 
+It is also not the same surface as source management. Artists, bands, promoters, and future businesses are separate source entities managed from source/admin tooling, not from this listener profile workspace.
+
 Top-to-bottom when expanded:
 1. profile summary header
    - listener identity
@@ -136,6 +140,7 @@ Boundaries:
 - do not make follower counts or clout metrics primary
 - do not make it a separate route for current Home-side interaction
 - do not confuse this collection workspace with Artist Profile
+- do not place Release Deck, Print Shop, source-posting, or source-management controls here
 
 ## Feed Tab
 Purpose: live community pulse inside Plot.
@@ -216,6 +221,7 @@ For Claude Designer, Stitch, Gemini, or similar tools:
 - stop the tool if it says Plot is a standalone screen
 - stop the tool if it creates `Statistics` or `Promotions` as current MVP tabs
 - stop the tool if it places the engagement wheel on Artist Profile
+- stop the tool if it puts source-management tools inside the listener profile
 - stop the tool if it designs a Spotify/TikTok/Instagram clone
 
 ## Current Upload / Context Pack

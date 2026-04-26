@@ -33,7 +33,7 @@ Current briefs:
 - `CONTEXT_ROUTER.md` - work-lane routing map; use first to decide which section brief and companion briefs are needed.
 - `UI_CURRENT.md` - frontend/app UI, Home/Plot, player/profile interaction, Artist Profile, Feed/Events/Archive, design-agent handoff.
 - `ACTIONS_AND_SIGNALS.md` - listener actions, signal/action boundaries, engagement wheel split, and stale `Add` / `Support` wording.
-- `ARTIST_PROFILE_SOURCE_DASHBOARD.md` - public Artist Profile, Source Dashboard, Release Deck, Print Shop, and source account switching.
+- `ARTIST_PROFILE_SOURCE_DASHBOARD.md` - public Artist Profile, Source Dashboard/source management, Release Deck, Print Shop, and managed source entity selection.
 - `EVENTS_ARCHIVE.md` - Plot Events, Archive, event calendar behavior, event-bound artifacts, and descriptive stats/history boundaries.
 - `BUSINESS_MONETIZATION.md` - business accounts, promos/coupons/offers, paid ad slots, revenue constraints, premium analytics, and launch monetization boundaries.
 - `ONBOARDING_HOME_SCENE.md` - onboarding, Home Scene tuple resolution, GPS/voting eligibility, pioneer fallback, and first-run authority boundaries.

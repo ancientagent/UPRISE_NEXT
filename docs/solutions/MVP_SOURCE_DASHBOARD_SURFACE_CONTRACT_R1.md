@@ -2,27 +2,38 @@
 
 Status: Active  
 Owner: Founder + product engineering  
-Last updated: 2026-04-13
+Last updated: 2026-04-26
 
 ## 1) Purpose
-Define the first explicit Source Dashboard surface for the one-account web MVP so source-side tools stop feeling like detached routes.
+Define the first explicit Source Dashboard surface for source management so source-side tools are clearly separated from the listener profile/community experience.
 
 This contract is implementation-facing and sits under:
 - `docs/solutions/MVP_ACCOUNT_SOURCE_SIGNAL_SYSTEM_PLAN_R1.md`
 - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
 
 ## 2) System Role
-Source Dashboard is the source-side operating shell inside the signed-in web platform.
+Source Dashboard is the source-side operating shell for managing source entities.
 
 It is:
 - not a second login tree
 - not a public listener surface
 - not a rename of Registrar
+- not the listener user profile / collection workspace
+- not part of the listener's Home/Plot community space
 
 It is:
-- the place where a signed-in user operates a managed source account
+- the place where authorized users operate a managed source entity
 - the place where source-facing tools are grouped
-- the bridge between listener identity and source operations
+- the source/admin surface that the listener app can read from
+
+Product model:
+- listener profile = the in-app profile for everyone who has onboarded as a listener
+- source entity = artist/band/promoter/business-style entity registered or attached to users
+- source management = a separate source/admin web surface/domain that manages source data
+
+Current MVP implementation note:
+- `/source-dashboard` is currently implemented as a route in this web app.
+- Treat that route as the current monorepo implementation stand-in for the separate source-management website/domain, not as proof that source tools belong inside the listener profile/community shell.
 
 ## 3) MVP Entry Rule
 The dashboard is available only to signed-in users who manage one or more source entities.
@@ -30,7 +41,7 @@ The dashboard is available only to signed-in users who manage one or more source
 Current managed-source runtime:
 - linked Artist/Band entities
 
-Current MVP route:
+Current MVP route / stand-in:
 - `/source-dashboard`
 
 Current MVP entrypoints:
@@ -49,10 +60,11 @@ Must show:
 - source type / slug / membership role summary
 - listener-account return path
 
-### 4.2 Context Switcher
+### 4.2 Managed Source Selector
 Must support:
-- listener account context
-- switching between managed source accounts
+- selecting between managed source entities
+- showing which source entity is currently being operated
+- preserving a clear return path back to listener mode when entered from the listener app
 
 Current active runtime:
 - Artist/Band entities
@@ -137,7 +149,8 @@ Do not widen Source Dashboard into:
 
 ## 7) Success Criteria
 This surface is succeeding when:
-- a user understands they are still in one signed-in account
-- a managed source feels like a switchable operating context
+- a listener understands their personal app profile is separate from source management
+- a managed source feels like a distinct entity being operated from source/admin tooling
 - Print Shop no longer feels like a random isolated route
 - source-side work can begin from one coherent shell
+- the listener app can pull source data without making source tools feel native to the listener profile

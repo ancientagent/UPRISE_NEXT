@@ -98,16 +98,16 @@ Business-facing source dashboard expectation:
 Source-facing capabilities should be understood as part of a source dashboard system, not as disconnected route tools.
 
 System model:
-- a user signs into one account
-- from that account they can access any source accounts/entities they are attached to
-- each source account exposes its tools and features through a source-facing dashboard layer
+- a base user/listener identity can be linked to source accounts/entities they are authorized to operate
+- source accounts/entities are managed from a separate source/admin web surface/domain
+- each source account exposes its tools and features through that source-facing dashboard layer
 - Print Shop is one item/tool inside that source-dashboard system
-- listeners who are attached to bands/sources should be able to switch into those source accounts/entities from the same signed-in web app
+- the listener app may link to or read from that source-management surface, but source tools should not feel native to the listener profile/community space
 
 Account-context interpretation:
-- do not treat listener and source use as separate app logins
-- treat source access as an account-context switch inside one web platform
-- the mental model is closer to switching into a managed business/page account than opening a different product
+- do not treat listener profile and source dashboard as the same surface
+- treat source access as operating a managed source entity from source/admin tooling
+- the mental model is closer to leaving the listener app context for a managed-source control room than adding creator tools to the listener profile
 
 Implementation interpretation:
 - current routes such as `/artist-bands/[id]`, `/plot`, `/registrar`, and `/print-shop` may bridge into that system during MVP

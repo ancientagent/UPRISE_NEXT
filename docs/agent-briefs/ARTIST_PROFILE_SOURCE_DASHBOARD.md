@@ -1,18 +1,18 @@
-# Artist Profile And Source Dashboard Agent Brief
+# Artist Profile And Source Management Agent Brief
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-04-26
 
 ## Use When
 Use this brief when the task is about:
 - public Artist Profile
 - artist/source pages
-- source dashboard
+- source dashboard / source-management surface
 - Release Deck
 - Print Shop as a source-facing tool
-- artist/source account switching
+- managed source entity selection
 - source-owned tracks or events
-- source dashboard design handoff
+- source management design handoff
 
 ## Do Not Use For
 - listener user profile / collection workspace
@@ -55,9 +55,12 @@ Tests / verification files:
 - Artist Profile song rows can support `Collect` and gated `Recommend`.
 - Artist Profile does not use the engagement wheel.
 - Artist Profile does not expose `Blast`.
-- Source Dashboard is the signed-in source-side operating shell.
-- Source Dashboard is not a second login tree.
-- One signed-in user account can switch into managed source accounts.
+- Source Dashboard is the current source-side operating shell for managing source entities.
+- Source Dashboard is not the listener user profile / collection workspace.
+- Source Dashboard is not part of the listener Home/Plot community space.
+- Product direction is a separate source/admin web surface/domain that the listener app reads from.
+- Current `/source-dashboard` runtime is the monorepo implementation stand-in for that separate management surface.
+- Authorized users can operate managed source entities linked to their base user identity.
 - Current managed-source runtime is artist/band entities.
 - Current Source Dashboard live tool cards are `Release Deck`, `Source Profile`, `Print Shop`, and `Registrar`.
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
@@ -67,7 +70,7 @@ Tests / verification files:
 
 ## Current Runtime Pointers
 - `/artist-bands/[id]` is the public artist/source profile route.
-- `/source-dashboard` is the current source-side operating shell.
+- `/source-dashboard` is the current source-side operating shell / stand-in for the separate source-management surface.
 - `/source-dashboard/release-deck` is the current Release Deck route.
 - `/print-shop` is still a direct route but should be understood as part of source-dashboard tooling.
 - `/registrar` is still a direct route but should preserve source-side continuity where relevant.
@@ -75,6 +78,8 @@ Tests / verification files:
 ## Design / Implementation Boundaries
 - Do not put Artist Profile actions on the listener user profile.
 - Do not put listener collection workspace behavior on Artist Profile.
+- Do not put source-management tools inside the listener user profile / collection workspace.
+- Do not make source management feel like ordinary Home/Plot community participation.
 - Do not add source-level `Collect`, source-level `Blast`, or source-level `Support`.
 - Do not add fake source-dashboard cards such as analytics, billing, growth, or upgrade modules unless explicitly activated.
 - Do not model Print Shop as a listener-facing event-authoring utility.
@@ -92,4 +97,4 @@ Use the narrowest relevant checks:
 Use broader `pnpm run verify` before PR/closeout when feasible.
 
 ## Update Rule
-Patch this brief whenever Artist Profile, Source Dashboard, Release Deck, or Print Shop source-facing truth changes.
+Patch this brief whenever Artist Profile, Source Dashboard/source-management, Release Deck, or Print Shop source-facing truth changes.

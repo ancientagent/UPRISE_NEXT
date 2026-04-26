@@ -160,7 +160,7 @@ Use when working on:
 - Source Dashboard
 - Release Deck
 - Print Shop
-- source account switching
+- managed source entity selection
 - source-owned tracks/events
 
 Default load:
@@ -180,7 +180,7 @@ Do not load by default:
 Work aims while focused:
 - keep public Artist Profile separate from listener profile
 - keep source tools inside source-dashboard mental model
-- preserve one-account context switching
+- preserve listener-profile versus source-management separation
 - keep Release Deck / Print Shop / Registrar boundaries clear
 
 Exit criteria:

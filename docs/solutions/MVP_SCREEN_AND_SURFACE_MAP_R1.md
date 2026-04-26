@@ -176,6 +176,8 @@ When the player is pulled down and the profile seam is expanded:
 
 This is not a normal separate profile page navigation. The listener remains inside the Home-side shell, and collapsing the expanded profile restores the prior Plot context.
 
+This profile is the listener profile for onboarded users. It is not the source-management surface for artists, bands, promoters, or future business entities.
+
 Top to bottom:
 1. profile summary header
    - listener identity
@@ -219,6 +221,7 @@ Top to bottom:
 Important interpretation:
 - current web runtime expresses much of `SPACE` through this expanded collection/display area plus the `SPACE` player mode
 - this is why `SPACE` should not currently be described as a clean standalone route
+- source-management tools do not belong in this listener profile workspace
 
 Source:
 - `apps/web/src/app/plot/page.tsx`
@@ -425,7 +428,7 @@ Source:
 ### 8) Source Dashboard
 - Route: `/source-dashboard`
 - Status: active
-- Kind: source-side operating shell
+- Kind: source-side operating shell / current stand-in for separate source-management web surface
 
 Top to bottom:
 1. source dashboard header
@@ -446,6 +449,12 @@ Top to bottom:
 
 Source:
 - `apps/web/src/app/source-dashboard/page.tsx`
+
+Important rule:
+- this is not the listener user profile
+- this is not part of the Home/Plot community interaction space
+- product direction is a separate source/admin web surface/domain that the listener app pulls source data from
+- current monorepo route should be interpreted as the MVP implementation stand-in for that separate source-management surface
 
 ### 9) Release Deck
 - Route: `/source-dashboard/release-deck`

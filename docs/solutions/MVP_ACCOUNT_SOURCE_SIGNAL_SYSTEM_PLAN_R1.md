@@ -52,10 +52,12 @@ Responsibilities:
 - signal actions available to listeners
 
 ### 3.3 Source Account / Source Dashboard
-The creator/operator layer inside the same signed-in platform.
+The creator/operator layer for managed source entities.
+
+Product direction: this is a separate source/admin web surface/domain that the listener app can link to and read from. It is not the listener user profile / collection workspace and should not feel like ordinary Home/Plot community participation.
 
 Responsibilities:
-- switch into managed source accounts/entities
+- operate managed source accounts/entities
 - source profile management
 - source tools/features
 - source-facing updates/actions

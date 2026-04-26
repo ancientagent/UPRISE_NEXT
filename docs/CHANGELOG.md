@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Locked the listener-profile versus source-management separation: user profile now means the listener profile / collection workspace for onboarded users, while artist/band/promoter source entities are managed from a separate source/admin web surface/domain that the listener app reads from; current `/source-dashboard` remains the monorepo stand-in for that source-management surface.
 - Added the remaining focus-lane briefs expected by `docs/agent-briefs/CONTEXT_ROUTER.md`: `docs/agent-briefs/BUSINESS_MONETIZATION.md`, `docs/agent-briefs/ONBOARDING_HOME_SCENE.md`, `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, and `docs/agent-briefs/EXTERNAL_TOOLS.md`, so business, onboarding, registrar, and external-tool work now has narrow default context instead of pulling broad platform history.
 - Added `docs/agent-briefs/CONTEXT_ROUTER.md` as a lightweight focus-lane framework so agents load context by active work area, pull companion briefs only when touched, and avoid dragging unrelated feature history into UX/UI, business, registrar, infrastructure, or external-tool work.
 - Added explicit canon-anchor routing to the focus-lane framework so agents know which `docs/canon/` files to load for semantics, revenue, voice/messaging, surfaces, glossary, and narrative mechanics without bulk-loading the full canon set by default.
