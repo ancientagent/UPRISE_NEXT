@@ -61,6 +61,6 @@ describe('ArtistBandsController', () => {
       success: true,
       data: { id: 'artist-1', name: 'Signal Static' },
     });
-    expect(artistBandsServiceMock.findProfile).toHaveBeenCalledWith('artist-1');
+    expect(artistBandsServiceMock.findProfile).toHaveBeenCalledWith('artist-1', 'user-1');
   });
 });

@@ -13,6 +13,6 @@ describe('SceneContextBadge source lock', () => {
 
     expect(badgeSource).toContain("const hasResolvedContext = Boolean(homeScene || tunedScene);");
     expect(badgeSource).toContain("const presenceLabel = !hasResolvedContext ? 'Context unset' : isVisitor ? 'Visitor' : 'Local';");
-    expect(badgeSource).toContain("? 'border-black/15 bg-white text-black/60'");
+    expect(badgeSource).toContain("? 'bg-white text-black/60'");
   });
 });

@@ -29,7 +29,6 @@ import type {
   DiscoverSongResult,
   SaveDiscoverUpriseResult,
 } from '@uprise/types';
-import { mapSignalToShelf } from '../common/constants/collection-shelves';
 
 type FeedItemType = 'blast' | 'track_release' | 'event_created' | 'signal_created';
 
@@ -728,7 +727,6 @@ export class CommunitiesService {
   ): Promise<CommunityDiscoverHighlights> {
     const scene = await this.getSceneOrThrow(sceneId);
     const scopeWhere = this.buildDiscoverScopeWhere(scene, query.tier);
-    const windowStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
     const [singleSignals, recommendationActions] = await Promise.all([
       this.prisma.signal.findMany({
