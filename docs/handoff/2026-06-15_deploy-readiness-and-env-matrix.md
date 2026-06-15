@@ -111,9 +111,14 @@ Vercel context:
   deploys and intentionally does not override the Next.js output directory.
 - `.vercelignore` excludes local workspaces, docs, and design/reference assets
   from manual Vercel uploads.
-- First preview deployment is READY:
+- First manual preview deployment is READY:
   `https://uprise-web-staging-8x2er8ahx-ben-risemans-projects.vercel.app`
   (`dpl_84WtnQZ4wR4aPt8kLRgbkuq6ad3Y`).
+- Git-driven preview deployment after commit `8510e48` is READY:
+  `https://uprise-web-staging-imkqy84ef-ben-risemans-projects.vercel.app`
+  (`dpl_B1bkukr1aXXaZS33LxwRVd1zgB94`).
+- Stable branch preview alias:
+  `https://uprise-web-staging-git-feat-ux-fou-a15c03-ben-risemans-projects.vercel.app`.
 - The preview is protected by Vercel Authentication because standard
   Deployment Protection is enabled; unauthenticated browser smoke checks route
   to Vercel login unless protection is changed intentionally.
@@ -167,7 +172,9 @@ Fly API context:
 - Set Fly secrets:
   - `DATABASE_URL`
   - `JWT_SECRET`
-  - `CORS_ORIGIN=https://uprise-web-staging-8x2er8ahx-ben-risemans-projects.vercel.app`
+  - `CORS_ORIGIN` with the current Git-driven preview URL and stable branch
+    preview alias:
+    `https://uprise-web-staging-imkqy84ef-ben-risemans-projects.vercel.app,https://uprise-web-staging-git-feat-ux-fou-a15c03-ben-risemans-projects.vercel.app`
 - Not set yet:
   - `DIRECT_URL`
   - `GOOGLE_PLACES_API_KEY`
@@ -187,12 +194,13 @@ Fly API context:
   - `/health/db`: healthy against Neon Postgres 18
   - `/health/postgis`: healthy, PostGIS 3.6, `spatial_ref_sys` count `8500`
   - `/health/ready`: healthy
+- CORS preflight smoke results:
+  - current Git-driven preview URL: allowed
+  - stable branch preview alias: allowed
 
 Remaining deploy follow-ups:
 
-- Trigger a fresh Vercel preview after this branch is pushed so the deployment
-  includes the new `NEXT_PUBLIC_API_URL`.
 - Replace `CORS_ORIGIN` with the stable staging web URL/domain when selected;
-  it currently points at the first protected preview URL.
+  it currently allows the Git-driven preview URL and the stable branch alias.
 - Add `DIRECT_URL` only when migration automation is explicitly implemented.
 - Socket, workers, storage, and media deployment remain deferred.

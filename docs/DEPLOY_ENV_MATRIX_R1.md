@@ -124,8 +124,9 @@ Current configured staging values:
 - API `DATABASE_URL`: Neon pooled connection string for `uprise_staging`, set
   in Fly secrets.
 - API `JWT_SECRET`: set in Fly secrets.
-- API `CORS_ORIGIN`: set to the first protected Vercel preview URL; replace
-  with the stable staging web URL/domain when selected.
+- API `CORS_ORIGIN`: set to the current Git-driven preview URL plus the stable
+  branch preview alias; replace with the stable staging web URL/domain when
+  selected.
 - `DIRECT_URL`: intentionally not set yet; add only when hosted Prisma
   migration execution is wired.
 

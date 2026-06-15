@@ -80,8 +80,9 @@ Set secrets:
 - `DATABASE_URL` (set to Neon pooled staging connection string)
 - `DIRECT_URL` if Neon/Prisma migration flow requires it (not set yet)
 - `JWT_SECRET` (set)
-- `CORS_ORIGIN` (set to the first protected Vercel preview URL; replace with
-  stable staging web URL/domain when selected)
+- `CORS_ORIGIN` (set to the current Git-driven preview URL plus the stable
+  branch preview alias; replace with stable staging web URL/domain when
+  selected)
 - `GOOGLE_PLACES_API_KEY` or current code-equivalent name, only if hosted
   onboarding location lookup requires it.
 
@@ -138,7 +139,8 @@ After the first deployment exists:
 - Fly API `/health/db` confirms Neon connectivity. (verified)
 - Fly API `/health/postgis` confirms PostGIS. (verified)
 - Vercel web can call the Fly API through `NEXT_PUBLIC_API_URL`. (env set;
-  verify after the next Git-driven Vercel preview)
+  CORS preflight verified from the Git-driven preview URL and stable branch
+  alias)
 - One read-only product route can load against staging data.
 
 ## Deferred Setup
