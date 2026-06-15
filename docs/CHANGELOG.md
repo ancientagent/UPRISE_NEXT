@@ -7,6 +7,21 @@
 
 ## [Unreleased]
 ### Added
+- Added `apps/web/vercel.json` for the `uprise-web-staging` monorepo web build, mirroring Vercel's `apps/web` root-directory setup without overriding the Next.js output directory.
+- Updated `apps/web` to patched `next` and `eslint-config-next` 15.5.19 after Vercel blocked deployment of vulnerable Next.js 15.5.6.
+- Added `.vercelignore` so manual Vercel deploys do not upload local workspaces, generated artifacts, docs, or design/reference assets.
+- Added a shared API JWT secret resolver so production startup requires `JWT_SECRET` while local/test development keeps the existing fallback behavior; also documented `NEXT_PUBLIC_WEB_APP_URL` and optional `NEXT_PUBLIC_MOBILE_APP_URL` in the deploy env matrix for Registrar invite links.
+- Added an agent browser/auth-session rule so future Vercel or provider checks reuse the founder-authenticated browser/session or CLI/MCP verification instead of opening fresh login-gated browser profiles.
+- Documented the local-only Playwright auth-state workflow for protected provider previews: stable named session, `state-save`, `state-load`, and ignored `.auth/` storage snapshots.
+- Updated `docs/ENVIRONMENTS.md` so the example env placeholder block matches the hosted-staging env matrix, including web public URLs, `DIRECT_URL`, `GOOGLE_PLACES_API_KEY`, `REDIS_URL`, and `CORS_ORIGIN`.
+- Added non-runnable example deploy templates under `docs/deploy/examples/` for the first Vercel/Fly/Neon staging path, including example Fly API config, API Dockerfile shape, Vercel project settings, and Neon staging setup notes.
+- Added `docs/DEPLOY_ACCOUNT_SETUP_CHECKLIST_R1.md` with the provider-side setup checklist for the first Vercel/Fly/Neon staging path, including product-first resource names and healthcheck targets.
+- Added API liveness/readiness health endpoints for hosted staging: `/health/live` for process checks and `/health/ready` for DB/PostGIS dependency readiness, while preserving `/health`, `/health/db`, and `/health/postgis`.
+- Added `docs/solutions/FIRST_STAGING_TARGET_VERCEL_FLY_NEON_R1.md` to lock the first hosted staging path as Vercel web, Fly API, and Neon Postgres/PostGIS, while deferring socket, workers, and storage until the web/API/database path is repeatable.
+- Documented product-first provider naming for staging and production resources, using `uprise-*` names instead of the repo name `UPRISE_NEXT`.
+- Added `docs/DEPLOY_ENV_MATRIX_R1.md` as the service-by-service environment variable matrix for hosted deployment planning, separating public web values from API/socket/worker/database/storage secrets before provider manifests are introduced.
+- Added `docs/solutions/DEPLOY_TARGET_READINESS_R1.md` to turn the DeepAgent-to-hosted-stack policy into an actionable readiness plan for Vercel, Fly/App Runner, Fargate, Neon/PostGIS, and S3/R2 without treating DeepAgent as production infrastructure.
+- Updated agent-facing infra routing and added `docs/handoff/2026-06-15_deploy-readiness-and-env-matrix.md` so future agents load the deploy readiness plan and env matrix before making provider-manifest or hosted-stack decisions.
 - Clarified that the separate source-management website/domain direction preserves the current `/source-dashboard`, Release Deck, Print Shop, and source-context work as the MVP stand-in; future Registrar approval/materialization should expose a managed source dashboard URL/domain rather than placing source tools in the listener profile.
 - Locked the listener-profile versus source-management separation: user profile now means the listener profile / collection workspace for onboarded users, while artist/band/promoter source entities are managed from a separate source/admin web surface/domain that the listener app reads from; current `/source-dashboard` remains the monorepo stand-in for that source-management surface.
 - Added the remaining focus-lane briefs expected by `docs/agent-briefs/CONTEXT_ROUTER.md`: `docs/agent-briefs/BUSINESS_MONETIZATION.md`, `docs/agent-briefs/ONBOARDING_HOME_SCENE.md`, `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, and `docs/agent-briefs/EXTERNAL_TOOLS.md`, so business, onboarding, registrar, and external-tool work now has narrow default context instead of pulling broad platform history.

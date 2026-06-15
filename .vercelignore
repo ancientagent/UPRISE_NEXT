@@ -1,0 +1,17 @@
+# Local workspaces and generated artifacts
+.openclaw/
+.playwright-cli/
+.worktrees/
+backups/
+tmp/
+
+# Design/reference assets are not part of the web deploy bundle.
+art/
+
+# Repository documentation is not required for the Vercel web build.
+docs/
+
+# Local environment files must never be uploaded.
+.env
+.env.*
+!.env.example

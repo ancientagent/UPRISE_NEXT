@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-15_deploy-readiness-and-env-matrix.md`](./2026-06-15_deploy-readiness-and-env-matrix.md) — current hosted-stack readiness context for Vercel/Fly/App Runner/Neon/S3/R2 planning and deploy env ownership.
 - [`2026-04-26_listener-profile-source-management-separation.md`](./2026-04-26_listener-profile-source-management-separation.md) — locks the distinction between listener user profile, public Artist Profile, and separate source-management surface/domain.
 - [`2026-04-25_missing-focus-lane-briefs.md`](./2026-04-25_missing-focus-lane-briefs.md) — closes the missing business, onboarding, registrar, and external-tool lane brief gaps called out by the focus-stage inventory.
 - [`2026-04-25_cloud-codex-stale-language-audit-cleanup.md`](./2026-04-25_cloud-codex-stale-language-audit-cleanup.md) — accepted Cloud Codex stale-language audit cleanup for active Plot/Archive/Discover-placeholder docs.

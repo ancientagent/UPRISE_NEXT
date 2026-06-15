@@ -362,10 +362,14 @@ Use when working on:
 - web-tier boundary
 - QA reports
 - environment failures
+- DeepAgent-to-hosted-stack transition planning
+- deploy environment variables and provider readiness
 
 Default load:
 - `docs/RUNBOOK.md`
 - `docs/STRATEGY_CRITICAL_INFRA_NOTE.md`
+- `docs/solutions/DEPLOY_TARGET_READINESS_R1.md` for hosted deployment planning
+- `docs/DEPLOY_ENV_MATRIX_R1.md` for env var ownership and staging readiness
 - `apps/web/WEB_TIER_BOUNDARY.md` for web work
 
 Load only if touched:
@@ -381,11 +385,14 @@ Work aims while focused:
 - classify issue as bug, stale, environment, fixture/data, or product decision
 - fix the narrow failure
 - verify on the current branch state
+- keep DeepAgent as dev/CI/control-plane only, not production infrastructure
+- promote hosted staging in the order env matrix, healthchecks, manifests, Neon/PostGIS, storage, then production
 
 Exit criteria:
 - failure is reproduced or classified
 - fix is verified with the narrowest relevant command
 - handoff includes branch/commit and setup context when needed
+- deploy work identifies the owning provider for every public URL and private secret
 
 ## Companion Brief Decision Table
 

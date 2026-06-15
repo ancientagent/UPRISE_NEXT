@@ -39,6 +39,7 @@ Current briefs:
 - `ONBOARDING_HOME_SCENE.md` - onboarding, Home Scene tuple resolution, GPS/voting eligibility, pioneer fallback, and first-run authority boundaries.
 - `REGISTRAR_GOVERNANCE.md` - Registrar actor model, capability filings, promoter capability, backing/procedural actions, and governance gates.
 - `EXTERNAL_TOOLS.md` - Cloud Codex, NotebookLM, Claude Designer, Stitch, Abacus, generated wiki, and cross-agent handoff rules.
+- `INFRA_RUNTIME_QA` lane in `CONTEXT_ROUTER.md` - build/test/deploy, CI, Vercel/Fly/AWS/Neon/S3/R2, web-tier boundary, DeepAgent-to-hosted-stack transition planning, and deploy env ownership.
 
 Planned brief families:
 - Add new families here only after a recurring work lane appears in `CONTEXT_ROUTER.md`.

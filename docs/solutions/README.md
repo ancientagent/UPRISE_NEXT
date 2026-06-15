@@ -47,6 +47,8 @@ Start from: `docs/solutions/TEMPLATE.md`
 - `docs/solutions/MVP_UX_BATCH27_EXECUTION_PLAN.md`
 
 ## Additional Playbooks
+- `docs/solutions/FIRST_STAGING_TARGET_VERCEL_FLY_NEON_R1.md`
+- `docs/solutions/DEPLOY_TARGET_READINESS_R1.md`
 - `docs/solutions/MODEL_ONBOARDING_EVAL.md`
 - `docs/solutions/USER_ISARTIST_DEPRECATION_READINESS.md`
 - `docs/solutions/WEB_TS6053_NEXT_TYPES.md`

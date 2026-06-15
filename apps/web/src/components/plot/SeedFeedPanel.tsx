@@ -221,11 +221,12 @@ function PopularSinglesInsert({ highlights }: { highlights: CommunityDiscoverHig
 }
 
 function RecommendationsInsert({ highlights }: { highlights: CommunityDiscoverHighlights }) {
+  const railRef = useRef<HTMLDivElement | null>(null);
+
   if (highlights.recommendations.length === 0) {
     return null;
   }
 
-  const railRef = useRef<HTMLDivElement | null>(null);
   const scrollByDirection = (direction: 'left' | 'right') => {
     if (!railRef.current) return;
     railRef.current.scrollBy({
