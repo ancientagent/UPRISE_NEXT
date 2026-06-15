@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 ### Added
+- Added the first live Fly API staging deployment path for `apps/api`: `.dockerignore`, `apps/api/Dockerfile`, and `fly.api.staging.toml`, including production-package Prisma client handling for `pnpm deploy --prod`.
+- Completed first hosted staging provider wiring: Vercel project `uprise-web-staging` is connected to GitHub, `NEXT_PUBLIC_API_URL` points at the Fly API for this PR preview branch and production, Neon `uprise_staging` has verified PostGIS, and Fly `uprise-api-staging` passes `/health/live`, `/health/db`, `/health/postgis`, and `/health/ready`.
 - Added `apps/web/vercel.json` for the `uprise-web-staging` monorepo web build, mirroring Vercel's `apps/web` root-directory setup without overriding the Next.js output directory.
 - Updated `apps/web` to patched `next` and `eslint-config-next` 15.5.19 after Vercel blocked deployment of vulnerable Next.js 15.5.6.
 - Added `.vercelignore` so manual Vercel deploys do not upload local workspaces, generated artifacts, docs, or design/reference assets.

@@ -25,22 +25,24 @@ hosted provider resource name.
 
 Create:
 
-- Project: `uprise-web-staging`
-- Root directory: `apps/web`.
-- Framework preset: Next.js
-- Node.js version: `22.x`
-- Build command: `pnpm --filter web build`
-- Install command: `pnpm install --frozen-lockfile`
-- Development command: `pnpm --filter web dev`
-- Output directory: use the Next.js default; do not override it.
+- Project: `uprise-web-staging` (created)
+- Root directory: `apps/web` (configured)
+- Framework preset: Next.js (configured)
+- Node.js version: `22.x` (configured)
+- Build command: `pnpm --filter web build` (configured)
+- Install command: `pnpm install --frozen-lockfile` (configured)
+- Development command: `pnpm --filter web dev` (configured)
+- Output directory: use the Next.js default; do not override it (configured)
 
 `apps/web/vercel.json` mirrors the monorepo build/install/dev commands for
 CLI/manual deploys. It does not force a custom output directory.
 
 Set environment variables:
 
-- `NEXT_PUBLIC_API_URL`
-- `NEXT_PUBLIC_WEB_APP_URL`
+- `NEXT_PUBLIC_API_URL` (set to `https://uprise-api-staging.fly.dev` for
+  Production and for the `feat/ux-founder-locks-and-harness` Preview branch)
+- `NEXT_PUBLIC_WEB_APP_URL` (defer until stable staging web URL/domain is
+  selected)
 
 Hold until socket staging exists:
 
@@ -61,25 +63,25 @@ Do not set:
 
 GitHub integration note:
 
-- If Vercel cannot connect `ancientagent/UPRISE_NEXT`, grant Vercel's GitHub
-  app access to the private repo from Vercel/GitHub integration settings.
-- Manual deploys can still run from the locally linked project while Git
-  integration is unresolved.
+- Vercel's GitHub integration has access to `ancientagent/UPRISE_NEXT`.
+- Manual deploys can still run from the locally linked project for emergency
+  verification, but Git-driven preview deploys are now the repeatable path.
 
 ## Fly.io API Setup
 
 Create:
 
-- App: `uprise-api-staging`
-- Region: `ord` unless another launch geography is selected.
+- App: `uprise-api-staging` (created)
+- Region: `ord`
 - Service: `apps/api`
 
 Set secrets:
 
-- `DATABASE_URL`
-- `DIRECT_URL` if Neon/Prisma migration flow requires it.
-- `JWT_SECRET`
-- `CORS_ORIGIN`
+- `DATABASE_URL` (set to Neon pooled staging connection string)
+- `DIRECT_URL` if Neon/Prisma migration flow requires it (not set yet)
+- `JWT_SECRET` (set)
+- `CORS_ORIGIN` (set to the first protected Vercel preview URL; replace with
+  stable staging web URL/domain when selected)
 - `GOOGLE_PLACES_API_KEY` or current code-equivalent name, only if hosted
   onboarding location lookup requires it.
 
@@ -97,15 +99,16 @@ Production-mode API startup must fail if `JWT_SECRET` is missing.
 
 Create:
 
-- Project: `uprise`
-- Branch: `staging`
-- Database: `uprise_staging`
+- Project: `uprise` (created)
+- Branch: `staging` (`br-lucky-water-atjlgbjo`, parent `production`)
+- Database: `uprise_staging` (created)
 
 Confirm:
 
-- PostGIS extension is available.
+- PostGIS extension is available and verified.
 - Runtime pooled connection string is available.
-- Direct migration connection string is available if Prisma needs it.
+- Direct migration connection string is available if Prisma needs it; not wired
+  into Fly yet.
 - Backup/restore behavior is understood before production data exists.
 
 Required validation target:
@@ -130,11 +133,12 @@ Keep production and staging secrets separate.
 After the first deployment exists:
 
 - Vercel web URL loads.
-- Fly API `/health/live` returns healthy.
-- Fly API `/health/ready` returns healthy.
-- Fly API `/health/db` confirms Neon connectivity.
-- Fly API `/health/postgis` confirms PostGIS.
-- Vercel web can call the Fly API through `NEXT_PUBLIC_API_URL`.
+- Fly API `/health/live` returns healthy. (verified)
+- Fly API `/health/ready` returns healthy. (verified)
+- Fly API `/health/db` confirms Neon connectivity. (verified)
+- Fly API `/health/postgis` confirms PostGIS. (verified)
+- Vercel web can call the Fly API through `NEXT_PUBLIC_API_URL`. (env set;
+  verify after the next Git-driven Vercel preview)
 - One read-only product route can load against staging data.
 
 ## Deferred Setup

@@ -18,3 +18,12 @@ Current first staging direction:
 - Neon: project `uprise`, branch `staging`, database `uprise_staging`
 
 Do not put real secrets in these files.
+
+Live staging manifests now exist outside this examples folder:
+
+- `.dockerignore`
+- `apps/api/Dockerfile`
+- `fly.api.staging.toml`
+
+Those files contain provider names and build behavior only. Secrets remain in
+provider secret stores or local ignored auth files.

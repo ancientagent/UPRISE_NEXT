@@ -117,6 +117,18 @@ Current first staging target:
 - socket: deferred until web + API staging is repeatable
 - workers/storage: deferred until media path work is active
 
+Current configured staging values:
+
+- `NEXT_PUBLIC_API_URL`: `https://uprise-api-staging.fly.dev` in Vercel
+  Production and in the `feat/ux-founder-locks-and-harness` Preview branch.
+- API `DATABASE_URL`: Neon pooled connection string for `uprise_staging`, set
+  in Fly secrets.
+- API `JWT_SECRET`: set in Fly secrets.
+- API `CORS_ORIGIN`: set to the first protected Vercel preview URL; replace
+  with the stable staging web URL/domain when selected.
+- `DIRECT_URL`: intentionally not set yet; add only when hosted Prisma
+  migration execution is wired.
+
 Recommended product-first resource names:
 
 - Vercel project: `uprise-web-staging`
@@ -132,7 +144,7 @@ Do not use `UPRISE_NEXT` in provider resource names.
 
 ## Open Decisions
 
-- Exact Fly region for the staging API; recommended default is `ord`.
+- Stable staging web URL/domain for `CORS_ORIGIN` and `NEXT_PUBLIC_WEB_APP_URL`.
 - Whether storage starts on S3 or Cloudflare R2.
 - Whether JWT remains shared-secret based for MVP staging or moves to issuer/JWKS.
 - Whether Redis is needed in the first staging pass or only once queue/realtime

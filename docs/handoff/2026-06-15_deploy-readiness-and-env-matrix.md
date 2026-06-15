@@ -99,8 +99,10 @@ Provider setup context:
 Vercel context:
 
 - Vercel project `uprise-web-staging` is locally linked.
-- GitHub integration failed because Vercel does not yet have access to
-  `ancientagent/UPRISE_NEXT`.
+- GitHub integration is now connected to `ancientagent/UPRISE_NEXT`.
+- `NEXT_PUBLIC_API_URL` is set in Vercel to
+  `https://uprise-api-staging.fly.dev` for Production and for the
+  `feat/ux-founder-locks-and-harness` Preview branch.
 - `.vercel/` is local-only and excluded through `.git/info/exclude`.
 - Vercel dashboard is configured for root directory `apps/web`, framework
   preset Next.js, Node.js `22.x`, build `pnpm --filter web build`, install
@@ -139,3 +141,58 @@ Vercel context:
 - Vercel blocked the earlier preview attempt because `next@15.5.6` was flagged
   as vulnerable. The web package was patched to `next@15.5.19` and
   `eslint-config-next@15.5.19`.
+
+Neon context:
+
+- Neon organization/project path: `UPRISE` / `uprise`.
+- Neon project slug/path includes `misty-fire-63832725`.
+- Staging branch: `staging` (`br-lucky-water-atjlgbjo`), parent `production`.
+- Staging database: `uprise_staging`.
+- Staging role: `neondb_owner`.
+- Region: AWS US East 1 (N. Virginia).
+- Postgres version: 18.
+- PostGIS is enabled and verified on `uprise_staging`.
+- Verified PostGIS result included `POSTGIS="3.6.0 4c1967d"` and
+  `PGSQL="180"`.
+- Runtime `DATABASE_URL` uses the Neon pooled connection string and is stored
+  only in local ignored auth storage plus Fly secrets.
+- `DIRECT_URL` is intentionally not set yet. Add it only when hosted Prisma
+  migration execution is wired and verified.
+
+Fly API context:
+
+- Fly app `uprise-api-staging` exists in the personal org.
+- Public API URL: `https://uprise-api-staging.fly.dev`.
+- Primary region: `ord`.
+- Set Fly secrets:
+  - `DATABASE_URL`
+  - `JWT_SECRET`
+  - `CORS_ORIGIN=https://uprise-web-staging-8x2er8ahx-ben-risemans-projects.vercel.app`
+- Not set yet:
+  - `DIRECT_URL`
+  - `GOOGLE_PLACES_API_KEY`
+- Added live deployment files:
+  - `.dockerignore`
+  - `apps/api/Dockerfile`
+  - `fly.api.staging.toml`
+- Docker packaging note: `pnpm deploy --prod` does not carry
+  `node_modules/.prisma/client` into the production package by default. The API
+  Dockerfile now runs `prisma:generate`, builds the API, deploys the production
+  package, and explicitly copies the generated `.prisma` client into `/prod/api`
+  before the final image stage.
+- Fly image deployment succeeded with image
+  `registry.fly.io/uprise-api-staging:deployment-01KV6SG8X6K8G1MVSW2EVB50Q6`.
+- Health smoke results:
+  - `/health/live`: healthy
+  - `/health/db`: healthy against Neon Postgres 18
+  - `/health/postgis`: healthy, PostGIS 3.6, `spatial_ref_sys` count `8500`
+  - `/health/ready`: healthy
+
+Remaining deploy follow-ups:
+
+- Trigger a fresh Vercel preview after this branch is pushed so the deployment
+  includes the new `NEXT_PUBLIC_API_URL`.
+- Replace `CORS_ORIGIN` with the stable staging web URL/domain when selected;
+  it currently points at the first protected preview URL.
+- Add `DIRECT_URL` only when migration automation is explicitly implemented.
+- Socket, workers, storage, and media deployment remain deferred.

@@ -52,8 +52,24 @@ Vercel staging project:
   Node.js `22.x`.
 - `apps/web/vercel.json` mirrors the monorepo web build/install/dev commands for
   CLI/manual deploys and does not force a custom output directory.
-- GitHub integration may require granting Vercel access to the private
-  `ancientagent/UPRISE_NEXT` repository before automatic Git deploys work.
+- GitHub integration is connected to the private `ancientagent/UPRISE_NEXT`
+  repository.
+
+Fly staging API:
+
+- App name: `uprise-api-staging`.
+- Public URL: `https://uprise-api-staging.fly.dev`.
+- Live manifests now exist at `.dockerignore`, `apps/api/Dockerfile`, and
+  `fly.api.staging.toml`.
+- Health endpoints pass against Neon/PostGIS:
+  `/health/live`, `/health/db`, `/health/postgis`, and `/health/ready`.
+
+Neon staging database:
+
+- Project: `uprise`.
+- Branch: `staging`.
+- Database: `uprise_staging`.
+- PostGIS is enabled and verified.
 
 Out of scope:
 
@@ -140,11 +156,18 @@ Neon:
 
 Do not add real provider secrets to the repo.
 
-Do not commit a `fly.toml`, Vercel config, or deployment script with fake app
-names that look production-ready. If templates are needed, keep them under
-`docs/` with `.example` naming until real account-specific values are chosen.
+Do not commit provider files with fake app names that look production-ready. If
+templates are needed, keep them under `docs/` with `.example` naming until real
+account-specific values are chosen.
 
 Example-only templates live under `docs/deploy/examples/`.
+
+Real staging manifests may be committed only after their account-specific names
+are confirmed. Current confirmed live files:
+
+- `.dockerignore`
+- `apps/api/Dockerfile`
+- `fly.api.staging.toml`
 
 ## First Validation Target
 
@@ -165,5 +188,5 @@ API health endpoints:
 
 ## Next Engineering Slice
 
-Resolve GitHub integration permissions or use manual Vercel deploys from the
-linked local project while Fly/Neon setup is still pending.
+Push the deployment slice so GitHub/Vercel creates a fresh preview with the
+current `NEXT_PUBLIC_API_URL`, then run the first web-to-Fly smoke test.
