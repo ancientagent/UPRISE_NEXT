@@ -41,6 +41,7 @@
 - Added `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` and wired it into the repo's external-assistant workflow layer so Abacus/delegation/design tools now inherit explicit context-acquisition, critical-decision pause, verification, anti-trope, and originality rules without importing third-party system prompts wholesale; see `docs/handoff/2026-04-21_external-agent-hardening-patterns.md`.
 
 ### Changed
+- Moved historical mobile/screenshot UX docs out of the `UI_CURRENT` current-lock list and into an explicit companion/reference section, with a regression lock so design agents load current Home/Plot authority before legacy visual references; see `docs/handoff/2026-06-16_ui-brief-reference-routing.md`.
 - Reframed the retained promotions read seam as deferred/non-tab infrastructure in the economy spec and Plot tab contract tests so future agents do not treat `Promotions` as a current MVP Plot tab; see `docs/handoff/2026-06-16_promotions-deferred-contract.md`.
 - Fixed artist-profile song-driven handoffs so `?signalId=` changes refresh the selected demo row memoization instead of reusing stale track ordering; see `docs/handoff/2026-06-16_artist-profile-signal-handoff-deps.md`.
 - Added the responsive follow-up to the live `/plot` Home-side shell: the expanded listener profile now passes an explicit `profile-bottom` placement into the real RADIYO/SPACE player, the bottom player exposes a compact small-screen marquee slot, and the top identity layer wraps safely on mobile; see `docs/handoff/2026-06-16_ux-profile-player-responsive-polish.md`.
