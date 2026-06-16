@@ -229,18 +229,22 @@ describe('OnboardingService home-scene resolution', () => {
     });
   });
 
-  it('verifies GPS against the fallback voting scene when the submitted Home Scene is unavailable', async () => {
+  it('verifies GPS against an exact active Home Scene geofence', async () => {
     const prisma = createPrismaMock();
-    const service = new OnboardingService(prisma as any);
+    const places = { reverseGeocode: jest.fn() };
+    const service = new OnboardingService(prisma as any, places as any);
 
     prisma.user.findUnique.mockResolvedValue({
-      homeSceneCity: 'Houston',
+      homeSceneCity: 'Austin',
       homeSceneState: 'Texas',
       homeSceneCommunity: 'Punk',
       tunedSceneId: 'scene-austin-punk',
     });
-    prisma.community.findFirst.mockResolvedValue(null);
-    prisma.community.findUnique.mockResolvedValue({ id: 'scene-austin-punk', radius: 50000 });
+    prisma.community.findFirst.mockResolvedValue({
+      id: 'scene-austin-punk',
+      radius: 50000,
+      isActive: true,
+    });
     prisma.$queryRaw
       .mockResolvedValueOnce([{ has_geofence: true }])
       .mockResolvedValueOnce([{ within: true, distance: 1200 }]);
@@ -256,16 +260,137 @@ describe('OnboardingService home-scene resolution', () => {
       longitude: -97.7431,
     });
 
-    expect(prisma.community.findUnique).toHaveBeenCalledWith({
-      where: { id: 'scene-austin-punk' },
-      select: { id: true, radius: true },
-    });
+    expect(places.reverseGeocode).not.toHaveBeenCalled();
+    expect(prisma.community.findUnique).not.toHaveBeenCalled();
     expect(result).toMatchObject({
       gpsVerified: true,
       votingEligible: true,
       votingSceneId: 'scene-austin-punk',
       distance: 1200,
       reason: null,
+    });
+  });
+
+  it('verifies GPS against submitted city/state while voting at fallback when Home Scene is unavailable', async () => {
+    const prisma = createPrismaMock();
+    const places = {
+      reverseGeocode: jest.fn().mockResolvedValue({
+        city: 'El Paso',
+        state: 'TX',
+        formattedAddress: 'El Paso, TX, USA',
+      }),
+    };
+    const service = new OnboardingService(prisma as any, places as any);
+
+    prisma.user.findUnique.mockResolvedValue({
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      tunedSceneId: 'scene-austin-punk',
+    });
+    prisma.community.findFirst.mockResolvedValue(null);
+    prisma.community.findUnique.mockResolvedValue({ id: 'scene-austin-punk', radius: 50000 });
+    prisma.user.update.mockResolvedValue({
+      id: 'user-1',
+      gpsVerified: true,
+      latitude: 31.7619,
+      longitude: -106.485,
+    });
+
+    const result = await service.verifyGps('user-1', {
+      latitude: 31.7619,
+      longitude: -106.485,
+    });
+
+    expect(places.reverseGeocode).toHaveBeenCalledWith(31.7619, -106.485);
+    expect(prisma.community.findUnique).toHaveBeenCalledWith({
+      where: { id: 'scene-austin-punk' },
+      select: { id: true, radius: true },
+    });
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
+    expect(result).toMatchObject({
+      gpsVerified: true,
+      votingEligible: true,
+      votingSceneId: 'scene-austin-punk',
+      distance: null,
+      reason: null,
+    });
+  });
+
+  it('rejects GPS for unavailable Home Scene when submitted city/state does not match reverse geocode', async () => {
+    const prisma = createPrismaMock();
+    const places = {
+      reverseGeocode: jest.fn().mockResolvedValue({
+        city: 'Austin',
+        state: 'TX',
+        formattedAddress: 'Austin, TX, USA',
+      }),
+    };
+    const service = new OnboardingService(prisma as any, places as any);
+
+    prisma.user.findUnique.mockResolvedValue({
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      tunedSceneId: 'scene-austin-punk',
+    });
+    prisma.community.findFirst.mockResolvedValue(null);
+    prisma.community.findUnique.mockResolvedValue({ id: 'scene-austin-punk', radius: 50000 });
+    prisma.user.update.mockResolvedValue({
+      id: 'user-1',
+      gpsVerified: false,
+      latitude: 30.2672,
+      longitude: -97.7431,
+    });
+
+    const result = await service.verifyGps('user-1', {
+      latitude: 30.2672,
+      longitude: -97.7431,
+    });
+
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
+    expect(result).toMatchObject({
+      gpsVerified: false,
+      votingEligible: false,
+      votingSceneId: 'scene-austin-punk',
+      distance: null,
+      reason: 'SUBMITTED_LOCATION_MISMATCH',
+    });
+  });
+
+  it('fails closed when submitted-location reverse geocoding is unavailable', async () => {
+    const prisma = createPrismaMock();
+    const places = {
+      reverseGeocode: jest.fn().mockRejectedValue(new Error('geocoder unavailable')),
+    };
+    const service = new OnboardingService(prisma as any, places as any);
+
+    prisma.user.findUnique.mockResolvedValue({
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      tunedSceneId: 'scene-austin-punk',
+    });
+    prisma.community.findFirst.mockResolvedValue(null);
+    prisma.community.findUnique.mockResolvedValue({ id: 'scene-austin-punk', radius: 50000 });
+    prisma.user.update.mockResolvedValue({
+      id: 'user-1',
+      gpsVerified: false,
+      latitude: 31.7619,
+      longitude: -106.485,
+    });
+
+    const result = await service.verifyGps('user-1', {
+      latitude: 31.7619,
+      longitude: -106.485,
+    });
+
+    expect(result).toMatchObject({
+      gpsVerified: false,
+      votingEligible: false,
+      votingSceneId: 'scene-austin-punk',
+      distance: null,
+      reason: 'SUBMITTED_LOCATION_NOT_VERIFIED',
     });
   });
 });

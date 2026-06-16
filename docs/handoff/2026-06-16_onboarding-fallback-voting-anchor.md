@@ -5,6 +5,8 @@ Branch: `feat/upr-10-onboarding-fallback`
 Issue: `UPR-10`
 Status: implementation slice
 
+Superseded GPS detail, 2026-06-16: fallback voting remains valid, but GPS authority changed in `docs/handoff/2026-06-16_submitted-location-gps-authority.md`. Current rule: inactive/unavailable submitted Home Scene users verify GPS against submitted city/state locality, then vote in the resolved active fallback scene stored in `User.tunedSceneId`.
+
 ## Summary
 
 Aligned server-side Home Scene resolution with the active onboarding spec and founder clarification:
@@ -14,7 +16,7 @@ Aligned server-side Home Scene resolution with the active onboarding spec and fo
 - inactive or missing submitted Home Scene resolves the nearest active city-tier scene for the selected parent music community
 - resolved active scene is stored in `User.tunedSceneId` as the active listening/voting anchor
 - server no longer creates inactive `Community` rows from onboarding fallback
-- fallback users can vote in the resolved active scene after GPS verification
+- fallback users can vote in the resolved active scene after submitted-location GPS verification
 
 ## Voting Rule
 
@@ -22,7 +24,7 @@ GPS remains required for voting only. Listening and participation do not require
 
 When the submitted Home Scene is available, GPS/voting applies to that exact scene.
 
-When the submitted Home Scene is not available, GPS/voting applies to the resolved nearest active city-tier scene, while the submitted tuple remains pioneer intent for future activation/follow-up.
+When the submitted Home Scene is not available, GPS verification applies to the submitted city/state locality, while voting applies to the resolved nearest active city-tier scene and the submitted tuple remains pioneer intent for future activation/follow-up.
 
 ## Files Changed
 

@@ -178,15 +178,20 @@ Result:
 
 ## Boundaries / Follow-Ups
 
+Supersession note, 2026-06-16:
+
+- The separate submitted-location GPS authority follow-up has now landed in `docs/handoff/2026-06-16_submitted-location-gps-authority.md`.
+- Current rule after that slice: exact active Home Scene users verify against the exact scene geofence; inactive/unavailable submitted Home Scene users verify against submitted city/state locality and then vote in the resolved fallback scene.
+
 Not included in this slice:
 
 - Production DB writes.
 - State/national geofence or tier logic.
 - Prime model structures, Sects, generated channels, or sub-communities.
 - City-specific runtime branches.
-- A separate submitted-location geocoder/geofence authority for non-launched pioneer cities.
+- A separate submitted-location geocoder/geofence authority for non-launched pioneer cities. This was later addressed by `docs/handoff/2026-06-16_submitted-location-gps-authority.md`.
 
-Current active behavior remains:
+Behavior at the time of this handoff was:
 
 - Exact active Home Scene users verify and vote against their exact scene geofence.
-- Pioneer users whose submitted Home Scene is inactive/unavailable vote at the resolved active fallback scene after GPS verification against that fallback scene.
+- Superseded by the submitted-location GPS authority follow-up: this slice still treated pioneer users as voting at the resolved active fallback scene after GPS verification against that fallback scene.

@@ -80,8 +80,8 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 ### Endpoints
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/onboarding/home-scene` | required | Resolve/create Home Scene and auto-join membership |
-| POST | `/onboarding/gps-verify` | required | Verify voting eligibility against Home Scene geofence |
+| POST | `/onboarding/home-scene` | required | Resolve Home Scene and auto-join resolved active membership |
+| POST | `/onboarding/gps-verify` | required | Verify voting eligibility against exact Home Scene geofence or submitted-location fallback locality |
 | GET | `/communities` | required | List communities |
 | GET | `/communities/:id` | required | Community details |
 | POST | `/communities` | required | Create community (supports geofence fields) |
@@ -99,6 +99,8 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
     - `SCENE_NOT_FOUND`
     - `SCENE_NO_GEOFENCE`
     - `OUTSIDE_GEOFENCE`
+    - `SUBMITTED_LOCATION_NOT_VERIFIED`
+    - `SUBMITTED_LOCATION_MISMATCH`
 
 ## Web UI / Client Behavior
 - Onboarding prompts for **City**, **State**, **Music Community**.
