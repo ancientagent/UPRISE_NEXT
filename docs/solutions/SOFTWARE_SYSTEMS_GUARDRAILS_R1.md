@@ -179,7 +179,40 @@ Reject:
 - recommendation/trending systems quietly steering governance or civic rights
 - stats UI implying decision power where none exists
 
-### Rule 11: The shell matters as much as the page
+### Rule 11: No one-off community implementations
+UPRISE must be built as a reusable civic/music-community system, not as a
+collection of custom cases for individual launch scenes.
+
+Every product and implementation decision must be evaluated by whether it scales
+cleanly across:
+- many cities
+- many music communities
+- many artists and source entities
+- many listeners
+- many events and artifacts
+- city, state, and national aggregation when those tiers are capacity-ready
+
+Reject:
+- hardcoded behavior that only works for Austin, Punk, or any other specific
+  launch example
+- branch logic that treats one music community as structurally different unless
+  an active spec explicitly defines that difference
+- source or artist assumptions that only work for a seeded fixture
+- UI or API behavior that cannot generalize across the launch city/community
+  matrix
+- tests that accidentally become product logic by forcing production code around
+  fixture-specific names
+
+Allowed:
+- fixture-specific data in tests, seed scripts, and QA helpers when it is
+  clearly marked fixture-only or test-only
+- temporary launch data that exercises the generic system without changing the
+  system rules
+
+If a design only works for one city/community tuple, stop and redesign the
+system boundary before implementing it.
+
+### Rule 12: The shell matters as much as the page
 Do not design pages as if they exist alone.
 Always account for:
 - profile strip
@@ -193,7 +226,7 @@ Reject:
 - route-level ideas that only work if the rest of the app disappears
 - secondary screens that contradict the global shell contract
 
-### Rule 12: If a behavior belongs to a system, implement it in the system
+### Rule 13: If a behavior belongs to a system, implement it in the system
 Do not bury system behavior inside random page-specific hacks.
 
 Examples:
