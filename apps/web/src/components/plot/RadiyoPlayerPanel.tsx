@@ -12,6 +12,7 @@ const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];
 
 interface RadiyoPlayerPanelProps {
   mode: PlayerMode;
+  placement?: 'top' | 'profile-bottom';
   onCollectionEject: () => void;
   rotationPool: RotationPool;
   onRotationPoolChange: (pool: RotationPool) => void;
@@ -31,6 +32,7 @@ interface RadiyoPlayerPanelProps {
 
 export default function RadiyoPlayerPanel({
   mode,
+  placement = 'top',
   onCollectionEject,
   rotationPool,
   onRotationPoolChange,
@@ -48,6 +50,7 @@ export default function RadiyoPlayerPanel({
   radiyoFooter = null,
 }: RadiyoPlayerPanelProps) {
   const isRadiyoMode = mode === 'RADIYO';
+  const isProfileBottomPlacement = placement === 'profile-bottom';
   const wheelActions = getEngagementWheelActions(mode);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const radiyoTrackQueue = useMemo(
@@ -97,13 +100,36 @@ export default function RadiyoPlayerPanel({
       ? `Track ${Math.min(currentTrackIndex + 1, activeTrackCount)} of ${activeTrackCount} in this rotation`
       : 'Waiting for the rotation to populate'
     : 'Selection-driven space queue';
+  const marqueeTitle = isRadiyoMode ? activeTrack?.title ?? 'Now Broadcasting' : collectionTitle ?? 'Space Player';
+  const marqueeContext = isRadiyoMode ? activeTrack?.artist ?? broadcastLabel : broadcastLabel;
 
   return (
     <section
       data-slot="compact-player-shell"
-      className="plot-wire-card mt-3 overflow-hidden bg-[#202020] text-white"
+      data-placement={placement}
+      className={`plot-wire-card overflow-hidden bg-[#202020] text-white ${
+        isProfileBottomPlacement ? 'mt-0 rounded-[1.05rem]' : 'mt-3'
+      }`}
     >
-      <div className="grid gap-3 px-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+      <div
+        data-slot="bottom-player-marquee"
+        className={`border-b border-white/12 bg-[#161616] px-3 py-2 ${
+          isProfileBottomPlacement ? 'block sm:hidden' : 'hidden'
+        }`}
+      >
+        <p className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-[#b8d63b]">
+          {mode}
+        </p>
+        <p className="truncate text-sm font-semibold leading-tight text-white">
+          {marqueeTitle} <span className="text-white/50">/</span> {marqueeContext}
+        </p>
+      </div>
+
+      <div
+        className={`grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start ${
+          isProfileBottomPlacement ? 'px-2 py-2 sm:px-3 sm:py-3' : 'px-3 py-3'
+        }`}
+      >
         <div className="rounded-[1rem] border border-white/15 bg-[#2a2a2a] p-3">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
@@ -111,7 +137,7 @@ export default function RadiyoPlayerPanel({
                 {isRadiyoMode ? 'Now Playing' : 'Your Space'}
               </p>
               <p className="mt-1 truncate text-sm font-semibold leading-tight text-white">{broadcastLabel}</p>
-              <p className="mt-1 text-[11px] text-white/68">
+              <p className={`mt-1 text-[11px] text-white/68 ${isProfileBottomPlacement ? 'hidden sm:block' : ''}`}>
                 {isRadiyoMode
                   ? rotationPool === 'new_releases'
                     ? 'New releases are cycling through this scene feed.'
