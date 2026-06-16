@@ -48,6 +48,7 @@
 
 ### Changed
 
+- Replaced the live `/plot` Archive tab's interactive `StatisticsPanel` explorer with read-only Archive modules: `TopSongsPanel` and a descriptive Scene Activity Snapshot, and updated active briefs so future agents do not reintroduce StatisticsPanel/tier-map exploration as the MVP Archive body.
 - Updated the onboarding Music Community selector and seed docs to the founder-approved MVP launch list: Punk, Electronic, Noise, Spoken Word / Poetry, Indie, Folk, Singer-Songwriter, and Hip-Hop; the broader taxonomy remains internal reference only.
 - Fixed `/onboarding` so approved Music Community choices render visible option labels instead of blank dropdown rows, and added a regression lock to preserve the selection-only parent-community rule.
 - Moved historical mobile/screenshot UX docs out of the `UI_CURRENT` current-lock list and into an explicit companion/reference section, with a regression lock so design agents load current Home/Plot authority before legacy visual references; see `docs/handoff/2026-06-16_ui-brief-reference-routing.md`.

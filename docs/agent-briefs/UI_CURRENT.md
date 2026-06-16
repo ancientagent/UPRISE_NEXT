@@ -4,7 +4,9 @@ Status: active
 Last Updated: 2026-04-26
 
 ## Use When
+
 Use this brief when the task is about:
+
 - app/frontend UI
 - Claude Designer / Stitch / visual design handoff
 - Home / Plot layout
@@ -15,6 +17,7 @@ Use this brief when the task is about:
 - external design-agent prompts for UPRISE screens
 
 ## Do Not Use For
+
 - backend-only API work
 - deployment/infrastructure work
 - source-dashboard implementation details beyond visible UI structure
@@ -22,18 +25,22 @@ Use this brief when the task is about:
 - legacy mobile archive interpretation
 
 ## Loading Rule
+
 Start with the normal repo entry rules, then this UI packet.
 
 Do not read every file listed below by default. This brief is the working UI router.
 
 Load more only when the task needs it:
+
 - design prompt / wireframe context: this brief is usually enough
 - runtime implementation: load the exact route/component files being edited plus the one relevant lock
 - QA/review: load the tested route/component and the regression test/handoff tied to that behavior
 - spec/doc correction: load the exact active lock/spec being patched
 
 ## Section Pointers
+
 Core UI files:
+
 1. `apps/web/WEB_TIER_BOUNDARY.md`
 2. `apps/web/src/app/plot/page.tsx`
 3. `apps/web/src/components/plot/RadiyoPlayerPanel.tsx`
@@ -42,6 +49,7 @@ Core UI files:
 6. `packages/ui/src`
 
 Current UI locks:
+
 1. `docs/solutions/MVP_HOME_PLOT_FEED_COMPOSITION_LOCK_R1.md`
 2. `docs/solutions/MVP_SCREEN_AND_SURFACE_MAP_R1.md`
 3. `docs/solutions/SURFACE_CONTRACT_HOME_R1.md`
@@ -50,17 +58,20 @@ Current UI locks:
 6. `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
 
 Reference / companion UI files:
+
 1. `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md` - mapping-only; does not authorize new behavior.
 2. `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md` - historical mobile-first phase reference; do not treat stale tab/action language as current authority.
 3. `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md` - historical screenshot-derived reference.
 4. `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md` - legacy screenshot element inventory; current locks win on conflict.
 
 Recent handoffs to use only after the locks above:
+
 - `docs/handoff/2026-04-25_player-pulldown-profile-rule.md`
 - `docs/handoff/2026-04-23_plot-tabs-archive-runtime-lock.md`
 - `docs/handoff/2026-04-23_home-plot-feed-composition-lock.md`
 
 ## Current Truth
+
 - Home contains Plot.
 - Plot is not a separate destination/screen conceptually.
 - Plot is the tabbed dashboard inside the Home-side community interface.
@@ -79,6 +90,7 @@ Recent handoffs to use only after the locks above:
 - Travel / Discover remains deferred as a main destination unless explicitly reactivated.
 
 ## Home / Plot Top-To-Bottom Composition
+
 1. User avatar bust.
 2. Recommendation bubble attached to the avatar/current listener identity.
 3. `UPRISE <CITY>` identity text beside the listener identity layer.
@@ -89,7 +101,9 @@ Recent handoffs to use only after the locks above:
 8. Plot body shows the active tab: Feed, Events, or Archive.
 
 ## Player / Profile Interaction
+
 Current locked behavior:
+
 - the player starts as top-screen listening infrastructure
 - pulling the player down opens the user's profile / collection workspace in-place
 - while profile / collection workspace is open, the player relocates to the bottom of the workspace
@@ -99,11 +113,13 @@ Current locked behavior:
 - collapsing restores the prior Plot context
 
 Do not describe this as:
+
 - a separate normal user-profile route replacing Home
 - a profile page that independently sits above the player
 - a generic social profile navigation pattern
 
 ## User Profile / Collection Workspace
+
 Purpose: listener-owned identity and collection workspace opened from the Home-side player pull-down.
 
 This is not the same surface as Artist Profile.
@@ -111,6 +127,7 @@ This is not the same surface as Artist Profile.
 It is also not the same surface as source management. Artists, bands, promoters, and future businesses are separate source entities managed from source/admin tooling, not from this listener profile workspace.
 
 Top-to-bottom when expanded:
+
 1. profile summary header
    - listener identity
    - activity score
@@ -138,6 +155,7 @@ Top-to-bottom when expanded:
    - `Return to Plot Tabs`
 
 Boundaries:
+
 - do not turn this into an Instagram-style profile
 - do not make follower counts or clout metrics primary
 - do not make it a separate route for current Home-side interaction
@@ -145,9 +163,11 @@ Boundaries:
 - do not place Release Deck, Print Shop, source-posting, or source-management controls here
 
 ## Feed Tab
+
 Purpose: live community pulse inside Plot.
 
 Allowed feed families:
+
 - listener `Blast` activity
 - artist/source updates
 - track releases
@@ -155,20 +175,24 @@ Allowed feed families:
 - community/system updates
 
 Current inserts:
+
 - `Popular Singles`
 - `Buzz`
 - `Upcoming Events`
 
 Boundaries:
+
 - no algorithmic `For You`
 - no inline `Collect`, `Blast`, `Follow`, or wheel actions on insert cards
 - music insert cards hand into Artist Profile listening
 - event inserts preview only; full event handling belongs in Events
 
 ## Events Tab
+
 Purpose: full event surface inside Plot.
 
 Should include:
+
 - scene/community label
 - event cards/list
 - title, date/time, venue/location
@@ -176,20 +200,26 @@ Should include:
 - event detail state where needed
 
 Do not add:
+
 - paid boost controls
 - generic social calendar behavior
 - standalone promotion tab behavior
 
 ## Archive Tab
+
 Purpose: descriptive community record/history lane.
 
 Should include:
+
 - scene/community identity
 - descriptive activity snapshot
 - top songs / scene activity modules where present
 - historical community activity
 
 Do not include:
+
+- interactive `StatisticsPanel` exploration as the current MVP Archive body
+- tier/map/nearby-community exploration as the default Archive experience
 - leaderboards
 - rankings
 - trending hype
@@ -197,9 +227,11 @@ Do not include:
 - comparative artist scoring
 
 ## Artist Profile
+
 Purpose: direct-listen/discovery/info/share surface outside `RADIYO`.
 
 Should include:
+
 - artist header / identity
 - follow
 - share
@@ -211,13 +243,16 @@ Should include:
 - official artist links when configured: website, merch, albums/music, donate
 
 Do not include:
+
 - engagement wheel
 - `Blast`
 - RADIYO controls
 - rankings/scores/editorial badges
 
 ## Design-Agent Handoff Rules
+
 For Claude Designer, Stitch, Gemini, or similar tools:
+
 - give code/UX references before art references
 - ensure the tool repeats the screen hierarchy before it designs visuals
 - stop the tool if it says Plot is a standalone screen
@@ -227,14 +262,18 @@ For Claude Designer, Stitch, Gemini, or similar tools:
 - stop the tool if it designs a Spotify/TikTok/Instagram clone
 
 ## Current Upload / Context Pack
+
 If a copied design pack is needed, use the latest pack under:
+
 - `tmp/claude-designer-app-pack-2026-04-24`
 - `tmp/claude-designer-app-pack-2026-04-24.tar.gz`
 
 Prefer GitHub/code access when available. Use art/mockups only for visual flavor after the tool understands screen structure.
 
 ## Verification
+
 For UI route/surface changes, run the narrowest relevant checks first:
+
 - `pnpm --filter web test -- plot-ux-regression-lock.test.ts`
 - `pnpm --filter web typecheck`
 - `pnpm run docs:lint`
@@ -243,4 +282,5 @@ For UI route/surface changes, run the narrowest relevant checks first:
 Use broader `pnpm run verify` before PR/closeout when feasible.
 
 ## Update Rule
+
 Patch this file whenever UI truth changes. Do not leave UI corrections in chat memory only.

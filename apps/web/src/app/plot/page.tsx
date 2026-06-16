@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
@@ -15,7 +14,11 @@ import { useAuthStore } from '@/store/auth';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
-import RadiyoPlayerPanel, { type PlayerMode, type PlayerTier, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
+import RadiyoPlayerPanel, {
+  type PlayerMode,
+  type PlayerTier,
+  type RotationPool,
+} from '@/components/plot/RadiyoPlayerPanel';
 import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 import {
@@ -31,29 +34,16 @@ import {
   resolveHomeCommunity,
   type CommunityStatisticsResponse,
 } from '@/lib/communities/client';
-import { listArtistBandRegistrations, listPromoterRegistrations, type RegistrarPromoterEntry } from '@/lib/registrar/client';
-import { formatRegistrarEntryStatus, getRegistrarPlotSummary, type RegistrarPlotSummary } from '@/lib/registrar/entryStatus';
-
-// Dynamic imports for client components
-const StatisticsPanel = dynamic(
-  () => import('@/components/plot/StatisticsPanel'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="rounded-2xl border border-black/10 bg-white p-6 h-full">
-        <div className="animate-pulse space-y-4">
-          <div className="h-6 w-48 bg-black/10 rounded" />
-          <div className="h-64 w-full bg-black/5 rounded-2xl flex items-center justify-center">
-            <div className="text-center">
-              <div className="h-8 w-8 mx-auto mb-3 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-              <p className="text-sm text-black/50">Loading statistics...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-  }
-);
+import {
+  listArtistBandRegistrations,
+  listPromoterRegistrations,
+  type RegistrarPromoterEntry,
+} from '@/lib/registrar/client';
+import {
+  formatRegistrarEntryStatus,
+  getRegistrarPlotSummary,
+  type RegistrarPlotSummary,
+} from '@/lib/registrar/entryStatus';
 
 const tabs = ['Feed', 'Events', 'Archive'] as const;
 type PlotTab = (typeof tabs)[number];
@@ -94,7 +84,7 @@ interface PlotProfileRead {
 
 const readMetadataString = (
   metadata: Record<string, unknown> | null | undefined,
-  keys: string[],
+  keys: string[]
 ): string | null => {
   if (!metadata) return null;
 
@@ -134,7 +124,9 @@ const formatShelfItemSecondaryLabel = (item: PlotCollectionShelfItem): string =>
   );
 };
 
-const formatPlotCommunityLabel = (community: Pick<CommunityWithDistance, 'city' | 'state' | 'musicCommunity' | 'name'> | null): string | null => {
+const formatPlotCommunityLabel = (
+  community: Pick<CommunityWithDistance, 'city' | 'state' | 'musicCommunity' | 'name'> | null
+): string | null => {
   if (!community) return null;
 
   if (community.city && community.state && community.musicCommunity) {
@@ -159,13 +151,17 @@ export default function PlotPage() {
   const { token, user } = useAuthStore();
   const initialPlayerTier = useMemo<PlayerTier>(
     () => playerTier ?? getMvpPlayerTier(tunedScene?.tier),
-    [playerTier, tunedScene?.tier],
+    [playerTier, tunedScene?.tier]
   );
   const [activeTab, setActiveTab] = useState<PlotTab>('Feed');
   const [selectedTier, setSelectedTier] = useState<PlayerTier>(initialPlayerTier);
-  const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>(initialPlayerTier);
+  const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>(
+    initialPlayerTier
+  );
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
-  const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
+  const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>(
+    'collapsed'
+  );
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
   const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
   const [broadcastRotation, setBroadcastRotation] = useState<BroadcastRotation | null>(null);
@@ -173,13 +169,15 @@ export default function PlotPage() {
   const [broadcastLoading, setBroadcastLoading] = useState(false);
   const [broadcastError, setBroadcastError] = useState<string | null>(null);
   const [broadcastEmptyMessage, setBroadcastEmptyMessage] = useState<string | null>(null);
-  const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists');
+  const [activeProfileSection, setActiveProfileSection] =
+    useState<ExpandedProfileSection>('Singles/Playlists');
   const [selectedCollectionItem, setSelectedCollectionItem] = useState<{
     id: string;
     label: string;
     kind: 'track' | 'playlist';
   } | null>(null);
-  const [expandedProfileStats, setExpandedProfileStats] = useState<CommunityStatisticsResponse | null>(null);
+  const [expandedProfileStats, setExpandedProfileStats] =
+    useState<CommunityStatisticsResponse | null>(null);
   const [isEngagementWheelOpen, setIsEngagementWheelOpen] = useState(false);
   const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
   const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null);
@@ -212,9 +210,12 @@ export default function PlotPage() {
       tunedScene?.name,
       tunedScene?.state,
       tunedScene?.tier,
-    ],
+    ]
   );
-  const selectedCommunityLabel = useMemo(() => formatPlotCommunityLabel(selectedCommunity), [selectedCommunity]);
+  const selectedCommunityLabel = useMemo(
+    () => formatPlotCommunityLabel(selectedCommunity),
+    [selectedCommunity]
+  );
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
@@ -252,7 +253,7 @@ export default function PlotPage() {
               state: homeScene.state,
               musicCommunity: homeScene.musicCommunity,
             },
-            token,
+            token
           );
 
           if (homeResponse) {
@@ -261,7 +262,7 @@ export default function PlotPage() {
           }
         }
       } catch {
-        // Leave unselected; Feed/Stats panels render guidance states.
+        // Leave unselected; Feed/Archive panels render guidance states.
       }
     }
 
@@ -281,7 +282,11 @@ export default function PlotPage() {
       }
 
       try {
-        const stats = await getCommunityStatistics(selectedCommunity.id, selectedTier, token || undefined);
+        const stats = await getCommunityStatistics(
+          selectedCommunity.id,
+          selectedTier,
+          token || undefined
+        );
         setExpandedProfileStats(stats);
       } catch {
         setExpandedProfileStats(null);
@@ -318,12 +323,13 @@ export default function PlotPage() {
         setBroadcastEmptyMessage(
           activeBroadcastTier === 'state' && response.meta?.sceneId.startsWith('state-unavailable:')
             ? 'No state scene is active for this community yet.'
-            : null,
+            : null
         );
       } catch (error: unknown) {
         if (cancelled) return;
 
-        const message = error instanceof Error ? error.message : 'Unable to load the active broadcast rotation.';
+        const message =
+          error instanceof Error ? error.message : 'Unable to load the active broadcast rotation.';
         const normalized = normalizeBroadcastRuntimeError(message, activeBroadcastTier);
 
         if (normalized.treatAsEmptyState) {
@@ -410,11 +416,18 @@ export default function PlotPage() {
 
         if (cancelled) return;
 
-        setPlotProfile(response.data ?? { canViewCollection: true, collectionShelves: [], managedArtistBands: [] });
+        setPlotProfile(
+          response.data ?? {
+            canViewCollection: true,
+            collectionShelves: [],
+            managedArtistBands: [],
+          }
+        );
       } catch (error: unknown) {
         if (cancelled) return;
 
-        const message = error instanceof Error ? error.message : 'Unable to load collection shelves.';
+        const message =
+          error instanceof Error ? error.message : 'Unable to load collection shelves.';
         setPlotProfile(null);
         setPlotProfileError(message);
       } finally {
@@ -471,11 +484,11 @@ export default function PlotPage() {
     };
   }, [token]);
 
-  const handleCommunitySelect = (community: CommunityWithDistance) => {
-    setSelectedCommunity(community);
-  };
-
-  const handleCollectionSelection = (item: { id: string; label: string; kind: 'track' | 'playlist' }) => {
+  const handleCollectionSelection = (item: {
+    id: string;
+    label: string;
+    kind: 'track' | 'playlist';
+  }) => {
     setSelectedCollectionItem(item);
     setPlayerMode('SPACE');
   };
@@ -537,24 +550,25 @@ export default function PlotPage() {
     setProfilePanelState('expanded');
   };
 
-  // Callback to update nearby communities from StatisticsPanel
-  const handleCommunitiesUpdate = (_communities: CommunityWithDistance[]) => {
-    // Communities are managed within StatisticsPanel
-    // This callback exists for potential future use
-  };
   const isProfileExpanded = profilePanelState === 'expanded';
   const currentRotationTracks =
     rotationPool === 'new_releases'
-      ? broadcastRotation?.newReleases ?? []
-      : broadcastRotation?.mainRotation ?? [];
+      ? (broadcastRotation?.newReleases ?? [])
+      : (broadcastRotation?.mainRotation ?? []);
   const currentBroadcastTrack: Track | null = currentRotationTracks[0] ?? null;
-  const radiyoBroadcastLabel = buildRadiyoBroadcastLabel(selectedTier, selectedCommunity, homeScene);
-  const currentBroadcastLabel =
-    broadcastMeta?.sceneName ?? radiyoBroadcastLabel;
-  const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Space`;
+  const radiyoBroadcastLabel = buildRadiyoBroadcastLabel(
+    selectedTier,
+    selectedCommunity,
+    homeScene
+  );
+  const currentBroadcastLabel = broadcastMeta?.sceneName ?? radiyoBroadcastLabel;
+  const collectionBroadcastLabel =
+    selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Space`;
   const homeCityLabel = selectedCommunity?.city ?? homeScene?.city ?? 'CITY';
   const listenerRecommendationLabel =
-    selectedCollectionItem?.label ?? currentBroadcastTrack?.title ?? 'No current recommendation yet';
+    selectedCollectionItem?.label ??
+    currentBroadcastTrack?.title ??
+    'No current recommendation yet';
   const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;
   const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
   const collectionShelves = plotProfile?.collectionShelves ?? [];
@@ -564,8 +578,10 @@ export default function PlotPage() {
   const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === 'fliers') ?? null;
   const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === 'uprises') ?? null;
   const posterShelf = collectionShelves.find((shelf) => shelf.shelf === 'posters') ?? null;
-  const merchButtonShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_buttons') ?? null;
-  const merchPatchShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_patches') ?? null;
+  const merchButtonShelf =
+    collectionShelves.find((shelf) => shelf.shelf === 'merch_buttons') ?? null;
+  const merchPatchShelf =
+    collectionShelves.find((shelf) => shelf.shelf === 'merch_patches') ?? null;
   const merchShirtShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_shirts') ?? null;
   const singlesCollectionItems =
     singlesShelf?.items.map((item) => ({
@@ -574,7 +590,9 @@ export default function PlotPage() {
       kind: 'track' as const,
     })) ?? [];
   const latestPromoterEntry = promoterEntries[0] ?? null;
-  const canOpenPrintShop = Boolean(latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0);
+  const canOpenPrintShop = Boolean(
+    latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0
+  );
   const bandStatusCard =
     managedArtistBands.length > 0 || (registrarSummary?.totalEntries ?? 0) > 0
       ? {
@@ -613,7 +631,7 @@ export default function PlotPage() {
         }
       : null;
   const profileStatusCards = [bandStatusCard, promoterStatusCard].filter(
-    (card): card is { label: string; value: string; detail: string } => Boolean(card),
+    (card): card is { label: string; value: string; detail: string } => Boolean(card)
   );
   const seamLabel =
     profilePanelState === 'expanded'
@@ -719,21 +737,33 @@ export default function PlotPage() {
     if (activeTab === 'Archive') {
       return (
         <div className="space-y-4">
-          <StatisticsPanel
-            selectedTier={selectedTier}
-            selectedCommunity={selectedCommunity}
-            onCommunitySelect={handleCommunitySelect}
-            onCommunitiesUpdate={handleCommunitiesUpdate}
-          />
           <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
           <div className="rounded-2xl border border-black/10 bg-white p-6">
             <h3 className="mb-2 font-semibold text-black">Scene Activity Snapshot</h3>
             <p className="text-sm text-black/60">
-              Descriptive context for the current archive scope. This is not a ranking or authority signal.
+              Descriptive context for the current archive scope. This is not a ranking or authority
+              signal.
             </p>
-            <p className="mt-2 text-xs text-black/50">
-              Current tier: <span className="capitalize">{selectedTier}</span>
-              {selectedCommunity && <span> • Selected: {selectedCommunity.name}</span>}
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                ['Members', expandedProfileStats?.metrics.totalMembers ?? 0],
+                ['Active Sects', expandedProfileStats?.metrics.activeSects ?? 0],
+                ['Events This Week', expandedProfileStats?.metrics.eventsThisWeek ?? 0],
+                ['Active Tracks', expandedProfileStats?.metrics.activeTracks ?? 0],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                  <p className="text-lg font-semibold text-black">
+                    {typeof value === 'number' ? value.toLocaleString() : value}
+                  </p>
+                  <p className="text-xs uppercase tracking-[0.12em] text-black/55">{label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-black/50">
+              Archive is read-only descriptive history for the current Plot context.
+              {selectedCommunity && (
+                <span> Selected: {selectedCommunityLabel ?? selectedCommunity.name}.</span>
+              )}
             </p>
           </div>
         </div>
@@ -794,12 +824,19 @@ export default function PlotPage() {
               Complete onboarding to anchor your Home Scene and unlock Plot context.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Button className="rounded-full border border-black bg-[#b8d63b] text-black hover:bg-[#b8d63b]/90" onClick={() => router.push('/onboarding')}>Complete Onboarding</Button>
+              <Button
+                className="rounded-full border border-black bg-[#b8d63b] text-black hover:bg-[#b8d63b]/90"
+                onClick={() => router.push('/onboarding')}
+              >
+                Complete Onboarding
+              </Button>
             </div>
           </section>
 
           <section className="plot-wire-panel plot-wire-grid-bg p-6">
-            <h2 className="text-lg font-semibold text-black">Plot surfaces unlock after Home Scene resolution</h2>
+            <h2 className="text-lg font-semibold text-black">
+              Plot surfaces unlock after Home Scene resolution
+            </h2>
             <p className="mt-2 max-w-2xl text-sm text-black/65">
               Feed, Events, Archive, and scene-scoped profile context remain unavailable until your
               Home Scene is set.
@@ -828,7 +865,10 @@ export default function PlotPage() {
                 className="flex h-16 w-14 shrink-0 items-end justify-center rounded-t-full border border-black bg-[#b8d63b] shadow-[2px_2px_0_rgba(0,0,0,0.28)]"
                 aria-label="Listener avatar bust"
               >
-                <span className="mb-2 h-8 w-8 rounded-full border border-black bg-[#efefe2]" aria-hidden />
+                <span
+                  className="mb-2 h-8 w-8 rounded-full border border-black bg-[#efefe2]"
+                  aria-hidden
+                />
               </div>
 
               <div data-slot="home-identity-copy" className="min-w-0 flex-1">
@@ -837,7 +877,9 @@ export default function PlotPage() {
                   className="mb-2 max-w-full rounded-[1rem] border border-black bg-white px-3 py-2 shadow-[2px_2px_0_rgba(0,0,0,0.22)] sm:max-w-[18rem]"
                 >
                   <p className="plot-wire-label">Current recommendation</p>
-                  <p className="truncate text-xs font-semibold text-black">{listenerRecommendationLabel}</p>
+                  <p className="truncate text-xs font-semibold text-black">
+                    {listenerRecommendationLabel}
+                  </p>
                 </div>
                 <p className="plot-wire-label">UPRISE {homeCityLabel}</p>
                 <p className="truncate text-sm font-semibold leading-tight text-black">
@@ -875,7 +917,10 @@ export default function PlotPage() {
                 >
                   🔔
                   {hasPioneerFollowUp ? (
-                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#b7d43f]" aria-hidden />
+                    <span
+                      className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#b7d43f]"
+                      aria-hidden
+                    />
                   ) : null}
                 </Button>
                 {hasPioneerFollowUp && isNotificationPanelOpen && pioneerNotificationHomeScene ? (
@@ -889,8 +934,9 @@ export default function PlotPage() {
                       {pioneerNotificationHomeScene.musicCommunity}
                     </p>
                     <p className="mt-2 text-sm text-black/70">
-                      Your Home Scene is still pioneering. You are temporarily routed through the nearest active city
-                      scene for {pioneerNotificationHomeScene.musicCommunity} while your city builds.
+                      Your Home Scene is still pioneering. You are temporarily routed through the
+                      nearest active city scene for {pioneerNotificationHomeScene.musicCommunity}{' '}
+                      while your city builds.
                     </p>
                     <p className="mt-2 text-sm text-black/70">
                       Once enough local users join, you can establish or uprise your own city scene.
@@ -898,7 +944,12 @@ export default function PlotPage() {
                   </div>
                 ) : null}
               </div>
-              <Button size="sm" variant="outline" className="h-8 rounded-full border-black bg-white text-xs" aria-label="More menu">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 rounded-full border-black bg-white text-xs"
+                aria-label="More menu"
+              >
                 ⋯
               </Button>
             </div>
@@ -912,7 +963,9 @@ export default function PlotPage() {
               onClick={toggleProfilePanel}
               aria-controls="plot-profile-panel"
               aria-expanded={isProfileExpanded}
-              aria-label={profilePanelState === 'expanded' ? 'Collapse profile panel' : 'Expand profile panel'}
+              aria-label={
+                profilePanelState === 'expanded' ? 'Collapse profile panel' : 'Expand profile panel'
+              }
             >
               <span className="block h-1.5 w-8 rounded-full bg-black/30" aria-hidden />
               <span>{seamLabel}</span>
@@ -931,7 +984,9 @@ export default function PlotPage() {
             <header className="grid gap-4 rounded-[1.15rem] border border-black bg-[#efefe2] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
               <div className="space-y-4">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Profile Summary</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">
+                    Profile Summary
+                  </p>
                   <h2 className="mt-1 text-lg font-semibold leading-tight text-black">
                     {user?.displayName || user?.username || 'User'}
                   </h2>
@@ -959,7 +1014,9 @@ export default function PlotPage() {
                 <p className="mt-1 text-sm text-black/60">
                   {eventsThisWeek} event{eventsThisWeek === 1 ? '' : 's'} this week
                 </p>
-                <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Context</p>
+                <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-black/55">
+                  Scene Context
+                </p>
                 <p className="mt-1 text-sm font-medium text-black">
                   {selectedCommunityLabel ??
                     (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
@@ -976,7 +1033,11 @@ export default function PlotPage() {
                     key={section}
                     size="sm"
                     variant={activeProfileSection === section ? 'default' : 'outline'}
-                    className={activeProfileSection === section ? 'h-8 rounded-full border-black bg-[#b8d63b] text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-[#b8d63b]/90' : 'h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-black/5'}
+                    className={
+                      activeProfileSection === section
+                        ? 'h-8 rounded-full border-black bg-[#b8d63b] text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-[#b8d63b]/90'
+                        : 'h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-black/5'
+                    }
                     onClick={() => setActiveProfileSection(section)}
                   >
                     {section}
@@ -999,7 +1060,9 @@ export default function PlotPage() {
                         {plotProfileError}
                       </p>
                     ) : !canViewCollection ? (
-                      <p className="text-sm text-black/60">Collection visibility is disabled for this profile.</p>
+                      <p className="text-sm text-black/60">
+                        Collection visibility is disabled for this profile.
+                      </p>
                     ) : singlesCollectionItems.length > 0 ? (
                       <div className="flex flex-col gap-2">
                         {singlesShelf?.items.map((item) => {
@@ -1021,17 +1084,28 @@ export default function PlotPage() {
                               onClick={() => handleCollectionSelection(collectionItem)}
                             >
                               <span>
-                                <span className="block text-sm font-medium">{collectionItem.label}</span>
-                                <span className={`block text-[11px] uppercase tracking-[0.12em] ${
-                                  selectedCollectionItem?.id === collectionItem.id ? 'text-white/75' : 'text-black/55'
-                                }`}>
+                                <span className="block text-sm font-medium">
+                                  {collectionItem.label}
+                                </span>
+                                <span
+                                  className={`block text-[11px] uppercase tracking-[0.12em] ${
+                                    selectedCollectionItem?.id === collectionItem.id
+                                      ? 'text-white/75'
+                                      : 'text-black/55'
+                                  }`}
+                                >
                                   Track • {formatShelfItemSecondaryLabel(item)}
                                 </span>
                               </span>
-                              <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
-                                selectedCollectionItem?.id === collectionItem.id ? 'text-white/75' : 'text-black/55'
-                              }`}>
-                                {selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'
+                              <span
+                                className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
+                                  selectedCollectionItem?.id === collectionItem.id
+                                    ? 'text-white/75'
+                                    : 'text-black/55'
+                                }`}
+                              >
+                                {selectedCollectionItem?.id === collectionItem.id &&
+                                playerMode === 'SPACE'
                                   ? 'Live in space'
                                   : 'Select to enter your space'}
                               </span>
@@ -1046,7 +1120,8 @@ export default function PlotPage() {
                     <div className="plot-wire-card-muted p-3">
                       <p className="plot-wire-label">Playlist Groupings</p>
                       <p className="mt-1 text-sm text-black/70">
-                        Saved playlist groupings appear here when they are available in your collection.
+                        Saved playlist groupings appear here when they are available in your
+                        collection.
                       </p>
                     </div>
                   </div>
@@ -1066,24 +1141,34 @@ export default function PlotPage() {
                       <ul className="space-y-2">
                         {fliersShelf?.items.slice(0, 6).map((item) => (
                           <li key={item.signalId} className="plot-wire-card-muted p-3">
-                            <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
-                            <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
+                            <p className="text-sm font-medium text-black">
+                              {formatShelfItemPrimaryLabel(item)}
+                            </p>
+                            <p className="mt-1 text-xs text-black/55">
+                              {formatShelfItemSecondaryLabel(item)}
+                            </p>
                           </li>
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-sm text-black/60">No saved event artifacts or fliers yet.</p>
+                      <p className="text-sm text-black/60">
+                        No saved event artifacts or fliers yet.
+                      </p>
                     )}
                   </div>
                 ) : activeProfileSection === 'Photos' ? (
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     <div className="plot-wire-card-muted p-3">
                       <p className="plot-wire-label">Scene Photography</p>
-                      <p className="mt-1 text-sm text-black/70">Saved event and scene photography artifacts appear in this workspace.</p>
+                      <p className="mt-1 text-sm text-black/70">
+                        Saved event and scene photography artifacts appear in this workspace.
+                      </p>
                     </div>
                     <div className="plot-wire-card-muted p-3">
                       <p className="plot-wire-label">Current Scene</p>
-                      <p className="mt-1 text-sm font-medium text-black">{selectedCommunityLabel ?? 'No scene selected'}</p>
+                      <p className="mt-1 text-sm font-medium text-black">
+                        {selectedCommunityLabel ?? 'No scene selected'}
+                      </p>
                     </div>
                   </div>
                 ) : activeProfileSection === 'Merch' ? (
@@ -1110,10 +1195,14 @@ export default function PlotPage() {
                           <div key={item.label} className="plot-wire-card-muted p-3">
                             <p className="text-sm font-medium text-black">{item.label}</p>
                             <p className="mt-1 text-xs text-black/55">
-                              {item.shelf ? `${item.shelf.itemCount} saved item${item.shelf.itemCount === 1 ? '' : 's'}` : 'No saved items yet.'}
+                              {item.shelf
+                                ? `${item.shelf.itemCount} saved item${item.shelf.itemCount === 1 ? '' : 's'}`
+                                : 'No saved items yet.'}
                             </p>
                             {item.shelf?.items[0] ? (
-                              <p className="mt-2 text-xs text-black/60">{formatShelfItemPrimaryLabel(item.shelf.items[0])}</p>
+                              <p className="mt-2 text-xs text-black/60">
+                                {formatShelfItemPrimaryLabel(item.shelf.items[0])}
+                              </p>
                             ) : null}
                           </div>
                         ))}
@@ -1136,8 +1225,12 @@ export default function PlotPage() {
                       <ul className="space-y-2">
                         {uprisesShelf?.items.slice(0, 6).map((item) => (
                           <li key={item.signalId} className="plot-wire-card-muted p-3">
-                            <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
-                            <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
+                            <p className="text-sm font-medium text-black">
+                              {formatShelfItemPrimaryLabel(item)}
+                            </p>
+                            <p className="mt-1 text-xs text-black/55">
+                              {formatShelfItemSecondaryLabel(item)}
+                            </p>
                           </li>
                         ))}
                       </ul>
@@ -1146,22 +1239,26 @@ export default function PlotPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="mt-3 plot-wire-card-muted p-3">
+                  <div className="plot-wire-card-muted mt-3 p-3">
                     <p className="plot-wire-label">Saved Promos/Coupons</p>
                     <p className="mt-1 text-sm text-black/70">
-                      Saved promos and coupons appear here with status and expiration when collection support is available.
+                      Saved promos and coupons appear here with status and expiration when
+                      collection support is available.
                     </p>
                   </div>
                 )}
               </div>
             </div>
 
-            <div data-slot="expanded-profile-player-strip">
-              {playerPanel}
-            </div>
+            <div data-slot="expanded-profile-player-strip">{playerPanel}</div>
 
             <div className="flex flex-wrap gap-2.5">
-              <Button size="sm" variant="outline" className="h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={toggleProfilePanel}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
+                onClick={toggleProfilePanel}
+              >
                 Return to Plot Tabs
               </Button>
             </div>
@@ -1222,7 +1319,8 @@ export default function PlotPage() {
                 <div className="plot-wire-panel">
                   <h3 className="mb-2 font-semibold text-black">Registrar Access</h3>
                   <p className="text-sm text-black/65">
-                    Artist/Band registration status stays visible here so Plot keeps registrar access inside the civic workflow.
+                    Artist/Band registration status stays visible here so Plot keeps registrar
+                    access inside the civic workflow.
                   </p>
 
                   {!token ? (
@@ -1236,31 +1334,48 @@ export default function PlotPage() {
                       {registrarSummaryError}
                     </p>
                   ) : registrarSummary && registrarSummary.totalEntries > 0 ? (
-                    <div className="mt-4 plot-wire-card-muted p-4">
+                    <div className="plot-wire-card-muted mt-4 p-4">
                       <p className="plot-wire-label">Latest Status</p>
                       <p className="mt-1 text-sm font-medium text-black">
-                        {registrarSummary.latestStatus ? formatRegistrarEntryStatus(registrarSummary.latestStatus) : 'No recent status'}
+                        {registrarSummary.latestStatus
+                          ? formatRegistrarEntryStatus(registrarSummary.latestStatus)
+                          : 'No recent status'}
                       </p>
                       <p className="mt-3 text-sm text-black/70">
-                        Entries: {registrarSummary.totalEntries} • Submitted: {registrarSummary.submittedCount} • Materialized:{' '}
+                        Entries: {registrarSummary.totalEntries} • Submitted:{' '}
+                        {registrarSummary.submittedCount} • Materialized:{' '}
                         {registrarSummary.materializedCount}
                       </p>
                       <p className="mt-1 text-xs text-black/55">
-                        Invites pending: {registrarSummary.pendingInviteCount} • queued: {registrarSummary.queuedInviteCount} •
-                        sent: {registrarSummary.sentInviteCount} • failed: {registrarSummary.failedInviteCount}
+                        Invites pending: {registrarSummary.pendingInviteCount} • queued:{' '}
+                        {registrarSummary.queuedInviteCount} • sent:{' '}
+                        {registrarSummary.sentInviteCount} • failed:{' '}
+                        {registrarSummary.failedInviteCount}
                       </p>
                     </div>
                   ) : (
-                    <p className="mt-4 text-sm text-black/60">No Artist/Band registrar entries yet.</p>
+                    <p className="mt-4 text-sm text-black/60">
+                      No Artist/Band registrar entries yet.
+                    </p>
                   )}
 
                   <div className="mt-4">
                     <div className="flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/registrar')}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
+                        onClick={() => router.push('/registrar')}
+                      >
                         Open Registrar
                       </Button>
                       {canOpenPrintShop ? (
-                        <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/print-shop')}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
+                          onClick={() => router.push('/print-shop')}
+                        >
                           Open Print Shop
                         </Button>
                       ) : null}
@@ -1272,7 +1387,9 @@ export default function PlotPage() {
                   <div className="plot-wire-panel">
                     <h3 className="mb-3 font-semibold text-black">Selected Community</h3>
                     <div className="plot-wire-card-muted p-4">
-                      <p className="font-medium text-black">{selectedCommunityLabel ?? selectedCommunity.name}</p>
+                      <p className="font-medium text-black">
+                        {selectedCommunityLabel ?? selectedCommunity.name}
+                      </p>
                       <p className="mt-1 text-sm text-black/60">
                         {selectedCommunity.memberCount?.toLocaleString()} members
                       </p>

@@ -4,7 +4,9 @@ Status: active
 Last Updated: 2026-04-25
 
 ## Use When
+
 Use this brief when the task is about:
+
 - Plot `Events`
 - Plot `Archive`
 - event cards/details/calendar behavior
@@ -14,18 +16,22 @@ Use this brief when the task is about:
 - stale `Statistics` or `Promotions` tab language
 
 ## Do Not Use For
+
 - action grammar outside event/archive surfaces
 - Artist Profile or Source Dashboard work unless events are being surfaced there
 - Home/player/profile interaction unless it changes Events or Archive placement
 - deployment/infrastructure work
 
 ## Loading Rule
+
 Start with the normal repo entry rules, then this brief.
 
 Do not read every linked document by default. For Events work, load the event spec and touched Events files. For Archive work, load the current UI brief plus the stats/archive lock that authorizes the behavior.
 
 ## Section Pointers
+
 Runtime files:
+
 - `apps/web/src/app/plot/page.tsx`
 - `apps/web/src/components/plot/PlotEventsPanel.tsx`
 - `apps/web/src/components/plot/StatisticsPanel.tsx`
@@ -34,6 +40,7 @@ Runtime files:
 - `apps/api/src/communities/`
 
 Specs / locks:
+
 - `docs/agent-briefs/UI_CURRENT.md`
 - `docs/solutions/MVP_HOME_PLOT_FEED_COMPOSITION_LOCK_R1.md`
 - `docs/solutions/MVP_SCREEN_AND_SURFACE_MAP_R1.md`
@@ -44,11 +51,13 @@ Specs / locks:
 - `docs/specs/communities/plot-and-scene-plot.md`
 
 Tests / verification files:
+
 - `apps/web/__tests__/plot-ux-regression-lock.test.ts`
 - `apps/web/__tests__/plot-statistics-request.test.ts`
 - `apps/web/__tests__/communities-client.test.ts`
 
 ## Current Truth
+
 - Current MVP Plot tabs are `Feed`, `Events`, and `Archive`.
 - `Archive` is the current user-facing label for the descriptive stats/history lane.
 - Do not call the active current tab `Statistics`.
@@ -62,15 +71,19 @@ Tests / verification files:
 - Listeners discover, add/calendar, attend, and collect verified event artifacts where supported.
 - Flyers are event-bound artifacts, not default current MVP signals.
 - Archive/stats are descriptive only.
+- Current `/plot` Archive renders read-only descriptive modules, not the interactive `StatisticsPanel` explorer.
+- Tier/map/nearby-community exploration is not the current MVP Archive body.
 - Archive must not become ranking, predictive analytics, leaderboards, or comparative artist scoring.
 
 ## Current Runtime Pointers
-- `/plot` currently routes the third MVP tab to the existing statistics/archive panel implementation.
+
+- `/plot` routes the third MVP tab to read-only Archive modules such as Top Songs and Scene Activity Snapshot.
 - Runtime component names may still contain `StatisticsPanel`; current user-facing language should be `Archive`.
 - Events read through scene-scoped community event endpoints.
 - Print Shop owns current source-facing event creation flow.
 
 ## Design / Implementation Boundaries
+
 - Do not reintroduce `Statistics` as the active tab label.
 - Do not reintroduce `Promotions` as a current MVP Plot tab.
 - Do not make Archive a leaderboard.
@@ -81,7 +94,9 @@ Tests / verification files:
 - Do not let flyer artifacts affect Fair Play rotation or tier progression.
 
 ## Verification
+
 Use the narrowest relevant checks:
+
 - `pnpm --filter web test -- plot-ux-regression-lock.test.ts`
 - `pnpm --filter web test -- plot-statistics-request.test.ts`
 - `pnpm --filter web test -- communities-client.test.ts`
@@ -92,4 +107,5 @@ Use the narrowest relevant checks:
 Use broader `pnpm run verify` before PR/closeout when feasible.
 
 ## Update Rule
+
 Patch this brief whenever Events, Archive, descriptive stats, Scene Map, or event artifact truth changes.
