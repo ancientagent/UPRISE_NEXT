@@ -24,6 +24,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change runtime screens, menus, tabs, actions, player behavior, or routing.
 - Sects, generated channels, and sub-communities are created later through the Prime model, not through bespoke launch seed behavior.
 - Missing-music-community requests are intake only: they do not create selectable onboarding options or live city-tier scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.
+- Missing-music-community intake is stored through `POST /onboarding/music-community-requests`; it records distinct requester/city review signals and does not define a final approval threshold in code.
 - Taste tags are **not** collected during onboarding; they are configured after entering Home Scene.
 - Home Scene selection is stored regardless of GPS verification.
 - Setting a Home Scene auto-joins the resolved city-tier Scene membership.
@@ -92,11 +93,12 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 
 ### Endpoints
 
-| Method | Path                        | Auth     | Description                                                       |
-| ------ | --------------------------- | -------- | ----------------------------------------------------------------- |
-| POST   | `/onboarding/home-scene`    | required | Resolve/create Home Scene, persist user affinity, auto-join Scene |
-| POST   | `/onboarding/gps-verify`    | required | Verify geofence and set voting eligibility                        |
-| GET    | `/communities/resolve-home` | required | Resolve exact Home Scene tuple for Plot/community anchoring       |
+| Method | Path                                   | Auth     | Description                                                                         |
+| ------ | -------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
+| POST   | `/onboarding/home-scene`               | required | Resolve/create Home Scene, persist user affinity, auto-join Scene                   |
+| POST   | `/onboarding/gps-verify`               | required | Verify geofence and set voting eligibility                                          |
+| POST   | `/onboarding/music-community-requests` | required | Store missing music-community intake for later review without creating a live Scene |
+| GET    | `/communities/resolve-home`            | required | Resolve exact Home Scene tuple for Plot/community anchoring                         |
 
 ### Request/Response
 
@@ -126,10 +128,22 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
     - `SCENE_NO_GEOFENCE`
     - `OUTSIDE_GEOFENCE`
 
+- `POST /onboarding/music-community-requests` request:
+  - `requestedName: string`
+  - `city: string`
+  - `state: string`
+- `POST /onboarding/music-community-requests` response:
+  - stored request id/status
+  - normalized display fields
+  - `reviewSignals.distinctRequesterCount`
+  - `reviewSignals.distinctCityCount`
+  - no `Community` id and no selector mutation
+
 ## Web UI / Client Behavior
 
 - `apps/web/src/app/onboarding/page.tsx`:
   - captures City/State/Music Community (selection-only parent community)
+  - allows authenticated users to submit a missing-music-community request without changing the selected approved parent community
   - requests GPS with clear voting-only gating copy
   - resolves active scene fallback when city is inactive
   - shows pioneer status and nearest active routed scene in review step

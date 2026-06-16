@@ -69,6 +69,8 @@ Tests / verification files:
 - Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change screens, menus, tabs, actions, player behavior, or routing.
 - Sects, generated channels, and sub-communities happen later through the Prime model rather than as launch seed architecture variants.
 - Missing-music-community requests are intake only. They do not create selectable onboarding options or live scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.
+- Current intake endpoint is `POST /onboarding/music-community-requests`.
+- Missing-music-community intake stores distinct requester/city review signals but does not define a final approval threshold in code.
 - Taste tags are not collected during onboarding.
 - Home Scene selection is stored regardless of GPS verification.
 - Setting a Home Scene auto-joins the resolved city-tier scene membership.
@@ -84,6 +86,7 @@ Tests / verification files:
 - `GET /communities/resolve-home` resolves exact Home Scene tuple for Plot/community anchoring.
 - `POST /onboarding/home-scene` is the server-authoritative Home Scene persistence path.
 - `POST /onboarding/gps-verify` verifies voting eligibility.
+- `POST /onboarding/music-community-requests` stores missing music-community intake without creating a `Community` or selector option.
 
 ## Companion Briefs
 
@@ -102,6 +105,7 @@ Load only if touched:
 - Do not treat pioneer fallback as abandoning the user’s intended city.
 - Do not add taste-tag onboarding unless explicitly reactivated.
 - Do not turn a missing-music-community request into an immediate community creation path.
+- Do not add missing-music-community requests to `MUSIC_COMMUNITIES` or `docs/specs/seed/music-communities.json` until explicitly approved.
 - Do not widen first-run flow with speculative CTAs.
 
 ## Canon Anchors

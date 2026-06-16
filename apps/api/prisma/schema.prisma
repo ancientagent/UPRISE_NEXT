@@ -1,4 +1,3 @@
-
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -14,74 +13,75 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  email       String    @unique
-  username    String    @unique
-  displayName String
-  password    String
-  bio         String?
-  avatar      String?
-  coverImage  String?
-  latitude    Float?
-  longitude   Float?
-  city        String?
-  country     String?
-  homeSceneCity       String?
-  homeSceneState      String?
-  homeSceneCommunity  String?
-  homeSceneTag        String?
-  tunedSceneId        String?
-  tunedSceneUpdatedAt DateTime?
-  collectionDisplayEnabled Boolean @default(false)
-  gpsVerified         Boolean   @default(false)
-  isVerified  Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                       String    @id @default(uuid())
+  email                    String    @unique
+  username                 String    @unique
+  displayName              String
+  password                 String
+  bio                      String?
+  avatar                   String?
+  coverImage               String?
+  latitude                 Float?
+  longitude                Float?
+  city                     String?
+  country                  String?
+  homeSceneCity            String?
+  homeSceneState           String?
+  homeSceneCommunity       String?
+  homeSceneTag             String?
+  tunedSceneId             String?
+  tunedSceneUpdatedAt      DateTime?
+  collectionDisplayEnabled Boolean   @default(false)
+  gpsVerified              Boolean   @default(false)
+  isVerified               Boolean   @default(false)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
-  tracks             Track[]
-  communities        CommunityMember[]
-  createdCommunities Community[]
-  events             Event[]
-  tags               UserTag[]
-  signals            Signal[]
-  signalActions      SignalAction[]
-  follows            Follow[]
-  collections        Collection[]
-  trackEngagements   TrackEngagement[]
-  trackVotes         TrackVote[]
-  createdArtistBands ArtistBand[]
-  artistBandMembers  ArtistBandMember[]
-  registrarEntries   RegistrarEntry[]
-  registrarArtistMemberships RegistrarArtistMember[] @relation("RegistrarExistingUser")
-  registrarClaimedMemberships RegistrarArtistMember[] @relation("RegistrarClaimedUser")
-  capabilityGrants  UserCapabilityGrant[]
+  tracks                      Track[]
+  communities                 CommunityMember[]
+  createdCommunities          Community[]
+  events                      Event[]
+  tags                        UserTag[]
+  signals                     Signal[]
+  signalActions               SignalAction[]
+  follows                     Follow[]
+  collections                 Collection[]
+  trackEngagements            TrackEngagement[]
+  trackVotes                  TrackVote[]
+  createdArtistBands          ArtistBand[]
+  artistBandMembers           ArtistBandMember[]
+  registrarEntries            RegistrarEntry[]
+  registrarArtistMemberships  RegistrarArtistMember[]   @relation("RegistrarExistingUser")
+  registrarClaimedMemberships RegistrarArtistMember[]   @relation("RegistrarClaimedUser")
+  capabilityGrants            UserCapabilityGrant[]
   capabilityAuditTargetEvents CapabilityGrantAuditLog[] @relation("CapabilityAuditTargetUser")
   capabilityAuditActorEvents  CapabilityGrantAuditLog[] @relation("CapabilityAuditActorUser")
+  musicCommunityRequests      MusicCommunityRequest[]
 
   @@map("users")
 }
 
 model ArtistBand {
-  id               String   @id @default(uuid())
-  name             String
-  slug             String   @unique
-  entityType       String   @default("artist") // artist, band
-  registrarEntryRef String?
-  homeSceneId      String?
-  createdById      String
+  id                 String   @id @default(uuid())
+  name               String
+  slug               String   @unique
+  entityType         String   @default("artist") // artist, band
+  registrarEntryRef  String?
+  homeSceneId        String?
+  createdById        String
   officialWebsiteUrl String?
-  merchUrl         String?
-  musicUrl         String?
-  donationUrl      String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  merchUrl           String?
+  musicUrl           String?
+  donationUrl        String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  createdBy User      @relation(fields: [createdById], references: [id], onDelete: Restrict)
-  homeScene Community? @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
-  members   ArtistBandMember[]
+  createdBy        User               @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  homeScene        Community?         @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
+  members          ArtistBandMember[]
   registrarEntries RegistrarEntry[]
-  tracks    Track[]
-  events    Event[]
+  tracks           Track[]
+  events           Event[]
 
   @@index([homeSceneId])
   @@index([createdById])
@@ -104,39 +104,60 @@ model ArtistBandMember {
 }
 
 model Community {
-  id          String   @id @default(uuid())
-  name        String
-  slug        String   @unique
-  description String
-  coverImage  String?
-  avatar      String?
-  isPrivate   Boolean  @default(false)
-  memberCount Int      @default(0)
-  createdById String
-  city        String?
-  state       String?
+  id             String   @id @default(uuid())
+  name           String
+  slug           String   @unique
+  description    String
+  coverImage     String?
+  avatar         String?
+  isPrivate      Boolean  @default(false)
+  memberCount    Int      @default(0)
+  createdById    String
+  city           String?
+  state          String?
   musicCommunity String?
-  tier        String   @default("city") // city, state, national
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  tier           String   @default("city") // city, state, national
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // PostGIS geography column for geofencing
   geofence Unsupported("geography(Point, 4326)")?
   radius   Float? // radius in meters
 
-  createdBy User              @relation(fields: [createdById], references: [id])
-  members   CommunityMember[]
-  tracks    Track[]
-  events    Event[]
-  sectTags  SectTag[]
-  signals   Signal[]
-  rotationEntries RotationEntry[]
-  trackVotes TrackVote[]
-  artistBands ArtistBand[]
+  createdBy        User              @relation(fields: [createdById], references: [id])
+  members          CommunityMember[]
+  tracks           Track[]
+  events           Event[]
+  sectTags         SectTag[]
+  signals          Signal[]
+  rotationEntries  RotationEntry[]
+  trackVotes       TrackVote[]
+  artistBands      ArtistBand[]
   registrarEntries RegistrarEntry[]
 
   @@map("communities")
+}
+
+model MusicCommunityRequest {
+  id                      String   @id @default(uuid())
+  userId                  String
+  requestedName           String
+  requestedNameNormalized String
+  city                    String
+  cityNormalized          String
+  state                   String
+  stateNormalized         String
+  status                  String   @default("submitted")
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, requestedNameNormalized, cityNormalized, stateNormalized])
+  @@index([requestedNameNormalized])
+  @@index([requestedNameNormalized, cityNormalized, stateNormalized])
+  @@map("music_community_requests")
 }
 
 model RegistrarEntry {
@@ -150,12 +171,12 @@ model RegistrarEntry {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  scene      Community  @relation(fields: [sceneId], references: [id], onDelete: Restrict)
-  createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
-  artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
-  artistMembers RegistrarArtistMember[]
-  codes      RegistrarCode[]
-  capabilityGrants UserCapabilityGrant[]
+  scene                 Community                 @relation(fields: [sceneId], references: [id], onDelete: Restrict)
+  createdBy             User                      @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  artistBand            ArtistBand?               @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
+  artistMembers         RegistrarArtistMember[]
+  codes                 RegistrarCode[]
+  capabilityGrants      UserCapabilityGrant[]
   capabilityAuditEvents CapabilityGrantAuditLog[]
 
   @@index([sceneId, type, status])
@@ -165,19 +186,19 @@ model RegistrarEntry {
 }
 
 model RegistrarCode {
-  id              String   @id @default(uuid())
+  id               String    @id @default(uuid())
   registrarEntryId String
-  capability      String
-  codeHash        String   @unique
-  issuerType      String   @default("system")
-  status          String   @default("issued")
-  expiresAt       DateTime?
-  redeemedAt      DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  capability       String
+  codeHash         String    @unique
+  issuerType       String    @default("system")
+  status           String    @default("issued")
+  expiresAt        DateTime?
+  redeemedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
-  capabilityGrants UserCapabilityGrant[]
+  registrarEntry        RegistrarEntry            @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
+  capabilityGrants      UserCapabilityGrant[]
   capabilityAuditEvents CapabilityGrantAuditLog[]
 
   @@index([registrarEntryId, status])
@@ -186,18 +207,18 @@ model RegistrarCode {
 }
 
 model UserCapabilityGrant {
-  id                    String   @id @default(uuid())
-  userId                String
-  capability            String
-  status                String   @default("active") // active, revoked
+  id                     String    @id @default(uuid())
+  userId                 String
+  capability             String
+  status                 String    @default("active") // active, revoked
   sourceRegistrarEntryId String?
-  sourceRegistrarCodeId String?
-  grantedAt             DateTime @default(now())
-  revokedAt             DateTime?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  sourceRegistrarCodeId  String?
+  grantedAt              DateTime  @default(now())
+  revokedAt              DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
-  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   sourceRegistrarEntry RegistrarEntry? @relation(fields: [sourceRegistrarEntryId], references: [id], onDelete: SetNull)
   sourceRegistrarCode  RegistrarCode?  @relation(fields: [sourceRegistrarCodeId], references: [id], onDelete: SetNull)
 
@@ -209,19 +230,19 @@ model UserCapabilityGrant {
 }
 
 model CapabilityGrantAuditLog {
-  id              String   @id @default(uuid())
-  capability      String
-  action          String
-  actorType       String   @default("system")
-  targetUserId    String?
-  actorUserId     String?
+  id               String   @id @default(uuid())
+  capability       String
+  action           String
+  actorType        String   @default("system")
+  targetUserId     String?
+  actorUserId      String?
   registrarEntryId String?
-  registrarCodeId String?
-  metadata        Json?
-  createdAt       DateTime @default(now())
+  registrarCodeId  String?
+  metadata         Json?
+  createdAt        DateTime @default(now())
 
-  targetUser     User?          @relation("CapabilityAuditTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
-  actorUser      User?          @relation("CapabilityAuditActorUser", fields: [actorUserId], references: [id], onDelete: SetNull)
+  targetUser     User?           @relation("CapabilityAuditTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  actorUser      User?           @relation("CapabilityAuditActorUser", fields: [actorUserId], references: [id], onDelete: SetNull)
   registrarEntry RegistrarEntry? @relation(fields: [registrarEntryId], references: [id], onDelete: SetNull)
   registrarCode  RegistrarCode?  @relation(fields: [registrarCodeId], references: [id], onDelete: SetNull)
 
@@ -232,23 +253,23 @@ model CapabilityGrantAuditLog {
 }
 
 model RegistrarArtistMember {
-  id              String   @id @default(uuid())
-  registrarEntryId String
-  name            String
-  email           String
-  city            String
-  instrument      String
-  existingUserId  String?
-  claimedUserId   String?
-  inviteStatus    String   @default("pending_email") // pending_email, existing_user, sent, failed
-  inviteToken     String?
+  id                   String    @id @default(uuid())
+  registrarEntryId     String
+  name                 String
+  email                String
+  city                 String
+  instrument           String
+  existingUserId       String?
+  claimedUserId        String?
+  inviteStatus         String    @default("pending_email") // pending_email, existing_user, sent, failed
+  inviteToken          String?
   inviteTokenExpiresAt DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  registrarEntry RegistrarEntry @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
-  existingUser   User?          @relation("RegistrarExistingUser", fields: [existingUserId], references: [id], onDelete: SetNull)
-  claimedUser    User?          @relation("RegistrarClaimedUser", fields: [claimedUserId], references: [id], onDelete: SetNull)
+  registrarEntry RegistrarEntry            @relation(fields: [registrarEntryId], references: [id], onDelete: Cascade)
+  existingUser   User?                     @relation("RegistrarExistingUser", fields: [existingUserId], references: [id], onDelete: SetNull)
+  claimedUser    User?                     @relation("RegistrarClaimedUser", fields: [claimedUserId], references: [id], onDelete: SetNull)
   deliveries     RegistrarInviteDelivery[]
 
   @@unique([registrarEntryId, email])
@@ -260,14 +281,14 @@ model RegistrarArtistMember {
 }
 
 model RegistrarInviteDelivery {
-  id                     String   @id @default(uuid())
-  registrarArtistMemberId String   @unique
-  email                  String
-  status                 String   @default("queued") // queued, sent, failed
-  payload                Json
-  dispatchedAt           DateTime?
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id                      String    @id @default(uuid())
+  registrarArtistMemberId String    @unique
+  email                   String
+  status                  String    @default("queued") // queued, sent, failed
+  payload                 Json
+  dispatchedAt            DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
   registrarArtistMember RegistrarArtistMember @relation(fields: [registrarArtistMemberId], references: [id], onDelete: Cascade)
 
@@ -318,29 +339,29 @@ model CommunityMember {
 }
 
 model Track {
-  id            String   @id @default(uuid())
-  title         String
-  artist        String
-  artistBandId  String?
-  album         String?
-  duration      Float // in seconds
-  fileUrl       String
-  coverArt      String?
-  waveformData  Json?
-  uploadedById  String
-  communityId   String?
-  playCount     Int      @default(0)
-  likeCount     Int      @default(0)
-  status        String   @default("processing") // processing, ready, failed
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(uuid())
+  title        String
+  artist       String
+  artistBandId String?
+  album        String?
+  duration     Float // in seconds
+  fileUrl      String
+  coverArt     String?
+  waveformData Json?
+  uploadedById String
+  communityId  String?
+  playCount    Int      @default(0)
+  likeCount    Int      @default(0)
+  status       String   @default("processing") // processing, ready, failed
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  uploadedBy    User             @relation(fields: [uploadedById], references: [id])
-  artistBand    ArtistBand?      @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
-  community     Community?       @relation(fields: [communityId], references: [id])
-  engagements   TrackEngagement[]
+  uploadedBy      User              @relation(fields: [uploadedById], references: [id])
+  artistBand      ArtistBand?       @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
+  community       Community?        @relation(fields: [communityId], references: [id])
+  engagements     TrackEngagement[]
   rotationEntries RotationEntry[]
-  trackVotes    TrackVote[]
+  trackVotes      TrackVote[]
 
   @@index([artistBandId])
   @@map("tracks")
@@ -348,16 +369,16 @@ model Track {
 
 // Engagement events for Fair Play scoring (Canon: 3/2/1/0 model)
 model TrackEngagement {
-  id          String   @id @default(uuid())
-  userId      String
-  trackId     String
-  type        String   // full, majority, partial, skip (validated in app layer)
-  score       Int      // 3, 2, 1, 0 per Canon - derived from type
-  sessionId   String   // playback session identifier for spam prevention
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  trackId   String
+  type      String // full, majority, partial, skip (validated in app layer)
+  score     Int // 3, 2, 1, 0 per Canon - derived from type
+  sessionId String // playback session identifier for spam prevention
+  createdAt DateTime @default(now())
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  track       Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
   @@unique([userId, trackId, sessionId])
   @@index([trackId, createdAt])
@@ -381,8 +402,8 @@ model RotationEntry {
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
-  track           Track        @relation(fields: [trackId], references: [id], onDelete: Cascade)
-  scene           Community    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  track Track     @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  scene Community @relation(fields: [sceneId], references: [id], onDelete: Cascade)
 
   @@unique([trackId, sceneId])
   @@index([sceneId, pool, recurrenceScore])
@@ -391,17 +412,17 @@ model RotationEntry {
 }
 
 model TrackVote {
-  id                String    @id @default(uuid())
+  id                String   @id @default(uuid())
   userId            String
   trackId           String
   sceneId           String
   tier              String
   playbackSessionId String
-  createdAt         DateTime  @default(now())
+  createdAt         DateTime @default(now())
 
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  track             Track     @relation(fields: [trackId], references: [id], onDelete: Cascade)
-  scene             Community @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track Track     @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  scene Community @relation(fields: [sceneId], references: [id], onDelete: Cascade)
 
   @@unique([userId, trackId, sceneId, tier])
   @@index([sceneId, tier, createdAt])
@@ -416,9 +437,9 @@ model Signal {
   createdById String?
   createdAt   DateTime @default(now())
 
-  community Community? @relation(fields: [communityId], references: [id])
-  createdBy User?      @relation(fields: [createdById], references: [id])
-  actions   SignalAction[]
+  community       Community?       @relation(fields: [communityId], references: [id])
+  createdBy       User?            @relation(fields: [createdById], references: [id])
+  actions         SignalAction[]
   collectionItems CollectionItem[]
 
   @@map("signals")
@@ -439,11 +460,11 @@ model SignalAction {
 }
 
 model Follow {
-  id          String   @id @default(uuid())
-  followerId  String
-  entityType  String
-  entityId    String
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  followerId String
+  entityType String
+  entityId   String
+  createdAt  DateTime @default(now())
 
   follower User @relation(fields: [followerId], references: [id])
 
@@ -457,7 +478,7 @@ model Collection {
   userId    String
   createdAt DateTime @default(now())
 
-  user  User @relation(fields: [userId], references: [id])
+  user  User             @relation(fields: [userId], references: [id])
   items CollectionItem[]
 
   @@unique([userId, name])
@@ -496,8 +517,8 @@ model Event {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  community Community @relation(fields: [communityId], references: [id])
-  createdBy User      @relation(fields: [createdById], references: [id])
+  community  Community   @relation(fields: [communityId], references: [id])
+  createdBy  User        @relation(fields: [createdById], references: [id])
   artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
 
   @@index([artistBandId])
@@ -505,26 +526,26 @@ model Event {
 }
 
 model FairPlayConfig {
-  id                               String   @id @default(uuid())
-  scope                            String   @unique @default("global")
-  recurrenceReorderHours           Int?
-  recurrenceRollingWindowDays      Int?
-  bandPersistDays                  Int?
-  newWindowBandLowMaxActive        Int?
-  newWindowBandLowDays             Int?
-  newWindowBandMidMinActive        Int?
-  newWindowBandMidMaxActive        Int?
-  newWindowBandMidDays             Int?
-  newWindowBandHighMinActive       Int?
-  newWindowBandHighDays            Int?
-  graduationMinAgeDays             Int?
-  graduationExecutionCadenceDays   Int?
-  graduationCapPerRun              Int?
-  propagationMinUniqueListeners    Int?
-  propagationRateThreshold         Float?
-  propagationConfidenceGate        Float?
-  createdAt                        DateTime @default(now())
-  updatedAt                        DateTime @updatedAt
+  id                             String   @id @default(uuid())
+  scope                          String   @unique @default("global")
+  recurrenceReorderHours         Int?
+  recurrenceRollingWindowDays    Int?
+  bandPersistDays                Int?
+  newWindowBandLowMaxActive      Int?
+  newWindowBandLowDays           Int?
+  newWindowBandMidMinActive      Int?
+  newWindowBandMidMaxActive      Int?
+  newWindowBandMidDays           Int?
+  newWindowBandHighMinActive     Int?
+  newWindowBandHighDays          Int?
+  graduationMinAgeDays           Int?
+  graduationExecutionCadenceDays Int?
+  graduationCapPerRun            Int?
+  propagationMinUniqueListeners  Int?
+  propagationRateThreshold       Float?
+  propagationConfidenceGate      Float?
+  createdAt                      DateTime @default(now())
+  updatedAt                      DateTime @updatedAt
 
   @@map("fair_play_config")
 }
