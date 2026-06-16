@@ -6,7 +6,11 @@
 ---
 
 ## [Unreleased]
+
 ### Added
+
+- Added `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md` as a reusable read-only Hermes audit role, including branch/worktree pre-checks, authority order, safety boundaries, lane-loading rules, and the current launch-community / listener-facing Artist Profile / source-separation audit prompt.
+- Added the MVP city-tier launch matrix for Home Scene preload planning: `6` launch cities x `8` launch music communities = `48` city/music-community tuples, with an explicit invariant that location and music-community identity never change Home Scene architecture; Sects, generated channels, and sub-communities are later Prime-model output, not launch-time one-offs.
 - Added a systems-scale non-negotiable for agents and contributors: no runtime one-offs for a specific city, music community, artist, source, or fixture unless explicitly marked fixture-only/test-only; implementation decisions must scale across the full city/community/source matrix.
 - Added the first live Fly API staging deployment path for `apps/api`: `.dockerignore`, `apps/api/Dockerfile`, and `fly.api.staging.toml`, including production-package Prisma client handling for `pnpm deploy --prod`.
 - Completed first hosted staging provider wiring: Vercel project `uprise-web-staging` is connected to GitHub, `NEXT_PUBLIC_API_URL` points at the Fly API for this PR preview branch and production, Neon `uprise_staging` has verified PostGIS, and Fly `uprise-api-staging` passes `/health/live`, `/health/db`, `/health/postgis`, and `/health/ready`.
@@ -42,6 +46,8 @@
 - Added `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` and wired it into the repo's external-assistant workflow layer so Abacus/delegation/design tools now inherit explicit context-acquisition, critical-decision pause, verification, anti-trope, and originality rules without importing third-party system prompts wholesale; see `docs/handoff/2026-04-21_external-agent-hardening-patterns.md`.
 
 ### Changed
+
+- Updated the onboarding Music Community selector and seed docs to the founder-approved MVP launch list: Punk, Electronic, Noise, Spoken Word / Poetry, Indie, Folk, Singer-Songwriter, and Hip-Hop; the broader taxonomy remains internal reference only.
 - Fixed `/onboarding` so approved Music Community choices render visible option labels instead of blank dropdown rows, and added a regression lock to preserve the selection-only parent-community rule.
 - Moved historical mobile/screenshot UX docs out of the `UI_CURRENT` current-lock list and into an explicit companion/reference section, with a regression lock so design agents load current Home/Plot authority before legacy visual references; see `docs/handoff/2026-06-16_ui-brief-reference-routing.md`.
 - Reframed the retained promotions read seam as deferred/non-tab infrastructure in the economy spec and Plot tab contract tests so future agents do not treat `Promotions` as a current MVP Plot tab; see `docs/handoff/2026-06-16_promotions-deferred-contract.md`.
@@ -1693,6 +1699,7 @@
 - Signals data model, signal actions (ADD/BLAST/SUPPORT), follows, and collections.
 
 ### Changed
+
 - Registrar enforcement now validates artist registration submissions against Home Scene and city-tier scope in API service logic.
 - Identity implementation now uses canonical Artist/Band entity persistence as the primary model foundation while keeping `User.isArtist` transitional for compatibility.
 - Identity model correction (canon-alignment):
@@ -1774,6 +1781,7 @@
   - Added Scene Map policy locks to `docs/specs/DECISIONS_REQUIRED.md` (aggregation windows, geo privacy floor, tier rollup continuity).
 
 ### Fixed
+
 - API test DB fallback now matches local Docker PostGIS defaults in `apps/api/test/setup.ts` (`uprise/uprise_dev_password@localhost:5432/uprise_dev`) to prevent false auth failures during full-suite runs.
 - Jest tooling installed for `apps/web`, `apps/api`, and `apps/socket` so `pnpm run test` works.
 - Web-tier typecheck error in `apps/web/__tests__/web-tier-guard.test.ts`.
@@ -1787,7 +1795,9 @@
 ---
 
 ## 2025-11-13
+
 ### Added (T6)
+
 - **PostGIS API Endpoints for Communities:**
   - `GET /api/communities/nearby` - Find communities within radius using PostGIS ST_DWithin
   - `POST /api/communities/:id/verify-location` - Verify user location within geofence
@@ -1799,17 +1809,20 @@
   - Added `docs/T6_IMPLEMENTATION_SUMMARY.md` with complete implementation details
 
 ### Fixed (T6)
+
 - TypeScript errors related to Prisma Unsupported geofence field
 - Route path from `/api/communities/nearby/search` to `/api/communities/nearby`
 - Health service HealthStatus interface export issue
 - ZodQuery decorator TypeScript compatibility
 
 ### Changed (T6)
+
 - Refactored geofence operations to use raw SQL queries
 - Updated communities service with proper PostGIS handling
 - Improved error messages for geospatial operations
 
 ### Technical (T6)
+
 - PostGIS functions: ST_GeogFromText, ST_DWithin, ST_Distance, ST_X, ST_Y
 - Raw SQL queries for geography type handling
 - Coordinate validation: lat (-90 to 90), lng (-180 to 180)
@@ -1818,15 +1831,19 @@
 ---
 
 ## 2025-11-12
+
 ### Added
+
 - Phase 1 foundation documented: `PHASE1_COMPLETION_REPORT.md`.
 - Critical infrastructure directive: `STRATEGY_CRITICAL_INFRA_NOTE.md`.
 - Operational playbooks: `RUNBOOK.md`, `ENVIRONMENTS.md`, `PROJECT_STRUCTURE.md`.
 
 ### Changed
+
 - Established strict web-tier boundary contract and documented PR rules.
 
 ### Notes
+
 - CI should include a job to append merged PR titles grouped by date and labels to this file.
 
 - Lane E QA/docs consolidation complete (SLICE-QAREV-232A): passing consolidated gate replay documented in `docs/handoff/2026-02-27_SLICE-QAREV-232A.md`.
@@ -1897,7 +1914,6 @@
 - Lane E batch12 slice complete (SLICE-QAREV-363A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-363A.md`.
 
 - Lane E batch12 slice complete (SLICE-QAREV-364A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-364A.md`.
-
 
 - Lane E batch12 slice complete (SLICE-QAREV-365A): scope report + exact output in `docs/handoff/2026-02-28_SLICE-QAREV-365A.md`.
 
@@ -2043,7 +2059,6 @@
 
 - Batch23 QA replay reconciliation (2026-03-18): re-queued and completed `SLICE-UXQAREV-782A` after replay verify passed (`docs:lint`, infra-policy-check, targeted web tests, web/api typecheck); see `docs/handoff/2026-03-18_SLICE-UXQAREV-782A.md`.
 
-
 - Batch26 prep (2026-03-19): added `docs/solutions/MVP_UX_BATCH26_EXECUTION_PLAN.md`, created lane queues `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch26.json`, and recorded prep handoff `docs/handoff/2026-03-19_batch26-ux-queues-and-plan.md`.
 
 - Batch25 prep (2026-03-19): added `docs/solutions/MVP_UX_BATCH25_EXECUTION_PLAN.md`, created lane queues `.reliant/queue/mvp-lane-{a,b,c,d,e}-ux-*-batch25.json`, and recorded prep handoff `docs/handoff/2026-03-19_batch25-ux-queues-and-plan.md`.
@@ -2071,6 +2086,6 @@
 - Discover/Plot auth-state hardening (2026-03-23): persisted scene context immediately after onboarding Home Scene selection, stopped Discover from exposing dead-end community entry without auth, and replaced false Plot read failures with explicit sign-in-required states across Feed/Events/Promotions/Statistics panels.
 
 - Batch27 closeout prep (2026-03-23): added `docs/solutions/MVP_UX_BATCH27_EXECUTION_PLAN.md` to frame the next 5-lane pass as remaining-work QA/bugfix/readiness closure on top of the already-complete Discover/runtime branch state; see `docs/handoff/2026-03-23_batch27-closeout-plan.md`.
-- Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out  history state, and added  to remove persistent route QA noise; see .
+- Discover verification + runtime cleanup (2026-03-23): verified end-to-end Discover travel/community/artist/song handoff with real local fixtures, fixed misleading signed-out history state, and added to remove persistent route QA noise; see .
 
 - Plot pioneer follow-up discoverability (2026-03-24): persisted pioneer follow-up context from onboarding and exposed the locked onboarding follow-up message from the existing `/plot` notification icon, with focused onboarding/plot regression coverage; see `docs/handoff/2026-03-24_plot-pioneer-follow-up-notification-fix.md`.

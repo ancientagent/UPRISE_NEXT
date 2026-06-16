@@ -6,16 +6,24 @@
 **Last Updated:** `2026-03-02`
 
 ## Overview & Purpose
+
 Defines the onboarding flow for selecting a Home Scene and deterministic resolution/routing when a selected city-tier scene is inactive.
 
 ## User Roles & Use Cases
+
 - New Listener selects a Home Scene during onboarding.
 - Listener denies GPS and still participates without voting.
 - User enters a city/community not in DB and is treated as a pioneer.
 
 ## Functional Requirements
+
 - Onboarding asks for local scene context using **City**, **State**, and **Music Community**.
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
+- Current MVP launch selection uses the implementation list in `docs/specs/seed/music-communities.json`.
+- Current MVP launch matrix is defined in `docs/specs/seed/launch-community-city-matrix.json` as `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples.
+- Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change runtime screens, menus, tabs, actions, player behavior, or routing.
+- Sects, generated channels, and sub-communities are created later through the Prime model, not through bespoke launch seed behavior.
+- Missing-music-community requests are intake only: they do not create selectable onboarding options or live city-tier scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.
 - Taste tags are **not** collected during onboarding; they are configured after entering Home Scene.
 - Home Scene selection is stored regardless of GPS verification.
 - Setting a Home Scene auto-joins the resolved city-tier Scene membership.
@@ -27,6 +35,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Pioneer notification delivery UI is the top-right notification icon in the profile strip (next to the `...` settings menu).
 
 ### Implemented Resolution Logic
+
 - Input:
   - `city`, `state`, `musicCommunity`
 - Resolution:
@@ -39,24 +48,29 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - After loading user into Home Scene context, trigger pioneer informational notification (in-app + transactional notification path) stating fallback scene and pioneer tracking.
 
 ### GPS Verification Semantics (Implemented)
+
 - Verification checks user coordinates against Home Scene geofence/radius.
 - When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats the user as GPS-verified for voting eligibility.
 - Voting is enabled only when user is within geofence.
 - If no Home Scene or geofence, coordinates are stored but `gpsVerified=false`.
 
 ## Non-Functional Requirements
+
 - Clarity: onboarding copy must avoid “genre selection” framing.
 - Consistency: Home Scene is represented as city+state+music community.
 - Safety: GPS is never required for non-civic participation.
 - Determinism: fallback routing and pioneer messaging must be deterministic and explainable.
 
 ## Architectural Boundaries
+
 - Canon definitions come from `docs/canon/`.
 - Voting is the only action gated by GPS verification.
 - Web tier stores local onboarding state but uses API for authoritative server persistence when authenticated.
 
 ## Data Models & Migrations
+
 ### Prisma Models
+
 - `User`
   - `homeSceneCity`
   - `homeSceneState`
@@ -70,18 +84,22 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - `UserTag`
 
 ### Migrations
+
 - `20260213154237_add_scene_and_sect_tags`
 - `20260216004000_add_user_home_scene_and_track_engagement`
 
 ## API Design
+
 ### Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/onboarding/home-scene` | required | Resolve/create Home Scene, persist user affinity, auto-join Scene |
-| POST | `/onboarding/gps-verify` | required | Verify geofence and set voting eligibility |
-| GET | `/communities/resolve-home` | required | Resolve exact Home Scene tuple for Plot/community anchoring |
+
+| Method | Path                        | Auth     | Description                                                       |
+| ------ | --------------------------- | -------- | ----------------------------------------------------------------- |
+| POST   | `/onboarding/home-scene`    | required | Resolve/create Home Scene, persist user affinity, auto-join Scene |
+| POST   | `/onboarding/gps-verify`    | required | Verify geofence and set voting eligibility                        |
+| GET    | `/communities/resolve-home` | required | Resolve exact Home Scene tuple for Plot/community anchoring       |
 
 ### Request/Response
+
 - `POST /onboarding/home-scene` request:
   - `city: string`
   - `state: string`
@@ -109,6 +127,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
     - `OUTSIDE_GEOFENCE`
 
 ## Web UI / Client Behavior
+
 - `apps/web/src/app/onboarding/page.tsx`:
   - captures City/State/Music Community (selection-only parent community)
   - requests GPS with clear voting-only gating copy
@@ -122,6 +141,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - persists local onboarding state (`homeScene`, `gpsStatus`, `votingEligible`, `gpsReason`)
 
 ## Acceptance Tests / Test Plan
+
 - Active existing scene input resolves and persists correctly.
 - Inactive city selection marks pioneer intent and auto-routes user to nearest active city scene for selected parent community.
 - Pioneer routing returns deterministic nearest active scene label in onboarding review.
@@ -131,9 +151,11 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Geofence miss returns `OUTSIDE_GEOFENCE` and leaves `gpsVerified=false`.
 
 ## Future Work & Open Questions
+
 - Pioneer incentives/recruitment tooling remains open beyond baseline pioneer notification.
 - Sect uprising motion mechanics remain governed by `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
+
 - `docs/canon/Master Narrative Canon.md`
 - `docs/canon/Master Glossary Canon.md`

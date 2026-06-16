@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "status": "active-launch-matrix",
+  "description": "MVP city-tier Home Scene launch matrix. This file defines which city + state + music community tuples should be operationally opened first. It is implementation support only and does not override canon.",
+  "architectureRule": "Home Scene architecture is invariant. City and music-community identity change scene data, membership, content, activity, and later generated Prime-model structures; they must not change Home/Plot/Events/Archive/player/action architecture, tabs, menus, routing, or runtime behavior.",
+  "tiers": {
+    "launchTier": "city",
+    "deferred": ["state", "national"]
+  },
+  "cities": [
+    {
+      "city": "Austin",
+      "state": "Texas",
+      "launchOpen": true
+    },
+    {
+      "city": "Houston",
+      "state": "Texas",
+      "launchOpen": true
+    },
+    {
+      "city": "Dallas",
+      "state": "Texas",
+      "launchOpen": true
+    },
+    {
+      "city": "Los Angeles",
+      "state": "California",
+      "launchOpen": true
+    },
+    {
+      "city": "San Francisco",
+      "state": "California",
+      "launchOpen": true
+    },
+    {
+      "city": "San Diego",
+      "state": "California",
+      "launchOpen": true
+    }
+  ],
+  "musicCommunities": [
+    "Punk",
+    "Electronic",
+    "Noise",
+    "Spoken Word / Poetry",
+    "Indie",
+    "Folk",
+    "Singer-Songwriter",
+    "Hip-Hop"
+  ],
+  "expectedCityTierSceneCount": 48,
+  "missingCommunityRequests": {
+    "selectableDuringOnboarding": false,
+    "createsSceneImmediately": false,
+    "reviewEligibility": "Requires repeated submissions from distinct people in distinct cities before review eligibility. Users still choose one of the approved launch communities to complete onboarding."
+  }
+}
