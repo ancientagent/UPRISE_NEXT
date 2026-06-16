@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added an API-owned launch community preload seed path for the `48` city-tier Home Scene tuples, including a deterministic system owner, tuple-based idempotent create/update behavior, a Prisma seed hook, and unit coverage that does not touch a live database.
 - Added `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md` as a reusable read-only Hermes audit role, including branch/worktree pre-checks, authority order, safety boundaries, lane-loading rules, and the current launch-community / listener-facing Artist Profile / source-separation audit prompt.
 - Added the MVP city-tier launch matrix for Home Scene preload planning: `6` launch cities x `8` launch music communities = `48` city/music-community tuples, with an explicit invariant that location and music-community identity never change Home Scene architecture; Sects, generated channels, and sub-communities are later Prime-model output, not launch-time one-offs.
 - Added a systems-scale non-negotiable for agents and contributors: no runtime one-offs for a specific city, music community, artist, source, or fixture unless explicitly marked fixture-only/test-only; implementation decisions must scale across the full city/community/source matrix.
