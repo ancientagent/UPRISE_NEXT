@@ -31,6 +31,7 @@ Also fixed during live smoke:
 - `apps/api/src/common/pipes/zod-validation.pipe.ts`
 - `apps/api/test/launch-community-seed.test.ts`
 - `apps/api/test/zod-validation.pipe.test.ts`
+- `apps/web/__tests__/launch-community-matrix.test.ts`
 - `docs/CHANGELOG.md`
 - `docs/agent-briefs/ONBOARDING_HOME_SCENE.md`
 - `docs/specs/seed/README.md`
@@ -54,6 +55,8 @@ Launch cities in `docs/specs/seed/launch-community-city-matrix.json` now carry:
 
 The seed writes geofences with `ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)::geography` and `radius` in meters.
 
+The web launch-matrix lock now preserves the old city/state/order and `48`-tuple assertions while explicitly allowing and validating the geofence metadata as seed data, not architecture variants.
+
 ## Local Verification
 
 RED/GREEN seed tests:
@@ -67,6 +70,7 @@ RED/GREEN Zod pipe tests:
 - Initial RED reproduced route-param validation drift: method-level body schema rejected a route param string.
 - GREEN: `pnpm --filter api test -- zod-validation.pipe.test.ts --runInBand`
 - GREEN: `pnpm --filter api test -- launch-community-seed.test.ts onboarding.home-scene-resolution.test.ts fair-play.vote.test.ts --runInBand`
+- GREEN: `pnpm --filter web test -- launch-community-matrix.test.ts --runInBand`
 - GREEN: `pnpm --filter api typecheck`
 
 ## Neon Staging Geofence Update
