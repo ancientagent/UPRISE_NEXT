@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 ### Added
+- Added a systems-scale non-negotiable for agents and contributors: no runtime one-offs for a specific city, music community, artist, source, or fixture unless explicitly marked fixture-only/test-only; implementation decisions must scale across the full city/community/source matrix.
 - Added the first live Fly API staging deployment path for `apps/api`: `.dockerignore`, `apps/api/Dockerfile`, and `fly.api.staging.toml`, including production-package Prisma client handling for `pnpm deploy --prod`.
 - Completed first hosted staging provider wiring: Vercel project `uprise-web-staging` is connected to GitHub, `NEXT_PUBLIC_API_URL` points at the Fly API for this PR preview branch and production, Neon `uprise_staging` has verified PostGIS, and Fly `uprise-api-staging` passes `/health/live`, `/health/db`, `/health/postgis`, and `/health/ready`.
 - Added `apps/web/vercel.json` for the `uprise-web-staging` monorepo web build, mirroring Vercel's `apps/web` root-directory setup without overriding the Next.js output directory.

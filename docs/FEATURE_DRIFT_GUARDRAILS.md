@@ -15,6 +15,7 @@ Examples:
 - Introducing a new database model/migration without a spec update.
 - Implementing UI flows that imply new backend behavior without a corresponding contract.
 - Bypassing architectural boundaries (e.g., web tier importing server/data modules).
+- Solving a flow as a one-off for a specific city, music community, artist, or fixture instead of the reusable system.
 
 ---
 
@@ -32,6 +33,7 @@ Examples:
 - New auth/roles/permissions semantics without an approved spec.
 - Web-tier violations (DB access, secrets, server-only imports).
 - Placeholder CTAs for unapproved capabilities (e.g., `Coming Soon` action buttons that imply unsupported workflows).
+- Runtime one-offs for a particular city/music community/source unless explicitly fixture-only or test-only.
 
 Approved placeholder exception:
 - A disabled placeholder is allowed only when a current active spec or founder lock explicitly authorizes that exact deferred state.
@@ -59,6 +61,7 @@ If the relevant spec does not exist:
 
 - [ ] I can point to the spec that authorizes this work (`docs/specs/...` or `docs/Specifications/...`).
 - [ ] Every new user-facing action has explicit spec authorization (no implicit/placeholder workflows).
+- [ ] The implementation scales across the full `city + state + music community` matrix and does not special-case one launch community.
 - [ ] Web-tier boundary is respected (`apps/web/WEB_TIER_BOUNDARY.md`).
 - [ ] Any shared contract changes are reflected in `packages/types` (and regenerated where applicable).
 - [ ] PR description will include: Deployment Target, Phase, Specs links, and source agent tag.
