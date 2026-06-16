@@ -41,6 +41,7 @@
 - Added `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` and wired it into the repo's external-assistant workflow layer so Abacus/delegation/design tools now inherit explicit context-acquisition, critical-decision pause, verification, anti-trope, and originality rules without importing third-party system prompts wholesale; see `docs/handoff/2026-04-21_external-agent-hardening-patterns.md`.
 
 ### Changed
+- Fixed `/onboarding` so approved Music Community choices render visible option labels instead of blank dropdown rows, and added a regression lock to preserve the selection-only parent-community rule.
 - Moved historical mobile/screenshot UX docs out of the `UI_CURRENT` current-lock list and into an explicit companion/reference section, with a regression lock so design agents load current Home/Plot authority before legacy visual references; see `docs/handoff/2026-06-16_ui-brief-reference-routing.md`.
 - Reframed the retained promotions read seam as deferred/non-tab infrastructure in the economy spec and Plot tab contract tests so future agents do not treat `Promotions` as a current MVP Plot tab; see `docs/handoff/2026-06-16_promotions-deferred-contract.md`.
 - Fixed artist-profile song-driven handoffs so `?signalId=` changes refresh the selected demo row memoization instead of reusing stale track ordering; see `docs/handoff/2026-06-16_artist-profile-signal-handoff-deps.md`.

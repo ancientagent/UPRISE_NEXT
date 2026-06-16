@@ -427,7 +427,9 @@ export default function OnboardingPage() {
               >
                 <option value="">Select an approved parent music community</option>
                 {MUSIC_COMMUNITIES.map((community) => (
-                  <option key={community} value={community} />
+                  <option key={community} value={community}>
+                    {community}
+                  </option>
                 ))}
               </select>
               <p className="text-xs text-black/50">
