@@ -50,6 +50,8 @@
 
 ### Changed
 
+- Split pioneer fallback GPS authority from fallback voting authority: exact active Home Scenes still verify against their geofence, while inactive/unavailable submitted Home Scenes now verify the user's submitted city/state locality and keep `tunedSceneId` as the resolved active voting anchor.
+
 - Added launch geofence seeding for the `48` active city-tier Home Scene tuples, using one city-center `geography(Point, 4326)` plus `50000` meter voting radius per launch city, and verified exact Home Scene GPS voting plus pioneer fallback voting against Fly API staging and Neon/PostGIS; see `docs/handoff/2026-06-16_launch-geofence-gps-voting-readiness.md`.
 
 - Fixed method-level `ZodBody` validation so body schemas no longer validate route params, restoring `POST /tracks/:id/vote` on the hosted API while preserving body validation coverage; see `docs/handoff/2026-06-16_launch-geofence-gps-voting-readiness.md`.

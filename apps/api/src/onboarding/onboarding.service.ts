@@ -6,6 +6,67 @@ import type {
   GpsVerifyDto,
   MusicCommunityRequestDto,
 } from './dto/onboarding.dto';
+import { PlacesService } from '../places/places.service';
+
+const US_STATE_ABBREVIATIONS: Record<string, string> = {
+  Alabama: 'AL',
+  Alaska: 'AK',
+  Arizona: 'AZ',
+  Arkansas: 'AR',
+  California: 'CA',
+  Colorado: 'CO',
+  Connecticut: 'CT',
+  Delaware: 'DE',
+  Florida: 'FL',
+  Georgia: 'GA',
+  Hawaii: 'HI',
+  Idaho: 'ID',
+  Illinois: 'IL',
+  Indiana: 'IN',
+  Iowa: 'IA',
+  Kansas: 'KS',
+  Kentucky: 'KY',
+  Louisiana: 'LA',
+  Maine: 'ME',
+  Maryland: 'MD',
+  Massachusetts: 'MA',
+  Michigan: 'MI',
+  Minnesota: 'MN',
+  Mississippi: 'MS',
+  Missouri: 'MO',
+  Montana: 'MT',
+  Nebraska: 'NE',
+  Nevada: 'NV',
+  'New Hampshire': 'NH',
+  'New Jersey': 'NJ',
+  'New Mexico': 'NM',
+  'New York': 'NY',
+  'North Carolina': 'NC',
+  'North Dakota': 'ND',
+  Ohio: 'OH',
+  Oklahoma: 'OK',
+  Oregon: 'OR',
+  Pennsylvania: 'PA',
+  'Rhode Island': 'RI',
+  'South Carolina': 'SC',
+  'South Dakota': 'SD',
+  Tennessee: 'TN',
+  Texas: 'TX',
+  Utah: 'UT',
+  Vermont: 'VT',
+  Virginia: 'VA',
+  Washington: 'WA',
+  'West Virginia': 'WV',
+  Wisconsin: 'WI',
+  Wyoming: 'WY',
+};
+
+const US_STATE_NAMES_BY_ABBREVIATION = Object.fromEntries(
+  Object.entries(US_STATE_ABBREVIATIONS).map(([name, abbreviation]) => [
+    abbreviation.toLowerCase(),
+    name.toLowerCase(),
+  ])
+);
 
 function normalizeIntakeText(value: string): string {
   return value.trim().replace(/\s+/g, ' ');
@@ -13,6 +74,12 @@ function normalizeIntakeText(value: string): string {
 
 function normalizeIntakeKey(value: string): string {
   return normalizeIntakeText(value).toLowerCase();
+}
+
+function normalizeStateKey(value: string | null | undefined): string {
+  if (!value) return '';
+  const normalized = normalizeIntakeKey(value);
+  return US_STATE_NAMES_BY_ABBREVIATION[normalized] ?? normalized;
 }
 
 function formatSceneLabel(scene: {
@@ -42,7 +109,10 @@ type ResolvedHomeScene = {
 
 @Injectable()
 export class OnboardingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private placesService?: PlacesService
+  ) {}
 
   private async resolveActiveFallbackScene(
     state: string,
@@ -224,14 +294,14 @@ export class OnboardingService {
       },
       select: { id: true, radius: true, isActive: true },
     });
-    const community = exactCommunity?.isActive
-      ? exactCommunity
-      : user.tunedSceneId
+    const fallbackCommunity =
+      !exactCommunity?.isActive && user.tunedSceneId
         ? await this.prisma.community.findUnique({
             where: { id: user.tunedSceneId },
             select: { id: true, radius: true },
           })
         : null;
+    const community = exactCommunity?.isActive ? exactCommunity : fallbackCommunity;
 
     let within = false;
     let distance: number | null = null;
@@ -239,6 +309,10 @@ export class OnboardingService {
 
     if (!community) {
       reason = 'SCENE_NOT_FOUND';
+    } else if (!exactCommunity?.isActive) {
+      const submittedLocation = await this.verifySubmittedLocation(user, dto);
+      within = submittedLocation.verified;
+      reason = submittedLocation.reason;
     } else {
       // Verify geofence is configured (geofence is Unsupported in Prisma schema, so check via raw SQL).
       const hasGeofence = await this.prisma.$queryRaw<Array<{ has_geofence: boolean }>>`
@@ -291,6 +365,36 @@ export class OnboardingService {
       distance,
       reason,
     };
+  }
+
+  private async verifySubmittedLocation(
+    user: {
+      homeSceneCity: string | null;
+      homeSceneState: string | null;
+    },
+    dto: GpsVerifyDto
+  ): Promise<{ verified: boolean; reason: string | null }> {
+    if (!this.placesService) {
+      return { verified: false, reason: 'SUBMITTED_LOCATION_NOT_VERIFIED' };
+    }
+
+    const submittedCity = normalizeIntakeKey(user.homeSceneCity ?? '');
+    const submittedState = normalizeStateKey(user.homeSceneState);
+    const location = await this.placesService
+      .reverseGeocode(dto.latitude, dto.longitude)
+      .catch(() => ({ city: null, state: null, formattedAddress: null }));
+    const gpsCity = normalizeIntakeKey(location.city ?? '');
+    const gpsState = normalizeStateKey(location.state);
+
+    if (!gpsCity || !gpsState) {
+      return { verified: false, reason: 'SUBMITTED_LOCATION_NOT_VERIFIED' };
+    }
+
+    if (gpsCity !== submittedCity || gpsState !== submittedState) {
+      return { verified: false, reason: 'SUBMITTED_LOCATION_MISMATCH' };
+    }
+
+    return { verified: true, reason: null };
   }
 
   async requestMusicCommunity(userId: string, dto: MusicCommunityRequestDto) {

@@ -32,7 +32,7 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 ### Implemented Now
 - Home Scene is persisted on user profile.
 - GPS verification for voting eligibility is implemented and returns explicit reason codes when verification fails.
-- Unknown Home Scene input creates inactive pioneer community records.
+- Unknown Home Scene input preserves pioneer intent and resolves to an active fallback voting scene; onboarding does not create inactive pioneer `Community` records.
 
 ### Deferred (Not Implemented Yet)
 - Home Scene change cooldown workflow (30-day lock and transfer process).
@@ -63,7 +63,7 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/onboarding/home-scene` | required | Set/resolve Home Scene |
-| POST | `/onboarding/gps-verify` | required | Verify geofence and voting eligibility |
+| POST | `/onboarding/gps-verify` | required | Verify exact Home Scene geofence or submitted-location fallback voting eligibility |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |

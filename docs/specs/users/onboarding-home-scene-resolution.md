@@ -21,7 +21,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
 - Current MVP launch selection uses the implementation list in `docs/specs/seed/music-communities.json`.
 - Current MVP launch matrix is defined in `docs/specs/seed/launch-community-city-matrix.json` as `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples.
-- Current MVP launch geofence readiness uses the city-center point and `50000` meter radius stored on each launch city in `docs/specs/seed/launch-community-city-matrix.json`; every music-community scene in the same launch city inherits that city geofence for voting verification.
+- Current MVP launch geofence readiness uses the city-center point and `50000` meter radius stored on each launch city in `docs/specs/seed/launch-community-city-matrix.json`; every music-community scene in the same launch city inherits that city geofence for exact active Home Scene voting verification.
 - Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change runtime screens, menus, tabs, actions, player behavior, or routing.
 - Sects, generated channels, and sub-communities are created later through the Prime model, not through bespoke launch seed behavior.
 - Missing-music-community requests are intake only: they do not create selectable onboarding options or live city-tier scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.
@@ -33,7 +33,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - If GPS is denied or unavailable, user remains affiliated but cannot vote.
 - If selected city-tier scene is inactive/unavailable, user is auto-routed to nearest active city scene for the selected parent community.
 - Inactive-city onboarding must persist pioneer intent and trigger pioneer notification messaging.
-- If the selected Home Scene is inactive/unavailable, voting applies to the resolved nearest active city-tier community while the submitted city/state/music-community remains preserved as pioneer intent.
+- If the selected Home Scene is inactive/unavailable, GPS verification checks the submitted city/state locality while voting applies to the resolved nearest active city-tier community; the submitted city/state/music-community remains preserved as pioneer intent.
 - Pioneer notification is shown after the user is loaded into Home Scene context (routed nearest active scene when required).
 - Pioneer notification delivery UI is the top-right notification icon in the profile strip (next to the `...` settings menu).
 
@@ -52,11 +52,12 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 
 ### GPS Verification Semantics (Implemented)
 
-- Verification checks user coordinates against Home Scene geofence/radius.
-- When the submitted Home Scene is inactive/unavailable, verification and voting use the resolved active fallback scene.
+- Exact active Home Scene verification checks user coordinates against that Home Scene geofence/radius.
+- When the submitted Home Scene is inactive/unavailable, GPS verification checks the submitted city/state locality by reverse-geocoding the user's coordinates and comparing them to the preserved pioneer intent. It does not verify the user against the resolved fallback community geofence.
+- For inactive/unavailable Home Scenes, voting still uses the resolved active fallback scene stored in `User.tunedSceneId` after submitted locality verification succeeds.
 - Launch geofences are only a voting-readiness locality gate; they are not tier logic, state/national scope logic, discovery radius logic, or a city-specific runtime branch.
 - When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats the user as GPS-verified for voting eligibility.
-- Voting is enabled only when user is within geofence.
+- Voting is enabled only when the exact active Home Scene geofence check or submitted-location locality check succeeds.
 - If no Home Scene or geofence, coordinates are stored but `gpsVerified=false`.
 
 ## Non-Functional Requirements
@@ -101,7 +102,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 | Method | Path                                   | Auth     | Description                                                                         |
 | ------ | -------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
 | POST   | `/onboarding/home-scene`               | required | Resolve Home Scene, persist user affinity, auto-join resolved active Scene          |
-| POST   | `/onboarding/gps-verify`               | required | Verify geofence and set voting eligibility                                          |
+| POST   | `/onboarding/gps-verify`               | required | Verify exact Home Scene geofence or submitted-location fallback voting eligibility  |
 | POST   | `/onboarding/music-community-requests` | required | Store missing music-community intake for later review without creating a live Scene |
 | GET    | `/communities/resolve-home`            | required | Resolve exact Home Scene tuple for Plot/community anchoring                         |
 
@@ -134,6 +135,8 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
     - `SCENE_NOT_FOUND`
     - `SCENE_NO_GEOFENCE`
     - `OUTSIDE_GEOFENCE`
+    - `SUBMITTED_LOCATION_NOT_VERIFIED`
+    - `SUBMITTED_LOCATION_MISMATCH`
 
 - `POST /onboarding/music-community-requests` request:
   - `requestedName: string`

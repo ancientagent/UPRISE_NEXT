@@ -17,6 +17,8 @@ describe('/onboarding UX lock', () => {
     expect(onboardingSource).toContain('Selection only from the approved parent communities.');
     expect(onboardingSource).toContain("{isPioneer ? 'Fallback listening scene' : 'Listening scene'}");
     expect(onboardingSource).toContain('stays saved as your Home Scene pioneer intent');
+    expect(onboardingSource).toContain('formatGpsReasonForDisplay');
+    expect(onboardingSource).toContain('Your GPS location does not match your submitted Home Scene.');
     expect(onboardingSource).not.toContain('list="communities"');
   });
 });

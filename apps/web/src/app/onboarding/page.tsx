@@ -17,6 +17,27 @@ import { useAuthStore } from '@/store/auth';
 
 const steps = ['Scene Details', 'Review'];
 
+function formatGpsReasonForDisplay(reason?: string | null): string | null {
+  if (!reason) return null;
+
+  switch (reason) {
+    case 'SUBMITTED_LOCATION_MISMATCH':
+      return 'Your GPS location does not match your submitted Home Scene.';
+    case 'SUBMITTED_LOCATION_NOT_VERIFIED':
+      return 'Your submitted Home Scene location could not be verified from GPS.';
+    case 'OUTSIDE_GEOFENCE':
+      return 'Your GPS location is outside the voting boundary for this scene.';
+    case 'SCENE_NO_GEOFENCE':
+      return 'This scene is missing its voting boundary.';
+    case 'SCENE_NOT_FOUND':
+      return 'This scene could not be found for GPS verification.';
+    case 'NO_HOME_SCENE':
+      return 'Choose a Home Scene before verifying GPS for voting.';
+    default:
+      return reason;
+  }
+}
+
 interface ReverseGeocodeResponse {
   city: string | null;
   state: string | null;
@@ -253,10 +274,10 @@ export default function OnboardingPage() {
             if (response.data?.votingEligible) {
               setVotingEligibility(true, null);
             } else {
-              setVotingEligibility(
-                false,
-                response.data?.reason ?? 'GPS did not verify for voting.'
-              );
+              const displayReason =
+                formatGpsReasonForDisplay(response.data?.reason) ??
+                'GPS did not verify for voting.';
+              setVotingEligibility(false, displayReason);
               setGpsError(
                 'GPS did not verify for voting. You can still continue without voting access.'
               );
@@ -634,7 +655,9 @@ export default function OnboardingPage() {
                     Voting is the only action gated by GPS.
                   </p>
                   {!votingEligible && (gpsError || gpsReason) && (
-                    <p className="mt-2 text-sm text-black/50">{gpsError ?? gpsReason}</p>
+                    <p className="mt-2 text-sm text-black/50">
+                      {gpsError ?? formatGpsReasonForDisplay(gpsReason) ?? gpsReason}
+                    </p>
                   )}
                 </div>
 

@@ -176,6 +176,7 @@ Primary authorities:
 
 - `docs/specs/users/onboarding-home-scene-resolution.md`
 - `docs/handoff/2026-06-16_onboarding-fallback-voting-anchor.md`
+- `docs/handoff/2026-06-16_submitted-location-gps-authority.md` when reviewing GPS authority or post-UPR-10 onboarding behavior
 
 Runtime and tests:
 
@@ -193,7 +194,8 @@ Acceptance checks:
 - onboarding fallback does not create inactive `Community` rows
 - response includes `resolvedCitySceneId`, `resolvedCitySceneLabel`, and `pioneerHomeScene`
 - GPS remains required for voting
-- GPS-verified fallback users can vote in the resolved fallback scene
+- exact active Home Scene users verify GPS against the exact scene geofence
+- inactive/unavailable submitted Home Scene users verify GPS against the submitted city/state locality, then vote in the resolved fallback scene
 - GPS verification does not authorize voting in arbitrary visitor scenes
 - implementation does not add city-specific or community-specific one-off logic
 - launch-community seeding remains separate from UPR-10 and is not run during review
