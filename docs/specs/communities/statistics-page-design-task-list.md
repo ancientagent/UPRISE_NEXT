@@ -1,14 +1,16 @@
 # Statistics Page Design Task List
 
 **ID:** `COMM-STATS-DESIGN`  
-**Status:** `active`  
+**Status:** `active design backlog; not current MVP Plot tab`
 **Owner:** `platform`  
 **Last Updated:** `2026-02-16`
 
 ## Purpose
-Creates a non-code task track for designing the Statistics page so progress can continue when engineering capacity is low. This page is the dedicated Scene Map + metrics surface in The Plot.
+
+Creates a non-code task track for designing the later Statistics / Scene Map page so progress can continue when engineering capacity is low. This does **not** authorize a current MVP `Statistics` Plot tab; the current MVP user-facing tab remains `Archive`.
 
 ## Design Guardrails
+
 - Statistics is descriptive only.
 - No ranking, recommendation, or authority assignment.
 - Parent music-community context persists across tier toggles.
@@ -20,6 +22,7 @@ Creates a non-code task track for designing the Statistics page so progress can 
 ## Task Board
 
 ### Phase 1 — Information Architecture
+
 - [ ] Define page sections and reading order:
   - Scene header context
   - Map panel
@@ -31,6 +34,7 @@ Creates a non-code task track for designing the Statistics page so progress can 
 - [ ] Define copy for “descriptive only” analytics framing.
 
 ### Phase 2 — Metrics Catalog (Design Inputs)
+
 - [ ] Finalize city-tier cards:
   - members
   - activity totals
@@ -54,6 +58,7 @@ Creates a non-code task track for designing the Statistics page so progress can 
   - click-through behavior into song/signal detail
 
 ### Phase 3 — Map Behavior and Interaction
+
 - [ ] Define city map interactions:
   - sect overlays
   - local clusters
@@ -67,12 +72,14 @@ Creates a non-code task track for designing the Statistics page so progress can 
 - [ ] Define privacy floor behavior for low-count geography buckets.
 
 ### Phase 4 — Wireframes and UI States
+
 - [ ] Produce low-fidelity wireframes for city/state/national statistics pages.
 - [ ] Produce loading, no-data, and error state layouts.
 - [ ] Produce responsive behavior notes (desktop/tablet/mobile).
 - [ ] Validate labels against canon terminology.
 
 ### Phase 5 — Handoff Readiness
+
 - [ ] Convert design decisions into API contract requirements.
 - [ ] Cross-link required backend endpoints:
   - `GET /communities/:id/statistics`
@@ -83,12 +90,14 @@ Creates a non-code task track for designing the Statistics page so progress can 
 - [ ] Publish a handoff note in `docs/handoff/` when design phase is complete.
 
 ## Dependencies
+
 - `docs/specs/communities/scene-map-and-metrics.md`
 - `docs/specs/communities/plot-and-scene-plot.md`
 - `docs/specs/engagement/activity-points-and-analytics.md`
 - `docs/specs/DECISIONS_REQUIRED.md` (aggregation windows/privacy floor/tier rollup policy)
 
 ## Not In Scope
+
 - Implementing backend endpoints.
 - Implementing frontend components.
 - Finalizing founder-lock numeric thresholds.
