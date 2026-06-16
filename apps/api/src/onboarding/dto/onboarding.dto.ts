@@ -15,3 +15,11 @@ export const GpsVerifySchema = z.object({
 });
 
 export type GpsVerifyDto = z.infer<typeof GpsVerifySchema>;
+
+export const MusicCommunityRequestSchema = z.object({
+  requestedName: z.string().trim().min(2).max(120),
+  city: z.string().trim().min(1).max(120),
+  state: z.string().trim().min(1).max(120),
+});
+
+export type MusicCommunityRequestDto = z.infer<typeof MusicCommunityRequestSchema>;

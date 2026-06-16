@@ -7,6 +7,8 @@ import {
   HomeSceneSelectionDto,
   GpsVerifySchema,
   GpsVerifyDto,
+  MusicCommunityRequestSchema,
+  MusicCommunityRequestDto,
 } from './dto/onboarding.dto';
 
 @Controller('onboarding')
@@ -25,6 +27,13 @@ export class OnboardingController {
   @ZodBody(GpsVerifySchema)
   async verifyGps(@Body() dto: GpsVerifyDto, @Request() req: any) {
     const result = await this.onboardingService.verifyGps(req.user.userId, dto);
+    return { success: true, data: result };
+  }
+
+  @Post('music-community-requests')
+  @ZodBody(MusicCommunityRequestSchema)
+  async requestMusicCommunity(@Body() dto: MusicCommunityRequestDto, @Request() req: any) {
+    const result = await this.onboardingService.requestMusicCommunity(req.user.userId, dto);
     return { success: true, data: result };
   }
 }

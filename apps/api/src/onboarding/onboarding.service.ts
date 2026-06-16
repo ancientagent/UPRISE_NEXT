@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import type { HomeSceneSelectionDto, GpsVerifyDto } from './dto/onboarding.dto';
+import type {
+  HomeSceneSelectionDto,
+  GpsVerifyDto,
+  MusicCommunityRequestDto,
+} from './dto/onboarding.dto';
 
 function slugify(value: string): string {
   return value
@@ -17,6 +21,14 @@ function buildCommunitySlug(city: string, state: string, musicCommunity: string)
   // Ensure non-empty + keep reasonable uniqueness without needing a lookup.
   const suffix = Math.random().toString(36).slice(2, 6);
   return base ? `${base}-${suffix}` : `community-${suffix}`;
+}
+
+function normalizeIntakeText(value: string): string {
+  return value.trim().replace(/\s+/g, ' ');
+}
+
+function normalizeIntakeKey(value: string): string {
+  return normalizeIntakeText(value).toLowerCase();
 }
 
 @Injectable()
@@ -221,6 +233,72 @@ export class OnboardingService {
       votingEligible: updated.gpsVerified,
       distance,
       reason,
+    };
+  }
+
+  async requestMusicCommunity(userId: string, dto: MusicCommunityRequestDto) {
+    const requestedName = normalizeIntakeText(dto.requestedName);
+    const city = normalizeIntakeText(dto.city);
+    const state = normalizeIntakeText(dto.state);
+    const requestedNameNormalized = normalizeIntakeKey(requestedName);
+    const cityNormalized = normalizeIntakeKey(city);
+    const stateNormalized = normalizeIntakeKey(state);
+
+    const request = await this.prisma.musicCommunityRequest.upsert({
+      where: {
+        userId_requestedNameNormalized_cityNormalized_stateNormalized: {
+          userId,
+          requestedNameNormalized,
+          cityNormalized,
+          stateNormalized,
+        },
+      },
+      update: {
+        requestedName,
+        city,
+        state,
+        status: 'submitted',
+      },
+      create: {
+        userId,
+        requestedName,
+        requestedNameNormalized,
+        city,
+        cityNormalized,
+        state,
+        stateNormalized,
+        status: 'submitted',
+      },
+      select: {
+        id: true,
+        requestedName: true,
+        city: true,
+        state: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    const [distinctRequesters, distinctCities] = await Promise.all([
+      this.prisma.musicCommunityRequest.findMany({
+        where: { requestedNameNormalized, status: 'submitted' },
+        distinct: ['userId'],
+        select: { userId: true },
+      }),
+      this.prisma.musicCommunityRequest.findMany({
+        where: { requestedNameNormalized, status: 'submitted' },
+        distinct: ['cityNormalized', 'stateNormalized'],
+        select: { cityNormalized: true, stateNormalized: true },
+      }),
+    ]);
+
+    return {
+      ...request,
+      reviewSignals: {
+        distinctRequesterCount: distinctRequesters.length,
+        distinctCityCount: distinctCities.length,
+      },
     };
   }
 }
