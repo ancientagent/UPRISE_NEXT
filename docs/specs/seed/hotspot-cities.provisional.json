@@ -14,6 +14,12 @@
       "label": "Founder-supplied supplemental hotspot candidates from in-thread direction",
       "url": null,
       "publishedAt": "2026-03-24"
+    },
+    {
+      "id": "founder-supplement-2026-06-16",
+      "label": "Founder-supplied MVP launch city/community matrix direction",
+      "url": null,
+      "publishedAt": "2026-06-16"
     }
   ],
   "cities": [
@@ -85,7 +91,7 @@
       "state": "California",
       "source": "fifty-grande-top-20-2023",
       "rank": 10,
-      "launchOpen": false
+      "launchOpen": true
     },
     {
       "city": "Boston",
@@ -177,6 +183,13 @@
       "source": "founder-supplement-2026-03-24",
       "rank": null,
       "launchOpen": false
+    },
+    {
+      "city": "San Diego",
+      "state": "California",
+      "source": "founder-supplement-2026-06-16",
+      "rank": null,
+      "launchOpen": true
     }
   ]
 }

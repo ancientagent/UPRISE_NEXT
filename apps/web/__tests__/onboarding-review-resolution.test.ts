@@ -8,23 +8,32 @@ import type { DiscoverItem } from '../src/lib/discovery/client';
 describe('onboarding review resolution', () => {
   it('accepts only approved music-community selections', () => {
     expect(normalizeApprovedMusicCommunitySelection(' Punk ')).toBe('Punk');
+    expect(normalizeApprovedMusicCommunitySelection('Noise')).toBe('Noise');
+    expect(normalizeApprovedMusicCommunitySelection('Spoken Word / Poetry')).toBe(
+      'Spoken Word / Poetry'
+    );
+    expect(normalizeApprovedMusicCommunitySelection('Singer-Songwriter')).toBe('Singer-Songwriter');
+    expect(normalizeApprovedMusicCommunitySelection('Hip-Hop')).toBe('Hip-Hop');
     expect(normalizeApprovedMusicCommunitySelection('Bedroom Pop')).toBe('');
+    expect(normalizeApprovedMusicCommunitySelection('Metal')).toBe('');
   });
 
   it('keeps the exact active home-scene tuple when a matching scene is available', async () => {
-    const readScenes = jest.fn<Promise<DiscoverItem[]>, [any, string | undefined]>().mockResolvedValueOnce([
-      {
-        entryType: 'city_scene',
-        sceneId: 'scene-austin-punk',
-        name: 'Austin Punk',
-        city: 'Austin',
-        state: 'Texas',
-        musicCommunity: 'Punk',
-        memberCount: 12,
-        isActive: true,
-        isHomeScene: false,
-      },
-    ]);
+    const readScenes = jest
+      .fn<Promise<DiscoverItem[]>, [any, string | undefined]>()
+      .mockResolvedValueOnce([
+        {
+          entryType: 'city_scene',
+          sceneId: 'scene-austin-punk',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'Texas',
+          musicCommunity: 'Punk',
+          memberCount: 12,
+          isActive: true,
+          isHomeScene: false,
+        },
+      ]);
 
     const result = await resolveOnboardingReviewState(
       {
@@ -33,7 +42,7 @@ describe('onboarding review resolution', () => {
         musicCommunity: 'Punk',
       },
       undefined,
-      readScenes,
+      readScenes
     );
 
     expect(readScenes).toHaveBeenCalledTimes(1);
@@ -106,7 +115,7 @@ describe('onboarding review resolution', () => {
         musicCommunity: 'Punk',
       },
       undefined,
-      readScenes,
+      readScenes
     );
 
     expect(readScenes).toHaveBeenCalledTimes(2);
@@ -144,7 +153,7 @@ describe('onboarding review resolution', () => {
         musicCommunity: 'Punk',
       },
       undefined,
-      readScenes,
+      readScenes
     );
 
     expect(readScenes).toHaveBeenCalledTimes(3);
@@ -161,7 +170,7 @@ describe('onboarding review resolution', () => {
         city: 'Austin',
         state: 'Texas',
         musicCommunity: 'Punk',
-      }),
+      })
     ).toBe('Austin, Texas • Punk');
   });
 });
