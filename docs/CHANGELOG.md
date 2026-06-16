@@ -50,6 +50,8 @@
 
 ### Changed
 
+- Applied the current Prisma migration set to Neon staging and seeded the `48` launch city-tier Home Scene communities into `uprise_staging`, with verification confirming `48` active city-tier rows, one deterministic seed owner, and no state/national rows; see `docs/handoff/2026-06-16_neon-staging-launch-community-seed.md`.
+
 - Aligned server-side onboarding fallback with the active Home Scene spec: inactive or missing submitted scenes now preserve pioneer intent, resolve `tunedSceneId` to the nearest active city-tier scene, avoid creating inactive communities, and allow GPS-verified voting in that fallback scene.
 
 - Clarified active Archive/Event terminology docs so current MVP `Archive` is read-only Top Songs + Scene Activity Snapshot, while `StatisticsPanel` / Scene Map exploration remains retained/future infrastructure rather than a live tab.
