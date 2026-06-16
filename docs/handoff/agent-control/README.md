@@ -15,6 +15,7 @@ Allow one orchestrator agent to assign tasks directly to lane agents, and let la
 - `results/`: optional per-task result artifacts linked from queue rows.
 - `AGENT_DIRECTIVES.md`: lane-specialized prompt templates and parallel guardrails.
 - `CLAW_AUDITOR_PROMPT.md`: standing external-auditor prompt for Claw/Abacus-style repo audits.
+- `HERMES_LAUNCH_REVIEW_SHIM.md`: standing launch-reviewer prompt for Hermes-style post-implementation or post-merge reviews.
 
 ## Command Interface
 Use the root command:
@@ -64,6 +65,8 @@ Common lane ids:
 
 ## External Auditor Workflow (`external-audit`)
 Use this lane when an external repo auditor such as Claw CLI is available but should remain read-heavy and non-authoritative.
+
+Use `HERMES_LAUNCH_REVIEW_SHIM.md` instead of the broad auditor prompt when the task is a post-implementation or post-merge review of one named issue, PR, commit, or launch-readiness slice.
 
 Recommended pattern:
 1. Orchestrator assigns a narrow audit task into `external-audit`.
