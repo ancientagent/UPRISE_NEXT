@@ -9,6 +9,9 @@ export const SYSTEM_COMMUNITY_SEED_OWNER = {
 export interface LaunchCommunityMatrixCity {
   city: string;
   state: string;
+  latitude?: number;
+  longitude?: number;
+  geofenceRadiusMeters?: number;
   launchOpen?: boolean;
 }
 
@@ -37,6 +40,20 @@ export interface LaunchCommunitySeedResult {
   total: number;
 }
 
+export interface LaunchCommunityGeofenceSeedRecord {
+  city: string;
+  state: string;
+  musicCommunity: string;
+  latitude: number;
+  longitude: number;
+  radiusMeters: number;
+}
+
+export interface LaunchCommunityGeofenceSeedResult {
+  updated: number;
+  total: number;
+}
+
 interface LaunchCommunitySeedPrisma {
   user: {
     upsert(args: {
@@ -58,6 +75,10 @@ interface LaunchCommunitySeedPrisma {
     update(args: { where: { id: string }; data: LaunchCommunitySeedRecord }): Promise<unknown>;
     create(args: { data: LaunchCommunitySeedRecord & { createdById: string } }): Promise<unknown>;
   };
+}
+
+interface LaunchCommunityGeofencePrisma {
+  $executeRawUnsafe(query: string, ...values: any[]): Promise<number>;
 }
 
 export function slugifyLaunchCommunity(
@@ -95,6 +116,25 @@ export function buildLaunchCommunitySeedRecords(
   );
 }
 
+export function buildLaunchCommunityGeofenceSeedRecords(
+  matrix: LaunchCommunityMatrix
+): LaunchCommunityGeofenceSeedRecord[] {
+  validateLaunchCommunityMatrix(matrix);
+  validateLaunchCommunityGeofenceMatrix(matrix);
+
+  const launchCities = matrix.cities.filter((city) => city.launchOpen !== false);
+  return launchCities.flatMap((city) =>
+    matrix.musicCommunities.map((musicCommunity) => ({
+      city: city.city,
+      state: city.state,
+      musicCommunity,
+      latitude: city.latitude as number,
+      longitude: city.longitude as number,
+      radiusMeters: city.geofenceRadiusMeters as number,
+    }))
+  );
+}
+
 export function validateLaunchCommunityMatrix(matrix: LaunchCommunityMatrix): void {
   const launchCityCount = matrix.cities.filter((city) => city.launchOpen !== false).length;
   const generatedCount = launchCityCount * matrix.musicCommunities.length;
@@ -103,6 +143,28 @@ export function validateLaunchCommunityMatrix(matrix: LaunchCommunityMatrix): vo
     throw new Error(
       `Launch community matrix expected ${matrix.expectedCityTierSceneCount} city-tier scenes but generated ${generatedCount}`
     );
+  }
+}
+
+export function validateLaunchCommunityGeofenceMatrix(matrix: LaunchCommunityMatrix): void {
+  const launchCities = matrix.cities.filter((city) => city.launchOpen !== false);
+
+  for (const city of launchCities) {
+    if (typeof city.latitude !== 'number' || city.latitude < -90 || city.latitude > 90) {
+      throw new Error(`Launch city ${city.city}, ${city.state} is missing a valid latitude`);
+    }
+
+    if (typeof city.longitude !== 'number' || city.longitude < -180 || city.longitude > 180) {
+      throw new Error(`Launch city ${city.city}, ${city.state} is missing a valid longitude`);
+    }
+
+    if (
+      typeof city.geofenceRadiusMeters !== 'number' ||
+      !Number.isFinite(city.geofenceRadiusMeters) ||
+      city.geofenceRadiusMeters <= 0
+    ) {
+      throw new Error(`Launch city ${city.city}, ${city.state} is missing a valid geofence radius`);
+    }
   }
 }
 
@@ -152,4 +214,44 @@ export async function seedLaunchCommunities(
   }
 
   return { ownerId: owner.id, created, updated, total: records.length };
+}
+
+export async function seedLaunchCommunityGeofences(
+  prisma: LaunchCommunityGeofencePrisma,
+  options: { matrix: LaunchCommunityMatrix }
+): Promise<LaunchCommunityGeofenceSeedResult> {
+  const records = buildLaunchCommunityGeofenceSeedRecords(options.matrix);
+  let updated = 0;
+
+  for (const record of records) {
+    const affectedRows = await prisma.$executeRawUnsafe(
+      `
+        UPDATE communities
+        SET
+          geofence = ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+          radius = $3
+        WHERE city = $4
+          AND state = $5
+          AND "musicCommunity" = $6
+          AND tier = 'city'
+          AND "isActive" = true
+      `,
+      record.longitude,
+      record.latitude,
+      record.radiusMeters,
+      record.city,
+      record.state,
+      record.musicCommunity
+    );
+
+    if (affectedRows !== 1) {
+      throw new Error(
+        `Expected to update exactly one active launch geofence for ${record.city}, ${record.state} • ${record.musicCommunity}; updated ${affectedRows}`
+      );
+    }
+
+    updated += affectedRows;
+  }
+
+  return { updated, total: records.length };
 }

@@ -39,6 +39,11 @@ Behavior:
 - Upserts a deterministic non-listener system owner user: `system-community-seed@uprise.local`.
 - Finds existing `Community` rows by exact `{ city, state, musicCommunity, tier: "city" }`.
 - Updates existing tuple matches and creates only missing rows.
+- Applies the launch geofence policy to the same `48` active city-tier rows:
+  - each launch city has one city-center point and one `50000` meter voting radius;
+  - all `8` launch music-community scenes in that city inherit the same city geofence;
+  - the geofence is written with PostGIS as `geography(Point, 4326)` and `radius` in meters.
 - Does not create state/national scenes or community-specific architecture variants.
+- Does not use geofence radius as tier logic, discovery scope, or state/national proximity behavior.
 
 Do not run this command against production or staging without confirming the target `DATABASE_URL`.

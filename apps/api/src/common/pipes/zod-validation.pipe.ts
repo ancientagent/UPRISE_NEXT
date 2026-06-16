@@ -7,8 +7,12 @@ import { fromZodError } from 'zod-validation-error';
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema?: ZodSchema) {}
 
-  transform(value: unknown, _metadata: ArgumentMetadata) {
+  transform(value: unknown, metadata: ArgumentMetadata) {
     if (!this.schema) {
+      return value;
+    }
+
+    if (metadata.type !== 'body') {
       return value;
     }
 

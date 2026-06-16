@@ -7,6 +7,9 @@ const repoRoot = path.resolve(__dirname, '../../..');
 interface LaunchCity {
   city: string;
   state: string;
+  latitude: number;
+  longitude: number;
+  geofenceRadiusMeters: number;
   launchOpen: boolean;
 }
 
@@ -54,7 +57,9 @@ describe('launch community city matrix', () => {
       )
     );
 
-    expect(launchCities).toEqual([
+    expect(
+      launchCities.map(({ city, state, launchOpen }) => ({ city, state, launchOpen }))
+    ).toEqual([
       { city: 'Austin', state: 'Texas', launchOpen: true },
       { city: 'Houston', state: 'Texas', launchOpen: true },
       { city: 'Dallas', state: 'Texas', launchOpen: true },
@@ -62,6 +67,18 @@ describe('launch community city matrix', () => {
       { city: 'San Francisco', state: 'California', launchOpen: true },
       { city: 'San Diego', state: 'California', launchOpen: true },
     ]);
+    expect(launchCities.every((city) => city.geofenceRadiusMeters === 50000)).toBe(true);
+    expect(
+      launchCities.every(
+        (city) =>
+          typeof city.latitude === 'number' &&
+          city.latitude >= -90 &&
+          city.latitude <= 90 &&
+          typeof city.longitude === 'number' &&
+          city.longitude >= -180 &&
+          city.longitude <= 180
+      )
+    ).toBe(true);
     expect(matrix.musicCommunities).toEqual([...MUSIC_COMMUNITIES]);
     expect(tuples).toHaveLength(48);
     expect(new Set(tuples).size).toBe(48);

@@ -1,8 +1,10 @@
 import launchMatrix from '../../../docs/specs/seed/launch-community-city-matrix.json';
 import {
   SYSTEM_COMMUNITY_SEED_OWNER,
+  buildLaunchCommunityGeofenceSeedRecords,
   buildLaunchCommunitySeedRecords,
   ensureLaunchCommunitySeedOwner,
+  seedLaunchCommunityGeofences,
   seedLaunchCommunities,
   slugifyLaunchCommunity,
   validateLaunchCommunityMatrix,
@@ -60,6 +62,33 @@ describe('launch community seed helpers', () => {
       password: 'SYSTEM_ACCOUNT_NO_LOGIN',
       bio: 'System owner for deterministic launch Home Scene seed records.',
     });
+  });
+
+  it('expands city geofence policy across every launch city/music-community tuple', () => {
+    const records = buildLaunchCommunityGeofenceSeedRecords(launchMatrix);
+
+    expect(records).toHaveLength(48);
+    expect(records.filter((record) => record.city === 'Austin')).toHaveLength(8);
+    expect(records.filter((record) => record.city === 'Austin')).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          city: 'Austin',
+          state: 'Texas',
+          musicCommunity: 'Punk',
+          latitude: 30.2672,
+          longitude: -97.7431,
+          radiusMeters: 50000,
+        }),
+        expect.objectContaining({
+          city: 'Austin',
+          state: 'Texas',
+          musicCommunity: 'Hip-Hop',
+          latitude: 30.2672,
+          longitude: -97.7431,
+          radiusMeters: 50000,
+        }),
+      ])
+    );
   });
 });
 
@@ -139,5 +168,60 @@ describe('launch community Prisma seed runner', () => {
         createdById: 'system-user-1',
       }),
     });
+  });
+
+  it('updates launch geofences with parameterized PostGIS SQL for every active tuple', async () => {
+    const prisma = {
+      $executeRawUnsafe: jest.fn().mockResolvedValue(1),
+    };
+
+    const result = await seedLaunchCommunityGeofences(prisma as any, {
+      matrix: {
+        ...launchMatrix,
+        cities: launchMatrix.cities.slice(0, 1),
+        musicCommunities: launchMatrix.musicCommunities.slice(0, 2),
+        expectedCityTierSceneCount: 2,
+      },
+    });
+
+    expect(result).toEqual({ updated: 2, total: 2 });
+    expect(prisma.$executeRawUnsafe).toHaveBeenCalledTimes(2);
+    expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining('ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography'),
+      -97.7431,
+      30.2672,
+      50000,
+      'Austin',
+      'Texas',
+      'Punk'
+    );
+    expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
+      2,
+      expect.any(String),
+      -97.7431,
+      30.2672,
+      50000,
+      'Austin',
+      'Texas',
+      'Electronic'
+    );
+  });
+
+  it('aborts launch geofence updates when an expected active tuple is missing', async () => {
+    const prisma = {
+      $executeRawUnsafe: jest.fn().mockResolvedValue(0),
+    };
+
+    await expect(
+      seedLaunchCommunityGeofences(prisma as any, {
+        matrix: {
+          ...launchMatrix,
+          cities: launchMatrix.cities.slice(0, 1),
+          musicCommunities: launchMatrix.musicCommunities.slice(0, 1),
+          expectedCityTierSceneCount: 1,
+        },
+      })
+    ).rejects.toThrow('Expected to update exactly one active launch geofence for Austin, Texas • Punk');
   });
 });
