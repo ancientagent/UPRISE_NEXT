@@ -132,7 +132,7 @@ export default function ArtistBandProfilePage() {
     }
 
     return baseTracks;
-  }, [profile, selectedTrackId]);
+  }, [profile, selectedSignalId, selectedTrackId]);
 
   const viewerCanOpenPrintShop = useMemo(() => {
     if (!profile || !user?.id) return false;
