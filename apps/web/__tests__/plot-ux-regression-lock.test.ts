@@ -20,7 +20,9 @@ describe('/plot UX regression lock', () => {
     expect(uiBrief).toContain(referenceMarker);
 
     const currentLocksSection = uiBrief.split('Current UI locks:')[1].split(referenceMarker)[0];
-    const referenceSection = uiBrief.split(referenceMarker)[1].split('Recent handoffs to use only after the locks above:')[0];
+    const referenceSection = uiBrief
+      .split(referenceMarker)[1]
+      .split('Recent handoffs to use only after the locks above:')[0];
 
     expect(currentLocksSection).not.toContain('MVP_MOBILE_UX_SYSTEM_R1.md');
     expect(currentLocksSection).not.toContain('MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md');
@@ -41,7 +43,9 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
-    expect(plotPageSource).toContain("useState<'collapsed' | 'peek' | 'expanded'>('collapsed')");
+    expect(plotPageSource).toMatch(
+      /useState<'collapsed' \| 'peek' \| 'expanded'>\(\s*'collapsed'\s*\)/
+    );
     expect(plotPageSource).toContain("const isProfileExpanded = profilePanelState === 'expanded'");
     expect(plotPageSource).toContain('const seamLabel =');
     expect(plotPageSource).toContain("'Pull up or tap to collapse profile'");
@@ -59,7 +63,9 @@ describe('/plot UX regression lock', () => {
 
     expect(playerSource).toContain("placement?: 'top' | 'profile-bottom';");
     expect(playerSource).toContain("placement = 'top',");
-    expect(playerSource).toContain("const isProfileBottomPlacement = placement === 'profile-bottom';");
+    expect(playerSource).toContain(
+      "const isProfileBottomPlacement = placement === 'profile-bottom';"
+    );
     expect(playerSource).toContain('data-slot="compact-player-shell"');
     expect(playerSource).toContain('data-placement={placement}');
     expect(playerSource).toContain('data-slot="bottom-player-marquee"');
@@ -74,15 +80,23 @@ describe('/plot UX regression lock', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
-    expect(plotPageSource).toContain("() => playerTier ?? getMvpPlayerTier(tunedScene?.tier)");
-    expect(plotPageSource).toContain("const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>(initialPlayerTier)");
-    expect(playerSource).not.toContain("useState<PlayerMode>");
+    expect(plotPageSource).toContain(
+      "const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')"
+    );
+    expect(plotPageSource).toContain('() => playerTier ?? getMvpPlayerTier(tunedScene?.tier)');
+    expect(plotPageSource).toMatch(
+      /const \[activeBroadcastTier, setActiveBroadcastTier\] = useState<PlayerTier \| null>\(\s*initialPlayerTier\s*\)/
+    );
+    expect(playerSource).not.toContain('useState<PlayerMode>');
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
     expect(plotPageSource).toContain('activeBroadcastTier={activeBroadcastTier}');
-    expect(plotPageSource).toContain("const collectionBroadcastLabel = selectedCollectionItem?.label ??");
-    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'");
-    expect(plotPageSource).toContain("const handleCollectionEject = () => {");
+    expect(plotPageSource).toMatch(
+      /const collectionBroadcastLabel =\s*selectedCollectionItem\?\.label \?\?/
+    );
+    expect(plotPageSource).toMatch(
+      /selectedCollectionItem\?\.id === collectionItem\.id &&\s*playerMode === 'SPACE'/
+    );
+    expect(plotPageSource).toContain('const handleCollectionEject = () => {');
     expect(playerSource).not.toContain('Switch to SPACE mode');
     expect(playerSource).toContain('Eject');
     expect(playerSource).toContain('aria-label="Return to RADIYO"');
@@ -95,19 +109,27 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('const handleCollectionEject =');
     expect(plotPageSource).toContain("setPlayerMode('SPACE')");
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
-    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => current ?? selectedTier);');
+    expect(plotPageSource).toContain(
+      'setActiveBroadcastTier((current) => current ?? selectedTier);'
+    );
     expect(plotPageSource).toContain('const handleTierChange = (tier: PlayerTier) => {');
     expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
-    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === nextTier ? null : nextTier));');
+    expect(plotPageSource).toMatch(
+      /setActiveBroadcastTier\(\(current\) => \(current === nextTier \? null : nextTier\)\);/
+    );
     expect(plotPageSource).toContain('setSelectedTier(initialPlayerTier);');
-    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === null ? null : initialPlayerTier));');
+    expect(plotPageSource).toMatch(
+      /setActiveBroadcastTier\(\(current\) => \(current === null \? null : initialPlayerTier\)\);/
+    );
     expect(plotPageSource).toContain('setPlayerTier(nextTier);');
     expect(plotPageSource).toContain('mode={playerMode}');
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
     expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
-    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'");
-    expect(plotPageSource).toContain("setSelectedCollectionItem(item)");
+    expect(plotPageSource).toMatch(
+      /selectedCollectionItem\?\.id === collectionItem\.id &&\s*playerMode === 'SPACE'/
+    );
+    expect(plotPageSource).toContain('setSelectedCollectionItem(item)');
     expect(playerSource).not.toContain('Back to RADIYO');
   });
 
@@ -136,8 +158,12 @@ describe('/plot UX regression lock', () => {
 
     expect(playerSource).toContain('radiyoFooter?: ReactNode;');
     expect(playerSource).toContain('isRadiyoMode && radiyoFooter ? (');
-    expect(playerSource).toContain('Tap City or State to start that broadcast. Tap the active tier again to stop.');
-    expect(playerSource).toContain('SPACE stays selection-driven. Use return to go back to RADIYO.');
+    expect(playerSource).toContain(
+      'Tap City or State to start that broadcast. Tap the active tier again to stop.'
+    );
+    expect(playerSource).toContain(
+      'SPACE stays selection-driven. Use return to go back to RADIYO.'
+    );
     expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");
     expect(playerSource).toContain('aria-pressed={activeBroadcastTier === tier}');
     expect(playerSource).toContain('<audio');
@@ -148,10 +174,16 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).not.toContain('aria-label="Pause"');
     expect(playerSource).not.toContain('aria-label="Add to collection"');
     expect(playerSource).not.toContain('Back to RADIYO');
-    expect(playerSource).toContain("const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];");
+    expect(playerSource).toContain(
+      "const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];"
+    );
     expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
-    expect(plotPageSource).toContain('trackQueue={playerMode === \'RADIYO\' ? currentRotationTracks : []}');
-    expect(plotPageSource).toContain("const [selectedTier, setSelectedTier] = useState<PlayerTier>(initialPlayerTier)");
+    expect(plotPageSource).toMatch(
+      /trackQueue=\{playerMode === 'RADIYO' \? currentRotationTracks : \[\]\}/
+    );
+    expect(plotPageSource).toContain(
+      'const [selectedTier, setSelectedTier] = useState<PlayerTier>(initialPlayerTier);'
+    );
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -178,8 +210,10 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
     expect(playerSource).toContain('Wheel: {wheelActions.map');
-    expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : SPACE_WHEEL_ACTIONS;");
-    expect(wheelSource).toContain("label:");
+    expect(wheelSource).toContain(
+      "return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : SPACE_WHEEL_ACTIONS;"
+    );
+    expect(wheelSource).toContain('label:');
     expect(wheelSource).toContain("'Play It Loud'");
     expect(wheelSource).toContain("'Blast'");
     expect(wheelSource).toContain("position?: '9:00' | '10:00' | '12:00' | '1:00' | '3:00';");
@@ -209,26 +243,46 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Saved Promos/Coupons');
     expect(plotPageSource).toContain('Activity Score');
     expect(plotPageSource).toContain('Calendar');
-    expect(plotPageSource).toContain("const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists')");
+    expect(plotPageSource).toMatch(
+      /const \[activeProfileSection, setActiveProfileSection\] =\s*useState<ExpandedProfileSection>\('Singles\/Playlists'\)/
+    );
     expect(plotPageSource).toContain('Return to Plot Tabs');
-    expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
+    expect(plotPageSource).not.toContain(
+      "const collectionShelves = ['Tracks', 'Playlists', 'Saved']"
+    );
     expect(plotPageSource).not.toContain('track-south-side-signal');
     expect(plotPageSource).not.toContain('track-lakefront-lights');
-    expect(plotPageSource).toContain('const [plotProfile, setPlotProfile] = useState<PlotProfileRead | null>(null)');
-    expect(plotPageSource).toContain("api.get<PlotProfileRead>(`/users/${user.id}/profile`, { token })");
-    expect(plotPageSource).toContain('const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === \'singles\') ?? null;');
-    expect(plotPageSource).toContain('const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === \'uprises\') ?? null;');
-    expect(plotPageSource).toContain('const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === \'fliers\') ?? null;');
-    expect(plotPageSource).toContain('Saved playlist groupings appear here when they are available in your collection.');
+    expect(plotPageSource).toMatch(
+      /const \[plotProfile, setPlotProfile\] = useState<PlotProfileRead \| null>\(null\);/
+    );
+    expect(plotPageSource).toContain(
+      'api.get<PlotProfileRead>(`/users/${user.id}/profile`, { token })'
+    );
+    expect(plotPageSource).toContain(
+      "const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === 'singles') ?? null;"
+    );
+    expect(plotPageSource).toContain(
+      "const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === 'uprises') ?? null;"
+    );
+    expect(plotPageSource).toContain(
+      "const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === 'fliers') ?? null;"
+    );
+    expect(plotPageSource).toMatch(
+      /Saved playlist groupings appear here when they are available in your\s*collection\./
+    );
     expect(plotPageSource).toContain('No saved event artifacts or fliers yet.');
     expect(plotPageSource).toContain('No saved Uprises yet.');
-    expect(plotPageSource).toContain('Saved promos and coupons appear here with status and expiration when collection support is available.');
+    expect(plotPageSource).toMatch(
+      /Saved promos and coupons appear here with status and expiration when\s*collection support is available\./
+    );
   });
 
   it('locks expanded profile header to conditional band and promoter status cards', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain('const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([])');
+    expect(plotPageSource).toMatch(
+      /const \[promoterEntries, setPromoterEntries\] = useState<RegistrarPromoterEntry\[]>\(\[\]\)/
+    );
     expect(plotPageSource).toContain('listPromoterRegistrations(token)');
     expect(plotPageSource).toContain("label: 'Band Status'");
     expect(plotPageSource).toContain("label: 'Promoter Status'");
@@ -246,8 +300,12 @@ describe('/plot UX regression lock', () => {
   it('keeps selected Plot community identity structural when tuple fields exist', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain("const selectedCommunityLabel = useMemo(() => formatPlotCommunityLabel(selectedCommunity), [selectedCommunity]);");
-    expect(plotPageSource).toContain("return `${community.city}, ${community.state} • ${community.musicCommunity}`;");
+    expect(plotPageSource).toMatch(
+      /const selectedCommunityLabel = useMemo\(\s*\(\) => formatPlotCommunityLabel\(selectedCommunity\),\s*\[selectedCommunity\]\s*\);/
+    );
+    expect(plotPageSource).toContain(
+      'return `${community.city}, ${community.state} • ${community.musicCommunity}`;'
+    );
     expect(plotPageSource).toContain('{selectedCommunityLabel ??');
     expect(plotPageSource).toContain('{selectedCommunityLabel ?? selectedCommunity.name}');
   });
@@ -263,7 +321,9 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Open UPRISE engagement wheel');
     expect(plotPageSource).toContain('UPRISE Wheel');
     expect(plotPageSource).toContain('Discover');
-    expect(plotPageSource).toContain('Discover is coming soon while MVP stays local-community-only.');
+    expect(plotPageSource).toContain(
+      'Discover is coming soon while MVP stays local-community-only.'
+    );
     expect(plotPageSource).toContain('Soon');
     expect(plotPageSource).toContain('aria-disabled="true"');
     expect(plotPageSource).toContain('getEngagementWheelActions(playerMode)');
@@ -280,7 +340,9 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("if (activeTab === 'Events')");
     expect(plotPageSource).toContain('PlotEventsPanel');
     expect(plotPageSource).toContain("if (activeTab === 'Archive')");
-    expect(plotPageSource).toContain('StatisticsPanel');
+    expect(plotPageSource).not.toContain('StatisticsPanel');
+    expect(plotPageSource).toContain('TopSongsPanel');
+    expect(plotPageSource).toContain('Scene Activity Snapshot');
     expect(plotPageSource).not.toContain("if (activeTab === 'Promotions')");
     expect(plotPageSource).not.toContain('PlotPromotionsPanel');
     expect(plotPageSource).not.toContain("if (activeTab === 'Statistics')");
@@ -290,13 +352,17 @@ describe('/plot UX regression lock', () => {
   it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
+    expect(plotPageSource).toContain('playerTier,');
     expect(plotPageSource).toContain(
-      'playerTier,',
+      'const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;'
     );
-    expect(plotPageSource).toContain("const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;");
-    expect(plotPageSource).toContain("const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);");
+    expect(plotPageSource).toContain(
+      'const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);'
+    );
     expect(plotPageSource).toContain('aria-label="Notifications"');
-    expect(plotPageSource).toContain("aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}");
+    expect(plotPageSource).toContain(
+      "aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}"
+    );
     expect(plotPageSource).toContain('onPointerDown={(event) => {');
     expect(plotPageSource).toContain('event.stopPropagation();');
     expect(plotPageSource).toContain('setIsNotificationPanelOpen((open) => !open)');
@@ -319,14 +385,22 @@ describe('/plot UX regression lock', () => {
   it('locks registrar access/status context onto the resolved plot route', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain("const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null)");
+    expect(plotPageSource).toContain(
+      'const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null)'
+    );
     expect(plotPageSource).toContain('listArtistBandRegistrations(token)');
-    expect(plotPageSource).toContain('setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []))');
-    expect(plotPageSource).toContain('const canOpenPrintShop = Boolean(latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0);');
+    expect(plotPageSource).toContain(
+      'setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []))'
+    );
+    expect(plotPageSource).toMatch(
+      /const canOpenPrintShop = Boolean\(\s*latestPromoterEntry\?\.promoterCapability\.granted \|\| managedArtistBands\.length > 0\s*\);/
+    );
     expect(plotPageSource).toContain('SourceAccountSwitcher');
     expect(plotPageSource).toContain('Registrar Access');
     expect(plotPageSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
-    expect(plotPageSource).toContain('Sign in to view registrar status and continue registration work.');
+    expect(plotPageSource).toContain(
+      'Sign in to view registrar status and continue registration work.'
+    );
     expect(plotPageSource).toContain('No Artist/Band registrar entries yet.');
     expect(plotPageSource).toContain('Open Registrar');
     expect(plotPageSource).toContain('Open Print Shop');
@@ -337,7 +411,9 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain('if (!token) return;');
     expect(plotPageSource).toContain('shouldUseTunedSceneAsDefaultPlotAnchor(tunedScene)');
-    expect(plotPageSource).toContain('const tunedResponse = await getCommunityById(tunedSceneId, token);');
+    expect(plotPageSource).toContain(
+      'const tunedResponse = await getCommunityById(tunedSceneId, token);'
+    );
     expect(plotPageSource).toContain('const homeResponse = await resolveHomeCommunity(');
     expect(plotPageSource).toContain('musicCommunity: homeScene.musicCommunity,');
     expect(plotPageSource).toContain('token,');
@@ -347,20 +423,26 @@ describe('/plot UX regression lock', () => {
     const topSongsSource = readRepoFile('src/components/plot/TopSongsPanel.tsx');
 
     expect(topSongsSource).toContain('if (!token) {');
-    expect(topSongsSource).toContain("setSongs([]);");
-    expect(topSongsSource).toContain("setError(null);");
-    expect(topSongsSource).toContain("setLoading(false);");
-    expect(topSongsSource).toContain("Sign in is required to load Top 40 songs for this scene context.");
+    expect(topSongsSource).toContain('setSongs([]);');
+    expect(topSongsSource).toContain('setError(null);');
+    expect(topSongsSource).toContain('setLoading(false);');
+    expect(topSongsSource).toContain(
+      'Sign in is required to load Top 40 songs for this scene context.'
+    );
     expect(topSongsSource).toContain('{ token }');
     expect(topSongsSource).toContain('artistBandId: string | null;');
-    expect(topSongsSource).toContain('href={`/artist-bands/${track.artistBandId}?trackId=${track.trackId}`}');
+    expect(topSongsSource).toContain(
+      'href={`/artist-bands/${track.artistBandId}?trackId=${track.trackId}`}'
+    );
   });
 
   it('keeps track-release feed items wired into artist-page listening without adding inline card actions', () => {
     const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
 
     expect(seedFeedSource).toContain("if (item.type !== 'track_release') return null;");
-    expect(seedFeedSource).toContain('return `/artist-bands/${source.id}?trackId=${item.entity.id}`;');
+    expect(seedFeedSource).toContain(
+      'return `/artist-bands/${source.id}?trackId=${item.entity.id}`;'
+    );
     expect(seedFeedSource).toContain('{trackHref ? (');
     expect(seedFeedSource).not.toContain('Collect from this listening context');
   });
@@ -374,9 +456,11 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).toContain('Most Added');
     expect(seedFeedSource).toContain('Recent Rises');
     expect(seedFeedSource).toContain('Read-only artist/song launch squares.');
-    expect(seedFeedSource).toContain("aria-label={`Scroll ${title} left`}");
-    expect(seedFeedSource).toContain("aria-label={`Scroll ${title} right`}");
-    expect(seedFeedSource).toContain('return `/artist-bands/${artistBandId}?signalId=${signal.signalId}`;');
+    expect(seedFeedSource).toContain('aria-label={`Scroll ${title} left`}');
+    expect(seedFeedSource).toContain('aria-label={`Scroll ${title} right`}');
+    expect(seedFeedSource).toContain(
+      'return `/artist-bands/${artistBandId}?signalId=${signal.signalId}`;'
+    );
     expect(seedFeedSource).not.toContain('Collect from this listening context');
     expect(seedFeedSource).not.toContain('Blast this track');
     expect(seedFeedSource).not.toContain('Follow artist');
@@ -387,12 +471,16 @@ describe('/plot UX regression lock', () => {
 
     expect(seedFeedSource).toContain('plot-feed-buzz-insert');
     expect(seedFeedSource).toContain('Buzz');
-    expect(seedFeedSource).toContain('Listener recommendations from this community, surfaced without inline actions.');
+    expect(seedFeedSource).toContain(
+      'Listener recommendations from this community, surfaced without inline actions.'
+    );
     expect(seedFeedSource).toContain('Community buzz');
     expect(seedFeedSource).toContain('Read-only listener recommendation squares.');
     expect(seedFeedSource).toContain('aria-label="Scroll Buzz left"');
     expect(seedFeedSource).toContain('aria-label="Scroll Buzz right"');
-    expect(seedFeedSource).toContain('Recommended by {recommendation.actor.displayName || recommendation.actor.username}');
+    expect(seedFeedSource).toContain(
+      'Recommended by {recommendation.actor.displayName || recommendation.actor.username}'
+    );
     expect(seedFeedSource).toContain('const href = discoverSignalHref(recommendation.signal);');
     expect(seedFeedSource).not.toContain('Collect from this listening context');
     expect(seedFeedSource).not.toContain('Blast this track');
@@ -420,12 +508,16 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain('const discoveryContextFallback = useMemo(');
-    expect(plotPageSource).toContain('mergeDiscoveryContextPatch(response, discoveryContextFallback)');
+    expect(plotPageSource).toContain(
+      'mergeDiscoveryContextPatch(response, discoveryContextFallback)'
+    );
     expect(plotPageSource).not.toContain('SceneContextBadge');
     expect(plotPageSource).toContain('Scene Context');
     expect(plotPageSource).toContain('Selected Community');
     expect(plotPageSource).toContain('Open Community');
-    expect(plotPageSource).toContain('Complete onboarding to anchor your Home Scene and unlock Plot context.');
+    expect(plotPageSource).toContain(
+      'Complete onboarding to anchor your Home Scene and unlock Plot context.'
+    );
     expect(plotPageSource).not.toContain('Browse Discover');
   });
 
