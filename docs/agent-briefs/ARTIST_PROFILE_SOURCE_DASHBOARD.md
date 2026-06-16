@@ -4,7 +4,9 @@ Status: active
 Last Updated: 2026-04-26
 
 ## Use When
+
 Use this brief when the task is about:
+
 - public Artist Profile
 - artist/source pages
 - source dashboard / source-management surface
@@ -15,18 +17,22 @@ Use this brief when the task is about:
 - source management design handoff
 
 ## Do Not Use For
+
 - listener user profile / collection workspace
 - generic Home / Plot layout unless source surfaces are visible
 - action grammar without source/profile implications
 - deployment/infrastructure work
 
 ## Loading Rule
+
 Start with the normal repo entry rules, then this brief.
 
 Do not read every linked document by default. For public artist-page work, load the artist profile lock and the artist route. For source-dashboard work, load the source dashboard contract and the touched route/tool.
 
 ## Section Pointers
+
 Runtime files:
+
 - `apps/web/src/app/artist-bands/[id]/page.tsx`
 - `apps/web/src/app/source-dashboard/page.tsx`
 - `apps/web/src/app/source-dashboard/release-deck/page.tsx`
@@ -37,6 +43,7 @@ Runtime files:
 - `apps/api/src/registrar/`
 
 Specs / locks:
+
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_SOURCE_DASHBOARD_SURFACE_CONTRACT_R1.md`
 - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
@@ -45,16 +52,21 @@ Specs / locks:
 - `docs/specs/economy/print-shop-and-promotions.md`
 
 Tests / verification files:
+
 - `apps/web/__tests__/plot-ux-regression-lock.test.ts` when source/profile actions affect Plot handoff or inserts
 - package-specific API/web tests for touched routes
 
 ## Current Truth
+
 - Artist Profile is a public source page and direct-listen surface outside `RADIYO`.
 - Artist Profile is not the listener user profile / collection workspace.
 - Artist Profile has source-level actions such as `Follow`, share, and official outbound links.
 - Artist Profile song rows can support `Collect` and gated `Recommend`.
+- Artist Profile current MVP direct-listen area is capped to `3` playable song rows.
+- If a feed/discovery handoff selects a track outside the first three, that selected track may be placed first while preserving the `3` row cap.
 - Artist Profile does not use the engagement wheel.
 - Artist Profile does not expose `Blast`.
+- Full catalogue/library/history expansion is retained future context, not authorization to render the full artist library in the current MVP listener profile page.
 - Source Dashboard is the current source-side operating shell for managing source entities.
 - Source Dashboard is not the listener user profile / collection workspace.
 - Source Dashboard is not part of the listener Home/Plot community space.
@@ -71,6 +83,7 @@ Tests / verification files:
 - Registrar remains separate civic/formalization infrastructure but must stay reachable from source-side operating context.
 
 ## Current Runtime Pointers
+
 - `/artist-bands/[id]` is the public artist/source profile route.
 - `/source-dashboard` is the current source-side operating shell / stand-in for the separate source-management surface.
 - `/source-dashboard/release-deck` is the current Release Deck route.
@@ -78,19 +91,23 @@ Tests / verification files:
 - `/registrar` is still a direct route but should preserve source-side continuity where relevant.
 
 ## Design / Implementation Boundaries
+
 - Do not put Artist Profile actions on the listener user profile.
 - Do not put listener collection workspace behavior on Artist Profile.
 - Do not put source-management tools inside the listener user profile / collection workspace.
 - Do not make source management feel like ordinary Home/Plot community participation.
 - Do not interpret “separate source-management website/domain” as permission to discard the existing Source Dashboard, Release Deck, or Print Shop work.
 - Do not add source-level `Collect`, source-level `Blast`, or source-level `Support`.
+- Do not widen the current listener-facing Artist Profile into a full catalogue/library surface unless the Artist Profile lock is explicitly updated.
 - Do not add fake source-dashboard cards such as analytics, billing, growth, or upgrade modules unless explicitly activated.
 - Do not model Print Shop as a listener-facing event-authoring utility.
 - Do not treat business runtime, causes, source analytics packages, billing, or promotion package management as active MVP source-dashboard scope unless explicitly reactivated.
 - Do not let source-dashboard work bypass Home Scene, registrar, or ownership validation rules.
 
 ## Verification
+
 Use the narrowest relevant checks:
+
 - route/component tests for the touched web surface, when present
 - API tests for artist/source/event/registrar ownership changes, when present
 - `pnpm --filter web typecheck`
@@ -100,4 +117,5 @@ Use the narrowest relevant checks:
 Use broader `pnpm run verify` before PR/closeout when feasible.
 
 ## Update Rule
+
 Patch this brief whenever Artist Profile, Source Dashboard/source-management, Release Deck, or Print Shop source-facing truth changes.
