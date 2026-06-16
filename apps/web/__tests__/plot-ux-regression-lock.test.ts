@@ -89,6 +89,11 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).not.toContain("user?.displayName?.[0] || user?.username?.[0] || 'U'");
     expect(plotPageSource).not.toContain('{profilePanelState}');
+    expect(plotPageSource).toContain('data-slot="home-identity-layer"');
+    expect(plotPageSource).toContain('data-slot="listener-avatar-bust"');
+    expect(plotPageSource).toContain('data-slot="listener-recommendation-bubble"');
+    expect(plotPageSource).toContain('Current recommendation');
+    expect(plotPageSource).toContain('UPRISE {homeCityLabel}');
     expect(plotPageSource).toContain('aria-label="Notifications"');
     expect(plotPageSource).toContain('aria-label="More menu"');
   });
@@ -152,10 +157,13 @@ describe('/plot UX regression lock', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain('const isProfileExpanded = profilePanelState ===');
+    expect(plotPageSource).toContain('const playerPanel = (');
+    expect(plotPageSource).toContain('{isProfileExpanded ? null : playerPanel}');
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
     expect(plotPageSource).toMatch(
-      /<header[\s\S]*Profile Summary[\s\S]*Activity Score[\s\S]*Calendar[\s\S]*<\/header>[\s\S]*Player Context[\s\S]*expandedProfileSections\.map[\s\S]*Return to Plot Tabs/
+      /<header[\s\S]*Profile Summary[\s\S]*Activity Score[\s\S]*Calendar[\s\S]*<\/header>[\s\S]*expandedProfileSections\.map[\s\S]*data-slot="expanded-profile-player-strip"[\s\S]*\{playerPanel\}[\s\S]*Return to Plot Tabs/
     );
+    expect(plotPageSource).not.toContain('Player Context');
     expect(plotPageSource).toMatch(
       /const expandedProfileSections = \[\s*'Singles\/Playlists',\s*'Events',\s*'Photos',\s*'Merch',\s*'Saved Uprises',\s*'Saved Promos\/Coupons',\s*\] as const;/
     );
