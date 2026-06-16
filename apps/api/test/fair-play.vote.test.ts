@@ -134,6 +134,43 @@ describe('FairPlayService.castVote', () => {
     expect(result.data.id).toBe('vote-1');
   });
 
+  it('creates vote for GPS-verified pioneer user in fallback voting scene', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'user-1',
+      gpsVerified: true,
+      tunedSceneId: 'scene-austin-punk',
+      homeSceneCity: 'Houston',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.track.findUnique.mockResolvedValue({ id: 'track-1' });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-austin-punk',
+      tier: 'city',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+    });
+    mockPrisma.rotationEntry.findFirst.mockResolvedValue({ id: 'entry-1' });
+    mockPrisma.trackVote.create.mockResolvedValue({
+      id: 'vote-1',
+      userId: 'user-1',
+      trackId: 'track-1',
+      sceneId: 'scene-austin-punk',
+      tier: 'city',
+      playbackSessionId: 'sess-1',
+    });
+
+    const result = await service.castVote('user-1', 'track-1', {
+      sceneId: 'scene-austin-punk',
+      playbackSessionId: 'sess-1',
+      nowPlayingTrackId: 'track-1',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data.sceneId).toBe('scene-austin-punk');
+  });
+
   it('rejects duplicate vote with ConflictException', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'user-1',

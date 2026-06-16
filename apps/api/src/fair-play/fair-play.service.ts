@@ -332,6 +332,7 @@ export class FairPlayService {
         select: {
           id: true,
           gpsVerified: true,
+          tunedSceneId: true,
           homeSceneCity: true,
           homeSceneState: true,
           homeSceneCommunity: true,
@@ -391,10 +392,17 @@ export class FairPlayService {
     const sceneState = (scene.state ?? '').toLowerCase();
     const sceneCommunity = (scene.musicCommunity ?? '').toLowerCase();
 
-    if (!homeCity || !homeState || !homeCommunity || homeCity !== sceneCity || homeState !== sceneState || homeCommunity !== sceneCommunity) {
+    const isHomeSceneMatch =
+      Boolean(homeCity && homeState && homeCommunity) &&
+      homeCity === sceneCity &&
+      homeState === sceneState &&
+      homeCommunity === sceneCommunity;
+    const isFallbackVotingScene = Boolean(user.tunedSceneId && user.tunedSceneId === scene.id);
+
+    if (!isHomeSceneMatch && !isFallbackVotingScene) {
       throw new ForbiddenException({
         success: false,
-        error: { message: 'Voting is limited to your GPS-verified Home Scene' },
+        error: { message: 'Voting is limited to your GPS-verified Home Scene or fallback voting scene' },
       });
     }
 

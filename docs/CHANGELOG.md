@@ -49,6 +49,8 @@
 
 ### Changed
 
+- Aligned server-side onboarding fallback with the active Home Scene spec: inactive or missing submitted scenes now preserve pioneer intent, resolve `tunedSceneId` to the nearest active city-tier scene, avoid creating inactive communities, and allow GPS-verified voting in that fallback scene.
+
 - Clarified active Archive/Event terminology docs so current MVP `Archive` is read-only Top Songs + Scene Activity Snapshot, while `StatisticsPanel` / Scene Map exploration remains retained/future infrastructure rather than a live tab.
 
 - Locked listener-facing Artist Profile readiness for launch: current runtime keeps a 3-row direct-listen cap, Follow/Share/source links, gated Recommend, no wheel/Blast/ranking drift, and treats full catalogue/library history as deferred future context.

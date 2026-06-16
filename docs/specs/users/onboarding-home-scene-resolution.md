@@ -27,11 +27,12 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Missing-music-community intake is stored through `POST /onboarding/music-community-requests`; it records distinct requester/city review signals and does not define a final approval threshold in code.
 - Taste tags are **not** collected during onboarding; they are configured after entering Home Scene.
 - Home Scene selection is stored regardless of GPS verification.
-- Setting a Home Scene auto-joins the resolved city-tier Scene membership.
+- Setting a Home Scene auto-joins the resolved active city-tier Scene membership.
 - GPS verification is requested only to enable voting rights.
 - If GPS is denied or unavailable, user remains affiliated but cannot vote.
 - If selected city-tier scene is inactive/unavailable, user is auto-routed to nearest active city scene for the selected parent community.
 - Inactive-city onboarding must persist pioneer intent and trigger pioneer notification messaging.
+- If the selected Home Scene is inactive/unavailable, voting applies to the resolved nearest active city-tier community while the submitted city/state/music-community remains preserved as pioneer intent.
 - Pioneer notification is shown after the user is loaded into Home Scene context (routed nearest active scene when required).
 - Pioneer notification delivery UI is the top-right notification icon in the profile strip (next to the `...` settings menu).
 
@@ -43,14 +44,15 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - Find city-tier `Community` by exact `{city, state, musicCommunity, tier='city'}`.
   - If not found or not active, mark user as pioneer for selected `{city,state,musicCommunity}`.
   - Resolve nearest active city-tier `Community` for the selected parent music community.
-  - Set active listening anchor/Home Scene context to the nearest active city-tier community; preserve pioneer intent for the chosen city.
-  - Persist user home-scene fields.
+  - Set active listening/voting anchor to the nearest active city-tier community through `User.tunedSceneId`; preserve pioneer intent for the chosen city.
+  - Persist user home-scene fields as the submitted `city`, `state`, and `musicCommunity`.
   - Auto-join via `CommunityMember` (idempotent; duplicate join ignored).
   - After loading user into Home Scene context, trigger pioneer informational notification (in-app + transactional notification path) stating fallback scene and pioneer tracking.
 
 ### GPS Verification Semantics (Implemented)
 
 - Verification checks user coordinates against Home Scene geofence/radius.
+- When the submitted Home Scene is inactive/unavailable, verification and voting use the resolved active fallback scene.
 - When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats the user as GPS-verified for voting eligibility.
 - Voting is enabled only when user is within geofence.
 - If no Home Scene or geofence, coordinates are stored but `gpsVerified=false`.
@@ -76,6 +78,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - `homeSceneCity`
   - `homeSceneState`
   - `homeSceneCommunity`
+  - `tunedSceneId`
   - `gpsVerified`
   - `latitude` / `longitude`
 - `Community`
@@ -95,7 +98,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 
 | Method | Path                                   | Auth     | Description                                                                         |
 | ------ | -------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
-| POST   | `/onboarding/home-scene`               | required | Resolve/create Home Scene, persist user affinity, auto-join Scene                   |
+| POST   | `/onboarding/home-scene`               | required | Resolve Home Scene, persist user affinity, auto-join resolved active Scene          |
 | POST   | `/onboarding/gps-verify`               | required | Verify geofence and set voting eligibility                                          |
 | POST   | `/onboarding/music-community-requests` | required | Store missing music-community intake for later review without creating a live Scene |
 | GET    | `/communities/resolve-home`            | required | Resolve exact Home Scene tuple for Plot/community anchoring                         |
@@ -112,6 +115,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - `resolvedCitySceneId: string`
   - `resolvedCitySceneLabel: string`
   - `pioneerHomeScene: { city: string; state: string; musicCommunity: string } | null`
+  - `tunedSceneId: string`
   - `votingEligible: boolean`
   - `pioneer: boolean`
 
@@ -121,6 +125,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - `POST /onboarding/gps-verify` response:
   - `id`, `gpsVerified`, `latitude`, `longitude`
   - `votingEligible: boolean`
+  - `votingSceneId: string | null`
   - `distance: number | null`
   - `reason: string | null` where applicable:
     - `NO_HOME_SCENE`
