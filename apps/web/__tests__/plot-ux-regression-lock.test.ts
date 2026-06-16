@@ -35,7 +35,12 @@ describe('/plot UX regression lock', () => {
   it('locks compact player shell scaffolding for track row and tier stack', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
+    expect(playerSource).toContain("placement?: 'top' | 'profile-bottom';");
+    expect(playerSource).toContain("placement = 'top',");
+    expect(playerSource).toContain("const isProfileBottomPlacement = placement === 'profile-bottom';");
     expect(playerSource).toContain('data-slot="compact-player-shell"');
+    expect(playerSource).toContain('data-placement={placement}');
+    expect(playerSource).toContain('data-slot="bottom-player-marquee"');
     expect(playerSource).toContain('data-slot="player-track-row"');
     expect(playerSource).toContain('data-slot="player-tier-stack"');
     expect(playerSource).toContain('Current track art thumbnail');
@@ -92,6 +97,11 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('data-slot="home-identity-layer"');
     expect(plotPageSource).toContain('data-slot="listener-avatar-bust"');
     expect(plotPageSource).toContain('data-slot="listener-recommendation-bubble"');
+    expect(plotPageSource).toContain('data-slot="home-identity-copy"');
+    expect(plotPageSource).toContain('flex-wrap');
+    expect(plotPageSource).toContain('sm:flex-nowrap');
+    expect(plotPageSource).toContain('basis-full');
+    expect(plotPageSource).toContain('sm:basis-auto');
     expect(plotPageSource).toContain('Current recommendation');
     expect(plotPageSource).toContain('UPRISE {homeCityLabel}');
     expect(plotPageSource).toContain('aria-label="Notifications"');
@@ -158,6 +168,7 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).toContain('const isProfileExpanded = profilePanelState ===');
     expect(plotPageSource).toContain('const playerPanel = (');
+    expect(plotPageSource).toContain("placement={isProfileExpanded ? 'profile-bottom' : 'top'}");
     expect(plotPageSource).toContain('{isProfileExpanded ? null : playerPanel}');
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
     expect(plotPageSource).toMatch(

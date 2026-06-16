@@ -765,6 +765,7 @@ export default function PlotPage() {
   const playerPanel = (
     <RadiyoPlayerPanel
       mode={playerMode}
+      placement={isProfileExpanded ? 'profile-bottom' : 'top'}
       onCollectionEject={handleCollectionEject}
       rotationPool={rotationPool}
       onRotationPoolChange={setRotationPool}
@@ -816,12 +817,12 @@ export default function PlotPage() {
         <section className="plot-wire-card px-4 py-3 transition-all">
           <div
             data-slot="home-identity-layer"
-            className="flex items-end justify-between gap-3 rounded-[1.15rem] border border-black bg-[#dfdfcf] px-3 py-3"
+            className="flex flex-wrap items-end justify-between gap-3 rounded-[1.15rem] border border-black bg-[#dfdfcf] px-3 py-3 sm:flex-nowrap"
             onPointerDown={handleProfilePointerDown}
             onPointerMove={handleProfilePointerMove}
             onPointerUp={handleProfilePointerUp}
           >
-            <div className="flex min-w-0 flex-1 items-end gap-3">
+            <div className="flex min-w-0 flex-1 basis-full items-end gap-3 sm:basis-auto">
               <div
                 data-slot="listener-avatar-bust"
                 className="flex h-16 w-14 shrink-0 items-end justify-center rounded-t-full border border-black bg-[#b8d63b] shadow-[2px_2px_0_rgba(0,0,0,0.28)]"
@@ -830,10 +831,10 @@ export default function PlotPage() {
                 <span className="mb-2 h-8 w-8 rounded-full border border-black bg-[#efefe2]" aria-hidden />
               </div>
 
-              <div className="min-w-0 flex-1">
+              <div data-slot="home-identity-copy" className="min-w-0 flex-1">
                 <div
                   data-slot="listener-recommendation-bubble"
-                  className="mb-2 max-w-[18rem] rounded-[1rem] border border-black bg-white px-3 py-2 shadow-[2px_2px_0_rgba(0,0,0,0.22)]"
+                  className="mb-2 max-w-full rounded-[1rem] border border-black bg-white px-3 py-2 shadow-[2px_2px_0_rgba(0,0,0,0.22)] sm:max-w-[18rem]"
                 >
                   <p className="plot-wire-label">Current recommendation</p>
                   <p className="truncate text-xs font-semibold text-black">{listenerRecommendationLabel}</p>
