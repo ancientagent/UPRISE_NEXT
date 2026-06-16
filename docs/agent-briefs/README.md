@@ -45,6 +45,7 @@ Current briefs:
 - `REGISTRAR_GOVERNANCE.md` - Registrar actor model, capability filings, promoter capability, backing/procedural actions, and governance gates.
 - `EXTERNAL_TOOLS.md` - Cloud Codex, NotebookLM, Claude Designer, Stitch, Abacus, generated wiki, and cross-agent handoff rules.
 - `UPRISE_HERMES_AUDITOR_AGENT.md` - read-only Hermes auditor role, safety boundaries, lane-loading rules, and the current launch-community / artist-profile / source-separation audit prompt.
+- `UPRISE_HERMES_LAUNCH_REVIEWER.md` - read-only Hermes launch reviewer role for one named issue, PR, merge commit, or release-readiness slice after implementation.
 - `INFRA_RUNTIME_QA` lane in `CONTEXT_ROUTER.md` - build/test/deploy, CI, Vercel/Fly/AWS/Neon/S3/R2, web-tier boundary, DeepAgent-to-hosted-stack transition planning, and deploy env ownership.
 
 Planned brief families:

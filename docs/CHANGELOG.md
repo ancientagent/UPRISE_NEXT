@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added `docs/agent-briefs/UPRISE_HERMES_LAUNCH_REVIEWER.md` and `docs/handoff/agent-control/HERMES_LAUNCH_REVIEW_SHIM.md` so Hermes can run narrow read-only launch reviews against one named issue, PR, merge commit, or release-readiness slice without becoming a broad repo auditor or implementation agent.
 - Added authenticated missing-music-community request intake from onboarding via `POST /onboarding/music-community-requests`; requests store distinct requester/city review signals without creating live `Community` records or mutating the approved onboarding selector.
 - Added an API-owned launch community preload seed path for the `48` city-tier Home Scene tuples, including a deterministic system owner, tuple-based idempotent create/update behavior, a Prisma seed hook, and unit coverage that does not touch a live database.
 - Added `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md` as a reusable read-only Hermes audit role, including branch/worktree pre-checks, authority order, safety boundaries, lane-loading rules, and the current launch-community / listener-facing Artist Profile / source-separation audit prompt.

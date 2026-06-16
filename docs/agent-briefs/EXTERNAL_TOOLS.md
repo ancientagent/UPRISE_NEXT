@@ -43,6 +43,7 @@ External guidance:
 - `.devin/wiki.json`
 - `.deepagent-desktop/rules/uprise_next_rules.md`
 - `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md`
+- `docs/agent-briefs/UPRISE_HERMES_LAUNCH_REVIEWER.md`
 
 Agent context:
 
@@ -63,7 +64,7 @@ Handoffs:
 - External assistants never outrank repo truth.
 - External assistants should acquire context before answering or designing.
 - External assistants must separate locked now, implemented now, deferred, and historical/later-version context.
-- Hermes should be used as a read-only auditor unless the user explicitly changes the task to implementation.
+- Hermes should be used as a read-only auditor or launch reviewer unless the user explicitly changes the task to implementation.
 - Design tools can explore visual/layout options but cannot redefine action grammar or surface boundaries.
 - Writing tools can draft briefs/emails/docs but cannot invent doctrine.
 - Coding/delegation agents must implement only from active specs/locks/runtime evidence.
@@ -76,6 +77,8 @@ Handoffs:
 - `.devin/wiki.json` provides generated-wiki steering and page plan.
 - `.deepagent-desktop/rules/uprise_next_rules.md` provides Abacus/Desktop-style external assistant rules.
 - `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md` provides the reusable read-only Hermes auditor role and current audit prompt.
+- `docs/agent-briefs/UPRISE_HERMES_LAUNCH_REVIEWER.md` provides the narrower post-implementation / post-merge Hermes reviewer role for one named issue, PR, commit, or launch-readiness slice.
+- `docs/handoff/agent-control/HERMES_LAUNCH_REVIEW_SHIM.md` provides copy-paste launch prompts and queue wiring for Hermes launch reviews.
 - `docs/solutions/AGENT_WIKI_STEERING_R1.md` defines generated wiki priorities.
 - `docs/agent-briefs/CONTEXT_ROUTER.md` selects the active focus lane before prompting an external tool.
 
