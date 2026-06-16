@@ -83,7 +83,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 | POST | `/proof-support` | required | Submit/verify support proof |
 
 ## Web UI / Client Behavior
-- Plot Promotions tab lists scene-scoped promotions/offers via `/communities/:id/promotions`.
+- The scene-scoped promotions/offers read surface at `/communities/:id/promotions` is retained/deferred runtime infrastructure; `Promotions` is not a current MVP Plot tab.
 - Print Shop is web-first for creators and is the source of event creation + flier purchasing.
 - Print Shop should be understood as a source-dashboard tool:
   - creators reach it from the source-facing side of the platform,
