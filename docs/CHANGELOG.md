@@ -50,6 +50,8 @@
 
 ### Changed
 
+- Deployed current `main` to Fly staging API image `deployment-01KV9067ZSY27R28YERF80V8S6`, removed stale pre-UPR-10 smoke residue from Neon staging, and verified the hosted onboarding/Home Scene path end-to-end against Vercel web, Fly API, and Neon/PostGIS; see `docs/handoff/2026-06-16_staging-api-redeploy-and-onboarding-smoke.md`.
+
 - Applied the current Prisma migration set to Neon staging and seeded the `48` launch city-tier Home Scene communities into `uprise_staging`, with verification confirming `48` active city-tier rows, one deterministic seed owner, and no state/national rows; see `docs/handoff/2026-06-16_neon-staging-launch-community-seed.md`.
 
 - Aligned server-side onboarding fallback with the active Home Scene spec: inactive or missing submitted scenes now preserve pioneer intent, resolve `tunedSceneId` to the nearest active city-tier scene, avoid creating inactive communities, and allow GPS-verified voting in that fallback scene.
