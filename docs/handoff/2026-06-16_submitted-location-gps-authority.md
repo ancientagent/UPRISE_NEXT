@@ -67,3 +67,47 @@ Staging smoke should verify:
 3. Pioneer El Paso/Texas/Punk user using Austin coordinates fails GPS with `SUBMITTED_LOCATION_MISMATCH`.
 
 This staging smoke requires hosted API `GOOGLE_PLACES_API_KEY`; if absent, pioneer fallback verification should return `SUBMITTED_LOCATION_NOT_VERIFIED`.
+
+## Staging Verification
+
+Completed: 2026-06-16
+
+Provider change:
+
+- Set Fly staging secret `GOOGLE_PLACES_API_KEY` on `uprise-api-staging`.
+- Fly reported `GOOGLE_PLACES_API_KEY` as `Deployed`.
+- The staging API machine restarted through Fly's rolling update and returned healthy readiness checks.
+
+Health evidence after secret deployment:
+
+- `GET https://uprise-api-staging.fly.dev/health/live` returned healthy.
+- `GET https://uprise-api-staging.fly.dev/health/db` returned healthy.
+- `GET https://uprise-api-staging.fly.dev/health/postgis` returned healthy.
+- `GET https://uprise-api-staging.fly.dev/health/ready` returned healthy.
+
+Smoke command:
+
+```bash
+node /tmp/uprise-neon-runner/staging-submitted-location-gps-smoke.mjs
+```
+
+Smoke result:
+
+- Exact Austin/Texas/Punk user verified GPS at Austin coordinates, became voting eligible, and voted in Austin/Texas/Punk.
+- Pioneer El Paso/Texas/Punk user verified GPS at El Paso coordinates, kept El Paso as pioneer intent, resolved Austin/Texas/Punk as fallback voting scene, became voting eligible, and voted in Austin/Texas/Punk.
+- Pioneer El Paso/Texas/Punk user using Austin coordinates failed verification with `SUBMITTED_LOCATION_MISMATCH`.
+- Smoke cleanup removed temporary users, memberships, track, rotation entry, and votes.
+
+Cleanup verification:
+
+- `remaining_users: 0`
+- `remaining_tracks: 0`
+- `remaining_rotation_entries: 0`
+- `remaining_votes: 0`
+- `launch_geofenced: 48`
+- `total_communities: 48`
+
+Conclusion:
+
+- Submitted-location GPS authority is verified on Fly API staging.
+- Exact geofence voting and pioneer submitted-location fallback voting both pass against Neon/PostGIS staging.
