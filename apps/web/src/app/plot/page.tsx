@@ -552,6 +552,9 @@ export default function PlotPage() {
   const currentBroadcastLabel =
     broadcastMeta?.sceneName ?? radiyoBroadcastLabel;
   const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Space`;
+  const homeCityLabel = selectedCommunity?.city ?? homeScene?.city ?? 'CITY';
+  const listenerRecommendationLabel =
+    selectedCollectionItem?.label ?? currentBroadcastTrack?.title ?? 'No current recommendation yet';
   const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;
   const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
   const collectionShelves = plotProfile?.collectionShelves ?? [];
@@ -759,6 +762,26 @@ export default function PlotPage() {
     return null;
   };
 
+  const playerPanel = (
+    <RadiyoPlayerPanel
+      mode={playerMode}
+      onCollectionEject={handleCollectionEject}
+      rotationPool={rotationPool}
+      onRotationPoolChange={setRotationPool}
+      selectedTier={selectedTier}
+      activeBroadcastTier={activeBroadcastTier}
+      onTierChange={handleTierChange}
+      broadcastLabel={playerMode === 'RADIYO' ? currentBroadcastLabel : collectionBroadcastLabel}
+      collectionTitle={selectedCollectionItem?.label ?? null}
+      trackQueue={playerMode === 'RADIYO' ? currentRotationTracks : []}
+      currentTrack={playerMode === 'RADIYO' ? currentBroadcastTrack : null}
+      currentTrackCount={currentRotationTracks.length}
+      isBroadcastLoading={playerMode === 'RADIYO' ? broadcastLoading : false}
+      broadcastError={playerMode === 'RADIYO' ? broadcastError : null}
+      broadcastEmptyMessage={playerMode === 'RADIYO' ? broadcastEmptyMessage : null}
+    />
+  );
+
   if (!hasHomeScene) {
     return (
       <main className="plot-wire-page">
@@ -792,22 +815,40 @@ export default function PlotPage() {
       <div className="plot-wire-frame">
         <section className="plot-wire-card px-4 py-3 transition-all">
           <div
-            className="flex items-center justify-between gap-3 rounded-[1rem] border border-black bg-[#dfdfcf] px-3 py-2.5"
+            data-slot="home-identity-layer"
+            className="flex items-end justify-between gap-3 rounded-[1.15rem] border border-black bg-[#dfdfcf] px-3 py-3"
             onPointerDown={handleProfilePointerDown}
             onPointerMove={handleProfilePointerMove}
             onPointerUp={handleProfilePointerUp}
           >
-            <div className="min-w-0 flex-1">
-              <p className="plot-wire-label">User dashboard</p>
-              <p className="truncate text-sm font-semibold leading-tight text-black">
-                {user?.displayName || user?.username || 'User'}
-              </p>
-              <p className="mt-1 truncate text-[11px] text-black/60">
-                {selectedCommunityLabel ??
-                  (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
-                    ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
-                    : 'No scene selected')}
-              </p>
+            <div className="flex min-w-0 flex-1 items-end gap-3">
+              <div
+                data-slot="listener-avatar-bust"
+                className="flex h-16 w-14 shrink-0 items-end justify-center rounded-t-full border border-black bg-[#b8d63b] shadow-[2px_2px_0_rgba(0,0,0,0.28)]"
+                aria-label="Listener avatar bust"
+              >
+                <span className="mb-2 h-8 w-8 rounded-full border border-black bg-[#efefe2]" aria-hidden />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <div
+                  data-slot="listener-recommendation-bubble"
+                  className="mb-2 max-w-[18rem] rounded-[1rem] border border-black bg-white px-3 py-2 shadow-[2px_2px_0_rgba(0,0,0,0.22)]"
+                >
+                  <p className="plot-wire-label">Current recommendation</p>
+                  <p className="truncate text-xs font-semibold text-black">{listenerRecommendationLabel}</p>
+                </div>
+                <p className="plot-wire-label">UPRISE {homeCityLabel}</p>
+                <p className="truncate text-sm font-semibold leading-tight text-black">
+                  {user?.displayName || user?.username || 'User'}
+                </p>
+                <p className="mt-1 truncate text-[11px] text-black/60">
+                  {selectedCommunityLabel ??
+                    (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
+                      ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
+                      : 'No scene selected')}
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-2.5">
               <div className="relative">
@@ -878,23 +919,7 @@ export default function PlotPage() {
           </div>
         </section>
 
-        <RadiyoPlayerPanel
-          mode={playerMode}
-          onCollectionEject={handleCollectionEject}
-          rotationPool={rotationPool}
-          onRotationPoolChange={setRotationPool}
-          selectedTier={selectedTier}
-          activeBroadcastTier={activeBroadcastTier}
-          onTierChange={handleTierChange}
-          broadcastLabel={playerMode === 'RADIYO' ? currentBroadcastLabel : collectionBroadcastLabel}
-          collectionTitle={selectedCollectionItem?.label ?? null}
-          trackQueue={playerMode === 'RADIYO' ? currentRotationTracks : []}
-          currentTrack={playerMode === 'RADIYO' ? currentBroadcastTrack : null}
-          currentTrackCount={currentRotationTracks.length}
-          isBroadcastLoading={playerMode === 'RADIYO' ? broadcastLoading : false}
-          broadcastError={playerMode === 'RADIYO' ? broadcastError : null}
-          broadcastEmptyMessage={playerMode === 'RADIYO' ? broadcastEmptyMessage : null}
-        />
+        {isProfileExpanded ? null : playerPanel}
 
         {isProfileExpanded ? (
           <section
@@ -942,13 +967,6 @@ export default function PlotPage() {
                 </p>
               </div>
             </header>
-
-            <div className="plot-wire-card-muted p-4">
-              <p className="plot-wire-label">Player Context</p>
-              <p className="mt-1 text-sm font-medium text-black">
-                {playerMode === 'RADIYO' ? 'RADIYO' : 'SPACE'} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
-              </p>
-            </div>
 
             <div className="plot-wire-card-muted p-4">
               <div className="flex flex-wrap gap-2">
@@ -1135,6 +1153,10 @@ export default function PlotPage() {
                   </div>
                 )}
               </div>
+            </div>
+
+            <div data-slot="expanded-profile-player-strip">
+              {playerPanel}
             </div>
 
             <div className="flex flex-wrap gap-2.5">
