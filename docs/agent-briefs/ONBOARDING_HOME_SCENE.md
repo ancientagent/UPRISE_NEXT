@@ -73,10 +73,12 @@ Tests / verification files:
 - Missing-music-community intake stores distinct requester/city review signals but does not define a final approval threshold in code.
 - Taste tags are not collected during onboarding.
 - Home Scene selection is stored regardless of GPS verification.
-- Setting a Home Scene auto-joins the resolved city-tier scene membership.
+- Setting a Home Scene auto-joins the resolved active city-tier scene membership.
 - GPS is requested to enable voting rights only.
 - Users can participate without GPS but cannot vote when GPS is denied/unavailable.
 - If the selected city-tier scene is inactive/unavailable, preserve pioneer intent and route to nearest active city scene for the selected parent community.
+- For inactive/unavailable Home Scenes, the submitted city/state/music-community remains the user's pioneer intent while `tunedSceneId` stores the resolved active listening/voting anchor.
+- Voting for a pioneer fallback user is allowed in the resolved nearest active community after GPS verification; voting is not allowed in arbitrary visitor scenes.
 - Pioneer follow-up appears through the top-right notification icon in the profile strip after Home Scene context loads.
 
 ## Current Runtime Pointers
@@ -85,7 +87,7 @@ Tests / verification files:
 - `/plot` resolves Home Scene context and surfaces pioneer follow-up through the notification icon.
 - `GET /communities/resolve-home` resolves exact Home Scene tuple for Plot/community anchoring.
 - `POST /onboarding/home-scene` is the server-authoritative Home Scene persistence path.
-- `POST /onboarding/gps-verify` verifies voting eligibility.
+- `POST /onboarding/gps-verify` verifies voting eligibility against the active Home Scene or fallback voting scene.
 - `POST /onboarding/music-community-requests` stores missing music-community intake without creating a `Community` or selector option.
 
 ## Companion Briefs

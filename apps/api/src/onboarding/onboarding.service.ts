@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type {
@@ -6,22 +6,6 @@ import type {
   GpsVerifyDto,
   MusicCommunityRequestDto,
 } from './dto/onboarding.dto';
-
-function slugify(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80);
-}
-
-function buildCommunitySlug(city: string, state: string, musicCommunity: string): string {
-  const base = slugify(`${city}-${state}-${musicCommunity}`);
-  // Ensure non-empty + keep reasonable uniqueness without needing a lookup.
-  const suffix = Math.random().toString(36).slice(2, 6);
-  return base ? `${base}-${suffix}` : `community-${suffix}`;
-}
 
 function normalizeIntakeText(value: string): string {
   return value.trim().replace(/\s+/g, ' ');
@@ -31,9 +15,72 @@ function normalizeIntakeKey(value: string): string {
   return normalizeIntakeText(value).toLowerCase();
 }
 
+function formatSceneLabel(scene: {
+  city: string | null;
+  state: string | null;
+  musicCommunity: string | null;
+}): string {
+  const city = scene.city?.trim();
+  const state = scene.state?.trim();
+  const musicCommunity = scene.musicCommunity?.trim();
+
+  if (city && state && musicCommunity) return `${city}, ${state} • ${musicCommunity}`;
+  if (city && state) return `${city}, ${state}`;
+  if (city && musicCommunity) return `${city} • ${musicCommunity}`;
+  if (state && musicCommunity) return `${state} • ${musicCommunity}`;
+  return city || state || musicCommunity || '';
+}
+
+type ResolvedHomeScene = {
+  id: string;
+  name: string;
+  city: string | null;
+  state: string | null;
+  musicCommunity: string | null;
+  isActive: boolean;
+};
+
 @Injectable()
 export class OnboardingService {
   constructor(private prisma: PrismaService) {}
+
+  private async resolveActiveFallbackScene(
+    state: string,
+    musicCommunity: string
+  ): Promise<ResolvedHomeScene | null> {
+    const select = {
+      id: true,
+      name: true,
+      city: true,
+      state: true,
+      musicCommunity: true,
+      isActive: true,
+      memberCount: true,
+    };
+    const orderBy = [
+      { memberCount: 'desc' as const },
+      { name: 'asc' as const },
+      { id: 'asc' as const },
+    ];
+
+    const sameStateMatches = await this.prisma.community.findMany({
+      where: { tier: 'city', musicCommunity, state, isActive: true },
+      select,
+      orderBy,
+      take: 1,
+    });
+
+    if (sameStateMatches[0]) return sameStateMatches[0];
+
+    const communityMatches = await this.prisma.community.findMany({
+      where: { tier: 'city', musicCommunity, isActive: true },
+      select,
+      orderBy,
+      take: 1,
+    });
+
+    return communityMatches[0] ?? null;
+  }
 
   async setHomeScene(userId: string, dto: HomeSceneSelectionDto) {
     const city = dto.city.trim();
@@ -41,35 +88,29 @@ export class OnboardingService {
     const musicCommunity = dto.musicCommunity.trim();
     const tasteTag = dto.tasteTag?.trim() || null;
 
-    // We treat the Home Scene as a City-tier Community container.
-    // If it doesn't exist yet, we create it as inactive (pioneer) and still allow the user to affiliate.
-    let resolvedScene = await this.prisma.community.findFirst({
+    const exactScene = await this.prisma.community.findFirst({
       where: { city, state, musicCommunity, tier: 'city' },
-      select: { id: true, city: true, state: true, musicCommunity: true, isActive: true },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        isActive: true,
+      },
     });
 
     const appliedTags: string[] = [];
-    let pioneer = false;
+    const pioneer = !exactScene?.isActive;
+    const resolvedScene = exactScene?.isActive
+      ? exactScene
+      : await this.resolveActiveFallbackScene(state, musicCommunity);
 
     if (!resolvedScene) {
-      pioneer = true;
-      resolvedScene = await this.prisma.community.create({
-        data: {
-          name: `${city}, ${state} ${musicCommunity}`,
-          slug: buildCommunitySlug(city, state, musicCommunity),
-          description: `Local music community for ${musicCommunity} in ${city}, ${state}.`,
-          city,
-          state,
-          musicCommunity,
-          tier: 'city',
-          isActive: false,
-          // createdById is required; tie it to the first pioneer by default.
-          createdById: userId,
-        },
-        select: { id: true, city: true, state: true, musicCommunity: true, isActive: true },
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'No active city scene is available for the selected music community' },
       });
-    } else {
-      pioneer = !resolvedScene.isActive;
     }
 
     const inferredTag = tasteTag || (appliedTags.length > 0 ? appliedTags[0] : null);
@@ -80,8 +121,10 @@ export class OnboardingService {
         data: {
           homeSceneCity: city,
           homeSceneState: state,
-          homeSceneCommunity: resolvedScene.musicCommunity,
+          homeSceneCommunity: musicCommunity,
           homeSceneTag: inferredTag,
+          tunedSceneId: resolvedScene.id,
+          tunedSceneUpdatedAt: new Date(),
         },
         select: {
           id: true,
@@ -89,6 +132,7 @@ export class OnboardingService {
           homeSceneState: true,
           homeSceneCommunity: true,
           homeSceneTag: true,
+          tunedSceneId: true,
           gpsVerified: true,
         },
       });
@@ -137,6 +181,9 @@ export class OnboardingService {
     return {
       ...user,
       sceneId: resolvedScene.id,
+      resolvedCitySceneId: resolvedScene.id,
+      resolvedCitySceneLabel: formatSceneLabel(resolvedScene),
+      pioneerHomeScene: pioneer ? { city, state, musicCommunity } : null,
       appliedTags: Array.from(tagsToApply),
       votingEligible: user.gpsVerified,
       pioneer,
@@ -150,6 +197,7 @@ export class OnboardingService {
         homeSceneCity: true,
         homeSceneState: true,
         homeSceneCommunity: true,
+        tunedSceneId: true,
       },
     });
 
@@ -167,15 +215,23 @@ export class OnboardingService {
       return { ...updated, votingEligible: false, reason: 'NO_HOME_SCENE' as const };
     }
 
-    const community = await this.prisma.community.findFirst({
+    const exactCommunity = await this.prisma.community.findFirst({
       where: {
         city: user.homeSceneCity,
         state: user.homeSceneState,
         musicCommunity: user.homeSceneCommunity,
         tier: 'city',
       },
-      select: { id: true, radius: true },
+      select: { id: true, radius: true, isActive: true },
     });
+    const community = exactCommunity?.isActive
+      ? exactCommunity
+      : user.tunedSceneId
+        ? await this.prisma.community.findUnique({
+            where: { id: user.tunedSceneId },
+            select: { id: true, radius: true },
+          })
+        : null;
 
     let within = false;
     let distance: number | null = null;
@@ -231,6 +287,7 @@ export class OnboardingService {
     return {
       ...updated,
       votingEligible: updated.gpsVerified,
+      votingSceneId: community?.id ?? null,
       distance,
       reason,
     };
