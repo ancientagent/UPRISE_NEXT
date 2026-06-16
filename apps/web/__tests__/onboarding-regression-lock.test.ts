@@ -15,6 +15,9 @@ describe('/onboarding regression lock', () => {
     expect(onboardingSource).toContain('<select');
     expect(onboardingSource).toContain('Select an approved parent music community');
     expect(onboardingSource).toContain('{MUSIC_COMMUNITIES.map((community) => (');
+    expect(onboardingSource).toContain('<option key={community} value={community}>');
+    expect(onboardingSource).toContain('{community}');
+    expect(onboardingSource).not.toContain('<option key={community} value={community} />');
     expect(onboardingSource).toContain('Selection only from the approved parent communities.');
     expect(onboardingSource).not.toContain('list="communities"');
     expect(onboardingSource).not.toContain('<datalist id="communities">');
