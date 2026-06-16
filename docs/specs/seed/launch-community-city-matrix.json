@@ -11,31 +11,49 @@
     {
       "city": "Austin",
       "state": "Texas",
+      "latitude": 30.2672,
+      "longitude": -97.7431,
+      "geofenceRadiusMeters": 50000,
       "launchOpen": true
     },
     {
       "city": "Houston",
       "state": "Texas",
+      "latitude": 29.7604,
+      "longitude": -95.3698,
+      "geofenceRadiusMeters": 50000,
       "launchOpen": true
     },
     {
       "city": "Dallas",
       "state": "Texas",
+      "latitude": 32.7767,
+      "longitude": -96.797,
+      "geofenceRadiusMeters": 50000,
       "launchOpen": true
     },
     {
       "city": "Los Angeles",
       "state": "California",
+      "latitude": 34.0522,
+      "longitude": -118.2437,
+      "geofenceRadiusMeters": 50000,
       "launchOpen": true
     },
     {
       "city": "San Francisco",
       "state": "California",
+      "latitude": 37.7749,
+      "longitude": -122.4194,
+      "geofenceRadiusMeters": 50000,
       "launchOpen": true
     },
     {
       "city": "San Diego",
       "state": "California",
+      "latitude": 32.7157,
+      "longitude": -117.1611,
+      "geofenceRadiusMeters": 50000,
       "launchOpen": true
     }
   ],

@@ -50,6 +50,10 @@
 
 ### Changed
 
+- Added launch geofence seeding for the `48` active city-tier Home Scene tuples, using one city-center `geography(Point, 4326)` plus `50000` meter voting radius per launch city, and verified exact Home Scene GPS voting plus pioneer fallback voting against Fly API staging and Neon/PostGIS; see `docs/handoff/2026-06-16_launch-geofence-gps-voting-readiness.md`.
+
+- Fixed method-level `ZodBody` validation so body schemas no longer validate route params, restoring `POST /tracks/:id/vote` on the hosted API while preserving body validation coverage; see `docs/handoff/2026-06-16_launch-geofence-gps-voting-readiness.md`.
+
 - Deployed current `main` to Fly staging API image `deployment-01KV9067ZSY27R28YERF80V8S6`, removed stale pre-UPR-10 smoke residue from Neon staging, and verified the hosted onboarding/Home Scene path end-to-end against Vercel web, Fly API, and Neon/PostGIS; see `docs/handoff/2026-06-16_staging-api-redeploy-and-onboarding-smoke.md`.
 
 - Applied the current Prisma migration set to Neon staging and seeded the `48` launch city-tier Home Scene communities into `uprise_staging`, with verification confirming `48` active city-tier rows, one deterministic seed owner, and no state/national rows; see `docs/handoff/2026-06-16_neon-staging-launch-community-seed.md`.

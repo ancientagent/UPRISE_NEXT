@@ -1,12 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import launchMatrix from '../../../docs/specs/seed/launch-community-city-matrix.json';
-import { seedLaunchCommunities } from '../src/seed/launch-community-seed';
+import {
+  seedLaunchCommunities,
+  seedLaunchCommunityGeofences,
+} from '../src/seed/launch-community-seed';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const result = await seedLaunchCommunities(prisma, { matrix: launchMatrix });
-  console.log(JSON.stringify({ seed: 'launch-communities', ...result }, null, 2));
+  const communities = await seedLaunchCommunities(prisma, { matrix: launchMatrix });
+  const geofences = await seedLaunchCommunityGeofences(prisma, { matrix: launchMatrix });
+
+  console.log(JSON.stringify({ seed: 'launch-communities', communities, geofences }, null, 2));
 }
 
 main()

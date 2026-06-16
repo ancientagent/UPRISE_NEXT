@@ -66,6 +66,8 @@ Tests / verification files:
 - Music Community input is selection-only; no free-text genre/community creation in onboarding.
 - Current MVP launch selection is the implementation list in `docs/specs/seed/music-communities.json` and `apps/web/src/data/music-communities.ts`.
 - Current MVP launch matrix is `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples; see `docs/specs/seed/launch-community-city-matrix.json`.
+- Current MVP launch geofence readiness uses one city-center point plus a `50000` meter voting radius per launch city; all `8` music-community scenes in the same city inherit that city geofence.
+- Launch geofences are a voting-readiness locality gate only. Do not use them as tier logic, state/national scope logic, discovery radius logic, or city-specific runtime behavior.
 - Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change screens, menus, tabs, actions, player behavior, or routing.
 - Sects, generated channels, and sub-communities happen later through the Prime model rather than as launch seed architecture variants.
 - Missing-music-community requests are intake only. They do not create selectable onboarding options or live scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.

@@ -21,6 +21,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
 - Current MVP launch selection uses the implementation list in `docs/specs/seed/music-communities.json`.
 - Current MVP launch matrix is defined in `docs/specs/seed/launch-community-city-matrix.json` as `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples.
+- Current MVP launch geofence readiness uses the city-center point and `50000` meter radius stored on each launch city in `docs/specs/seed/launch-community-city-matrix.json`; every music-community scene in the same launch city inherits that city geofence for voting verification.
 - Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change runtime screens, menus, tabs, actions, player behavior, or routing.
 - Sects, generated channels, and sub-communities are created later through the Prime model, not through bespoke launch seed behavior.
 - Missing-music-community requests are intake only: they do not create selectable onboarding options or live city-tier scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.
@@ -53,6 +54,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 
 - Verification checks user coordinates against Home Scene geofence/radius.
 - When the submitted Home Scene is inactive/unavailable, verification and voting use the resolved active fallback scene.
+- Launch geofences are only a voting-readiness locality gate; they are not tier logic, state/national scope logic, discovery radius logic, or a city-specific runtime branch.
 - When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats the user as GPS-verified for voting eligibility.
 - Voting is enabled only when user is within geofence.
 - If no Home Scene or geofence, coordinates are stored but `gpsVerified=false`.
