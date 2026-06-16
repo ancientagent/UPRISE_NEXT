@@ -48,10 +48,12 @@ Current UI locks:
 4. `docs/solutions/SURFACE_CONTRACT_PLOT_R1.md`
 5. `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
 6. `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
-7. `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md`
-8. `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md`
-9. `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md`
-10. `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md`
+
+Reference / companion UI files:
+1. `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md` - mapping-only; does not authorize new behavior.
+2. `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md` - historical mobile-first phase reference; do not treat stale tab/action language as current authority.
+3. `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md` - historical screenshot-derived reference.
+4. `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md` - legacy screenshot element inventory; current locks win on conflict.
 
 Recent handoffs to use only after the locks above:
 - `docs/handoff/2026-04-25_player-pulldown-profile-rule.md`

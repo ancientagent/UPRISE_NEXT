@@ -2,12 +2,34 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const repoRoot = path.resolve(__dirname, '..');
+const workspaceRoot = path.resolve(repoRoot, '..', '..');
 
 function readRepoFile(relativePath: string): string {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function readWorkspaceFile(relativePath: string): string {
+  return fs.readFileSync(path.join(workspaceRoot, relativePath), 'utf8');
+}
+
 describe('/plot UX regression lock', () => {
+  it('keeps historical mobile and screenshot docs out of the current UI lock list', () => {
+    const uiBrief = readWorkspaceFile('docs/agent-briefs/UI_CURRENT.md');
+    const referenceMarker = 'Reference / companion UI files:';
+
+    expect(uiBrief).toContain(referenceMarker);
+
+    const currentLocksSection = uiBrief.split('Current UI locks:')[1].split(referenceMarker)[0];
+    const referenceSection = uiBrief.split(referenceMarker)[1].split('Recent handoffs to use only after the locks above:')[0];
+
+    expect(currentLocksSection).not.toContain('MVP_MOBILE_UX_SYSTEM_R1.md');
+    expect(currentLocksSection).not.toContain('MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md');
+    expect(currentLocksSection).not.toContain('MVP_SCREENSHOT_ELEMENT_SPEC_R1.md');
+    expect(referenceSection).toContain('MVP_MOBILE_UX_SYSTEM_R1.md');
+    expect(referenceSection).toContain('MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md');
+    expect(referenceSection).toContain('MVP_SCREENSHOT_ELEMENT_SPEC_R1.md');
+  });
+
   it('locks player mode labels to explicit RADIYO vs SPACE copy', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
