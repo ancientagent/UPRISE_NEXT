@@ -23,7 +23,57 @@ describe('Health Check API', () => {
     service = module.get<HealthService>(HealthService);
   });
 
-  describe('GET /api/health', () => {
+  describe('GET /health/live', () => {
+    it('should return process liveness without dependency checks', () => {
+      const result = controller.checkLive();
+
+      expect(result.success).toBe(true);
+      expect(result.data.status).toBe('healthy');
+      expect(result.data.checks.api.status).toBe('healthy');
+      expect(result.data.uptime).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('GET /health/ready', () => {
+    it('should return readiness when all dependencies are healthy', async () => {
+      const mockHealth = {
+        status: 'healthy' as const,
+        timestamp: new Date().toISOString(),
+        uptime: 100,
+        checks: {
+          api: { status: 'healthy' },
+          database: { status: 'healthy', latency: 10 },
+          postgis: { status: 'healthy', version: '3.3.0', spatialRefSys: 8500 },
+        },
+      };
+
+      jest.spyOn(service, 'check').mockResolvedValue(mockHealth);
+
+      const result = await controller.checkReady();
+
+      expect(result.success).toBe(true);
+      expect(result.data.status).toBe('healthy');
+    });
+
+    it('should reject readiness when a dependency is unhealthy', async () => {
+      const mockHealth = {
+        status: 'unhealthy' as const,
+        timestamp: new Date().toISOString(),
+        uptime: 100,
+        checks: {
+          api: { status: 'healthy' },
+          database: { status: 'unhealthy', error: 'connection failed' },
+          postgis: { status: 'healthy', version: '3.3.0', spatialRefSys: 8500 },
+        },
+      };
+
+      jest.spyOn(service, 'check').mockResolvedValue(mockHealth);
+
+      await expect(controller.checkReady()).rejects.toThrow();
+    });
+  });
+
+  describe('GET /health', () => {
     it('should return health status', async () => {
       const mockHealth = {
         status: 'healthy' as const,
@@ -46,7 +96,7 @@ describe('Health Check API', () => {
     });
   });
 
-  describe('GET /api/health/postgis', () => {
+  describe('GET /health/postgis', () => {
     it('should verify PostGIS is installed', async () => {
       const mockPostGISHealth = {
         status: 'healthy' as const,
@@ -83,7 +133,7 @@ describe('Health Check API', () => {
     });
   });
 
-  describe('GET /api/health/db', () => {
+  describe('GET /health/db', () => {
     it('should check database connection', async () => {
       const mockDbHealth = {
         status: 'healthy' as const,

@@ -3,10 +3,13 @@ import { ArtistBandsService } from '../src/artist-bands/artist-bands.service';
 
 describe('ArtistBandsService', () => {
   const mockPrisma = {
-    artistBand: {
-      findUnique: jest.fn(),
-      findMany: jest.fn(),
-    },
+    artistBand: { findUnique: jest.fn(), findMany: jest.fn() },
+    follow: { count: jest.fn() },
+    track: { findMany: jest.fn() },
+    event: { findMany: jest.fn() },
+    signal: { findMany: jest.fn() },
+    collectionItem: { findMany: jest.fn() },
+    signalAction: { findMany: jest.fn() },
   };
 
   let service: ArtistBandsService;
@@ -16,25 +19,34 @@ describe('ArtistBandsService', () => {
     service = new ArtistBandsService(mockPrisma as any);
   });
 
-  it('throws NotFoundException when artist/band entity is missing', async () => {
+  it('throws when the artist/band does not exist', async () => {
     mockPrisma.artistBand.findUnique.mockResolvedValue(null);
 
-    await expect(service.findOne('missing-id')).rejects.toThrow(NotFoundException);
+    await expect(service.findProfile('missing-band')).rejects.toThrow(NotFoundException);
   });
 
-  it('returns mapped artist/band entity with membership details', async () => {
+  it('returns a profile with songs and events', async () => {
     mockPrisma.artistBand.findUnique.mockResolvedValue({
-      id: 'ab-1',
-      name: 'The Static Hearts',
-      slug: 'the-static-hearts',
+      id: 'artist-1',
+      name: 'Signal Static',
+      slug: 'signal-static',
       entityType: 'band',
-      registrarEntryRef: 'reg-101',
-      createdAt: new Date('2026-02-20T00:00:00.000Z'),
-      updatedAt: new Date('2026-02-20T00:00:00.000Z'),
+      registrarEntryRef: null,
+      officialWebsiteUrl: 'https://signalstatic.example.com',
+      merchUrl: 'https://signalstatic.example.com/merch',
+      musicUrl: 'https://signalstatic.example.com/music',
+      donationUrl: 'https://signalstatic.example.com/support',
+      homeSceneId: 'scene-1',
+      createdById: 'user-1',
+      createdAt: new Date('2026-03-20T00:00:00.000Z'),
+      updatedAt: new Date('2026-03-21T00:00:00.000Z'),
       createdBy: {
-        id: 'u-1',
-        username: 'owner',
-        displayName: 'Owner',
+        id: 'user-1',
+        username: 'signalstatic',
+        displayName: 'Signal Static',
+        bio: 'Local broadcast damage.',
+        avatar: null,
+        coverImage: null,
       },
       homeScene: {
         id: 'scene-1',
@@ -42,74 +54,183 @@ describe('ArtistBandsService', () => {
         slug: 'austin-punk',
         city: 'Austin',
         state: 'TX',
-        musicCommunity: 'punk',
+        musicCommunity: 'Punk',
         tier: 'city',
       },
       members: [
         {
-          userId: 'u-1',
+          userId: 'user-1',
           role: 'owner',
-          createdAt: new Date('2026-02-20T00:00:00.000Z'),
+          createdAt: new Date('2026-03-20T00:00:00.000Z'),
           user: {
-            id: 'u-1',
-            username: 'owner',
-            displayName: 'Owner',
-          },
-        },
-        {
-          userId: 'u-2',
-          role: 'manager',
-          createdAt: new Date('2026-02-20T00:00:00.000Z'),
-          user: {
-            id: 'u-2',
-            username: 'mgr',
-            displayName: 'Manager',
+            id: 'user-1',
+            username: 'signalstatic',
+            displayName: 'Signal Static',
+            avatar: null,
           },
         },
       ],
     });
+    mockPrisma.follow.count.mockResolvedValue(14);
+    mockPrisma.track.findMany.mockResolvedValue([
+      {
+        id: 'track-1',
+        artistBandId: 'artist-1',
+        title: 'Broken Tower',
+        artist: 'Signal Static',
+        album: null,
+        duration: 187,
+        fileUrl: 'https://cdn.example.com/track-1.mp3',
+        coverArt: null,
+        playCount: 42,
+        likeCount: 10,
+        status: 'ready',
+        createdAt: new Date('2026-03-20T00:00:00.000Z'),
+      },
+    ]);
+    mockPrisma.event.findMany.mockResolvedValue([
+      {
+        id: 'event-1',
+        artistBandId: 'artist-1',
+        title: 'Warehouse Set',
+        description: 'All ages.',
+        startDate: new Date('2026-04-01T01:00:00.000Z'),
+        endDate: new Date('2026-04-01T03:00:00.000Z'),
+        locationName: 'The Yard',
+        address: '123 Red River',
+        attendeeCount: 88,
+        createdAt: new Date('2026-03-21T00:00:00.000Z'),
+      },
+    ]);
+    mockPrisma.signal.findMany.mockResolvedValue([
+      {
+        id: 'signal-1',
+        createdById: 'user-1',
+        metadata: {
+          title: 'Broken Tower',
+          artistBandId: 'artist-1',
+        },
+      },
+    ]);
+    mockPrisma.collectionItem.findMany.mockResolvedValue([{ signalId: 'signal-1' }]);
+    mockPrisma.signalAction.findMany.mockResolvedValue([{ signalId: 'signal-1' }]);
 
-    const result = await service.findOne('ab-1');
+    const result = await service.findProfile('artist-1', 'viewer-1');
 
-    expect(result.id).toBe('ab-1');
-    expect(result.entityType).toBe('band');
-    expect(result.registrarEntryRef).toBe('reg-101');
-    expect(result.memberCount).toBe(2);
-    expect(result.members[0]).toEqual(
+    expect(result.name).toBe('Signal Static');
+    expect(result.followCount).toBe(14);
+    expect(result.officialWebsiteUrl).toBe('https://signalstatic.example.com');
+    expect(result.merchUrl).toBe('https://signalstatic.example.com/merch');
+    expect(result.musicUrl).toBe('https://signalstatic.example.com/music');
+    expect(result.donationUrl).toBe('https://signalstatic.example.com/support');
+    expect(result.tracks).toHaveLength(1);
+    expect(result.events).toHaveLength(1);
+    expect(result.tracks[0]?.artistBandId).toBe('artist-1');
+    expect(result.tracks[0]?.signalId).toBe('signal-1');
+    expect(result.tracks[0]?.viewerHasCollected).toBe(true);
+    expect(result.tracks[0]?.viewerHasRecommended).toBe(true);
+    expect(result.events[0]?.artistBandId).toBe('artist-1');
+    expect(mockPrisma.track.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        userId: 'u-1',
-        role: 'owner',
+        where: expect.objectContaining({
+          status: 'ready',
+          communityId: 'scene-1',
+        }),
       }),
     );
   });
 
-  it('lists artist/band entities managed by a user', async () => {
-    mockPrisma.artistBand.findMany.mockResolvedValue([
-      {
-        id: 'ab-1',
-        name: 'Solo Signal',
-        slug: 'solo-signal',
-        entityType: 'artist',
-        registrarEntryRef: null,
-        createdAt: new Date('2026-02-20T00:00:00.000Z'),
-        updatedAt: new Date('2026-02-20T00:00:00.000Z'),
+  it('keeps explicit source ownership ahead of legacy fallback on profile reads', async () => {
+    mockPrisma.artistBand.findUnique.mockResolvedValue({
+      id: 'artist-1',
+      name: 'Signal Static',
+      slug: 'signal-static',
+      entityType: 'band',
+      registrarEntryRef: null,
+      officialWebsiteUrl: null,
+      merchUrl: null,
+      musicUrl: null,
+      donationUrl: null,
+      homeSceneId: 'scene-1',
+      createdById: 'user-1',
+      createdAt: new Date('2026-03-20T00:00:00.000Z'),
+      updatedAt: new Date('2026-03-21T00:00:00.000Z'),
+      createdBy: {
+        id: 'user-1',
+        username: 'signalstatic',
+        displayName: 'Signal Static',
+        bio: null,
+        avatar: null,
+        coverImage: null,
       },
-    ]);
+      homeScene: null,
+      members: [
+        {
+          userId: 'user-2',
+          role: 'member',
+          createdAt: new Date('2026-03-20T00:00:00.000Z'),
+          user: {
+            id: 'user-2',
+            username: 'signalmate',
+            displayName: 'Signal Mate',
+            avatar: null,
+          },
+        },
+      ],
+    });
+    mockPrisma.follow.count.mockResolvedValue(0);
+    mockPrisma.track.findMany.mockResolvedValue([]);
+    mockPrisma.event.findMany.mockResolvedValue([]);
+    mockPrisma.signal.findMany.mockResolvedValue([]);
+    mockPrisma.collectionItem.findMany.mockResolvedValue([]);
+    mockPrisma.signalAction.findMany.mockResolvedValue([]);
 
-    const result = await service.findByUserId('u-1');
+    await service.findProfile('artist-1', 'viewer-1');
 
-    expect(mockPrisma.artistBand.findMany).toHaveBeenCalledWith(
+    expect(mockPrisma.track.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {
-          members: {
-            some: {
-              userId: 'u-1',
+          status: 'ready',
+          communityId: 'scene-1',
+          OR: [
+            {
+              artistBandId: 'artist-1',
             },
-          },
+            {
+              artistBandId: null,
+              artist: {
+                equals: 'Signal Static',
+                mode: 'insensitive',
+              },
+            },
+            {
+              artistBandId: null,
+              uploadedById: {
+                in: ['user-2'],
+              },
+            },
+          ],
         },
       }),
     );
-    expect(result).toHaveLength(1);
-    expect(result[0].slug).toBe('solo-signal');
+    expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          communityId: 'scene-1',
+          OR: [
+            {
+              artistBandId: 'artist-1',
+            },
+            {
+              artistBandId: null,
+              createdById: {
+                in: ['user-2'],
+              },
+            },
+          ],
+        },
+      }),
+    );
   });
+
 });

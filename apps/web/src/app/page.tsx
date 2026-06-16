@@ -26,8 +26,11 @@ export default function Home() {
           <Button asChild size="lg" variant="outline">
             <Link href="/plot">Open The Plot</Link>
           </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/discover">Open Discover</Link>
+          <Button size="lg" variant="outline" disabled className="gap-2">
+            <span>Discover</span>
+            <span className="rounded-full border border-black/10 bg-black/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-black/60">
+              Soon
+            </span>
           </Button>
         </div>
         <div className="mt-12 grid gap-4 md:grid-cols-3">

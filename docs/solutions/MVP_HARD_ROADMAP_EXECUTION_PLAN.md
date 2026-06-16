@@ -15,6 +15,7 @@ This document is execution-only (not product canon). Product behavior remains de
 - Web-tier boundary remains strict (`apps/web/WEB_TIER_BOUNDARY.md`).
 - No assumption-based product decisions when canon/spec is ambiguous; stop and ask founder.
 - Throughput runs require rollback checkpoints (`docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md`).
+- Throughput runs must obey phase stop-gate control (`docs/solutions/PHASE_STOP_GATE_PLAYBOOK.md`); do not keep seeding batches after convergence without an explicit acceptance/closeout decision.
 
 ## 3. Baseline Snapshot (2026-02-28)
 Observed from lane queue files (`.reliant/queue/mvp-lane-*.json`):
@@ -83,6 +84,10 @@ Exit criteria:
 - Founder review pass on web flow coherence.
 - No unresolved critical UX blockers in MVP paths.
 - Typecheck/tests/docs lint green.
+
+Stop-batching criteria:
+- If recent R2 batches are converging cleanly and remaining work is acceptance-oriented rather than implementation-oriented, stop seeding general UX batches.
+- Produce readiness review + founder walkthrough + explicit closeout/delta decision before any additional broad R2 queue prep.
 
 ## Phase R3 — Core MVP Feature Closure (communities + broadcast + signals)
 Goal: close core product behavior required for MVP usage loops.

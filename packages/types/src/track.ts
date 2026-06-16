@@ -5,6 +5,7 @@ export const TrackSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(200),
   artist: z.string().min(1).max(200),
+  artistBandId: z.string().uuid().nullable().optional(),
   album: z.string().max(200).optional(),
   duration: z.number().positive(), // in seconds
   fileUrl: z.string().url(),
@@ -29,6 +30,20 @@ export const UploadTrackSchema = TrackSchema.pick({
 });
 
 export type UploadTrack = z.infer<typeof UploadTrackSchema>;
+
+export const CreateTrackInputSchema = z.object({
+  title: z.string().min(1).max(200),
+  artist: z.string().min(1).max(200),
+  artistBandId: z.string().uuid().optional(),
+  album: z.string().max(200).optional(),
+  duration: z.number().positive(),
+  fileUrl: z.string().url(),
+  coverArt: z.string().url().optional(),
+  communityId: z.string().uuid().optional(),
+  status: z.enum(['processing', 'ready', 'failed']).optional(),
+});
+
+export type CreateTrackInput = z.infer<typeof CreateTrackInputSchema>;
 
 export const UpdateTrackSchema = TrackSchema.partial().omit({
   id: true,

@@ -1,26 +1,38 @@
 'use client';
 
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
+import type { BroadcastRotation, BroadcastRotationMeta, Track } from '@uprise/types';
+import { api } from '@/lib/api';
+import { getActiveBroadcastRotation } from '@/lib/broadcast/client';
+import { normalizeBroadcastRuntimeError } from '@/lib/broadcast/runtime';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
 import TopSongsPanel from '@/components/plot/TopSongsPanel';
 import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
 import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
-import PlotPromotionsPanel from '@/components/plot/PlotPromotionsPanel';
-import RadiyoPlayerPanel, { type PlayerMode, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
-import { buildRadiyoBroadcastLabel } from '@/components/plot/tier-guard';
+import RadiyoPlayerPanel, { type PlayerMode, type PlayerTier, type RotationPool } from '@/components/plot/RadiyoPlayerPanel';
+import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
+import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
+import {
+  buildRadiyoBroadcastLabel,
+  getMvpPlayerTier,
+  shouldUseTunedSceneAsDefaultPlotAnchor,
+} from '@/components/plot/tier-guard';
 import { getDiscoveryContext } from '@/lib/discovery/client';
-import { toDiscoveryContextPatch } from '@/lib/discovery/context';
+import { mergeDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
   getCommunityById,
   getCommunityStatistics,
   resolveHomeCommunity,
   type CommunityStatisticsResponse,
 } from '@/lib/communities/client';
+import { listArtistBandRegistrations, listPromoterRegistrations, type RegistrarPromoterEntry } from '@/lib/registrar/client';
+import { formatRegistrarEntryStatus, getRegistrarPlotSummary, type RegistrarPlotSummary } from '@/lib/registrar/entryStatus';
 
 // Dynamic imports for client components
 const StatisticsPanel = dynamic(
@@ -43,7 +55,7 @@ const StatisticsPanel = dynamic(
   }
 );
 
-const tabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;
+const tabs = ['Feed', 'Events', 'Archive'] as const;
 type PlotTab = (typeof tabs)[number];
 const expandedProfileSections = [
   'Singles/Playlists',
@@ -54,23 +66,113 @@ const expandedProfileSections = [
   'Saved Promos/Coupons',
 ] as const;
 type ExpandedProfileSection = (typeof expandedProfileSections)[number];
-const singlesAndPlaylistsItems: Array<{ id: string; label: string; kind: 'track' | 'playlist' }> = [
-  { id: 'track-south-side-signal', label: 'South Side Signal', kind: 'track' },
-  { id: 'track-lakefront-lights', label: 'Lakefront Lights', kind: 'track' },
-  { id: 'playlist-city-after-hours', label: 'City After Hours', kind: 'playlist' },
-  { id: 'playlist-state-line-set', label: 'State Line Set', kind: 'playlist' },
-];
+
+interface PlotCollectionShelfItem {
+  signalId: string;
+  type: string;
+  createdAt: string;
+  metadata: Record<string, unknown> | null;
+}
+
+interface PlotCollectionShelf {
+  shelf: string;
+  itemCount: number;
+  items: PlotCollectionShelfItem[];
+}
+
+interface PlotProfileRead {
+  canViewCollection: boolean;
+  collectionShelves: PlotCollectionShelf[];
+  managedArtistBands: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    entityType: string;
+    membershipRole: string | null;
+  }>;
+}
+
+const readMetadataString = (
+  metadata: Record<string, unknown> | null | undefined,
+  keys: string[],
+): string | null => {
+  if (!metadata) return null;
+
+  for (const key of keys) {
+    const value = metadata[key];
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return value.trim();
+    }
+  }
+
+  return null;
+};
+
+const formatShelfItemPrimaryLabel = (item: PlotCollectionShelfItem): string => {
+  const metadata = item.metadata;
+
+  const sceneCity = readMetadataString(metadata, ['city']);
+  const sceneState = readMetadataString(metadata, ['state']);
+  const sceneMusicCommunity = readMetadataString(metadata, ['musicCommunity', 'community']);
+
+  if (sceneCity && sceneState && sceneMusicCommunity) {
+    return `${sceneCity}, ${sceneState} • ${sceneMusicCommunity}`;
+  }
+
+  return (
+    readMetadataString(metadata, ['title', 'name', 'label', 'summary', 'productionName']) ??
+    item.type.replace(/_/g, ' ')
+  );
+};
+
+const formatShelfItemSecondaryLabel = (item: PlotCollectionShelfItem): string => {
+  const metadata = item.metadata;
+
+  return (
+    readMetadataString(metadata, ['callToAction', 'status', 'expiresAt', 'expiration']) ??
+    new Date(item.createdAt).toLocaleDateString()
+  );
+};
+
+const formatPlotCommunityLabel = (community: Pick<CommunityWithDistance, 'city' | 'state' | 'musicCommunity' | 'name'> | null): string | null => {
+  if (!community) return null;
+
+  if (community.city && community.state && community.musicCommunity) {
+    return `${community.city}, ${community.state} • ${community.musicCommunity}`;
+  }
+
+  return community.name ?? null;
+};
 
 export default function PlotPage() {
   const router = useRouter();
-  const { homeScene, tunedSceneId, setDiscoveryContext } = useOnboardingStore();
+  const {
+    homeScene,
+    pioneerFollowUp,
+    playerTier,
+    tunedSceneId,
+    tunedScene,
+    isVisitor,
+    setDiscoveryContext,
+    setPlayerTier,
+  } = useOnboardingStore();
   const { token, user } = useAuthStore();
+  const initialPlayerTier = useMemo<PlayerTier>(
+    () => playerTier ?? getMvpPlayerTier(tunedScene?.tier),
+    [playerTier, tunedScene?.tier],
+  );
   const [activeTab, setActiveTab] = useState<PlotTab>('Feed');
-  const [selectedTier, setSelectedTier] = useState<'city' | 'state' | 'national'>('city');
+  const [selectedTier, setSelectedTier] = useState<PlayerTier>(initialPlayerTier);
+  const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>(initialPlayerTier);
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>('collapsed');
   const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO');
   const [rotationPool, setRotationPool] = useState<RotationPool>('new_releases');
+  const [broadcastRotation, setBroadcastRotation] = useState<BroadcastRotation | null>(null);
+  const [broadcastMeta, setBroadcastMeta] = useState<BroadcastRotationMeta | null>(null);
+  const [broadcastLoading, setBroadcastLoading] = useState(false);
+  const [broadcastError, setBroadcastError] = useState<string | null>(null);
+  const [broadcastEmptyMessage, setBroadcastEmptyMessage] = useState<string | null>(null);
   const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists');
   const [selectedCollectionItem, setSelectedCollectionItem] = useState<{
     id: string;
@@ -78,32 +180,64 @@ export default function PlotPage() {
     kind: 'track' | 'playlist';
   } | null>(null);
   const [expandedProfileStats, setExpandedProfileStats] = useState<CommunityStatisticsResponse | null>(null);
+  const [isEngagementWheelOpen, setIsEngagementWheelOpen] = useState(false);
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
+  const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null);
+  const [registrarSummaryLoading, setRegistrarSummaryLoading] = useState(false);
+  const [registrarSummaryError, setRegistrarSummaryError] = useState<string | null>(null);
+  const [plotProfile, setPlotProfile] = useState<PlotProfileRead | null>(null);
+  const [plotProfileLoading, setPlotProfileLoading] = useState(false);
+  const [plotProfileError, setPlotProfileError] = useState<string | null>(null);
+  const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
+  const [promoterEntriesLoading, setPromoterEntriesLoading] = useState(false);
+  const [promoterEntriesError, setPromoterEntriesError] = useState<string | null>(null);
   const hasHomeScene =
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
+
+  const discoveryContextFallback = useMemo(
+    () => ({
+      tunedSceneId,
+      tunedScene,
+      isVisitor,
+    }),
+    [
+      isVisitor,
+      tunedSceneId,
+      tunedScene?.city,
+      tunedScene?.id,
+      tunedScene?.isActive,
+      tunedScene?.musicCommunity,
+      tunedScene?.name,
+      tunedScene?.state,
+      tunedScene?.tier,
+    ],
+  );
+  const selectedCommunityLabel = useMemo(() => formatPlotCommunityLabel(selectedCommunity), [selectedCommunity]);
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
       if (!token) return;
       try {
         const response = await getDiscoveryContext(token);
-        setDiscoveryContext(toDiscoveryContextPatch(response));
+        setDiscoveryContext(mergeDiscoveryContextPatch(response, discoveryContextFallback));
       } catch {
         // Keep local state if context fetch fails.
       }
     }
     fetchDiscoveryContext();
-  }, [token, setDiscoveryContext]);
+  }, [discoveryContextFallback, setDiscoveryContext, token]);
 
   useEffect(() => {
     async function resolveDefaultCommunity() {
       if (selectedCommunity) return;
       if (!hasHomeScene) return;
+      if (!token) return;
 
       try {
-        if (tunedSceneId) {
-          const tunedResponse = await getCommunityById(tunedSceneId, token || undefined);
+        if (tunedSceneId && shouldUseTunedSceneAsDefaultPlotAnchor(tunedScene)) {
+          const tunedResponse = await getCommunityById(tunedSceneId, token);
           if (tunedResponse) {
             setSelectedCommunity(tunedResponse);
             return;
@@ -118,7 +252,7 @@ export default function PlotPage() {
               state: homeScene.state,
               musicCommunity: homeScene.musicCommunity,
             },
-            token || undefined,
+            token,
           );
 
           if (homeResponse) {
@@ -133,6 +267,11 @@ export default function PlotPage() {
 
     resolveDefaultCommunity();
   }, [selectedCommunity, token, homeScene, tunedSceneId, hasHomeScene]);
+
+  useEffect(() => {
+    setSelectedTier(initialPlayerTier);
+    setActiveBroadcastTier((current) => (current === null ? null : initialPlayerTier));
+  }, [initialPlayerTier]);
 
   useEffect(() => {
     async function loadExpandedProfileStats() {
@@ -152,17 +291,207 @@ export default function PlotPage() {
     loadExpandedProfileStats();
   }, [selectedCommunity?.id, selectedTier, token]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadBroadcastRotation() {
+      if (!token || playerMode !== 'RADIYO' || !activeBroadcastTier) {
+        setBroadcastRotation(null);
+        setBroadcastMeta(null);
+        setBroadcastError(null);
+        setBroadcastEmptyMessage(null);
+        setBroadcastLoading(false);
+        return;
+      }
+
+      setBroadcastLoading(true);
+      setBroadcastError(null);
+      setBroadcastEmptyMessage(null);
+
+      try {
+        const response = await getActiveBroadcastRotation(activeBroadcastTier, token);
+
+        if (cancelled) return;
+
+        setBroadcastRotation(response.data ?? { newReleases: [], mainRotation: [] });
+        setBroadcastMeta(response.meta ?? null);
+        setBroadcastEmptyMessage(
+          activeBroadcastTier === 'state' && response.meta?.sceneId.startsWith('state-unavailable:')
+            ? 'No state scene is active for this community yet.'
+            : null,
+        );
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load the active broadcast rotation.';
+        const normalized = normalizeBroadcastRuntimeError(message, activeBroadcastTier);
+
+        if (normalized.treatAsEmptyState) {
+          setBroadcastRotation({ newReleases: [], mainRotation: [] });
+          setBroadcastMeta(null);
+          setBroadcastError(null);
+          setBroadcastEmptyMessage(normalized.userMessage);
+        } else {
+          setBroadcastRotation(null);
+          setBroadcastMeta(null);
+          setBroadcastError(normalized.userMessage);
+          setBroadcastEmptyMessage(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setBroadcastLoading(false);
+        }
+      }
+    }
+
+    loadBroadcastRotation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeBroadcastTier, playerMode, token]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadRegistrarSummary() {
+      if (!token || !hasHomeScene) {
+        setRegistrarSummary(null);
+        setRegistrarSummaryError(null);
+        setRegistrarSummaryLoading(false);
+        return;
+      }
+
+      setRegistrarSummaryLoading(true);
+      setRegistrarSummaryError(null);
+
+      try {
+        const response = await listArtistBandRegistrations(token);
+
+        if (cancelled) return;
+
+        setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []));
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load registrar status.';
+        setRegistrarSummary(null);
+        setRegistrarSummaryError(message);
+      } finally {
+        if (!cancelled) {
+          setRegistrarSummaryLoading(false);
+        }
+      }
+    }
+
+    loadRegistrarSummary();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasHomeScene, token]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPlotProfile() {
+      if (!token || !user?.id) {
+        setPlotProfile(null);
+        setPlotProfileError(null);
+        setPlotProfileLoading(false);
+        return;
+      }
+
+      setPlotProfileLoading(true);
+      setPlotProfileError(null);
+
+      try {
+        const response = await api.get<PlotProfileRead>(`/users/${user.id}/profile`, { token });
+
+        if (cancelled) return;
+
+        setPlotProfile(response.data ?? { canViewCollection: true, collectionShelves: [], managedArtistBands: [] });
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load collection shelves.';
+        setPlotProfile(null);
+        setPlotProfileError(message);
+      } finally {
+        if (!cancelled) {
+          setPlotProfileLoading(false);
+        }
+      }
+    }
+
+    loadPlotProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, user?.id]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPromoterEntries() {
+      if (!token) {
+        setPromoterEntries([]);
+        setPromoterEntriesError(null);
+        setPromoterEntriesLoading(false);
+        return;
+      }
+
+      setPromoterEntriesLoading(true);
+      setPromoterEntriesError(null);
+
+      try {
+        const response = await listPromoterRegistrations(token);
+
+        if (cancelled) return;
+
+        setPromoterEntries(response.entries ?? []);
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        const message = error instanceof Error ? error.message : 'Unable to load promoter status.';
+        setPromoterEntries([]);
+        setPromoterEntriesError(message);
+      } finally {
+        if (!cancelled) {
+          setPromoterEntriesLoading(false);
+        }
+      }
+    }
+
+    loadPromoterEntries();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
   const handleCommunitySelect = (community: CommunityWithDistance) => {
     setSelectedCommunity(community);
   };
 
   const handleCollectionSelection = (item: { id: string; label: string; kind: 'track' | 'playlist' }) => {
     setSelectedCollectionItem(item);
-    setPlayerMode('Collection');
+    setPlayerMode('SPACE');
   };
 
   const handleCollectionEject = () => {
     setPlayerMode('RADIYO');
+    setActiveBroadcastTier((current) => current ?? selectedTier);
+  };
+
+  const handleTierChange = (tier: PlayerTier) => {
+    const nextTier = tier === 'national' ? 'state' : tier;
+
+    setSelectedTier(nextTier);
+    setPlayerTier(nextTier);
+    setPlayerMode('RADIYO');
+    setActiveBroadcastTier((current) => (current === nextTier ? null : nextTier));
   };
 
   const handleProfilePointerDown = (event: PointerEvent<HTMLDivElement>) => {
@@ -214,8 +543,75 @@ export default function PlotPage() {
     // This callback exists for potential future use
   };
   const isProfileExpanded = profilePanelState === 'expanded';
+  const currentRotationTracks =
+    rotationPool === 'new_releases'
+      ? broadcastRotation?.newReleases ?? []
+      : broadcastRotation?.mainRotation ?? [];
+  const currentBroadcastTrack: Track | null = currentRotationTracks[0] ?? null;
   const radiyoBroadcastLabel = buildRadiyoBroadcastLabel(selectedTier, selectedCommunity, homeScene);
-  const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Collection`;
+  const currentBroadcastLabel =
+    broadcastMeta?.sceneName ?? radiyoBroadcastLabel;
+  const collectionBroadcastLabel = selectedCollectionItem?.label ?? `${user?.displayName || user?.username || 'Your'} Space`;
+  const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;
+  const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
+  const collectionShelves = plotProfile?.collectionShelves ?? [];
+  const canViewCollection = Boolean(plotProfile?.canViewCollection);
+  const managedArtistBands = plotProfile?.managedArtistBands ?? [];
+  const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === 'singles') ?? null;
+  const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === 'fliers') ?? null;
+  const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === 'uprises') ?? null;
+  const posterShelf = collectionShelves.find((shelf) => shelf.shelf === 'posters') ?? null;
+  const merchButtonShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_buttons') ?? null;
+  const merchPatchShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_patches') ?? null;
+  const merchShirtShelf = collectionShelves.find((shelf) => shelf.shelf === 'merch_shirts') ?? null;
+  const singlesCollectionItems =
+    singlesShelf?.items.map((item) => ({
+      id: item.signalId,
+      label: formatShelfItemPrimaryLabel(item),
+      kind: 'track' as const,
+    })) ?? [];
+  const latestPromoterEntry = promoterEntries[0] ?? null;
+  const canOpenPrintShop = Boolean(latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0);
+  const bandStatusCard =
+    managedArtistBands.length > 0 || (registrarSummary?.totalEntries ?? 0) > 0
+      ? {
+          label: 'Band Status',
+          value:
+            managedArtistBands.length > 0
+              ? managedArtistBands.length === 1
+                ? '1 linked entity'
+                : `${managedArtistBands.length} linked entities`
+              : registrarSummary?.latestStatus
+                ? formatRegistrarEntryStatus(registrarSummary.latestStatus)
+                : 'No recent status',
+          detail:
+            managedArtistBands.length > 0
+              ? managedArtistBands
+                  .slice(0, 2)
+                  .map((artistBand) => artistBand.name)
+                  .join(' • ')
+              : 'Registrar-linked identity status',
+        }
+      : null;
+  const promoterStatusCard =
+    latestPromoterEntry || promoterEntriesLoading || promoterEntriesError
+      ? {
+          label: 'Promoter Status',
+          value: promoterEntriesLoading
+            ? 'Loading...'
+            : promoterEntriesError
+              ? 'Unavailable'
+              : latestPromoterEntry?.promoterCapability.granted
+                ? 'Capability granted'
+                : latestPromoterEntry
+                  ? formatRegistrarEntryStatus(latestPromoterEntry.status)
+                  : 'No recent status',
+          detail: latestPromoterEntry?.payload.productionName ?? 'Promoter registrar lifecycle',
+        }
+      : null;
+  const profileStatusCards = [bandStatusCard, promoterStatusCard].filter(
+    (card): card is { label: string; value: string; detail: string } => Boolean(card),
+  );
   const seamLabel =
     profilePanelState === 'expanded'
       ? 'Pull up or tap to collapse profile'
@@ -228,20 +624,96 @@ export default function PlotPage() {
   }).format(new Date());
   const activityScore = expandedProfileStats?.metrics.activityScore ?? 0;
   const eventsThisWeek = expandedProfileStats?.metrics.eventsThisWeek ?? 0;
-  const plotTabHeading = activeTab === 'Statistics' ? 'Scene Statistics' : activeTab;
+  const plotTabHeading = activeTab === 'Archive' ? 'Scene Archive' : activeTab;
+  const wheelActions = getEngagementWheelActions(playerMode);
   const plotTabDescription =
     activeTab === 'Feed'
       ? 'Community actions appear here.'
       : activeTab === 'Events'
         ? 'Scene events listing from your selected community anchor.'
-        : activeTab === 'Promotions'
-          ? 'Scene-scoped promotions and offers from your selected anchor.'
-          : activeTab === 'Statistics'
-            ? null
-            : 'Message boards and listening rooms.';
+        : activeTab === 'Archive'
+          ? null
+          : 'Message boards and listening rooms.';
+
+  const renderBottomNav = () => (
+    <>
+      {isEngagementWheelOpen ? (
+        <div className="fixed inset-x-0 bottom-24 z-40 px-4 sm:px-6">
+          <div className="mx-auto max-w-3xl rounded-[1.25rem] border border-black bg-[#efefe4] p-4 shadow-[4px_4px_0_rgba(0,0,0,0.35)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="plot-wire-label">UPRISE Wheel</p>
+                <p className="mt-1 text-sm text-black/70">
+                  {playerMode === 'RADIYO'
+                    ? 'RADIYO actions stay deterministic for the current scene context.'
+                    : 'SPACE actions stay deterministic for the selected listening context.'}
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs"
+                onClick={() => setIsEngagementWheelOpen(false)}
+                aria-label="Close engagement wheel"
+              >
+                Close
+              </Button>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {wheelActions.map((action) => (
+                <span
+                  key={`${action.label}-${action.position ?? 'center'}`}
+                  className="plot-wire-chip bg-white px-3 py-2 text-[11px]"
+                >
+                  {action.position ? `${action.position} ${action.label}` : action.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <nav
+        aria-label="Plot bottom navigation"
+        data-slot="plot-bottom-nav"
+        className="plot-wire-nav"
+      >
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
+          <Link
+            href="/plot"
+            className="plot-wire-nav-button inline-flex min-h-11 items-center justify-center px-4"
+          >
+            Home
+          </Link>
+
+          <button
+            type="button"
+            className="plot-wire-nav-center inline-flex min-h-11 items-center justify-center px-5 hover:bg-[#b8d63b]/90"
+            onClick={() => setIsEngagementWheelOpen((value) => !value)}
+            aria-expanded={isEngagementWheelOpen}
+            aria-controls="plot-engagement-wheel"
+            aria-label="Open UPRISE engagement wheel"
+          >
+            UPRISE
+          </button>
+
+          <button
+            type="button"
+            className="plot-wire-nav-button inline-flex min-h-11 items-center justify-center gap-2 px-4 opacity-55"
+            aria-disabled="true"
+            title="Discover is coming soon while MVP stays local-community-only."
+          >
+            <span>Discover</span>
+            <span className="plot-wire-chip bg-[#d9d9d1] text-black/70">Soon</span>
+          </button>
+        </div>
+      </nav>
+    </>
+  );
 
   const renderPrimaryPlotTabBody = () => {
-    if (activeTab === 'Statistics') {
+    if (activeTab === 'Archive') {
       return (
         <div className="space-y-4">
           <StatisticsPanel
@@ -254,7 +726,7 @@ export default function PlotPage() {
           <div className="rounded-2xl border border-black/10 bg-white p-6">
             <h3 className="mb-2 font-semibold text-black">Scene Activity Snapshot</h3>
             <p className="text-sm text-black/60">
-              Descriptive context for the current statistics scope. This is not a ranking or authority signal.
+              Descriptive context for the current archive scope. This is not a ranking or authority signal.
             </p>
             <p className="mt-2 text-xs text-black/50">
               Current tier: <span className="capitalize">{selectedTier}</span>
@@ -269,7 +741,7 @@ export default function PlotPage() {
       return (
         <SeedFeedPanel
           communityId={selectedCommunity?.id ?? null}
-          communityName={selectedCommunity?.name ?? null}
+          communityLabel={selectedCommunityLabel}
           selectedTier={selectedTier}
         />
       );
@@ -279,16 +751,7 @@ export default function PlotPage() {
       return (
         <PlotEventsPanel
           communityId={selectedCommunity?.id ?? null}
-          communityName={selectedCommunity?.name ?? null}
-        />
-      );
-    }
-
-    if (activeTab === 'Promotions') {
-      return (
-        <PlotPromotionsPanel
-          communityId={selectedCommunity?.id ?? null}
-          communityName={selectedCommunity?.name ?? null}
+          communityLabel={selectedCommunityLabel}
         />
       );
     }
@@ -296,51 +759,104 @@ export default function PlotPage() {
     return null;
   };
 
-  useEffect(() => {
-    if (!hasHomeScene) {
-      router.replace('/onboarding');
-    }
-  }, [hasHomeScene, router]);
-
   if (!hasHomeScene) {
-    return null;
+    return (
+      <main className="plot-wire-page">
+        <div className="plot-wire-frame max-w-5xl space-y-4">
+          <section className="plot-wire-card p-6">
+            <p className="plot-wire-label">The Plot</p>
+            <h1 className="mt-2 text-2xl font-semibold text-black">Home Scene setup required</h1>
+            <p className="mt-3 max-w-2xl text-sm text-black/70">
+              Complete onboarding to anchor your Home Scene and unlock Plot context.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Button className="rounded-full border border-black bg-[#b8d63b] text-black hover:bg-[#b8d63b]/90" onClick={() => router.push('/onboarding')}>Complete Onboarding</Button>
+            </div>
+          </section>
+
+          <section className="plot-wire-panel plot-wire-grid-bg p-6">
+            <h2 className="text-lg font-semibold text-black">Plot surfaces unlock after Home Scene resolution</h2>
+            <p className="mt-2 max-w-2xl text-sm text-black/65">
+              Feed, Events, Archive, and scene-scoped profile context remain unavailable until your
+              Home Scene is set.
+            </p>
+          </section>
+        </div>
+        {renderBottomNav()}
+      </main>
+    );
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-4 py-10 sm:px-6">
-      <div className="mx-auto max-w-7xl">
-        <section className="rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm transition-all">
+    <main className="plot-wire-page">
+      <div className="plot-wire-frame">
+        <section className="plot-wire-card px-4 py-3 transition-all">
           <div
-            className="flex items-center justify-between gap-3"
+            className="flex items-center justify-between gap-3 rounded-[1rem] border border-black bg-[#dfdfcf] px-3 py-2.5"
             onPointerDown={handleProfilePointerDown}
             onPointerMove={handleProfilePointerMove}
             onPointerUp={handleProfilePointerUp}
           >
-            <div className="flex min-w-0 items-center gap-3.5">
-              <div className={`flex items-center justify-center rounded-full border border-black/20 bg-black/5 font-semibold text-black transition-all duration-200 ${profilePanelState === 'expanded' ? 'h-14 w-14 text-lg' : 'h-11 w-11 text-sm'}`}>
-                {user?.displayName?.[0] || user?.username?.[0] || 'U'}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold leading-tight text-black">
-                  {user?.displayName || user?.username || 'User'}
-                </p>
-                <p className="truncate text-xs text-black/60">@{user?.username || 'listener'}</p>
-              </div>
+            <div className="min-w-0 flex-1">
+              <p className="plot-wire-label">User dashboard</p>
+              <p className="truncate text-sm font-semibold leading-tight text-black">
+                {user?.displayName || user?.username || 'User'}
+              </p>
+              <p className="mt-1 truncate text-[11px] text-black/60">
+                {selectedCommunityLabel ??
+                  (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
+                    ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
+                    : 'No scene selected')}
+              </p>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${
-                profilePanelState === 'expanded'
-                  ? 'bg-[#b7d43f]/30 text-black'
-                  : profilePanelState === 'peek'
-                    ? 'bg-[#5da9ff]/20 text-black'
-                    : 'bg-black/10 text-black/70'
-              }`}>
-                {profilePanelState}
-              </span>
-              <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="Notifications">
-                🔔
-              </Button>
-              <Button size="sm" variant="outline" className="h-8 text-xs" aria-label="More menu">
+              <div className="relative">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="relative h-8 rounded-full border-black bg-white text-xs"
+                  aria-label="Notifications"
+                  aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}
+                  aria-expanded={hasPioneerFollowUp ? isNotificationPanelOpen : undefined}
+                  onPointerDown={(event) => {
+                    event.stopPropagation();
+                  }}
+                  onPointerUp={(event) => {
+                    event.stopPropagation();
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    if (!hasPioneerFollowUp) return;
+                    setIsNotificationPanelOpen((open) => !open);
+                  }}
+                >
+                  🔔
+                  {hasPioneerFollowUp ? (
+                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#b7d43f]" aria-hidden />
+                  ) : null}
+                </Button>
+                {hasPioneerFollowUp && isNotificationPanelOpen && pioneerNotificationHomeScene ? (
+                  <div
+                    id="plot-pioneer-follow-up"
+                    className="absolute right-0 top-10 z-20 w-72 rounded-[1.1rem] border border-black bg-[#f7f7ef] p-4 text-left shadow-[4px_4px_0_rgba(0,0,0,0.3)]"
+                  >
+                    <p className="plot-wire-label">Pioneer Follow-up</p>
+                    <p className="mt-2 text-sm font-medium text-black">
+                      {pioneerNotificationHomeScene.city}, {pioneerNotificationHomeScene.state} •{' '}
+                      {pioneerNotificationHomeScene.musicCommunity}
+                    </p>
+                    <p className="mt-2 text-sm text-black/70">
+                      Your Home Scene is still pioneering. You are temporarily routed through the nearest active city
+                      scene for {pioneerNotificationHomeScene.musicCommunity} while your city builds.
+                    </p>
+                    <p className="mt-2 text-sm text-black/70">
+                      Once enough local users join, you can establish or uprise your own city scene.
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+              <Button size="sm" variant="outline" className="h-8 rounded-full border-black bg-white text-xs" aria-label="More menu">
                 ⋯
               </Button>
             </div>
@@ -350,7 +866,7 @@ export default function PlotPage() {
             <button
               type="button"
               id="plot-profile-seam-toggle"
-              className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-black/[0.03] px-4 py-2.5 text-xs font-medium text-black/70"
+              className="mx-auto flex w-full items-center justify-center gap-2 rounded-[0.95rem] border border-black bg-[#efefe2] px-4 py-2.5 text-xs font-medium text-black/70"
               onClick={toggleProfilePanel}
               aria-controls="plot-profile-panel"
               aria-expanded={isProfileExpanded}
@@ -368,18 +884,25 @@ export default function PlotPage() {
           rotationPool={rotationPool}
           onRotationPoolChange={setRotationPool}
           selectedTier={selectedTier}
-          onTierChange={setSelectedTier}
-          broadcastLabel={playerMode === 'RADIYO' ? radiyoBroadcastLabel : collectionBroadcastLabel}
+          activeBroadcastTier={activeBroadcastTier}
+          onTierChange={handleTierChange}
+          broadcastLabel={playerMode === 'RADIYO' ? currentBroadcastLabel : collectionBroadcastLabel}
           collectionTitle={selectedCollectionItem?.label ?? null}
+          trackQueue={playerMode === 'RADIYO' ? currentRotationTracks : []}
+          currentTrack={playerMode === 'RADIYO' ? currentBroadcastTrack : null}
+          currentTrackCount={currentRotationTracks.length}
+          isBroadcastLoading={playerMode === 'RADIYO' ? broadcastLoading : false}
+          broadcastError={playerMode === 'RADIYO' ? broadcastError : null}
+          broadcastEmptyMessage={playerMode === 'RADIYO' ? broadcastEmptyMessage : null}
         />
 
         {isProfileExpanded ? (
           <section
             id="plot-profile-panel"
-            className="mt-6 space-y-5 rounded-2xl border border-black/10 bg-white/92 p-6 shadow-sm transition-all duration-200"
+            className="mt-4 space-y-4 rounded-[1.4rem] border border-black bg-[#f7f7ef] p-4 shadow-[3px_3px_0_rgba(0,0,0,0.3)] transition-all duration-200"
             aria-labelledby="plot-profile-seam-toggle"
           >
-            <header className="grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
+            <header className="grid gap-4 rounded-[1.15rem] border border-black bg-[#efefe2] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
               <div className="space-y-4">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Profile Summary</p>
@@ -390,45 +913,51 @@ export default function PlotPage() {
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl border border-black/10 bg-white p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Activity Score</p>
+                  <div className="plot-wire-card-muted bg-white p-3">
+                    <p className="plot-wire-label">Activity Score</p>
                     <p className="mt-1 text-lg font-semibold text-black">{activityScore}</p>
                   </div>
-                  <div className="rounded-xl border border-black/10 bg-white p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Tier Snapshot</p>
-                    <p className="mt-1 text-sm font-medium capitalize text-black">{selectedTier}</p>
-                  </div>
+                  {profileStatusCards.map((card) => (
+                    <div key={card.label} className="plot-wire-card-muted bg-white p-3">
+                      <p className="plot-wire-label">{card.label}</p>
+                      <p className="mt-1 text-sm font-medium text-black">{card.value}</p>
+                      <p className="mt-1 text-xs text-black/55">{card.detail}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-black/10 bg-white p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">Calendar</p>
+              <div className="plot-wire-card-muted bg-white p-4">
+                <p className="plot-wire-label">Calendar</p>
                 <p className="mt-2 text-2xl font-semibold text-black">{calendarDate}</p>
                 <p className="mt-1 text-sm text-black/60">
                   {eventsThisWeek} event{eventsThisWeek === 1 ? '' : 's'} this week
                 </p>
                 <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Context</p>
                 <p className="mt-1 text-sm font-medium text-black">
-                  {selectedCommunity?.name ?? homeScene?.musicCommunity ?? 'No scene selected'}
+                  {selectedCommunityLabel ??
+                    (homeScene?.city && homeScene?.state && homeScene?.musicCommunity
+                      ? `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`
+                      : 'No scene selected')}
                 </p>
               </div>
             </header>
 
-            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-              <p className="text-xs uppercase tracking-[0.12em] text-black/55">Player Context</p>
+            <div className="plot-wire-card-muted p-4">
+              <p className="plot-wire-label">Player Context</p>
               <p className="mt-1 text-sm font-medium text-black">
-                {playerMode} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
+                {playerMode === 'RADIYO' ? 'RADIYO' : 'SPACE'} • <span className="capitalize">{selectedTier}</span> • {rotationPool === 'new_releases' ? 'New Releases' : 'Main Rotation'}
               </p>
             </div>
 
-            <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+            <div className="plot-wire-card-muted p-4">
               <div className="flex flex-wrap gap-2">
                 {expandedProfileSections.map((section) => (
                   <Button
                     key={section}
                     size="sm"
                     variant={activeProfileSection === section ? 'default' : 'outline'}
-                    className={activeProfileSection === section ? 'h-8 rounded-full bg-black text-xs text-white' : 'h-8 rounded-full text-xs'}
+                    className={activeProfileSection === section ? 'h-8 rounded-full border-black bg-[#b8d63b] text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-[#b8d63b]/90' : 'h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.1em] text-black hover:bg-black/5'}
                     onClick={() => setActiveProfileSection(section)}
                   >
                     {section}
@@ -436,83 +965,172 @@ export default function PlotPage() {
                 ))}
               </div>
 
-              <div className="mt-4 rounded-lg border border-black/10 bg-white p-4">
+              <div className="mt-4 rounded-[1rem] border border-black bg-white p-4">
                 <p className="text-sm font-medium text-black">{activeProfileSection}</p>
                 {activeProfileSection === 'Singles/Playlists' ? (
-                  <div className="mt-3 flex flex-col gap-2">
-                    {singlesAndPlaylistsItems.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${
-                          selectedCollectionItem?.id === item.id
-                            ? 'border-black bg-black text-white'
-                            : 'border-black/10 bg-black/[0.02] text-black hover:bg-black/[0.05]'
-                        }`}
-                        onClick={() => handleCollectionSelection(item)}
-                      >
-                        <span>
-                          <span className="block text-sm font-medium">{item.label}</span>
-                          <span className={`block text-[11px] uppercase tracking-[0.12em] ${
-                            selectedCollectionItem?.id === item.id ? 'text-white/75' : 'text-black/55'
-                          }`}>
-                            {item.kind === 'track' ? 'Track' : 'Playlist'}
-                          </span>
-                        </span>
-                        <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
-                          selectedCollectionItem?.id === item.id ? 'text-white/75' : 'text-black/55'
-                        }`}>
-                          {selectedCollectionItem?.id === item.id && playerMode === 'Collection'
-                            ? 'Live in player'
-                            : 'Select to enter Collection mode'}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                ) : activeProfileSection === 'Events' ? (
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Event Artifacts</p>
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved singles and playlist groupings.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : !canViewCollection ? (
+                      <p className="text-sm text-black/60">Collection visibility is disabled for this profile.</p>
+                    ) : singlesCollectionItems.length > 0 ? (
+                      <div className="flex flex-col gap-2">
+                        {singlesShelf?.items.map((item) => {
+                          const collectionItem = {
+                            id: item.signalId,
+                            label: formatShelfItemPrimaryLabel(item),
+                            kind: 'track' as const,
+                          };
+
+                          return (
+                            <button
+                              key={item.signalId}
+                              type="button"
+                              className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors ${
+                                selectedCollectionItem?.id === collectionItem.id
+                                  ? 'border-black bg-black text-white'
+                                  : 'border-black/10 bg-black/[0.02] text-black hover:bg-black/[0.05]'
+                              }`}
+                              onClick={() => handleCollectionSelection(collectionItem)}
+                            >
+                              <span>
+                                <span className="block text-sm font-medium">{collectionItem.label}</span>
+                                <span className={`block text-[11px] uppercase tracking-[0.12em] ${
+                                  selectedCollectionItem?.id === collectionItem.id ? 'text-white/75' : 'text-black/55'
+                                }`}>
+                                  Track • {formatShelfItemSecondaryLabel(item)}
+                                </span>
+                              </span>
+                              <span className={`text-[11px] font-semibold uppercase tracking-[0.12em] ${
+                                selectedCollectionItem?.id === collectionItem.id ? 'text-white/75' : 'text-black/55'
+                              }`}>
+                                {selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'
+                                  ? 'Live in space'
+                                  : 'Select to enter your space'}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-black/60">No saved singles yet.</p>
+                    )}
+
+                    <div className="plot-wire-card-muted p-3">
+                      <p className="plot-wire-label">Playlist Groupings</p>
                       <p className="mt-1 text-sm text-black/70">
-                        Event fliers and saved scene artifacts live here. Calendar stays in the header.
+                        Saved playlist groupings appear here when they are available in your collection.
                       </p>
                     </div>
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Events This Week</p>
-                      <p className="mt-1 text-lg font-semibold text-black">{eventsThisWeek}</p>
-                    </div>
+                  </div>
+                ) : activeProfileSection === 'Events' ? (
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved event artifacts and fliers.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : (fliersShelf?.items.length ?? 0) > 0 ? (
+                      <ul className="space-y-2">
+                        {fliersShelf?.items.slice(0, 6).map((item) => (
+                          <li key={item.signalId} className="plot-wire-card-muted p-3">
+                            <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
+                            <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-black/60">No saved event artifacts or fliers yet.</p>
+                    )}
                   </div>
                 ) : activeProfileSection === 'Photos' ? (
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Scene Photography</p>
+                    <div className="plot-wire-card-muted p-3">
+                      <p className="plot-wire-label">Scene Photography</p>
                       <p className="mt-1 text-sm text-black/70">Saved event and scene photography artifacts appear in this workspace.</p>
                     </div>
-                    <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                      <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Current Scene</p>
-                      <p className="mt-1 text-sm font-medium text-black">{selectedCommunity?.name ?? 'No scene selected'}</p>
+                    <div className="plot-wire-card-muted p-3">
+                      <p className="plot-wire-label">Current Scene</p>
+                      <p className="mt-1 text-sm font-medium text-black">{selectedCommunityLabel ?? 'No scene selected'}</p>
                     </div>
                   </div>
                 ) : activeProfileSection === 'Merch' ? (
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-                    {['Posters', 'Shirts', 'Patches', 'Buttons', 'Special Items'].map((item) => (
-                      <div key={item} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                        <p className="text-sm font-medium text-black">{item}</p>
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved merch items.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : (
+                      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+                        {[
+                          { label: 'Posters', shelf: posterShelf },
+                          { label: 'Shirts', shelf: merchShirtShelf },
+                          { label: 'Patches', shelf: merchPatchShelf },
+                          { label: 'Buttons', shelf: merchButtonShelf },
+                          { label: 'Special Items', shelf: null },
+                        ].map((item) => (
+                          <div key={item.label} className="plot-wire-card-muted p-3">
+                            <p className="text-sm font-medium text-black">{item.label}</p>
+                            <p className="mt-1 text-xs text-black/55">
+                              {item.shelf ? `${item.shelf.itemCount} saved item${item.shelf.itemCount === 1 ? '' : 's'}` : 'No saved items yet.'}
+                            </p>
+                            {item.shelf?.items[0] ? (
+                              <p className="mt-2 text-xs text-black/60">{formatShelfItemPrimaryLabel(item.shelf.items[0])}</p>
+                            ) : null}
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 ) : activeProfileSection === 'Saved Uprises' ? (
-                  <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Scene Entries</p>
-                    <p className="mt-1 text-sm text-black/70">
-                      {selectedCommunity?.name ?? 'Current scene'} remains available as a saved scene anchor in this workspace.
-                    </p>
+                  <div className="mt-3 space-y-3">
+                    {!token ? (
+                      <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        Sign in to view saved/followed Uprises.
+                      </p>
+                    ) : plotProfileLoading ? (
+                      <p className="text-sm text-black/60">Loading collection shelves...</p>
+                    ) : plotProfileError ? (
+                      <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                        {plotProfileError}
+                      </p>
+                    ) : (uprisesShelf?.items.length ?? 0) > 0 ? (
+                      <ul className="space-y-2">
+                        {uprisesShelf?.items.slice(0, 6).map((item) => (
+                          <li key={item.signalId} className="plot-wire-card-muted p-3">
+                            <p className="text-sm font-medium text-black">{formatShelfItemPrimaryLabel(item)}</p>
+                            <p className="mt-1 text-xs text-black/55">{formatShelfItemSecondaryLabel(item)}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-black/60">No saved Uprises yet.</p>
+                    )}
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-black/55">Saved Promos/Coupons</p>
+                  <div className="mt-3 plot-wire-card-muted p-3">
+                    <p className="plot-wire-label">Saved Promos/Coupons</p>
                     <p className="mt-1 text-sm text-black/70">
-                      Saved promos and coupons appear here with status and expiration when available for the active scene.
+                      Saved promos and coupons appear here with status and expiration when collection support is available.
                     </p>
                   </div>
                 )}
@@ -520,7 +1138,7 @@ export default function PlotPage() {
             </div>
 
             <div className="flex flex-wrap gap-2.5">
-              <Button size="sm" variant="outline" className="h-8 text-xs" onClick={toggleProfilePanel}>
+              <Button size="sm" variant="outline" className="h-8 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={toggleProfilePanel}>
                 Return to Plot Tabs
               </Button>
             </div>
@@ -528,7 +1146,7 @@ export default function PlotPage() {
         ) : (
           <>
             {/* Tab Navigation */}
-            <section className="mt-6 flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border border-black/10 bg-white/85 px-5 py-4 shadow-sm">
+            <section className="mt-4 flex flex-wrap items-end justify-start gap-2 overflow-x-auto px-2 pt-1">
               {tabs.map((tab) => (
                 <Button
                   key={tab}
@@ -536,8 +1154,8 @@ export default function PlotPage() {
                   variant={activeTab === tab ? 'default' : 'outline'}
                   className={
                     activeTab === tab
-                      ? 'h-8 rounded-full bg-black px-4 text-xs text-white'
-                      : 'h-8 rounded-full border-black/20 bg-white px-4 text-xs text-black hover:bg-black/5'
+                      ? 'plot-wire-tab plot-wire-tab-active h-auto'
+                      : 'plot-wire-tab h-auto hover:bg-[#e7e7d8]'
                   }
                   onClick={() => setActiveTab(tab)}
                 >
@@ -547,16 +1165,17 @@ export default function PlotPage() {
             </section>
 
             {/* Main Content Grid */}
-            <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
-              {/* Left Panel - Statistics & Map */}
-              <div className="rounded-2xl border border-black/10 bg-white p-6 lg:p-7">
-                <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-black">{plotTabHeading}</h2>
-                  <p className="text-sm text-black/60">
+            <section className="grid gap-4 border border-black bg-[#d8d8c8] p-3 lg:grid-cols-[minmax(0,1.75fr)_300px]">
+              {/* Left Panel - Archive & Map */}
+              <div className="plot-wire-panel">
+                <div className="mb-4 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
+                  <p className="plot-wire-label">Active Surface</p>
+                  <h2 className="mt-1 text-lg font-semibold text-black">{plotTabHeading}</h2>
+                  <p className="mt-1 text-sm text-black/65">
                     {plotTabDescription}
-                    {activeTab === 'Statistics' && (
+                    {activeTab === 'Archive' && (
                       <>
-                        Scene metrics and activity from{' '}
+                        Descriptive scene history and activity from{' '}
                         <span className="capitalize">{selectedTier}</span> tier
                         {!homeScene && '. Complete onboarding to see your local scene.'}
                       </>
@@ -568,12 +1187,69 @@ export default function PlotPage() {
               </div>
 
               {/* Right Panel - Selected Community Info */}
-              <div className="space-y-6">
+              <div className="space-y-4">
+                {token && managedArtistBands.length > 0 ? (
+                  <SourceAccountSwitcher
+                    sources={managedArtistBands}
+                    onSelectListener={() => router.push('/plot')}
+                    onSelectSource={() => router.push('/source-dashboard')}
+                  />
+                ) : null}
+
+                <div className="plot-wire-panel">
+                  <h3 className="mb-2 font-semibold text-black">Registrar Access</h3>
+                  <p className="text-sm text-black/65">
+                    Artist/Band registration status stays visible here so Plot keeps registrar access inside the civic workflow.
+                  </p>
+
+                  {!token ? (
+                    <p className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                      Sign in to view registrar status and continue registration work.
+                    </p>
+                  ) : registrarSummaryLoading ? (
+                    <p className="mt-4 text-sm text-black/60">Loading registrar status...</p>
+                  ) : registrarSummaryError ? (
+                    <p className="mt-4 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                      {registrarSummaryError}
+                    </p>
+                  ) : registrarSummary && registrarSummary.totalEntries > 0 ? (
+                    <div className="mt-4 plot-wire-card-muted p-4">
+                      <p className="plot-wire-label">Latest Status</p>
+                      <p className="mt-1 text-sm font-medium text-black">
+                        {registrarSummary.latestStatus ? formatRegistrarEntryStatus(registrarSummary.latestStatus) : 'No recent status'}
+                      </p>
+                      <p className="mt-3 text-sm text-black/70">
+                        Entries: {registrarSummary.totalEntries} • Submitted: {registrarSummary.submittedCount} • Materialized:{' '}
+                        {registrarSummary.materializedCount}
+                      </p>
+                      <p className="mt-1 text-xs text-black/55">
+                        Invites pending: {registrarSummary.pendingInviteCount} • queued: {registrarSummary.queuedInviteCount} •
+                        sent: {registrarSummary.sentInviteCount} • failed: {registrarSummary.failedInviteCount}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="mt-4 text-sm text-black/60">No Artist/Band registrar entries yet.</p>
+                  )}
+
+                  <div className="mt-4">
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/registrar')}>
+                        Open Registrar
+                      </Button>
+                      {canOpenPrintShop ? (
+                        <Button size="sm" variant="outline" className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]" onClick={() => router.push('/print-shop')}>
+                          Open Print Shop
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+
                 {selectedCommunity && (
-                  <div className="rounded-2xl border border-black/10 bg-white p-6">
+                  <div className="plot-wire-panel">
                     <h3 className="mb-3 font-semibold text-black">Selected Community</h3>
-                    <div className="rounded-xl bg-black/5 p-4">
-                      <p className="font-medium text-black">{selectedCommunity.name}</p>
+                    <div className="plot-wire-card-muted p-4">
+                      <p className="font-medium text-black">{selectedCommunityLabel ?? selectedCommunity.name}</p>
                       <p className="mt-1 text-sm text-black/60">
                         {selectedCommunity.memberCount?.toLocaleString()} members
                       </p>
@@ -589,9 +1265,10 @@ export default function PlotPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
                           onClick={() => router.push(`/community/${selectedCommunity.id}`)}
                         >
-                          Open Profile
+                          Open Community
                         </Button>
                       </div>
                     </div>
@@ -602,6 +1279,7 @@ export default function PlotPage() {
           </>
         )}
       </div>
+      <div id="plot-engagement-wheel">{renderBottomNav()}</div>
     </main>
   );
 }

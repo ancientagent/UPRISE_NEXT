@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-24T04:33:00Z",
+  "lane": "lane-d-ux-automation-batch27",
+  "sourceFiles": [
+    "mvp-slices-batch27-ux-closeout.json"
+  ],
+  "summary": {
+    "total": 2,
+    "queued": 2,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXAUTO-882A",
+      "title": "Batch27 regression evidence command pack",
+      "prompt": "Execute one MVP slice only: standardize the exact verification command set for Batch27 closeout, capture it in a dated handoff, and patch only verification-documentation drift needed to keep the closeout reproducible.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXAUTO-883A",
+      "title": "Batch27 residual bugfix regression lock",
+      "prompt": "Execute one MVP slice only: add or tighten focused regression tests for any residual bugfixes actually made in Batch27. If no residual bugfixes were needed, publish a no-op regression note instead of broadening test scope.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued"
+    }
+  ]
+}

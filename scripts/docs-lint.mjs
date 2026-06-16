@@ -44,6 +44,14 @@ function listGitRootMarkdown() {
   return files.filter((file) => !file.includes('/'));
 }
 
+function listMarkdownFilesInDir(dirPath) {
+  if (!exists(dirPath)) return [];
+  return fs
+    .readdirSync(dirPath, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => path.join(dirPath, entry.name));
+}
+
 function ensureReadmeInDir(dirPath) {
   const readmePath = path.join(dirPath, 'README.md');
   if (!exists(readmePath)) {
@@ -57,6 +65,55 @@ function assertSpecsHaveMetadata(specPath) {
   const missing = required.filter((needle) => !content.includes(needle));
   if (missing.length) {
     fail(`${specPath} is missing required metadata lines: ${missing.join(', ')}`);
+  }
+}
+
+function assertCurrentAgentContextHasNoStaleTerms(repoRoot) {
+  const files = [
+    path.join(repoRoot, '.devin', 'wiki.json'),
+    path.join(repoRoot, 'docs', 'solutions', 'AGENT_WIKI_STEERING_R1.md'),
+    ...listMarkdownFilesInDir(path.join(repoRoot, 'docs', 'agent-briefs')),
+  ].filter(exists);
+
+  const staleRules = [
+    {
+      label: 'old Buzz insert label',
+      pattern: /\bPeople Are Saying\b/,
+    },
+    {
+      label: 'old Plot tab set with Promotions and Statistics',
+      pattern: /\bFeed\s*(?:,|\/)\s*Events\s*(?:,|\/)\s*Prom(?:os|otions)\s*(?:,|\/)\s*Statistics\b/i,
+    },
+    {
+      label: 'old RADIYO wheel with Blast',
+      pattern: /\bRADIYO actions:\s*Report,\s*Skip,\s*Blast,\s*Collect,\s*Upvote\b/i,
+    },
+    {
+      label: 'old artist-page Follow/Add/Support action grammar',
+      pattern: /\bartist(?:-| )page\b[^\n]{0,80}\bFollow\s*\/\s*Add\s*\/\s*Support\b/i,
+    },
+  ];
+
+  const failures = [];
+  for (const filePath of files) {
+    const relPath = path.relative(repoRoot, filePath);
+    const content = readText(filePath);
+    for (const rule of staleRules) {
+      const match = content.match(rule.pattern);
+      if (match) {
+        failures.push(`${relPath}: ${rule.label} -> "${match[0]}"`);
+      }
+    }
+  }
+
+  if (failures.length) {
+    fail(
+      `Current agent-facing context contains stale product language. Reword it or mark it in a non-current historical doc:\n- ${failures.join(
+        '\n- ',
+      )}`,
+    );
+  } else {
+    ok('Current agent-facing context avoids known stale UI/action terms');
   }
 }
 
@@ -117,6 +174,8 @@ function main() {
   } else {
     ok('No unexpected root-level markdown files');
   }
+
+  assertCurrentAgentContextHasNoStaleTerms(repoRoot);
 
   if (process.exitCode) process.exit(process.exitCode);
   ok('docs:lint passed');

@@ -1,21 +1,27 @@
 # MVP Figma Agent Prompts R1
 
+> Historical prompt pack. Use only when a Figma-specific design execution pass is explicitly requested.
+>
+> Current authority order is:
+> 1. `AGENTS.md`
+> 2. active `docs/specs/`
+> 3. active founder locks in `docs/solutions/`
+> 4. current code/runtime evidence
+> 5. dated handoffs as context only
+
 Purpose: copy/paste prompts for parallel agents executing the Figma-first UX plan with strict anti-drift behavior.
 
 ## Global Rules (paste into every lane)
 
 ```text
-Read AGENTS.md required docs first.
+Read `AGENTS.md` first, then load only the active specs/founder locks required for the assigned design slice.
 
 You are executing docs/design-only UX work for UPRISE_NEXT with no feature drift.
 
 Required source-of-truth:
-1) docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md
-2) docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md
-3) docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md
-4) docs/solutions/MVP_UX_DRIFT_GUARD_R1.md
-5) docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md
-6) docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md
+1) The active founder locks / `docs/specs/` files for the assigned slice
+2) Any current Figma execution pack explicitly named by the task
+3) Current dated handoff only if needed for active context
 
 Hard constraints:
 - No speculative redesign.

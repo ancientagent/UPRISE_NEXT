@@ -41,6 +41,13 @@
         "docs/**",
         "scripts/**"
       ]
+    },
+    {
+      "id": "external-audit",
+      "description": "External auditor lane for read-heavy drift scans and report artifacts",
+      "allowedPaths": [
+        "docs/**"
+      ]
     }
   ]
 }

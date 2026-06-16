@@ -14,6 +14,7 @@ import {
   loadArtistBandInviteStatus,
   redeemRegistrarCode,
   submitArtistBandRegistration,
+  submitPromoterRegistration,
   submitProjectRegistration,
   syncArtistBandMembers,
   verifyRegistrarCode,
@@ -143,6 +144,60 @@ describe('registrar client scaffolding', () => {
     await expect(redeemRegistrarCode('PRC-VALID-CODE', 'token-1')).rejects.toThrow(
       'Registrar code redeem response was empty.',
     );
+  });
+
+  it('calls promoter registration submit endpoint and returns typed payload', async () => {
+    mockedApiPost.mockResolvedValueOnce({
+      success: true,
+      data: {
+        id: 'reg-promoter-1',
+        type: 'promoter_registration',
+        status: 'submitted',
+        sceneId: 'scene-1',
+        createdById: 'u-1',
+        payload: { productionName: 'Southside Signal Co.' },
+        createdAt: '2026-02-26T00:00:00.000Z',
+      },
+    });
+
+    const response = await submitPromoterRegistration(
+      {
+        sceneId: 'scene-1',
+        productionName: 'Southside Signal Co.',
+      },
+      'token-1',
+    );
+
+    expect(mockedApiPost).toHaveBeenCalledWith(
+      '/registrar/promoter',
+      {
+        sceneId: 'scene-1',
+        productionName: 'Southside Signal Co.',
+      },
+      { token: 'token-1' },
+    );
+    expect(response).toEqual(
+      expect.objectContaining({
+        id: 'reg-promoter-1',
+        type: 'promoter_registration',
+        status: 'submitted',
+        payload: { productionName: 'Southside Signal Co.' },
+      }),
+    );
+  });
+
+  it('throws when promoter registration submit response has no data payload', async () => {
+    mockedApiPost.mockResolvedValueOnce({ success: true, data: undefined });
+
+    await expect(
+      submitPromoterRegistration(
+        {
+          sceneId: 'scene-1',
+          productionName: 'Southside Signal Co.',
+        },
+        'token-1',
+      ),
+    ).rejects.toThrow('Promoter registration response returned no data.');
   });
 
   it('propagates forbidden error from registrar code verify endpoint', async () => {

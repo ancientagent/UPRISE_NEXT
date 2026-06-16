@@ -1,7 +1,17 @@
 
 import type { ApiResponse } from '@uprise/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+export function resolveApiUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  if (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1') {
+    return 'http://127.0.0.1:4000';
+  }
+
+  return 'http://localhost:4000';
+}
 
 interface RequestOptions extends RequestInit {
   token?: string;
@@ -22,7 +32,7 @@ async function fetcher<T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const response = await fetch(`${resolveApiUrl()}${endpoint}`, {
     ...fetchOptions,
     headers,
   });

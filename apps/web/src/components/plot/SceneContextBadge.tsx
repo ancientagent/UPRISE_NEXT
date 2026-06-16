@@ -21,21 +21,23 @@ function formatTuned(tunedScene: TunedSceneContext | null): string {
 }
 
 export default function SceneContextBadge({ homeScene, tunedScene, isVisitor }: SceneContextBadgeProps) {
+  const hasResolvedContext = Boolean(homeScene || tunedScene);
+  const presenceLabel = !hasResolvedContext ? 'Context unset' : isVisitor ? 'Visitor' : 'Local';
+  const presenceClassName = !hasResolvedContext
+    ? 'bg-white text-black/60'
+    : isVisitor
+      ? 'bg-[#f5e8bf] text-black'
+      : 'bg-[#b8d63b] text-black';
+
   return (
     <div className="mt-3 flex flex-wrap gap-2 text-xs">
-      <span className="rounded-full border border-black/15 bg-white px-3 py-1 text-black/70">
+      <span className="plot-wire-chip normal-case tracking-[0.06em] text-[11px] font-medium">
         {formatHome(homeScene)}
       </span>
-      <span className="rounded-full border border-black/15 bg-white px-3 py-1 text-black/70">
+      <span className="plot-wire-chip normal-case tracking-[0.06em] text-[11px] font-medium">
         {formatTuned(tunedScene)}
       </span>
-      <span
-        className={`rounded-full border px-3 py-1 ${
-          isVisitor ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-emerald-300 bg-emerald-50 text-emerald-700'
-        }`}
-      >
-        {isVisitor ? 'Visitor' : 'Local'}
-      </span>
+      <span className={`plot-wire-chip tracking-[0.12em] ${presenceClassName}`}>{presenceLabel}</span>
     </div>
   );
 }

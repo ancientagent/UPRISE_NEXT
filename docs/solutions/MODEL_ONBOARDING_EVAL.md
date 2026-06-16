@@ -8,9 +8,8 @@
 Use this checklist to qualify any new model before it can execute implementation work in UPRISE_NEXT.
 
 ## Required Inputs
-- Required reading list from `AGENTS.md`
-- Canon sources in `docs/canon/`
-- Current specs in `docs/specs/`
+- `AGENTS.md` core reading path
+- Task-specific active specs / founder locks for the evaluation slice
 - Current guardrails in `docs/FEATURE_DRIFT_GUARDRAILS.md` and `apps/web/WEB_TIER_BOUNDARY.md`
 
 ## 4-Stage Qualification Flow
@@ -19,10 +18,10 @@ Use this checklist to qualify any new model before it can execute implementation
 - Instruct model to do a read-only repo onboarding pass.
 - Require:
   - repo map
-  - canon summary
-  - spec coverage matrix
+  - active-source summary
+  - task-scoped spec coverage matrix
   - risk list
-  - proposed sprint
+  - bounded next-step plan
 - Reject if it makes edits or invents missing facts.
 
 ### Stage 2: Evidence Correction Pass
@@ -68,23 +67,18 @@ Use this checklist to qualify any new model before it can execute implementation
 You are joining UPRISE_NEXT as an implementation agent. Do an onboarding read-only pass first. Do not edit files.
 
 Read in order:
-1) docs/STRATEGY_CRITICAL_INFRA_NOTE.md
-2) docs/RUNBOOK.md
-3) docs/FEATURE_DRIFT_GUARDRAILS.md
-4) docs/architecture/UPRISE_OVERVIEW.md
-5) docs/PROJECT_STRUCTURE.md
-6) apps/web/WEB_TIER_BOUNDARY.md
-7) docs/AGENT_STRATEGY_AND_HANDOFF.md
-8) docs/README.md
-9) docs/solutions/README.md
-10) docs/canon/*.md
+1) AGENTS.md always-read core
+2) Exact task-specific add-ons required for the assigned evaluation slice
+3) Relevant active specs / founder locks only
+
+Only load `docs/canon/` if the evaluation explicitly requires a canon-wide audit.
 
 Output:
 A) Repo map
-B) Canon extraction
-C) Spec status matrix
+B) Active-source extraction
+C) Task-scoped spec status matrix
 D) Drift/risk list
-E) Next sprint (5-10 tasks)
+E) Bounded next-step plan
 F) Blocker questions
 ```
 

@@ -1,0 +1,101 @@
+{
+  "reviewed_at": "2026-04-01",
+  "source": "Figma Boxmoji expression exports",
+  "notes": [
+    "This batch contains expression candidates only; no usable faceProps are present yet.",
+    "Two files still include the square box/border and should not be used directly.",
+    "These SVGs should be treated as expression-language references to normalize onto the canonical avatar head, not as drop-in production assets."
+  ],
+  "core_expression_candidates": [
+    {
+      "file": "expression-2.svg",
+      "label": "flat_annoyed",
+      "notes": "clean annoyed/deadpan read"
+    },
+    {
+      "file": "expression-3.svg",
+      "label": "worried_open_mouth",
+      "notes": "strong anxious/fearful read"
+    },
+    {
+      "file": "expression-4.svg",
+      "label": "pout",
+      "notes": "good kiss/pout expression"
+    },
+    {
+      "file": "expression-5.svg",
+      "label": "angry_frown",
+      "notes": "clear aggressive read"
+    },
+    {
+      "file": "expression-12.svg",
+      "label": "sad_downcast",
+      "notes": "good melancholy/sad option"
+    },
+    {
+      "file": "expression-15.svg",
+      "label": "clenched_grimace",
+      "notes": "tense/gritted teeth variant"
+    },
+    {
+      "file": "expression-16.svg",
+      "label": "neutral_soft_smile",
+      "notes": "useful baseline positive expression"
+    },
+    {
+      "file": "expression-17.svg",
+      "label": "goofy_smirk",
+      "notes": "good playful/asymmetric expression"
+    }
+  ],
+  "optional_later": [
+    {
+      "file": "expression-8.svg",
+      "label": "uneasy_side_pout",
+      "notes": "interesting but redundant with pout/worried"
+    },
+    {
+      "file": "expression-9.svg",
+      "label": "big_eyes_pleading",
+      "notes": "usable, but trends too cute/emoji-forward for main punk set"
+    },
+    {
+      "file": "expression-10.svg",
+      "label": "flat_bored_snarl",
+      "notes": "possible second annoyed variant if needed"
+    },
+    {
+      "file": "expression-11.svg",
+      "label": "minimal_neutral",
+      "notes": "very sparse; may be useful as a low-affect option"
+    },
+    {
+      "file": "expression-13.svg",
+      "label": "dizzy_x_eyes",
+      "notes": "stylistically interesting but less universal"
+    },
+    {
+      "file": "expression-14.svg",
+      "label": "blank_stare",
+      "notes": "wide-eyed blank expression; can work as a specialty read"
+    },
+    {
+      "file": "expression-7.svg",
+      "label": "snarl_scribble_mouth",
+      "notes": "edgier anger variant, but mouth style is less clean"
+    }
+  ],
+  "reject_or_redo": [
+    {
+      "file": "expr-source-01.svg",
+      "label": "boxed_source",
+      "notes": "contains square box/frame; not directly usable"
+    },
+    {
+      "file": "expression-6.svg",
+      "label": "boxed_blank",
+      "notes": "contains square box/frame and is not a usable expression"
+    }
+  ],
+  "face_props": []
+}

@@ -1,4 +1,6 @@
 
+const { TextDecoder, TextEncoder } = require('node:util');
+
 // Jest setup file for web tier tests
 
 // Mock Next.js router
@@ -22,6 +24,14 @@ jest.mock('next/navigation', () => ({
 // Mock environment variables
 process.env.NEXT_PUBLIC_API_URL = 'http://localhost:4000';
 process.env.NEXT_PUBLIC_SOCKET_URL = 'http://localhost:4001';
+
+if (!global.TextEncoder) {
+  global.TextEncoder = TextEncoder;
+}
+
+if (!global.TextDecoder) {
+  global.TextDecoder = TextDecoder;
+}
 
 // Suppress console errors in tests
 global.console = {

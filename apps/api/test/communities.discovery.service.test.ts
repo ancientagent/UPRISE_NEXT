@@ -6,6 +6,14 @@ describe('CommunitiesService.discoverScenes', () => {
     user: { findUnique: jest.fn(), update: jest.fn() },
     community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     communityMember: { create: jest.fn() },
+    artistBand: { findMany: jest.fn(), findFirst: jest.fn() },
+    track: { findMany: jest.fn() },
+    rotationEntry: { findMany: jest.fn() },
+    follow: { groupBy: jest.fn() },
+    signal: { findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn() },
+    signalAction: { findMany: jest.fn(), groupBy: jest.fn(), upsert: jest.fn() },
+    collection: { upsert: jest.fn() },
+    collectionItem: { upsert: jest.fn() },
     $transaction: jest.fn(),
   };
 
@@ -27,6 +35,36 @@ describe('CommunitiesService.discoverScenes', () => {
         limit: 50,
       })
     ).rejects.toThrow(NotFoundException);
+  });
+
+  it('returns deterministic scene items without home-scene markers when reads are anonymous', async () => {
+    mockPrisma.community.findMany.mockResolvedValue([
+      {
+        id: 'c1',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        memberCount: 120,
+        isActive: true,
+      },
+    ]);
+
+    const result = await service.discoverScenes(null, {
+      tier: 'city',
+      musicCommunity: 'Punk',
+      state: 'TX',
+      limit: 50,
+    });
+
+    expect(mockPrisma.user.findUnique).not.toHaveBeenCalled();
+    expect(result.items).toEqual([
+      expect.objectContaining({
+        entryType: 'city_scene',
+        sceneId: 'c1',
+        isHomeScene: false,
+      }),
+    ]);
   });
 
   it('returns deterministic city-scene items with home-scene marker', async () => {
@@ -257,6 +295,18 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.isVisitor).toBe(true);
   });
 
+  it('returns neutral context when discovery context is requested without auth', async () => {
+    const result = await service.getDiscoveryContext(null);
+
+    expect(mockPrisma.user.findUnique).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      tunedSceneId: null,
+      tunedScene: null,
+      homeSceneId: null,
+      isVisitor: false,
+    });
+  });
+
   it('falls back to home scene when tuned scene is not set', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'u1',
@@ -369,5 +419,329 @@ describe('CommunitiesService.discoverScenes', () => {
     });
 
     await expect(service.resolveActiveSceneId('u1')).resolves.toBe('c1');
+  });
+
+  it('searchCommunityDiscover returns local artist and song results for a scene', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      {
+        id: 'ab1',
+        name: 'Signal Rise',
+        slug: 'signal-rise',
+        entityType: 'artist',
+        homeSceneId: 'c1',
+        homeScene: { name: 'Austin Punk' },
+        _count: { members: 2 },
+      },
+    ]);
+    mockPrisma.track.findMany.mockResolvedValue([
+      {
+        id: 't1',
+        title: 'Signal Fire',
+        artist: 'Signal Rise',
+        coverArt: null,
+        playCount: 12,
+        likeCount: 5,
+        status: 'ready',
+        uploadedById: 'uploader-1',
+        communityId: 'c1',
+        community: { name: 'Austin Punk' },
+      },
+    ]);
+    mockPrisma.follow.groupBy.mockResolvedValue([{ entityId: 'ab1', _count: { entityId: 3 } }]);
+    mockPrisma.artistBand.findFirst.mockResolvedValueOnce({
+      id: 'ab1',
+      name: 'Signal Rise',
+    });
+
+    const result = await service.searchCommunityDiscover('u1', 'c1', {
+      query: 'signal',
+      limit: 6,
+    });
+
+    expect(result.community.id).toBe('c1');
+    expect(result.artists).toEqual([
+      expect.objectContaining({
+        artistBandId: 'ab1',
+        name: 'Signal Rise',
+        followCount: 3,
+      }),
+    ]);
+    expect(result.songs).toEqual([
+      expect.objectContaining({
+        trackId: 't1',
+        artistBandId: 'ab1',
+        artistBandName: 'Signal Rise',
+      }),
+    ]);
+  });
+
+  it('getCommunityDiscoverHighlights aggregates popular singles lenses and listener recommendations', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.signal.findMany
+      .mockResolvedValueOnce([
+        {
+          id: 's1',
+          type: 'single',
+          metadata: { title: 'Signal Fire', artistBandId: 'ab1' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T10:00:00.000Z'),
+        },
+        {
+          id: 's2',
+          type: 'single',
+          metadata: { title: 'City Burn', artistBandId: 'ab2' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T11:00:00.000Z'),
+        },
+      ]);
+    mockPrisma.signalAction.findMany.mockResolvedValue([
+      {
+        id: 'recommend-1',
+        createdAt: new Date('2026-03-24T12:00:00.000Z'),
+        user: {
+          id: 'u2',
+          username: 'listener2',
+          displayName: 'Listener Two',
+          avatar: null,
+        },
+        signal: {
+          id: 's1',
+          type: 'single',
+          metadata: { title: 'Signal Fire', artistBandId: 'ab1' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T10:00:00.000Z'),
+        },
+      },
+      {
+        id: 'recommend-flyer',
+        createdAt: new Date('2026-03-24T13:00:00.000Z'),
+        user: {
+          id: 'u3',
+          username: 'flyerlistener',
+          displayName: 'Flyer Listener',
+          avatar: null,
+        },
+        signal: {
+          id: 'flyer-1',
+          type: 'flyer',
+          metadata: { title: 'Show Flyer' },
+          communityId: 'c1',
+          createdAt: new Date('2026-03-23T09:00:00.000Z'),
+        },
+      },
+    ]);
+    mockPrisma.signalAction.groupBy
+      .mockResolvedValueOnce([
+        { signalId: 's1', type: 'RECOMMEND', _count: { type: 4 } },
+        { signalId: 's1', type: 'ADD', _count: { type: 6 } },
+        { signalId: 's2', type: 'ADD', _count: { type: 3 } },
+      ]);
+
+    const result = await service.getCommunityDiscoverHighlights('u1', 'c1', { limit: 8 });
+
+    expect(result.popularSingles.mostAdded).toEqual([
+      expect.objectContaining({
+        signalId: 's1',
+        artistBandId: 'ab1',
+        lensMetricValue: 6,
+        lensMetricLabel: 'All-time adds',
+      }),
+      expect.objectContaining({
+        signalId: 's2',
+        artistBandId: 'ab2',
+        lensMetricValue: 3,
+        lensMetricLabel: 'All-time adds',
+      }),
+    ]);
+    expect(result.popularSingles.recentRises).toEqual([]);
+    expect(result.recommendations).toEqual([
+      expect.objectContaining({
+        recommendationId: 'recommend-1',
+        actor: expect.objectContaining({
+          id: 'u2',
+          username: 'listener2',
+        }),
+        signal: expect.objectContaining({
+          signalId: 's1',
+          artistBandId: 'ab1',
+          lensMetricValue: 4,
+          lensMetricLabel: 'Active recommendations',
+          actionCounts: expect.objectContaining({ recommend: 4 }),
+        }),
+      }),
+    ]);
+    expect(result.recommendations).toHaveLength(1);
+
+    expect(mockPrisma.signal.findMany).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        take: expect.any(Number),
+      }),
+    );
+    expect(mockPrisma.signalAction.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          signal: expect.objectContaining({
+            type: {
+              not: 'flyer',
+            },
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('getCommunityDiscoverHighlights derives recent rises from the most recent city-to-state broadcast entries', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'city-1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.signal.findMany.mockResolvedValue([
+      {
+        id: 'single-1',
+        type: 'single',
+        metadata: { title: 'Signal Fire', artist: 'Signal Rise', artistBandId: 'ab1' },
+        communityId: 'city-1',
+        community: {
+          city: 'Austin',
+          state: 'TX',
+          musicCommunity: 'Punk',
+        },
+        createdAt: new Date('2026-03-23T10:00:00.000Z'),
+      },
+      {
+        id: 'single-2',
+        type: 'single',
+        metadata: { title: 'City Burn', artist: 'Static Signal', artistBandId: 'ab2' },
+        communityId: 'city-2',
+        community: {
+          city: 'Dallas',
+          state: 'TX',
+          musicCommunity: 'Punk',
+        },
+        createdAt: new Date('2026-03-23T11:00:00.000Z'),
+      },
+    ]);
+    mockPrisma.signalAction.findMany.mockResolvedValue([]);
+    mockPrisma.signalAction.groupBy
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'state-1' });
+    mockPrisma.rotationEntry.findMany.mockResolvedValue([
+      {
+        enteredPoolAt: new Date('2026-03-25T09:00:00.000Z'),
+        track: {
+          title: 'City Burn',
+          artist: 'Static Signal',
+          communityId: 'city-2',
+        },
+      },
+      {
+        enteredPoolAt: new Date('2026-03-24T09:00:00.000Z'),
+        track: {
+          title: 'Signal Fire',
+          artist: 'Signal Rise',
+          communityId: 'city-1',
+        },
+      },
+      {
+        enteredPoolAt: new Date('2026-03-23T09:00:00.000Z'),
+        track: {
+          title: 'Signal Fire',
+          artist: 'Signal Rise',
+          communityId: 'city-1',
+        },
+      },
+    ]);
+
+    const result = await service.getCommunityDiscoverHighlights('u1', 'city-1', {
+      limit: 8,
+      tier: 'state',
+    });
+
+    expect(result.popularSingles.recentRises).toEqual([
+      expect.objectContaining({
+        signalId: 'single-2',
+        artistBandId: 'ab2',
+        highestScopeReached: 'state',
+        lastRiseAt: '2026-03-25T09:00:00.000Z',
+        communityCity: 'Dallas',
+        communityState: 'TX',
+        communityMusicCommunity: 'Punk',
+      }),
+      expect.objectContaining({
+        signalId: 'single-1',
+        artistBandId: 'ab1',
+        highestScopeReached: 'state',
+        lastRiseAt: '2026-03-24T09:00:00.000Z',
+        communityCity: 'Austin',
+        communityState: 'TX',
+        communityMusicCommunity: 'Punk',
+      }),
+    ]);
+    expect(mockPrisma.rotationEntry.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { sceneId: 'state-1' },
+        orderBy: [{ enteredPoolAt: 'desc' }, { id: 'asc' }],
+      }),
+    );
+  });
+
+  it('saveDiscoverUprise creates or reuses an Uprise signal and adds it to the uprises shelf', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.signal.findFirst.mockResolvedValue(null);
+    mockPrisma.signal.create.mockResolvedValue({ id: 'signal-u1' });
+    mockPrisma.collection.upsert.mockResolvedValue({ id: 'collection-1' });
+    mockPrisma.signalAction.upsert.mockResolvedValue({ id: 'action-1' });
+    mockPrisma.collectionItem.upsert.mockResolvedValue({ id: 'item-1' });
+
+    const result = await service.saveDiscoverUprise('user-1', { sceneId: 'c1' });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        signalId: 'signal-u1',
+        collectionId: 'collection-1',
+        collectionItemId: 'item-1',
+        actionId: 'action-1',
+        shelf: 'uprises',
+      }),
+    );
+    expect(mockPrisma.signal.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: 'uprise',
+          communityId: 'c1',
+        }),
+      }),
+    );
   });
 });

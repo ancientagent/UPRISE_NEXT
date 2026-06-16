@@ -1,8 +1,9 @@
 
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { engagementToScore, isValidEngagementScore } from './engagement.utils';
 import type { TrackEngageDto, EngagementType } from './dto/track-engage.dto';
+import type { CreateTrackDto } from './dto/create-track.dto';
 
 @Injectable()
 export class TracksService {
@@ -20,6 +21,63 @@ export class TracksService {
 
   async findById(id: string) {
     return this.prisma.track.findUnique({ where: { id } });
+  }
+
+  async createTrack(userId: string, dto: CreateTrackDto) {
+    let managedArtistBand:
+      | {
+          id: string;
+          name: string;
+          homeSceneId: string | null;
+        }
+      | null = null;
+
+    if (dto.artistBandId) {
+      managedArtistBand = await this.prisma.artistBand.findFirst({
+        where: {
+          id: dto.artistBandId,
+          OR: [{ createdById: userId }, { members: { some: { userId } } }],
+        },
+        select: {
+          id: true,
+          name: true,
+          homeSceneId: true,
+        },
+      });
+
+      if (!managedArtistBand) {
+        throw new ForbiddenException('Track release requires a managed Artist/Band source');
+      }
+
+      if (dto.communityId && managedArtistBand.homeSceneId && dto.communityId !== managedArtistBand.homeSceneId) {
+        throw new BadRequestException('Track community must match the managed source Home Scene');
+      }
+    }
+
+    if (dto.communityId) {
+      const community = await this.prisma.community.findUnique({
+        where: { id: dto.communityId },
+        select: { id: true },
+      });
+      if (!community) {
+        throw new NotFoundException({ success: false, error: { message: 'Community not found' } });
+      }
+    }
+
+    return this.prisma.track.create({
+      data: {
+        title: dto.title,
+        artist: managedArtistBand?.name ?? dto.artist,
+        artistBandId: managedArtistBand?.id ?? null,
+        album: dto.album ?? null,
+        duration: dto.duration,
+        fileUrl: dto.fileUrl,
+        coverArt: dto.coverArt ?? null,
+        communityId: dto.communityId ?? null,
+        status: dto.status ?? 'ready',
+        uploadedById: userId,
+      },
+    });
   }
 
   /**

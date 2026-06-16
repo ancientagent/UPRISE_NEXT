@@ -1,12 +1,21 @@
 # The Plot and Scene Dashboard
 
-**ID:** `COMM-PLOT`  
-**Status:** `active`  
-**Owner:** `platform`  
-**Last Updated:** `2026-03-02`
+**ID:** `COMM-PLOT`
+**Status:** `active`
+**Owner:** `platform`
+**Last Updated:** `2026-04-25`
 
 ## Overview & Purpose
-Defines The Plot as the Home Scene dashboard where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
+Defines The Plot as the Home-side sectional system inside the `Home` surface where communities operate their Scene. The Plot is a civic interface, not a personalized discovery feed.
+
+Shell relationship lock:
+- `Home` is the left bottom-nav destination.
+- `Discover` is the right bottom-nav destination.
+- `Plot` lives inside `Home`; it is not a peer route to `Home`.
+
+Current MVP shell note:
+- the right-side `Discover` slot may be visibly disabled / `Coming Soon` while MVP remains local-community-only
+- active MVP listening stays inside the user's own community until borders open later
 
 ## User Roles & Use Cases
 - Listeners view community activity and access civic actions.
@@ -15,59 +24,74 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Visitors can listen and act with non-civic permissions, but cannot vote.
 
 ## Functional Requirements
-- The Plot is the primary Home Scene interface.
+- The Plot is the primary Home-side participation interface inside `Home`.
 - Plot tab surfaces:
   - Activity Feed (S.E.E.D Feed) (default)
   - Events
-  - Promotions
-  - Statistics / Scene Map (dedicated page-level surface)
+  - Archive (descriptive statistics / Scene Map / history lane)
   - Social (V2, hidden in MVP UI)
+  - Promotions/business surfaces are deferred and are not a current MVP Plot tab.
 - Profile strip notification requirement:
   - A notification icon is present at the top-right of the profile strip, immediately next to the `...` settings menu.
   - Pioneer users receive an onboarding follow-up message in this notification surface after Home Scene context is loaded.
   - Message must explain temporary nearest-active routing and that user can establish/uprise their own city scene once sufficient local users join.
+  - Followed-source updates do **not** move into this icon by default; the feed remains the primary surface for those updates.
+  - The profile-strip notification icon is reserved for system/state-change notices, pioneer follow-up, and other explicit notification/inbox behavior.
 - S.E.E.D stands for Support, Explore, Engage, Distribute.
 - Activity Feed semantics:
-  - explicit community actions only (blast/registration/release entry)
+  - explicit community actions and followed-source updates only
   - identical for all listeners in the same Home Scene
   - no ranking, personalization, or recommendation inference
-- Promotions are distinct from Activity Feed and remain in Promotions surfaces.
-- Registrar entry is part of Plot activity/civic workflow.
-- Statistics / Scene Map rule:
-  - Scene Map is inherent to the Scene and lives inside the Statistics surface.
-  - Statistics is its own dedicated page-level surface within The Plot (not a mini widget).
-  - Tier toggles scale the same Scene context from city to state to national aggregates.
-  - Parent music-community context remains constant during tier toggles unless explicitly changed by user.
+  - followed-source updates must surface through the same feed grammar rather than a separate algorithmic notification feed
+  - stats-driven discovery material may surface intermittently as inserted feed carousels while `Discover` remains deferred
+  - these insertions are not fixed feed furniture and should appear as occasional scoped informational moments
+  - inserted discovery carousels are read-only launch surfaces, not inline action strips
+  - clicking an inserted discovery card should pause `RADIYO` and hand the user into artist-profile demo listening on the selected song
+- Calendar rule:
+  - calendar is a real MVP organizational layer
+  - users add events directly to calendar
+  - following a source is awareness subscription, not automatic event-calendar population under the intended action model
+  - calendar behavior may sync/export to Google / Apple calendars
+- Promotions/business surfaces are distinct from Activity Feed, but are deferred from the current MVP Plot tab set.
+- Registrar entry is part of Plot civic workflow and should be accessed from within The Scenery.
+- Scenery / Scene Map rule:
+  - Scene Map is inherent to the Scene and lives inside The Scenery surface.
+  - The Scenery is the dedicated community-information surface within The Plot (not a mini widget).
+  - Registrar lives within The Scenery as a feature/module, not as a separate peer default-screen section.
+  - Current MVP Plot tier toggles expose `city` and `state` only.
+  - The broader platform model may still retain `national`, but `national` is deferred from the live MVP Plot surface until population justifies it.
+  - Parent community context remains anchored to the active community identity (`city + state + music community`) during tier toggles unless explicitly changed by user.
   - City map shows local sect-level/community detail.
   - State map shows city-level macro statistics.
-  - National map shows state-level macro statistics.
-  - Each tier view includes a Top 40 songs list for that same scope.
+  - Top 40 / billboard-style lists are deferred from MVP until population supports them.
 
 ### Implemented Behavior (Current)
 - Web app ships Plot shell at `apps/web/src/app/plot/page.tsx`.
 - Current shell includes tab switching and Home Scene identity summary.
 - Copy and framing align with canon (“anchor this dashboard”).
-- Statistics surface now calls `GET /communities/:id/statistics` for tier-scoped metrics and Top 40 payload.
-- Statistics Scene Map now calls `GET /communities/:id/scene-map` for tier-scoped map points/rollups.
+- Archive surface now calls `GET /communities/:id/statistics` for tier-scoped metrics.
+- Archive Scene Map now calls `GET /communities/:id/scene-map` for tier-scoped map points/rollups.
 - Feed tab now renders server-driven S.E.E.D activity via `GET /communities/:id/feed` (cursor-paginated, non-personalized).
 - Events tab now renders scene-scoped listings via `GET /communities/:id/events`.
-- Promotions tab now renders scene-scoped listings via `GET /communities/:id/promotions`.
+- Promotions read endpoints may remain as retained/deferred runtime seams, but there is no current MVP Promotions tab.
 - Plot now resolves default community anchor from Home Scene tuple via `GET /communities/resolve-home` before GPS-nearby fallback.
 - Plot read surfaces now support active-scene fallback (tuned scene first, Home Scene fallback) when no explicit scene anchor is selected:
   - `GET /communities/active/feed`
   - `GET /communities/active/events`
   - `GET /communities/active/promotions`
   - `GET /communities/active/statistics`
-- Statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor.
+- The current Archive/statistics panel now consumes active-scene statistics fallback when no explicit community anchor is selected, then resolves tier map payload via the returned active-scene anchor; this remains implementation debt under the broader The Scenery section naming direction.
+- Plot player controls and Archive/statistics surface now clamp active MVP tier selection to `city` and `state`.
 - Plot Scene Activity panel now integrates registrar status read context:
   - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,
   - displays registration totals/status summary while retaining explicit `Open Registrar` navigation.
-- Plot Statistics and Top Songs surfaces now share a unified selected-community anchor in the page state to keep tier/context reads consistent across panels.
+- Plot Archive/statistics surfaces now share a unified selected-community anchor in the page state to keep tier/context reads consistent across panels.
 - Plot and statistics read endpoints now flow through typed web client wrappers (`apps/web/src/lib/communities/client.ts`, `apps/web/src/lib/discovery/client.ts`) for centralized route contract management.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Advanced registrar lifecycle dashboard in Plot (beyond status summary + explicit registrar navigation).
 - Social tab message boards/listening rooms (V2). Social tab UI remains hidden in MVP.
+- Search Party and sect private channels remain explicit private-group/social constructs when enabled; they are not auto-created feed channels.
 
 ## Non-Functional Requirements
 - No personalized ranking or algorithmic feed ordering.
@@ -78,6 +102,8 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Plot is a civic interface, not a recommendation surface.
 - Promotions are non-governing signals and must not affect Fair Play.
 - Web tier may not import DB/server modules directly; data flows through API endpoints.
+- If deferred discovery material is surfaced in Plot/feed during MVP, it must remain scene-scoped, deterministic, and intermittent rather than becoming a second fixed discovery route.
+- Deferred discovery inserts must use read-only titled horizontal carousels with no inline `Collect`, `Blast`, or `Follow` actions on the cards themselves.
 
 ## Data Models & Migrations
 ### Data Dependencies
@@ -96,37 +122,40 @@ Defines The Plot as the Home Scene dashboard where communities operate their Sce
 - Plot currently reads local onboarding state in web store.
 - `GET /communities/:id/feed` is implemented for scene-scoped S.E.E.D feed projection.
 - `GET /communities/resolve-home` resolves exact Home Scene tuple for deterministic Plot anchoring.
-- `GET /communities/active/feed|events|promotions|statistics` is implemented for active-scene read defaults.
+- `GET /communities/active/feed|events|statistics` is implemented for current active-scene Plot read defaults; `promotions` may remain a retained/deferred runtime seam but is not a current MVP tab.
 
 ### Required for Full Surface
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | `/communities/:id/events` | required | Scene event listing for Plot events surface |
-| GET | `/communities/:id/promotions` | required | Scene promotions/offers surface |
-| GET | `/communities/:id/statistics` | required | Scene metrics and top songs aggregates (implemented) |
+| GET | `/communities/:id/statistics` | required | Scene metrics aggregates (implemented) |
 | GET | `/communities/:id/scene-map` | required | Scene map points/rollups by active tier (implemented) |
 
 ## Web UI / Client Behavior
-- Plot is Home Scene scoped.
+- Plot is Home Scene scoped within the `Home` surface.
 - Tabs are fixed civic surfaces, not algorithmic sections.
 - Home Scene and optional taste tag are visible context on entry.
 - Profile strip includes notification icon + settings (`...`) on the right side.
 - Pioneer onboarding message is discoverable from the notification icon (not as an always-visible blocking modal).
-- Feed uses explicit scene actions from API; it does not rank or personalize.
+- Feed uses explicit scene actions and followed-source updates from API; it does not rank or personalize.
+- When intermittent discovery inserts appear in feed, they should present read-only song/artist squares with arrow-based horizontal browsing and artist-profile click handoff rather than direct card actions.
 - Events uses scene-scoped API listings from selected community anchor.
-- Promotions uses scene-scoped API listings from selected community anchor.
+- Archive uses scene-scoped descriptive stats / Scene Map reads from selected community anchor.
 - Social remains hidden in MVP until endpoint + surface contract ship.
+- The profile-strip notification icon is not a second ranked activity channel; followed-source updates should continue to surface through feed grammar.
 
 ## Acceptance Tests / Test Plan
 - Plot loads and displays Home Scene context from onboarding state.
 - Tab selection updates panel content with no personalization behavior.
 - Activity Feed copy does not imply recommendation or ranking.
-- Promotions and Events remain represented as separate surfaces.
+- Feed, Events, and Archive remain represented as the current MVP Plot tab surfaces.
+- Followed-source updates are visible in the feed without introducing a separate ranked notification feed.
 
 ## Future Work & Open Questions
 - Add registrar entry component and motion lifecycle surfaces.
 - Implement scene map/statistics payload contract in `docs/specs/communities/scene-map-and-metrics.md`.
 - Execute statistics-page design checklist in `docs/specs/communities/statistics-page-design-task-list.md`.
+- Lock the exact notification/update rendering split between feed-post expressions and the profile-strip notification icon.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

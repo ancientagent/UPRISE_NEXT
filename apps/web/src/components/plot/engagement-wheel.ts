@@ -1,19 +1,29 @@
 import type { PlayerMode } from '@/components/plot/RadiyoPlayerPanel';
 
 export interface EngagementWheelAction {
-  label: 'Report' | 'Skip' | 'Blast' | 'Add' | 'Upvote' | 'Back' | 'Pause' | 'Recommend' | 'Next';
+  label:
+    | 'Report'
+    | 'Skip'
+    | 'Play It Loud'
+    | 'Collect'
+    | 'Upvote'
+    | 'Back'
+    | 'Pause'
+    | 'Blast'
+    | 'Recommend'
+    | 'Next';
   position?: '9:00' | '10:00' | '12:00' | '1:00' | '3:00';
 }
 
 export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction[] = [
   { label: 'Report' },
   { label: 'Skip' },
-  { label: 'Blast' },
-  { label: 'Add' },
+  { label: 'Play It Loud' },
+  { label: 'Collect' },
   { label: 'Upvote' },
 ];
 
-export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction[] = [
+export const SPACE_WHEEL_ACTIONS: EngagementWheelAction[] = [
   { label: 'Back', position: '9:00' },
   { label: 'Pause', position: '10:00' },
   { label: 'Blast', position: '12:00' },
@@ -22,5 +32,5 @@ export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction[] = [
 ];
 
 export function getEngagementWheelActions(mode: PlayerMode): EngagementWheelAction[] {
-  return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : COLLECTION_WHEEL_ACTIONS;
+  return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : SPACE_WHEEL_ACTIONS;
 }

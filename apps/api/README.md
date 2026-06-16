@@ -69,6 +69,7 @@ pnpm prisma:studio
 - `POST /communities` - Create community
 
 ### Tracks
+- `POST /tracks` - Create a track
 - `GET /tracks` - List tracks (paginated)
 - `GET /tracks/:id` - Get track by ID
 

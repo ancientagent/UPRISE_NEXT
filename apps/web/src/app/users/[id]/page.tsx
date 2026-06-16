@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
@@ -64,13 +65,45 @@ export default function UserProfilePage() {
   const userId = useMemo(() => (typeof params?.id === 'string' ? params.id : ''), [params]);
   const isOwner = authUser?.id === userId;
 
+  async function withTimeout<T>(promise: Promise<T>, timeoutMessage: string, timeoutMs = 8000): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const timer = window.setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+      promise.then(
+        (value) => {
+          window.clearTimeout(timer);
+          resolve(value);
+        },
+        (reason) => {
+          window.clearTimeout(timer);
+          reject(reason);
+        },
+      );
+    });
+  }
+
   async function loadProfile() {
-    if (!token || !userId) return;
+    if (!userId) {
+      setProfile(null);
+      setError('Invalid user id.');
+      setLoading(false);
+      return;
+    }
+
+    if (!token) {
+      setProfile(null);
+      setError('You must be signed in to view user profiles.');
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const profileResponse = await api.get<UserProfileData>(`/users/${userId}/profile`, { token });
+      const profileResponse = await withTimeout(
+        api.get<UserProfileData>(`/users/${userId}/profile`, { token }),
+        'Timed out while loading user profile.',
+      );
       setProfile(profileResponse.data ?? null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load user profile.');
@@ -204,11 +237,16 @@ export default function UserProfilePage() {
             <ul className="mt-4 space-y-2">
               {profile.managedArtistBands.map((entity) => (
                 <li key={entity.id} className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2">
-                  <p className="text-sm font-medium text-black">{entity.name}</p>
-                  <p className="text-xs text-black/60">
-                    {formatArtistBandEntityType(entity.entityType)} • {entity.slug}
-                    {entity.membershipRole ? ` • ${entity.membershipRole}` : ''}
-                  </p>
+                  <Link
+                    href={`/artist-bands/${entity.id}`}
+                    className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-black/20"
+                  >
+                    <p className="text-sm font-medium text-black">{entity.name}</p>
+                    <p className="text-xs text-black/60">
+                      {formatArtistBandEntityType(entity.entityType)} • {entity.slug}
+                      {entity.membershipRole ? ` • ${entity.membershipRole}` : ''}
+                    </p>
+                  </Link>
                 </li>
               ))}
             </ul>

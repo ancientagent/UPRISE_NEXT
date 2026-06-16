@@ -11,9 +11,15 @@ async function bootstrap() {
     new FastifyAdapter({ logger: true })
   );
 
+  const corsOrigins = process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()).filter(Boolean) ?? [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ];
+  const isProduction = process.env.NODE_ENV === 'production';
+
   // Enable CORS
   app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'],
+    origin: isProduction ? corsOrigins : true,
     credentials: true,
   });
 

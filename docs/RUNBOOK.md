@@ -11,9 +11,9 @@
 | File | Purpose | Status |
 |------|--------|--------|
 | [STRATEGY_CRITICAL_INFRA_NOTE.md](./STRATEGY_CRITICAL_INFRA_NOTE.md) | Defines “DeepAgent = Foundry only” rule; production targets (Vercel, Fly, AWS, Neon). | 🔴 Critical |
-| [PHASE1_COMPLETION_REPORT.md](./PHASE1_COMPLETION_REPORT.md) | Certifies monorepo foundation; establishes readiness for Phase 2. | ✅ Complete |
+| [PHASE1_COMPLETION_REPORT.md](./PHASE1_COMPLETION_REPORT.md) | Historical milestone context for the monorepo foundation. | 🗂️ Historical |
 
-> All agents MUST read the two files above before running any task.
+> Default agent onboarding and task routing now live in `AGENTS.md`. Use this runbook for operational policy and environment behavior, not as a broader replacement for the current agent reading path.
 
 ## 🚨 Critical Package Manager Rule
 - **UPRISE_NEXT uses pnpm only.**

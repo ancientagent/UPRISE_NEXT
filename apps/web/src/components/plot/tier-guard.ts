@@ -1,4 +1,5 @@
 export type PlotTier = 'city' | 'state' | 'national';
+export type MvpPlotTier = Exclude<PlotTier, 'national'>;
 
 interface BroadcastAnchor {
   name?: string | null;
@@ -10,6 +11,16 @@ interface BroadcastAnchor {
 // Canon guard: tier switching is structural (city/state/national), not radius expansion.
 export function shouldFetchNearbyForTier(tier: PlotTier): boolean {
   return tier === 'city';
+}
+
+export function shouldUseTunedSceneAsDefaultPlotAnchor(
+  tunedScene: { tier?: string | null } | null | undefined,
+): boolean {
+  return tunedScene?.tier === 'city';
+}
+
+export function getMvpPlayerTier(tunedTier?: string | null): MvpPlotTier {
+  return tunedTier === 'state' || tunedTier === 'national' ? 'state' : 'city';
 }
 
 function normalizeLabelPart(value?: string | null): string | null {

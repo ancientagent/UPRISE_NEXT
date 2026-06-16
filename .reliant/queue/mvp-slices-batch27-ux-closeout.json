@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-24T04:33:00Z",
+  "lane": "batch27-ux-closeout",
+  "summary": {
+    "total": 10,
+    "queued": 10,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXWEB-876A",
+      "title": "Batch27 web residual triage and patch",
+      "prompt": "Execute one MVP slice only: inspect current routed web surfaces on current HEAD, fix only current reproducible UX/state defects in Discover/community/artist/registrar/onboarding, and publish exact before-after evidence. If no reproducible defect exists, record a no-defect handoff instead of inventing work.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-a-ux-plot-batch27"
+    },
+    {
+      "id": "SLICE-UXWEB-877A",
+      "title": "Batch27 web auth and identity regression lock",
+      "prompt": "Execute one MVP slice only: tighten focused regression coverage for auth-state clarity and full community-identity rendering on touched web routes only, based on current reproduced behavior or current no-defect evidence.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web test -- discovery-query-state.test.ts discovery-client.test.ts communities-client.test.ts plot-ux-regression-lock.test.ts && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-a-ux-plot-batch27"
+    },
+    {
+      "id": "SLICE-UXAPI-878A",
+      "title": "Batch27 API/runtime residual triage and patch",
+      "prompt": "Execute one MVP slice only: inspect current API/runtime behavior behind Discover/onboarding/tracks/artist-band flows, fix only current reproducible defects on current HEAD, and publish exact runtime evidence. If no reproducible defect exists, publish a no-defect runtime handoff instead.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-b-ux-discovery-batch27"
+    },
+    {
+      "id": "SLICE-UXAPI-879A",
+      "title": "Batch27 discovery and track contract replay",
+      "prompt": "Execute one MVP slice only: replay the implemented Discover/tracks runtime contracts with focused API tests and patch only evidence-backed regressions. Preserve the existing POST /tracks support contract and current discovery read/write auth boundaries.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- communities.discovery.controller.test.ts communities.discovery.service.test.ts tracks.engagement.service.test.ts artist-bands.service.test.ts artist-bands.controller.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-b-ux-discovery-batch27"
+    },
+    {
+      "id": "SLICE-UXCONT-880A",
+      "title": "Batch27 onboarding to discover continuity replay",
+      "prompt": "Execute one MVP slice only: verify onboarding to Plot/Discover continuity on current HEAD, patch only deterministic state-ownership defects if they still reproduce, and publish exact route-to-route evidence.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-c-ux-player-profile-batch27"
+    },
+    {
+      "id": "SLICE-UXCONT-881A",
+      "title": "Batch27 discover destination continuity replay",
+      "prompt": "Execute one MVP slice only: verify Discover to community/artist/song destination continuity on current HEAD, patch only reproduced continuity defects, and record exact route/entry evidence. If flows are clean, publish a no-defect continuity handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-c-ux-player-profile-batch27"
+    },
+    {
+      "id": "SLICE-UXAUTO-882A",
+      "title": "Batch27 regression evidence command pack",
+      "prompt": "Execute one MVP slice only: standardize the exact verification command set for Batch27 closeout, capture it in a dated handoff, and patch only verification-documentation drift needed to keep the closeout reproducible.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-d-ux-automation-batch27"
+    },
+    {
+      "id": "SLICE-UXAUTO-883A",
+      "title": "Batch27 residual bugfix regression lock",
+      "prompt": "Execute one MVP slice only: add or tighten focused regression tests for any residual bugfixes actually made in Batch27. If no residual bugfixes were needed, publish a no-op regression note instead of broadening test scope.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api typecheck && pnpm --filter web typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-d-ux-automation-batch27"
+    },
+    {
+      "id": "SLICE-UXQAREV-884A",
+      "title": "Batch27 fresh current-HEAD QA sweep",
+      "prompt": "Execute one MVP slice only: run a fresh live QA sweep on current HEAD across Discover, artist, community, registrar, plot, users, and onboarding; discard stale findings; report only current reproducible defects with exact evidence.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-e-ux-qarev-batch27"
+    },
+    {
+      "id": "SLICE-UXQAREV-885A",
+      "title": "Batch27 merge-readiness closeout memo",
+      "prompt": "Execute one MVP slice only: produce the final Batch27 closeout memo summarizing current reproducible-defect status, exact verification commands run, residual risks, and merge/readiness recommendation for the branch.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued",
+      "updatedAt": "2026-03-24T04:33:00Z",
+      "lane": "lane-e-ux-qarev-batch27"
+    }
+  ]
+}

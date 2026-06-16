@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CreateSignalDto, FollowDto } from './dto/signal.dto';
 import { mapSignalToShelf } from '../common/constants/collection-shelves';
@@ -60,11 +60,27 @@ export class SignalsService {
     });
   }
 
-  async supportSignal(userId: string, signalId: string) {
+  async recommendSignal(userId: string, signalId: string) {
+    const heldSignal = await this.prisma.collectionItem.findFirst({
+      where: {
+        signalId,
+        collection: {
+          userId,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!heldSignal) {
+      throw new BadRequestException('Collect this song before recommending it.');
+    }
+
     return this.prisma.signalAction.upsert({
-      where: { userId_signalId_type: { userId, signalId, type: 'SUPPORT' } },
+      where: { userId_signalId_type: { userId, signalId, type: 'RECOMMEND' } },
       update: {},
-      create: { userId, signalId, type: 'SUPPORT' },
+      create: { userId, signalId, type: 'RECOMMEND' },
     });
   }
 

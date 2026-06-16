@@ -10,7 +10,7 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 
 ## User Roles & Use Cases
 - **Listener (base user):** default account type; can participate in Home Scene and as Visitor elsewhere.
-- **Artist/Band entity (Registrar-registered):** a separate music entity linked to one or more Users for upload/management workflows.
+- **Artist/Band entity (Registrar-registered):** a separate source entity linked to one or more Users for upload/management workflows.
 - **Promoter capability (additive, V1 target):** enables event and promotion workflows through named Production identities.
 - **Business capabilities (V2+):** merchant/venue style economic surfaces.
 - **Super Admin:** platform operations and moderation authority.
@@ -18,7 +18,8 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 
 ## Functional Requirements
 - Every person has one `User` identity.
-- Artist/Band accounts are separate entities linked to User identities (many-to-many management model).
+- Artist/Band accounts are separate source entities linked to User identities (many-to-many management model).
+- Source entities are managed from source-management surfaces, not from the listener user profile / collection workspace.
 - Home Scene affiliation and GPS verification determine voting eligibility; GPS gates voting only.
 - Capability expansion is additive permissions attached to existing user identity.
 - Visitor state may listen and use non-civic actions; Visitor state cannot vote.
@@ -109,6 +110,17 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
     - queue member invites,
     - inspect invite status summary.
   - All actions remain API-backed and submitter-scoped.
+- Registrar promoter web intake/status (slice 121):
+  - `/registrar` now includes explicit `Promoter Registration` action selection alongside Artist/Band registration.
+  - Promoter form submits to `POST /registrar/promoter` with Home Scene-scoped `productionName`.
+  - Client flow uses the same Home Scene resolution + GPS verification gate as other registrar civic submissions.
+  - `/registrar` now loads submitter-owned promoter entries via `GET /registrar/promoter/entries`.
+  - UI supports explicit promoter follow-up reads:
+    - registration detail,
+    - capability audit summary.
+- Registrar capability-code web access rule (slice 122A):
+  - promoter capability code verify/redeem flows may still be linked from source-facing surfaces during the current MVP bridge period.
+  - the actual capability verify/redeem workflow remains listener-owned inside `/registrar`; source-facing entrypoints are transitional routing aids, not a separate source-side registrar surface.
 - Registrar entry-list invite outcome enrichment (slice 70):
   - `GET /registrar/artist/entries` now includes `sentInviteCount` and `failedInviteCount` in per-entry invite lifecycle summaries.
   - Existing invite summary counts remain unchanged (`pendingInviteCount`, `queuedInviteCount`, `claimedCount`, `existingUserCount`).
@@ -154,12 +166,31 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 ### Promoter Policy (Locked Direction)
 - Base user identity remains listener/supporter/fan.
 - Promoter is an additive capability, not a separate account tree.
-- Web account management stays unified across listener/artist/promoter capability holders.
+- Web account identity may remain unified across listener/artist/promoter capability holders, but the operating surfaces stay separated.
+- Source-facing tools should still be understood as belonging to the source-management dashboard/tool layer rather than as isolated public utilities.
+- Users who are attached to artist/band or other source entities should be able to operate those managed source entities from a separate source-management web surface/domain.
+- The listener app/profile remains the base community identity for everyone who has onboarded; source management is not part of that listener profile space.
+- Current MVP runtime shell for that model is `/source-dashboard` inside this monorepo, but it should be treated as the current implementation stand-in for a separate source/admin web surface that the listener app reads from.
+- Current `/source-dashboard` work should be preserved and evolved; the future separate-domain model is a routing/deployment direction, not a restart.
+- Registrar approval/materialization should eventually expose the managed source dashboard URL/domain for that artist/band/source entity.
+- Registrar may still be linked as a transitional bridge, but it remains listener-side civic/formalization infrastructure in the intended actor model.
 - Promoters operate named Production entities for public promotional actions.
 - Promoters can:
   - create/manage events (via Print Shop flow),
   - publish promotional messages publicly as production identity,
   - manage promoter web profile.
+
+### Business Policy (Locked Direction)
+- Business capability should remain account-attached rather than anonymous/public-link intake.
+- Business accounts follow the same underlying source/profile/update model as other sources.
+- Business-facing surface direction includes:
+  - create/manage promotions,
+  - read business analytics,
+  - publish outward follower-facing updates/actions.
+- A broader standalone business product system may remain narrower than artist/promoter presence in current MVP work, but the underlying source model is shared.
+- Artist/business deal-making workflows are legitimate later-version behavior and must not be silently widened into current MVP scope.
+- Current MVP boundary:
+  - business accounts/runtime are deferred while the promo/business surface is deferred.
 
 ## Non-Functional Requirements
 - Clarity: role semantics must remain unambiguous in docs and API contracts.
@@ -269,7 +300,13 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Add outbound delivery provider pipeline for queued `pending_email`/`queued` member invites.
 - See phased execution note: `docs/handoff/2026-02-21_artist-band-identity-remaining-phased-plan.md`.
 - Define Promoter capability registration and code exchange flow details under locked issuance policy (`system-only` issuer authority + `approved` issuance precondition).
-- Define business capability model for Promotions/Print Shop workflows.
+- Define business capability/account model for Promotions/Print Shop workflows.
+
+### Founder Lock (2026-04-10)
+- Business promotion submission should be attached to a business account in Print Shop even when the business does not maintain a broader in-app presence/profile.
+- Do not treat business promotion intake as anonymous/public-link submission going forward.
+- Business accounts should be understood as source-facing dashboards, not one-off intake forms.
+- That business account/dashboard model is retained for later implementation, but is not current-MVP runtime scope while promos remain deferred.
 
 ## References
 - `docs/canon/Master Identity and Philosohpy Canon.md`

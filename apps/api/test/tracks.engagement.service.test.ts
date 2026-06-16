@@ -1,9 +1,16 @@
 import { TracksService } from '../src/tracks/tracks.service';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 
 // Mock PrismaService with trackEngagement
 const mockPrisma = {
+  artistBand: {
+    findFirst: jest.fn(),
+  },
   track: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+  },
+  community: {
     findUnique: jest.fn(),
   },
   trackEngagement: {
@@ -87,5 +94,87 @@ describe('TracksService.recordEngagement', () => {
       });
       expect(result.data.score).toBe(expectedScores[i]);
     }
+  });
+});
+
+describe('TracksService.createTrack', () => {
+  let service: TracksService;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    service = new TracksService(mockPrisma as any);
+  });
+
+  it('creates a track with uploadedById from the authenticated user', async () => {
+    const createdTrack = {
+      id: 'track-1',
+      title: 'QA Song',
+      artist: 'QA Artist',
+      duration: 181,
+      fileUrl: 'https://example.com/audio.mp3',
+      uploadedById: 'user-1',
+      communityId: 'community-1',
+      status: 'ready',
+    };
+
+    mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
+    mockPrisma.artistBand.findFirst.mockResolvedValue({
+      id: 'artist-band-1',
+      name: 'Youngblood QA Source',
+      homeSceneId: 'community-1',
+    });
+    mockPrisma.track.create.mockResolvedValue(createdTrack);
+
+    const result = await service.createTrack('user-1', {
+      title: 'QA Song',
+      artist: 'QA Artist',
+      artistBandId: 'artist-band-1',
+      duration: 181,
+      fileUrl: 'https://example.com/audio.mp3',
+      communityId: 'community-1',
+    });
+
+    expect(mockPrisma.track.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        title: 'QA Song',
+        artist: 'Youngblood QA Source',
+        artistBandId: 'artist-band-1',
+        duration: 181,
+        fileUrl: 'https://example.com/audio.mp3',
+        uploadedById: 'user-1',
+        communityId: 'community-1',
+        status: 'ready',
+      }),
+    });
+    expect(result).toEqual(createdTrack);
+  });
+
+  it('throws NotFoundException when communityId does not resolve', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue(null);
+
+    await expect(
+      service.createTrack('user-1', {
+        title: 'QA Song',
+        artist: 'QA Artist',
+        duration: 181,
+        fileUrl: 'https://example.com/audio.mp3',
+        communityId: 'community-1',
+      }),
+    ).rejects.toThrow(NotFoundException);
+  });
+
+  it('throws ForbiddenException when artistBandId is not managed by the signed-in user', async () => {
+    mockPrisma.artistBand.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.createTrack('user-1', {
+        title: 'QA Song',
+        artist: 'QA Artist',
+        artistBandId: 'artist-band-1',
+        duration: 181,
+        fileUrl: 'https://example.com/audio.mp3',
+        communityId: 'community-1',
+      }),
+    ).rejects.toThrow(ForbiddenException);
   });
 });

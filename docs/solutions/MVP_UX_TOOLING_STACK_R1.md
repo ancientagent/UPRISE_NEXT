@@ -1,5 +1,17 @@
 # MVP UX Tooling Stack R1
 
+Status: Historical tooling reference
+
+Historical note:
+- This file captures an earlier mobile-first tooling phase.
+- It should not be used as the current authority for active MVP product behavior.
+- Current assistants should read:
+  - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
+  - `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`
+  - current founder locks in `docs/solutions/`
+  - relevant active specs in `docs/specs/`
+
+
 Purpose: single source for design/prototype/build tooling used in current MVP UX stage.
 
 ## Stage Objective

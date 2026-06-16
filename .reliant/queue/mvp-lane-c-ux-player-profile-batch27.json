@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-24T04:33:00Z",
+  "lane": "lane-c-ux-player-profile-batch27",
+  "sourceFiles": [
+    "mvp-slices-batch27-ux-closeout.json"
+  ],
+  "summary": {
+    "total": 2,
+    "queued": 2,
+    "in_progress": 0,
+    "done": 0,
+    "blocked": 0
+  },
+  "tasks": [
+    {
+      "id": "SLICE-UXCONT-880A",
+      "title": "Batch27 onboarding to discover continuity replay",
+      "prompt": "Execute one MVP slice only: verify onboarding to Plot/Discover continuity on current HEAD, patch only deterministic state-ownership defects if they still reproduce, and publish exact route-to-route evidence.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    },
+    {
+      "id": "SLICE-UXCONT-881A",
+      "title": "Batch27 discover destination continuity replay",
+      "prompt": "Execute one MVP slice only: verify Discover to community/artist/song destination continuity on current HEAD, patch only reproduced continuity defects, and record exact route/entry evidence. If flows are clean, publish a no-defect continuity handoff.",
+      "verifyCommand": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter web typecheck && pnpm --filter api typecheck",
+      "status": "queued"
+    }
+  ]
+}

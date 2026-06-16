@@ -1,7 +1,7 @@
 # MVP UX Alignment Report (R1)
 
-Status: Active planning artifact (pre-implementation UX alignment)  
-Last Updated: 2026-02-28  
+Status: Active planning artifact (pre-implementation UX alignment)
+Last Updated: 2026-04-14
 Owner: Product execution (founder + orchestration)
 
 ## 1) Purpose
@@ -14,6 +14,7 @@ Primary rule: no inferred product behavior outside documented canon/spec sources
 - `docs/specs/communities/plot-and-scene-plot.md`
 - `docs/specs/system/registrar.md`
 - `docs/specs/core/signals-and-universal-actions.md`
+- `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
 - `docs/solutions/MVP_FLOW_MAP_R1.md`
 - `docs/solutions/MVP_FOUNDER_DECISION_REGISTER_R1.md`
 - `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md`
@@ -35,7 +36,12 @@ Primary rule: no inferred product behavior outside documented canon/spec sources
 - Deferred boundaries remain explicit (admin orchestration, full provider/scheduler production integration, project/sect lifecycle expansion).
 
 ### 3.4 Signals / Universal Actions
-- Universal actions are explicit (`ADD`, `BLAST`, `SUPPORT`, `FOLLOW`) and idempotent.
+- Intended action grammar is explicit and idempotent:
+  - sources: `Follow`
+  - music-distribution signals: `Collect`, `Blast`, `Recommend` once genuinely held
+  - events: `Add` to calendar
+  - social posts/comments/replies: `React`
+- Runtime still carries older `ADD`/`SUPPORT` naming debt in the generic signal API; UX work should follow `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md` when wording or layout choices depend on the intended model.
 - No ranking or recommendation behavior may be implied by UX wording or interaction order.
 
 ## 4) Current Web Surface Snapshot

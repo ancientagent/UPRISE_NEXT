@@ -18,9 +18,32 @@ export interface HealthStatus {
   };
 }
 
+export interface LivenessStatus {
+  status: 'healthy';
+  timestamp: string;
+  uptime: number;
+  checks: {
+    api: { status: 'healthy' };
+  };
+}
+
 @Injectable()
 export class HealthService {
   constructor(private prisma: PrismaService) {}
+
+  /**
+   * Process-only liveness check. This must not depend on database readiness.
+   */
+  checkLive(): LivenessStatus {
+    return {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      checks: {
+        api: { status: 'healthy' },
+      },
+    };
+  }
 
   /**
    * Overall health check

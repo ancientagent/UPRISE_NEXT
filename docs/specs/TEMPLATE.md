@@ -10,6 +10,13 @@
 - Why it exists and what problems it solves.
 - Links to any relevant blueprint(s) or architecture docs.
 
+## Persistent System Impact (Required)
+- Player visibility on this surface/flow:
+- Player context/state inherited by this surface/flow:
+- Can this feature affect player state or listening context?
+- Does player state constrain search, navigation, travel, or content scope here?
+- If the player is not visible here, why is that valid?
+
 ## User Roles & Use Cases
 - Roles affected (listener, artist, admin, etc.)
 - Key user stories / flows

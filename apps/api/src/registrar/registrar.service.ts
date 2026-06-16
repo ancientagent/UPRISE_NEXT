@@ -962,6 +962,14 @@ export class RegistrarService {
     }, {} as Record<string, number>);
 
     const entryIds = entries.map((entry: any) => entry.id);
+    if (entryIds.length === 0) {
+      return {
+        total: 0,
+        countsByStatus,
+        entries: [],
+      };
+    }
+
     const [registrarCodes, capabilityGrants] = await Promise.all([
       this.prisma.registrarCode.findMany({
         where: {

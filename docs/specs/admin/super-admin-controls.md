@@ -3,7 +3,7 @@
 **ID:** `ADMIN-SUPER`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-19`
+**Last Updated:** `2026-04-08`
 
 ## Overview & Purpose
 Defines the Super Admin’s platform oversight capabilities.
@@ -15,6 +15,7 @@ Defines the Super Admin’s platform oversight capabilities.
 ## Functional Requirements
 - Full visibility into Users, Artists, Businesses, Events, and transactions.
 - Full visibility into all analytics and instrumentation datasets (including non-UI metrics).
+- All trackable metrics with operational, audit, admin, or future analytics value should remain available to Super Admin even when they are not surfaced in current MVP user-facing UI.
 - Account control: view, edit, suspend, release, or ban.
 - Moderation queue access and dispute handling.
 - Platform configuration:
@@ -48,6 +49,11 @@ Defines the Super Admin’s platform oversight capabilities.
   - `POST /admin/config/fair-play`
   - current guard: authenticated user (`JwtAuthGuard`)
   - RBAC/super-admin enforcement: deferred
+- Retained analytics read surface exists:
+  - `GET /admin/analytics/query`
+  - current guard: authenticated user (`JwtAuthGuard`)
+  - returns current platform totals, signal-action totals, and retained-metric availability/data from the live MVP runtime
+- Web app exposes a minimal read-only admin route at `/admin` for the retained analytics surface.
 - No admin audit log model currently exists.
 
 ### Deferred (Not Implemented Yet)
@@ -95,6 +101,7 @@ Defines the Super Admin’s platform oversight capabilities.
 |--------|------|------|-------------|
 | GET | `/admin/config/fair-play` | authenticated (RBAC deferred) | View current Fair Play policy variables |
 | POST | `/admin/config/fair-play` | authenticated (RBAC deferred) | Update Fair Play policy variables (global) |
+| GET | `/admin/analytics/query` | authenticated (RBAC deferred) | Query current retained analytics and platform totals |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
@@ -107,10 +114,11 @@ Defines the Super Admin’s platform oversight capabilities.
 | GET | `/admin/analytics/metrics` | super-admin | List metric definitions and status |
 | POST | `/admin/analytics/metrics` | super-admin | Create metric definition |
 | PATCH | `/admin/analytics/metrics/:id` | super-admin | Update or deprecate metric definition |
-| GET | `/admin/analytics/query` | super-admin | Query historical telemetry datasets |
+| GET | `/admin/analytics/query` | super-admin | Historical/scoped telemetry query expansion beyond the current MVP summary surface |
 
 ## Web UI / Client Behavior
 - Admin console with scoped access.
+- Current MVP web route `/admin` is read-only and focuses on retained analytics visibility, not full moderation/config management.
 
 ## Acceptance Tests / Test Plan
 - Admin actions logged and auditable.

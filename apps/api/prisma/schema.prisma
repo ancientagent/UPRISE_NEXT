@@ -69,6 +69,10 @@ model ArtistBand {
   registrarEntryRef String?
   homeSceneId      String?
   createdById      String
+  officialWebsiteUrl String?
+  merchUrl         String?
+  musicUrl         String?
+  donationUrl      String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -76,6 +80,8 @@ model ArtistBand {
   homeScene Community? @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
   members   ArtistBandMember[]
   registrarEntries RegistrarEntry[]
+  tracks    Track[]
+  events    Event[]
 
   @@index([homeSceneId])
   @@index([createdById])
@@ -315,6 +321,7 @@ model Track {
   id            String   @id @default(uuid())
   title         String
   artist        String
+  artistBandId  String?
   album         String?
   duration      Float // in seconds
   fileUrl       String
@@ -329,11 +336,13 @@ model Track {
   updatedAt     DateTime @updatedAt
 
   uploadedBy    User             @relation(fields: [uploadedById], references: [id])
+  artistBand    ArtistBand?      @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
   community     Community?       @relation(fields: [communityId], references: [id])
   engagements   TrackEngagement[]
   rotationEntries RotationEntry[]
   trackVotes    TrackVote[]
 
+  @@index([artistBandId])
   @@map("tracks")
 }
 
@@ -481,6 +490,7 @@ model Event {
   longitude     Float
   communityId   String
   createdById   String
+  artistBandId  String?
   attendeeCount Int      @default(0)
   maxAttendees  Int?
   createdAt     DateTime @default(now())
@@ -488,7 +498,9 @@ model Event {
 
   community Community @relation(fields: [communityId], references: [id])
   createdBy User      @relation(fields: [createdById], references: [id])
+  artistBand ArtistBand? @relation(fields: [artistBandId], references: [id], onDelete: SetNull)
 
+  @@index([artistBandId])
   @@map("events")
 }
 

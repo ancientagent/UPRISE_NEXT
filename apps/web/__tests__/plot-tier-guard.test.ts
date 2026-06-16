@@ -1,4 +1,9 @@
-import { buildRadiyoBroadcastLabel, shouldFetchNearbyForTier } from '@/components/plot/tier-guard';
+import {
+  buildRadiyoBroadcastLabel,
+  getMvpPlayerTier,
+  shouldFetchNearbyForTier,
+  shouldUseTunedSceneAsDefaultPlotAnchor,
+} from '@/components/plot/tier-guard';
 
 describe('Plot Tier Guard', () => {
   it('allows nearby lookup for city tier', () => {
@@ -8,6 +13,20 @@ describe('Plot Tier Guard', () => {
   it('blocks nearby lookup for state and national tiers', () => {
     expect(shouldFetchNearbyForTier('state')).toBe(false);
     expect(shouldFetchNearbyForTier('national')).toBe(false);
+  });
+
+  it('only uses a tuned city scene as the default Plot anchor', () => {
+    expect(shouldUseTunedSceneAsDefaultPlotAnchor({ tier: 'city' })).toBe(true);
+    expect(shouldUseTunedSceneAsDefaultPlotAnchor({ tier: 'state' })).toBe(false);
+    expect(shouldUseTunedSceneAsDefaultPlotAnchor({ tier: 'national' })).toBe(false);
+    expect(shouldUseTunedSceneAsDefaultPlotAnchor(null)).toBe(false);
+  });
+
+  it('clamps tuned transport tiers to the MVP player tier set', () => {
+    expect(getMvpPlayerTier('city')).toBe('city');
+    expect(getMvpPlayerTier('state')).toBe('state');
+    expect(getMvpPlayerTier('national')).toBe('state');
+    expect(getMvpPlayerTier(null)).toBe('city');
   });
 
   it('keeps the parent music-community anchor stable across tier titles', () => {

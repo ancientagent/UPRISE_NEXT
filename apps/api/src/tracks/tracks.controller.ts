@@ -4,6 +4,7 @@ import { TracksService } from './tracks.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { TrackEngageSchema, type TrackEngageDto } from './dto/track-engage.dto';
+import { CreateTrackSchema, type CreateTrackDto } from './dto/create-track.dto';
 
 @Controller('tracks')
 @UseGuards(JwtAuthGuard)
@@ -23,6 +24,17 @@ export class TracksController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const track = await this.tracksService.findById(id);
+    return { success: true, data: track };
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @ZodBody(CreateTrackSchema)
+  async create(
+    @Body() dto: CreateTrackDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const track = await this.tracksService.createTrack(req.user.userId, dto);
     return { success: true, data: track };
   }
 

@@ -11,8 +11,9 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 ## User Roles & Use Cases
 - Artists and promoters purchase Runs to issue digital artifacts.
 - Promoters create events from Print Shop as the uniform event-creation entrypoint.
-- Businesses publish promotions via direct web form link without requiring account creation.
+- Businesses submit promotions through a Print Shop-attached business account, whether or not the business has a broader in-app presence/profile.
 - Listeners carry or redeem Offers explicitly.
+- Print Shop itself is source-facing infrastructure, not a listener-facing creation surface.
 
 ## Functional Requirements
 - Promotions displays local offers and paid placements within explicit scope.
@@ -25,9 +26,12 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Print Shop and promotions must never alter Fair Play, propagation thresholds, or civic authority.
 - For current MVP phase, purchasable print artifacts focus on event fliers for touring workflows.
 - Business promotion submissions are auto-published in current phase (no pre-publish moderation queue).
+- Business promotion submission remains account-attached even when the business does not maintain a broader in-app source/profile surface.
 
 ### Implemented Now
-- No Print Shop API/domain model yet.
+- Minimal source-facing event-write lane:
+  - `POST /print-shop/events`
+  - creator-gated event creation through the Print Shop seam
 - Read-only Promotions surface endpoint:
   - `GET /communities/:id/promotions` (scene-scoped projection from promotion/offer signals).
 
@@ -49,6 +53,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Print Shop is an issuance infrastructure surface linked to Events/Promotions workflows.
 - Artifacts are participation records/signals, not commodities.
 - Paid distribution is explicit-scope ad infrastructure, not algorithmic recommendation.
+- Print Shop creation/manage flows belong to source operators (artists/promoters), not to listeners acting in ordinary discovery mode.
 
 ## Data Models & Migrations
 ### Planned Models
@@ -71,7 +76,6 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/print-shop/runs` | required | Purchase/create issuance run |
-| POST | `/print-shop/events` | required | Create event via Print Shop flow |
 | POST | `/print-shop/runs/:id/mint` | required | Mint artifact within run capacity |
 | POST | `/offers` | required | Create offer signal |
 | POST | `/offers/:id/carry` | required | Carry offer into user context |
@@ -81,8 +85,19 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 ## Web UI / Client Behavior
 - Plot Promotions tab lists scene-scoped promotions/offers via `/communities/:id/promotions`.
 - Print Shop is web-first for creators and is the source of event creation + flier purchasing.
+- Print Shop should be understood as a source-dashboard tool:
+  - creators reach it from the source-facing side of the platform,
+  - it lives conceptually inside the source dashboard/tool layer rather than as a listener/public utility surface.
+- Print Shop remains source-facing only:
+  - artists/promoters use it to create/manage event-related issuance flows,
+  - listeners do not enter Print Shop to create events, purchase runs, or manage issuance.
+- `/source-dashboard` is the first explicit source-side shell for current MVP runtime.
+- `/print-shop` should present the current source operating context when one has been selected from that dashboard/switcher layer.
+- `/print-shop` now provides the minimum creator-facing event form for the published event-write seam.
+- linked Artist/Band members can reach `/print-shop` directly from their artist-facing source page via `Open Print Shop`.
 - Promotional Pack setup requires explicit target scope selection (city/state/community).
-- Businesses can submit promotions from a public web link (no account requirement in current phase).
+- Businesses submit promotions from a Print Shop-attached account even when they do not have a broader in-app profile/presence.
+- Business submission should be treated as part of a business-facing source dashboard, not as anonymous one-off intake.
 - Business promotion submissions auto-publish for current phase and are handled by post-publish moderation policy.
 - Artifact collections are visible on profiles.
 

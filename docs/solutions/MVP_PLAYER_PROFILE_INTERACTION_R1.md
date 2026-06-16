@@ -1,5 +1,13 @@
 # MVP Player + Profile Expansion Interaction (R1)
 
+Status: Historical interaction reference
+
+Historical note:
+- This file reflects an earlier Plot/Profile interaction model.
+- It remains useful for historical rationale but should not override newer founder locks, current action grammar, or current route/surface doctrine.
+- Current founder-corrected wording: the player is pulled down to open the user's profile / collection workspace in-place, and the player relocates to the bottom while that workspace is expanded. If space allows, it can keep normal controls/status; if space is tight, it can shrink to a compact scrolling band / song title marquee. Do not reinterpret this as a separate normal profile page navigation.
+
+
 ## Status
 - `R1 draft`
 - Source of truth for implementation slices: this doc + in-thread founder direction.

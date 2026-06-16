@@ -3,24 +3,28 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-27`
+**Last Updated:** `2026-04-14`
 
 ## Overview & Purpose
-Defines the Registrar as the civic registration surface inside The Plot where role/capability motions and project activations are formalized.
+Defines the Registrar as the listener-side civic registration surface inside The Plot where role/capability motions and prerequisite filings are formalized.
 
 ## User Roles & Use Cases
 - Listener starts Artist/Band entity registration.
 - Listener starts Promoter registration for event workflows.
-- Community participants formalize Project signals after discussion.
+- Community participants formalize Registrar-stage civic prerequisites when active.
 - Sect participants file motion when uprising thresholds are met.
 
 ## Functional Requirements
 - Registrar is a Home Scene civic surface (Activity Feed context in canon narrative).
 - Registrar records and tracks registration intent/status.
+- Registrar actor rule:
+  - Registrar belongs to the listener/base identity side
+  - source-facing routes may still expose transitional links into `/registrar` during current MVP runtime, but that bridge does not change the actor model or make Registrar a source-side tool
+- Print Shop event-write access remains source-facing as well; registrar promoter capability exists to unlock that source-facing lane rather than to create a listener event-authoring flow.
 - V1 target functions:
   - Artist/Band registration initiation.
   - Promoter registration initiation.
-  - Project registration/activation into signal space.
+  - Registrar-stage civic prerequisite filings where active.
 - Sect uprising motions are registrar-mediated when threshold criteria are met (45-minute committed artist playtime threshold + explicit support).
 
 ### Implemented Now
@@ -49,7 +53,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Submitter-only read for single promoter registrar entry status tracking.
   - Returns scene context and payload summary (`productionName`) for the requested entry.
   - Read payload normalization trims `productionName`; blank/whitespace resolves to `null`.
-- Registrar project status read surfaces (slice 114A/114B):
+- Transitional project/civic status read surfaces (slice 114A/114B):
   - `GET /registrar/project/entries` implemented.
   - Submitter-only list read for project registrar entries (`type = project_registration`) with reverse-chronological ordering.
   - Includes top-level `countsByStatus` summary and per-entry scene context + normalized payload summary (`projectName`).
@@ -169,6 +173,26 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
     - queue invites (`POST /registrar/artist/:entryId/dispatch-invites`),
     - read invite summary (`GET /registrar/artist/:entryId/invites`).
   - Displays per-entry invite lifecycle summary counts for submitter follow-up.
+- Registrar promoter web intake/status (slice 121):
+  - `/registrar` now exposes a `Promoter Registration` action alongside Artist/Band registration.
+  - Promoter intake submits `productionName` to `POST /registrar/promoter` using the same Home Scene resolution + GPS gating as other registrar civic submissions.
+  - `/registrar` now reads submitter-owned promoter registration history from `GET /registrar/promoter/entries`.
+  - Web surface supports explicit follow-up reads for:
+    - `GET /registrar/promoter/:entryId`,
+    - `GET /registrar/promoter/:entryId/capability-audit`.
+  - Registrar web surface now includes an eligibility snapshot clarifying that filings remain Home Scene-bound, visitor listening context does not change registrar scope, and promoter event creation remains blocked until capability is granted and the Print Shop event-write lane is published.
+- Registrar code verification/redemption web intake (slice 122):
+  - `/registrar` now exposes a `Promoter Capability Code` panel.
+  - Web surface supports explicit authenticated calls to:
+    - `POST /registrar/code/verify`,
+    - `POST /registrar/code/redeem`.
+  - Verify/redeem remains user-driven; no auto-redeem behavior is introduced.
+  - Redemption success refreshes promoter registrar status so capability-grant reads stay current on the same page.
+  - Current source-facing surfaces may still link people back into `/registrar` as a transitional bridge, but the capability lane itself remains listener-owned rather than a standalone source-side workflow.
+- Registrar source-context visibility bridge (slice 124):
+  - `/registrar` may surface current source-side operating context when the signed-in user has a managed source selected.
+  - That source context is informational only; Registrar submissions remain Home Scene-bound and listener-owned.
+  - Source Dashboard may remain a return path for source-attached users without changing Registrar into a source-side operating surface.
 - Registrar web canonical member-sync action (slice 14):
   - `/registrar` status panel now includes explicit `Sync Eligible Members` action.
   - Action calls `POST /registrar/artist/:entryId/sync-members` for materialized entries.
@@ -181,7 +205,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
   - Transitional alias `isArtistTransitional` is also removed from user detail/profile read contracts.
 - Identity persistence cleanup alignment (slice 33):
   - Legacy `User.isArtist` column removed from persistence schema after caller migration reached zero.
-- Registrar project submission primitive (slice 98A):
+- Transitional project submission primitive (slice 98A):
   - `POST /registrar/project` implemented for Home Scene-scoped project registration submissions.
   - Persists registrar entry baseline lifecycle (`type = project_registration`, `status = submitted`) with project name payload.
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
@@ -240,6 +264,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 - Registrar cannot bypass Fair Play, voting, or propagation constraints.
 - Registrar actions do not grant automatic visibility or authority.
 - Registrar must remain Scene-scoped to preserve structural locality.
+- Registrar promoter capability should be interpreted as gating a source-facing Print Shop/event lane, not a listener-facing event-creation surface.
 
 ## Data Models & Migrations
 ### Target Models (Planned)
@@ -287,6 +312,7 @@ Defines the Registrar as the civic registration surface inside The Plot where ro
 
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.
+- Source-facing surfaces may expose transitional links back into `/registrar`, but the actual Registrar workflow remains listener-side rather than a source-dashboard-native tool.
 - Users should be able to inspect registration state and required next actions.
 - Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
 - Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.

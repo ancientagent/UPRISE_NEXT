@@ -1,0 +1,24 @@
+import { api } from '@/lib/api';
+import type { ArtistBandProfile } from '@uprise/types';
+
+export async function getArtistBandProfile(id: string, token: string): Promise<ArtistBandProfile> {
+  const response = await api.get<ArtistBandProfile>(`/artist-bands/${id}/profile`, { token });
+  if (!response.data) {
+    throw new Error('Artist profile response was empty.');
+  }
+  return response.data;
+}
+
+export async function followArtistBand(id: string, token: string) {
+  const response = await api.post<{ entityId: string }>(
+    '/follow',
+    { entityType: 'artistBand', entityId: id },
+    { token },
+  );
+
+  if (!response.data) {
+    throw new Error('Artist follow response was empty.');
+  }
+
+  return response.data;
+}

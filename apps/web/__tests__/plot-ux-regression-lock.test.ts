@@ -8,11 +8,11 @@ function readRepoFile(relativePath: string): string {
 }
 
 describe('/plot UX regression lock', () => {
-  it('locks player mode labels to explicit RADIYO vs Collection copy', () => {
+  it('locks player mode labels to explicit RADIYO vs SPACE copy', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
     expect(playerSource).toContain('RADIYO');
-    expect(playerSource).toContain('Collection');
+    expect(playerSource).toContain('SPACE');
   });
 
   it('locks panel-state ownership to the /plot route container', () => {
@@ -38,37 +38,83 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).toContain('data-slot="compact-player-shell"');
     expect(playerSource).toContain('data-slot="player-track-row"');
     expect(playerSource).toContain('data-slot="player-tier-stack"');
+    expect(playerSource).toContain('Current track art thumbnail');
+    expect(playerSource).toContain('Space track art thumbnail');
+    expect(playerSource).not.toContain("{isRadiyoMode ? 'RAD' : 'COL'}");
   });
 
-  it('locks collection mode to selection entry and explicit eject return', () => {
+  it('locks SPACE mode to selection entry and explicit return to RADIYO', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain("const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')");
+    expect(plotPageSource).toContain("() => playerTier ?? getMvpPlayerTier(tunedScene?.tier)");
+    expect(plotPageSource).toContain("const [activeBroadcastTier, setActiveBroadcastTier] = useState<PlayerTier | null>(initialPlayerTier)");
     expect(playerSource).not.toContain("useState<PlayerMode>");
     expect(plotPageSource).toContain('onCollectionEject={handleCollectionEject}');
+    expect(plotPageSource).toContain('activeBroadcastTier={activeBroadcastTier}');
     expect(plotPageSource).toContain("const collectionBroadcastLabel = selectedCollectionItem?.label ??");
-    expect(plotPageSource).toContain('selectedCollectionItem?.id === item.id && playerMode === \'Collection\'');
+    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'");
     expect(plotPageSource).toContain("const handleCollectionEject = () => {");
-    expect(playerSource).not.toContain('Switch to Collection mode');
-    expect(playerSource).toContain('Back to RADIYO');
-    expect(playerSource).toContain('aria-label="Back to RADIYO"');
+    expect(playerSource).not.toContain('Switch to SPACE mode');
+    expect(playerSource).toContain('Eject');
+    expect(playerSource).toContain('aria-label="Return to RADIYO"');
     expect(playerSource).toContain('onCollectionEject');
-    expect(playerSource).toContain('Selection-driven collection queue');
-    expect(playerSource).toContain('Selection-driven queue');
-    expect(playerSource).toContain('aria-label="Shuffle collection"');
+    expect(playerSource).toContain('Selection-driven space queue');
+    expect(playerSource).toContain('aria-label="Shuffle space"');
     expect(plotPageSource).toContain('selectedCollectionItem?.label');
     expect(playerSource).not.toContain('onModeChange');
     expect(plotPageSource).toContain('const handleCollectionSelection =');
     expect(plotPageSource).toContain('const handleCollectionEject =');
-    expect(plotPageSource).toContain("setPlayerMode('Collection')");
+    expect(plotPageSource).toContain("setPlayerMode('SPACE')");
     expect(plotPageSource).toContain("setPlayerMode('RADIYO')");
+    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => current ?? selectedTier);');
+    expect(plotPageSource).toContain('const handleTierChange = (tier: PlayerTier) => {');
+    expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
+    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === nextTier ? null : nextTier));');
+    expect(plotPageSource).toContain('setSelectedTier(initialPlayerTier);');
+    expect(plotPageSource).toContain('setActiveBroadcastTier((current) => (current === null ? null : initialPlayerTier));');
+    expect(plotPageSource).toContain('setPlayerTier(nextTier);');
     expect(plotPageSource).toContain('mode={playerMode}');
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
     expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
-    expect(plotPageSource).toContain("selectedCollectionItem?.id === item.id && playerMode === 'Collection'");
+    expect(plotPageSource).toContain("selectedCollectionItem?.id === collectionItem.id && playerMode === 'SPACE'");
     expect(plotPageSource).toContain("setSelectedCollectionItem(item)");
+    expect(playerSource).not.toContain('Back to RADIYO');
+  });
+
+  it('keeps the collapsed profile strip to username plus notifications and options only', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).not.toContain("user?.displayName?.[0] || user?.username?.[0] || 'U'");
+    expect(plotPageSource).not.toContain('{profilePanelState}');
+    expect(plotPageSource).toContain('aria-label="Notifications"');
+    expect(plotPageSource).toContain('aria-label="More menu"');
+  });
+
+  it('keeps player controls tier-driven and wheel-driven instead of exposing forbidden transport buttons', () => {
+    const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(playerSource).toContain('radiyoFooter?: ReactNode;');
+    expect(playerSource).toContain('isRadiyoMode && radiyoFooter ? (');
+    expect(playerSource).toContain('Tap City or State to start that broadcast. Tap the active tier again to stop.');
+    expect(playerSource).toContain('SPACE stays selection-driven. Use return to go back to RADIYO.');
+    expect(playerSource).toContain("{activeBroadcastTier ? 'Live' : 'Stopped'}");
+    expect(playerSource).toContain('aria-pressed={activeBroadcastTier === tier}');
+    expect(playerSource).toContain('<audio');
+    expect(playerSource).toContain('autoPlay');
+    expect(playerSource).toContain('onEnded={handleTrackEnded}');
+    expect(playerSource).toContain('trackQueue?: Track[];');
+    expect(playerSource).not.toContain('aria-label="Play"');
+    expect(playerSource).not.toContain('aria-label="Pause"');
+    expect(playerSource).not.toContain('aria-label="Add to collection"');
+    expect(playerSource).not.toContain('Back to RADIYO');
+    expect(playerSource).toContain("const MVP_PLAYER_TIER_OPTIONS: PlayerTier[] = ['state', 'city'];");
+    expect(plotPageSource).toContain("const nextTier = tier === 'national' ? 'state' : tier;");
+    expect(plotPageSource).toContain('trackQueue={playerMode === \'RADIYO\' ? currentRotationTracks : []}');
+    expect(plotPageSource).toContain("const [selectedTier, setSelectedTier] = useState<PlayerTier>(initialPlayerTier)");
   });
 
   it('locks engagement wheel actions to deterministic mode-specific sets', () => {
@@ -76,17 +122,17 @@ describe('/plot UX regression lock', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
 
     expect(wheelSource).toMatch(
-      /export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Report' \},\s*\{ label: 'Skip' \},\s*\{ label: 'Blast' \},\s*\{ label: 'Add' \},\s*\{ label: 'Upvote' \},\s*\];/
+      /export const RADIYO_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Report' \},\s*\{ label: 'Skip' \},\s*\{ label: 'Play It Loud' \},\s*\{ label: 'Collect' \},\s*\{ label: 'Upvote' \},\s*\];/
     );
     expect(wheelSource).toMatch(
-      /export const COLLECTION_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Back', position: '9:00' \},\s*\{ label: 'Pause', position: '10:00' \},\s*\{ label: 'Blast', position: '12:00' \},\s*\{ label: 'Recommend', position: '1:00' \},\s*\{ label: 'Next', position: '3:00' \},\s*\];/
+      /export const SPACE_WHEEL_ACTIONS: EngagementWheelAction\[] = \[\s*\{ label: 'Back', position: '9:00' \},\s*\{ label: 'Pause', position: '10:00' \},\s*\{ label: 'Blast', position: '12:00' \},\s*\{ label: 'Recommend', position: '1:00' \},\s*\{ label: 'Next', position: '3:00' \},\s*\];/
     );
     expect(wheelSource).toContain('export const RADIYO_WHEEL_ACTIONS');
-    expect(wheelSource).toContain('export const COLLECTION_WHEEL_ACTIONS');
+    expect(wheelSource).toContain('export const SPACE_WHEEL_ACTIONS');
     expect(wheelSource).toContain("{ label: 'Report' }");
     expect(wheelSource).toContain("{ label: 'Skip' }");
-    expect(wheelSource).toContain("{ label: 'Blast' }");
-    expect(wheelSource).toContain("{ label: 'Add' }");
+    expect(wheelSource).toContain("{ label: 'Play It Loud' }");
+    expect(wheelSource).toContain("{ label: 'Collect' }");
     expect(wheelSource).toContain("{ label: 'Upvote' }");
     expect(wheelSource).toContain("{ label: 'Back', position: '9:00' }");
     expect(wheelSource).toContain("{ label: 'Pause', position: '10:00' }");
@@ -95,8 +141,10 @@ describe('/plot UX regression lock', () => {
     expect(wheelSource).toContain("{ label: 'Next', position: '3:00' }");
     expect(playerSource).toContain('getEngagementWheelActions(mode)');
     expect(playerSource).toContain('Wheel: {wheelActions.map');
-    expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : COLLECTION_WHEEL_ACTIONS;");
-    expect(wheelSource).toContain("label: 'Report' | 'Skip' | 'Blast' | 'Add' | 'Upvote' | 'Back' | 'Pause' | 'Recommend' | 'Next'");
+    expect(wheelSource).toContain("return mode === 'RADIYO' ? RADIYO_WHEEL_ACTIONS : SPACE_WHEEL_ACTIONS;");
+    expect(wheelSource).toContain("label:");
+    expect(wheelSource).toContain("'Play It Loud'");
+    expect(wheelSource).toContain("'Blast'");
     expect(wheelSource).toContain("position?: '9:00' | '10:00' | '12:00' | '1:00' | '3:00';");
   });
 
@@ -120,36 +168,224 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('Saved Promos/Coupons');
     expect(plotPageSource).toContain('Activity Score');
     expect(plotPageSource).toContain('Calendar');
-    expect(plotPageSource).toContain('Calendar stays in the header.');
     expect(plotPageSource).toContain("const [activeProfileSection, setActiveProfileSection] = useState<ExpandedProfileSection>('Singles/Playlists')");
-    expect(plotPageSource).toContain('eventsThisWeek');
-    expect(plotPageSource).toContain("['Posters', 'Shirts', 'Patches', 'Buttons', 'Special Items']");
-    expect(plotPageSource).toContain('Saved promos and coupons appear here with status and expiration');
     expect(plotPageSource).toContain('Return to Plot Tabs');
     expect(plotPageSource).not.toContain("const collectionShelves = ['Tracks', 'Playlists', 'Saved']");
+    expect(plotPageSource).not.toContain('track-south-side-signal');
+    expect(plotPageSource).not.toContain('track-lakefront-lights');
+    expect(plotPageSource).toContain('const [plotProfile, setPlotProfile] = useState<PlotProfileRead | null>(null)');
+    expect(plotPageSource).toContain("api.get<PlotProfileRead>(`/users/${user.id}/profile`, { token })");
+    expect(plotPageSource).toContain('const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === \'singles\') ?? null;');
+    expect(plotPageSource).toContain('const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === \'uprises\') ?? null;');
+    expect(plotPageSource).toContain('const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === \'fliers\') ?? null;');
+    expect(plotPageSource).toContain('Saved playlist groupings appear here when they are available in your collection.');
+    expect(plotPageSource).toContain('No saved event artifacts or fliers yet.');
+    expect(plotPageSource).toContain('No saved Uprises yet.');
+    expect(plotPageSource).toContain('Saved promos and coupons appear here with status and expiration when collection support is available.');
   });
 
-  it('locks Top Songs + Scene Activity to statistics-only placement', () => {
+  it('locks expanded profile header to conditional band and promoter status cards', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([])');
+    expect(plotPageSource).toContain('listPromoterRegistrations(token)');
+    expect(plotPageSource).toContain("label: 'Band Status'");
+    expect(plotPageSource).toContain("label: 'Promoter Status'");
+    expect(plotPageSource).not.toContain('Tier Snapshot');
+  });
+
+  it('locks Top Songs + Scene Activity to archive-only placement', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toMatch(
-      /activeTab === 'Statistics'[\s\S]*TopSongsPanel[\s\S]*Scene Activity Snapshot/
+      /activeTab === 'Archive'[\s\S]*TopSongsPanel[\s\S]*Scene Activity Snapshot/
     );
   });
 
-  it('locks primary Plot tab ownership to explicit Feed/Events/Promotions/Statistics bodies', () => {
+  it('keeps selected Plot community identity structural when tuple fields exist', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
-    expect(plotPageSource).toContain("const tabs = ['Feed', 'Events', 'Promotions', 'Statistics'] as const;");
+    expect(plotPageSource).toContain("const selectedCommunityLabel = useMemo(() => formatPlotCommunityLabel(selectedCommunity), [selectedCommunity]);");
+    expect(plotPageSource).toContain("return `${community.city}, ${community.state} • ${community.musicCommunity}`;");
+    expect(plotPageSource).toContain('{selectedCommunityLabel ??');
+    expect(plotPageSource).toContain('{selectedCommunityLabel ?? selectedCommunity.name}');
+  });
+
+  it('locks bottom nav and center UPRISE wheel trigger onto the /plot route', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('aria-label="Plot bottom navigation"');
+    expect(plotPageSource).toContain('data-slot="plot-bottom-nav"');
+    expect(plotPageSource).toContain('href="/plot"');
+    expect(plotPageSource).toContain('plot-wire-nav-button');
+    expect(plotPageSource).toContain('plot-wire-nav-center');
+    expect(plotPageSource).toContain('Open UPRISE engagement wheel');
+    expect(plotPageSource).toContain('UPRISE Wheel');
+    expect(plotPageSource).toContain('Discover');
+    expect(plotPageSource).toContain('Discover is coming soon while MVP stays local-community-only.');
+    expect(plotPageSource).toContain('Soon');
+    expect(plotPageSource).toContain('aria-disabled="true"');
+    expect(plotPageSource).toContain('getEngagementWheelActions(playerMode)');
+    expect(plotPageSource).toContain('renderBottomNav()');
+  });
+
+  it('locks primary Plot tab ownership to explicit Feed/Events/Archive bodies', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain("const tabs = ['Feed', 'Events', 'Archive'] as const;");
     expect(plotPageSource).not.toContain('Social');
     expect(plotPageSource).toContain("if (activeTab === 'Feed')");
     expect(plotPageSource).toContain('SeedFeedPanel');
     expect(plotPageSource).toContain("if (activeTab === 'Events')");
     expect(plotPageSource).toContain('PlotEventsPanel');
-    expect(plotPageSource).toContain("if (activeTab === 'Promotions')");
-    expect(plotPageSource).toContain('PlotPromotionsPanel');
-    expect(plotPageSource).toContain("if (activeTab === 'Statistics')");
+    expect(plotPageSource).toContain("if (activeTab === 'Archive')");
+    expect(plotPageSource).toContain('StatisticsPanel');
+    expect(plotPageSource).not.toContain("if (activeTab === 'Promotions')");
+    expect(plotPageSource).not.toContain('PlotPromotionsPanel');
+    expect(plotPageSource).not.toContain("if (activeTab === 'Statistics')");
     expect(plotPageSource).toContain('renderPrimaryPlotTabBody()');
+  });
+
+  it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain(
+      'playerTier,',
+    );
+    expect(plotPageSource).toContain("const pioneerNotificationHomeScene = pioneerFollowUp?.homeScene ?? null;");
+    expect(plotPageSource).toContain("const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);");
+    expect(plotPageSource).toContain('aria-label="Notifications"');
+    expect(plotPageSource).toContain("aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}");
+    expect(plotPageSource).toContain('onPointerDown={(event) => {');
+    expect(plotPageSource).toContain('event.stopPropagation();');
+    expect(plotPageSource).toContain('setIsNotificationPanelOpen((open) => !open)');
+    expect(plotPageSource).toContain('Pioneer Follow-up');
+    expect(plotPageSource).toContain('Your Home Scene is still pioneering.');
+    expect(plotPageSource).toContain('nearest active city');
+    expect(plotPageSource).toContain('establish or uprise your own city scene');
+    expect(plotPageSource).toContain('aria-label="More menu"');
+  });
+
+  it('keeps /plot reachable with an unresolved Home Scene guidance state instead of redirecting to onboarding', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('Home Scene setup required');
+    expect(plotPageSource).toContain('Complete Onboarding');
+    expect(plotPageSource).not.toContain("router.replace('/onboarding')");
+    expect(plotPageSource).not.toContain('if (!hasHomeScene) {\n    return null;');
+  });
+
+  it('locks registrar access/status context onto the resolved plot route', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain("const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null)");
+    expect(plotPageSource).toContain('listArtistBandRegistrations(token)');
+    expect(plotPageSource).toContain('setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []))');
+    expect(plotPageSource).toContain('const canOpenPrintShop = Boolean(latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0);');
+    expect(plotPageSource).toContain('SourceAccountSwitcher');
+    expect(plotPageSource).toContain('Registrar Access');
+    expect(plotPageSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
+    expect(plotPageSource).toContain('Sign in to view registrar status and continue registration work.');
+    expect(plotPageSource).toContain('No Artist/Band registrar entries yet.');
+    expect(plotPageSource).toContain('Open Registrar');
+    expect(plotPageSource).toContain('Open Print Shop');
+  });
+
+  it('avoids protected community resolution reads for unsigned /plot states', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('if (!token) return;');
+    expect(plotPageSource).toContain('shouldUseTunedSceneAsDefaultPlotAnchor(tunedScene)');
+    expect(plotPageSource).toContain('const tunedResponse = await getCommunityById(tunedSceneId, token);');
+    expect(plotPageSource).toContain('const homeResponse = await resolveHomeCommunity(');
+    expect(plotPageSource).toContain('musicCommunity: homeScene.musicCommunity,');
+    expect(plotPageSource).toContain('token,');
+  });
+
+  it('keeps Top 40 in explicit signed-in terminal state instead of protected-read failure for unsigned statistics', () => {
+    const topSongsSource = readRepoFile('src/components/plot/TopSongsPanel.tsx');
+
+    expect(topSongsSource).toContain('if (!token) {');
+    expect(topSongsSource).toContain("setSongs([]);");
+    expect(topSongsSource).toContain("setError(null);");
+    expect(topSongsSource).toContain("setLoading(false);");
+    expect(topSongsSource).toContain("Sign in is required to load Top 40 songs for this scene context.");
+    expect(topSongsSource).toContain('{ token }');
+    expect(topSongsSource).toContain('artistBandId: string | null;');
+    expect(topSongsSource).toContain('href={`/artist-bands/${track.artistBandId}?trackId=${track.trackId}`}');
+  });
+
+  it('keeps track-release feed items wired into artist-page listening without adding inline card actions', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain("if (item.type !== 'track_release') return null;");
+    expect(seedFeedSource).toContain('return `/artist-bands/${source.id}?trackId=${item.entity.id}`;');
+    expect(seedFeedSource).toContain('{trackHref ? (');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
+  });
+
+  it('keeps the first feed insert as a read-only Popular Singles carousel with artist-page signal handoff', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain('getCommunityDiscoverHighlights');
+    expect(seedFeedSource).toContain('plot-feed-popular-singles-insert');
+    expect(seedFeedSource).toContain('Popular Singles');
+    expect(seedFeedSource).toContain('Most Added');
+    expect(seedFeedSource).toContain('Recent Rises');
+    expect(seedFeedSource).toContain('Read-only artist/song launch squares.');
+    expect(seedFeedSource).toContain("aria-label={`Scroll ${title} left`}");
+    expect(seedFeedSource).toContain("aria-label={`Scroll ${title} right`}");
+    expect(seedFeedSource).toContain('return `/artist-bands/${artistBandId}?signalId=${signal.signalId}`;');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
+    expect(seedFeedSource).not.toContain('Blast this track');
+    expect(seedFeedSource).not.toContain('Follow artist');
+  });
+
+  it('keeps buzz as a read-only recommendation insert with artist-page signal handoff', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain('plot-feed-buzz-insert');
+    expect(seedFeedSource).toContain('Buzz');
+    expect(seedFeedSource).toContain('Listener recommendations from this community, surfaced without inline actions.');
+    expect(seedFeedSource).toContain('Community buzz');
+    expect(seedFeedSource).toContain('Read-only listener recommendation squares.');
+    expect(seedFeedSource).toContain('aria-label="Scroll Buzz left"');
+    expect(seedFeedSource).toContain('aria-label="Scroll Buzz right"');
+    expect(seedFeedSource).toContain('Recommended by {recommendation.actor.displayName || recommendation.actor.username}');
+    expect(seedFeedSource).toContain('const href = discoverSignalHref(recommendation.signal);');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
+    expect(seedFeedSource).not.toContain('Blast this track');
+    expect(seedFeedSource).not.toContain('Follow artist');
+  });
+
+  it('keeps upcoming-events as a read-only feed insert without inline calendar actions', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+
+    expect(seedFeedSource).toContain('plot-feed-upcoming-events-insert');
+    expect(seedFeedSource).toContain('Upcoming Events');
+    expect(seedFeedSource).toContain('Read-only event snapshots from the current scene context.');
+    expect(seedFeedSource).toContain('Upcoming this week');
+    expect(seedFeedSource).toContain('Read-only event squares with no inline calendar actions.');
+    expect(seedFeedSource).toContain('aria-label="Scroll Upcoming Events left"');
+    expect(seedFeedSource).toContain('aria-label="Scroll Upcoming Events right"');
+    expect(seedFeedSource).toContain('getCommunityEvents(');
+    expect(seedFeedSource).toContain('getActiveCommunityEvents(');
+    expect(seedFeedSource).not.toContain('Add to calendar');
+    expect(seedFeedSource).not.toContain('Collect from this listening context');
+    expect(seedFeedSource).not.toContain('Blast this track');
+  });
+
+  it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('const discoveryContextFallback = useMemo(');
+    expect(plotPageSource).toContain('mergeDiscoveryContextPatch(response, discoveryContextFallback)');
+    expect(plotPageSource).not.toContain('SceneContextBadge');
+    expect(plotPageSource).toContain('Scene Context');
+    expect(plotPageSource).toContain('Selected Community');
+    expect(plotPageSource).toContain('Open Community');
+    expect(plotPageSource).toContain('Complete onboarding to anchor your Home Scene and unlock Plot context.');
+    expect(plotPageSource).not.toContain('Browse Discover');
   });
 
   it('locks feed copy to scene-scoped deterministic, non-personalized states', () => {

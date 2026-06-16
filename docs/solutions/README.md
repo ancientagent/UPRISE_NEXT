@@ -3,61 +3,65 @@
 Playbooks for recurring problems and operational failures (build breaks, deployment misconfigurations, boundary violations, etc.).
 
 ## Rule
-
 If an issue happens **twice**, it gets a Solutions doc.
 
-## What goes here
-
+## What Goes Here
 - Root cause writeups that include **symptoms → diagnosis → fix → prevention → verification**
 - “Do this first” checklists for common incidents
+- Reusable workflow protocols and guardrails
 - Links to relevant runbook sections, specs, and CI checks
 
-## What does not go here
-
+## What Does Not Go Here
 - Feature requirements (use `docs/specs/`)
 - Long-form architecture explanations (use `docs/architecture/`)
 - Per-session work notes (use `docs/handoff/`)
 
 ## Template
-
 Start from: `docs/solutions/TEMPLATE.md`
 
-## Agent Qualification
+## Start Here For Agent Workflow
+- `docs/solutions/AGENT_WORKFLOW_PROTOCOL_R1.md` — current recommended multi-agent operating protocol
+- `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` — prevents non-canon product-pattern assumptions
+- `docs/solutions/SOFTWARE_SYSTEMS_GUARDRAILS_R1.md` — strict systems-thinking rules for software composition, context inheritance, and control-surface discipline
+- `docs/solutions/UPRISE_AUTOHARNESS_R1.md` — founder-to-agent control harness for prompt shaping, drift review, and model-agnostic product-truth enforcement
+- `docs/solutions/UPRISE_DRIFT_TAXONOMY_R1.md` — recurring UPRISE-specific drift cases and correction directions for external models and agents
+- `docs/solutions/SEAMLESS_AGENT_CONTINUITY_PROTOCOL_R1.md` — standard handoff system for preserving canon, active working memory, and executable next steps across agents and sessions
+- `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md` — mandatory same-pass salvage rule for founder decisions that change product truth, scope, terminology, or lifecycle behavior
+- `docs/solutions/SURFACE_CONTRACT_HOME_R1.md` / `SURFACE_CONTRACT_PLOT_R1.md` / `SURFACE_CONTRACT_DISCOVER_R1.md` / `SURFACE_CONTRACT_COMMUNITY_R1.md` — minimum stable per-surface contracts for Home, Plot, Discover, and Community
+- `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — safe rollback/checkpoint flow
+- `docs/solutions/SESSION_STANDING_DIRECTIVES.md` — paste-ready session policy block
+- `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` — keep dense doctrine/implementation work from wasting session context
+- `docs/solutions/PHASE_STOP_GATE_PLAYBOOK.md` — stop-gate process to prevent infinite batching after convergence
+- `docs/solutions/NARRATIVE_CARRY_FORWARD_RULES_R1.md` — prevents context narrowing below valid repo/carry-forward truth
+- `docs/solutions/LATER_VERSION_DOMAIN_UNDERSTANDINGS_R1.md` — preserves legitimate later-version domains without silently widening current MVP scope
 
-For new model onboarding and stress-testing, use:
+## Active Founder Locks / Execution Guides
+- `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_STATS_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+- `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
+- `docs/solutions/MVP_SCREEN_AND_SURFACE_MAP_R1.md`
+- `docs/solutions/MVP_EXPLICIT_DEFERRED_LIST_R1.md`
+- `docs/solutions/MVP_WEB_UX_IMPLEMENTATION_BRIEF_R1.md`
+- `docs/solutions/MVP_UX_BATCH27_EXECUTION_PLAN.md`
+
+## Additional Playbooks
+- `docs/solutions/FIRST_STAGING_TARGET_VERCEL_FLY_NEON_R1.md`
+- `docs/solutions/DEPLOY_TARGET_READINESS_R1.md`
 - `docs/solutions/MODEL_ONBOARDING_EVAL.md`
-- `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` (prevents non-canon product-pattern assumptions)
-- `docs/solutions/SESSION_STANDING_DIRECTIVES.md` (paste-ready session policy block)
-- `docs/solutions/USER_ISARTIST_DEPRECATION_READINESS.md` (bridge/removal readiness workflow for transitional artist marker)
-
-## Web Build/Typecheck Incidents
-
-- `docs/solutions/WEB_TS6053_NEXT_TYPES.md` — `.next/types` TS6053 failures
-- `docs/solutions/NEXT_FONT_GOOGLE_FONTS_BUILD_FAIL.md` — `next/font` Google Fonts build failures
-- `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md` — local/dev Prisma migration drift and failed-history recovery
-- `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md` — scheduler/chat bridge setup for queue-driven multi-agent autonomy
-- `docs/solutions/RELIANT_WORKFLOW_PILOT.md` — repo-local Reliant workflow pilot for slice plan→implement→verify→review execution
-- `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md` — queue-driven Reliant parent workflow for sequential slice execution with done/blocked continuation
-- `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` — deterministic rollback checkpoints, compare-first flow, and safe revert patterns for multi-agent throughput runs
-- `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md` — spec-locked execution roadmap from current registrar-heavy throughput to full MVP launch readiness
-- `docs/solutions/MVP_UX_ALIGNMENT_REPORT_R1.md` — canon/spec-anchored UX alignment report and demo/sample process before UX implementation
-- `docs/solutions/MVP_MOBILE_UX_SYSTEM_R1.md` — mobile-first UX source-of-truth (layout, gestures, state model, and web adaptation rules) for post-alignment implementation
-- `docs/solutions/MVP_UX_MASTER_LOCK_R1.md` — single authoritative UX master lock (precedence, same-vs-different delta, MVP/deferred boundaries, and drift rejection rules)
-- `docs/solutions/MVP_UX_BATCH16_EXECUTION_PLAN.md` — lane-by-lane execution plan + queue/runtime commands for remaining MVP UX closure (Plot, Discovery, Player/Profile, automation, QA)
-- `docs/solutions/MVP_UX_BATCH16_DRIFT_WATCHLIST.md` — top failure modes + per-lane validation checklist for Batch16 drift prevention (includes onboarding/tier-title/social-deferred gates)
-- `docs/solutions/MVP_MOBILE_UX_MAPPING_FROM_PLOT_PROTOTYPE_R1.md` — frozen mapping of current Plot prototype decisions into the mobile-first UX system format
-- `docs/solutions/MVP_PLATFORM_COVERAGE_MATRIX_R1.md` — one-page whole-platform MVP coverage map (done/partial/missing) to prevent registrar-only execution bias
-- `docs/solutions/MVP_PROFILE_EXPANDED_MOCKUP_R1.md` — profile IA contract (collapsed/expanded sections and collection tab content)
-- `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md` — interaction contract for panel states and player mode transitions
-- `docs/solutions/MVP_UX_DRIFT_GUARD_R1.md` — micro-decision drift guard checklist for mobile MVP UX
-- `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md` — full `/plot` + profile surface contract (elements, states, ownership)
-- `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md` — element-by-element screenshot capture with MVP/V2 boundaries
-- `docs/solutions/MVP_UIZARD_PROMPT_PACK_R1.md` — baseline Uizard prompt pack
-- `docs/solutions/MVP_UIZARD_PROMPT_PACK_R2_STRICT.md` — strict per-screen Uizard prompt pack with MUST/NEVER and acceptance checks
-- `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R1.md` — Figma-first lane execution pack (pages, acceptance, and drift gates)
-- `docs/solutions/MVP_FIGMA_EXECUTION_PACK_R2_STRICT.md` — strict Figma execution policy (MUST/NEVER, hard gates, stop conditions)
-- `docs/solutions/MVP_FIGMA_AGENT_PROMPTS_R1.md` — copy/paste lane and supervisor prompts for parallel Figma UX execution
-- `docs/solutions/MVP_UX_TOOLING_STACK_R1.md` — consolidated tooling guidance for this UX stage
-- `docs/solutions/MVP_DESIGN_PLATFORM_PACK_R1.md` — multi-platform design handoff (Uizard/Figma/Penpot/Balsamiq)
-- `docs/solutions/NEW_CHAT_BOOTSTRAP_PROMPT_UX_R1.md` — copy/paste bootstrap for fresh high-context sessions
-- `docs/solutions/UIZARD_MCP_SERVER_SETUP.md` — in-repo Uizard MCP server setup and auth wiring notes
+- `docs/solutions/USER_ISARTIST_DEPRECATION_READINESS.md`
+- `docs/solutions/WEB_TS6053_NEXT_TYPES.md`
+- `docs/solutions/NEXT_FONT_GOOGLE_FONTS_BUILD_FAIL.md`
+- `docs/solutions/PRISMA_MIGRATION_DRIFT_RECOVERY.md`
+- `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`
+- `docs/solutions/EXTERNAL_AUDITOR_QUEUE_BRIDGE_R1.md`
+- `docs/solutions/RELIANT_WORKFLOW_PILOT.md`
+- `docs/solutions/RELIANT_ORCHESTRATOR_RUNBOOK.md`
+- `docs/solutions/MVP_CURRENT_EXECUTION_ROADMAP_R1.md`
+- `docs/solutions/MVP_PHASE1_PHASE2_ACTION_BOARD_R1.md`
+- `docs/solutions/MVP_HARD_ROADMAP_EXECUTION_PLAN.md`
+- `docs/solutions/MVP_UX_MASTER_LOCK_R1.md`
+- `docs/solutions/MVP_PLOT_PROFILE_SURFACE_SPEC_R1.md`
+- `docs/solutions/MVP_PLAYER_PROFILE_INTERACTION_R1.md`
+- `docs/solutions/MVP_SCREENSHOT_ELEMENT_SPEC_R1.md`

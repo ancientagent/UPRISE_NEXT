@@ -1,6 +1,9 @@
 import {
+  getCommunityDiscoverHighlights,
   getDiscoveryContext,
   listDiscoverScenes,
+  saveDiscoverUprise,
+  searchCommunityDiscover,
   setDiscoverHomeScene,
   tuneDiscoverScene,
 } from '../src/lib/discovery/client';
@@ -45,6 +48,35 @@ describe('discovery client', () => {
         method: 'GET',
         headers: expect.objectContaining({
           Authorization: 'Bearer token-1',
+        }),
+      }),
+    );
+  });
+
+  it('allows discovery scene reads without auth headers when no token is available', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: [],
+      }),
+    });
+
+    await listDiscoverScenes(
+      {
+        tier: 'city',
+        musicCommunity: 'Punk',
+        state: 'TX',
+        city: 'Austin',
+      },
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/scenes?tier=city&musicCommunity=Punk&state=TX&city=Austin',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.anything(),
         }),
       }),
     );
@@ -163,6 +195,78 @@ describe('discovery client', () => {
     const keys = Array.from(new URL(url).searchParams.keys()).sort();
 
     expect(keys).toEqual(['musicCommunity', 'state', 'tier']);
+  });
+
+  it('allows community discover search reads without auth headers when no token is available', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-1',
+            name: 'Austin Punk',
+            city: 'Austin',
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'city',
+            isActive: true,
+          },
+          query: 'signal',
+          artists: [],
+          songs: [],
+        },
+      }),
+    });
+
+    await searchCommunityDiscover('scene-1', 'signal');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/communities/scene-1/search?query=signal&tier=city',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.anything(),
+        }),
+      }),
+    );
+  });
+
+  it('allows community discover highlights reads without auth headers when no token is available', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-1',
+            name: 'Austin Punk',
+            city: 'Austin',
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'city',
+            isActive: true,
+          },
+          popularSingles: {
+            mostAdded: [],
+            recentRises: [],
+          },
+          recommendations: [],
+        },
+      }),
+    });
+
+    await getCommunityDiscoverHighlights('scene-1');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/communities/scene-1/highlights?tier=city',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.anything(),
+        }),
+      }),
+    );
   });
 
   it('never adds artist or band lookup params to discovery queries', async () => {
@@ -637,6 +741,116 @@ describe('discovery client', () => {
     );
     await expect(setDiscoverHomeScene('scene-empty', 'token-empty')).rejects.toThrow(
       'Set Home Scene response was empty.',
+    );
+  });
+
+  it('requests community discover search through the typed client', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-1',
+            name: 'Austin Punk',
+            city: 'Austin',
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'city',
+            isActive: true,
+          },
+          query: 'signal',
+          artists: [],
+          songs: [],
+        },
+      }),
+    });
+
+    await searchCommunityDiscover('scene-1', ' signal ', 'token-search', 5, 'state');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/communities/scene-1/search?query=signal&tier=state&limit=5',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-search',
+        }),
+      }),
+    );
+  });
+
+  it('requests community discover highlights through the typed client', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          community: {
+            id: 'scene-1',
+            name: 'Austin Punk',
+            city: 'Austin',
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'city',
+            isActive: true,
+          },
+          popularSingles: {
+            mostAdded: [],
+            recentRises: [],
+          },
+          recommendations: [],
+        },
+      }),
+    });
+
+    await getCommunityDiscoverHighlights('scene-1', 'token-highlights', 6, 'national');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/communities/scene-1/highlights?tier=national&limit=6',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-highlights',
+        }),
+      }),
+    );
+  });
+
+  it('posts save-uprise requests through the typed client', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          scene: {
+            id: 'scene-1',
+            name: 'Austin Punk',
+            city: 'Austin',
+            state: 'TX',
+            musicCommunity: 'Punk',
+            tier: 'city',
+            isActive: true,
+          },
+          signalId: 'signal-1',
+          collectionId: 'collection-1',
+          collectionItemId: 'item-1',
+          actionId: 'action-1',
+          shelf: 'uprises',
+        },
+      }),
+    });
+
+    await saveDiscoverUprise('scene-1', 'token-save');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/discover/save-uprise',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ sceneId: 'scene-1' }),
+        headers: expect.objectContaining({
+          Authorization: 'Bearer token-save',
+        }),
+      }),
     );
   });
 });

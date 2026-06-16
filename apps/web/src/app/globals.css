@@ -68,3 +68,87 @@
     @apply bg-background text-foreground;
   }
 }
+@layer components {
+  .plot-wire-page {
+    @apply min-h-screen bg-[#161616] px-4 py-6 pb-28 text-[#111111] sm:px-6;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .plot-wire-frame {
+    @apply mx-auto max-w-7xl rounded-[1.75rem] border border-black bg-[#ececdf] p-3 shadow-[0_18px_50px_rgba(0,0,0,0.28)];
+  }
+
+  .plot-wire-card {
+    @apply rounded-[1.35rem] border border-black bg-[#f7f7ef] shadow-[3px_3px_0_rgba(0,0,0,0.35)];
+  }
+
+  .plot-wire-card-muted {
+    @apply rounded-[1.1rem] border border-black bg-[#efefe2];
+  }
+
+  .plot-wire-toolbar {
+    @apply rounded-[1.15rem] border border-black bg-[#dfdfcf] px-3 py-2;
+  }
+
+  .plot-wire-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.18em] text-black/55;
+  }
+
+  .plot-wire-value {
+    @apply text-sm font-semibold text-black;
+  }
+
+  .plot-wire-tab {
+    @apply rounded-t-[1rem] border border-black border-b-0 bg-[#dedeca] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-black transition-colors;
+  }
+
+  .plot-wire-tab-active {
+    @apply bg-[#f7f7ef] text-black shadow-[-2px_-2px_0_rgba(0,0,0,0.18)] relative;
+  }
+
+  .plot-wire-tab-active::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 6px;
+    height: 3px;
+    border-radius: 9999px;
+    background: #b8d63b;
+  }
+
+  .plot-wire-panel {
+    @apply rounded-[1.35rem] border border-black bg-[#f7f7ef] p-4 shadow-[3px_3px_0_rgba(0,0,0,0.3)];
+  }
+
+  .plot-wire-list-item {
+    @apply rounded-[1rem] border border-black bg-white px-3 py-3;
+  }
+
+  .plot-wire-chip {
+    @apply inline-flex items-center rounded-full border border-black bg-[#e4e4d6] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-black;
+  }
+
+  .plot-wire-nav {
+    @apply fixed inset-x-0 bottom-0 z-50 border-t border-black bg-black px-4 py-3 text-white sm:px-6;
+  }
+
+  .plot-wire-nav-button {
+    @apply min-w-[92px] rounded-full border border-white/30 bg-transparent text-xs font-semibold uppercase tracking-[0.12em] text-white;
+  }
+
+  .plot-wire-nav-center {
+    @apply min-w-[132px] rounded-full border border-black bg-[#b8d63b] text-xs font-black uppercase tracking-[0.2em] text-black shadow-[0_0_0_3px_rgba(184,214,59,0.22)];
+  }
+
+  .plot-wire-grid-bg {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+}
+

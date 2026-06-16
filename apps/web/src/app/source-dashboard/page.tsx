@@ -1,0 +1,287 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@uprise/ui';
+import { api } from '@/lib/api';
+import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
+import { listPromoterRegistrations, type RegistrarPromoterEntry } from '@/lib/registrar/client';
+import { useAuthStore } from '@/store/auth';
+import { useOnboardingStore } from '@/store/onboarding';
+import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
+import { useSourceAccountStore } from '@/store/source-account';
+import type { CurrentUserSourceProfile } from '@/lib/source/types';
+
+export default function SourceDashboardPage() {
+  const router = useRouter();
+  const { token, user } = useAuthStore();
+  const { homeScene } = useOnboardingStore();
+  const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
+
+  const [profile, setProfile] = useState<CurrentUserSourceProfile | null>(null);
+  const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProfile() {
+      if (!token || !user?.id) {
+        setProfile(null);
+        setLoading(false);
+        setError('Sign in is required before opening source dashboard tools.');
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await api.get<CurrentUserSourceProfile>(`/users/${user.id}/profile`, { token });
+        if (cancelled) return;
+        setProfile(response.data ?? { user: { id: user.id }, managedArtistBands: [] });
+      } catch (loadError: unknown) {
+        if (cancelled) return;
+        setProfile(null);
+        setError(loadError instanceof Error ? loadError.message : 'Unable to load source dashboard context.');
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void loadProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, user?.id]);
+
+  const managedSources = profile?.managedArtistBands ?? [];
+  const activeSource = useMemo(
+    () => managedSources.find((source) => source.id === activeSourceId) ?? null,
+    [activeSourceId, managedSources],
+  );
+  const latestPromoterEntry = promoterEntries[0] ?? null;
+  const promoterCapabilityGranted = Boolean(latestPromoterEntry?.promoterCapability.granted);
+  const gpsVerified = Boolean(user?.gpsVerified);
+  const homeSceneLabel = useMemo(() => {
+    if (user?.homeSceneCity && user?.homeSceneState && user?.homeSceneCommunity) {
+      return `${user.homeSceneCity}, ${user.homeSceneState} • ${user.homeSceneCommunity}`;
+    }
+
+    if (homeScene?.city && homeScene?.state && homeScene?.musicCommunity) {
+      return `${homeScene.city}, ${homeScene.state} • ${homeScene.musicCommunity}`;
+    }
+
+    return 'Home Scene unresolved';
+  }, [homeScene?.city, homeScene?.musicCommunity, homeScene?.state, user?.homeSceneCity, user?.homeSceneCommunity, user?.homeSceneState]);
+  const registrarCardTitle = activeSource
+    ? `Review ${formatArtistBandEntityType(activeSource.entityType)} filings`
+    : 'Review filings and capability state';
+  const registrarCardDescription = activeSource
+    ? `Track ${formatArtistBandEntityType(activeSource.entityType).toLowerCase()} registration status, member sync work, and capability-code progress from the same source-side operating shell.`
+    : 'Registrar stays separate from source tools, but it remains reachable from the same operating side.';
+  const printShopCardTitle = promoterCapabilityGranted
+    ? 'Create scene-bound events with promoter capability'
+    : 'Create scene-bound events';
+  const printShopCardDescription = promoterCapabilityGranted
+    ? 'Promoter capability is active, so Print Shop can operate from both your source membership and promoter lane.'
+    : gpsVerified
+      ? 'Open the source-facing Print Shop lane through your linked artist/band membership. Promoter capability can still be added through Registrar.'
+      : 'Open the source-facing Print Shop lane through your linked artist/band membership. GPS verification is still required before promoter capability can progress in Registrar.';
+
+  useEffect(() => {
+    if (!activeSourceId) return;
+    if (managedSources.length === 0) return;
+    if (activeSource) return;
+    clearActiveSourceId();
+  }, [activeSource, activeSourceId, clearActiveSourceId, managedSources.length]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPromoterEntries() {
+      if (!token) {
+        setPromoterEntries([]);
+        return;
+      }
+
+      try {
+        const response = await listPromoterRegistrations(token);
+        if (cancelled) return;
+        setPromoterEntries(response.entries ?? []);
+      } catch {
+        if (cancelled) return;
+        setPromoterEntries([]);
+      }
+    }
+
+    void loadPromoterEntries();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  if (loading) {
+    return (
+      <main className="plot-wire-page pb-10">
+        <div className="plot-wire-frame max-w-5xl">
+          <div className="plot-wire-card p-6">
+            <p className="plot-wire-label">Source Dashboard</p>
+            <p className="mt-2 text-sm text-black/60">Loading source dashboard...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="plot-wire-page pb-10">
+        <div className="plot-wire-frame max-w-5xl space-y-4">
+          <section className="plot-wire-card p-6">
+            <p className="plot-wire-label">Source Dashboard</p>
+            <p className="mt-2 text-sm text-red-700">{error}</p>
+          </section>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+              <Link href="/plot">Back to Plot</Link>
+            </Button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="plot-wire-page pb-10">
+      <div className="plot-wire-frame max-w-5xl space-y-4">
+        <section className="plot-wire-card p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-3xl space-y-3">
+              <p className="plot-wire-label">Source Dashboard</p>
+              <div>
+                <h1 className="text-3xl font-semibold text-black">
+                  {activeSource ? activeSource.name : 'Select a source account'}
+                </h1>
+                <p className="mt-1 text-sm text-black/60">
+                  {activeSource
+                    ? `${formatArtistBandEntityType(activeSource.entityType)} • ${activeSource.slug}${activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}`
+                    : 'Stay signed into one account and switch into the source you want to operate.'}
+                </p>
+              </div>
+              <p className="text-sm text-black/70">
+                Source-facing tools live here. Use this dashboard to manage the source account you are currently operating.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                <Link href="/plot">Back to Plot</Link>
+              </Button>
+              {activeSource ? (
+                <Button asChild size="sm" variant="outline" className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                  <Link href="/plot" onClick={() => clearActiveSourceId()}>
+                    Return to Listener Account
+                  </Link>
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        </section>
+
+        <SourceAccountSwitcher
+          sources={managedSources}
+          onSelectSource={() => router.push('/source-dashboard')}
+          onSelectListener={() => router.push('/plot')}
+        />
+
+        {!activeSource ? (
+          <section className="plot-wire-card p-6">
+            <p className="plot-wire-label">Current Context</p>
+            <p className="mt-2 text-sm text-black/70">
+              {managedSources.length > 0
+                ? 'Choose one of your managed source accounts above to load its tools. Source Dashboard stays separate from the listener/community shell even though it uses the same signed-in account.'
+                : 'No managed source accounts are attached to this user yet. Promoter capability can still open creator lanes like Print Shop, but Source Dashboard itself remains source-account driven.'}
+            </p>
+          </section>
+        ) : (
+          <>
+            <section className="plot-wire-card p-6">
+              <p className="plot-wire-label">Current Context</p>
+              <div className="mt-2 rounded-[1rem] border border-black bg-[#f7f1df] px-4 py-4 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.18)]">
+                <p className="font-medium text-black">{activeSource.name}</p>
+                <p className="mt-1 text-xs text-black/65">
+                  {formatArtistBandEntityType(activeSource.entityType)}
+                  {activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-black/60">
+                  <span className="plot-wire-chip">Home Scene: {homeSceneLabel}</span>
+                  <span className="plot-wire-chip">GPS: {gpsVerified ? 'verified' : 'pending'}</span>
+                  <span className="plot-wire-chip">
+                    Promoter capability: {promoterCapabilityGranted ? 'active' : 'inactive'}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-black/70">
+                  Tools below operate from this source context. Creator routes still validate eligibility, but new
+                  source-side releases and events can now attach directly to the active source account while your
+                  signed-in user remains the actor.
+                </p>
+              </div>
+            </section>
+
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="plot-wire-card p-6">
+                <p className="plot-wire-label">Release Deck</p>
+                <h2 className="mt-2 text-lg font-semibold text-black">Release singles from this source</h2>
+                <p className="mt-2 text-sm text-black/65">
+                  Open the source-side release lane for the current artist/band and manage the active music slots.
+                </p>
+                <Button asChild size="sm" variant="outline" className="mt-4 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                  <Link href="/source-dashboard/release-deck">Open Release Deck</Link>
+                </Button>
+              </div>
+
+              <div className="plot-wire-card p-6">
+                <p className="plot-wire-label">Source Profile</p>
+                <h2 className="mt-2 text-lg font-semibold text-black">View public source page</h2>
+                <p className="mt-2 text-sm text-black/65">
+                  Open the live source profile followers see, including signal actions and source identity.
+                </p>
+                <Button asChild size="sm" variant="outline" className="mt-4 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                  <Link href={`/artist-bands/${activeSource.id}`}>View Source Profile</Link>
+                </Button>
+              </div>
+
+              <div className="plot-wire-card p-6">
+                <p className="plot-wire-label">Print Shop</p>
+                <h2 className="mt-2 text-lg font-semibold text-black">{printShopCardTitle}</h2>
+                <p className="mt-2 text-sm text-black/65">
+                  {printShopCardDescription}
+                </p>
+                <Button asChild size="sm" variant="outline" className="mt-4 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                  <Link href="/print-shop">Open Print Shop</Link>
+                </Button>
+              </div>
+
+              <div className="plot-wire-card p-6">
+                <p className="plot-wire-label">Registrar</p>
+                <h2 className="mt-2 text-lg font-semibold text-black">{registrarCardTitle}</h2>
+                <p className="mt-2 text-sm text-black/65">
+                  {registrarCardDescription}
+                </p>
+                <Button asChild size="sm" variant="outline" className="mt-4 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black">
+                  <Link href="/registrar">Open Registrar</Link>
+                </Button>
+              </div>
+            </section>
+          </>
+        )}
+      </div>
+    </main>
+  );
+}

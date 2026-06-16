@@ -1,5 +1,12 @@
 # Multi‑Agent Documentation Strategy for UPRISE_NEXT
 
+> Historical blueprint. This file is retained for background only.
+>
+> Current agent workflow, authority order, and handoff rules now live in:
+> - `AGENTS.md`
+> - `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+> - `docs/handoff/README.md`
+
 This blueprint defines a scalable documentation and hand‑off strategy for coordinating multiple agents on the UPRISE_NEXT monorepo. The goal is to keep context clear and up to date while maintaining traceability, consistency, and smooth onboarding.
 
 ## 1. Purpose
@@ -77,7 +84,7 @@ Use `docs/handoff/TEMPLATE_handoff-phase.md` to start.
 
 ## 6. Onboarding New Agents
 
-New agents should start with:
+Historical onboarding flow at the time of this blueprint:
 
 1. `docs/architecture/UPRISE_OVERVIEW.md`
 2. `docs/RUNBOOK.md`
@@ -85,7 +92,7 @@ New agents should start with:
 4. `docs/ENVIRONMENTS.md`
 5. Latest phase handoff in `docs/handoff/` (when available)
 
-Then read specs relevant to the task (under `docs/specs/` and/or `docs/Specifications/` while legacy IDs are still in use).
+Current practice is more strict: start with `AGENTS.md`, then load only the task-specific add-ons required for the assigned slice.
 
 ## 7. Future Enhancements
 

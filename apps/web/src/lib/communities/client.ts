@@ -42,10 +42,23 @@ export interface CommunityEventItem {
   description: string;
   startDate: string;
   endDate: string;
+  createdAt: string;
   locationName: string;
   address: string;
   attendeeCount: number;
   maxAttendees: number | null;
+  createdBy: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar: string | null;
+  } | null;
+  artistBand: {
+    id: string;
+    name: string;
+    slug: string;
+    entityType: string;
+  } | null;
 }
 
 export interface CommunityPromotionItem {
@@ -85,6 +98,7 @@ export interface CommunityStatisticsResponse {
   };
   topSongs: Array<{
     trackId: string;
+    artistBandId: string | null;
     title: string;
     artist: string;
     duration: number;
