@@ -21,3 +21,24 @@ This folder contains **implementation seed data** used for onboarding and routin
 - `launchOpen: true` inside `hotspot-cities.provisional.json` marks the cities currently intended to be operationally open for launch work on this branch.
 - Tags are used for routing and Scene Map clustering only.
 - Do not introduce new structural terms here; use canon vocabulary in specs.
+
+## Launch Community Preload
+
+The API package owns the deterministic preload path for the current launch matrix.
+
+Run from the repo root when a target database has been intentionally selected:
+
+```bash
+pnpm --filter api run seed:launch-communities
+```
+
+Behavior:
+
+- Reads `docs/specs/seed/launch-community-city-matrix.json`.
+- Builds the `48` city-tier Home Scene tuples from the full `city + state + music community` identity.
+- Upserts a deterministic non-listener system owner user: `system-community-seed@uprise.local`.
+- Finds existing `Community` rows by exact `{ city, state, musicCommunity, tier: "city" }`.
+- Updates existing tuple matches and creates only missing rows.
+- Does not create state/national scenes or community-specific architecture variants.
+
+Do not run this command against production or staging without confirming the target `DATABASE_URL`.

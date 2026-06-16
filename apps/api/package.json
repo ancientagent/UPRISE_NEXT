@@ -11,6 +11,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
+    "seed:launch-communities": "tsx prisma/seed.ts",
     "seed:radiyo-fixture": "node --env-file=.env scripts/seed-radiyo-dev-fixture.mjs",
     "seed:print-shop-creator": "node --env-file=.env scripts/seed-print-shop-creator-user.mjs",
     "seed:artist-fixture-roster": "node --env-file=.env scripts/seed-artist-fixture-roster.mjs",
@@ -59,5 +60,8 @@
     "prisma": "^5.18.0",
     "ts-jest": "^29.2.5",
     "typescript": "^5.5.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
