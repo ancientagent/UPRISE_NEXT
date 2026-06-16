@@ -1,10 +1,18 @@
 # MVP UX Batch16 Execution Plan
 
-Status: Ready  
+Status: Historical execution plan; stale tab labels superseded by current Feed / Events / Archive lock
 Date: 2026-03-15
 
+Current note:
+
+- This was a Batch16 execution snapshot, not current UI authority.
+- Current MVP Plot tabs are `Feed`, `Events`, and `Archive`.
+- Do not use this plan to reintroduce `Promotions` or `Statistics` as current MVP Plot tabs.
+
 ## Goal
+
 Complete remaining MVP UX implementation areas with deterministic lane scopes:
+
 - Plot section overhauls
 - Discovery surface closure
 - Player/Profile final parity
@@ -12,6 +20,7 @@ Complete remaining MVP UX implementation areas with deterministic lane scopes:
 - QA/review closeout
 
 ## Queue Files
+
 - `.reliant/queue/mvp-lane-a-ux-plot-batch16.json`
 - `.reliant/queue/mvp-lane-b-ux-discovery-batch16.json`
 - `.reliant/queue/mvp-lane-c-ux-player-profile-batch16.json`
@@ -19,6 +28,7 @@ Complete remaining MVP UX implementation areas with deterministic lane scopes:
 - `.reliant/queue/mvp-lane-e-ux-qarev-batch16.json`
 
 ## Runtime Files (recommended)
+
 - `.reliant/runtime/current-task-lane-a-ux-batch16.json`
 - `.reliant/runtime/current-task-lane-b-ux-batch16.json`
 - `.reliant/runtime/current-task-lane-c-ux-batch16.json`
@@ -28,31 +38,38 @@ Complete remaining MVP UX implementation areas with deterministic lane scopes:
 ## Lane Responsibilities
 
 ### Lane A — Plot UX
-- Feed/Events/Promotions/Statistics tab overhauls
+
+- Feed/Events/Archive tab overhauls
+- Retire stale Promotions/Statistics tab assumptions from active handoffs
 - Social deferred-policy lock
 - Plot tab regression closeout
 
 ### Lane B — Discovery UX
+
 - Discovery IA + state model
 - Scene card/search/switch behavior parity
 - Discovery contract/test closeout
 
 ### Lane C — Player/Profile UX
+
 - Compact player shell parity
 - Tier-title/context behavior
 - Collection entry/eject + expanded profile composition locks
 
 ### Lane D — Automation Reliability
+
 - UX master-lock preflight checks
 - Queue/runtime drift protection
 - Runbook + transcript consistency
 
 ### Lane E — QA/Docs/Closeout
+
 - Consolidated gate replays
 - Risk/rollback memo
 - Founder checklist + final closeout report
 
 ## Standard Loop (each lane)
+
 1. `claim`
 2. execute exact slice prompt
 3. run `verifyCommand` exactly
@@ -90,6 +107,7 @@ node scripts/reliant-slice-queue.mjs claim \
 ```
 
 ## Safety Locks
+
 - Canon/spec-first only; no inferred behavior.
 - No placeholder CTAs.
 - Stop and escalate on unresolved founder decisions.

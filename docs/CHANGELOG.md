@@ -49,6 +49,8 @@
 
 ### Changed
 
+- Clarified active Archive/Event terminology docs so current MVP `Archive` is read-only Top Songs + Scene Activity Snapshot, while `StatisticsPanel` / Scene Map exploration remains retained/future infrastructure rather than a live tab.
+
 - Locked listener-facing Artist Profile readiness for launch: current runtime keeps a 3-row direct-listen cap, Follow/Share/source links, gated Recommend, no wheel/Blast/ranking drift, and treats full catalogue/library history as deferred future context.
 - Replaced the live `/plot` Archive tab's interactive `StatisticsPanel` explorer with read-only Archive modules: `TopSongsPanel` and a descriptive Scene Activity Snapshot, and updated active briefs so future agents do not reintroduce StatisticsPanel/tier-map exploration as the MVP Archive body.
 - Updated the onboarding Music Community selector and seed docs to the founder-approved MVP launch list: Punk, Electronic, Noise, Spoken Word / Poetry, Indie, Folk, Singer-Songwriter, and Hip-Hop; the broader taxonomy remains internal reference only.
