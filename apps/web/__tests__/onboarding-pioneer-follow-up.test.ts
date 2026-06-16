@@ -13,10 +13,16 @@ describe('Onboarding pioneer follow-up contract', () => {
 
     expect(storeSource).toContain('export interface PioneerFollowUp');
     expect(storeSource).toContain('pioneerFollowUp: PioneerFollowUp | null;');
-    expect(storeSource).toContain('setPioneerFollowUp: (followUp: PioneerFollowUp | null) => void;');
+    expect(storeSource).toContain(
+      'setPioneerFollowUp: (followUp: PioneerFollowUp | null) => void;'
+    );
     expect(storeSource).toContain('pioneerFollowUp: null,');
-    expect(storeSource).toContain('setPioneerFollowUp: (pioneerFollowUp) => set({ pioneerFollowUp })');
-    expect(storeSource).toContain('setHomeScene: (homeScene) => set({ homeScene, pioneerFollowUp: null })');
+    expect(storeSource).toContain(
+      'setPioneerFollowUp: (pioneerFollowUp) => set({ pioneerFollowUp })'
+    );
+    expect(storeSource).toContain(
+      'setHomeScene: (homeScene) => set({ homeScene, pioneerFollowUp: null })'
+    );
   });
 
   it('records pioneer follow-up state from onboarding home-scene resolution', () => {
@@ -25,9 +31,15 @@ describe('Onboarding pioneer follow-up contract', () => {
     expect(onboardingSource).toContain('setPioneerFollowUp');
     expect(onboardingSource).toContain('setPioneerFollowUp(null);');
     expect(onboardingSource).toContain('let authenticatedPioneer: boolean | null = null;');
-    expect(onboardingSource).toContain('authenticatedPioneer = response.data?.pioneer === undefined ? null : Boolean(response.data.pioneer);');
-    expect(onboardingSource).toContain('const pioneer = authenticatedPioneer ?? reviewResolution.pioneer;');
-    expect(onboardingSource).toContain('setPioneerFollowUp(pioneer ? { homeScene: selection } : null);');
+    expect(onboardingSource).toMatch(
+      /authenticatedPioneer\s*=\s*response\.data\?\.pioneer === undefined\s*\?\s*null\s*:\s*Boolean\(response\.data\.pioneer\);/
+    );
+    expect(onboardingSource).toContain(
+      'const pioneer = authenticatedPioneer ?? reviewResolution.pioneer;'
+    );
+    expect(onboardingSource).toContain(
+      'setPioneerFollowUp(pioneer ? { homeScene: selection } : null);'
+    );
     expect(onboardingSource).toContain("router.push('/plot');");
   });
 });
