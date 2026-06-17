@@ -37,6 +37,8 @@ Current briefs:
 
 - `CONTEXT_ROUTER.md` - work-lane routing map; use first to decide which section brief and companion briefs are needed.
 - `UI_CURRENT.md` - frontend/app UI, Home/Plot, player/profile interaction, Artist Profile, Feed/Events/Archive, design-agent handoff.
+- `UPRISE_UI_UX_FOCUS_PACKET_R1.md` - current UI/UX lane truth packet for Home/Plot, onboarding context, Archive, Artist Profile, and design-agent context loading.
+- `UPRISE_DESIGN_HANDOFF_SCREEN_PACKAGE_R1.md` - one-screen-at-a-time design handoff packet for external visual/design agents.
 - `ACTIONS_AND_SIGNALS.md` - listener actions, signal/action boundaries, engagement wheel split, and stale `Add` / `Support` wording.
 - `ARTIST_PROFILE_SOURCE_DASHBOARD.md` - public Artist Profile, Source Dashboard/source management, Release Deck, Print Shop, and managed source entity selection.
 - `EVENTS_ARCHIVE.md` - Plot Events, Archive, event calendar behavior, event-bound artifacts, and descriptive stats/history boundaries.

@@ -5,6 +5,8 @@ Historical note:
 - This file documents an earlier Plot/Profile architecture phase.
 - Some interaction and composition assumptions here have since been superseded by April 2026 founder locks and carry-forward notes.
 - Use it for historical rationale only, not as current authority.
+- The tab set named in this document (`Feed`, `Events`, `Promotions`, `Statistics`) is historical only.
+- Do not use this document as the source of current Plot tab truth; current runtime is `Feed`, `Events`, `Archive`.
 - Current authority now lives in:
   - `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
   - `docs/solutions/MVP_DISCOVER_FOUNDER_LOCK_R1.md`
@@ -45,7 +47,7 @@ This document is the execution baseline for:
 Primary order for Plot screen (mobile):
 1. Profile Header Row
 2. RaDIYo/Collection Player Shell
-3. Plot Tabs (Feed, Events, Promotions, Statistics)
+3. Plot Tabs (historical legacy set)
 4. Active Tab Content
 
 Notes:
@@ -281,7 +283,7 @@ Events:
     - No recommendation rail, ranking model, or dynamic “because you listened” logic in R1.
     - No implied RSVP/ticketing workflow unless separately authorized by canon/spec.
 
-Promotions:
+Promotions (historical; legacy, not active MVP):
 - Scene-scoped promotions/offers.
 - IA Contract (R1):
   - Purpose:
@@ -308,7 +310,7 @@ Promotions:
     - No dynamic pricing rank, recommendation model, or behavior-scored ordering in R1.
     - No implied checkout/payment flow from this tab unless canon/spec explicitly authorizes it.
 
-Statistics:
+Statistics (historical; legacy, not active MVP):
 - Metrics, top songs, activity snapshot.
 - IA Contract (R1):
   - Purpose:
@@ -347,7 +349,8 @@ Social:
     - Do not imply ranking/recommendation/feed authority from deferred content.
     - Do not imply hidden unlock conditions or paywall semantics for deferred behavior.
   - Interaction constraints:
-    - Active tab behavior remains limited to Feed, Events, Promotions, and Statistics.
+    - Active tab behavior in this legacy model remains limited to Feed, Events, Promotions, and Statistics.
+    - Current runtime tab set is Feed, Events, Archive.
     - No hidden or inactive Social rail slot may be rendered in MVP.
   - Error/loading constraints:
     - MVP collapsed `/plot` does not attempt Social reads in R1.
@@ -356,12 +359,12 @@ Social:
 ### Cross-Tab IA Consistency Rules (R1 Consolidation)
 - Canon-consistent terminology:
   - Use `RADIYO`, `Collection`, `City`, `State`, `National`, and `Plot` exactly as written.
-  - Use “scene-scoped” wording for Feed/Events/Promotions/Statistics reads.
+  - Use “scene-scoped” wording for legacy Feed/Events/Promotions/Statistics reads where this document applies.
 - Ordering language:
   - All tab ordering rules must reference explicit canonical sort fields.
   - Do not use ambiguous “best”, “smart”, “recommended”, or “for you” ordering language.
 - Recommendation/ranking guardrail:
-  - Feed/Events/Promotions/Statistics in R1 are descriptive context reads, not recommendation engines.
+  - Historical Feed/Events/Promotions/Statistics in this legacy set are descriptive context reads, not recommendation engines.
   - No personalization, behavioral weighting, or opaque ranking semantics may be implied.
 - Deferred-surface guardrail:
   - Social remains hidden in MVP collapsed `/plot` navigation.
@@ -387,7 +390,7 @@ Web must preserve mobile semantics while adapting layout:
 | `RADIYO` controls | Tier stack plus source toggle (`New Releases` / `Main Rotation`) | Same tier/source semantics; control order may adapt visually only |
 | `Collection` controls | Eject/back return plus Shuffle | Same controls and intent; no additional queue/recommendation behavior introduced |
 | Tier context controls | `City` / `State` / `National` context switch | Same tier set and read-context update behavior; no ranking/authority implications added |
-| Plot tabs | Feed / Events / Promotions / Statistics tab switching | Same tab set and tab state model; desktop layout may split panes without changing tab semantics |
+| Plot tabs | Legacy Feed / Events / Promotions / Statistics tab switching model (historical only) | Keep desktop layout behavior constrained to this legacy model only; do not use this row as active runtime authority |
 | Feed ordering | Scene-scoped, reverse-chronological | Same canonical reverse-chronological ordering; no personalization/relevance sort |
 | Loading/empty/error states | Deterministic tab-body states | Same loading/empty/error semantics with retry preserved; current tab/context remains unchanged |
 | Route invariants | Profile expansion and player mode changes stay on same route | Web adaptation must keep these interactions route-stable; layout shifts allowed, route drift disallowed |

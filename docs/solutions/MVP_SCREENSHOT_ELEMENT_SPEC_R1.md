@@ -59,12 +59,12 @@ Purpose: convert the provided legacy-style screenshot into a deterministic build
   - MVP: yes (shown in Collection mode).
 
 ### A3. Plot tabs
-- Element set: `Feed`, `Events`, `Promos`, `Statistics`
+- Element set: `Feed`, `Events`, `Archive`
   - What: core Plot panels.
   - Why: scene dashboard organization.
   - MVP: yes.
 - Element: `Social` tab
-  - What: legacy/older placeholder.
+  - What: deferred/legacy placeholder. Not in active MVP.
   - MVP: no for current strict mockups.
 
 ### A4. Feed/body cards
