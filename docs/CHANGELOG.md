@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added current UI/UX context packets for Spark-safe design handoffs: `docs/agent-briefs/UPRISE_UI_UX_FOCUS_PACKET_R1.md` and `docs/agent-briefs/UPRISE_DESIGN_HANDOFF_SCREEN_PACKAGE_R1.md`, plus Linear-ready follow-up cards for stale-tab linting and Archive verification in `docs/handoff/2026-06-16_linear-ready-ui-context-issues.md`.
 - Added `docs/agent-briefs/UPRISE_HERMES_LAUNCH_REVIEWER.md` and `docs/handoff/agent-control/HERMES_LAUNCH_REVIEW_SHIM.md` so Hermes can run narrow read-only launch reviews against one named issue, PR, merge commit, or release-readiness slice without becoming a broad repo auditor or implementation agent.
 - Added authenticated missing-music-community request intake from onboarding via `POST /onboarding/music-community-requests`; requests store distinct requester/city review signals without creating live `Community` records or mutating the approved onboarding selector.
 - Added an API-owned launch community preload seed path for the `48` city-tier Home Scene tuples, including a deterministic system owner, tuple-based idempotent create/update behavior, a Prisma seed hook, and unit coverage that does not touch a live database.
@@ -50,6 +51,7 @@
 
 ### Changed
 
+- Reconciled remaining design-facing UI docs around the active `Feed`, `Events`, `Archive` Plot tab set, marked the older mobile-first tab model as historical-only, and tightened `UI_CURRENT` Archive guidance so future agents do not treat `StatisticsPanel`-style exploration as the default MVP Archive body; see `docs/handoff/2026-06-16_uprise-spark-high-ui-alignment-pass.md`.
 - Split pioneer fallback GPS authority from fallback voting authority: exact active Home Scenes still verify against their geofence, while inactive/unavailable submitted Home Scenes now verify the user's submitted city/state locality and keep `tunedSceneId` as the resolved active voting anchor.
 
 - Set `GOOGLE_PLACES_API_KEY` on Fly API staging and verified submitted-location GPS end-to-end: exact Austin/Punk voting passes, El Paso/Punk pioneer voting verifies submitted El Paso locality while voting in fallback Austin/Punk, and mismatch coordinates return `SUBMITTED_LOCATION_MISMATCH`; see `docs/handoff/2026-06-16_submitted-location-gps-authority.md`.

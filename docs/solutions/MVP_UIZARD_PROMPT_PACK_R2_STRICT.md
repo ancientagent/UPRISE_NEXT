@@ -16,7 +16,7 @@ Historical note:
 Use this file only as historical reference for a prior mobile mockup phase.
 
 
-Use this pack for deterministic mobile mockup generation with minimal drift.
+Do not paste this historical pack directly into a design tool for current work. Use `docs/agent-briefs/UPRISE_DESIGN_HANDOFF_SCREEN_PACKAGE_R1.md` for current design-agent handoffs.
 
 ## How To Use
 1. Paste **Section A** once.
@@ -105,7 +105,7 @@ MUST include:
   - compact track row
   - right-side vertical tier stack: National, State, City
   - no mode switch button
-- plot tabs: Feed, Events, Promos, Statistics
+- plot tabs: Feed, Events, Archive
 - feed body card area
 - bottom nav with center UPRISE action button
 

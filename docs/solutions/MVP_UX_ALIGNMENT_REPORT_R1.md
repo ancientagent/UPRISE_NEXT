@@ -27,7 +27,7 @@ Primary rule: no inferred product behavior outside documented canon/spec sources
 
 ### 3.2 The Plot
 - Plot is civic dashboard, not personalized recommendation feed.
-- Core tabs/surfaces: Activity Feed (default), Events, Promotions, Statistics/Scene Map.
+- Core tabs/surfaces: Activity Feed (default), Events, Archive (descriptive scene history).
 - Feed behavior is deterministic scene-scoped action projection.
 
 ### 3.3 Registrar

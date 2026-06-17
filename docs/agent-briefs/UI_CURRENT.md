@@ -218,8 +218,9 @@ Should include:
 
 Do not include:
 
-- interactive `StatisticsPanel` exploration as the current MVP Archive body
+- interactive `StatisticsPanel`-style deep analytics exploration as the current default Archive body
 - tier/map/nearby-community exploration as the default Archive experience
+- any behavior that assumes a separate Statistics tab in MVP
 - leaderboards
 - rankings
 - trending hype

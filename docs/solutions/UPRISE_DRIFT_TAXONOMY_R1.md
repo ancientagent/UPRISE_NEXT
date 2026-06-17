@@ -49,7 +49,7 @@ Each drift case should record:
 
 ### C2. Unapproved tabs
 - Failure: invents `Social`, `Messages`, or other new MVP Plot tabs.
-- Correction: current MVP tabs are `Feed`, `Events`, `Promotions`, `Statistics`.
+- Correction: current MVP tabs are `Feed`, `Events`, `Archive`.
 
 ## Category D — Discover Drift
 ### D1. Separate travel search system

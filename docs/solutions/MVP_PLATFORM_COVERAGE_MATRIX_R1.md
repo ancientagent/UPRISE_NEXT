@@ -26,7 +26,7 @@ Provide a one-page, non-speculative view of what is covered vs missing across th
 | Surface | Current Coverage | Evidence | Gaps to MVP | Next Focus |
 |---|---|---|---|---|
 | Onboarding + Home Scene | Complete (MVP-usable) | `USER-ONBOARDING` implemented endpoints + web onboarding page/store | Parent-scene free-text sect mapping, pioneer incentives | UX polish and messaging consistency |
-| Plot shell (Feed/Events/Promotions/Stats/Map reads) | Partial | `COMM-PLOT` shows shell + read surfaces + active/home scene fallback | Unified UX ordering, social tab policy, advanced registrar dashboard | UX-first flow coherence and state handling |
+| Plot shell (Feed/Events/Archive) | Partial | `COMM-PLOT` shows shell + scene-scoped read surfaces + active/home scene fallback | Unified UX ordering, descriptive archive rendering scope, social tab policy, advanced registrar dashboard | UX-first flow coherence and state handling |
 | Registrar (artist/promoter/project/sect + invite/code reads/writes) | Partial-to-strong | `SYS-REGISTRAR` implemented-now list is extensive | Admin orchestration, project/sect lifecycle expansion, provider/scheduler production path | Keep hardening, avoid feature drift, align UX copy |
 | Signals / Universal Actions | Partial | `CORE-SIGNALS` endpoints and idempotent actions implemented; current runtime still carries `ADD`/`SUPPORT` naming debt against the newer action matrix | Broader discourse/proof-of-support extensions plus action-grammar reconciliation | Integrate clear UX paths without ranking implications |
 | Communities core beyond plot shell | Partial | Specs exist; some read surfaces in Plot | End-to-end closure for scenes/uprises/sects and discovery-scene switching semantics | R3 closure planning |

@@ -55,7 +55,7 @@ These are the first gate for any serious output.
 2. Player context must be considered on every surface, feature, menu, modal, and flow.
 3. Home Scene identity is `city + state + music community`.
 4. Plot is structural, not Home.
-5. Current MVP Plot tabs are `Feed`, `Events`, `Promotions`, `Statistics`.
+5. Current MVP Plot tabs are `Feed`, `Events`, `Archive` (descriptive scene activity/history).
 6. Discover is tier-aware and player-anchored.
 7. Discover search scope is bounded by current player tier/context.
 8. Travel is attached to the bottom of the player.

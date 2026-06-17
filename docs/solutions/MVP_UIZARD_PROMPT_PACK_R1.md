@@ -12,7 +12,7 @@ Historical note:
   - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
 
 
-Use these prompts directly in Uizard to generate mobile mockups aligned to current UPRISE decisions.
+Do not paste these prompts directly into a design tool for current work. Use `docs/agent-briefs/UPRISE_DESIGN_HANDOFF_SCREEN_PACKAGE_R1.md` for current design-agent handoffs.
 
 ## 0) Global Setup Prompt (paste first)
 Design a mobile-first music community app called UPRISE.
@@ -56,7 +56,7 @@ Layout order:
    - tier controls on right side (National / State / City in vertical stack)
    - mode control for RADIYO/Collection
 3. Plot tabs:
-   - Feed, Events, Promos, Statistics
+   - Feed, Events, Archive
 4. Plot body card area (Feed selected)
 5. Bottom nav:
    - Home, center UPRISE button, Discover

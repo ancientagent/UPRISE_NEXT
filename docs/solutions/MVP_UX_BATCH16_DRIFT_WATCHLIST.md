@@ -13,7 +13,7 @@ Purpose: strict drift-prevention checklist for Batch16 lane execution and QA rev
 
 2. Unauthorized tabs or wrong order
 - Collapsed tab rail is locked to:
-  - Feed, Events, Promos, Statistics.
+  - Feed, Events, Archive.
 - Social remains deferred unless explicitly unlocked by spec update.
 
 3. Player mode contract violations
@@ -84,7 +84,7 @@ Purpose: strict drift-prevention checklist for Batch16 lane execution and QA rev
 - Verify collapsed `/plot` stack order is intact.
 
 4. Tabs check
-- Verify only Feed/Events/Promos/Statistics are visible in collapsed rail.
+- Verify only Feed/Events/Archive are visible in collapsed rail.
 - Verify Social treatment matches deferred policy lock.
 
 5. Player mode checks
@@ -102,7 +102,7 @@ Purpose: strict drift-prevention checklist for Batch16 lane execution and QA rev
 - Validate wheel action sets remain mode-locked.
 
 9. Non-personalization check
-- Verify Feed/Events/Promos/Statistics do not imply recommendation/ranking behavior.
+- Verify Feed/Events/Archive do not imply recommendation/ranking behavior.
 
 10. Regression + verify commands
 - Run each slice `verifyCommand` exactly.
