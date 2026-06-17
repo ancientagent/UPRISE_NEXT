@@ -349,6 +349,20 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('renderPrimaryPlotTabBody()');
   });
 
+  it('keeps Archive descriptive instead of reviving map or analytics exploration', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain("const plotTabHeading = activeTab === 'Archive' ? 'Scene Archive' : activeTab;");
+    expect(plotPageSource).toContain('Archive is read-only descriptive history for the current Plot context.');
+    expect(plotPageSource).toContain('This is not a ranking or authority');
+    expect(plotPageSource).not.toContain('Archive & Map');
+    expect(plotPageSource).not.toContain('SceneMap');
+    expect(plotPageSource).not.toContain('nearby-community');
+    expect(plotPageSource).not.toContain('leaderboard');
+    expect(plotPageSource).not.toContain('predictive analytics');
+    expect(plotPageSource).not.toContain('comparative artist scoring');
+  });
+
   it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
