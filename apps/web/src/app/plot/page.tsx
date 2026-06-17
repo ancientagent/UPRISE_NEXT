@@ -1286,7 +1286,7 @@ export default function PlotPage() {
 
             {/* Main Content Grid */}
             <section className="grid gap-4 border border-black bg-[#d8d8c8] p-3 lg:grid-cols-[minmax(0,1.75fr)_300px]">
-              {/* Left Panel - Archive & Map */}
+              {/* Left Panel - Active Plot Surface */}
               <div className="plot-wire-panel">
                 <div className="mb-4 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
                   <p className="plot-wire-label">Active Surface</p>

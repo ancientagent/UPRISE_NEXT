@@ -51,6 +51,7 @@
 
 ### Changed
 
+- Hardened the `/plot` Archive runtime contract so the active Plot panel is no longer labeled as `Archive & Map`, and added a regression lock that keeps Archive descriptive rather than reviving map/analytics exploration as the default MVP body; see `docs/handoff/2026-06-17_archive-runtime-contract.md`.
 - Reconciled remaining design-facing UI docs around the active `Feed`, `Events`, `Archive` Plot tab set, marked the older mobile-first tab model as historical-only, and tightened `UI_CURRENT` Archive guidance so future agents do not treat `StatisticsPanel`-style exploration as the default MVP Archive body; see `docs/handoff/2026-06-16_uprise-spark-high-ui-alignment-pass.md`.
 - Split pioneer fallback GPS authority from fallback voting authority: exact active Home Scenes still verify against their geofence, while inactive/unavailable submitted Home Scenes now verify the user's submitted city/state locality and keep `tunedSceneId` as the resolved active voting anchor.
 

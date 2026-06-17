@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-17_archive-runtime-contract.md`](./2026-06-17_archive-runtime-contract.md) — current `/plot` Archive runtime contract hardening: Archive remains descriptive and does not revive map/analytics exploration as the default MVP body.
 - [`2026-06-16_uprise-spark-high-ui-alignment-pass.md`](./2026-06-16_uprise-spark-high-ui-alignment-pass.md) — current Spark-safe UI/UX docs alignment pass for active Plot tab language, Archive wording, and design-agent packet setup.
 - [`2026-06-16_linear-ready-ui-context-issues.md`](./2026-06-16_linear-ready-ui-context-issues.md) — Linear-ready follow-up cards for UI context routing, stale-tab lint expansion, and Archive runtime verification after the next UI slice.
 - [`2026-06-15_deploy-readiness-and-env-matrix.md`](./2026-06-15_deploy-readiness-and-env-matrix.md) — current hosted-stack readiness context for Vercel/Fly/App Runner/Neon/S3/R2 planning and deploy env ownership.
