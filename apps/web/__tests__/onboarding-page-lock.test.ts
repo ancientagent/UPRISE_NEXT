@@ -21,4 +21,13 @@ describe('/onboarding UX lock', () => {
     expect(onboardingSource).toContain('Your GPS location does not match your submitted Home Scene.');
     expect(onboardingSource).not.toContain('list="communities"');
   });
+
+  it('rechecks stored GPS coordinates after Home Scene submit so GPS can decide location before voting', () => {
+    const onboardingSource = readRepoFile('src/app/onboarding/page.tsx');
+
+    expect(onboardingSource).toContain('gpsCoords');
+    expect(onboardingSource).toContain('refreshGpsVotingEligibility');
+    expect(onboardingSource).toContain('await refreshGpsVotingEligibility(gpsCoords)');
+    expect(onboardingSource).toContain('NO_HOME_SCENE');
+  });
 });

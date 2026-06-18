@@ -3,7 +3,7 @@
 **ID:** `USER-ONBOARDING`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-03-02`
+**Last Updated:** `2026-06-18`
 
 ## Overview & Purpose
 
@@ -18,6 +18,8 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 ## Functional Requirements
 
 - Onboarding asks for local scene context using **City**, **State**, and **Music Community**.
+- Listener location authority is manual-first: if the user enters city/state, that submitted location is the Home Scene intent even when GPS is denied.
+- If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review.
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
 - Current MVP launch selection uses the implementation list in `docs/specs/seed/music-communities.json`.
 - Current MVP launch matrix is defined in `docs/specs/seed/launch-community-city-matrix.json` as `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples.
@@ -31,7 +33,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Setting a Home Scene auto-joins the resolved active city-tier Scene membership.
 - GPS verification is requested only to enable voting rights.
 - If GPS is denied or unavailable, user remains affiliated but cannot vote.
-- If selected city-tier scene is inactive/unavailable, user is auto-routed to nearest active city scene for the selected parent community.
+- If selected city-tier scene is inactive/unavailable, user is auto-routed to nearest active city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
 - Inactive-city onboarding must persist pioneer intent and trigger pioneer notification messaging.
 - If the selected Home Scene is inactive/unavailable, GPS verification checks the submitted city/state locality while voting applies to the resolved nearest active city-tier community; the submitted city/state/music-community remains preserved as pioneer intent.
 - Pioneer notification is shown after the user is loaded into Home Scene context (routed nearest active scene when required).
@@ -56,7 +58,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - When the submitted Home Scene is inactive/unavailable, GPS verification checks the submitted city/state locality by reverse-geocoding the user's coordinates and comparing them to the preserved pioneer intent. It does not verify the user against the resolved fallback community geofence.
 - For inactive/unavailable Home Scenes, voting still uses the resolved active fallback scene stored in `User.tunedSceneId` after submitted locality verification succeeds.
 - Launch geofences are only a voting-readiness locality gate; they are not tier logic, state/national scope logic, discovery radius logic, or a city-specific runtime branch.
-- When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats the user as GPS-verified for voting eligibility.
+- When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats that GPS-derived city/state as the submitted Home Scene location and rechecks stored GPS coordinates after Home Scene persistence for voting eligibility.
 - Voting is enabled only when the exact active Home Scene geofence check or submitted-location locality check succeeds.
 - If no Home Scene or geofence, coordinates are stored but `gpsVerified=false`.
 
@@ -153,6 +155,9 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 
 - `apps/web/src/app/onboarding/page.tsx`:
   - captures City/State/Music Community (selection-only parent community)
+  - lets manual city/state input set the submitted Home Scene when GPS is denied or skipped
+  - lets GPS-derived reverse geocoding provide city/state when the user does not manually enter location
+  - rechecks stored GPS coordinates after authenticated Home Scene persistence so GPS-first onboarding can enable voting once a scene exists
   - allows authenticated users to submit a missing-music-community request without changing the selected approved parent community
   - requests GPS with clear voting-only gating copy
   - resolves active scene fallback when city is inactive
