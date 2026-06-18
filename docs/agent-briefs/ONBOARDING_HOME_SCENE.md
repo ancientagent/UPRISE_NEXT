@@ -1,7 +1,7 @@
 # Onboarding Home Scene Agent Brief
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-06-18
 
 ## Use When
 
@@ -74,19 +74,23 @@ Tests / verification files:
 - Current intake endpoint is `POST /onboarding/music-community-requests`.
 - Missing-music-community intake stores distinct requester/city review signals but does not define a final approval threshold in code.
 - Taste tags are not collected during onboarding.
+- Location authority is manual-first. If the user enters city/state and denies or skips GPS, that submitted city/state remains the Home Scene intent and voting stays disabled.
+- If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review.
 - Home Scene selection is stored regardless of GPS verification.
 - Setting a Home Scene auto-joins the resolved active city-tier scene membership.
 - GPS is requested to enable voting rights only.
 - Users can participate without GPS but cannot vote when GPS is denied/unavailable.
-- If the selected city-tier scene is inactive/unavailable, preserve pioneer intent and route to nearest active city scene for the selected parent community.
+- If the selected city-tier scene is inactive/unavailable, preserve pioneer intent and route to nearest active city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
 - For inactive/unavailable Home Scenes, the submitted city/state/music-community remains the user's pioneer intent while `tunedSceneId` stores the resolved active listening/voting anchor.
 - For inactive/unavailable Home Scenes, GPS verification checks the submitted city/state locality, while `tunedSceneId` stores the resolved active listening/voting anchor.
 - Voting for a pioneer fallback user is allowed in the resolved nearest active community after submitted-location GPS verification; voting is not allowed in arbitrary visitor scenes.
+- GPS-first onboarding must recheck stored GPS coordinates after authenticated Home Scene persistence, because a pre-selection GPS check can only store coordinates and return `NO_HOME_SCENE`.
 - Pioneer follow-up appears through the top-right notification icon in the profile strip after Home Scene context loads.
 
 ## Current Runtime Pointers
 
 - `/onboarding` captures and persists Home Scene and GPS state.
+- `/onboarding` lets user-entered city/state remain authoritative when supplied, and uses GPS-derived city/state only when the user chooses GPS detection instead of manual entry.
 - `/plot` resolves Home Scene context and surfaces pioneer follow-up through the notification icon.
 - `GET /communities/resolve-home` resolves exact Home Scene tuple for Plot/community anchoring.
 - `POST /onboarding/home-scene` is the server-authoritative Home Scene persistence path.

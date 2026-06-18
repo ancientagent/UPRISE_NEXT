@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-18_onboarding-gps-location-authority.md`](./2026-06-18_onboarding-gps-location-authority.md) — locks manual-first location authority, GPS-derived city/state fallback when the user does not enter location, and GPS recheck after Home Scene persistence for voting eligibility.
 - [`2026-06-17_archive-runtime-contract.md`](./2026-06-17_archive-runtime-contract.md) — current `/plot` Archive runtime contract hardening: Archive remains descriptive and does not revive map/analytics exploration as the default MVP body.
 - [`2026-06-16_uprise-spark-high-ui-alignment-pass.md`](./2026-06-16_uprise-spark-high-ui-alignment-pass.md) — current Spark-safe UI/UX docs alignment pass for active Plot tab language, Archive wording, and design-agent packet setup.
 - [`2026-06-16_linear-ready-ui-context-issues.md`](./2026-06-16_linear-ready-ui-context-issues.md) — Linear-ready follow-up cards for UI context routing, stale-tab lint expansion, and Archive runtime verification after the next UI slice.

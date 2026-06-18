@@ -67,6 +67,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const {
     homeScene,
+    gpsCoords,
     votingEligible,
     gpsReason,
     setHomeScene,
@@ -147,6 +148,7 @@ export default function OnboardingPage() {
     });
 
     let authenticatedPioneer: boolean | null = null;
+    let homeScenePersisted = false;
 
     if (token) {
       try {
@@ -157,9 +159,14 @@ export default function OnboardingPage() {
         );
         authenticatedPioneer =
           response.data?.pioneer === undefined ? null : Boolean(response.data.pioneer);
+        homeScenePersisted = true;
       } catch {
         // Keep local state if API request fails.
       }
+    }
+
+    if (token && homeScenePersisted && gpsCoords) {
+      await refreshGpsVotingEligibility(gpsCoords);
     }
 
     try {
@@ -238,6 +245,45 @@ export default function OnboardingPage() {
     }
   };
 
+  const refreshGpsVotingEligibility = async (
+    coords: { latitude: number; longitude: number },
+    options: { allowPendingHomeScene?: boolean } = {}
+  ) => {
+    if (!token) {
+      setVotingEligibility(false, 'Sign in to verify voting access.');
+      return;
+    }
+
+    try {
+      const response = await api.post<{
+        id: string;
+        gpsVerified: boolean;
+        votingEligible: boolean;
+        reason?: string | null;
+      }>('/onboarding/gps-verify', coords, { token });
+
+      if (response.data?.votingEligible) {
+        setVotingEligibility(true, null);
+        setGpsError(null);
+        return;
+      }
+
+      const displayReason =
+        formatGpsReasonForDisplay(response.data?.reason) ?? 'GPS did not verify for voting.';
+      setVotingEligibility(false, displayReason);
+
+      if (options.allowPendingHomeScene && response.data?.reason === 'NO_HOME_SCENE') {
+        setGpsError(null);
+        return;
+      }
+
+      setGpsError('GPS did not verify for voting. You can still continue without voting access.');
+    } catch {
+      setVotingEligibility(false, 'GPS request failed.');
+      setGpsError('GPS could not be completed. You can still continue without voting access.');
+    }
+  };
+
   const handleGpsRequest = async () => {
     setGpsError(null);
     setLocationError(null);
@@ -258,39 +304,10 @@ export default function OnboardingPage() {
       async (pos) => {
         setGpsStatus('granted', { latitude: pos.coords.latitude, longitude: pos.coords.longitude });
 
-        if (token) {
-          try {
-            const response = await api.post<{
-              id: string;
-              gpsVerified: boolean;
-              votingEligible: boolean;
-              reason?: string | null;
-            }>(
-              '/onboarding/gps-verify',
-              { latitude: pos.coords.latitude, longitude: pos.coords.longitude },
-              { token }
-            );
-
-            if (response.data?.votingEligible) {
-              setVotingEligibility(true, null);
-            } else {
-              const displayReason =
-                formatGpsReasonForDisplay(response.data?.reason) ??
-                'GPS did not verify for voting.';
-              setVotingEligibility(false, displayReason);
-              setGpsError(
-                'GPS did not verify for voting. You can still continue without voting access.'
-              );
-            }
-          } catch {
-            setVotingEligibility(false, 'GPS request failed.');
-            setGpsError(
-              'GPS could not be completed. You can still continue without voting access.'
-            );
-          }
-        } else {
-          setVotingEligibility(false, 'Sign in to verify voting access.');
-        }
+        await refreshGpsVotingEligibility(
+          { latitude: pos.coords.latitude, longitude: pos.coords.longitude },
+          { allowPendingHomeScene: true }
+        );
 
         const detected = await reverseGeocodeWithFallback(
           pos.coords.latitude,
