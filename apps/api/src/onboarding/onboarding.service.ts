@@ -115,6 +115,7 @@ export class OnboardingService {
   ) {}
 
   private async resolveActiveFallbackScene(
+    city: string,
     state: string,
     musicCommunity: string
   ): Promise<ResolvedHomeScene | null> {
@@ -132,6 +133,42 @@ export class OnboardingService {
       { name: 'asc' as const },
       { id: 'asc' as const },
     ];
+
+    const submittedLocation = await this.placesService
+      ?.geocodeCity(city, state)
+      .catch(() => null);
+
+    if (submittedLocation) {
+      const submittedPoint = `POINT(${submittedLocation.longitude} ${submittedLocation.latitude})`;
+      const nearestRows = await this.prisma.$queryRaw<Array<{ id: string; distance: number }>>`
+        SELECT
+          id::text as id,
+          ST_Distance(geofence, ST_GeogFromText(${submittedPoint})) as distance
+        FROM communities
+        WHERE
+          tier = 'city'
+          AND "musicCommunity" = ${musicCommunity}
+          AND "isActive" = true
+          AND geofence IS NOT NULL
+        ORDER BY
+          ST_Distance(geofence, ST_GeogFromText(${submittedPoint})) ASC,
+          CASE WHEN lower(state) = lower(${state}) THEN 0 ELSE 1 END ASC,
+          "memberCount" DESC,
+          name ASC,
+          id ASC
+        LIMIT 1
+      `;
+
+      const nearestId = nearestRows[0]?.id;
+      if (nearestId) {
+        const nearestScene = await this.prisma.community.findFirst({
+          where: { id: nearestId, tier: 'city', musicCommunity, isActive: true },
+          select,
+        });
+
+        if (nearestScene) return nearestScene;
+      }
+    }
 
     const sameStateMatches = await this.prisma.community.findMany({
       where: { tier: 'city', musicCommunity, state, isActive: true },
@@ -174,7 +211,7 @@ export class OnboardingService {
     const pioneer = !exactScene?.isActive;
     const resolvedScene = exactScene?.isActive
       ? exactScene
-      : await this.resolveActiveFallbackScene(state, musicCommunity);
+      : await this.resolveActiveFallbackScene(city, state, musicCommunity);
 
     if (!resolvedScene) {
       throw new BadRequestException({

@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-19_distance-based-pioneer-fallback.md`](./2026-06-19_distance-based-pioneer-fallback.md) — makes unavailable Home Scene fallback actually distance-based when submitted city coordinates and active scene geofences are available.
 - [`2026-06-18_fake-location-provider-smoke.md`](./2026-06-18_fake-location-provider-smoke.md) — local fake location provider and onboarding smoke command for manual, GPS-first, and pioneer fallback flows without routine Google Maps API calls.
 - [`2026-06-18_onboarding-gps-location-authority.md`](./2026-06-18_onboarding-gps-location-authority.md) — locks manual-first location authority, GPS-derived city/state fallback when the user does not enter location, and GPS recheck after Home Scene persistence for voting eligibility.
 - [`2026-06-17_archive-runtime-contract.md`](./2026-06-17_archive-runtime-contract.md) — current `/plot` Archive runtime contract hardening: Archive remains descriptive and does not revive map/analytics exploration as the default MVP body.

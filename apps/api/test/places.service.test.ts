@@ -45,4 +45,20 @@ describe('PlacesService test location provider', () => {
     ]);
     expect(global.fetch).not.toHaveBeenCalled();
   });
+
+  it('geocodes supported fake cities without calling Google', async () => {
+    process.env.UPRISE_LOCATION_PROVIDER = 'fake';
+    process.env.GOOGLE_PLACES_API_KEY = 'should-not-be-used';
+
+    const service = new PlacesService();
+
+    await expect(service.geocodeCity('El Paso', 'Texas')).resolves.toEqual({
+      city: 'El Paso',
+      state: 'Texas',
+      latitude: 31.7619,
+      longitude: -106.485,
+      formattedAddress: 'El Paso, Texas, USA',
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
 });
