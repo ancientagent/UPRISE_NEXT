@@ -17,9 +17,9 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 
 ## Functional Requirements
 
-- Onboarding asks for local scene context using **City**, **State**, and **Music Community**.
-- Listener location authority is manual-first: if the user enters city/state, that submitted location is the Home Scene intent even when GPS is denied.
-- If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review.
+- Onboarding asks for local scene context using **City**, **State**, optional **ZIP/postal code**, and **Music Community**.
+- Listener location authority is manual-first: if the user enters city/state, that submitted location is the Home Scene intent even when GPS is denied. Optional ZIP/postal code is submitted-location detail for preview/context only and does not replace city/state/music-community identity.
+- If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review and may prefill ZIP/postal code when the provider returns it.
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
 - Current MVP launch selection uses the implementation list in `docs/specs/seed/music-communities.json`.
 - Current MVP launch matrix is defined in `docs/specs/seed/launch-community-city-matrix.json` as `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples.
@@ -156,7 +156,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 ## Web UI / Client Behavior
 
 - `apps/web/src/app/onboarding/page.tsx`:
-  - captures City/State/Music Community (selection-only parent community)
+  - captures City/State, optional ZIP/postal code, and Music Community (selection-only parent community)
   - lets manual city/state input set the submitted Home Scene when GPS is denied or skipped
   - lets GPS-derived reverse geocoding provide city/state when the user does not manually enter location
   - rechecks stored GPS coordinates after authenticated Home Scene persistence so GPS-first onboarding can enable voting once a scene exists
@@ -169,7 +169,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - after onboarding completion and Home Scene context load, the pioneer message is available from the notification icon in the profile strip.
   - pioneer message copy explains fallback routing and that the user can establish/uprise their own city scene once enough local users join.
 - `apps/web/src/store/onboarding.ts`:
-  - persists local onboarding state (`homeScene`, `gpsStatus`, `votingEligible`, `gpsReason`)
+  - persists local onboarding state (`homeScene`, including optional `postalCode`, `gpsStatus`, `votingEligible`, `gpsReason`)
 
 ## Acceptance Tests / Test Plan
 

@@ -1,5 +1,6 @@
 import {
   formatHomeSceneLabel,
+  formatSubmittedLocationLabel,
   normalizeApprovedMusicCommunitySelection,
   resolveOnboardingReviewState,
 } from '../src/lib/onboarding/review-resolution';
@@ -169,8 +170,20 @@ describe('onboarding review resolution', () => {
       formatHomeSceneLabel({
         city: 'Austin',
         state: 'Texas',
+        postalCode: '78704',
         musicCommunity: 'Punk',
       })
     ).toBe('Austin, Texas • Punk');
+  });
+
+  it('formats submitted location with ZIP without changing Home Scene identity', () => {
+    expect(
+      formatSubmittedLocationLabel({
+        city: 'Austin',
+        state: 'Texas',
+        postalCode: '78704',
+        musicCommunity: 'Punk',
+      })
+    ).toBe('Austin, Texas 78704');
   });
 });

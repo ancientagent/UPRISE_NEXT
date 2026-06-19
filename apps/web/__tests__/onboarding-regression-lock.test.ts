@@ -21,6 +21,7 @@ describe('/onboarding regression lock', () => {
     expect(onboardingSource).toContain('{community}');
     expect(onboardingSource).not.toContain('<option key={community} value={community} />');
     expect(onboardingSource).toContain('Selection only from the approved parent communities.');
+    expect(onboardingSource).toContain('ZIP helps describe the submitted location in your setup preview.');
     expect(onboardingSource).toContain('Request a missing music community');
     expect(onboardingSource).toContain('/onboarding/music-community-requests');
     expect(onboardingSource).toContain(
@@ -38,6 +39,7 @@ describe('/onboarding regression lock', () => {
     const onboardingSource = readRepoFile('src/app/onboarding/page.tsx');
 
     expect(onboardingSource).toContain('setHomeScene(selection);');
+    expect(onboardingSource).toContain('postalCode: postalCode.trim() || undefined,');
     expect(onboardingSource).toContain(
       'resolveOnboardingReviewState(selection, token || undefined)'
     );

@@ -8,6 +8,7 @@ export interface HomeSceneSelection {
   city: string;
   state: string;
   musicCommunity: string;
+  postalCode?: string;
   tasteTag?: string;
 }
 

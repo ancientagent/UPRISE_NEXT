@@ -63,6 +63,7 @@ Tests / verification files:
 - Do not collapse community identity to city-only or genre-only.
 - When a flow already knows current community context, inherit the music community instead of asking the user to redefine it.
 - Onboarding asks for City, State, and approved parent Music Community.
+- Onboarding also offers optional ZIP/postal code as submitted-location detail for setup preview/context; ZIP does not replace city/state/music-community identity and does not change voting or fallback authority.
 - Music Community input is selection-only; no free-text genre/community creation in onboarding.
 - Current MVP launch selection is the implementation list in `docs/specs/seed/music-communities.json` and `apps/web/src/data/music-communities.ts`.
 - Current MVP launch matrix is `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples; see `docs/specs/seed/launch-community-city-matrix.json`.
@@ -92,6 +93,7 @@ Tests / verification files:
 
 - `/onboarding` captures and persists Home Scene and GPS state.
 - `/onboarding` lets user-entered city/state remain authoritative when supplied, and uses GPS-derived city/state only when the user chooses GPS detection instead of manual entry.
+- `/onboarding` displays submitted ZIP/postal code in setup review when the user enters it or reverse geocoding returns it.
 - `/plot` resolves Home Scene context and surfaces pioneer follow-up through the notification icon.
 - `GET /communities/resolve-home` resolves exact Home Scene tuple for Plot/community anchoring.
 - `POST /onboarding/home-scene` is the server-authoritative Home Scene persistence path.

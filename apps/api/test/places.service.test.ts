@@ -24,14 +24,51 @@ describe('PlacesService test location provider', () => {
     await expect(service.reverseGeocode(30.2672, -97.7431)).resolves.toEqual({
       city: 'Austin',
       state: 'Texas',
+      postalCode: '78701',
       formattedAddress: 'Austin, Texas, USA',
     });
     await expect(service.reverseGeocode(31.7619, -106.485)).resolves.toEqual({
       city: 'El Paso',
       state: 'Texas',
+      postalCode: '79901',
       formattedAddress: 'El Paso, Texas, USA',
     });
     expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('extracts a postal code from Google reverse geocode results when available', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = 'test-key';
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: 'OK',
+        results: [
+          {
+            formatted_address: 'Austin, TX 78704, USA',
+            address_components: [
+              { long_name: 'Austin', short_name: 'Austin', types: ['locality'] },
+              {
+                long_name: 'Texas',
+                short_name: 'TX',
+                types: ['administrative_area_level_1'],
+              },
+              { long_name: '78704', short_name: '78704', types: ['postal_code'] },
+              { long_name: 'United States', short_name: 'US', types: ['country'] },
+            ],
+          },
+        ],
+      }),
+    } as any);
+
+    const service = new PlacesService();
+
+    await expect(service.reverseGeocode(30.245, -97.75)).resolves.toEqual({
+      city: 'Austin',
+      state: 'TX',
+      postalCode: '78704',
+      formattedAddress: 'Austin, TX 78704, USA',
+    });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
   it('returns launch city suggestions locally in fake mode without calling Google autocomplete', async () => {
