@@ -19,6 +19,8 @@ describe('/onboarding UX lock', () => {
     expect(onboardingSource).toContain('stays saved as your Home Scene pioneer intent');
     expect(onboardingSource).toContain('formatGpsReasonForDisplay');
     expect(onboardingSource).toContain('Your GPS location does not match your submitted Home Scene.');
+    expect(onboardingSource).toContain('ZIP Code (optional)');
+    expect(onboardingSource).toContain('Submitted location: {submittedLocationLabel}');
     expect(onboardingSource).not.toContain('list="communities"');
   });
 
@@ -29,5 +31,6 @@ describe('/onboarding UX lock', () => {
     expect(onboardingSource).toContain('refreshGpsVotingEligibility');
     expect(onboardingSource).toContain('await refreshGpsVotingEligibility(gpsCoords)');
     expect(onboardingSource).toContain('NO_HOME_SCENE');
+    expect(onboardingSource).toContain('if (detected.postalCode) setPostalCode(detected.postalCode);');
   });
 });

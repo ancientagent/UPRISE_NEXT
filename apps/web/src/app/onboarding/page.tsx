@@ -8,6 +8,7 @@ import { MUSIC_COMMUNITIES } from '@/data/music-communities';
 import { US_STATES } from '@/data/us-states';
 import {
   formatHomeSceneLabel,
+  formatSubmittedLocationLabel,
   normalizeApprovedMusicCommunitySelection,
   resolveOnboardingReviewState,
   type OnboardingReviewResolutionMode,
@@ -41,6 +42,7 @@ function formatGpsReasonForDisplay(reason?: string | null): string | null {
 interface ReverseGeocodeResponse {
   city: string | null;
   state: string | null;
+  postalCode?: string | null;
   formattedAddress: string | null;
 }
 
@@ -49,6 +51,7 @@ interface ReverseGeocodeFallbackResponse {
   locality?: string;
   principalSubdivision?: string;
   principalSubdivisionCode?: string;
+  postcode?: string;
 }
 
 interface MusicCommunityRequestResponse {
@@ -80,6 +83,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [city, setCity] = useState(homeScene?.city ?? '');
   const [state, setState] = useState(homeScene?.state ?? '');
+  const [postalCode, setPostalCode] = useState(homeScene?.postalCode ?? '');
   const [musicCommunity, setMusicCommunity] = useState(
     normalizeApprovedMusicCommunitySelection(homeScene?.musicCommunity)
   );
@@ -119,6 +123,20 @@ export default function OnboardingPage() {
       ),
     [approvedMusicCommunity, city, homeScene, state]
   );
+  const submittedLocationLabel = useMemo(
+    () =>
+      formatSubmittedLocationLabel(
+        city.trim() && state.trim()
+          ? {
+              city: city.trim(),
+              state: state.trim(),
+              musicCommunity: approvedMusicCommunity || homeScene?.musicCommunity || '',
+              postalCode: postalCode.trim() || undefined,
+            }
+          : homeScene
+      ),
+    [approvedMusicCommunity, city, homeScene, postalCode, state]
+  );
 
   const canContinue = useMemo(
     () => city.trim() && state.trim() && approvedMusicCommunity,
@@ -132,6 +150,7 @@ export default function OnboardingPage() {
       city: city.trim(),
       state: state.trim(),
       musicCommunity: approvedMusicCommunity,
+      postalCode: postalCode.trim() || undefined,
     };
 
     setHomeScene(selection);
@@ -238,6 +257,7 @@ export default function OnboardingPage() {
       return {
         city,
         state,
+        postalCode: fallbackData.postcode ?? null,
         formattedAddress: null,
       };
     } catch {
@@ -316,6 +336,7 @@ export default function OnboardingPage() {
         if (detected?.city && detected?.state) {
           setCity(detected.city);
           setState(detected.state);
+          if (detected.postalCode) setPostalCode(detected.postalCode);
           setManualLocationMode(false);
         } else {
           setManualLocationMode(true);
@@ -503,6 +524,9 @@ export default function OnboardingPage() {
                   <p className="mt-2 text-base text-black">
                     {city}, {state}
                   </p>
+                  {postalCode.trim() ? (
+                    <p className="mt-1 text-sm text-black/60">ZIP {postalCode.trim()}</p>
+                  ) : null}
                   <Button
                     size="sm"
                     variant="outline"
@@ -556,6 +580,23 @@ export default function OnboardingPage() {
                   </div>
                 </div>
               )}
+
+              <div className="mt-4 flex flex-col gap-2">
+                <label className="text-xs uppercase tracking-[0.2em] text-black/60">
+                  ZIP Code (optional)
+                </label>
+                <input
+                  inputMode="numeric"
+                  value={postalCode}
+                  onChange={(event) => setPostalCode(event.target.value)}
+                  className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
+                  placeholder="Optional ZIP for submitted location"
+                />
+                <p className="text-xs text-black/50">
+                  ZIP helps describe the submitted location in your setup preview. It does not
+                  replace the city, state, and music community Home Scene identity.
+                </p>
+              </div>
 
               <div className="mt-6 flex flex-col gap-2">
                 <label className="text-xs uppercase tracking-[0.2em] text-black/60">
@@ -643,6 +684,11 @@ export default function OnboardingPage() {
                 <div className="rounded-2xl border border-black/10 bg-white p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-black/50">Home Scene</p>
                   <p className="mt-2 text-base text-black">{selectedHomeSceneLabel}</p>
+                  {submittedLocationLabel ? (
+                    <p className="mt-1 text-sm text-black/60">
+                      Submitted location: {submittedLocationLabel}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="rounded-2xl border border-black/10 bg-white p-4">

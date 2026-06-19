@@ -8,6 +8,7 @@ export interface PlaceSuggestion {
 export interface ReverseGeocodeResult {
   city: string | null;
   state: string | null;
+  postalCode: string | null;
   formattedAddress: string | null;
 }
 
@@ -32,6 +33,7 @@ const FAKE_CITY_FIXTURES = [
   {
     city: 'Austin',
     state: 'Texas',
+    postalCode: '78701',
     latitude: 30.2672,
     longitude: -97.7431,
     aliases: ['austin', 'aus'],
@@ -39,6 +41,7 @@ const FAKE_CITY_FIXTURES = [
   {
     city: 'El Paso',
     state: 'Texas',
+    postalCode: '79901',
     latitude: 31.7619,
     longitude: -106.485,
     aliases: ['el paso', 'elp'],
@@ -46,6 +49,7 @@ const FAKE_CITY_FIXTURES = [
   {
     city: 'Houston',
     state: 'Texas',
+    postalCode: '77002',
     latitude: 29.7604,
     longitude: -95.3698,
     aliases: ['houston', 'hou'],
@@ -53,6 +57,7 @@ const FAKE_CITY_FIXTURES = [
   {
     city: 'Dallas',
     state: 'Texas',
+    postalCode: '75201',
     latitude: 32.7767,
     longitude: -96.797,
     aliases: ['dallas', 'dal'],
@@ -60,6 +65,7 @@ const FAKE_CITY_FIXTURES = [
   {
     city: 'Los Angeles',
     state: 'California',
+    postalCode: '90012',
     latitude: 34.0522,
     longitude: -118.2437,
     aliases: ['los angeles', 'la'],
@@ -67,6 +73,7 @@ const FAKE_CITY_FIXTURES = [
   {
     city: 'San Francisco',
     state: 'California',
+    postalCode: '94102',
     latitude: 37.7749,
     longitude: -122.4194,
     aliases: ['san francisco', 'sf'],
@@ -74,6 +81,7 @@ const FAKE_CITY_FIXTURES = [
   {
     city: 'San Diego',
     state: 'California',
+    postalCode: '92101',
     latitude: 32.7157,
     longitude: -117.1611,
     aliases: ['san diego', 'sd'],
@@ -242,7 +250,7 @@ export class PlacesService {
   ): Promise<ReverseGeocodeResult> {
     if (isFakeLocationProvider()) {
       if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
-        return { city: null, state: null, formattedAddress: null };
+        return { city: null, state: null, postalCode: null, formattedAddress: null };
       }
 
       const nearest = FAKE_CITY_FIXTURES.map((fixture) => ({
@@ -251,49 +259,80 @@ export class PlacesService {
       })).sort((a, b) => a.distance - b.distance)[0];
 
       if (!nearest || nearest.distance > 75000 || country.toUpperCase() !== 'US') {
-        return { city: null, state: null, formattedAddress: null };
+        return { city: null, state: null, postalCode: null, formattedAddress: null };
       }
 
       return {
         city: nearest.fixture.city,
         state: nearest.fixture.state,
+        postalCode: nearest.fixture.postalCode,
         formattedAddress: `${nearest.fixture.city}, ${nearest.fixture.state}, USA`,
       };
     }
 
     const apiKey = process.env.GOOGLE_PLACES_API_KEY;
     if (!apiKey || Number.isNaN(latitude) || Number.isNaN(longitude)) {
-      return { city: null, state: null, formattedAddress: null };
+      return { city: null, state: null, postalCode: null, formattedAddress: null };
     }
 
     const params = new URLSearchParams({
       latlng: `${latitude},${longitude}`,
-      result_type: 'locality|administrative_area_level_1',
       key: apiKey,
     });
 
     const url = `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`;
     const response = await fetch(url);
     if (!response.ok) {
-      return { city: null, state: null, formattedAddress: null };
+      return { city: null, state: null, postalCode: null, formattedAddress: null };
     }
 
     const data = await response.json();
     if (data.status !== 'OK' || !Array.isArray(data.results) || data.results.length === 0) {
-      return { city: null, state: null, formattedAddress: null };
+      return { city: null, state: null, postalCode: null, formattedAddress: null };
     }
 
-    const inCountry = data.results.find((result: any) =>
+    const isInCountry = (result: any) =>
       Array.isArray(result.address_components) &&
       result.address_components.some(
         (component: any) =>
           Array.isArray(component.types) &&
           component.types.includes('country') &&
           component.short_name?.toUpperCase() === country.toUpperCase(),
-      ),
-    );
-    const best = inCountry ?? data.results[0];
+      );
+    const inCountry = data.results.find(isInCountry);
+    const citySource =
+      data.results.find(
+        (result: any) =>
+          isInCountry(result) &&
+          Array.isArray(result.address_components) &&
+          result.address_components.some(
+            (component: any) =>
+              Array.isArray(component.types) &&
+              (component.types.includes('locality') || component.types.includes('postal_town')),
+          ) &&
+          result.address_components.some(
+            (component: any) =>
+              Array.isArray(component.types) &&
+              component.types.includes('administrative_area_level_1'),
+          ),
+      ) ??
+      inCountry ??
+      data.results[0];
+    const postalSource =
+      data.results.find(
+        (result: any) =>
+          isInCountry(result) &&
+          Array.isArray(result.address_components) &&
+          result.address_components.some(
+            (component: any) =>
+              Array.isArray(component.types) && component.types.includes('postal_code'),
+          ),
+      ) ?? citySource;
+    const best = citySource;
     const components = Array.isArray(best.address_components) ? best.address_components : [];
+    const postalComponents = Array.isArray(postalSource.address_components)
+      ? postalSource.address_components
+      : [];
 
     const cityComponent = components.find(
       (component: any) =>
@@ -304,10 +343,15 @@ export class PlacesService {
       (component: any) =>
         Array.isArray(component.types) && component.types.includes('administrative_area_level_1'),
     );
+    const postalComponent = postalComponents.find(
+      (component: any) =>
+        Array.isArray(component.types) && component.types.includes('postal_code'),
+    );
 
     return {
       city: cityComponent?.long_name ?? null,
       state: stateComponent?.short_name ?? null,
+      postalCode: postalComponent?.long_name ?? null,
       formattedAddress: typeof best.formatted_address === 'string' ? best.formatted_address : null,
     };
   }

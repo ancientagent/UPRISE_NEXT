@@ -93,6 +93,15 @@ export function formatHomeSceneLabel(selection: HomeSceneSelection | null | unde
   return buildSceneLabel(selection.city, selection.state, selection.musicCommunity);
 }
 
+export function formatSubmittedLocationLabel(
+  selection: HomeSceneSelection | null | undefined
+): string {
+  if (!selection) return '';
+  const locationLabel = buildSceneLabel(selection.city, selection.state, null);
+  const postalCode = selection.postalCode?.trim();
+  return postalCode && locationLabel ? `${locationLabel} ${postalCode}` : locationLabel;
+}
+
 export async function resolveOnboardingReviewState(
   selection: HomeSceneSelection,
   token?: string,
