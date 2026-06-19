@@ -11,7 +11,22 @@ export interface ReverseGeocodeResult {
   formattedAddress: string | null;
 }
 
+export interface CityGeocodeResult {
+  city: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+  formattedAddress: string;
+}
+
 const FAKE_LOCATION_PROVIDER = 'fake';
+
+const FAKE_STATE_ALIASES: Record<string, string> = {
+  ca: 'california',
+  california: 'california',
+  tx: 'texas',
+  texas: 'texas',
+};
 
 const FAKE_CITY_FIXTURES = [
   {
@@ -76,6 +91,11 @@ function formatFakePlaceId(city: string, state: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+function normalizeFakeState(value: string): string {
+  const normalized = value.trim().toLowerCase();
+  return FAKE_STATE_ALIASES[normalized] ?? normalized;
+}
+
 function haversineMeters(
   latitudeA: number,
   longitudeA: number,
@@ -97,6 +117,82 @@ function haversineMeters(
 
 @Injectable()
 export class PlacesService {
+  async geocodeCity(
+    city: string,
+    state: string,
+    country = 'US',
+  ): Promise<CityGeocodeResult | null> {
+    const normalizedCity = city.trim().toLowerCase();
+    const normalizedState = normalizeFakeState(state);
+    if (!normalizedCity || !normalizedState || country.toUpperCase() !== 'US') {
+      return null;
+    }
+
+    if (isFakeLocationProvider()) {
+      const fixture = FAKE_CITY_FIXTURES.find(
+        (candidate) =>
+          candidate.city.toLowerCase() === normalizedCity &&
+          normalizeFakeState(candidate.state) === normalizedState,
+      );
+
+      if (!fixture) return null;
+
+      return {
+        city: fixture.city,
+        state: fixture.state,
+        latitude: fixture.latitude,
+        longitude: fixture.longitude,
+        formattedAddress: `${fixture.city}, ${fixture.state}, USA`,
+      };
+    }
+
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    if (!apiKey) return null;
+
+    const params = new URLSearchParams({
+      address: `${city.trim()}, ${state.trim()}`,
+      components: `country:${country.toUpperCase()}`,
+      key: apiKey,
+    });
+
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`;
+    const response = await fetch(url);
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    if (data.status !== 'OK' || !Array.isArray(data.results) || data.results.length === 0) {
+      return null;
+    }
+
+    const best = data.results[0];
+    const location = best.geometry?.location;
+    if (typeof location?.lat !== 'number' || typeof location?.lng !== 'number') {
+      return null;
+    }
+
+    const components = Array.isArray(best.address_components) ? best.address_components : [];
+    const cityComponent = components.find(
+      (component: any) =>
+        Array.isArray(component.types) &&
+        (component.types.includes('locality') || component.types.includes('postal_town')),
+    );
+    const stateComponent = components.find(
+      (component: any) =>
+        Array.isArray(component.types) && component.types.includes('administrative_area_level_1'),
+    );
+
+    return {
+      city: cityComponent?.long_name ?? city.trim(),
+      state: stateComponent?.long_name ?? state.trim(),
+      latitude: location.lat,
+      longitude: location.lng,
+      formattedAddress:
+        typeof best.formatted_address === 'string'
+          ? best.formatted_address
+          : `${city.trim()}, ${state.trim()}, ${country.toUpperCase()}`,
+    };
+  }
+
   async autocompleteCities(input: string, country = 'us'): Promise<PlaceSuggestion[]> {
     if (isFakeLocationProvider()) {
       const normalizedInput = input.trim().toLowerCase();

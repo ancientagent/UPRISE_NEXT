@@ -3,7 +3,7 @@
 **ID:** `USER-ONBOARDING`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-18`
+**Last Updated:** `2026-06-19`
 
 ## Overview & Purpose
 
@@ -34,6 +34,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - GPS verification is requested only to enable voting rights.
 - If GPS is denied or unavailable, user remains affiliated but cannot vote.
 - If selected city-tier scene is inactive/unavailable, user is auto-routed to nearest active city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
+- Nearest-active fallback is distance-based when the submitted city/state can be geocoded and active candidate scenes have geofences; if coordinates are unavailable, runtime falls back to deterministic same-state/member/name ordering rather than blocking onboarding.
 - Inactive-city onboarding must persist pioneer intent and trigger pioneer notification messaging.
 - If the selected Home Scene is inactive/unavailable, GPS verification checks the submitted city/state locality while voting applies to the resolved nearest active city-tier community; the submitted city/state/music-community remains preserved as pioneer intent.
 - Pioneer notification is shown after the user is loaded into Home Scene context (routed nearest active scene when required).
@@ -47,6 +48,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - Find city-tier `Community` by exact `{city, state, musicCommunity, tier='city'}`.
   - If not found or not active, mark user as pioneer for selected `{city,state,musicCommunity}`.
   - Resolve nearest active city-tier `Community` for the selected parent music community.
+  - When submitted city/state coordinates are available, rank active city-tier candidates by PostGIS distance from the submitted location before same-state/member-count/name tie-breakers.
   - Set active listening/voting anchor to the nearest active city-tier community through `User.tunedSceneId`; preserve pioneer intent for the chosen city.
   - Persist user home-scene fields as the submitted `city`, `state`, and `musicCommunity`.
   - Auto-join via `CommunityMember` (idempotent; duplicate join ignored).

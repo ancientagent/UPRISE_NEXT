@@ -229,6 +229,69 @@ describe('OnboardingService home-scene resolution', () => {
     });
   });
 
+  it('routes a missing tuple to the nearest active city scene by distance, not member count', async () => {
+    const prisma = createPrismaMock();
+    const places = {
+      geocodeCity: jest.fn().mockResolvedValue({
+        city: 'El Paso',
+        state: 'Texas',
+        latitude: 31.7619,
+        longitude: -106.485,
+        formattedAddress: 'El Paso, Texas, USA',
+      }),
+    };
+    const service = new OnboardingService(prisma as any, places as any);
+
+    prisma.community.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'scene-austin-punk',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+        isActive: true,
+        memberCount: 1,
+      });
+    prisma.$queryRaw.mockResolvedValueOnce([{ id: 'scene-austin-punk', distance: 849000 }]);
+    prisma.__tx.user.update.mockResolvedValue({
+      id: 'user-1',
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      homeSceneTag: null,
+      tunedSceneId: 'scene-austin-punk',
+      gpsVerified: false,
+    });
+
+    const result = await service.setHomeScene('user-1', {
+      city: 'El Paso',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+    });
+
+    expect(places.geocodeCity).toHaveBeenCalledWith('El Paso', 'Texas');
+    expect(prisma.community.findMany).not.toHaveBeenCalled();
+    const distanceSql = prisma.$queryRaw.mock.calls[0][0].join('');
+    expect(distanceSql.indexOf('ST_Distance')).toBeLessThan(distanceSql.indexOf('"memberCount"'));
+    expect(prisma.__tx.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          homeSceneCity: 'El Paso',
+          homeSceneState: 'Texas',
+          homeSceneCommunity: 'Punk',
+          tunedSceneId: 'scene-austin-punk',
+        }),
+      })
+    );
+    expect(result).toMatchObject({
+      sceneId: 'scene-austin-punk',
+      resolvedCitySceneLabel: 'Austin, Texas • Punk',
+      pioneerHomeScene: { city: 'El Paso', state: 'Texas', musicCommunity: 'Punk' },
+      pioneer: true,
+    });
+  });
+
   it('verifies GPS against an exact active Home Scene geofence', async () => {
     const prisma = createPrismaMock();
     const places = { reverseGeocode: jest.fn() };

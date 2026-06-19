@@ -1,7 +1,7 @@
 # Onboarding Home Scene Agent Brief
 
 Status: active
-Last Updated: 2026-06-18
+Last Updated: 2026-06-19
 
 ## Use When
 
@@ -81,6 +81,7 @@ Tests / verification files:
 - GPS is requested to enable voting rights only.
 - Users can participate without GPS but cannot vote when GPS is denied/unavailable.
 - If the selected city-tier scene is inactive/unavailable, preserve pioneer intent and route to nearest active city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
+- Nearest-active fallback is distance-based when the submitted city/state can be geocoded and active candidate scenes have geofences; if coordinates are unavailable, runtime falls back to deterministic same-state/member/name ordering instead of blocking onboarding.
 - For inactive/unavailable Home Scenes, the submitted city/state/music-community remains the user's pioneer intent while `tunedSceneId` stores the resolved active listening/voting anchor.
 - For inactive/unavailable Home Scenes, GPS verification checks the submitted city/state locality, while `tunedSceneId` stores the resolved active listening/voting anchor.
 - Voting for a pioneer fallback user is allowed in the resolved nearest active community after submitted-location GPS verification; voting is not allowed in arbitrary visitor scenes.
