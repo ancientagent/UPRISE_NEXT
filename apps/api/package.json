@@ -20,7 +20,8 @@
     "test:db": "jest \"communities.test.ts\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "smoke:onboarding-location": "node --env-file=.env scripts/smoke-onboarding-location.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.0",
