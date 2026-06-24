@@ -35,6 +35,7 @@ Runtime files:
 Specs / locks:
 - `docs/specs/economy/revenue-and-pricing.md`
 - `docs/specs/economy/print-shop-and-promotions.md`
+- `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md`
 - `docs/solutions/MVP_EXPLICIT_DEFERRED_LIST_R1.md`
 - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_SOURCE_DASHBOARD_SURFACE_CONTRACT_R1.md`
@@ -57,6 +58,7 @@ Tests / verification files:
 - The paid ad slot is not a fourth song and not its own rotation entry.
 - Premium analytics must remain descriptive, not prescriptive or comparative ranking.
 - Discovery Pass / subscription / billing / entitlement infrastructure is not implemented yet.
+- `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` is the active boundary packet for avoiding accidental billing, promotions, business-dashboard, coupon/offer, or premium-analytics implementation.
 
 ## Current Runtime Pointers
 - `/source-dashboard` is the current source-side operating shell.
@@ -75,6 +77,7 @@ Load only if touched:
 ## Design / Implementation Boundaries
 - Do not implement a business dashboard unless explicitly activated.
 - Do not reintroduce a current MVP Promotions tab.
+- Do not add `Upgrade`, `Buy`, `Subscribe`, `Promote`, `Boost`, `Redeem`, `Analytics`, or `Business Dashboard` CTAs unless an active spec explicitly authorizes that exact current runtime surface.
 - Do not turn paid promo/ad packages into algorithmic boosting or Fair Play influence.
 - Do not create pay-to-rank, pay-to-vote, or pay-to-govern mechanics.
 - Do not add billing/subscription infrastructure from spec text alone.

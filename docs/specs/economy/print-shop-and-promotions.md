@@ -8,6 +8,15 @@
 ## Overview & Purpose
 Defines the Promotions surface and the Print Shop issuance model. The Print Shop is infrastructure for limited‑run digital artifacts and Proof‑of‑Support, not a marketplace.
 
+## Current MVP Boundary
+This spec preserves Print Shop and Promotions doctrine, but current MVP runtime
+only implements the source-facing event-write lane. Business promotions, Offers,
+Runs, billing, artifacts, carry/redeem, and paid Promotions management remain
+deferred.
+
+Use `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` before promoting any
+commercial Print Shop or Promotions behavior into runtime.
+
 ## User Roles & Use Cases
 - Artists and promoters purchase Runs to issue digital artifacts.
 - Promoters create events from Print Shop as the uniform event-creation entrypoint.
@@ -24,9 +33,11 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Proof-of-Support may mint artifacts and award Activity Points.
 - Offers propagate only by explicit user carry/redeem action.
 - Print Shop and promotions must never alter Fair Play, propagation thresholds, or civic authority.
-- For current MVP phase, purchasable print artifacts focus on event fliers for touring workflows.
-- Business promotion submissions are auto-published in current phase (no pre-publish moderation queue).
-- Business promotion submission remains account-attached even when the business does not maintain a broader in-app source/profile surface.
+- For the current MVP event-write phase, Print Shop supports event creation but
+  not purchasable artifact Runs.
+- Business promotion submissions, when later activated, must remain
+  account-attached even when the business does not maintain a broader in-app
+  source/profile surface.
 
 ### Implemented Now
 - Minimal source-facing event-write lane:
@@ -45,6 +56,7 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - Dedicated Promotions domain models (`Offer`, billing linkage, carry/redeem ledger) beyond read projection.
 - Limited flier minting variants are deferred (not required in current MVP phase).
 - Shirt creation flows are deferred until avatar-wearable framing is implemented; shirts may appear as non-actionable "coming soon" catalog entries.
+- Business promotion submission and auto-publish runtime.
 
 ## Non-Functional Requirements
 - No marketplace behavior, resale, or bidding.
@@ -99,10 +111,10 @@ Defines the Promotions surface and the Print Shop issuance model. The Print Shop
 - linked Artist/Band members can reach `/print-shop` directly from their artist-facing source page via `Open Print Shop`.
 - linked Artist/Band members must carry the active source context into `/print-shop`; generic membership without a selected managed source must not create an unattached Artist/Band event.
 - promoter-capability users may create promoter-lane events without an `artistBandId`, but the event still attaches to the resolved active city-tier Home Scene community.
-- Promotional Pack setup requires explicit target scope selection (city/state/community).
-- Businesses submit promotions from a Print Shop-attached account even when they do not have a broader in-app profile/presence.
+- Promotional Pack setup is deferred; when later activated it requires explicit target scope selection (city/state/community).
+- Business promotion submission is deferred; when later activated it should come from a Print Shop-attached account even when the business does not have a broader in-app profile/presence.
 - Business submission should be treated as part of a business-facing source dashboard, not as anonymous one-off intake.
-- Business promotion submissions auto-publish for current phase and are handled by post-publish moderation policy.
+- Business promotion auto-publish and post-publish moderation policy are deferred until business promotion submission is activated.
 - Artifact collections are visible on profiles.
 
 ## Acceptance Tests / Test Plan
