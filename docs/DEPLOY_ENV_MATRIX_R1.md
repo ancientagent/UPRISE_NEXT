@@ -130,6 +130,27 @@ Current configured staging values:
 - `DIRECT_URL`: intentionally not set yet; add only when hosted Prisma
   migration execution is wired.
 
+Repeatable read-only staging API smoke:
+
+```bash
+UPRISE_API_URL=https://uprise-api-staging.fly.dev pnpm run smoke:staging:api
+```
+
+Add `UPRISE_EXPECTED_CORS_ORIGIN=<confirmed web origin>` to the command when
+verifying CORS for a specific Vercel preview or stable staging domain.
+
+Launch community seed guard:
+
+- Use `pnpm --filter api run seed:launch-communities:dry-run` before any write
+  seed to inspect the `48` tuple plan without touching a database.
+- Any non-local seed target must set
+  `UPRISE_CONFIRM_LAUNCH_COMMUNITY_SEED=seed-launch-communities:<database_name>`.
+- For the documented Neon staging database, the expected confirmation is
+  `seed-launch-communities:uprise_staging`.
+- This confirmation requirement does not replace human/provider verification;
+  confirm the visible Neon project, branch, database, and `DATABASE_URL` target
+  before running the write command.
+
 Recommended product-first resource names:
 
 - Vercel project: `uprise-web-staging`

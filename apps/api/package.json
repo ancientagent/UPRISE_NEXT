@@ -12,6 +12,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "seed:launch-communities": "tsx prisma/seed.ts",
+    "seed:launch-communities:dry-run": "tsx prisma/seed.ts --dry-run",
     "seed:radiyo-fixture": "node --env-file=.env scripts/seed-radiyo-dev-fixture.mjs",
     "seed:print-shop-creator": "node --env-file=.env scripts/seed-print-shop-creator-user.mjs",
     "seed:artist-fixture-roster": "node --env-file=.env scripts/seed-artist-fixture-roster.mjs",
@@ -21,7 +22,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "smoke:onboarding-location": "node --env-file=.env scripts/smoke-onboarding-location.mjs"
+    "smoke:onboarding-location": "node --env-file=.env scripts/smoke-onboarding-location.mjs",
+    "smoke:staging:api": "node scripts/smoke-staging-api.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.0",

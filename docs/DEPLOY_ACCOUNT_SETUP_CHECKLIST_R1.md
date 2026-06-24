@@ -143,6 +143,31 @@ After the first deployment exists:
   alias)
 - One read-only product route can load against staging data.
 
+Repeatable read-only smoke:
+
+```bash
+UPRISE_API_URL=https://uprise-api-staging.fly.dev pnpm run smoke:staging:api
+```
+
+Optional CORS verification when a staging web origin is known:
+
+```bash
+UPRISE_API_URL=https://uprise-api-staging.fly.dev \
+UPRISE_EXPECTED_CORS_ORIGIN=<confirmed Vercel preview or staging origin> \
+pnpm run smoke:staging:api
+```
+
+Launch community seed safety:
+
+- Always run `pnpm --filter api run seed:launch-communities:dry-run` before a
+  write seed.
+- Non-local database targets require
+  `UPRISE_CONFIRM_LAUNCH_COMMUNITY_SEED=seed-launch-communities:<database_name>`.
+- For Neon staging, the expected confirmation value is
+  `seed-launch-communities:uprise_staging`.
+- Do not run the write seed from a shell until the visible provider/project,
+  database name, and `DATABASE_URL` target have been confirmed.
+
 ## Deferred Setup
 
 Socket:

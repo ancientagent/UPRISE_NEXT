@@ -32,6 +32,33 @@ Run from the repo root when a target database has been intentionally selected:
 pnpm --filter api run seed:launch-communities
 ```
 
+Dry-run first from the repo root to inspect the exact launch matrix without
+opening a Prisma connection or writing to any database:
+
+```bash
+pnpm --filter api run seed:launch-communities:dry-run
+```
+
+Safety:
+
+- Local database targets with host `localhost`, `127.0.0.1`, or `::1` can run
+  without an extra confirmation variable.
+- Any non-local `DATABASE_URL` is refused unless
+  `UPRISE_CONFIRM_LAUNCH_COMMUNITY_SEED` matches the database name in this
+  exact form:
+
+```bash
+UPRISE_CONFIRM_LAUNCH_COMMUNITY_SEED=seed-launch-communities:<database_name>
+```
+
+Example for the staging database name documented in the deploy matrix:
+
+```bash
+DATABASE_URL="<confirmed Neon pooled URL for uprise_staging>" \
+UPRISE_CONFIRM_LAUNCH_COMMUNITY_SEED=seed-launch-communities:uprise_staging \
+pnpm --filter api run seed:launch-communities
+```
+
 Behavior:
 
 - Reads `docs/specs/seed/launch-community-city-matrix.json`.

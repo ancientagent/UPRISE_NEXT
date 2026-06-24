@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added staging readiness and launch seed safety guardrails: `seed:launch-communities:dry-run`, non-local `DATABASE_URL` confirmation before launch-community seed writes, read-only staging API health smoke command, and updated deploy/seed docs; see `docs/handoff/2026-06-24_staging-readiness-and-seed-safety.md`.
 - Added player/profile contract hardening for the Home-side pull-down profile seam: regression coverage now locks the listener profile to in-place `/plot` expansion, bottom-player placement, route separation from `/users/[id]`, and exclusion of source-dashboard tooling from the expanded listener profile branch; see `docs/handoff/2026-06-24_player-profile-contract-hardening.md`.
 - Added Plot shell contract hardening for the current `Feed`, `Events`, `Archive` tab model: regression coverage now rejects user-facing `Promotions` / `Statistics` tabs, active `PlotPromotionsPanel` / `StatisticsPanel` mounting, inline Plot Events calendar mutation controls, and inline Feed insert engagement controls; see `docs/handoff/2026-06-24_plot-shell-archive-contract-hardening.md`.
 - Added optional onboarding ZIP/postal-code preview support: users can offer ZIP during onboarding, GPS reverse geocoding can prefill it when available, and setup review displays it as submitted-location detail without changing the city/state/music-community Home Scene identity; see `docs/handoff/2026-06-19_onboarding-zip-preview.md`.
