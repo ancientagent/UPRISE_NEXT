@@ -50,6 +50,7 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).not.toContain('getEngagementWheelActions');
     expect(artistSource).not.toContain('engagement-wheel');
     expect(artistSource).not.toContain('blastArtistBandSignal');
+    expect(artistSource).not.toContain("'Blast'");
     expect(artistSource).not.toContain("{busyAction === 'blast' ? 'Blasting...' : 'Blast'}");
     expect(artistSource).toContain('Songs / Releases');
     expect(artistSource).toContain('Listen Here');
@@ -63,6 +64,8 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('track.viewerHasCollected');
     expect(artistSource).toContain('track.viewerHasRecommended');
     expect(artistSource).toMatch(/disabled=\{[\s\S]*!isCollected[\s\S]*isRecommended/);
+    expect(artistSource).toContain('onClick={() => void handleCollectTrack(track)}');
+    expect(artistSource).toContain('onClick={() => void handleRecommendTrack(track)}');
     expect(artistSource).toContain('Playback timeline for');
     expect(artistSource).not.toContain('Play Single');
     expect(artistSource).toContain('Identity');

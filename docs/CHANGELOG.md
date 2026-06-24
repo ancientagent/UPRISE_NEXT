@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added executable RADIYO vs SPACE engagement-wheel contract coverage so `Play It Loud` / `Upvote` stay on RADIYO, `Blast` stays in SPACE, and Artist Profile remains a no-wheel direct-listen surface; see `docs/handoff/2026-06-24_radiyo-space-action-contract.md`.
 - Added a read-only launch-community seed verification command that checks the expected `48` active city-tier tuples and geofences against a confirmed database target without running seed writes; see `docs/handoff/2026-06-24_launch-community-seed-verification.md`.
 - Added a full staging-readiness smoke command for the Vercel -> Fly -> Neon/PostGIS path, including API health, PostGIS, optional web/CORS, and public Places checks; current live verification found Fly staging CORS does not allow the current Vercel main origins; see `docs/handoff/2026-06-24_staging-readiness-smoke-2.md`.
 - Added onboarding/Home Scene smoke safety guardrails: `smoke:onboarding-location:dry-run` now reports manual, GPS-first, and pioneer-fallback coverage without writes, and full non-local onboarding smokes require host-scoped confirmation before temporary user/database writes; see `docs/handoff/2026-06-24_onboarding-location-smoke-safety.md`.
