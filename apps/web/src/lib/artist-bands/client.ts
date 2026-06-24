@@ -1,7 +1,7 @@
 import { api } from '@/lib/api';
 import type { ArtistBandProfile } from '@uprise/types';
 
-export async function getArtistBandProfile(id: string, token: string): Promise<ArtistBandProfile> {
+export async function getArtistBandProfile(id: string, token?: string): Promise<ArtistBandProfile> {
   const response = await api.get<ArtistBandProfile>(`/artist-bands/${id}/profile`, { token });
   if (!response.data) {
     throw new Error('Artist profile response was empty.');

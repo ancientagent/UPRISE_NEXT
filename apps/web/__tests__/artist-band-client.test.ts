@@ -40,6 +40,28 @@ describe('artist band client', () => {
     );
   });
 
+  it('loads public artist profile without an auth token', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: { id: 'artist-1', name: 'Signal Static' },
+      }),
+    });
+
+    await getArtistBandProfile('artist-1');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/artist-bands/artist-1/profile',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.not.objectContaining({
+          Authorization: expect.any(String),
+        }),
+      }),
+    );
+  });
+
   it('posts artist follows through the shared follow endpoint', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,

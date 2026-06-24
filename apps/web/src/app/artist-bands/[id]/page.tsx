@@ -92,18 +92,11 @@ export default function ArtistBandProfilePage() {
       return;
     }
 
-    if (!token) {
-      setProfile(null);
-      setError('You must be signed in to view artist pages.');
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
-      const response = await getArtistBandProfile(artistBandId, token);
+      const response = await getArtistBandProfile(artistBandId, token ?? undefined);
       setProfile(response);
     } catch (e) {
       setProfile(null);
