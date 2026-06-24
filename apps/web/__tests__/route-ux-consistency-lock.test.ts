@@ -51,6 +51,35 @@ describe('cross-route UX consistency lock', () => {
     expect(usersSource).toContain('Linked Artist/Band Entities');
   });
 
+  it('keeps /users profiles as listener collection read surfaces, not source tooling', () => {
+    const usersSource = readRepoFile('src/app/users/[id]/page.tsx');
+
+    expect(usersSource).toContain('User Profile');
+    expect(usersSource).toContain('Collection Display');
+    expect(usersSource).toContain('Collection');
+    expect(usersSource).toContain('Linked Artist/Band Entities');
+    expect(usersSource).not.toContain('SourceAccountSwitcher');
+    expect(usersSource).not.toContain('Source Dashboard');
+    expect(usersSource).not.toContain('Release Deck');
+    expect(usersSource).not.toContain('Print Shop');
+    expect(usersSource).not.toContain('Open Registrar');
+  });
+
+  it('keeps Artist Profile separate from the listener profile pull-down seam', () => {
+    const artistSource = readRepoFile('src/app/artist-bands/[id]/page.tsx');
+    const dashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
+
+    expect(artistSource).toContain('Artist Page');
+    expect(artistSource).toContain('Share Artist Page');
+    expect(artistSource).toContain('Source Dashboard');
+    expect(artistSource).not.toContain('plot-profile-seam-toggle');
+    expect(artistSource).not.toContain('Return to Plot Tabs');
+    expect(artistSource).not.toContain('data-slot="expanded-profile-player-strip"');
+    expect(dashboardSource).toContain('Source-facing tools live here.');
+    expect(dashboardSource).toContain('Return to Listener Account');
+    expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
+  });
+
   it('keeps print-shop event creation source-facing and auth-gated', () => {
     const printShopSource = readRepoFile('src/app/print-shop/page.tsx');
 
