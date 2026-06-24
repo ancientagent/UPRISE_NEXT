@@ -10,6 +10,7 @@ function readRepoFile(relativePath: string): string {
 describe('release deck shell lock', () => {
   it('keeps release deck inside the source dashboard system', () => {
     const releaseDeckSource = readRepoFile('src/app/source-dashboard/release-deck/page.tsx');
+    const releaseDeckValidationSource = readRepoFile('src/lib/source/release-deck-validation.ts');
 
     expect(releaseDeckSource).toContain('Back to Source Dashboard');
     expect(releaseDeckSource).toContain('Return to Listener Account');
@@ -21,9 +22,12 @@ describe('release deck shell lock', () => {
     expect(releaseDeckSource).toContain('attach directly to the active source account');
     expect(releaseDeckSource).toContain('Release Single');
     expect(releaseDeckSource).toContain('Audio File URL');
-    expect(releaseDeckSource).toContain('artistBandId: activeSource.id');
+    expect(releaseDeckSource).toContain('buildReleaseDeckTrackPayload(form, activeSource, communityId)');
     expect(releaseDeckSource).toContain('createTrack(payload, token)');
     expect(releaseDeckSource).toContain('Source-owned release');
     expect(releaseDeckSource).toContain('Legacy carry-forward');
+    expect(releaseDeckValidationSource).toContain('artistBandId: activeSource.id');
+    expect(releaseDeckValidationSource).toContain('Audio File URL must be an http(s) URL for the current hosted-file MVP.');
+    expect(releaseDeckValidationSource).toContain('Cover Art URL must be an http(s) URL for the current hosted-file MVP.');
   });
 });
