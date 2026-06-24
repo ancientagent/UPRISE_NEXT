@@ -57,6 +57,7 @@
 
 ### Changed
 
+- Annotated canon Plot-surface references with the current MVP runtime override so older Promotions / Statistics / Social tab language is preserved as canon context without authorizing current Plot tabs beyond Feed, Events, and Archive; see `docs/handoff/2026-06-24_plot-tab-canon-annotations.md`.
 - Hardened Release Deck MVP validation so source-owned track creation is built through a focused payload helper with nonblank title, positive duration, and hosted `http(s)` audio/cover URL validation while real upload/transcode/storage remains deferred; see `docs/handoff/2026-06-24_release-deck-mvp-validation.md`.
 - Hardened source account context so persisted active source selection is scoped to the current signed-in user, stale source IDs clear before Source Dashboard / Release Deck / Print Shop / Registrar tooling runs, and Artist Profile source-tool handoffs stamp the current user alongside the source ID; see `docs/handoff/2026-06-24_source-account-context-hardening.md`.
 - Aligned Artist Profile runtime access with the active public source-page contract: `GET /artist-bands/:id/profile` now supports optional auth, signed-out users can load the direct-listen Artist Profile, and viewer/source actions remain signed-in or member-gated; see `docs/handoff/2026-06-24_artist-profile-public-read.md`.

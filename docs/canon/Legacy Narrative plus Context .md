@@ -4,6 +4,11 @@
 **Purpose:** Comprehensive platform specification — conceptual foundation for all technical development  
 **Last Updated:** February 2026 (v2 — Full Rewrite)
 
+> Current MVP runtime override (2026-06-24): this legacy narrative preserves older launch-era surface language.
+> For current Plot UI, the user-facing tab set is Feed, Events, and Archive. Older references in this file to
+> Promotions, Statistics, or Social as launch Plot tabs are historical/canon context only and do not authorize
+> current MVP runtime tabs.
+
 ---
 
 ## 1. Location & Scene Structure

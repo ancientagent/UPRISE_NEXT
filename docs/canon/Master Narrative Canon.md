@@ -184,6 +184,9 @@ The Plot is governed by Scene rules, not individual preference.
 --- Page 8 ---
 
 6.3 Plot Surfaces
+Current MVP runtime override (2026-06-24): the user-facing Plot tab set is Feed, Events, and Archive.
+Promotions/business surfaces are deferred; Social remains V2/hidden; Statistics/Scene Map content is descriptive
+Archive context, not a current user-facing Statistics tab.
 The Plot is composed of multiple fixed surfaces:
 Activity Feed (S.E.E.D Feed) - Displays Signals explicitly Blasted into the Scene - Displays new releases entering Fair Play -
 Displays civic updates (registrations, motions, milestones) - Contains the Statistics View and Scene Map
