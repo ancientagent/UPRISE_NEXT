@@ -61,7 +61,7 @@ export default function ArtistBandProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { token, user } = useAuthStore();
-  const { activeSourceId, setActiveSourceId } = useSourceAccountStore();
+  const { activeSourceId, activeSourceUserId, setActiveSourceId } = useSourceAccountStore();
 
   const [profile, setProfile] = useState<ArtistBandProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -131,7 +131,7 @@ export default function ArtistBandProfilePage() {
     if (!profile || !user?.id) return false;
     return profile.members.some((member) => member.userId === user.id);
   }, [profile, user?.id]);
-  const sourceContextMatchesProfile = activeSourceId === profile?.id;
+  const sourceContextMatchesProfile = activeSourceId === profile?.id && activeSourceUserId === user?.id;
 
   useEffect(() => {
     if (!demoTracks.length) {
@@ -396,7 +396,7 @@ export default function ArtistBandProfilePage() {
                     variant="outline"
                     className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                   >
-                    <Link href="/source-dashboard" onClick={() => setActiveSourceId(profile.id)}>
+                    <Link href="/source-dashboard" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>
                       Source Dashboard
                     </Link>
                   </Button>
@@ -406,7 +406,7 @@ export default function ArtistBandProfilePage() {
                     variant="outline"
                     className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                   >
-                    <Link href="/source-dashboard/release-deck" onClick={() => setActiveSourceId(profile.id)}>
+                    <Link href="/source-dashboard/release-deck" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>
                       Open Release Deck
                     </Link>
                   </Button>
@@ -416,7 +416,7 @@ export default function ArtistBandProfilePage() {
                     variant="outline"
                     className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                   >
-                    <Link href="/print-shop" onClick={() => setActiveSourceId(profile.id)}>
+                    <Link href="/print-shop" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>
                       Open Print Shop
                     </Link>
                   </Button>
@@ -426,7 +426,7 @@ export default function ArtistBandProfilePage() {
                     variant="outline"
                     className="plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
                   >
-                    <Link href="/registrar" onClick={() => setActiveSourceId(profile.id)}>
+                    <Link href="/registrar" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>
                       Open Registrar
                     </Link>
                   </Button>

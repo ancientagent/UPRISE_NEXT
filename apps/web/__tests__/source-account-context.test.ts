@@ -8,11 +8,14 @@ describe('source account context store', () => {
 
   it('stores and clears the active source account id', () => {
     expect(useSourceAccountStore.getState().activeSourceId).toBeNull();
+    expect(useSourceAccountStore.getState().activeSourceUserId).toBeNull();
 
-    useSourceAccountStore.getState().setActiveSourceId('artist-band-1');
+    useSourceAccountStore.getState().setActiveSourceId('artist-band-1', 'user-1');
     expect(useSourceAccountStore.getState().activeSourceId).toBe('artist-band-1');
+    expect(useSourceAccountStore.getState().activeSourceUserId).toBe('user-1');
 
     useSourceAccountStore.getState().clearActiveSourceId();
     expect(useSourceAccountStore.getState().activeSourceId).toBeNull();
+    expect(useSourceAccountStore.getState().activeSourceUserId).toBeNull();
   });
 });

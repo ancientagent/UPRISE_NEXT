@@ -58,7 +58,7 @@ export default function RegistrarPage() {
   const router = useRouter();
   const { token, user } = useAuthStore();
   const { homeScene, isVisitor, tunedScene } = useOnboardingStore();
-  const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
+  const { activeSourceId, activeSourceUserId, clearActiveSourceId } = useSourceAccountStore();
 
   const [selectedAction, setSelectedAction] = useState<'artist_band' | 'promoter' | null>(null);
   const [entityType, setEntityType] = useState<RegistrarEntityType>('band');
@@ -189,11 +189,15 @@ export default function RegistrarPage() {
   }, [token, user?.id]);
 
   useEffect(() => {
+    if (activeSourceId && (!user?.id || activeSourceUserId !== user.id)) {
+      clearActiveSourceId();
+      return;
+    }
     if (!activeSourceId) return;
     if (managedSources.length === 0) return;
     if (activeSource) return;
     clearActiveSourceId();
-  }, [activeSource, activeSourceId, clearActiveSourceId, managedSources.length]);
+  }, [activeSource, activeSourceId, activeSourceUserId, clearActiveSourceId, managedSources.length, user?.id]);
 
   const loadEntries = async () => {
     if (!token) {

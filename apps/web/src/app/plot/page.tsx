@@ -1311,6 +1311,7 @@ export default function PlotPage() {
                 {token && managedArtistBands.length > 0 ? (
                   <SourceAccountSwitcher
                     sources={managedArtistBands}
+                    currentUserId={user?.id ?? null}
                     onSelectListener={() => router.push('/plot')}
                     onSelectSource={() => router.push('/source-dashboard')}
                   />

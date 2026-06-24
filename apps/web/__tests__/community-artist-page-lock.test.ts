@@ -27,7 +27,7 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain('const viewerCanOpenPrintShop = useMemo(() => {');
     expect(artistSource).toContain('profile.members.some((member) => member.userId === user.id)');
     expect(artistSource).toContain(
-      'const sourceContextMatchesProfile = activeSourceId === profile?.id;'
+      'const sourceContextMatchesProfile = activeSourceId === profile?.id && activeSourceUserId === user?.id;'
     );
     expect(artistSource).toContain('getArtistBandProfile(artistBandId, token ?? undefined)');
     expect(artistSource).not.toContain('You must be signed in to view artist pages.');

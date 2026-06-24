@@ -17,7 +17,7 @@ export default function SourceDashboardPage() {
   const router = useRouter();
   const { token, user } = useAuthStore();
   const { homeScene } = useOnboardingStore();
-  const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
+  const { activeSourceId, activeSourceUserId, clearActiveSourceId } = useSourceAccountStore();
 
   const [profile, setProfile] = useState<CurrentUserSourceProfile | null>(null);
   const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
@@ -95,11 +95,15 @@ export default function SourceDashboardPage() {
       : 'Open the source-facing Print Shop lane through your linked artist/band membership. GPS verification is still required before promoter capability can progress in Registrar.';
 
   useEffect(() => {
+    if (activeSourceId && (!user?.id || activeSourceUserId !== user.id)) {
+      clearActiveSourceId();
+      return;
+    }
     if (!activeSourceId) return;
     if (managedSources.length === 0) return;
     if (activeSource) return;
     clearActiveSourceId();
-  }, [activeSource, activeSourceId, clearActiveSourceId, managedSources.length]);
+  }, [activeSource, activeSourceId, activeSourceUserId, clearActiveSourceId, managedSources.length, user?.id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -196,6 +200,7 @@ export default function SourceDashboardPage() {
 
         <SourceAccountSwitcher
           sources={managedSources}
+          currentUserId={user?.id ?? null}
           onSelectSource={() => router.push('/source-dashboard')}
           onSelectListener={() => router.push('/plot')}
         />

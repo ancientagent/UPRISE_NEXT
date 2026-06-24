@@ -115,11 +115,11 @@ describe('cross-route UX consistency lock', () => {
 
     expect(artistSource).toContain('const viewerCanOpenPrintShop = useMemo(() => {');
     expect(artistSource).toContain("profile.members.some((member) => member.userId === user.id)");
-    expect(artistSource).toContain('const sourceContextMatchesProfile = activeSourceId === profile?.id;');
-    expect(artistSource).toContain('<Link href="/source-dashboard" onClick={() => setActiveSourceId(profile.id)}>');
-    expect(artistSource).toContain('<Link href="/source-dashboard/release-deck" onClick={() => setActiveSourceId(profile.id)}>');
-    expect(artistSource).toContain('<Link href="/print-shop" onClick={() => setActiveSourceId(profile.id)}>');
-    expect(artistSource).toContain('<Link href="/registrar" onClick={() => setActiveSourceId(profile.id)}>');
+    expect(artistSource).toContain('const sourceContextMatchesProfile = activeSourceId === profile?.id && activeSourceUserId === user?.id;');
+    expect(artistSource).toContain('<Link href="/source-dashboard" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>');
+    expect(artistSource).toContain('<Link href="/source-dashboard/release-deck" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>');
+    expect(artistSource).toContain('<Link href="/print-shop" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>');
+    expect(artistSource).toContain('<Link href="/registrar" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>');
   });
 
   it('keeps a dedicated source dashboard route for source-side tools', () => {
@@ -138,6 +138,21 @@ describe('cross-route UX consistency lock', () => {
     expect(dashboardSource).toContain('source-side releases and events can now attach directly');
     expect(dashboardSource).toContain('member sync work, and capability-code progress');
     expect(dashboardSource).toContain('Open the source-facing Print Shop lane through your linked artist/band membership.');
+  });
+
+  it('clears stale persisted source context when the signed-in user changes', () => {
+    const dashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
+    const releaseDeckSource = readRepoFile('src/app/source-dashboard/release-deck/page.tsx');
+    const printShopSource = readRepoFile('src/app/print-shop/page.tsx');
+    const registrarSource = readRepoFile('src/app/registrar/page.tsx');
+
+    expect(dashboardSource).toContain('activeSourceUserId !== user.id');
+    expect(dashboardSource).toContain('currentUserId={user?.id ?? null}');
+    expect(releaseDeckSource).toContain('activeSourceUserId !== user.id');
+    expect(releaseDeckSource).toContain('Select a source account before opening Release Deck.');
+    expect(printShopSource).toContain('const sourceContextBelongsToUser = Boolean(user?.id && activeSourceUserId === user.id);');
+    expect(printShopSource).toContain('activeSourceUserId !== user.id');
+    expect(registrarSource).toContain('activeSourceUserId !== user.id');
   });
 
   it('keeps release deck source-facing and tied to active source context', () => {

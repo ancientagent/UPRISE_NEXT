@@ -30,7 +30,7 @@ const emptyForm: ReleaseDeckFormState = {
 
 export default function ReleaseDeckPage() {
   const { token, user } = useAuthStore();
-  const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
+  const { activeSourceId, activeSourceUserId, clearActiveSourceId } = useSourceAccountStore();
 
   const [currentUserProfile, setCurrentUserProfile] = useState<CurrentUserSourceProfile | null>(null);
   const [sourceProfile, setSourceProfile] = useState<ArtistBandProfile | null>(null);
@@ -46,10 +46,22 @@ export default function ReleaseDeckPage() {
 
     async function load() {
       if (!token || !user?.id) {
+        if (activeSourceId) {
+          clearActiveSourceId();
+        }
         setCurrentUserProfile(null);
         setSourceProfile(null);
         setLoading(false);
         setError('Sign in is required before opening Release Deck.');
+        return;
+      }
+
+      if (activeSourceId && activeSourceUserId !== user.id) {
+        clearActiveSourceId();
+        setCurrentUserProfile(null);
+        setSourceProfile(null);
+        setLoading(false);
+        setError('Select a source account before opening Release Deck.');
         return;
       }
 
@@ -100,7 +112,7 @@ export default function ReleaseDeckPage() {
     return () => {
       cancelled = true;
     };
-  }, [activeSourceId, clearActiveSourceId, token, user?.id]);
+  }, [activeSourceId, activeSourceUserId, clearActiveSourceId, token, user?.id]);
 
   const activeSource = useMemo(
     () => currentUserProfile?.managedArtistBands.find((source) => source.id === activeSourceId) ?? null,

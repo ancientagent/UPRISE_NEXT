@@ -16,6 +16,10 @@ describe('source account switcher lock', () => {
     expect(switcherSource).toContain('Switch account context');
     expect(switcherSource).toContain('Listener Account');
     expect(switcherSource).toContain('Stay signed into one account and switch into the source accounts you manage.');
+    expect(switcherSource).toContain('currentUserId');
+    expect(switcherSource).toContain('activeSourceUserId === currentUserId');
+    expect(switcherSource).toContain('setActiveSourceId(source.id, currentUserId)');
     expect(plotSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
+    expect(plotSource).toContain('currentUserId={user?.id ?? null}');
   });
 });

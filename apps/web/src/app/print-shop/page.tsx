@@ -61,7 +61,7 @@ function parseCoordinate(value: string, requiredMessage: string, invalidMessage:
 export default function PrintShopPage() {
   const { token, user } = useAuthStore();
   const { homeScene } = useOnboardingStore();
-  const { activeSourceId, clearActiveSourceId } = useSourceAccountStore();
+  const { activeSourceId, activeSourceUserId, clearActiveSourceId } = useSourceAccountStore();
 
   const [form, setForm] = useState(emptyForm);
   const [maxAttendeesInput, setMaxAttendeesInput] = useState('');
@@ -180,7 +180,10 @@ export default function PrintShopPage() {
   }, [token]);
 
   const managedArtistBands = profile?.managedArtistBands ?? [];
-  const activeSource = managedArtistBands.find((entity) => entity.id === activeSourceId) ?? null;
+  const sourceContextBelongsToUser = Boolean(user?.id && activeSourceUserId === user.id);
+  const activeSource = sourceContextBelongsToUser
+    ? managedArtistBands.find((entity) => entity.id === activeSourceId) ?? null
+    : null;
   const canCreateEvent = promoterGranted || managedArtistBands.length > 0;
 
   const eligibilityMessage = useMemo(() => {
@@ -199,11 +202,15 @@ export default function PrintShopPage() {
     : 'Unavailable';
 
   useEffect(() => {
+    if (activeSourceId && (!user?.id || activeSourceUserId !== user.id)) {
+      clearActiveSourceId();
+      return;
+    }
     if (!activeSourceId) return;
     if (managedArtistBands.length === 0) return;
     if (activeSource) return;
     clearActiveSourceId();
-  }, [activeSource, activeSourceId, clearActiveSourceId, managedArtistBands.length]);
+  }, [activeSource, activeSourceId, activeSourceUserId, clearActiveSourceId, managedArtistBands.length, user?.id]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

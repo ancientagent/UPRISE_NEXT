@@ -76,6 +76,7 @@ Tests / verification files:
 - Future direction: once Registrar materializes/approves a source entity, the operator receives a source-dashboard URL/domain for that entity.
 - Authorized users can operate managed source entities linked to their base user identity.
 - Current managed-source runtime is artist/band entities.
+- Active source context is user-scoped: the persisted source ID must belong to the current signed-in user, and stale or legacy source context must be cleared before source-side tools operate.
 - Current Source Dashboard live tool cards are `Release Deck`, `Source Profile`, `Print Shop`, and `Registrar`.
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
 - The ad slot is not an extra song slot and not its own rotation entry.
