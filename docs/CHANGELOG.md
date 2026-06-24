@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Plot shell contract hardening for the current `Feed`, `Events`, `Archive` tab model: regression coverage now rejects user-facing `Promotions` / `Statistics` tabs, active `PlotPromotionsPanel` / `StatisticsPanel` mounting, inline Plot Events calendar mutation controls, and inline Feed insert engagement controls; see `docs/handoff/2026-06-24_plot-shell-archive-contract-hardening.md`.
 - Added optional onboarding ZIP/postal-code preview support: users can offer ZIP during onboarding, GPS reverse geocoding can prefill it when available, and setup review displays it as submitted-location detail without changing the city/state/music-community Home Scene identity; see `docs/handoff/2026-06-19_onboarding-zip-preview.md`.
 - Added a local fake location provider and onboarding smoke command so manual-location, GPS-first, and pioneer fallback flows can be regression-tested without routine Google Maps Platform calls; see `docs/handoff/2026-06-18_fake-location-provider-smoke.md`.
 - Added current UI/UX context packets for Spark-safe design handoffs: `docs/agent-briefs/UPRISE_UI_UX_FOCUS_PACKET_R1.md` and `docs/agent-briefs/UPRISE_DESIGN_HANDOFF_SCREEN_PACKAGE_R1.md`, plus Linear-ready follow-up cards for stale-tab linting and Archive verification in `docs/handoff/2026-06-16_linear-ready-ui-context-issues.md`.
