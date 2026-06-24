@@ -96,6 +96,10 @@ Current MVP live cards:
 
 No placeholder tool cards.
 Do not add fake analytics, billing, or growth modules.
+Business, monetization, billing, promotions, coupons/offers, and premium
+analytics remain governed by `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md`
+and are not active Source Dashboard runtime unless a newer implementation spec
+explicitly promotes them.
 Do not add source posts/messages or follower-update cards in the current MVP;
 `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` keeps those valid
 later capabilities deferred until a dedicated implementation spec activates

@@ -17,9 +17,15 @@ If an item appears here, treat it as:
 The active MVP is focused on:
 - community creation / resolution / assignment
 - RaDIYo and listening-context systems
-- minimum revenue surfaces:
-  - artist promotion packages
-  - event promotion packages
+- current source-facing creator seams:
+  - Release Deck source-owned track creation
+  - Print Shop source/promoter event creation
+
+Revenue, promotions, paid ad slots, billing, business dashboards, paid analytics,
+offers/coupons, and subscription entitlements remain deferred unless a newer
+founder lock or implementation spec explicitly reactivates them. Use
+`docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` for the current commercial
+runtime boundary.
 
 Everything below is outside that core unless explicitly stated otherwise.
 
@@ -107,6 +113,16 @@ These remain legitimate product domains, but are not current-MVP-driving:
 - business accounts are deferred with the promo/business surface
 - do not treat business dashboards, business analytics, or business follower-update runtime as current MVP work
 - preserve the longer-term shared-source model for businesses, but do not widen current implementation scope around it
+
+### 12. Billing / subscriptions / premium analytics
+- billing provider integration
+- subscription purchase, renewal, cancellation, and entitlement enforcement
+- Discovery Pass purchase/runtime entitlement
+- artist capability purchase/runtime entitlement
+- premium analytics products
+- paid ad-slot purchase and campaign lifecycle
+- offer/coupon creation, carry, redeem, or ledger runtime
+- business promotion package purchase or management runtime
 
 ## Handling Rule
 When a deferred item appears in canon, specs, or legacy docs:

@@ -8,6 +8,15 @@
 ## Overview & Purpose
 Defines the canonical revenue streams and subscription tiers. Revenue is infrastructure‑aligned and cannot create visibility or governance advantages.
 
+## Current MVP Boundary
+This spec preserves revenue doctrine and constraints, but it does not activate
+commercial runtime by itself. Current MVP runtime has no billing, subscription,
+entitlement, ad purchase, paid promotion, offer/coupon, business dashboard, or
+premium analytics implementation.
+
+Use `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` as the current
+boundary before implementing anything from this spec.
+
 ## User Roles & Use Cases
 - Listeners choose Free or Discovery Pass access.
 - Artists activate Standard or Premium capability tiers.
@@ -37,6 +46,9 @@ Defines the canonical revenue streams and subscription tiers. Revenue is infrast
 - No subscription billing or entitlement model is implemented yet.
 - No ad, offer, run, or payment infrastructure is implemented yet.
 - This spec currently defines business constraints and rollout boundaries.
+- The only current source-facing creator revenue-adjacent seams are Release Deck
+  source-owned track creation and Print Shop event creation; neither includes
+  payment, purchase, entitlement, offer/coupon, or analytics runtime.
 
 ### Deferred (Not Implemented Yet)
 - Discovery Pass purchase, renewal, and entitlement enforcement.
@@ -77,8 +89,9 @@ Defines the canonical revenue streams and subscription tiers. Revenue is infrast
 | POST | `/billing/on-air-ads` | required | Purchase ad slot campaign |
 
 ## Web UI / Client Behavior
-- Subscription management surfaces show tier capabilities clearly.
-- Promotions and ads are labeled as paid surfaces.
+- Subscription, promotion, ad, offer/coupon, and premium analytics surfaces are
+  not current MVP UI unless explicitly reactivated by a newer spec/founder lock.
+- When later activated, Promotions and ads must be labeled as paid surfaces.
 
 ## Acceptance Tests / Test Plan
 - Premium capability increases active slots only.
