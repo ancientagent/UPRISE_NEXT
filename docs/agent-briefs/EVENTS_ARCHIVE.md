@@ -64,11 +64,13 @@ Tests / verification files:
 - There is no current MVP `Promotions` tab.
 - Older docs may still describe `Feed`, `Events`, `Promotions`, and `Statistics`; treat that as stale unless a current lock explicitly reactivates it.
 - Events are scene-bound scheduled objects.
-- Event action grammar is `Add` to calendar.
+- Current Plot Events is a read-only listener-facing listing.
+- Do not add inline `Add to calendar` or other calendar mutation controls to Plot Events unless a future explicit scope approves that UI.
+- Event calendar/add behavior is retained system grammar, not current inline Plot Events row behavior.
 - Events are not sources.
 - Event pages are not blast targets.
 - Event creation is source-facing through Print Shop.
-- Listeners discover, add/calendar, attend, and collect verified event artifacts where supported.
+- Listeners discover events in Plot; add/calendar, attendance, and verified event artifacts require their own approved surfaces where supported.
 - Flyers are event-bound artifacts, not default current MVP signals.
 - Archive/stats are descriptive only.
 - Current `/plot` Archive renders read-only descriptive modules, not the interactive `StatisticsPanel` explorer.
@@ -87,6 +89,7 @@ Tests / verification files:
 - Do not reintroduce `Statistics` as the active tab label.
 - Do not reintroduce `Promotions` as a current MVP Plot tab.
 - Do not make Archive a leaderboard.
+- Do not add inline calendar mutation controls to current Plot Events rows.
 - Do not add ranking, trending hype, predictive success metrics, or comparative artist scores.
 - Do not make event pages blast targets.
 - Do not make following a source automatically add all its events to calendar.

@@ -18,11 +18,12 @@ Defines Scene-bound events, event discovery surfaces, and event-bound flyer arti
 - Events are Scene-bound objects with explicit locality context.
 - Event creation entrypoint is Print Shop for uniform creator workflow.
 - Event surfaces are descriptive and not algorithmically ranked.
-- Event distribution occurs through source updates, explicit calendar behavior, and flyer/artifact circulation rather than BLAST.
+- Event distribution occurs through source updates, approved calendar behavior, and flyer/artifact circulation rather than BLAST.
 - Flyers are attendance artifacts minted from Proof-of-Support workflows.
 - Event artifact issuance follows Print Shop run constraints (service issuance, not marketplace fulfillment).
 - Event action grammar:
-  - current direct listener verb is `Add`, meaning add to calendar
+  - `Add` means add to calendar where an approved event/calendar surface exists
+  - current Plot Events rows are read-only and must not expose inline calendar mutation controls
   - event pages are not blast targets
   - event pages are not follow targets under the intended system model
 - Flyer artifact rule:
@@ -84,10 +85,11 @@ Defines Scene-bound events, event discovery surfaces, and event-bound flyer arti
 
 ## Web UI / Client Behavior
 - Plot includes an Events tab shell.
-- Plot Events tab now uses `/communities/:id/events` and selected community anchor from Statistics.
+- Plot Events tab uses `/communities/:id/events` with the current Plot/Home Scene community context.
+- Current listener-facing Plot Events listings are read-only and do not expose inline add-to-calendar/calendar mutation controls.
 - Event detail presentation remains API-backed read-only.
 - Event writes originate in Print Shop (web flow), not standalone mobile event creation.
-- Event write entry remains source-facing through Print Shop; listener-facing event surfaces are read / add-to-calendar / attendance oriented.
+- Event write entry remains source-facing through Print Shop; listener-facing event surfaces are read-oriented unless a specific approved calendar/attendance surface is in scope.
 - Event pages are not blast targets under the current signal-action contract.
 - `/print-shop` now carries the minimum creator-facing event-create form for the published write lane.
 - Flyer displays and redemption UI are deferred.
