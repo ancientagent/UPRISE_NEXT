@@ -39,6 +39,18 @@ opening a Prisma connection or writing to any database:
 pnpm --filter api run seed:launch-communities:dry-run
 ```
 
+Read-only verification can confirm an intentionally selected database already
+has the expected `48` active city-tier tuples and geofences without running the
+write seed:
+
+```bash
+DATABASE_URL="<confirmed database URL>" pnpm --filter api run verify:launch-communities
+```
+
+This verifier uses only `SELECT` queries. It checks every expected
+`city + state + music community` tuple, geofence presence, `50000` meter radius,
+and the launch-city coordinates from `launch-community-city-matrix.json`.
+
 Safety:
 
 - Local database targets with host `localhost`, `127.0.0.1`, or `::1` can run
