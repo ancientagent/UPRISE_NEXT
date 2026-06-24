@@ -96,6 +96,10 @@ Current MVP live cards:
 
 No placeholder tool cards.
 Do not add fake analytics, billing, or growth modules.
+Do not add source posts/messages or follower-update cards in the current MVP;
+`docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` keeps those valid
+later capabilities deferred until a dedicated implementation spec activates
+them.
 
 ### 4.5 Release Deck Runtime Slice
 Current artist-side creator tool now live:
@@ -157,6 +161,7 @@ Do not widen Source Dashboard into:
 - business runtime
 - causes
 - social messaging
+- source posts/messages or follower-update composers
 - source analytics packages beyond what already exists
 - billing / package purchase flow
 - promotion package management
