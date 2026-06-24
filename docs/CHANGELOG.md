@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added onboarding/Home Scene smoke safety guardrails: `smoke:onboarding-location:dry-run` now reports manual, GPS-first, and pioneer-fallback coverage without writes, and full non-local onboarding smokes require host-scoped confirmation before temporary user/database writes; see `docs/handoff/2026-06-24_onboarding-location-smoke-safety.md`.
 - Added staging readiness and launch seed safety guardrails: `seed:launch-communities:dry-run`, non-local `DATABASE_URL` confirmation before launch-community seed writes, read-only staging API health smoke command, and updated deploy/seed docs; see `docs/handoff/2026-06-24_staging-readiness-and-seed-safety.md`.
 - Added player/profile contract hardening for the Home-side pull-down profile seam: regression coverage now locks the listener profile to in-place `/plot` expansion, bottom-player placement, route separation from `/users/[id]`, and exclusion of source-dashboard tooling from the expanded listener profile branch; see `docs/handoff/2026-06-24_player-profile-contract-hardening.md`.
 - Added Plot shell contract hardening for the current `Feed`, `Events`, `Archive` tab model: regression coverage now rejects user-facing `Promotions` / `Statistics` tabs, active `PlotPromotionsPanel` / `StatisticsPanel` mounting, inline Plot Events calendar mutation controls, and inline Feed insert engagement controls; see `docs/handoff/2026-06-24_plot-shell-archive-contract-hardening.md`.

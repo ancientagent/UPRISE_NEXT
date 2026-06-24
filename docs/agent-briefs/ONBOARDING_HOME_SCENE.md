@@ -99,6 +99,7 @@ Tests / verification files:
 - `POST /onboarding/home-scene` is the server-authoritative Home Scene persistence path.
 - `POST /onboarding/gps-verify` verifies voting eligibility against the exact active Home Scene geofence, or against submitted city/state locality when the submitted Home Scene is inactive/unavailable.
 - `POST /onboarding/music-community-requests` stores missing music-community intake without creating a `Community` or selector option.
+- Routine onboarding/Home Scene smoke planning should use `pnpm run smoke:onboarding-location:dry-run` first; full smoke writes temporary users and requires explicit confirmation before non-local API targets.
 
 ## Companion Briefs
 
@@ -135,6 +136,8 @@ Use the narrowest relevant checks:
 - `pnpm --filter web test -- onboarding-page-lock.test.ts`
 - `pnpm --filter web test -- onboarding-regression-lock.test.ts`
 - `pnpm --filter web test -- onboarding-pioneer-follow-up.test.ts`
+- `pnpm run smoke:onboarding-location:dry-run`
+- `pnpm --filter api test -- onboarding-location-smoke-safety.test.ts onboarding.home-scene-resolution.test.ts onboarding.music-community-request.test.ts`
 - `pnpm --filter web typecheck`
 - `pnpm run docs:lint`
 - `git diff --check`

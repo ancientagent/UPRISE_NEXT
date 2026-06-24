@@ -4,8 +4,73 @@ import { PrismaClient } from '@prisma/client';
 const API_URL = process.env.UPRISE_API_URL || 'http://localhost:4000';
 const RUN_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const PASSWORD = 'Password123!';
-const prisma = new PrismaClient();
+const DRY_RUN = process.argv.includes('--dry-run');
 const createdEmails = [];
+let prisma;
+
+function getPrisma() {
+  if (!prisma) {
+    prisma = new PrismaClient();
+  }
+  return prisma;
+}
+
+function resolveApiHost() {
+  try {
+    return new URL(API_URL).host;
+  } catch {
+    throw new Error(`UPRISE_API_URL must be a valid URL. Received: ${API_URL}`);
+  }
+}
+
+function isLocalApiHost(host) {
+  const hostname = host.split(':')[0];
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+}
+
+function assertSmokeTargetAllowed() {
+  const host = resolveApiHost();
+  if (isLocalApiHost(host)) return;
+
+  const requiredConfirmation = `smoke-onboarding-location:${host}`;
+  if (process.env.UPRISE_CONFIRM_ONBOARDING_SMOKE !== requiredConfirmation) {
+    throw new Error(
+      [
+        `Refusing onboarding smoke writes against non-local API ${API_URL}.`,
+        'This smoke registers temporary users and cleans them up through the configured Prisma database.',
+        `Set UPRISE_CONFIRM_ONBOARDING_SMOKE=${requiredConfirmation} only after confirming API and DATABASE_URL target the intended staging environment.`,
+      ].join(' '),
+    );
+  }
+}
+
+function buildDryRunPlan() {
+  const host = resolveApiHost();
+  const requiredConfirmation = isLocalApiHost(host) ? null : `smoke-onboarding-location:${host}`;
+
+  return {
+    smoke: 'onboarding-location',
+    mode: 'dry-run',
+    apiUrl: API_URL,
+    writesApi: false,
+    writesDatabase: false,
+    nonLocalConfirmationRequired: requiredConfirmation,
+    scenarios: [
+      {
+        name: 'manual_austin_denied_gps',
+        proves: 'Manual city/state/music-community remains Home Scene intent when GPS is skipped or denied; voting remains disabled.',
+      },
+      {
+        name: 'gps_first_austin',
+        proves: 'GPS-first reverse geocoding can supply submitted city/state before Home Scene persistence, then GPS is rechecked after Home Scene exists.',
+      },
+      {
+        name: 'pioneer_el_paso_fallback',
+        proves: 'Inactive/unavailable submitted city preserves pioneer intent while routing voting/listening to the nearest active city-tier scene.',
+      },
+    ],
+  };
+}
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
@@ -122,19 +187,27 @@ async function runPioneerElPasoFallback() {
 
 async function cleanup() {
   if (createdEmails.length === 0) return { users: 0, memberships: 0 };
-  const users = await prisma.user.findMany({
+  const db = getPrisma();
+  const users = await db.user.findMany({
     where: { email: { in: createdEmails } },
     select: { id: true },
   });
   const userIds = users.map((user) => user.id);
   const memberships = userIds.length
-    ? await prisma.communityMember.deleteMany({ where: { userId: { in: userIds } } })
+    ? await db.communityMember.deleteMany({ where: { userId: { in: userIds } } })
     : { count: 0 };
-  const deletedUsers = await prisma.user.deleteMany({ where: { email: { in: createdEmails } } });
+  const deletedUsers = await db.user.deleteMany({ where: { email: { in: createdEmails } } });
   return { users: deletedUsers.count, memberships: memberships.count };
 }
 
 async function main() {
+  if (DRY_RUN) {
+    console.log(JSON.stringify(buildDryRunPlan(), null, 2));
+    return;
+  }
+
+  assertSmokeTargetAllowed();
+
   const health = await request('/health/ready');
   const results = [
     await runManualAustinDeniedGps(),
@@ -153,5 +226,5 @@ main()
     process.exitCode = 1;
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    await prisma?.$disconnect();
   });
