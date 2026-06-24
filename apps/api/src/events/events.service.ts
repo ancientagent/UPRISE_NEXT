@@ -56,10 +56,10 @@ export class EventsService {
       }
     }
 
-    const [community, activePromoterGrant, artistBandMembership] = await Promise.all([
+    const [community, activePromoterGrant] = await Promise.all([
       this.prisma.community.findUnique({
         where: { id: dto.communityId },
-        select: { id: true },
+        select: { id: true, tier: true, isActive: true },
       }),
       this.prisma.userCapabilityGrant.findFirst({
         where: {
@@ -70,19 +70,19 @@ export class EventsService {
         },
         select: { id: true },
       }),
-      this.prisma.artistBandMember.findFirst({
-        where: { userId },
-        select: { artistBandId: true },
-      }),
     ]);
 
     if (!community) {
       throw new NotFoundException('Community not found');
     }
 
-    if (!activePromoterGrant && !artistBandMembership) {
+    if (community.tier !== 'city' || !community.isActive) {
+      throw new BadRequestException('Print Shop events require an active city-tier Home Scene community');
+    }
+
+    if (!activePromoterGrant && !managedArtistBand) {
       throw new ForbiddenException(
-        'Print Shop event creation requires active promoter capability or a linked Artist/Band source',
+        'Print Shop event creation requires active promoter capability or an explicitly selected managed Artist/Band source',
       );
     }
 

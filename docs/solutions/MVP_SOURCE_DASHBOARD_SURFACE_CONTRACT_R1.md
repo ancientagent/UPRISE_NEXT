@@ -133,7 +133,8 @@ Implementation note:
 - current Source Dashboard card copy may reflect creator-lane state such as linked source membership, promoter capability, and GPS-gated promoter progression as long as it does not invent unsupported actions
 - current runtime now passes an explicit optional `artistBandId` for new events created from active source context
 - current runtime now validates that the signed-in user actually manages the submitted Artist/Band before persisting that link
-- current runtime still falls back to creator-eligibility validation when no explicit source link is supplied
+- current runtime allows promoter-capability event creation without an explicit source link, but Artist/Band event creation requires an active selected managed source and submitted `artistBandId`
+- current runtime rejects Print Shop event writes to inactive or non-city community anchors
 - current read-side event surfaces should prefer explicit source attribution when a stored `artistBandId` is present, instead of falling back to creator-user attribution
 - current route shell should preserve source-side operating continuity:
   - direct return to listener mode when active source context is set
