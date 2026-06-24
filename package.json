@@ -36,6 +36,7 @@
     "qa:phase2": "pnpm run docs:lint && pnpm run infra-policy-check && pnpm --filter api test -- auth.invite-registration.service.test.ts registrar.service.test.ts registrar.invite-delivery-worker.test.ts registrar.invite-delivery-trigger.service.test.ts webhook-invite-delivery.provider.test.ts invite-delivery-provider-selector.test.ts && pnpm --filter api typecheck && pnpm --filter web typecheck",
     "qa:phase2:db": "pnpm run qa:db && pnpm --filter api test -- registrar.invite-delivery.integration.test.ts registrar.invite-delivery.replay.integration.test.ts",
     "smoke:staging:api": "pnpm --filter api run smoke:staging:api",
+    "smoke:onboarding-location:dry-run": "pnpm --filter api run smoke:onboarding-location:dry-run",
     "agent:queue": "node scripts/agent-control.mjs",
     "agent:queue:test": "node scripts/agent-control.test.mjs",
     "agent:bridge:tick": "node scripts/agent-bridge-tick.mjs",
