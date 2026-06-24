@@ -8,6 +8,7 @@ import { getArtistBandProfile } from '@/lib/artist-bands/client';
 import { api } from '@/lib/api';
 import { createTrack } from '@/lib/tracks/client';
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
+import { buildReleaseDeckTrackPayload } from '@/lib/source/release-deck-validation';
 import type { CurrentUserSourceProfile } from '@/lib/source/types';
 import { useAuthStore } from '@/store/auth';
 import { useSourceAccountStore } from '@/store/source-account';
@@ -139,9 +140,11 @@ export default function ReleaseDeckPage() {
       return;
     }
 
-    const duration = Number(form.duration.trim());
-    if (!Number.isFinite(duration) || duration <= 0) {
-      setSubmitError('Duration must be a positive number of seconds.');
+    let payload: CreateTrackInput;
+    try {
+      payload = buildReleaseDeckTrackPayload(form, activeSource, communityId);
+    } catch (validationError: unknown) {
+      setSubmitError(validationError instanceof Error ? validationError.message : 'Release Deck validation failed.');
       return;
     }
 
@@ -150,18 +153,6 @@ export default function ReleaseDeckPage() {
     setSubmitMessage(null);
 
     try {
-      const payload: CreateTrackInput = {
-        title: form.title.trim(),
-        artist: activeSource.name,
-        artistBandId: activeSource.id,
-        album: form.album.trim() || undefined,
-        duration,
-        fileUrl: form.fileUrl.trim(),
-        coverArt: form.coverArt.trim() || undefined,
-        communityId,
-        status: 'ready',
-      };
-
       await createTrack(payload, token);
       setSubmitMessage(`Released ${payload.title} from ${activeSource.name}.`);
       setForm(emptyForm);

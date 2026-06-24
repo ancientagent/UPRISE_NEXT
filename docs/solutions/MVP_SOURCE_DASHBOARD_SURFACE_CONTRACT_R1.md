@@ -112,6 +112,7 @@ Current locked direction:
 Implementation note:
 - current runtime uses the existing `/tracks` ingestion seam from active source context
 - current runtime now passes an explicit optional `artistBandId` for new releases created from `Release Deck`
+- current runtime accepts explicit hosted `http(s)` audio URLs for the MVP Release Deck seam; upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred
 - current runtime shows the latest ready singles for the three visible music slots
 - current runtime may distinguish explicitly source-owned rows from older compatible carry-forward tracks inside those visible slots
 - current runtime does not yet widen billing/media-pipeline mechanics or paid ad-slot tooling

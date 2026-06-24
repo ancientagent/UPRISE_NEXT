@@ -80,6 +80,7 @@ Tests / verification files:
 - Current Source Dashboard live tool cards are `Release Deck`, `Source Profile`, `Print Shop`, and `Registrar`.
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
 - The ad slot is not an extra song slot and not its own rotation entry.
+- Release Deck current MVP creates source-owned tracks from explicit hosted `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred.
 - Print Shop is source-facing infrastructure for creator/event issuance flows.
 - Print Shop event creation requires explicit venue location input; the runtime must not default coordinates or address examples to a particular launch city.
 - Registrar remains separate civic/formalization infrastructure but must stay reachable from source-side operating context.
