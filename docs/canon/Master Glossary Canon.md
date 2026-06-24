@@ -75,6 +75,9 @@ Canonical Definition: The Plot; the dashboard in which listeners interact with t
 Home Scene.
 Canon Alignment: Matches Master Narrative Canon. The Plot is a civic interface, not a personalized feed.
 Activity Feed (S.E.E.D Feed), Events, Promotions, Statistics/Scene Map, and Social (V2) are correctly scoped.
+Current MVP runtime override (2026-06-24): the current user-facing Plot tabs are Feed, Events, and Archive.
+Promotions/business surfaces are deferred, Social remains V2/hidden, and Statistics/Scene Map content is exposed
+through descriptive Archive context rather than a current Statistics tab.
 Constraint Reminder: - The Plot does not rank, recommend, or personalize content.
 Action: None
 3
