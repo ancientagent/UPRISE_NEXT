@@ -170,8 +170,14 @@ pnpm run smoke:staging:api
 
 2026-06-24 status: the current Fly API health, Neon/PostGIS, and public Places
 checks pass, but CORS does not allow the current Vercel `main` branch alias or
-latest deployment URL. Confirm the intended stable web origin before updating
-Fly `CORS_ORIGIN`.
+stable project domain. Confirm the intended stable web origin before updating
+Fly `CORS_ORIGIN`. Current minimum staging candidates are:
+
+- `https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app`
+- `https://uprise-web-staging.vercel.app`
+
+See `docs/handoff/2026-06-24_onboarding-browser-qa-blocked-cors.md` before
+attempting the onboarding browser/device QA pass.
 
 Launch community seed safety:
 

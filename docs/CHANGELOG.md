@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a Task 3 onboarding browser/device QA blocker handoff documenting the current Fly CORS mismatch for the Vercel staging origins and the exact provider-side unblock path before manual/GPS/pioneer/missing-community browser QA can be claimed; see `docs/handoff/2026-06-24_onboarding-browser-qa-blocked-cors.md`.
 - Added `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` and tightened active business/economy docs so billing, subscriptions, paid promotions, coupons/offers, business dashboards, and premium analytics remain deferred until explicitly activated.
 - Added `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` to clarify that source-authored follower updates/posts are valid later source doctrine but not current MVP runtime; Source Dashboard remains limited to Release Deck, Source Profile, Print Shop, and Registrar until a dedicated implementation spec activates posts/messages.
 - Added `docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md` to lock the current media posture: Release Deck remains URL-only for MVP, real upload/storage/transcoding/waveform work is deferred, and Cloudflare R2 is the recommended first staging default only if media upload/read is explicitly activated; see `docs/handoff/2026-06-24_media-storage-decision-packet.md`.
