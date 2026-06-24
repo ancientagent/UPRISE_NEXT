@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md` to define when UPRISE should use Abacus Agent Swarm / Fusion-style workflows for complex-area mapping, independent deliverables, audit scouting, and decision packets without letting external agents become product authority.
 - Added a Task 3 onboarding browser/device QA blocker handoff documenting the current Fly CORS mismatch for the Vercel staging origins and the exact provider-side unblock path before manual/GPS/pioneer/missing-community browser QA can be claimed; see `docs/handoff/2026-06-24_onboarding-browser-qa-blocked-cors.md`.
 - Added `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` and tightened active business/economy docs so billing, subscriptions, paid promotions, coupons/offers, business dashboards, and premium analytics remain deferred until explicitly activated.
 - Added `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` to clarify that source-authored follower updates/posts are valid later source doctrine but not current MVP runtime; Source Dashboard remains limited to Release Deck, Source Profile, Print Shop, and Registrar until a dedicated implementation spec activates posts/messages.
