@@ -81,6 +81,7 @@ Tests / verification files:
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
 - The ad slot is not an extra song slot and not its own rotation entry.
 - Release Deck current MVP creates source-owned tracks from explicit hosted `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred.
+- Media/storage activation is governed by `docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md`: current MVP remains URL-only, workers/storage stay undeployed, and Cloudflare R2 is only the recommended first staging default if/when media upload/read is explicitly activated.
 - Print Shop is source-facing infrastructure for creator/event issuance flows.
 - Print Shop event creation requires explicit venue location input; the runtime must not default coordinates or address examples to a particular launch city.
 - Print Shop Artist/Band event creation requires an explicitly selected active managed source context; a generic linked membership is not enough to create an unattached source event.

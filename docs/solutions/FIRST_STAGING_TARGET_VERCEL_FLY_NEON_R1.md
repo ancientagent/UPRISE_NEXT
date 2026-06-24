@@ -18,8 +18,10 @@ This is a staging plan, not a production launch plan.
 - Database: Neon Postgres with PostGIS.
 - Socket: deferred until web + API staging is repeatable.
 - Workers: deferred until media processing is the active deployment slice.
-- Storage: S3 or Cloudflare R2 decision deferred until media upload/read is in
-  scope.
+- Storage: deferred for the current URL-only Release Deck MVP; when media
+  upload/read is explicitly activated, use
+  `docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md` for the R2/S3 decision
+  boundary.
 
 ## Why This Path
 
@@ -77,6 +79,8 @@ Out of scope:
 - Hosted Socket.IO.
 - Hosted transcoder worker.
 - S3/R2 media path.
+- Media upload, storage, transcoding, waveform extraction, and paid ad-slot
+  mechanics.
 - Billing, premium analytics, business dashboard runtime, or other product scope
   expansion.
 - Production domain cutover.
