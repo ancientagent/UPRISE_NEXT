@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` to clarify that source-authored follower updates/posts are valid later source doctrine but not current MVP runtime; Source Dashboard remains limited to Release Deck, Source Profile, Print Shop, and Registrar until a dedicated implementation spec activates posts/messages.
 - Added `docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md` to lock the current media posture: Release Deck remains URL-only for MVP, real upload/storage/transcoding/waveform work is deferred, and Cloudflare R2 is the recommended first staging default only if media upload/read is explicitly activated; see `docs/handoff/2026-06-24_media-storage-decision-packet.md`.
 - Added executable RADIYO vs SPACE engagement-wheel contract coverage so `Play It Loud` / `Upvote` stay on RADIYO, `Blast` stays in SPACE, and Artist Profile remains a no-wheel direct-listen surface; see `docs/handoff/2026-06-24_radiyo-space-action-contract.md`.
 - Added a read-only launch-community seed verification command that checks the expected `48` active city-tier tuples and geofences against a confirmed database target without running seed writes; see `docs/handoff/2026-06-24_launch-community-seed-verification.md`.
