@@ -221,6 +221,9 @@ describe('/plot UX regression lock', () => {
 
   it('locks expanded-profile behavior to swap out Plot tabs/body', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const expandedProfileBranch = plotPageSource
+      .split('{isProfileExpanded ? (')[1]
+      .split('\n        ) : (\n          <>')[0];
 
     expect(plotPageSource).toContain('const isProfileExpanded = profilePanelState ===');
     expect(plotPageSource).toContain('const playerPanel = (');
@@ -275,6 +278,18 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toMatch(
       /Saved promos and coupons appear here with status and expiration when\s*collection support is available\./
     );
+    expect(plotPageSource).not.toContain("router.push(`/users");
+    expect(plotPageSource).not.toContain('href={`/users');
+    expect(plotPageSource).not.toContain('href="/users');
+    expect(expandedProfileBranch).toContain('Profile Summary');
+    expect(expandedProfileBranch).toContain('data-slot="expanded-profile-player-strip"');
+    expect(expandedProfileBranch).toContain('{playerPanel}');
+    expect(expandedProfileBranch).toContain('Return to Plot Tabs');
+    expect(expandedProfileBranch).not.toContain('SourceAccountSwitcher');
+    expect(expandedProfileBranch).not.toContain('Source Dashboard');
+    expect(expandedProfileBranch).not.toContain('Release Deck');
+    expect(expandedProfileBranch).not.toContain('Print Shop');
+    expect(expandedProfileBranch).not.toContain('Registrar');
   });
 
   it('locks expanded profile header to conditional band and promoter status cards', () => {
