@@ -29,6 +29,8 @@ describe('community and artist wireframe page locks', () => {
     expect(artistSource).toContain(
       'const sourceContextMatchesProfile = activeSourceId === profile?.id;'
     );
+    expect(artistSource).toContain('getArtistBandProfile(artistBandId, token ?? undefined)');
+    expect(artistSource).not.toContain('You must be signed in to view artist pages.');
     expect(artistSource).toContain("const selectedSignalId = searchParams.get('signalId');");
     expect(artistSource).toContain(
       'profile.tracks.find((track) => track.signalId === selectedSignalId)'
