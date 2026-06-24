@@ -107,7 +107,11 @@ For the first hosted staging pass, configure only:
 - CI: provider deploy tokens only after deployment provider is selected
 
 Storage and worker env can wait until the media path is the active deployment
-slice.
+slice. Current media posture is locked in
+`docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md`: Release Deck stays
+URL-only for MVP, real upload/storage/transcoding is deferred, and Cloudflare R2
+is the recommended first staging provider only when the media path is explicitly
+activated.
 
 Current first staging target:
 
@@ -115,7 +119,8 @@ Current first staging target:
 - api: Fly.io
 - database: Neon Postgres with PostGIS
 - socket: deferred until web + API staging is repeatable
-- workers/storage: deferred until media path work is active
+- workers/storage: deferred until media path work is active; current MVP does
+  not require storage credentials or transcoder deployment
 
 Current configured staging values:
 
@@ -184,7 +189,11 @@ Do not use `UPRISE_NEXT` in provider resource names.
 ## Open Decisions
 
 - Stable staging web URL/domain for `CORS_ORIGIN` and `NEXT_PUBLIC_WEB_APP_URL`.
-- Whether storage starts on S3 or Cloudflare R2.
+- Media storage is not required for the current URL-only Release Deck MVP. When
+  media upload/read is explicitly activated, `docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md`
+  recommends Cloudflare R2 as the first staging default while preserving the
+  S3-compatible abstraction and requiring provider/account confirmation before
+  any bucket or credential changes.
 - Whether JWT remains shared-secret based for MVP staging or moves to issuer/JWKS.
 - Whether Redis is needed in the first staging pass or only once queue/realtime
   persistence requires it.
