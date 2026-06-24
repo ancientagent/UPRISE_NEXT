@@ -24,7 +24,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "smoke:onboarding-location": "node --env-file=.env scripts/smoke-onboarding-location.mjs",
     "smoke:onboarding-location:dry-run": "node scripts/smoke-onboarding-location.mjs --dry-run",
-    "smoke:staging:api": "node scripts/smoke-staging-api.mjs"
+    "smoke:staging:api": "node scripts/smoke-staging-api.mjs",
+    "verify:launch-communities": "tsx scripts/verify-launch-community-seed.ts"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.0",
