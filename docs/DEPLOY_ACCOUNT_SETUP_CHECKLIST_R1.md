@@ -149,6 +149,17 @@ Repeatable read-only smoke:
 UPRISE_API_URL=https://uprise-api-staging.fly.dev pnpm run smoke:staging:api
 ```
 
+Full read-only staging readiness smoke:
+
+```bash
+pnpm run smoke:staging:readiness
+```
+
+Use `UPRISE_WEB_URL=<confirmed Vercel staging origin>` to include web-load and
+CORS checks. If Vercel Authentication is enabled, unauthenticated HTTP may
+report the web URL as `protected`; use Vercel MCP, automation bypass, or the
+stable authenticated browser session for full page proof.
+
 Optional CORS verification when a staging web origin is known:
 
 ```bash
@@ -156,6 +167,11 @@ UPRISE_API_URL=https://uprise-api-staging.fly.dev \
 UPRISE_EXPECTED_CORS_ORIGIN=<confirmed Vercel preview or staging origin> \
 pnpm run smoke:staging:api
 ```
+
+2026-06-24 status: the current Fly API health, Neon/PostGIS, and public Places
+checks pass, but CORS does not allow the current Vercel `main` branch alias or
+latest deployment URL. Confirm the intended stable web origin before updating
+Fly `CORS_ORIGIN`.
 
 Launch community seed safety:
 
