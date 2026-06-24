@@ -57,6 +57,7 @@
 
 ### Changed
 
+- Hardened source account context so persisted active source selection is scoped to the current signed-in user, stale source IDs clear before Source Dashboard / Release Deck / Print Shop / Registrar tooling runs, and Artist Profile source-tool handoffs stamp the current user alongside the source ID; see `docs/handoff/2026-06-24_source-account-context-hardening.md`.
 - Aligned Artist Profile runtime access with the active public source-page contract: `GET /artist-bands/:id/profile` now supports optional auth, signed-out users can load the direct-listen Artist Profile, and viewer/source actions remain signed-in or member-gated; see `docs/handoff/2026-06-24_artist-profile-public-read.md`.
 - Removed city-specific Print Shop location defaults: event creation now requires explicit venue latitude/longitude input instead of initializing to Austin coordinates, and the source-management brief now forbids city-specific Print Shop runtime defaults; see `docs/handoff/2026-06-24_print-shop-location-defaults.md`.
 - Made pioneer fallback selection distance-based when submitted city/state coordinates and active scene geofences are available, while preserving deterministic same-state/member/name fallback when coordinates are unavailable; see `docs/handoff/2026-06-19_distance-based-pioneer-fallback.md`.

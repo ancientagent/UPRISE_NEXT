@@ -3,7 +3,8 @@ import { persist } from 'zustand/middleware';
 
 interface SourceAccountState {
   activeSourceId: string | null;
-  setActiveSourceId: (sourceId: string | null) => void;
+  activeSourceUserId: string | null;
+  setActiveSourceId: (sourceId: string | null, userId: string | null) => void;
   clearActiveSourceId: () => void;
 }
 
@@ -11,8 +12,9 @@ export const useSourceAccountStore = create<SourceAccountState>()(
   persist(
     (set) => ({
       activeSourceId: null,
-      setActiveSourceId: (sourceId) => set({ activeSourceId: sourceId }),
-      clearActiveSourceId: () => set({ activeSourceId: null }),
+      activeSourceUserId: null,
+      setActiveSourceId: (sourceId, userId) => set({ activeSourceId: sourceId, activeSourceUserId: userId }),
+      clearActiveSourceId: () => set({ activeSourceId: null, activeSourceUserId: null }),
     }),
     {
       name: 'source-account-storage',

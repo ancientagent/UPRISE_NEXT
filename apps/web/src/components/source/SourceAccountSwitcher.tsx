@@ -14,17 +14,22 @@ export type SourceAccountSummary = {
 
 type SourceAccountSwitcherProps = {
   sources: SourceAccountSummary[];
+  currentUserId: string | null;
   onSelectSource?: (source: SourceAccountSummary) => void;
   onSelectListener?: () => void;
 };
 
 export function SourceAccountSwitcher({
   sources,
+  currentUserId,
   onSelectSource,
   onSelectListener,
 }: SourceAccountSwitcherProps) {
-  const { activeSourceId, setActiveSourceId, clearActiveSourceId } = useSourceAccountStore();
-  const activeSource = sources.find((source) => source.id === activeSourceId) ?? null;
+  const { activeSourceId, activeSourceUserId, setActiveSourceId, clearActiveSourceId } = useSourceAccountStore();
+  const activeSource =
+    currentUserId && activeSourceUserId === currentUserId
+      ? sources.find((source) => source.id === activeSourceId) ?? null
+      : null;
 
   if (sources.length === 0) {
     return null;
@@ -77,7 +82,7 @@ export function SourceAccountSwitcher({
                 : 'rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em] text-black'
             }
             onClick={() => {
-              setActiveSourceId(source.id);
+              setActiveSourceId(source.id, currentUserId);
               onSelectSource?.(source);
             }}
           >
