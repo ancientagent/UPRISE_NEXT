@@ -83,6 +83,8 @@ Tests / verification files:
 - Release Deck current MVP creates source-owned tracks from explicit hosted `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred.
 - Print Shop is source-facing infrastructure for creator/event issuance flows.
 - Print Shop event creation requires explicit venue location input; the runtime must not default coordinates or address examples to a particular launch city.
+- Print Shop Artist/Band event creation requires an explicitly selected active managed source context; a generic linked membership is not enough to create an unattached source event.
+- Print Shop promoter-capability event creation may create a promoter-lane event without `artistBandId`, but it must still attach to the user's resolved active city-tier Home Scene community.
 - Registrar remains separate civic/formalization infrastructure but must stay reachable from source-side operating context.
 
 ## Current Runtime Pointers

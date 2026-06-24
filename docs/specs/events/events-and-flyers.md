@@ -38,13 +38,14 @@ Defines Scene-bound events, event discovery surfaces, and event-bound flyer arti
   - `GET /communities/:id/events` (scene-scoped listing for Plot Events surface)
 - Source-facing event write endpoint:
   - `POST /print-shop/events`
+  - promoter capability can create a promoter-lane event
+  - Artist/Band event creation must include an explicitly selected managed `artistBandId`
+  - event writes require an active city-tier Home Scene community anchor
 - Backing model:
   - `Event` with core metadata, location coordinates, `communityId`, `createdById`.
 
 ### Deferred (Not Implemented Yet)
-- Event creation endpoint inside Print Shop flow.
 - Event update/delete endpoints.
-- Promoter capability checks and registrar-gated creation flow.
 - Attendance proof verification pipeline.
 - Flyer minting and profile artifact rendering.
 - Touring distribution tooling and promotional pack linkage.
@@ -90,13 +91,15 @@ Defines Scene-bound events, event discovery surfaces, and event-bound flyer arti
 - Event detail presentation remains API-backed read-only.
 - Event writes originate in Print Shop (web flow), not standalone mobile event creation.
 - Event write entry remains source-facing through Print Shop; listener-facing event surfaces are read-oriented unless a specific approved calendar/attendance surface is in scope.
+- Artist/Band Print Shop event writes must attach the selected managed source via `artistBandId`; promoter-capability writes may remain promoter-lane events without an Artist/Band source link.
 - Event pages are not blast targets under the current signal-action contract.
 - `/print-shop` now carries the minimum creator-facing event-create form for the published write lane.
 - Flyer displays and redemption UI are deferred.
 
 ## Acceptance Tests / Test Plan
 - `GET /events` and `GET /events/:id` return authenticated event data.
-- Event creation must enforce registrar/capability gating when write routes are added.
+- Event creation must enforce promoter capability or explicit managed Artist/Band source ownership.
+- Event creation must reject inactive/non-city community anchors.
 - Flyer minting/collection must require verified attendance/support proof or equivalent promoter-controlled claim flow.
 
 ## References

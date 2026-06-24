@@ -6,7 +6,6 @@ describe('EventsService.createFromPrintShop', () => {
     community: { findUnique: jest.fn() },
     userCapabilityGrant: { findFirst: jest.fn() },
     artistBand: { findFirst: jest.fn() },
-    artistBandMember: { findFirst: jest.fn() },
     event: { create: jest.fn() },
   };
 
@@ -28,30 +27,40 @@ describe('EventsService.createFromPrintShop', () => {
     longitude: -97.7431,
     communityId: '00000000-0000-0000-0000-000000000001',
   };
+  const activeCityCommunity = { id: baseDto.communityId, tier: 'city', isActive: true };
 
   it('rejects when the community does not exist', async () => {
     mockPrisma.community.findUnique.mockResolvedValue(null);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({ id: 'grant-1' });
     mockPrisma.artistBand.findFirst.mockResolvedValue(null);
-    mockPrisma.artistBandMember.findFirst.mockResolvedValue(null);
 
     await expect(service.createFromPrintShop('user-1', baseDto as any)).rejects.toThrow(NotFoundException);
   });
 
+  it('rejects inactive or non-city communities for Print Shop event writes', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: baseDto.communityId,
+      tier: 'state',
+      isActive: true,
+    });
+    mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({ id: 'grant-1' });
+
+    await expect(service.createFromPrintShop('user-1', baseDto as any)).rejects.toThrow(BadRequestException);
+    expect(mockPrisma.event.create).not.toHaveBeenCalled();
+  });
+
   it('rejects when the user has neither promoter capability nor artist ownership', async () => {
-    mockPrisma.community.findUnique.mockResolvedValue({ id: baseDto.communityId });
+    mockPrisma.community.findUnique.mockResolvedValue(activeCityCommunity);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue(null);
     mockPrisma.artistBand.findFirst.mockResolvedValue(null);
-    mockPrisma.artistBandMember.findFirst.mockResolvedValue(null);
 
     await expect(service.createFromPrintShop('user-1', baseDto as any)).rejects.toThrow(ForbiddenException);
   });
 
   it('rejects invalid dates', async () => {
-    mockPrisma.community.findUnique.mockResolvedValue({ id: baseDto.communityId });
+    mockPrisma.community.findUnique.mockResolvedValue(activeCityCommunity);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({ id: 'grant-1' });
     mockPrisma.artistBand.findFirst.mockResolvedValue(null);
-    mockPrisma.artistBandMember.findFirst.mockResolvedValue(null);
 
     await expect(
       service.createFromPrintShop('user-1', {
@@ -62,10 +71,9 @@ describe('EventsService.createFromPrintShop', () => {
   });
 
   it('rejects end date before start date', async () => {
-    mockPrisma.community.findUnique.mockResolvedValue({ id: baseDto.communityId });
+    mockPrisma.community.findUnique.mockResolvedValue(activeCityCommunity);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({ id: 'grant-1' });
     mockPrisma.artistBand.findFirst.mockResolvedValue(null);
-    mockPrisma.artistBandMember.findFirst.mockResolvedValue(null);
 
     await expect(
       service.createFromPrintShop('user-1', {
@@ -77,10 +85,9 @@ describe('EventsService.createFromPrintShop', () => {
   });
 
   it('creates an event for a promoter-capable user', async () => {
-    mockPrisma.community.findUnique.mockResolvedValue({ id: baseDto.communityId });
+    mockPrisma.community.findUnique.mockResolvedValue(activeCityCommunity);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue({ id: 'grant-1' });
     mockPrisma.artistBand.findFirst.mockResolvedValue(null);
-    mockPrisma.artistBandMember.findFirst.mockResolvedValue(null);
     mockPrisma.event.create.mockResolvedValue({
       id: 'event-1',
       title: 'Warehouse Show',
@@ -124,38 +131,18 @@ describe('EventsService.createFromPrintShop', () => {
     );
   });
 
-  it('creates an event for an artist-linked user without promoter capability', async () => {
-    mockPrisma.community.findUnique.mockResolvedValue({ id: baseDto.communityId });
+  it('rejects an Artist/Band source lane when no managed source id is selected', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue(activeCityCommunity);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue(null);
     mockPrisma.artistBand.findFirst.mockResolvedValue(null);
-    mockPrisma.artistBandMember.findFirst.mockResolvedValue({ artistBandId: 'band-1' });
-    mockPrisma.event.create.mockResolvedValue({
-      id: 'event-2',
-      title: 'Warehouse Show',
-      description: 'All-ages punk night.',
-      coverImage: null,
-      startDate: new Date(baseDto.startDate),
-      endDate: new Date(baseDto.endDate),
-      locationName: baseDto.locationName,
-      address: baseDto.address,
-      latitude: baseDto.latitude,
-      longitude: baseDto.longitude,
-      communityId: baseDto.communityId,
-      createdById: 'user-1',
-      artistBandId: null,
-      attendeeCount: 0,
-      maxAttendees: 150,
-      createdAt: new Date('2026-04-10T12:00:00.000Z'),
-      updatedAt: new Date('2026-04-10T12:00:00.000Z'),
-    });
 
-    const result = await service.createFromPrintShop('user-1', {
-      ...baseDto,
-      maxAttendees: 150,
-    } as any);
-
-    expect(result.maxAttendees).toBe(150);
-    expect(result.artistBandId).toBeNull();
+    await expect(
+      service.createFromPrintShop('user-1', {
+        ...baseDto,
+        maxAttendees: 150,
+      } as any),
+    ).rejects.toThrow(ForbiddenException);
+    expect(mockPrisma.event.create).not.toHaveBeenCalled();
   });
 
   it('creates an event linked to the managed artist band when artistBandId is supplied', async () => {
@@ -164,9 +151,8 @@ describe('EventsService.createFromPrintShop', () => {
       name: 'Youngblood QA Source',
       homeSceneId: baseDto.communityId,
     });
-    mockPrisma.community.findUnique.mockResolvedValue({ id: baseDto.communityId });
+    mockPrisma.community.findUnique.mockResolvedValue(activeCityCommunity);
     mockPrisma.userCapabilityGrant.findFirst.mockResolvedValue(null);
-    mockPrisma.artistBandMember.findFirst.mockResolvedValue({ artistBandId: 'band-1' });
     mockPrisma.event.create.mockResolvedValue({
       id: 'event-3',
       title: 'Warehouse Show',

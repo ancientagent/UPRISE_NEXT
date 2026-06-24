@@ -89,10 +89,16 @@ describe('cross-route UX consistency lock', () => {
     expect(printShopSource).toContain('Source Dashboard');
     expect(printShopSource).toContain('Return to Listener Account');
     expect(printShopSource).toContain('Open Release Deck');
+    expect(printShopSource).toContain('const canCreateEvent = promoterGranted || Boolean(activeSource);');
     expect(printShopSource).toContain('artistBandId: activeSource?.id');
     expect(printShopSource).toContain('new events from this lane now attach directly to the active');
     expect(printShopSource).toContain('Sign in is required before opening Print Shop creator tools.');
-    expect(printShopSource).toContain('Print Shop event creation requires active promoter capability or a linked Artist/Band source.');
+    expect(printShopSource).toContain(
+      'Print Shop event creation requires active promoter capability or an explicitly selected managed Artist/Band source.',
+    );
+    expect(printShopSource).toContain(
+      'Select a managed Artist/Band source from Source Dashboard before creating a source-attached Print Shop',
+    );
     expect(printShopSource).toContain('Create Event');
   });
 

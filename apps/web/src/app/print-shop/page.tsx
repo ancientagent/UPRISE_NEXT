@@ -184,7 +184,7 @@ export default function PrintShopPage() {
   const activeSource = sourceContextBelongsToUser
     ? managedArtistBands.find((entity) => entity.id === activeSourceId) ?? null
     : null;
-  const canCreateEvent = promoterGranted || managedArtistBands.length > 0;
+  const canCreateEvent = promoterGranted || Boolean(activeSource);
 
   const eligibilityMessage = useMemo(() => {
     if (!token) return 'Sign in is required before opening Print Shop creator tools.';
@@ -192,7 +192,7 @@ export default function PrintShopPage() {
     if (profileError) return profileError;
     if (promoterError) return promoterError;
     if (!canCreateEvent) {
-      return 'Print Shop event creation requires active promoter capability or a linked Artist/Band source.';
+      return 'Print Shop event creation requires active promoter capability or an explicitly selected managed Artist/Band source.';
     }
     return null;
   }, [canCreateEvent, homeSceneError, profileError, promoterError, token]);
@@ -343,20 +343,27 @@ export default function PrintShopPage() {
                 source account instead of relying only on creator-side inference.
               </p>
             </div>
-          ) : managedArtistBands.length > 0 ? (
-            <div className="mt-2 rounded-[1rem] border border-black/10 bg-white px-4 py-4 text-sm text-black">
-              <p className="font-medium text-black">No active source account selected</p>
-              <p className="mt-2 text-sm text-black/65">
-                You can still create from a valid creator lane, but source-facing tools are meant to be entered from
-                the source dashboard when you want to operate as a specific managed source.
-              </p>
-            </div>
-          ) : (
+          ) : promoterGranted ? (
             <div className="mt-2 rounded-[1rem] border border-black/10 bg-white px-4 py-4 text-sm text-black">
               <p className="font-medium text-black">Promoter capability lane</p>
               <p className="mt-2 text-sm text-black/65">
                 This creator lane is currently available through promoter capability rather than an active managed
                 source account.
+              </p>
+            </div>
+          ) : managedArtistBands.length > 0 ? (
+            <div className="mt-2 rounded-[1rem] border border-black/10 bg-white px-4 py-4 text-sm text-black">
+              <p className="font-medium text-black">No active source account selected</p>
+              <p className="mt-2 text-sm text-black/65">
+                Select a managed Artist/Band source from Source Dashboard before creating a source-attached Print Shop
+                event.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-2 rounded-[1rem] border border-black/10 bg-white px-4 py-4 text-sm text-black">
+              <p className="font-medium text-black">No creator lane available</p>
+              <p className="mt-2 text-sm text-black/65">
+                Print Shop event creation requires promoter capability or an active managed Artist/Band source.
               </p>
             </div>
           )}
