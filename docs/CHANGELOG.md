@@ -56,6 +56,7 @@
 
 ### Changed
 
+- Removed city-specific Print Shop location defaults: event creation now requires explicit venue latitude/longitude input instead of initializing to Austin coordinates, and the source-management brief now forbids city-specific Print Shop runtime defaults; see `docs/handoff/2026-06-24_print-shop-location-defaults.md`.
 - Made pioneer fallback selection distance-based when submitted city/state coordinates and active scene geofences are available, while preserving deterministic same-state/member/name fallback when coordinates are unavailable; see `docs/handoff/2026-06-19_distance-based-pioneer-fallback.md`.
 - Fixed GPS-first onboarding so stored GPS coordinates are rechecked after authenticated Home Scene persistence; manual city/state remains the submitted Home Scene when GPS is denied or skipped, and nearest-active fallback applies to both manual and GPS-derived locations; see `docs/handoff/2026-06-18_onboarding-gps-location-authority.md`.
 - Hardened the `/plot` Archive runtime contract so the active Plot panel is no longer labeled as `Archive & Map`, and added a regression lock that keeps Archive descriptive rather than reviving map/analytics exploration as the default MVP body; see `docs/handoff/2026-06-17_archive-runtime-contract.md`.

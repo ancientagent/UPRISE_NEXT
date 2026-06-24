@@ -96,6 +96,20 @@ describe('cross-route UX consistency lock', () => {
     expect(printShopSource).toContain('Create Event');
   });
 
+  it('keeps Print Shop event location explicit instead of using city-specific defaults', () => {
+    const printShopSource = readRepoFile('src/app/print-shop/page.tsx');
+
+    expect(printShopSource).toContain("latitude: ''");
+    expect(printShopSource).toContain("longitude: ''");
+    expect(printShopSource).toContain('Latitude is required before creating a Print Shop event.');
+    expect(printShopSource).toContain('Longitude is required before creating a Print Shop event.');
+    expect(printShopSource).toContain('Venue street address, city, state');
+    expect(printShopSource).not.toContain('30.2672');
+    expect(printShopSource).not.toContain('-97.7431');
+    expect(printShopSource).not.toContain('123 Main St, Austin, TX');
+    expect(printShopSource).not.toContain('Number(event.target.value || 0)');
+  });
+
   it('keeps an artist-facing route into Print Shop for linked members only', () => {
     const artistSource = readRepoFile('src/app/artist-bands/[id]/page.tsx');
 
