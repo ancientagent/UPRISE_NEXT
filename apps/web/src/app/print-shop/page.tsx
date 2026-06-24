@@ -21,7 +21,12 @@ type HomeSceneResolution = {
   musicCommunity: string;
 };
 
-const emptyForm: Omit<CreatePrintShopEvent, 'communityId'> = {
+type PrintShopEventForm = Omit<CreatePrintShopEvent, 'communityId' | 'latitude' | 'longitude'> & {
+  latitude: string;
+  longitude: string;
+};
+
+const emptyForm: PrintShopEventForm = {
   title: '',
   description: '',
   coverImage: undefined,
@@ -29,10 +34,29 @@ const emptyForm: Omit<CreatePrintShopEvent, 'communityId'> = {
   endDate: '',
   locationName: '',
   address: '',
-  latitude: 30.2672,
-  longitude: -97.7431,
+  latitude: '',
+  longitude: '',
   maxAttendees: undefined,
 };
+
+const latitudeRequiredMessage = 'Latitude is required before creating a Print Shop event.';
+const longitudeRequiredMessage = 'Longitude is required before creating a Print Shop event.';
+const latitudeInvalidMessage = 'Latitude must be a valid number between -90 and 90.';
+const longitudeInvalidMessage = 'Longitude must be a valid number between -180 and 180.';
+
+function parseCoordinate(value: string, requiredMessage: string, invalidMessage: string, min: number, max: number) {
+  if (!value.trim()) {
+    throw new Error(requiredMessage);
+  }
+
+  const coordinate = Number(value.trim());
+
+  if (!Number.isFinite(coordinate) || coordinate < min || coordinate > max) {
+    throw new Error(invalidMessage);
+  }
+
+  return coordinate;
+}
 
 export default function PrintShopPage() {
   const { token, user } = useAuthStore();
@@ -190,6 +214,9 @@ export default function PrintShopPage() {
     setCreatedEvent(null);
 
     try {
+      const latitude = parseCoordinate(form.latitude, latitudeRequiredMessage, latitudeInvalidMessage, -90, 90);
+      const longitude = parseCoordinate(form.longitude, longitudeRequiredMessage, longitudeInvalidMessage, -180, 180);
+
       const payload: CreatePrintShopEvent = {
         ...form,
         coverImage: form.coverImage?.trim() ? form.coverImage.trim() : undefined,
@@ -197,6 +224,8 @@ export default function PrintShopPage() {
         description: form.description.trim(),
         locationName: form.locationName.trim(),
         address: form.address.trim(),
+        latitude,
+        longitude,
         communityId: homeSceneResolution.id,
         artistBandId: activeSource?.id,
         maxAttendees: maxAttendeesInput.trim() ? Number(maxAttendeesInput.trim()) : undefined,
@@ -434,7 +463,7 @@ export default function PrintShopPage() {
                   className="mt-1 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-black outline-none"
                   value={form.address}
                   onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))}
-                  placeholder="123 Main St, Austin, TX"
+                  placeholder="Venue street address, city, state"
                   disabled={!canCreateEvent || !token || isSubmitting}
                 />
               </label>
@@ -448,9 +477,8 @@ export default function PrintShopPage() {
                   step="any"
                   className="mt-1 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-black outline-none"
                   value={form.latitude}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, latitude: Number(event.target.value || 0) }))
-                  }
+                  onChange={(event) => setForm((current) => ({ ...current, latitude: event.target.value }))}
+                  placeholder="Required venue latitude"
                   disabled={!canCreateEvent || !token || isSubmitting}
                 />
               </label>
@@ -461,9 +489,8 @@ export default function PrintShopPage() {
                   step="any"
                   className="mt-1 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-black outline-none"
                   value={form.longitude}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, longitude: Number(event.target.value || 0) }))
-                  }
+                  onChange={(event) => setForm((current) => ({ ...current, longitude: event.target.value }))}
+                  placeholder="Required venue longitude"
                   disabled={!canCreateEvent || !token || isSubmitting}
                 />
               </label>

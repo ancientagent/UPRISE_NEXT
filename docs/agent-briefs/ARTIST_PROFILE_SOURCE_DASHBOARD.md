@@ -80,6 +80,7 @@ Tests / verification files:
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
 - The ad slot is not an extra song slot and not its own rotation entry.
 - Print Shop is source-facing infrastructure for creator/event issuance flows.
+- Print Shop event creation requires explicit venue location input; the runtime must not default coordinates or address examples to a particular launch city.
 - Registrar remains separate civic/formalization infrastructure but must stay reachable from source-side operating context.
 
 ## Current Runtime Pointers
@@ -101,6 +102,7 @@ Tests / verification files:
 - Do not widen the current listener-facing Artist Profile into a full catalogue/library surface unless the Artist Profile lock is explicitly updated.
 - Do not add fake source-dashboard cards such as analytics, billing, growth, or upgrade modules unless explicitly activated.
 - Do not model Print Shop as a listener-facing event-authoring utility.
+- Do not add city-specific Print Shop defaults, placeholder venues, or hidden coordinate fallbacks unless they are explicitly fixture-only/test-only.
 - Do not treat business runtime, causes, source analytics packages, billing, or promotion package management as active MVP source-dashboard scope unless explicitly reactivated.
 - Do not let source-dashboard work bypass Home Scene, registrar, or ownership validation rules.
 
