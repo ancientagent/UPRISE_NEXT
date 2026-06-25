@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added `/plot` Home Scene roller consumption: the Plot shell now loads the authenticated roller read model, renders registered/resolvable music-community shortcuts, tunes selected scenes through the existing Discover scene-context endpoint, and keeps saved Away Scenes out of the roller.
 - Added the Music-Community Preference runtime foundation: Prisma persistence with backfill from the current single Home Scene music-community field, authenticated current-user preference/default API endpoints, typed web wrappers, and focused API/web tests.
 - Added expanded listener-profile music-community preference controls in `/plot`, including loading registered affiliations, adding approved parent music communities, and explicitly marking a default/starred preference.
 - Added the authenticated Home Scene roller read model and typed web wrapper so registered music-community preferences resolve to exact natural scenes or active proxy scenes while unresolved preferences stay out of the roller.

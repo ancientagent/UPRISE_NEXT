@@ -328,6 +328,24 @@ describe('/plot UX regression lock', () => {
     expect(expandedProfileBranch).not.toContain('Registrar');
   });
 
+  it('locks Home Scene roller into Plot as the active scene shortcut', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('getHomeSceneRoller(token)');
+    expect(plotPageSource).toContain('tuneDiscoverScene(item.sceneId, token)');
+    expect(plotPageSource).toContain('getCommunityById(item.sceneId, token)');
+    expect(plotPageSource).toContain('setSelectedCommunity(nextCommunity)');
+    expect(plotPageSource).toContain('setDiscoveryContext(context)');
+    expect(plotPageSource).toContain('data-slot="home-scene-roller"');
+    expect(plotPageSource).toContain('Home Scene Roller');
+    expect(plotPageSource).toContain('homeSceneRoller.items.map((item) =>');
+    expect(plotPageSource).toContain('handleHomeSceneRollerSelect(item)');
+    expect(plotPageSource).toContain(
+      "item.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'"
+    );
+    expect(plotPageSource).not.toContain('Saved Away Scene Roller');
+  });
+
   it('locks Top Songs + Scene Activity to archive-only placement', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 

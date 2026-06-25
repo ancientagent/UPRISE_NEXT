@@ -63,6 +63,7 @@ git diff --check
 
 ## Remaining Work
 
-1. Wire the read model into Home/Plot roller UI.
-2. Display unresolved profile preferences outside the roller.
-3. Decide when compatibility fields can be cleaned up after preference runtime is fully adopted.
+1. Display unresolved profile preferences outside the roller.
+2. Decide when compatibility fields can be cleaned up after preference runtime is fully adopted.
+
+Update: Home/Plot consumption of this read model was completed in `docs/handoff/2026-06-25_home-scene-roller-plot-consumption.md`.

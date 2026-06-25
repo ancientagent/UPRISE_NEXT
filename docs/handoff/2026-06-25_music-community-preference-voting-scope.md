@@ -58,6 +58,7 @@ git diff --check
 
 ## Remaining Work
 
-1. Wire the Home Scene roller read model into Home/Plot.
-2. Display unresolved preferences in profile while keeping them out of the roller.
-3. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.
+1. Display unresolved preferences in profile while keeping them out of the roller.
+2. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.
+
+Update: Home/Plot roller consumption was completed in `docs/handoff/2026-06-25_home-scene-roller-plot-consumption.md`.

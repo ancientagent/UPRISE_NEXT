@@ -10,7 +10,7 @@ Added music-community preference management to the expanded listener profile wor
 
 The listener profile now loads the authenticated user's registered music-community preferences, shows the default/starred preference, lets the user add approved parent music communities, and lets the user explicitly mark a different preference as default.
 
-This completes the profile-management UI portion of the Music-Community Preference Contract without changing Home Scene roller selection, Plot/Home scene switching, unresolved-preference display, source tooling, or compatibility-field storage.
+This completes the profile-management UI portion of the Music-Community Preference Contract without changing Home Scene roller selection, Plot/Home scene switching, unresolved-preference display, source tooling, or compatibility-field storage. Home Scene roller selection and Plot/Home scene switching were completed afterward in `docs/handoff/2026-06-25_home-scene-roller-plot-consumption.md`.
 
 ## Runtime Added
 
@@ -62,6 +62,5 @@ git diff --check
 
 ## Remaining Work
 
-1. Wire the Home Scene roller read model into Home/Plot scene switching.
-2. Display unresolved preferences in profile while keeping them out of the roller.
-3. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.
+1. Display unresolved preferences in profile while keeping them out of the roller.
+2. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.

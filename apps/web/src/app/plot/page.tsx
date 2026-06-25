@@ -27,7 +27,7 @@ import {
   getMvpPlayerTier,
   shouldUseTunedSceneAsDefaultPlotAnchor,
 } from '@/components/plot/tier-guard';
-import { getDiscoveryContext } from '@/lib/discovery/client';
+import { getDiscoveryContext, tuneDiscoverScene } from '@/lib/discovery/client';
 import { mergeDiscoveryContextPatch } from '@/lib/discovery/context';
 import {
   getCommunityById,
@@ -47,8 +47,11 @@ import {
 } from '@/lib/registrar/entryStatus';
 import {
   addMusicCommunityPreference,
+  getHomeSceneRoller,
   getMusicCommunityPreferences,
   setDefaultMusicCommunityPreference,
+  type HomeSceneRoller,
+  type HomeSceneRollerItem,
   type MusicCommunityPreference,
 } from '@/lib/users/client';
 
@@ -166,6 +169,14 @@ export default function PlotPage() {
     initialPlayerTier
   );
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
+  const [homeSceneRoller, setHomeSceneRoller] = useState<HomeSceneRoller>({
+    currentLocation: null,
+    items: [],
+  });
+  const [homeSceneRollerLoading, setHomeSceneRollerLoading] = useState(false);
+  const [homeSceneRollerError, setHomeSceneRollerError] = useState<string | null>(null);
+  const [homeSceneRollerSelectingSceneId, setHomeSceneRollerSelectingSceneId] =
+    useState<string | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>(
     'collapsed'
   );
@@ -231,6 +242,7 @@ export default function PlotPage() {
     () => formatPlotCommunityLabel(selectedCommunity),
     [selectedCommunity]
   );
+  const selectedCommunityId = selectedCommunity?.id ?? null;
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
@@ -283,6 +295,44 @@ export default function PlotPage() {
 
     resolveDefaultCommunity();
   }, [selectedCommunity, token, homeScene, tunedSceneId, hasHomeScene]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadHomeSceneRoller() {
+      if (!token || !hasHomeScene) {
+        setHomeSceneRoller({ currentLocation: null, items: [] });
+        setHomeSceneRollerError(null);
+        setHomeSceneRollerLoading(false);
+        return;
+      }
+
+      setHomeSceneRollerLoading(true);
+      setHomeSceneRollerError(null);
+
+      try {
+        const roller = await getHomeSceneRoller(token);
+        if (cancelled) return;
+        setHomeSceneRoller(roller);
+      } catch (error: unknown) {
+        if (cancelled) return;
+        const message =
+          error instanceof Error ? error.message : 'Unable to load Home Scene roller.';
+        setHomeSceneRoller({ currentLocation: null, items: [] });
+        setHomeSceneRollerError(message);
+      } finally {
+        if (!cancelled) {
+          setHomeSceneRollerLoading(false);
+        }
+      }
+    }
+
+    loadHomeSceneRoller();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasHomeScene, token]);
 
   useEffect(() => {
     setSelectedTier(initialPlayerTier);
@@ -586,6 +636,41 @@ export default function PlotPage() {
       setMusicCommunityPreferencesError(message);
     } finally {
       setMusicCommunityPreferenceSaving(false);
+    }
+  };
+
+  const handleHomeSceneRollerSelect = async (item: HomeSceneRollerItem) => {
+    if (!token) return;
+    if (homeSceneRollerSelectingSceneId) return;
+
+    setHomeSceneRollerSelectingSceneId(item.sceneId);
+    setHomeSceneRollerError(null);
+
+    try {
+      const nextCommunity = await getCommunityById(item.sceneId, token);
+
+      if (!nextCommunity) {
+        throw new Error('Selected Home Scene is unavailable.');
+      }
+
+      const context = await tuneDiscoverScene(item.sceneId, token);
+
+      setDiscoveryContext(context);
+      setSelectedCommunity(nextCommunity);
+      setSelectedCollectionItem(null);
+      setPlayerMode('RADIYO');
+      setHomeSceneRoller((current) => ({
+        ...current,
+        items: current.items.map((rollerItem) => ({
+          ...rollerItem,
+          isCurrent: rollerItem.sceneId === item.sceneId,
+        })),
+      }));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unable to switch Home Scene.';
+      setHomeSceneRollerError(message);
+    } finally {
+      setHomeSceneRollerSelectingSceneId(null);
     }
   };
 
@@ -1069,6 +1154,89 @@ export default function PlotPage() {
               <span>{seamLabel}</span>
             </button>
           </div>
+        </section>
+
+        <section
+          data-slot="home-scene-roller"
+          className="mt-3 rounded-[1.15rem] border border-black bg-[#efefe2] p-3 shadow-[2px_2px_0_rgba(0,0,0,0.2)]"
+        >
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="plot-wire-label">Home Scene Roller</p>
+              <p className="text-sm font-semibold text-black">
+                {homeSceneRoller.currentLocation
+                  ? `${homeSceneRoller.currentLocation.city}, ${homeSceneRoller.currentLocation.state}`
+                  : selectedCommunityLabel ?? 'Current city context'}
+              </p>
+            </div>
+            <p className="max-w-xl text-xs text-black/60">
+              Switch between registered music communities that resolve in your current city
+              context. Saved Away Scenes stay in your profile collection.
+            </p>
+          </div>
+
+          {homeSceneRollerLoading ? (
+            <p className="mt-3 text-sm text-black/60">Loading Home Scene roller...</p>
+          ) : homeSceneRollerError ? (
+            <p className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {homeSceneRollerError}
+            </p>
+          ) : homeSceneRoller.items.length > 0 ? (
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              {homeSceneRoller.items.map((item) => {
+                const isSelected =
+                  selectedCommunityId === item.sceneId ||
+                  (!selectedCommunityId && item.isCurrent);
+                const isSelecting = homeSceneRollerSelectingSceneId === item.sceneId;
+
+                return (
+                  <Button
+                    key={item.preferenceId}
+                    type="button"
+                    size="sm"
+                    variant={isSelected ? 'default' : 'outline'}
+                    aria-pressed={isSelected}
+                    className={
+                      isSelected
+                        ? 'min-w-[11rem] justify-start rounded-[1rem] border-black bg-[#b8d63b] px-3 py-2 text-left text-black hover:bg-[#b8d63b]/90'
+                        : 'min-w-[11rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5'
+                    }
+                    disabled={Boolean(homeSceneRollerSelectingSceneId)}
+                    onClick={() => handleHomeSceneRollerSelect(item)}
+                  >
+                    <span className="block w-full">
+                      <span className="block text-sm font-semibold">{item.musicCommunity}</span>
+                      <span className="mt-0.5 block text-[11px] text-black/65">
+                        {item.city && item.state
+                          ? `${item.city}, ${item.state}`
+                          : item.sceneName}
+                      </span>
+                      <span className="mt-1 flex flex-wrap gap-1">
+                        <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
+                          {item.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'}
+                        </span>
+                        {item.isDefault ? (
+                          <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
+                            Default
+                          </span>
+                        ) : null}
+                        {isSelecting ? (
+                          <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
+                            Switching
+                          </span>
+                        ) : null}
+                      </span>
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-black/60">
+              No additional registered music-community Home Scenes are available in this city
+              context yet.
+            </p>
+          )}
         </section>
 
         {isProfileExpanded ? null : playerPanel}
