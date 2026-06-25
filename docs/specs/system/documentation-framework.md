@@ -129,6 +129,9 @@ Current owner contracts:
 | Music-community preferences, default Home Scene, roller, city move, GPS voting scope | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` |
 | Identity, roles, capabilities, listener/source separation | `docs/specs/users/identity-roles-capabilities.md` |
 | Registrar source/capability workflows | `docs/specs/system/registrar.md` |
+| Source registration and source origin | `docs/specs/system/registrar.md#source-origin-contract` |
+| Community activation threshold workflow | `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow` plus `docs/specs/system/registrar.md#city-tier-activation-authority` |
+| Proxy scene music lifecycle and migration | `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points` plus `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` |
 | Plot/Home Scene shell | `docs/specs/communities/plot-and-scene-plot.md` |
 | Events/flyers | `docs/specs/events/events-and-flyers.md` |
 | Broadcast/Fair Play | `docs/specs/broadcast/radiyo-and-fair-play.md` |
@@ -140,9 +143,6 @@ Contracts still needing dedicated owner sections or cleanup:
 
 | Needed Contract | Current Best Home | Why It Matters |
 | --- | --- | --- |
-| Source registration and source origin | `docs/specs/system/registrar.md` | Controls GPS authority, source Home Scene, activation accounting, and source dashboard behavior. |
-| Community activation threshold workflow | `docs/specs/communities/scenes-uprises-sects.md` or `docs/specs/system/registrar.md` | Controls when a city/music-community becomes active and how Registrar/source notifications work. |
-| Proxy scene music lifecycle and migration | `docs/specs/users/onboarding-home-scene-resolution.md` plus community spec | Controls source/song/vote behavior when a natural Home Scene activates. |
 | Release Deck media eligibility | artist/source or future media spec | Controls 3-song / 20-minute / song-length / active-rotation limits. |
 | Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md` | Controls official sects, backing, thresholds, and subcommunity broadcast authority. |
 

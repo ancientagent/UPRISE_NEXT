@@ -3,7 +3,7 @@
 **ID:** `USER-ONBOARDING`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-24`
+**Last Updated:** `2026-06-25`
 
 ## Overview & Purpose
 
@@ -76,6 +76,23 @@ Defines the onboarding flow for selecting a Home Scene and deterministic assignm
 - When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats that GPS-derived city/state as the submitted Home Scene location and rechecks stored GPS coordinates after Home Scene persistence for voting eligibility.
 - Voting is enabled only when the exact active Home Scene geofence check or submitted-location locality check succeeds.
 - If no Home Scene or geofence, coordinates are stored but `gpsVerified=false`.
+
+## Proxy-to-Natural Cutover User Contract
+
+This section owns the user-facing Home Scene resolution side of proxy-to-natural cutover. Registrar owns source origin, the community spec owns activation readiness, and the broadcast spec owns song/vote lifecycle behavior.
+
+Owner references:
+- `docs/specs/system/registrar.md#source-origin-contract`
+- `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow`
+- `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points`
+
+- When a submitted/default Home Scene tuple becomes active after source-driven activation, matching users should resolve to the natural active Home Scene on the next supported Home Scene resolution/cutover path.
+- User profile music-community preferences remain the user's declared affiliations/interests; activation changes which scene those preferences resolve to, not the fact that the user holds the preference.
+- If a user was routed through a proxy scene for a music community, that proxy scene may remain available as an Away Scene or saved/listenable context where profile/collection support exists.
+- Voting authority follows the currently verified/default city and the resolved active Home Scene/proxy rules. Activation of the natural scene does not preserve city-tier voting authority in the former proxy scene unless the user is visiting it as an Away Scene under separate visitor rules.
+- Historical votes and activity remain tied to the scene/tier where they occurred; the user's profile may show history, but that history does not become natural-scene vote evidence.
+- Cutover messaging should be lightweight and explanatory: the natural Home Scene is now active because source/music readiness was met. It must not imply that listener demand alone created the community.
+- Runtime may continue carrying legacy `pioneer` compatibility fields until cleanup, but new user-facing copy should use submitted Home Scene, proxy scene, natural Home Scene, and Away Scene language.
 
 ## Non-Functional Requirements
 
@@ -198,6 +215,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic assignm
 - `apps/web/src/app/plot/page.tsx`:
   - after onboarding completion and Home Scene context load, Home may show major-node assignment helper copy through the notification icon or a lightweight Home dashboard tooltip.
   - helper copy explains that local communities are activated by local artist/band/source participation through Registrar/source registration, and that inviting local artists can help bring UPRISE to the listener's hometown.
+  - after natural Home Scene activation, Home may show lightweight cutover context that the user's submitted/default Home Scene is now active and the former proxy can remain an Away Scene/listening context where supported.
 - `apps/web/src/store/onboarding.ts`:
   - persists local onboarding state (`homeScene`, including optional `postalCode`, `gpsStatus`, `votingEligible`, `gpsReason`)
 
@@ -214,8 +232,9 @@ Defines the onboarding flow for selecting a Home Scene and deterministic assignm
 ## Future Work & Open Questions
 
 - Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
-- Define the Registrar/source activation workflow and artist/source concentration threshold for splitting a new active city-tier Home Scene from a major-node community.
+- Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
+- Lock final cutover notification placement/copy after the activation metrics and trigger implementation path is selected.
 - Sect uprising motion mechanics remain governed by `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References

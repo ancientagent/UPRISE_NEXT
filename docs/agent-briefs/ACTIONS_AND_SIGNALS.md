@@ -1,7 +1,7 @@
 # Actions And Signals Agent Brief
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-06-25
 
 ## Use When
 Use this brief when the task is about:
@@ -63,6 +63,7 @@ Tests / verification files:
 - Feed inserts are read-only launch surfaces with no inline `Collect`, `Blast`, `Follow`, or wheel actions.
 - Events are objects, not sources; event action is `Add` to calendar.
 - Flyers are event-bound artifacts, not default music-distribution signals.
+- Proxy-to-natural cutover does not move vote authority or vote history into the new natural Home Scene; Fair Play owns this in `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points`.
 
 ## Current Runtime Pointers
 - `/signals/:id/collect` is the public collect alias; legacy add compatibility may still exist in runtime.
@@ -77,6 +78,7 @@ Tests / verification files:
 - Do not use `Add` for saving songs in user-facing UI.
 - Do not put inline action buttons on feed insert cards.
 - Do not make event pages blast targets.
+- Do not treat proxy-scene votes/history as transferable natural-scene evidence after a Home Scene activates.
 - Do not let older source/feed docs outrank the action matrix when they conflict.
 
 ## Verification

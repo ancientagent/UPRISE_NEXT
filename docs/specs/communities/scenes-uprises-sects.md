@@ -74,7 +74,7 @@ This section owns the community-side activation workflow for splitting a natural
 
 ### Activation Trigger And Side Effects
 
-- Activation is source/music-driven. The operational trigger may be automated or approval-gated until an implementation spec locks the exact execution path, but listener demand is never the trigger.
+- Activation is source/music-driven. The operational trigger mechanism (automatic evaluator vs explicit Registrar/admin approval gate) is an implementation contract to lock before runtime automation, but listener demand is never the trigger.
 - When the natural Home Scene activates, future Home Scene resolution for matching listeners should route to the natural active scene.
 - Future source uploads for matching source-origin sources should attach according to the newly active natural Home Scene.
 - Existing songs already active in a proxy scene finish their current rotation lifecycle in that prior scene unless a later approved Fair Play/cutover spec changes the rule.

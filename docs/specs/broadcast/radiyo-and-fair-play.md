@@ -3,7 +3,7 @@
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-03-23`
+**Last Updated:** `2026-06-25`
 
 ## Overview & Purpose
 Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
@@ -106,6 +106,41 @@ Hard constraints:
 - Graduation execution runs every `14 days` (batched promotion runs, not continuous draining).
 - Graduation cap per run is enforced to prevent pool churn (`GRADUATION_CAP_PER_RUN`, value TBD).
 
+## Proxy Cutover And Lifecycle Join Points
+
+This section owns the Fair Play side of proxy-to-natural Home Scene cutover. Registrar owns source origin; the community spec owns activation readiness and community lifecycle. Fair Play owns what happens to songs, votes, rotation entries, and tier evidence once a natural Home Scene activates.
+
+Owner references:
+- `docs/specs/system/registrar.md#source-origin-contract`
+- `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow`
+- `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract`
+
+### Locked Cutover Rules
+
+- Activation of a natural Home Scene must not clone, transfer, or double-list an already active proxy-scene song into the new natural scene.
+- Existing songs already active in a proxy scene finish their current active placement in that prior scene/tier. "Current active placement" means the song's current New Releases/Main Rotation/tier placement until a normal lifecycle transition, removal/replacement rule, or approved promotion path ends that active placement.
+- New songs submitted after natural-scene activation attach according to the source's active Home Scene/source-origin rules.
+- A song cannot be actively listed in more than one Uprise rotation at the same time.
+- After a proxy-scene active placement ends, the source may reuse the same song in the new natural Home Scene only if the song has not already advanced to the statewide tier.
+- Proxy-scene listener votes, source/song voting data, engagement history, and recurrence evidence stay with the scene/tier where they occurred. They do not transfer into the newly active natural city-tier Home Scene.
+- The newly active natural Home Scene starts its local city-tier voting/evidence context from its own eligible songs and listeners after activation.
+- GPS-verified users routed through a proxy may vote only in their assigned active proxy scene for that music community, not in arbitrary Away Scenes.
+
+### Same-State And Cross-State Edge Policy
+
+- Same-state proxy assignment is the expected path; statewide tier identity remains coherent when the submitted/source-origin state and proxy scene state match.
+- Cross-state proxy assignment is an edge case allowed only when no same-state active major-node exists for the selected music community.
+- If cross-state proxy assignment is unavoidable, implementation must preserve both source-origin state and proxy-scene state in diagnostics before relying on statewide tier identity.
+- Cross-state proxy songs may continue tier progression provisionally, but statewide origin/identity handling remains a policy item to lock before automated production promotion depends on it.
+
+### Not Implemented By This Contract
+
+- No new promotion job is created here.
+- No activation evaluator is created here.
+- No migration or dedicated Uprise model is required by this section.
+- No new song-removal policy is defined here.
+- Exact promotion thresholds, graduation cap, and low-recurrence removal/floor policy remain governed by the open Fair Play decisions below.
+
 ## Non-Functional Requirements
 - No personalization.
 - No recommendation engines.
@@ -139,11 +174,7 @@ Hard constraints:
 - `POST /tracks` currently creates a valid track row with uploader ownership, file URL, duration, and optional community attachment.
 - This is a runtime ingestion contract, not a full upload/transcoding pipeline definition.
 - Track creation support exists so artist/discover flows can be exercised through the API instead of direct DB fixture insertion.
-- When artist/source concentration justifies splitting a new active city-tier Home Scene from a major-node community, existing artist/source songs tied to the prior active scene finish their current rotation lifecycle there. New songs submitted after activation attach according to the source's active Home Scene.
-- Proxy-scene listener votes and source/song voting data stay with the scene/tier where they occurred and do not transfer into the newly active natural Home Scene.
-- A song cannot be actively listed in more than one Uprise rotation at the same time.
-- After a proxy-scene lifecycle ends, the source may reuse the same song in the new natural Home Scene unless that song has already advanced to the statewide tier.
-- If cross-state proxy assignment is unavoidable because no same-state major-node exists, songs may still advance through tier progression provisionally; statewide origin/identity handling remains an explicit edge-case policy item.
+- Proxy-to-natural song, vote, and tier behavior follows `Proxy Cutover And Lifecycle Join Points`.
 
 ### Planned
 | Method | Path | Auth | Description |
@@ -159,12 +190,15 @@ Hard constraints:
 - No Main Rotation repeat faster than once/hour.
 - Upvotes do not affect recurrence.
 - Engagement does not affect propagation.
+- Proxy-scene votes/history remain historical to the proxy scene/tier after natural Home Scene activation.
+- Natural-scene activation does not create dual-active rotation placement for a song.
 - Stable behavior across density scenarios (`~6`, `15`, `25`, `35+` active new songs).
 
 ## Open Decisions
 - Exact propagation threshold formula.
 - Practical floor/removal policy for persistently low-recurrence songs.
 - `GRADUATION_CAP_PER_RUN` numeric value.
+- Automated production policy for cross-state proxy advancement identity.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

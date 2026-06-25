@@ -70,6 +70,7 @@
 
 ### Changed
 
+- Promoted proxy-to-natural cutover rules into the broadcast/Fair Play and onboarding owner specs, locking proxy song lifecycle, vote/history retention, user re-resolution, Away Scene preservation, and cross-state edge-case boundaries before runtime cutover work.
 - Promoted source-origin and city-tier Home Scene activation rules into owner specs: Registrar now owns source-origin authority, Communities now own activation workflow/counting semantics, and related briefs point future agents to those contracts before runtime activation work.
 - Clarified the Abacus community-activation strategy provenance so external lane findings are treated as scouting input rather than durable repo authority, and tightened source-origin / Release Deck owner-section guidance.
 - Replaced active user-facing onboarding/Plot `pioneer` copy with submitted-Home-Scene and proxy-scene language, updated the related regression locks, normalized active infra docs to Supercomputer, and patched stale Social-tab wording in the active social spec; see `docs/handoff/2026-06-25_stale-language-drift-cleanup.md`.
