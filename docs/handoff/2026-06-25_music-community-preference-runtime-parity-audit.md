@@ -1,91 +1,126 @@
 # Music-Community Preference Runtime Parity Audit
 
 Date: 2026-06-25
-Branch: docs/abacus-fusion-swarm-strategy
-Slice: Music-Community Preference runtime parity audit
+Branch: audit/music-community-preference-runtime-parity
+Base: main @ a65d457
+Slice: Music-Community Preference runtime parity audit refresh
 
 ## Summary
 
-Audited current runtime against `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract`.
+Re-audited current `main` against `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` after PR #116 merged.
 
-Result: the owner contract is active, but runtime remains a single-preference compatibility implementation. Current API/web/schema paths support one onboarding-selected/default music community and one resolved tuned scene. They do not yet implement profile-held multiple music-community preferences, explicit default/star selection, a Home Scene roller read model, or voting-scope expansion across all resolvable registered preferences.
+Result: the runtime now implements the main preference/default/roller/voting-scope foundation that the earlier audit listed as missing. The remaining compatibility work is narrower: centralize default-preference reads, invert remaining read paths away from direct `User.homeSceneCommunity` dependency where safe, and make onboarding/default-preference write paths keep the compatibility shadow in sync until schema cleanup is explicitly approved.
 
-No runtime code, schema, migration, seed, provider, or DB action was added in this slice.
+No runtime code, schema, migration, provider, DB, seed, deploy, or browser action was performed in this audit refresh.
 
 ## Evidence Checked
 
-Owner contract:
+Owner contracts and briefs:
 
 - `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract`
-- `docs/agent-briefs/ONBOARDING_HOME_SCENE.md`
+- `docs/specs/users/onboarding-home-scene-resolution.md#compatibility-cleanup-plan-2026-06-25`
+- `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points`
+- `docs/specs/system/registrar.md#source-origin-contract`
 - `docs/PLATFORM_START_HERE.md`
 
 Runtime/schema:
 
 - `apps/api/prisma/schema.prisma`
+- `apps/api/src/users/users.controller.ts`
+- `apps/api/src/users/users.service.ts`
+- `apps/api/src/fair-play/fair-play.service.ts`
 - `apps/api/src/onboarding/onboarding.service.ts`
-- `apps/api/src/communities/communities.service.ts`
-- `apps/api/src/communities/discovery.controller.ts`
-- `apps/api/src/communities/dto/community.dto.ts`
-- `apps/web/src/lib/discovery/client.ts`
-- `apps/web/src/lib/discovery/context.ts`
-- `apps/web/src/store/onboarding.ts`
+- `apps/web/src/lib/users/client.ts`
+- `apps/web/src/app/plot/page.tsx`
 
 Tests inspected:
 
-- `apps/api/test/onboarding.home-scene-resolution.test.ts`
-- `apps/api/test/communities.discovery.service.test.ts`
-- `apps/api/test/communities.discovery.controller.test.ts`
-- `apps/web/__tests__/discovery-context.test.ts`
-- `apps/web/__tests__/discovery-client.test.ts`
+- `apps/api/test/users.profile.collection.test.ts`
+- `apps/api/test/fair-play.vote.test.ts`
+- `apps/web/__tests__/plot-ux-regression-lock.test.ts`
+- `apps/web/__tests__/users-client.test.ts`
 
 ## Confirmed Current Runtime
 
-- `User.homeSceneCommunity` stores the one onboarding-selected/default music community.
-- `User.tunedSceneId` stores the current resolved active listening/voting anchor.
-- `POST /onboarding/home-scene` persists one `{city, state, musicCommunity}` tuple and one resolved scene anchor.
-- `POST /onboarding/gps-verify` evaluates voting eligibility against the user's current submitted tuple and `tunedSceneId` fallback.
-- `GET /discover/context` returns a single `tunedSceneId`, single `tunedScene`, optional `homeSceneId`, and `isVisitor`.
-- `POST /discover/tune` and `POST /discover/set-home-scene` mutate scene context by `sceneId`; they are not profile preference CRUD.
-- `CommunityMember` records user membership in resolved communities, but it does not encode preference ordering, default-star semantics, or city-carried affiliation intent.
+- `UserMusicCommunityPreference` exists with unique `{userId, musicCommunity}`, default/star flag, cascade relation to `User`, and a `userId/isDefault` index.
+- `UsersController` exposes authenticated current-user endpoints:
+  - `GET /users/me/music-community-preferences`
+  - `POST /users/me/music-community-preferences`
+  - `POST /users/me/music-community-preferences/default`
+  - `GET /users/me/home-scene-roller`
+- `UsersService.listMusicCommunityPreferences` lazily seeds the current `User.homeSceneCommunity` as a default preference when no preference rows exist.
+- `UsersService.addMusicCommunityPreference` adds a preference without stealing the default when preferences already exist.
+- `UsersService.setDefaultMusicCommunityPreference` flips the default/star row transactionally inside `UserMusicCommunityPreference`.
+- `UsersService.getHomeSceneRoller` resolves registered preferences against `User.homeSceneCity/homeSceneState`: exact active natural city scene first, same-state active proxy second, any active proxy third, unresolved preferences excluded.
+- `/plot` loads profile music-community preferences and lets the listener add approved parent communities and mark a default.
+- `/plot` labels profile preferences as `In Home Scene Roller` or `Profile-only until active scene`.
+- `/plot` renders `data-slot="home-scene-roller"` and uses `getHomeSceneRoller(token)`, `getCommunityById(item.sceneId, token)`, and `tuneDiscoverScene(item.sceneId, token)` when selecting a roller item.
+- Fair Play voting now allows registered preference votes that resolve to the user's current/default city natural scene or active proxy scene, and rejects unregistered preferences, unresolved visitor scenes, and non-city-tier vote targets.
+- Current tests cover preference seeding, add/default behavior, roller resolution/exclusion, profile UI labels, roller selection wiring, registered preference voting, same-state proxy voting, unregistered preference rejection, unresolved wrong-scene rejection, and non-city-tier vote rejection.
 
-## Parity Gaps
+## Remaining Parity Gaps
 
-The active owner contract requires follow-up runtime work for:
+### P1 — Default-preference read-path inversion still pending
 
-1. Profile-held music-community preference persistence.
-2. Add/remove/list preference API and typed web wrappers.
-3. Explicit default/starred music-community preference selection.
-4. Current verified/default city resolution for each registered preference.
-5. Home Scene roller read model that includes only resolvable registered preferences in the current verified/default city.
-6. Visibility of unresolved preferences in profile without showing them in the Home Scene roller.
-7. GPS voting scope across all registered preferences that resolve in the currently verified city.
-8. City-change behavior that carries preferences forward while re-resolving content.
-9. Migration/backfill from current single `User.homeSceneCommunity` into the future preference model.
+Current runtime still reads `User.homeSceneCommunity` directly in multiple owner-paths:
 
-## Files Changed
+- `apps/api/src/onboarding/onboarding.service.ts` uses `homeSceneCommunity` for GPS verification and still writes it as the compatibility Home Scene music-community field.
+- `apps/api/src/fair-play/fair-play.service.ts` selects and compares `homeSceneCommunity` for exact Home Scene voting before it checks registered preferences.
+- `apps/api/src/communities/communities.service.ts` still uses `homeSceneCommunity` for discover context and set-home-scene compatibility behavior.
+- Registrar/source-origin tests and services still rely on the user compatibility fields for source-origin scope.
 
-- `docs/specs/users/onboarding-home-scene-resolution.md`
-- `docs/specs/system/documentation-framework.md`
-- `docs/solutions/COMMUNITY_ACTIVATION_PROXY_LIFECYCLE_STRATEGY_R1.md`
-- `docs/CHANGELOG.md`
-- `docs/handoff/2026-06-25_music-community-preference-runtime-parity-audit.md`
+This is expected per the compatibility cleanup plan, but the next runtime slice should add a shared server-side default music-community preference resolver and update read paths to prefer `UserMusicCommunityPreference.isDefault`, with `User.homeSceneCommunity` only as fallback.
+
+### P1 — Write-path sync is incomplete
+
+`POST /onboarding/home-scene` writes `User.homeSceneCommunity` and `User.tunedSceneId`, but does not upsert the equivalent default `UserMusicCommunityPreference` row in the same transaction. The list endpoint can lazily seed the row later, but onboarding/default semantics should eventually write the preference model first and keep `homeSceneCommunity` as a compatibility shadow.
+
+`POST /users/me/music-community-preferences/default` updates the preference default/star rows, but it does not update `User.homeSceneCommunity` as a shadow. That is acceptable for profile UI, but compatibility read paths that still consult `homeSceneCommunity` will not see the changed default until read-path inversion is implemented.
+
+### P2 — No dedicated staging data audit yet
+
+The owner spec requires staging verification before schema cleanup: every user with `homeSceneCommunity` should have an equivalent default preference row, and every default preference should resolve or remain profile-only according to the roller contract. No staging data audit was run in this slice.
+
+## Updated Parity Status
+
+Former missing items that are now implemented:
+
+1. Profile-held preference persistence — implemented.
+2. Add/list preference API and typed web wrappers — implemented.
+3. Explicit default/star selection — implemented in the preference model and `/plot` UI.
+4. Current-city resolution for registered preferences — implemented in `getHomeSceneRoller`.
+5. Home Scene roller read model — implemented.
+6. Unresolved preference profile visibility without roller inclusion — implemented.
+7. GPS voting scope across registered preferences in verified/default city — implemented in Fair Play tests/runtime.
+8. Migration/backfill foundation from `User.homeSceneCommunity` — implemented as migration + lazy service fallback, with further write-path sync pending.
+
+Still pending:
+
+1. Shared resolver for default music-community preference with `homeSceneCommunity` fallback.
+2. Read-path inversion across onboarding GPS, Fair Play, Registrar/source origin, Discover/communities, and user/profile reads.
+3. Write-path sync so onboarding and default-preference mutations keep the preference model and compatibility field aligned.
+4. Staging data audit before any schema cleanup.
+5. Dedicated schema cleanup only after the above are proven.
+
+## Recommended Next Slice
+
+Item 3 from the execution list should proceed next:
+
+1. Add a shared API resolver for the user's default music-community preference.
+2. Cover it with tests for explicit default row, fallback to `User.homeSceneCommunity`, and no preference/no fallback.
+3. Use it in the safest first read path, likely Fair Play exact Home Scene voting or onboarding GPS verification, while preserving all existing behavior.
+4. Do not remove schema fields or change migrations in that slice.
 
 ## Validation
 
-Run before commit:
+Audit refresh validation to run before commit:
 
-```bash
-pnpm run docs:lint
-git diff --check
-```
+- `pnpm run docs:lint`
+- `git diff --check`
 
-## Next Slice
+## Boundaries
 
-Recommended next implementation slice:
-
-1. Add a dedicated music-community preference persistence model and migration.
-2. Backfill each user's current `homeSceneCommunity` as their initial default preference.
-3. Add preference CRUD/default-star API with tests.
-4. Add current-city resolution and Home Scene roller read model.
-5. Extend voting tests so one verified city grants voting across all registered preferences that resolve in that city, but not across multiple cities.
+- No runtime changes in this audit refresh.
+- No schema changes.
+- No provider, DB, seed, migration, deploy, or browser commands.
+- Existing `art/` untracked assets were not touched.

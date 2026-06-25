@@ -78,6 +78,7 @@
 
 ### Changed
 
+- Refreshed the Music-Community Preference runtime parity audit after PR #116 merged, confirming preference persistence, default/star selection, Home Scene Roller, profile-only unresolved labels, and registered-preference voting are implemented while narrowing remaining work to read-path inversion, write-path sync, and staging data audit.
 - Tightened Fair Play vote authority so `POST /tracks/:id/vote` rejects non-city-tier scenes even when `User.tunedSceneId` matches the target scene, preserving state/national context as listening/promotion context rather than direct vote targets.
 - Promoted activation notification and former-proxy Away Scene preservation into the onboarding/Home Scene cutover owner contract, keeping current runtime limited to listener/source re-rooting while notification persistence and saved-scene storage remain deferred.
 - Promoted Sect readiness and Sect Uprise boundaries into owner sections across the community and Registrar specs, keeping current runtime limited to sect-motion filing/readback while affiliation records, update channels, approvals, and visibility remain deferred.
