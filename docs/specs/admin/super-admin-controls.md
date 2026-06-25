@@ -51,8 +51,9 @@ Defines the Super Admin’s platform oversight capabilities.
   - RBAC/super-admin enforcement: deferred
 - Retained analytics read surface exists:
   - `GET /admin/analytics/query`
+  - `GET /admin/analytics/activation-readiness`
   - current guard: authenticated user (`JwtAuthGuard`)
-  - returns current platform totals, signal-action totals, and retained-metric availability/data from the live MVP runtime
+  - returns current platform totals, signal-action totals, retained-metric availability/data, and descriptive source-origin activation readiness diagnostics from the live MVP runtime
 - Web app exposes a minimal read-only admin route at `/admin` for the retained analytics surface.
 - No admin audit log model currently exists.
 
@@ -102,6 +103,7 @@ Defines the Super Admin’s platform oversight capabilities.
 | GET | `/admin/config/fair-play` | authenticated (RBAC deferred) | View current Fair Play policy variables |
 | POST | `/admin/config/fair-play` | authenticated (RBAC deferred) | Update Fair Play policy variables (global) |
 | GET | `/admin/analytics/query` | authenticated (RBAC deferred) | Query current retained analytics and platform totals |
+| GET | `/admin/analytics/activation-readiness` | authenticated (RBAC deferred) | Query descriptive source-origin activation readiness diagnostics |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |

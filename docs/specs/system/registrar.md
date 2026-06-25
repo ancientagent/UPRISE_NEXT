@@ -83,6 +83,11 @@ Registrar/source activation is the only authority path for creating or activatin
     - city-tier Scene only,
     - request Scene must match authenticated user's Home Scene or assigned same-music-community proxy scene.
   - Source-origin tuple persistence is implemented on `RegistrarEntry` and materialized `ArtistBand`.
+- Activation readiness diagnostics exist under `GET /admin/analytics/activation-readiness`:
+  - read-only/admin-facing;
+  - counts ready Artist/Band-backed tracks by persisted source-origin tuple;
+  - caps each source at `20` playable minutes;
+  - excludes already-active city-tier scenes.
 - Registrar promoter initiation primitive (slice 34):
   - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
   - Captures named production identity payload (`productionName`) for downstream capability processing.
@@ -293,7 +298,7 @@ Registrar/source activation is the only authority path for creating or activatin
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
-- Automated city-tier Home Scene activation metrics, trigger execution, and cutover orchestration.
+- Automated city-tier Home Scene trigger execution and cutover orchestration.
 - Sect motion lifecycle and approval state machine.
 - Sect readiness tracking visibility and unlock controls.
 - Official Sect affiliation, discovery, and updates-channel information architecture.

@@ -11,4 +11,9 @@ export class AdminAnalyticsController {
   async queryAnalytics() {
     return this.adminAnalyticsService.queryAnalytics();
   }
+
+  @Get('activation-readiness')
+  async getActivationReadinessDiagnostics() {
+    return this.adminAnalyticsService.getActivationReadinessDiagnostics();
+  }
 }

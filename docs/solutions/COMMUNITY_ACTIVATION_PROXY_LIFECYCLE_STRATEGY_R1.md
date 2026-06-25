@@ -85,7 +85,7 @@ This strategy is intentionally **no-migration at R1 doc stage**. Required model 
 3. Define whether additional derived/read-model fields are required for activation diagnostics (can be API computed first).
 4. Clarify role of existing `SectTag`/`UserTag` as non-authoritative for sect realization.
 
-Current runtime parity note: source-origin persistence is implemented on Registrar entries and materialized Artist/Band records. `sceneId` / `homeSceneId` remain the active operating scene, while `sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the submitted natural tuple for activation accounting. Slice 3 can now proceed to read-only activation readiness diagnostics from those fields.
+Current runtime parity note: source-origin persistence is implemented on Registrar entries and materialized Artist/Band records. `sceneId` / `homeSceneId` remain the active operating scene, while `sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the submitted natural tuple for activation accounting. Read-only activation readiness diagnostics now exist under the admin analytics surface; trigger execution remains deferred.
 
 Out of scope for this strategy pass:
 
@@ -198,7 +198,7 @@ Sequence translates blockers into implementation order (without runtime edits in
 2. **Slice 2 – Owner Contract: Proxy Cutover + Fair Play Lifecycle Join Points**
    - Patch migration/cutover contracts and cross-state policy placeholders.
 3. **Slice 3 – Activation Metrics Read Path**
-   - Add internal/admin read visibility for activation readiness diagnostics using persisted source-origin fields.
+   - Completed as authenticated admin analytics diagnostics using persisted source-origin fields.
 4. **Slice 4 – Activation Trigger Execution Path**
    - Implement deterministic activation evaluator (scheduled/manual trigger contract).
 5. **Slice 5 – Listener/Source Notification Path**

@@ -70,6 +70,7 @@
 
 ### Changed
 
+- Added authenticated admin activation-readiness diagnostics at `/admin/analytics/activation-readiness`, computing source-origin candidate readiness from ready Artist/Band-backed tracks while leaving activation trigger execution and cutover automation deferred.
 - Implemented Registrar source-origin persistence for Artist/Band registration: filings and materialized Artist/Band records now preserve the submitted natural `city + state + music community` separately from the active/proxy operating scene, unblocking future activation readiness diagnostics.
 - Recorded the interim activation-readiness blocker that source-origin persistence had to exist before diagnostics or trigger automation; this is now addressed by the Registrar source-origin persistence slice above.
 - Promoted proxy-to-natural cutover rules into the broadcast/Fair Play and onboarding owner specs, locking proxy song lifecycle, vote/history retention, user re-resolution, Away Scene preservation, and cross-state edge-case boundaries before runtime cutover work.
