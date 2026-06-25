@@ -1,7 +1,7 @@
 # UPRISE Platform Start Here
 
 Status: active orientation
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
 
 ## Purpose
 
@@ -73,6 +73,8 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 
 Use layered context, not bulk context.
 
+When a task changes cross-system product truth, use `docs/specs/system/documentation-framework.md` to identify the owner contract, lane-agent ownership, reviewer routing, Linear issue structure, and handoff promotion rule. Orientation docs and lane briefs should point to owner specs instead of carrying full duplicated rules.
+
 For focused implementation:
 
 1. `AGENTS.md`
@@ -98,6 +100,8 @@ After this file, use `docs/agent-briefs/CONTEXT_ROUTER.md` to pick the active la
 - Registrar/governance: `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`
 - Business/monetization: `docs/agent-briefs/BUSINESS_MONETIZATION.md`
 - External tools/design agents: `docs/agent-briefs/EXTERNAL_TOOLS.md`
+
+Lane agents own work areas, not final product truth. Durable product contracts live in `docs/specs/**`; see `docs/specs/system/documentation-framework.md#lane-agents`.
 
 ## Deferred Unless Activated
 
