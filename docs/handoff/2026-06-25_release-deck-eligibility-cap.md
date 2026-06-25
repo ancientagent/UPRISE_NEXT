@@ -37,7 +37,7 @@ This keeps the current Release Deck MVP URL-only and does not activate upload/st
 - Omitted `status` still defaults to `ready`.
 - Ready source-owned tracks now fail if they would create a fourth active music slot for the same source/community.
 - Ready source-owned tracks now fail if their duration would push the same source/community above `1200` active ready seconds.
-- `processing` and `failed` tracks are not counted as active rotation occupancy.
+- `processing` tracks are explicitly covered as not counted against active ready slot/duration occupancy; `failed` tracks follow the same non-ready boundary.
 
 ## TDD Evidence
 

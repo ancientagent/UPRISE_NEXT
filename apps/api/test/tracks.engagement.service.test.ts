@@ -252,4 +252,54 @@ describe('TracksService.createTrack', () => {
     });
     expect(mockPrisma.track.create).not.toHaveBeenCalled();
   });
+
+  it('does not count processing tracks as active Release Deck music slots', async () => {
+    const createdTrack = {
+      id: 'track-processing',
+      title: 'Processing Song',
+      artist: 'Youngblood QA Source',
+      duration: 181,
+      fileUrl: 'https://example.com/audio.mp3',
+      uploadedById: 'user-1',
+      communityId: 'community-1',
+      status: 'processing',
+    };
+
+    mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
+    mockPrisma.artistBand.findFirst.mockResolvedValue({
+      id: 'artist-band-1',
+      name: 'Youngblood QA Source',
+      homeSceneId: 'community-1',
+    });
+    mockPrisma.track.count.mockResolvedValue(3);
+    mockPrisma.track.aggregate.mockResolvedValue({
+      _sum: {
+        duration: 1_200,
+      },
+    });
+    mockPrisma.track.create.mockResolvedValue(createdTrack);
+
+    const result = await service.createTrack('user-1', {
+      title: 'Processing Song',
+      artist: 'QA Artist',
+      artistBandId: 'artist-band-1',
+      duration: 181,
+      fileUrl: 'https://example.com/audio.mp3',
+      communityId: 'community-1',
+      status: 'processing',
+    });
+
+    expect(mockPrisma.track.count).not.toHaveBeenCalled();
+    expect(mockPrisma.track.aggregate).not.toHaveBeenCalled();
+    expect(mockPrisma.track.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        title: 'Processing Song',
+        artist: 'Youngblood QA Source',
+        artistBandId: 'artist-band-1',
+        communityId: 'community-1',
+        status: 'processing',
+      }),
+    });
+    expect(result).toEqual(createdTrack);
+  });
 });
