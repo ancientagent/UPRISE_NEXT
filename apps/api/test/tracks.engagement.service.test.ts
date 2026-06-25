@@ -1,5 +1,5 @@
 import { TracksService } from '../src/tracks/tracks.service';
-import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 
 // Mock PrismaService with trackEngagement
 const mockPrisma = {
@@ -8,6 +8,8 @@ const mockPrisma = {
   },
   track: {
     findUnique: jest.fn(),
+    aggregate: jest.fn(),
+    count: jest.fn(),
     create: jest.fn(),
   },
   community: {
@@ -102,6 +104,12 @@ describe('TracksService.createTrack', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.track.aggregate.mockResolvedValue({
+      _sum: {
+        duration: 0,
+      },
+    });
+    mockPrisma.track.count.mockResolvedValue(0);
     service = new TracksService(mockPrisma as any);
   });
 
@@ -176,5 +184,72 @@ describe('TracksService.createTrack', () => {
         communityId: 'community-1',
       }),
     ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects ready Release Deck tracks that would exceed 20 active minutes for the source in one community', async () => {
+    mockPrisma.artistBand.findFirst.mockResolvedValue({
+      id: 'artist-band-1',
+      name: 'Youngblood QA Source',
+      homeSceneId: 'community-1',
+    });
+    mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
+    mockPrisma.track.aggregate.mockResolvedValue({
+      _sum: {
+        duration: 1_050,
+      },
+    });
+
+    await expect(
+      service.createTrack('user-1', {
+        title: 'Too Long For Rotation',
+        artist: 'QA Artist',
+        artistBandId: 'artist-band-1',
+        duration: 181,
+        fileUrl: 'https://example.com/audio.mp3',
+        communityId: 'community-1',
+      }),
+    ).rejects.toThrow(BadRequestException);
+
+    expect(mockPrisma.track.aggregate).toHaveBeenCalledWith({
+      where: {
+        artistBandId: 'artist-band-1',
+        communityId: 'community-1',
+        status: 'ready',
+      },
+      _sum: {
+        duration: true,
+      },
+    });
+    expect(mockPrisma.track.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects a fourth ready Release Deck music slot for the source in one community', async () => {
+    mockPrisma.artistBand.findFirst.mockResolvedValue({
+      id: 'artist-band-1',
+      name: 'Youngblood QA Source',
+      homeSceneId: 'community-1',
+    });
+    mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
+    mockPrisma.track.count.mockResolvedValue(3);
+
+    await expect(
+      service.createTrack('user-1', {
+        title: 'Fourth Active Song',
+        artist: 'QA Artist',
+        artistBandId: 'artist-band-1',
+        duration: 181,
+        fileUrl: 'https://example.com/audio.mp3',
+        communityId: 'community-1',
+      }),
+    ).rejects.toThrow(BadRequestException);
+
+    expect(mockPrisma.track.count).toHaveBeenCalledWith({
+      where: {
+        artistBandId: 'artist-band-1',
+        communityId: 'community-1',
+        status: 'ready',
+      },
+    });
+    expect(mockPrisma.track.create).not.toHaveBeenCalled();
   });
 });

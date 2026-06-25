@@ -130,12 +130,15 @@ Existing truths preserved:
 - 20-minute per-source cap per rotation;
 - URL-only media ingest for current MVP.
 
-Owner contract still needed for:
+Owner contract promoted:
 
-1. explicit song length cap;
-2. active-rotation eligibility criteria;
-3. replacement behavior when source is at active cap;
-4. enforcement method for single-active-rotation exclusivity.
+- `docs/specs/media/release-deck-and-eligibility.md` now owns the 3 active music slots, 20-minute active rotation cap, and URL-only MVP ingest boundary.
+
+Owner contract follow-ups still needed for:
+
+1. explicit per-song length cap, if any;
+2. replacement behavior when source is at active cap;
+3. enforcement method for single-active-rotation exclusivity beyond current create-time guardrails.
 
 ## Fair Play and Voting Implications
 
@@ -205,7 +208,8 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Minimal source/listener re-rooting is implemented in the manual activation trigger: matching `ArtistBand.homeSceneId` and `User.tunedSceneId` values move to the natural scene for future uploads/Home resolution without moving existing tracks/votes.
    - Next: minimal UX/API messaging for proxy-to-natural activation transitions and saved Away Scene/profile preservation for the former proxy context.
 6. **Slice 6 – Release Deck Eligibility Enforcement**
-   - First create or designate a Release Deck / media eligibility owner spec or section, then enforce owner-locked eligibility/replacement rules without widening MVP media scope.
+   - Active-slot and active-duration enforcement is implemented against the new Release Deck media eligibility owner spec.
+   - Next: define replacement UX and any explicit per-song length cap without widening MVP media scope.
 7. **Slice 7 – Sect Readiness Parity Foundations**
    - Reuse activation-metrics patterns for sect readiness (visibility still deferred).
 
@@ -231,7 +235,7 @@ Primary owner docs to patch in order:
 2. `docs/specs/communities/scenes-uprises-sects.md` (activation workflow owner section)
 3. `docs/specs/users/onboarding-home-scene-resolution.md` (cutover-facing user contract pointers)
 4. `docs/specs/broadcast/radiyo-and-fair-play.md` (activation/cutover execution semantics)
-5. `docs/specs/media/release-deck-and-eligibility.md` or an equivalent new owner section (Release Deck / media eligibility contract)
+5. `docs/specs/media/release-deck-and-eligibility.md` (replacement UX and any per-song length cap follow-up)
 6. `docs/agent-briefs/ONBOARDING_HOME_SCENE.md` / `REGISTRAR_GOVERNANCE.md` / `ARTIST_PROFILE_SOURCE_DASHBOARD.md` (short routing updates after owner patches)
 
 ## Risks / Drift Traps

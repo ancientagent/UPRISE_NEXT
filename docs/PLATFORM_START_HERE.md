@@ -22,25 +22,26 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 5. New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding or listener-side pioneer tracking. Listener demand can inform messaging, but without active local artists/music there is no music community to activate.
 6. A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
 7. No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
-8. If a listener's submitted/GPS city differs from the assigned active Home Scene, Home may show a lightweight tooltip encouraging them to tell local bands/artists to register with UPRISE; this is messaging, not a community-creation workflow.
-9. Home contains Plot; Plot is not a standalone destination.
-10. Current Plot tabs are exactly `Feed`, `Events`, and `Archive`.
-11. Listener Profile, Artist Profile, Source Dashboard, Registrar, and Business surfaces are separate.
-12. Source Dashboard is the MVP monorepo stand-in for future separate source/admin tooling.
-13. GPS gates voting rights, not ordinary participation.
-14. Onboarding collects one primary scene-of-choice music community; additional music-community preferences are added later from the user profile.
-15. GPS verification proves location authority for voting and source registration; it does not automatically add every active music community in the verified city to the user's Home Scene roller.
-16. One successful GPS verification for a city grants voting rights across the user's registered music-community preferences that resolve in that verified city.
-17. Verifying a new city replaces the user's prior city voting authority; users do not hold voting authority in multiple cities at the same time.
-18. Music-community preferences persist across cities; when the verified/default city changes, Home/Plot/RADIYO/Feed/Events/Archive content re-resolves to that city's active or proxy scenes.
-19. The Home Scene selected during onboarding is the user's initial active/default Home Scene.
-20. The starred default music-community preference determines the Home Scene loaded on login; the Home Scene roller is only a shortcut to resolvable primary communities in the current city.
-21. Saved Away Scenes live in the user profile/collection, not in the Home Scene roller.
-22. Missing music-community requests are intake/review only; they do not create live communities.
-23. Sect readiness tracking may be built before it is visible, but user-facing sect creation, sect backing limits, and unlock criteria remain beta/community-calibrated.
-24. Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags; Official Sects may become visible subcommunities with update channels, but they do not gain independent broadcast authority until they Uprise.
-25. Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community. They exist to give niche/sub/microgenre groups a purer broadcast without fragmenting the parent music community into isolated city/community silos.
-26. Business runtime, billing, paid promotion management, premium analytics, media upload/transcode, Prime model, and a dedicated Uprise model are deferred unless explicitly activated.
+8. Release Deck has `3` active music slots per managed Artist/Band source per city-tier community; the paid ad attachment is not a fourth music slot.
+9. If a listener's submitted/GPS city differs from the assigned active Home Scene, Home may show a lightweight tooltip encouraging them to tell local bands/artists to register with UPRISE; this is messaging, not a community-creation workflow.
+10. Home contains Plot; Plot is not a standalone destination.
+11. Current Plot tabs are exactly `Feed`, `Events`, and `Archive`.
+12. Listener Profile, Artist Profile, Source Dashboard, Registrar, and Business surfaces are separate.
+13. Source Dashboard is the MVP monorepo stand-in for future separate source/admin tooling.
+14. GPS gates voting rights, not ordinary participation.
+15. Onboarding collects one primary scene-of-choice music community; additional music-community preferences are added later from the user profile.
+16. GPS verification proves location authority for voting and source registration; it does not automatically add every active music community in the verified city to the user's Home Scene roller.
+17. One successful GPS verification for a city grants voting rights across the user's registered music-community preferences that resolve in that verified city.
+18. Verifying a new city replaces the user's prior city voting authority; users do not hold voting authority in multiple cities at the same time.
+19. Music-community preferences persist across cities; when the verified/default city changes, Home/Plot/RADIYO/Feed/Events/Archive content re-resolves to that city's active or proxy scenes.
+20. The Home Scene selected during onboarding is the user's initial active/default Home Scene.
+21. The starred default music-community preference determines the Home Scene loaded on login; the Home Scene roller is only a shortcut to resolvable primary communities in the current city.
+22. Saved Away Scenes live in the user profile/collection, not in the Home Scene roller.
+23. Missing music-community requests are intake/review only; they do not create live communities.
+24. Sect readiness tracking may be built before it is visible, but user-facing sect creation, sect backing limits, and unlock criteria remain beta/community-calibrated.
+25. Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags; Official Sects may become visible subcommunities with update channels, but they do not gain independent broadcast authority until they Uprise.
+26. Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community. They exist to give niche/sub/microgenre groups a purer broadcast without fragmenting the parent music community into isolated city/community silos.
+27. Business runtime, billing, paid promotion management, premium analytics, media upload/transcode, Prime model, and a dedicated Uprise model are deferred unless explicitly activated.
 
 ## Common Wrong Assumptions
 

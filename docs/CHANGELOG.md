@@ -70,6 +70,7 @@
 
 ### Changed
 
+- Added Release Deck eligibility enforcement for the 3 active music-slot cap and 20-minute per-source active rotation cap, with a new owner spec at `docs/specs/media/release-deck-and-eligibility.md`.
 - Extended manual Home Scene activation cutover so matching listeners are re-rooted to the newly active natural scene via `User.tunedSceneId`, while preserving proxy-scene tracks, votes, engagement history, and rotation entries.
 - Added an authenticated manual activation trigger at `POST /admin/analytics/activation-readiness/activate` that only activates source-origin tuples already meeting the locked readiness thresholds, creates or activates the natural city-tier scene, and re-anchors matching sources for future uploads while leaving existing proxy-scene tracks/votes/history untouched.
 - Added authenticated admin activation-readiness diagnostics at `/admin/analytics/activation-readiness`, computing source-origin candidate readiness from ready Artist/Band-backed tracks while leaving activation trigger execution and cutover automation deferred.

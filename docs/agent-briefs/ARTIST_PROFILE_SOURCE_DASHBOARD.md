@@ -83,6 +83,7 @@ Tests / verification files:
 - No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
 - The ad slot is not an extra song slot and not its own rotation entry.
 - Release Deck current MVP creates source-owned tracks from explicit hosted `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred.
+- Release Deck active-slot and active-duration eligibility is owned by `docs/specs/media/release-deck-and-eligibility.md`; replacement UX and any per-song length cap remain follow-up decisions there.
 - Source-origin authority is owned by `docs/specs/system/registrar.md#source-origin-contract`; source tools must not treat temporary proxy routing as the source's natural origin.
 - When artist/source concentration justifies splitting a new active city-tier Home Scene from a major-node community, existing songs finish their current rotation lifecycle in the prior active scene; new uploads attach according to the source's active Home Scene after Registrar/source activation.
 - A song cannot be actively listed in more than one Uprise rotation at the same time.

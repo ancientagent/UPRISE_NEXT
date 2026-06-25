@@ -135,6 +135,7 @@ Current owner contracts:
 | Plot/Home Scene shell | `docs/specs/communities/plot-and-scene-plot.md` |
 | Events/flyers | `docs/specs/events/events-and-flyers.md` |
 | Broadcast/Fair Play | `docs/specs/broadcast/radiyo-and-fair-play.md` |
+| Release Deck media eligibility | `docs/specs/media/release-deck-and-eligibility.md` |
 | Print Shop / promotions boundary | `docs/specs/economy/print-shop-and-promotions.md` |
 | Revenue/pricing doctrine | `docs/specs/economy/revenue-and-pricing.md` |
 | Documentation/context system | `docs/specs/system/documentation-framework.md` |
@@ -143,7 +144,7 @@ Contracts still needing dedicated owner sections or cleanup:
 
 | Needed Contract | Current Best Home | Why It Matters |
 | --- | --- | --- |
-| Release Deck media eligibility | artist/source or future media spec | Controls 3-song / 20-minute / song-length / active-rotation limits. |
+| Release Deck replacement and song-length cleanup | `docs/specs/media/release-deck-and-eligibility.md` | Active slot and 20-minute caps are owned/enforced; replacement UX and any per-song length cap still need a follow-up decision. |
 | Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md` | Controls official sects, backing, thresholds, and subcommunity broadcast authority. |
 
 ## Lane Agents
@@ -157,7 +158,7 @@ Lane agents own work areas, not product truth. Product truth lives in owner cont
 | `uprise-registrar-source` | Registrar, source registration, source origin, source dashboard boundaries | `REGISTRAR_GOVERNANCE`, `ARTIST_PROFILE_SOURCE_DASHBOARD`, registrar spec | artist/band/source intake, GPS source gates, source admin separation |
 | `uprise-community-activation` | city activation, proxy scenes, community lifecycle | community specs, onboarding spec, registrar spec | music-content and source-diversity activation thresholds, proxy cutover |
 | `uprise-fairplay-broadcast` | RADIYO, voting, rotation, tier propagation | `ACTIONS_AND_SIGNALS`, broadcast/Fair Play spec | action grammar, votes, Fair Play, tier lifecycle |
-| `uprise-media-release` | Release Deck, media limits, upload/transcode boundaries | artist/source brief, media/storage decision docs | song limits, active rotation eligibility, deferred media pipeline |
+| `uprise-media-release` | Release Deck, media limits, upload/transcode boundaries | Release Deck media spec, artist/source brief, media/storage decision docs | song limits, active rotation eligibility, deferred media pipeline |
 | `uprise-events-archive` | Events, Archive, flyers, descriptive history | `EVENTS_ARCHIVE`, event specs | prevent Statistics/Promotions drift, event read/write boundaries |
 | `uprise-sects-governance` | sect affiliation, official sects, Sect Uprises | Registrar/community sect specs | sect readiness, official status, Uprise threshold |
 | `uprise-business-later` | monetization doctrine and deferred boundaries | `BUSINESS_MONETIZATION`, economy specs | prevent premature billing/promotions/analytics implementation |
@@ -328,7 +329,7 @@ Seed these as Linear or repo-tracked work items when ready:
 Recently completed owner-contract seeds: source registration/source origin (Slice 1), community activation workflow around music-content and source-diversity thresholds (Slice 1), proxy scene music lifecycle and migration (Slice 2), and Fair Play / proxy vote / tier propagation join points (Slice 2). Runtime source-origin persistence on Registrar/ArtistBand, admin activation readiness diagnostics, an authenticated manual activation trigger, and minimal source/listener re-rooting are also implemented.
 
 1. Define listener/source notification and saved Away Scene/profile preservation after manual activation.
-2. Define Release Deck media eligibility contract.
+2. Define remaining Release Deck replacement behavior and any explicit per-song length cap.
 3. Define sect readiness and Sect Uprise boundary.
 4. Audit runtime parity against the Music-Community Preference Contract.
 
