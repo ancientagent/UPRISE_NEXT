@@ -280,7 +280,7 @@ Owner references:
 ## Future Work & Open Questions
 
 - Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
-- Continue the Music-Community Preference Contract runtime path: profile UI integration, Plot/Home roller consumption, unresolved-profile visibility outside the roller, and GPS voting scope across resolvable registered preferences.
+- Continue the Music-Community Preference Contract runtime path: profile UI integration, Plot/Home roller consumption, and unresolved-profile visibility outside the roller.
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
 - Implement cutover notification/Away Scene preservation using the Activation Notification and Former Proxy / Away Scene contracts above.
