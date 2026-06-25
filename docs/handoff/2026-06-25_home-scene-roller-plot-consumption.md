@@ -29,7 +29,7 @@ Saved Away Scenes remain profile/collection interests and are not treated as rol
 ## Guardrails Preserved
 
 - The roller is sourced only from `homeSceneRoller.items` returned by the authenticated read model.
-- Unresolved preferences still remain outside the roller until a later profile-visibility slice.
+- Unresolved preferences remain outside the roller; profile-visible unresolved/profile-only labels were completed in `docs/handoff/2026-06-25_unresolved-preference-profile-visibility.md`.
 - Saved Away Scenes are not pulled into the roller.
 - No new API route, schema migration, provider call, or DB command was added.
 - No source-dashboard, registrar, or Artist Profile behavior was changed.
@@ -71,5 +71,4 @@ Both passed before documentation updates.
 
 ## Remaining Work
 
-1. Display unresolved music-community preferences in the profile while keeping them out of the Home Scene roller.
-2. Plan compatibility-field cleanup once the preference/default/roller model fully owns runtime behavior.
+1. Plan compatibility-field cleanup once the preference/default/roller model fully owns runtime behavior.

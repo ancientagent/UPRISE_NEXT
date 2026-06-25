@@ -315,10 +315,15 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('setDefaultMusicCommunityPreference(musicCommunity, token)');
     expect(plotPageSource).toContain("const [musicCommunityPreferenceDraft, setMusicCommunityPreferenceDraft] = useState('');");
     expect(plotPageSource).toContain('MUSIC_COMMUNITIES.filter');
+    expect(plotPageSource).toContain('resolvedRollerMusicCommunities');
+    expect(plotPageSource).toContain('homeSceneRoller.items.map((item) => item.musicCommunity.trim().toLowerCase())');
+    expect(plotPageSource).toContain('resolvedRollerMusicCommunities.has(');
     expect(expandedProfileBranch).toContain('Music Communities');
     expect(expandedProfileBranch).toContain('Add a music community');
     expect(expandedProfileBranch).toContain('Make default');
     expect(expandedProfileBranch).toContain('Default Home Scene');
+    expect(expandedProfileBranch).toContain('In Home Scene Roller');
+    expect(expandedProfileBranch).toContain('Profile-only until active scene');
     expect(expandedProfileBranch).toContain('Preferences stay in your profile and re-resolve when your current city changes.');
     expect(expandedProfileBranch).not.toContain('Create community');
     expect(expandedProfileBranch).not.toContain('Launch community');

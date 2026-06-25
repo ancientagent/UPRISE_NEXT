@@ -154,14 +154,14 @@ Owner references:
   - `POST /users/me/music-community-preferences/default`
   - `GET /users/me/home-scene-roller`
 - Typed web client wrappers exist in `apps/web/src/lib/users/client.ts`.
-- The expanded listener profile in `/plot` now loads current preferences, shows registered music-community affiliations, lets the user add approved parent music communities, and lets the user explicitly mark a default/starred preference.
+- The expanded listener profile in `/plot` now loads current preferences, shows registered music-community affiliations, marks whether each preference is currently in the Home Scene Roller or profile-only until an active scene exists, lets the user add approved parent music communities, and lets the user explicitly mark a default/starred preference.
 - The Home Scene roller read model resolves registered preferences against the user's current/default city: exact active natural scene first, same-state active proxy scene second, then any active proxy scene for that music community. Preferences with no active resolution remain profile-only and are excluded from the roller response.
 - `/plot` now consumes `GET /users/me/home-scene-roller` as the Home Scene Roller shortcut. Selecting a roller item tunes the user's scene context with `POST /discover/tune`, updates the active Plot community anchor, and keeps saved Away Scenes out of the roller.
 - The Fair Play voting gate now allows a GPS-verified user to vote in any registered music-community preference that resolves from their current/default city to the target exact natural scene or active proxy scene. This does not authorize unregistered music communities, arbitrary visitor scenes, or simultaneous multi-city voting authority.
 - The Home Scene selected during onboarding still writes the compatibility fields `User.homeSceneCity`, `User.homeSceneState`, `User.homeSceneCommunity`, and `User.tunedSceneId`; preference runtime foundation does not remove those fields yet.
 - `CommunityMember` records membership in specific resolved communities, but it does not encode music-community preference order, profile affiliation intent, default-star semantics, or city-carried preference behavior.
 - `POST /discover/tune` and `POST /discover/set-home-scene` mutate scene context by `sceneId`; they are not the final profile preference/default system.
-- Remaining runtime work: unresolved-profile visibility outside the roller and migration cleanup once compatibility fields are retired.
+- Remaining runtime work: migration cleanup once compatibility fields are retired.
 
 ## Data Models & Migrations
 
@@ -282,7 +282,7 @@ Owner references:
 ## Future Work & Open Questions
 
 - Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
-- Continue the Music-Community Preference Contract runtime path: unresolved-profile visibility outside the roller and compatibility-field cleanup.
+- Continue the Music-Community Preference Contract runtime path: compatibility-field cleanup after the preference/default/roller model fully owns runtime behavior.
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
 - Implement cutover notification/Away Scene preservation using the Activation Notification and Former Proxy / Away Scene contracts above.

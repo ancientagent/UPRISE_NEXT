@@ -243,6 +243,10 @@ export default function PlotPage() {
     [selectedCommunity]
   );
   const selectedCommunityId = selectedCommunity?.id ?? null;
+  const resolvedRollerMusicCommunities = useMemo(
+    () => new Set(homeSceneRoller.items.map((item) => item.musicCommunity.trim().toLowerCase())),
+    [homeSceneRoller.items]
+  );
 
   useEffect(() => {
     async function fetchDiscoveryContext() {
@@ -1354,34 +1358,45 @@ export default function PlotPage() {
                 </p>
               ) : musicCommunityPreferences.length > 0 ? (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {musicCommunityPreferences.map((preference) => (
-                    <div
-                      key={preference.id}
-                      className="flex items-center gap-2 rounded-full border border-black bg-white px-3 py-2"
-                    >
-                      <span className="text-sm font-semibold text-black">
-                        {preference.musicCommunity}
-                      </span>
-                      {preference.isDefault ? (
-                        <span className="rounded-full bg-[#b8d63b] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black">
-                          Default Home Scene
+                  {musicCommunityPreferences.map((preference) => {
+                    const isResolvedInRoller = resolvedRollerMusicCommunities.has(
+                      preference.musicCommunity.trim().toLowerCase()
+                    );
+
+                    return (
+                      <div
+                        key={preference.id}
+                        className="flex items-center gap-2 rounded-full border border-black bg-white px-3 py-2"
+                      >
+                        <span className="text-sm font-semibold text-black">
+                          {preference.musicCommunity}
                         </span>
-                      ) : (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          className="h-7 rounded-full border-black bg-[#efefe2] text-[10px] font-semibold uppercase tracking-[0.12em]"
-                          disabled={musicCommunityPreferenceSaving}
-                          onClick={() =>
-                            handleSetDefaultMusicCommunityPreference(preference.musicCommunity)
-                          }
-                        >
-                          Make default
-                        </Button>
-                      )}
-                    </div>
-                  ))}
+                        <span className="rounded-full border border-black/15 bg-[#efefe2] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
+                          {isResolvedInRoller
+                            ? 'In Home Scene Roller'
+                            : 'Profile-only until active scene'}
+                        </span>
+                        {preference.isDefault ? (
+                          <span className="rounded-full bg-[#b8d63b] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black">
+                            Default Home Scene
+                          </span>
+                        ) : (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            className="h-7 rounded-full border-black bg-[#efefe2] text-[10px] font-semibold uppercase tracking-[0.12em]"
+                            disabled={musicCommunityPreferenceSaving}
+                            onClick={() =>
+                              handleSetDefaultMusicCommunityPreference(preference.musicCommunity)
+                            }
+                          >
+                            Make default
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="mt-4 text-sm text-black/60">
