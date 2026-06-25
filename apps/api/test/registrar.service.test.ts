@@ -10,6 +10,9 @@ describe('RegistrarService', () => {
       findUnique: jest.fn(),
       findMany: jest.fn(),
     },
+    userMusicCommunityPreference: {
+      findFirst: jest.fn(),
+    },
     registrarEntry: {
       create: jest.fn(),
       findUnique: jest.fn(),
@@ -106,6 +109,7 @@ describe('RegistrarService', () => {
       sourceRegistrarCodeId: 'rcode-default',
     }));
     mockPrisma.capabilityGrantAuditLog.findMany.mockResolvedValue([]);
+    mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue(null);
     service = new RegistrarService(mockPrisma as any);
   });
 
@@ -2965,6 +2969,62 @@ describe('RegistrarService', () => {
     );
     expect(result.sourceOriginCity).toBe('El Paso');
     expect(result.sourceOriginState).toBe('TX');
+    expect(result.sourceOriginMusicCommunity).toBe('punk');
+  });
+
+  it('uses the default music-community preference for proxy-scene artist source origin when compatibility community is stale', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-austin-punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      gpsVerified: true,
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'TX',
+      homeSceneCommunity: null,
+      tunedSceneId: 'scene-austin-punk',
+    });
+    mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue({
+      musicCommunity: 'punk',
+    });
+    mockPrisma.registrarEntry.create.mockResolvedValue({
+      id: 'reg-proxy-pref-1',
+      type: 'artist_band_registration',
+      status: 'submitted',
+      sceneId: 'scene-austin-punk',
+      sourceOriginCity: 'El Paso',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
+      createdById: 'u-1',
+      payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+      createdAt: new Date('2026-02-20T14:10:00.000Z'),
+    });
+    mockPrisma.user.findMany.mockResolvedValue([]);
+    mockPrisma.registrarArtistMember.createMany.mockResolvedValue({ count: 2 });
+
+    const result = await service.submitArtistBandRegistration('u-1', {
+      ...validDto,
+      sceneId: 'scene-austin-punk',
+    });
+
+    expect(mockPrisma.userMusicCommunityPreference.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { userId: 'u-1', isDefault: true },
+      }),
+    );
+    expect(mockPrisma.registrarEntry.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        }),
+      }),
+    );
     expect(result.sourceOriginMusicCommunity).toBe('punk');
   });
 

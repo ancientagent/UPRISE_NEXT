@@ -108,6 +108,15 @@ export class AuthService {
         },
       });
 
+      const musicCommunity = invite.registrarEntry.scene.musicCommunity;
+      if (musicCommunity) {
+        await tx.userMusicCommunityPreference.upsert({
+          where: { userId_musicCommunity: { userId: createdUser.id, musicCommunity } },
+          update: { isDefault: true },
+          create: { userId: createdUser.id, musicCommunity, isDefault: true },
+        });
+      }
+
       return createdUser;
     });
 

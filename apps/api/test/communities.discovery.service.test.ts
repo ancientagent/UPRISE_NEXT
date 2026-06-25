@@ -4,6 +4,7 @@ import { CommunitiesService } from '../src/communities/communities.service';
 describe('CommunitiesService.discoverScenes', () => {
   const mockPrisma = {
     user: { findUnique: jest.fn(), update: jest.fn() },
+    userMusicCommunityPreference: { findFirst: jest.fn(), upsert: jest.fn(), updateMany: jest.fn(), update: jest.fn() },
     community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     communityMember: { create: jest.fn() },
     artistBand: { findMany: jest.fn(), findFirst: jest.fn() },
@@ -22,6 +23,7 @@ describe('CommunitiesService.discoverScenes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPrisma.$transaction.mockImplementation(async (callback: any) => callback(mockPrisma));
+    mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue(null);
     service = new CommunitiesService(mockPrisma as any);
   });
 
@@ -113,6 +115,48 @@ describe('CommunitiesService.discoverScenes', () => {
       entryType: 'city_scene',
       sceneId: 'c2',
       isHomeScene: false,
+    });
+  });
+
+  it('uses the default music-community preference for city-scene home markers when compatibility community is stale', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: null,
+    });
+    mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue({
+      musicCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findMany.mockResolvedValue([
+      {
+        id: 'c1',
+        name: 'Austin Punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+        memberCount: 120,
+        isActive: true,
+      },
+    ]);
+
+    const result = await service.discoverScenes('u1', {
+      tier: 'city',
+      musicCommunity: 'Punk',
+      state: 'TX',
+      limit: 50,
+    });
+
+    expect(mockPrisma.userMusicCommunityPreference.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { userId: 'u1', isDefault: true },
+      }),
+    );
+    expect(result.items[0]).toMatchObject({
+      entryType: 'city_scene',
+      sceneId: 'c1',
+      isHomeScene: true,
     });
   });
 
@@ -237,6 +281,35 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.isVisitor).toBe(false);
   });
 
+  it('uses the default music-community preference when deciding tuned scene visitor status', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: null,
+    });
+    mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue({
+      musicCommunity: 'Punk',
+    });
+
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c1',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
+
+    const result = await service.tuneScene('u1', { sceneId: 'c1' });
+
+    expect(result.homeSceneId).toBe('c1');
+    expect(result.isVisitor).toBe(false);
+  });
+
   it('sets home scene to a city-tier scene in the same state', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'u1',
@@ -266,6 +339,15 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.tunedSceneId).toBe('c2');
     expect(result.previousHomeSceneId).toBe('c1');
     expect(result.changed).toBe(true);
+    expect(mockPrisma.userMusicCommunityPreference.updateMany).toHaveBeenCalledWith({
+      where: { userId: 'u1', isDefault: true },
+      data: { isDefault: false },
+    });
+    expect(mockPrisma.userMusicCommunityPreference.upsert).toHaveBeenCalledWith({
+      where: { userId_musicCommunity: { userId: 'u1', musicCommunity: 'Punk' } },
+      update: { isDefault: true },
+      create: { userId: 'u1', musicCommunity: 'Punk', isDefault: true },
+    });
   });
 
   it('returns persisted tuned scene context when available', async () => {

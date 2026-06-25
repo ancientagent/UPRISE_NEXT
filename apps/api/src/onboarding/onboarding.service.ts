@@ -244,6 +244,16 @@ export class OnboardingService {
         },
       });
 
+      await tx.userMusicCommunityPreference.updateMany({
+        where: { userId, isDefault: true },
+        data: { isDefault: false },
+      });
+      await tx.userMusicCommunityPreference.upsert({
+        where: { userId_musicCommunity: { userId, musicCommunity } },
+        update: { isDefault: true },
+        create: { userId, musicCommunity, isDefault: true },
+      });
+
       // Auto-join the resolved Home Scene.
       // Only increment memberCount if the membership is newly created.
       try {

@@ -427,7 +427,17 @@ export class AdminAnalyticsService {
       where: {
         homeSceneCity: city,
         homeSceneState: state,
-        homeSceneCommunity: musicCommunity,
+        OR: [
+          { homeSceneCommunity: musicCommunity },
+          {
+            musicCommunityPreferences: {
+              some: {
+                musicCommunity,
+                isDefault: true,
+              },
+            },
+          },
+        ],
       },
       data: {
         tunedSceneId: community.id,
