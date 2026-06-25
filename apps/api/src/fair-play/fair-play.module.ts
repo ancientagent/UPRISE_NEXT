@@ -4,8 +4,10 @@ import { RecurrenceAggregationJob } from './jobs/recurrence-aggregation.job';
 import { FairPlayController } from './fair-play.controller';
 import { BroadcastController } from './broadcast.controller';
 import { FairPlayMetricsController } from './fair-play-metrics.controller';
+import { UsersModule } from '../users/users.module';
 
 @Module({
+  imports: [UsersModule],
   controllers: [FairPlayController, BroadcastController, FairPlayMetricsController],
   providers: [FairPlayService, RecurrenceAggregationJob],
   exports: [FairPlayService, RecurrenceAggregationJob],

@@ -10,6 +10,7 @@
 ### Added
 
 - Added `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` as the concise AI/tool stack and lane-agent routing map for Codex, Cloud Codex, Hermes, Abacus, NotebookLM, design tools, Linear, and generated wiki workflows.
+- Added a shared API `MusicCommunityPreferenceResolverService` and wired Fair Play exact Home Scene voting to prefer the explicit default `UserMusicCommunityPreference` before falling back to the compatibility `User.homeSceneCommunity` field.
 - Added a Music-Community Preference compatibility cleanup plan that classifies active Home Scene fields, identifies `homeSceneCommunity` as the main default-preference shadow, and gates any schema cleanup behind read-path inversion plus staging data verification.
 - Added unresolved music-community preference visibility in the expanded `/plot` listener profile by labeling preferences as either in the Home Scene Roller or profile-only until an active scene exists.
 - Added `/plot` Home Scene roller consumption: the Plot shell now loads the authenticated roller read model, renders registered/resolvable music-community shortcuts, tunes selected scenes through the existing Discover scene-context endpoint, and keeps saved Away Scenes out of the roller.

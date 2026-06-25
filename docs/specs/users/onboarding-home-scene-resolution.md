@@ -159,6 +159,7 @@ Owner references:
 - `/plot` now consumes `GET /users/me/home-scene-roller` as the Home Scene Roller shortcut. Selecting a roller item tunes the user's scene context with `POST /discover/tune`, updates the active Plot community anchor, and keeps saved Away Scenes out of the roller.
 - The Fair Play voting gate now allows a GPS-verified user to vote in any registered music-community preference that resolves from their current/default city to the target exact natural scene or active proxy scene. This does not authorize unregistered music communities, arbitrary visitor scenes, or simultaneous multi-city voting authority.
 - `POST /tracks/:id/vote` remains city-tier only: a state-tier, national-tier, or other non-city `Community` is rejected even when it matches `User.tunedSceneId` for listening context.
+- `MusicCommunityPreferenceResolverService` now provides the shared server-side default music-community resolver. Fair Play uses it as the first read-path inversion slice so explicit `UserMusicCommunityPreference.isDefault` wins before the compatibility `User.homeSceneCommunity` fallback during exact Home Scene voting.
 - The Home Scene selected during onboarding still writes the compatibility fields `User.homeSceneCity`, `User.homeSceneState`, `User.homeSceneCommunity`, and `User.tunedSceneId`; preference runtime foundation does not remove those fields yet.
 - `CommunityMember` records membership in specific resolved communities, but it does not encode music-community preference order, profile affiliation intent, default-star semantics, or city-carried preference behavior.
 - `POST /discover/tune` and `POST /discover/set-home-scene` mutate scene context by `sceneId`; they are not the final profile preference/default system.
@@ -178,7 +179,7 @@ Field classification:
 
 Phased cleanup:
 
-1. Read-path inversion: add a shared server-side resolver for the user's default music-community preference and update onboarding GPS, Fair Play, Registrar/source origin, Discover context, communities reads, and user/profile reads to prefer `UserMusicCommunityPreference.isDefault` while retaining `User.homeSceneCommunity` fallback.
+1. Read-path inversion: shared resolver foundation exists and Fair Play exact Home Scene voting now prefers `UserMusicCommunityPreference.isDefault` while retaining `User.homeSceneCommunity` fallback. Remaining read paths to invert include onboarding GPS, Registrar/source origin, Discover context, communities reads, and user/profile reads.
 2. Write-path sync: make onboarding and default-preference mutations write the preference/default model first, with `User.homeSceneCommunity` updated only as a compatibility shadow while old clients/tests still need it.
 3. Contract switch: update shared web/API types and tests so `homeSceneCommunity` is no longer required for new behavior, while city/state and tuned scene fields remain active.
 4. Staging verification: run a data audit proving every user with a `homeSceneCommunity` has an equivalent default preference row and every default preference can resolve or remain profile-only according to the roller contract.
