@@ -144,6 +144,14 @@ Owner references:
 - The Home Scene roller is a shortcut to the user's resolvable primary music-community preferences in the current verified/default city.
 - The currently selected roller item is the scene the user is in.
 
+### Runtime Parity Status (2026-06-25)
+
+- Current runtime is still single-preference at the persistence boundary: `User.homeSceneCommunity` stores the onboarding-selected/default music community and `User.tunedSceneId` stores the currently resolved active listening/voting anchor.
+- There is no dedicated profile-held music-community preference model, default/starred preference field, preference CRUD API, or Home Scene roller read model yet.
+- `CommunityMember` records membership in specific resolved communities, but it does not encode music-community preference order, profile affiliation intent, default-star semantics, or city-carried preference behavior.
+- `POST /discover/tune` and `POST /discover/set-home-scene` mutate scene context by `sceneId`; they are not the final profile preference/default system.
+- Implementing this contract requires an explicit runtime slice for preference persistence, default selection, current-city resolution, roller filtering, GPS voting scope across resolvable preferences, and migration/backfill from the current single `User.homeSceneCommunity` field.
+
 ## Data Models & Migrations
 
 ### Prisma Models
@@ -155,6 +163,7 @@ Owner references:
   - `tunedSceneId`
   - `gpsVerified`
   - `latitude` / `longitude`
+- Future implementation must add or designate profile-held music-community preference persistence; the current `User` fields above are the single-preference compatibility path, not the complete contract.
 - `Community`
   - `city`, `state`, `musicCommunity`, `tier`, `isActive`, `geofence`, `radius`
 - `CommunityMember`
@@ -252,6 +261,7 @@ Owner references:
 ## Future Work & Open Questions
 
 - Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
+- Implement the Music-Community Preference Contract runtime path: persistence model, profile CRUD, default/star selection, current-city resolution, Home Scene roller read model, and GPS voting scope across resolvable registered preferences.
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
 - Implement cutover notification/Away Scene preservation using the Activation Notification and Former Proxy / Away Scene contracts above.

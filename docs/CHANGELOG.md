@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a Music-Community Preference runtime parity audit handoff and owner-spec status note clarifying that current runtime remains single-preference (`User.homeSceneCommunity` + `User.tunedSceneId`) while profile-held preference persistence, default-star behavior, Home Scene roller filtering, and GPS voting scope across resolvable preferences remain implementation work.
 - Added `docs/solutions/COMMUNITY_ACTIVATION_PROXY_LIFECYCLE_STRATEGY_R1.md` and `docs/handoff/2026-06-25_abacus-community-activation-proxy-lifecycle.md`, synthesizing Lane 1-6 findings into a repo-authority-aligned Lane 7 strategy that sequences source-origin and community-activation owner-contract work before runtime automation, preserves proxy-to-natural lifecycle locks, and records open founder decisions for activation/cutover/release-eligibility policy.
 - Added the UPRISE documentation/context framework as the owner system for contract ownership, lane-agent routing, Linear execution structure, reviewer routing, handoff promotion, and question discipline; see `docs/specs/system/documentation-framework.md`.
 - Added a Hermes reviewer clarification handoff that directs future review toward high-value source/activation/Fair Play/media/sect questions and away from repeated Home Scene roller micro-questions; see `docs/handoff/2026-06-25_hermes-reviewer-clarification-handoff.md`.
