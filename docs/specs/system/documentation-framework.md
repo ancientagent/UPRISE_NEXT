@@ -325,9 +325,9 @@ When changing agent routing or context policy, also inspect:
 
 Seed these as Linear or repo-tracked work items when ready:
 
-Recently completed owner-contract seeds: source registration/source origin (Slice 1), community activation workflow around music-content and source-diversity thresholds (Slice 1), proxy scene music lifecycle and migration (Slice 2), and Fair Play / proxy vote / tier propagation join points (Slice 2). Runtime source-origin persistence on Registrar/ArtistBand, admin activation readiness diagnostics, and an authenticated manual activation trigger are also implemented.
+Recently completed owner-contract seeds: source registration/source origin (Slice 1), community activation workflow around music-content and source-diversity thresholds (Slice 1), proxy scene music lifecycle and migration (Slice 2), and Fair Play / proxy vote / tier propagation join points (Slice 2). Runtime source-origin persistence on Registrar/ArtistBand, admin activation readiness diagnostics, an authenticated manual activation trigger, and minimal source/listener re-rooting are also implemented.
 
-1. Define listener/source notification and full proxy-to-natural cutover orchestration after manual activation.
+1. Define listener/source notification and saved Away Scene/profile preservation after manual activation.
 2. Define Release Deck media eligibility contract.
 3. Define sect readiness and Sect Uprise boundary.
 4. Audit runtime parity against the Music-Community Preference Contract.

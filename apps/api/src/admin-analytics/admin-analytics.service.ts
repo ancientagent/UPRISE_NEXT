@@ -423,6 +423,18 @@ export class AdminAnalyticsService {
       data: { homeSceneId: community.id },
     });
 
+    const cutoverListeners = await this.prisma.user.updateMany({
+      where: {
+        homeSceneCity: city,
+        homeSceneState: state,
+        homeSceneCommunity: musicCommunity,
+      },
+      data: {
+        tunedSceneId: community.id,
+        tunedSceneUpdatedAt: new Date(),
+      },
+    });
+
     return {
       success: true as const,
       data: {
@@ -433,6 +445,7 @@ export class AdminAnalyticsService {
         created: !existingCommunity,
         activated: true,
         reanchoredSourceCount: reanchoredSources.count,
+        cutoverListenerCount: cutoverListeners.count,
         thresholds: diagnostics.data.thresholds,
         candidate,
       },

@@ -55,7 +55,7 @@ Defines the Super Admin’s platform oversight capabilities.
   - `POST /admin/analytics/activation-readiness/activate`
   - current guard: authenticated user (`JwtAuthGuard`)
   - returns current platform totals, signal-action totals, retained-metric availability/data, and descriptive source-origin activation readiness diagnostics from the live MVP runtime
-  - allows authenticated manual activation of a readiness-proven source-origin tuple; RBAC/audit logging remains deferred, so this is a controlled MVP admin primitive rather than final super-admin governance
+  - allows authenticated manual activation of a readiness-proven source-origin tuple, re-anchors matching sources for future uploads, and re-roots matching listeners to the natural scene; RBAC/audit logging remains deferred, so this is a controlled MVP admin primitive rather than final super-admin governance
 - Web app exposes a minimal read-only admin route at `/admin` for the retained analytics surface.
 - No admin audit log model currently exists.
 
@@ -106,7 +106,7 @@ Defines the Super Admin’s platform oversight capabilities.
 | POST | `/admin/config/fair-play` | authenticated (RBAC deferred) | Update Fair Play policy variables (global) |
 | GET | `/admin/analytics/query` | authenticated (RBAC deferred) | Query current retained analytics and platform totals |
 | GET | `/admin/analytics/activation-readiness` | authenticated (RBAC deferred) | Query descriptive source-origin activation readiness diagnostics |
-| POST | `/admin/analytics/activation-readiness/activate` | authenticated (RBAC deferred) | Manually activate a readiness-proven city-tier source-origin tuple and re-anchor matching sources for future uploads |
+| POST | `/admin/analytics/activation-readiness/activate` | authenticated (RBAC deferred) | Manually activate a readiness-proven city-tier source-origin tuple, re-anchor matching sources for future uploads, and re-root matching listeners |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |

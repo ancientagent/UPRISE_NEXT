@@ -87,6 +87,7 @@ Owner references:
 - `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points`
 
 - When a submitted/default Home Scene tuple becomes active after source-driven activation, matching users should resolve to the natural active Home Scene on the next supported Home Scene resolution/cutover path.
+- Current MVP runtime performs this minimal cutover in the manual activation trigger by updating matching users' `tunedSceneId` to the newly active natural scene. Notification delivery and saved Away Scene/profile preservation for the former proxy context remain follow-up work.
 - User profile music-community preferences remain the user's declared affiliations/interests; activation changes which scene those preferences resolve to, not the fact that the user holds the preference.
 - If a user was routed through a proxy scene for a music community, that proxy scene may remain available as an Away Scene or saved/listenable context where profile/collection support exists.
 - Voting authority follows the currently verified/default city and the resolved active Home Scene/proxy rules. Activation of the natural scene does not preserve city-tier voting authority in the former proxy scene unless the user is visiting it as an Away Scene under separate visitor rules.

@@ -85,7 +85,7 @@ This strategy is intentionally **no-migration at R1 doc stage**. Required model 
 3. Define whether additional derived/read-model fields are required for activation diagnostics (can be API computed first).
 4. Clarify role of existing `SectTag`/`UserTag` as non-authoritative for sect realization.
 
-Current runtime parity note: source-origin persistence is implemented on Registrar entries and materialized Artist/Band records. `sceneId` / `homeSceneId` remain the active operating scene, while `sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the submitted natural tuple for activation accounting. Read-only activation readiness diagnostics and an authenticated manual activation trigger now exist under the admin analytics surface; scheduled automation, notifications, and full listener cutover orchestration remain deferred.
+Current runtime parity note: source-origin persistence is implemented on Registrar entries and materialized Artist/Band records. `sceneId` / `homeSceneId` remain the active operating scene, while `sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the submitted natural tuple for activation accounting. Read-only activation readiness diagnostics and an authenticated manual activation trigger now exist under the admin analytics surface; the trigger re-anchors matching sources and re-roots matching listeners to the natural scene. Scheduled automation, notifications, and saved Away Scene/profile preservation remain deferred.
 
 Out of scope for this strategy pass:
 
@@ -200,9 +200,10 @@ Sequence translates blockers into implementation order (without runtime edits in
 3. **Slice 3 – Activation Metrics Read Path**
    - Completed as authenticated admin analytics diagnostics using persisted source-origin fields.
 4. **Slice 4 – Activation Trigger Execution Path**
-   - Completed as authenticated manual admin trigger for readiness-proven tuples; creates or activates the natural city-tier scene and re-anchors matching sources for future uploads without moving existing tracks/votes.
+   - Completed as authenticated manual admin trigger for readiness-proven tuples; creates or activates the natural city-tier scene.
 5. **Slice 5 – Listener/Source Notification Path**
-   - Next: minimal UX/API messaging for proxy-to-natural activation transitions and full listener cutover orchestration.
+   - Minimal source/listener re-rooting is implemented in the manual activation trigger: matching `ArtistBand.homeSceneId` and `User.tunedSceneId` values move to the natural scene for future uploads/Home resolution without moving existing tracks/votes.
+   - Next: minimal UX/API messaging for proxy-to-natural activation transitions and saved Away Scene/profile preservation for the former proxy context.
 6. **Slice 6 – Release Deck Eligibility Enforcement**
    - First create or designate a Release Deck / media eligibility owner spec or section, then enforce owner-locked eligibility/replacement rules without widening MVP media scope.
 7. **Slice 7 – Sect Readiness Parity Foundations**

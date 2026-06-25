@@ -1,7 +1,7 @@
 import { AdminAnalyticsService } from '../src/admin-analytics/admin-analytics.service';
 
 const mockPrisma = {
-  user: { count: jest.fn(), upsert: jest.fn() },
+  user: { count: jest.fn(), upsert: jest.fn(), updateMany: jest.fn() },
   community: { count: jest.fn(), findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
   artistBand: { count: jest.fn(), updateMany: jest.fn() },
   event: { count: jest.fn() },
@@ -303,6 +303,7 @@ describe('AdminAnalyticsService', () => {
       isActive: true,
     });
     mockPrisma.artistBand.updateMany.mockResolvedValue({ count: 5 });
+    mockPrisma.user.updateMany.mockResolvedValue({ count: 12 });
 
     const result = await service.activateReadyCommunity({
       city: 'El Paso',
@@ -330,6 +331,16 @@ describe('AdminAnalyticsService', () => {
       },
       data: { homeSceneId: 'scene-el-paso-punk' },
     });
+    expect(mockPrisma.user.updateMany).toHaveBeenCalledWith({
+      where: {
+        homeSceneCity: 'El Paso',
+        homeSceneState: 'Texas',
+        homeSceneCommunity: 'Punk',
+      },
+      data: expect.objectContaining({
+        tunedSceneId: 'scene-el-paso-punk',
+      }),
+    });
     expect(mockPrisma.track.updateMany).not.toHaveBeenCalled();
     expect(result.data).toEqual(
       expect.objectContaining({
@@ -340,6 +351,7 @@ describe('AdminAnalyticsService', () => {
         created: true,
         activated: true,
         reanchoredSourceCount: 5,
+        cutoverListenerCount: 12,
       }),
     );
   });
@@ -376,6 +388,7 @@ describe('AdminAnalyticsService', () => {
       isActive: true,
     });
     mockPrisma.artistBand.updateMany.mockResolvedValue({ count: 5 });
+    mockPrisma.user.updateMany.mockResolvedValue({ count: 7 });
 
     const result = await service.activateReadyCommunity({
       city: 'El Paso',
@@ -390,6 +403,7 @@ describe('AdminAnalyticsService', () => {
     expect(mockPrisma.community.create).not.toHaveBeenCalled();
     expect(result.data.created).toBe(false);
     expect(result.data.sceneId).toBe('inactive-el-paso-punk');
+    expect(result.data.cutoverListenerCount).toBe(7);
   });
 
   it('rejects manual activation when the source-origin tuple is not ready', async () => {
@@ -419,6 +433,7 @@ describe('AdminAnalyticsService', () => {
     expect(mockPrisma.community.create).not.toHaveBeenCalled();
     expect(mockPrisma.community.update).not.toHaveBeenCalled();
     expect(mockPrisma.artistBand.updateMany).not.toHaveBeenCalled();
+    expect(mockPrisma.user.updateMany).not.toHaveBeenCalled();
   });
 
   it('rejects manual activation requests with missing tuple fields as bad requests', async () => {
@@ -432,5 +447,6 @@ describe('AdminAnalyticsService', () => {
     expect(mockPrisma.track.findMany).not.toHaveBeenCalled();
     expect(mockPrisma.community.create).not.toHaveBeenCalled();
     expect(mockPrisma.artistBand.updateMany).not.toHaveBeenCalled();
+    expect(mockPrisma.user.updateMany).not.toHaveBeenCalled();
   });
 });
