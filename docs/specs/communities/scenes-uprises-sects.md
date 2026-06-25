@@ -83,6 +83,7 @@ This section owns the community-side activation workflow for splitting a natural
 - A song cannot be actively listed in more than one Uprise rotation at the same time.
 - Proxy-scene listener votes, source/song voting data, and history remain historical to the proxy scene/tier where they occurred; they do not transfer into the newly active natural Home Scene.
 - If profile/collection support exists, the prior proxy scene may remain available as an Away Scene or saved context, but it no longer acts as the user's natural Home Scene when the matching natural scene is active.
+- Listener/source activation messaging and former-proxy saved-context behavior are owned by `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract`.
 
 ### Source And Listener Re-Resolution
 

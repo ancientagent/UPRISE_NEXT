@@ -90,6 +90,7 @@ Tests / verification files:
 - Profile-held music-community preferences, default-scene, roller, city-move, and voting behavior are owned by the `Music-Community Preference Contract` in `docs/specs/users/onboarding-home-scene-resolution.md`.
 - GPS verification proves location authority for voting and source registration; it must not automatically enroll the user into every active music community in their verified city.
 - Saved Away Scenes belong in the profile/collection area, not in the Home Scene roller.
+- Activation notification and former-proxy Away Scene preservation are owned by `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract`: messaging must explain source/music activation, and saved proxy context must not preserve proxy voting authority or appear as a Home Scene roller item.
 - GPS is requested to enable voting rights only.
 - Users can participate without GPS but cannot vote when GPS is denied/unavailable.
 - If the selected city-tier scene is inactive/unavailable, assign the user to the nearest/relevant active major-node city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.

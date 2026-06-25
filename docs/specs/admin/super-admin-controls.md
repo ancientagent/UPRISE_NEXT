@@ -55,7 +55,7 @@ Defines the Super Admin’s platform oversight capabilities.
   - `POST /admin/analytics/activation-readiness/activate`
   - current guard: authenticated user (`JwtAuthGuard`)
   - returns current platform totals, signal-action totals, retained-metric availability/data, and descriptive source-origin activation readiness diagnostics from the live MVP runtime
-  - allows authenticated manual activation of a readiness-proven source-origin tuple, re-anchors matching sources for future uploads, and re-roots matching listeners to the natural scene; RBAC/audit logging remains deferred, so this is a controlled MVP admin primitive rather than final super-admin governance
+  - allows authenticated manual activation of a readiness-proven source-origin tuple, re-anchors matching sources for future uploads, and re-roots matching listeners to the natural scene; RBAC/audit logging, notification delivery, and saved Away Scene/profile preservation remain deferred, so this is a controlled MVP admin primitive rather than final super-admin governance
 - Web app exposes a minimal read-only admin route at `/admin` for the retained analytics surface.
 - No admin audit log model currently exists.
 

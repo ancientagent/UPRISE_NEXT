@@ -110,7 +110,7 @@ Sect Uprise broadcast boundary at
   - creates the natural city-tier `Community` when no row exists, or marks an inactive matching row active;
   - re-anchors matching `ArtistBand.homeSceneId` values to the natural scene for future uploads;
   - re-roots matching listener `User.tunedSceneId` values to the natural scene for Home/Plot resolution after activation;
-  - does not move existing track rows, copy votes, transfer engagement history, schedule jobs, or emit notifications.
+  - does not move existing track rows, copy votes, transfer engagement history, schedule jobs, emit notifications, or persist saved Away Scene/profile context.
 - Registrar promoter initiation primitive (slice 34):
   - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
   - Captures named production identity payload (`productionName`) for downstream capability processing.

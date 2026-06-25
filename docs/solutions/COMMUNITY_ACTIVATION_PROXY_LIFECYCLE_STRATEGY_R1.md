@@ -206,7 +206,8 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Completed as authenticated manual admin trigger for readiness-proven tuples; creates or activates the natural city-tier scene.
 5. **Slice 5 – Listener/Source Notification Path**
    - Minimal source/listener re-rooting is implemented in the manual activation trigger: matching `ArtistBand.homeSceneId` and `User.tunedSceneId` values move to the natural scene for future uploads/Home resolution without moving existing tracks/votes.
-   - Next: minimal UX/API messaging for proxy-to-natural activation transitions and saved Away Scene/profile preservation for the former proxy context.
+   - Activation notification and former-proxy Away Scene preservation are now owner-locked in the onboarding/Home Scene cutover user contract.
+   - Next: implement UI placement/persistence for cutover context and saved proxy scene representation without preserving proxy voting authority.
 6. **Slice 6 – Release Deck Eligibility Enforcement**
    - Active-slot and active-duration enforcement is implemented against the new Release Deck media eligibility owner spec.
    - Next: define replacement UX and any explicit per-song length cap without widening MVP media scope.

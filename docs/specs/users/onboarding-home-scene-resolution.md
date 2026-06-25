@@ -95,6 +95,24 @@ Owner references:
 - Cutover messaging should be lightweight and explanatory: the natural Home Scene is now active because source/music readiness was met. It must not imply that listener demand alone created the community.
 - Runtime may continue carrying legacy `pioneer` compatibility fields until cleanup, but new user-facing copy should use submitted Home Scene, proxy scene, natural Home Scene, and Away Scene language.
 
+### Activation Notification Contract
+
+- The activation event should create lightweight context for affected listeners and sources explaining that their submitted/default natural Home Scene is now active.
+- Listener-facing copy should say the community activated because source/music readiness was met. It must not imply listener demand, onboarding counts, or missing-community requests created the community.
+- Source-facing copy should explain that future uploads attach to the newly active natural Home Scene while existing proxy-scene songs finish their current lifecycle in the prior active scene.
+- Current MVP may surface this context through Home/Profile strip notification affordances, a Home dashboard tooltip, Registrar/source-dashboard status context, or a future notification record.
+- Until a notification persistence model exists, activation messaging may remain a read-only/contextual UI requirement rather than a stored inbox event.
+- Notification delivery must not change voting authority, source origin, existing track placement, votes, engagement history, or rotation evidence.
+
+### Former Proxy / Away Scene Preservation Contract
+
+- After natural-scene activation, the former proxy scene should be preserved as a listenable Away Scene or saved profile/collection context when the product surface supports it.
+- Preserving the former proxy scene does not keep it in the Home Scene roller. The roller remains for resolvable primary music-community preferences in the user's current/default city.
+- Preserving the former proxy scene does not preserve city-tier voting authority there. The user may visit/listen under Away Scene behavior, but voting follows current verified/default city and Home Scene rules.
+- The former proxy scene should not be duplicated as a second registered Home Scene affiliation for the same music-community preference.
+- Existing collection/signal shelves may be used for future saved Uprise/Away Scene representation only if the signal type and shelf semantics are explicitly locked; this slice does not introduce that storage model.
+- If an implementation later persists a saved Away Scene record, it must store enough context to distinguish historical proxy context from active Home Scene membership.
+
 ## Non-Functional Requirements
 
 - Clarity: onboarding copy must avoid “genre selection” framing.
@@ -217,6 +235,7 @@ Owner references:
   - after onboarding completion and Home Scene context load, Home may show major-node assignment helper copy through the notification icon or a lightweight Home dashboard tooltip.
   - helper copy explains that local communities are activated by local artist/band/source participation through Registrar/source registration, and that inviting local artists can help bring UPRISE to the listener's hometown.
   - after natural Home Scene activation, Home may show lightweight cutover context that the user's submitted/default Home Scene is now active and the former proxy can remain an Away Scene/listening context where supported.
+  - any former-proxy saved context must not reappear as a Home Scene roller item unless it is also a registered/resolvable current-city music-community preference.
 - `apps/web/src/store/onboarding.ts`:
   - persists local onboarding state (`homeScene`, including optional `postalCode`, `gpsStatus`, `votingEligible`, `gpsReason`)
 
@@ -235,7 +254,8 @@ Owner references:
 - Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
-- Lock final cutover notification placement/copy after the activation metrics and trigger implementation path is selected.
+- Implement cutover notification/Away Scene preservation using the Activation Notification and Former Proxy / Away Scene contracts above.
+- Lock final UI placement/copy and any notification/saved-scene persistence model before adding stored notification records.
 - Sect uprising motion mechanics remain governed by `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
