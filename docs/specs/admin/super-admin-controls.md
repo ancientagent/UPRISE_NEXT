@@ -106,7 +106,7 @@ Defines the Super Admin’s platform oversight capabilities.
 | POST | `/admin/config/fair-play` | authenticated (RBAC deferred) | Update Fair Play policy variables (global) |
 | GET | `/admin/analytics/query` | authenticated (RBAC deferred) | Query current retained analytics and platform totals |
 | GET | `/admin/analytics/activation-readiness` | authenticated (RBAC deferred) | Query descriptive source-origin activation readiness diagnostics |
-| POST | `/admin/analytics/activation-readiness/activate` | authenticated (RBAC deferred) | Manually activate a readiness-proven city-tier source-origin tuple, re-anchor matching sources for future uploads, and re-root matching listeners |
+| POST | `/admin/analytics/activation-readiness/activate` | authenticated (RBAC/audit deferred) | Manually activate a readiness-proven city-tier source-origin tuple, re-anchor matching sources for future uploads, and re-root matching listeners |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |

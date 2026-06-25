@@ -339,6 +339,7 @@ describe('AdminAnalyticsService', () => {
       },
       data: expect.objectContaining({
         tunedSceneId: 'scene-el-paso-punk',
+        tunedSceneUpdatedAt: expect.any(Date),
       }),
     });
     expect(mockPrisma.track.updateMany).not.toHaveBeenCalled();
