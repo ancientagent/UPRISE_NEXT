@@ -3,7 +3,12 @@ import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
-import { SetCollectionDisplayDto, SetCollectionDisplaySchema } from './dto/user-profile.dto';
+import {
+  MusicCommunityPreferenceDto,
+  MusicCommunityPreferenceSchema,
+  SetCollectionDisplayDto,
+  SetCollectionDisplaySchema,
+} from './dto/user-profile.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -39,6 +44,32 @@ export class UsersController {
     @Request() req: { user: { userId: string } },
   ) {
     const result = await this.usersService.setCollectionDisplay(req.user.userId, dto.enabled);
+    return { success: true, data: result };
+  }
+
+  @Get('me/music-community-preferences')
+  async listMyMusicCommunityPreferences(@Request() req: { user: { userId: string } }) {
+    const result = await this.usersService.listMusicCommunityPreferences(req.user.userId);
+    return { success: true, data: result };
+  }
+
+  @Post('me/music-community-preferences')
+  @ZodBody(MusicCommunityPreferenceSchema)
+  async addMyMusicCommunityPreference(
+    @Body() dto: MusicCommunityPreferenceDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.usersService.addMusicCommunityPreference(req.user.userId, dto.musicCommunity);
+    return { success: true, data: result };
+  }
+
+  @Post('me/music-community-preferences/default')
+  @ZodBody(MusicCommunityPreferenceSchema)
+  async setDefaultMusicCommunityPreference(
+    @Body() dto: MusicCommunityPreferenceDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const result = await this.usersService.setDefaultMusicCommunityPreference(req.user.userId, dto.musicCommunity);
     return { success: true, data: result };
   }
 }

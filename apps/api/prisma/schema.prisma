@@ -57,8 +57,24 @@ model User {
   capabilityAuditTargetEvents CapabilityGrantAuditLog[] @relation("CapabilityAuditTargetUser")
   capabilityAuditActorEvents  CapabilityGrantAuditLog[] @relation("CapabilityAuditActorUser")
   musicCommunityRequests      MusicCommunityRequest[]
+  musicCommunityPreferences   UserMusicCommunityPreference[]
 
   @@map("users")
+}
+
+model UserMusicCommunityPreference {
+  id             String   @id @default(uuid())
+  userId         String
+  musicCommunity String
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, musicCommunity])
+  @@index([userId, isDefault])
+  @@map("user_music_community_preferences")
 }
 
 model ArtistBand {

@@ -146,11 +146,17 @@ Owner references:
 
 ### Runtime Parity Status (2026-06-25)
 
-- Current runtime is still single-preference at the persistence boundary: `User.homeSceneCommunity` stores the onboarding-selected/default music community and `User.tunedSceneId` stores the currently resolved active listening/voting anchor.
-- There is no dedicated profile-held music-community preference model, default/starred preference field, preference CRUD API, or Home Scene roller read model yet.
+- Current runtime has a profile-held preference persistence foundation: `UserMusicCommunityPreference` stores each user's registered music-community preferences and explicit default/star state.
+- Existing users are backfilled from the single `User.homeSceneCommunity` field as their initial default preference by migration.
+- Current API foundation:
+  - `GET /users/me/music-community-preferences`
+  - `POST /users/me/music-community-preferences`
+  - `POST /users/me/music-community-preferences/default`
+- Typed web client wrappers exist in `apps/web/src/lib/users/client.ts`.
+- The Home Scene selected during onboarding still writes the compatibility fields `User.homeSceneCity`, `User.homeSceneState`, `User.homeSceneCommunity`, and `User.tunedSceneId`; preference runtime foundation does not remove those fields yet.
 - `CommunityMember` records membership in specific resolved communities, but it does not encode music-community preference order, profile affiliation intent, default-star semantics, or city-carried preference behavior.
 - `POST /discover/tune` and `POST /discover/set-home-scene` mutate scene context by `sceneId`; they are not the final profile preference/default system.
-- Implementing this contract requires an explicit runtime slice for preference persistence, default selection, current-city resolution, roller filtering, GPS voting scope across resolvable preferences, and migration/backfill from the current single `User.homeSceneCommunity` field.
+- Remaining runtime work: current-city scene resolution for each preference, Home Scene roller filtering, unresolved-profile visibility, profile UI integration, GPS voting scope across resolvable registered preferences, and migration cleanup once compatibility fields are retired.
 
 ## Data Models & Migrations
 
@@ -163,7 +169,13 @@ Owner references:
   - `tunedSceneId`
   - `gpsVerified`
   - `latitude` / `longitude`
-- Future implementation must add or designate profile-held music-community preference persistence; the current `User` fields above are the single-preference compatibility path, not the complete contract.
+- `UserMusicCommunityPreference`
+  - `userId`
+  - `musicCommunity`
+  - `isDefault`
+  - unique `{userId, musicCommunity}`
+  - one default preference per user enforced by partial unique index
+- The current `User` fields above remain the single-preference compatibility path for onboarding/Home Scene resolution until the full preference/default/roller runtime replaces them.
 - `Community`
   - `city`, `state`, `musicCommunity`, `tier`, `isActive`, `geofence`, `radius`
 - `CommunityMember`
@@ -185,6 +197,9 @@ Owner references:
 | POST   | `/onboarding/gps-verify`               | required | Verify exact Home Scene geofence or submitted-location fallback voting eligibility  |
 | POST   | `/onboarding/music-community-requests` | required | Store missing music-community intake for later review without creating a live Scene |
 | GET    | `/communities/resolve-home`            | required | Resolve exact Home Scene tuple for Plot/community anchoring                         |
+| GET    | `/users/me/music-community-preferences` | required | List current user's profile-held music-community preferences                       |
+| POST   | `/users/me/music-community-preferences` | required | Add a profile-held music-community preference without implicitly changing default  |
+| POST   | `/users/me/music-community-preferences/default` | required | Set the user's explicit default music-community preference                |
 
 ### Request/Response
 
@@ -261,7 +276,7 @@ Owner references:
 ## Future Work & Open Questions
 
 - Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
-- Implement the Music-Community Preference Contract runtime path: persistence model, profile CRUD, default/star selection, current-city resolution, Home Scene roller read model, and GPS voting scope across resolvable registered preferences.
+- Continue the Music-Community Preference Contract runtime path: current-city resolution, Home Scene roller read model, profile UI integration, unresolved-profile visibility, and GPS voting scope across resolvable registered preferences.
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
 - Implement cutover notification/Away Scene preservation using the Activation Notification and Former Proxy / Away Scene contracts above.

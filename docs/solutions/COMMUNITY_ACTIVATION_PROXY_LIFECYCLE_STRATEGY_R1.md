@@ -215,9 +215,9 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Completed as owner-contract foundation: community spec owns sect readiness / Sect Uprise broadcast boundary; Registrar spec owns affiliation and motion authority.
    - Next: define implementation artifacts and visibility calibration without granting premature broadcast authority.
 8. **Slice 8 – Music-Community Preference Runtime Parity**
-   - Completed as runtime parity audit against the onboarding/Home Scene owner contract.
-   - Current runtime remains single-preference at persistence/API/web boundaries (`User.homeSceneCommunity` + `User.tunedSceneId`).
-   - Next: implement profile-held preference persistence, explicit default-star behavior, current-city resolution, Home Scene roller filtering, GPS voting scope across resolvable preferences, and migration/backfill from current user fields.
+   - Runtime parity audit completed against the onboarding/Home Scene owner contract.
+   - Preference persistence, migration backfill from `User.homeSceneCommunity`, current-user API endpoints, explicit default-star mutation, and typed web wrappers are implemented as the runtime foundation.
+   - Next: implement current-city resolution, Home Scene roller filtering, profile UI integration, unresolved-profile visibility, GPS voting scope across resolvable preferences, and compatibility-field cleanup.
 
 ## Test Plan
 
