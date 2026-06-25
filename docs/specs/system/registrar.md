@@ -49,6 +49,18 @@ This section owns the source-origin rules that connect Registrar filings, proxy-
 - Listener onboarding counts, missing-music-community requests, and passive listener demand do not activate a community.
 - Existing runtime field names such as `pioneer` may remain for compatibility until cleanup, but user-facing and owner-contract language should use submitted Home Scene, proxy scene, source origin, and activation readiness.
 
+### Runtime Parity Blocker: Source-Origin Persistence
+
+Current Registrar runtime still submits Artist/Band registration against an existing `sceneId`, verifies that scene against the user's current Home Scene, and materializes `ArtistBand.homeSceneId` to the same `sceneId`. That supports active Home Scene registration, but it is not enough to compute activation readiness for an inactive natural `city + state + music community` tuple routed through a proxy scene.
+
+Before adding activation readiness APIs or trigger automation, implementation must first persist the submitted natural source-origin tuple separately from the active/proxy operating scene. Acceptable implementation directions include:
+
+- source-origin tuple fields on the Registrar entry and/or materialized Artist/Band;
+- a dedicated source-origin/readiness model linked to Registrar and Artist/Band;
+- another owner-approved model that preserves inactive natural tuple identity without recreating listener-side pioneer workflows.
+
+Do not compute activation readiness from `ArtistBand.homeSceneId` alone while source-origin and proxy-scene identity can differ.
+
 ## City-Tier Activation Authority
 
 Registrar/source activation is the only authority path for creating or activating a new city-tier Home Scene from a major-node/proxy pattern.
@@ -281,6 +293,7 @@ Registrar/source activation is the only authority path for creating or activatin
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
+- Source-origin persistence for inactive natural tuples when Artist/Band registration operates through a proxy scene.
 - Automated city-tier Home Scene activation metrics, trigger execution, and cutover orchestration.
 - Sect motion lifecycle and approval state machine.
 - Sect readiness tracking visibility and unlock controls.

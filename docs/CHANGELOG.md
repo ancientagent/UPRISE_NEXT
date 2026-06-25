@@ -70,6 +70,7 @@
 
 ### Changed
 
+- Marked the activation readiness read path as blocked on runtime source-origin persistence: current Registrar submits by existing `sceneId` and materializes `ArtistBand.homeSceneId` to that scene, so inactive natural source-origin tuples must be persisted separately before activation diagnostics or trigger automation can be correct.
 - Promoted proxy-to-natural cutover rules into the broadcast/Fair Play and onboarding owner specs, locking proxy song lifecycle, vote/history retention, user re-resolution, Away Scene preservation, and cross-state edge-case boundaries before runtime cutover work.
 - Promoted source-origin and city-tier Home Scene activation rules into owner specs: Registrar now owns source-origin authority, Communities now own activation workflow/counting semantics, and related briefs point future agents to those contracts before runtime activation work.
 - Clarified the Abacus community-activation strategy provenance so external lane findings are treated as scouting input rather than durable repo authority, and tightened source-origin / Release Deck owner-section guidance.
