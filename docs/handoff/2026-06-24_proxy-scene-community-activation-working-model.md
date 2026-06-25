@@ -39,6 +39,7 @@ Definitions:
 - **Proxy Scene**: the active Home Scene where the listener participates when their natural Home Scene is not active yet.
 - **Rooted Home Scene**: the listener's current active civic/home anchor. This is either their natural active Home Scene or their assigned proxy scene.
 - **Visitor Scene**: a saved scene/listening context that is not the user's rooted Home Scene.
+- **Registered music-community preference**: a user-profile affiliation that means the user is a fan / involved with that music community; it persists across cities and resolves into local Home Scene or proxy scene content based on the current city. Active major-node cities should generally carry the same primary music-community set, so carried preferences normally resolve locally in the new city. If a saved music-community preference does not resolve to an active current-city scene, it stays visible in the profile but does not appear in the Home Scene roller until resolvable.
 
 Rules:
 
@@ -46,6 +47,14 @@ Rules:
 - This metadata is not a pending community, inactive community, activation queue, or promise.
 - It can be used to count how many listeners identify with that natural scene, but listener count does not activate a community.
 - The active/proxy scene is where the listener participates until the natural scene becomes active.
+- Onboarding collects one primary scene-of-choice music community. Users join additional music communities by adding registered music-community preferences to their user profile.
+- GPS verification gates voting/source-registration authority; it does not automatically add every active music community in the user's verified city to their Home Scene memberships.
+- One successful GPS verification for a city grants voting rights across all registered Home Scene affiliations in that verified city.
+- Verifying a new city replaces the user's prior city voting authority; users do not hold voting authority in multiple cities at the same time.
+- When a user verifies a new city and changes their Home Scene location, preserve their registered music-community preferences automatically as the same music communities in the new city without a separate re-confirmation step, but re-resolve Home/Plot/RADIYO/Feed/Events/Archive content to the new city's active or proxy scenes.
+- The Home Scene selected during onboarding is the user's initial active/default Home Scene.
+- A Home Scene roller should show the user's registered music-community preferences resolved against the current verified/default city. The user may switch active Home/Plot context through it, and the starred default music-community preference determines the Home Scene the user is anchored to and loaded into on login. The currently selected roller item is the scene the user is in.
+- Saved Away Scenes are profile/collection interests and visitor/listening contexts.
 - Proxy assignment must stay in-state when any same-state active major-node exists for the selected music community.
 - Cross-state proxy assignment is allowed only when no same-state active major-node exists for the selected music community.
 - If cross-state proxy assignment is unavoidable, songs may still advance through tier progression provisionally, but statewide origin/identity handling needs explicit edge-case policy before implementation depends on it.

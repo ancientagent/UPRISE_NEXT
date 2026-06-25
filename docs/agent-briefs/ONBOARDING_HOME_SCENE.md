@@ -62,7 +62,7 @@ Tests / verification files:
 - Community identity is `city + state + music community`.
 - Do not collapse community identity to city-only or genre-only.
 - When a flow already knows current community context, inherit the music community instead of asking the user to redefine it.
-- Onboarding asks for City, State, and approved parent Music Community.
+- Onboarding asks for City, State, and one approved parent Music Community as the user's primary scene of choice.
 - Onboarding also offers optional ZIP/postal code as submitted-location detail for setup preview/context; ZIP does not replace city/state/music-community identity and does not change voting or fallback authority.
 - Music Community input is selection-only; no free-text genre/community creation in onboarding.
 - Current MVP launch selection is the implementation list in `docs/specs/seed/music-communities.json` and `apps/web/src/data/music-communities.ts`.
@@ -84,6 +84,11 @@ Tests / verification files:
 - If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review.
 - Home Scene selection is stored regardless of GPS verification.
 - Setting a Home Scene auto-joins the resolved active city-tier scene membership.
+- The Home Scene selected during onboarding becomes the user's initial active/default Home Scene.
+- Onboarding does not collect multiple music-community preferences; it asks for the user's primary scene of choice.
+- Profile-held music-community preferences, default-scene, roller, city-move, and voting behavior are owned by the `Music-Community Preference Contract` in `docs/specs/users/onboarding-home-scene-resolution.md`.
+- GPS verification proves location authority for voting and source registration; it must not automatically enroll the user into every active music community in their verified city.
+- Saved Away Scenes belong in the profile/collection area, not in the Home Scene roller.
 - GPS is requested to enable voting rights only.
 - Users can participate without GPS but cannot vote when GPS is denied/unavailable.
 - If the selected city-tier scene is inactive/unavailable, assign the user to the nearest/relevant active major-node city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
@@ -123,6 +128,9 @@ Load only if touched:
 - Do not require GPS for non-civic participation.
 - Do not ask users to redefine a known music community context.
 - Do not treat visitor listening context as a Home Scene change.
+- Do not treat GPS verification as automatic membership in every city-local music community.
+- Do not treat saved Away Scenes as registered Home Scene affiliations.
+- Do not change the user's default Home Scene implicitly when they add another registered affiliation; default changes must be explicit.
 - Do not build listener-side pioneer tracking, activation queues, or promises that listener demand will create a community.
 - Do not add taste-tag onboarding unless explicitly reactivated.
 - Do not turn a missing-music-community request into an immediate community creation path.

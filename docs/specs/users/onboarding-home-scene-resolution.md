@@ -17,7 +17,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic assignm
 
 ## Functional Requirements
 
-- Onboarding asks for local scene context using **City**, **State**, optional **ZIP/postal code**, and **Music Community**.
+- Onboarding asks for local scene context using **City**, **State**, optional **ZIP/postal code**, and one **Music Community** as the user's primary scene of choice.
 - Listener location authority is manual-first: if the user enters city/state, that submitted location is the Home Scene intent even when GPS is denied. Optional ZIP/postal code is submitted-location detail for preview/context only and does not replace city/state/music-community identity.
 - If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review and may prefill ZIP/postal code when the provider returns it.
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
@@ -37,6 +37,9 @@ Defines the onboarding flow for selecting a Home Scene and deterministic assignm
 - Taste tags are **not** collected during onboarding; they are configured after entering Home Scene.
 - Home Scene selection is stored regardless of GPS verification.
 - Setting a Home Scene auto-joins the resolved active city-tier Scene membership.
+- The Home Scene selected during onboarding becomes the user's initial active/default Home Scene.
+- Music-community preference, default-scene, roller, and city-move behavior follows the contract below.
+- Saved Away Scenes and other explored scenes are profile/collection interests, not Home Scene memberships.
 - GPS verification is requested only to enable voting rights.
 - If GPS is denied or unavailable, user remains affiliated but cannot vote.
 - If the submitted city-tier scene is inactive/unavailable, the user is assigned to the nearest/relevant active major-node city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
@@ -86,6 +89,24 @@ Defines the onboarding flow for selecting a Home Scene and deterministic assignm
 - Canon definitions come from `docs/canon/`.
 - Voting is the only action gated by GPS verification.
 - Web tier stores local onboarding state but uses API for authoritative server persistence when authenticated.
+- Profile-held music-community preferences are the source of truth for multi-community membership.
+- GPS verification is city-scoped for voting.
+
+## Music-Community Preference Contract
+
+- Onboarding collects one primary scene-of-choice music community, not multiple preferences.
+- Additional music-community preferences are added later from the user profile.
+- A music-community preference means the user is a fan / involved with that music community.
+- Music-community preferences persist across cities.
+- The current verified/default city determines which local Home Scene or proxy scene content loads for each preference.
+- Active major-node cities should generally carry the same primary music-community set, so saved preferences normally resolve locally when a user changes city.
+- If a saved music-community preference does not resolve to an active current-city scene, it remains visible in the profile but does not appear in the Home Scene roller until resolvable.
+- One successful GPS verification for a city grants voting rights across all of the user's registered music-community preferences that resolve in that verified city.
+- Verifying a new city replaces the user's prior city voting authority; users do not hold voting authority in multiple cities at the same time.
+- When a user verifies a new city and changes their Home Scene location, music-community preferences carry forward automatically without a separate re-confirmation step, but Home/Plot/RADIYO/Feed/Events/Archive content re-resolves to the new city's active or proxy scenes.
+- The starred default music-community preference determines the Home Scene the user is anchored to and loaded into on login.
+- The Home Scene roller is a shortcut to the user's resolvable primary music-community preferences in the current verified/default city.
+- The currently selected roller item is the scene the user is in.
 
 ## Data Models & Migrations
 
