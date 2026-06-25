@@ -51,7 +51,7 @@ This section owns the source-origin rules that connect Registrar filings, proxy-
 
 ### Runtime Parity Blocker: Source-Origin Persistence
 
-Current Registrar runtime still submits Artist/Band registration against an existing `sceneId`, verifies that scene against the user's current Home Scene, and materializes `ArtistBand.homeSceneId` to the same `sceneId`. That supports active Home Scene registration, but it is not enough to compute activation readiness for an inactive natural `city + state + music community` tuple routed through a proxy scene.
+Current Registrar runtime still submits Artist/Band registration against an existing `sceneId`, requires that scene to be city-tier, requires the registering user to be GPS-verified, rejects submissions where the scene tuple does not match the user's current Home Scene tuple, and materializes `ArtistBand.homeSceneId` to the same `sceneId`. That supports active Home Scene registration, but it is not enough to compute activation readiness for an inactive natural `city + state + music community` tuple routed through a proxy scene.
 
 Before adding activation readiness APIs or trigger automation, implementation must first persist the submitted natural source-origin tuple separately from the active/proxy operating scene. Acceptable implementation directions include:
 
