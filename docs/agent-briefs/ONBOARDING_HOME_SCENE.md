@@ -1,7 +1,7 @@
 # Onboarding Home Scene Agent Brief
 
 Status: active
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
 
 ## Use When
 
@@ -74,6 +74,7 @@ Tests / verification files:
 - New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding or listener-side pioneer tracking. Listener demand can motivate copy, but without active local artists/music there is no music community to activate.
 - A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
 - No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
+- Activation readiness and source-origin authority are owned by `docs/specs/system/registrar.md#source-origin-contract` and `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow`.
 - If a listener's submitted/GPS city differs from the assigned active Home Scene, Home may show lightweight helper copy encouraging the listener to tell local bands/artists to register with UPRISE.
 - Sects, generated channels, and sub-communities happen later through the Prime model rather than as launch seed architecture variants.
 - Missing-music-community requests are intake only. They do not create selectable onboarding options or live scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.
@@ -132,6 +133,7 @@ Load only if touched:
 - Do not treat saved Away Scenes as registered Home Scene affiliations.
 - Do not change the user's default Home Scene implicitly when they add another registered affiliation; default changes must be explicit.
 - Do not build listener-side pioneer tracking, activation queues, or promises that listener demand will create a community.
+- Do not treat submitted Home Scene metadata as a potential `Community` row awaiting listener-side activation.
 - Do not add taste-tag onboarding unless explicitly reactivated.
 - Do not turn a missing-music-community request into an immediate community creation path.
 - Do not add missing-music-community requests to `MUSIC_COMMUNITIES` or `docs/specs/seed/music-communities.json` until explicitly approved.

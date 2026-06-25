@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-24`
+**Last Updated:** `2026-06-25`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -53,11 +53,48 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Sect Uprises remain part of their parent Home Scene/community context; they do not become standalone city/music-community replacements.
 - Once a sect is realized as a source, its Uprise is the sect signal and followers of the sect must be able to add that Uprise from the sect surface.
 
+## City-Tier Activation Workflow
+
+This section owns the community-side activation workflow for splitting a natural city-tier Home Scene from a major-node/proxy scene. Registrar owns source-origin authority; this spec owns how the community lifecycle changes once activation readiness is satisfied.
+
+### Activation Candidate
+
+- A candidate activation tuple is an inactive/unavailable `city + state + music community` that has registered source-origin activity.
+- Candidate identity is the same community identity used everywhere else: `city + state + music community`. Do not collapse activation to city-only, state-only, or music-community-only.
+- Listener onboarding submissions, missing-music-community requests, and passive demand can inform messaging or admin visibility, but they do not create an activation candidate without source/music evidence.
+- Onboarding must not create inactive `Community` rows solely to remember a possible future scene.
+
+### Readiness Criteria
+
+- A city-tier Home Scene is ready to activate when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
+- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
+- Only approved playable music from sources whose source origin matches the candidate tuple counts toward that tuple's activation readiness.
+- Readiness accounting should use approved playable minutes and source-origin metadata, not loose profile tags, listener taste metadata, follower counts, or onboarding demand.
+- Exact metric storage/read APIs are implementation details for follow-up slices; this section locks the counting semantics.
+
+### Activation Trigger And Side Effects
+
+- Activation is source/music-driven. The operational trigger may be automated or approval-gated until an implementation spec locks the exact execution path, but listener demand is never the trigger.
+- When the natural Home Scene activates, future Home Scene resolution for matching listeners should route to the natural active scene.
+- Future source uploads for matching source-origin sources should attach according to the newly active natural Home Scene.
+- Existing songs already active in a proxy scene finish their current rotation lifecycle in that prior scene unless a later approved Fair Play/cutover spec changes the rule.
+- A song cannot be actively listed in more than one Uprise rotation at the same time.
+- Proxy-scene listener votes, source/song voting data, and history remain historical to the proxy scene/tier where they occurred; they do not transfer into the newly active natural Home Scene.
+- If profile/collection support exists, the prior proxy scene may remain available as an Away Scene or saved context, but it no longer acts as the user's natural Home Scene when the matching natural scene is active.
+
+### Source And Listener Re-Resolution
+
+- Matched listeners whose submitted/default Home Scene tuple now exists should be rooted in the natural Home Scene on the next supported resolution/cutover path.
+- Source accounts preserve source identity; activation changes future routing and upload attachment, not the existence of the source entity.
+- Source-origin changes require an explicit Registrar workflow. Activation must not silently rewrite a source to an unrelated city or music community.
+- Cross-state proxy assignment remains an edge case. If activation/cutover depends on cross-state state-tier identity, lock the edge-case policy in the Fair Play/broadcast owner spec before implementation.
+
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
 - Reconcile older tag-era sect assignment flows so they stop implying that profile tag selection alone creates official sect affiliation or realizes a sect.
 - Official Sect affiliation/updates channel surfaces remain deferred until Registrar information architecture is locked.
 - Registrar motion threshold validation, approval workflow, and automatic Sect-to-Uprise activation.
+- Automated city-tier activation metrics, trigger execution, notifications, and proxy-to-natural cutover orchestration.
 - User-facing sect creation/unlock visibility, source-level backing limits, song-level backing limits, and paid/free backing capacity remain beta/community-calibrated until tested with real Home Scene density.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
@@ -87,6 +124,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - `User`
   - Home-scene affinity fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`, `gpsVerified`)
   - `homeSceneTag` remains relevant to system-order identity where that context is required
+- Source-origin and activation-readiness read models may be added in future slices. This R1 contract does not require a migration by itself.
 
 ### Migrations
 - `20260213154237_add_scene_and_sect_tags` (scene metadata + sect/user tag tables)
@@ -134,6 +172,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
   - Unknown or inactive city/community assigns to the nearest/relevant active major-node same-parent city-tier community and auto-joins the resolved active Scene.
   - Onboarding does not create inactive `Community` rows or listener-side pioneer activation queues.
   - New city-tier communities split from major nodes only through artist/source concentration and Registrar/source activation.
+  - Activation readiness uses source-origin-matching approved playable minutes, at least `5` distinct registered source accounts, and the `20` minute per-source rotation cap.
   - Artist/source tracks created before a split finish their existing rotation lifecycle; post-activation track uploads attach according to the source's active Home Scene.
   - Proxy-scene listener votes and source/song voting data remain historical to the proxy scene/tier where they occurred; they do not transfer into the newly active natural Home Scene.
   - Existing city/community resolves without duplicate membership.
@@ -148,8 +187,8 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
   - non-members can listen only according to parent scene/discovery access and cannot vote in the Sect Uprise
 
 ## Future Work & Open Questions
-- Lock the numeric/evidence requirements for artist/source concentration that justify splitting a new active city-tier community from an existing major-node/music-capital community.
-- Define the Registrar/source activation workflow for new city-tier community creation, source assignment, future upload routing, and listener helper messaging.
+- Lock implementation details for the metric storage/read path that evaluates the already-defined artist/source concentration threshold for splitting a new active city-tier community from an existing major-node/music-capital community.
+- Define implementation details for activation metrics read paths, trigger authority, notification delivery, source assignment/cutover, future upload routing, and listener helper messaging.
 - Retire or rename legacy `pioneer` runtime/test terminology once major-node assignment language is implemented end-to-end.
 - Beta-calibrate the community maturity milestone required before user-facing sect creation unlocks.
 - Define formal Official Sect and Sect Uprise mechanics beyond readiness tracking (Registrar affiliation schema, updates channel, motion schema, approvals, visibility, backing limits, and paid/free capacity).

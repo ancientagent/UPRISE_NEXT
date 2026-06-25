@@ -1,7 +1,7 @@
 # Registrar Governance Agent Brief
 
 Status: active
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
 
 ## Use When
 Use this brief when the task is about:
@@ -54,6 +54,10 @@ Tests / verification files:
 - Registrar filings remain Home Scene-bound.
 - Visitor listening context does not change registrar scope.
 - Artist/Band registration is a registrar-mediated formalization path.
+- Source origin is owned by `docs/specs/system/registrar.md#source-origin-contract`: it is the submitted natural `city + state + music community` verified through Registrar/GPS authority, not the temporary proxy scene.
+- Artist/Band source registration can count toward Home Scene activation only after the registering user is GPS-verified for the submitted source-origin location.
+- City-tier Home Scene activation is Registrar/source-driven: at least `45` minutes of approved playable music from at least `5` distinct registered source accounts, with no single source occupying more than `20` minutes of one Uprise rotation.
+- Listener onboarding counts, missing-music-community requests, and passive listener demand do not activate a community.
 - Promoter capability is additive to the base user identity, not a separate account tree.
 - Promoter capability unlocks source-facing event workflows rather than creating listener event-authoring.
 - Capability-code verify/redeem remains user-driven and authenticated.
@@ -87,6 +91,8 @@ Load only if touched:
 - Do not turn Registrar into a generic social action surface.
 - Do not expose `Back` as a normal feed/profile action.
 - Do not make source context override Home Scene filing scope.
+- Do not let proxy-scene routing overwrite source origin.
+- Do not use listener demand or onboarding metadata as a community activation trigger.
 - Do not create self-issued capability codes.
 - Do not grant promoter capability automatically from registration submission alone.
 - Do not let voting/governance authority depend on paid status, rankings, or popularity.
