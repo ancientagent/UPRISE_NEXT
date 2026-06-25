@@ -1,7 +1,7 @@
 # Registrar Governance Agent Brief
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-06-24
 
 ## Use When
 Use this brief when the task is about:
@@ -59,6 +59,15 @@ Tests / verification files:
 - Capability-code verify/redeem remains user-driven and authenticated.
 - `Back` is Registrar-only procedural behavior; do not expose it as a public social action.
 - Support/backing state is not a direct public button in the intended action model.
+- Sect readiness tracking can be built before it is user-visible.
+- Sect readiness counts approved playable minutes only from registered source accounts that explicitly back/tag/affiliate with that sect.
+- Passive genre/style metadata does not count toward sect readiness or sect realization by itself.
+- Sect maturity milestones, backing limits, paid/free backing capacity, and user-facing visibility are beta/community-calibrated and must not be hard-coded pre-launch.
+- Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags.
+- Official Sects are pre-Uprise Registrar-recognized subcommunities: visible/inspectable for affiliation and updates once enabled, but not independent broadcast authorities.
+- Registrar should eventually show active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
+- Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
+- Sect membership/affiliation grants sect voting authority; listening access alone does not.
 
 ## Current Runtime Pointers
 - `/registrar` hosts Artist/Band registration, Promoter Registration, and Promoter Capability Code panels.
@@ -82,6 +91,11 @@ Load only if touched:
 - Do not grant promoter capability automatically from registration submission alone.
 - Do not let voting/governance authority depend on paid status, rankings, or popularity.
 - Do not widen cause/project/sect-motion runtime without explicit current locks.
+- Do not auto-create Sects from passive genre/style tags.
+- Do not make loose profile tags the official sect affiliation mechanism.
+- Do not treat Official Sect status as broadcast authority.
+- Do not turn Sect Uprises into standalone city/music-community replacements isolated from the parent Home Scene.
+- Do not expose sect progress or sect creation controls publicly before the visibility/unlock rule is explicitly activated.
 
 ## Canon Anchors
 Use selectively:

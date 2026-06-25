@@ -43,7 +43,7 @@ Current briefs:
 - `ARTIST_PROFILE_SOURCE_DASHBOARD.md` - public Artist Profile, Source Dashboard/source management, Release Deck, Print Shop, and managed source entity selection.
 - `EVENTS_ARCHIVE.md` - Plot Events, Archive, event calendar behavior, event-bound artifacts, and descriptive stats/history boundaries.
 - `BUSINESS_MONETIZATION.md` - business accounts, promos/coupons/offers, paid ad slots, revenue constraints, premium analytics, and launch monetization boundaries.
-- `ONBOARDING_HOME_SCENE.md` - onboarding, Home Scene tuple resolution, GPS/voting eligibility, pioneer fallback, and first-run authority boundaries.
+- `ONBOARDING_HOME_SCENE.md` - onboarding, Home Scene tuple resolution, GPS/voting eligibility, major-node assignment, and first-run authority boundaries.
 - `REGISTRAR_GOVERNANCE.md` - Registrar actor model, capability filings, promoter capability, backing/procedural actions, and governance gates.
 - `EXTERNAL_TOOLS.md` - Cloud Codex, NotebookLM, Claude Designer, Stitch, Abacus, generated wiki, and cross-agent handoff rules.
 - `UPRISE_HERMES_AUDITOR_AGENT.md` - read-only Hermes auditor role, safety boundaries, lane-loading rules, and the current launch-community / artist-profile / source-separation audit prompt.

@@ -4,19 +4,27 @@ This file is the primary agent entry point for this repo. If another agent-facin
 
 ## Required Reading
 
-### Always Read (in order)
+### Always Read (Focused Default)
+1. `docs/PLATFORM_START_HERE.md`
+2. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+3. `docs/agent-briefs/CONTEXT_ROUTER.md`
+
+### Heavy Authority Pack
+Use this pack for broad audits, architecture planning, deployment/infra work, multi-agent strategy, repo-structure changes, or when the task explicitly asks for full-platform review.
+
 1. `docs/STRATEGY_CRITICAL_INFRA_NOTE.md`
 2. `docs/RUNBOOK.md`
 3. `docs/FEATURE_DRIFT_GUARDRAILS.md`
 4. `docs/architecture/UPRISE_OVERVIEW.md`
 5. `docs/PROJECT_STRUCTURE.md`
-6. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+6. Relevant canon/spec/brief files identified by `docs/agent-briefs/CONTEXT_ROUTER.md`
 
 ### Task-Specific Add-Ons
 Load only the minimum additional material required for the task.
 
 - Web/UI/routes: `apps/web/WEB_TIER_BOUNDARY.md` + the relevant active specs/founder locks
 - Spec/doc work: `docs/README.md` + `docs/specs/README.md` + relevant canon/spec files
+- Architecture/repo-shape/deployment work: the Heavy Authority Pack above
 - Recurring incidents / operating failures: `docs/solutions/README.md` + only the relevant playbook
 - Multi-agent execution / handoff review: `docs/handoff/README.md` + the latest relevant dated handoff(s)
 

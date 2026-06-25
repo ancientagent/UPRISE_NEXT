@@ -1,7 +1,7 @@
 # Context Router And Focus Lanes
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-06-24
 
 ## Purpose
 Keep agent context light, flexible, and accurate by routing work through the current focus lane.
@@ -15,17 +15,22 @@ This file answers:
 This is not a product spec. It is a context-loading map.
 
 ## Core Rule
-Load for the lane, not for the whole platform.
+Load for the lane, not for the whole platform, unless the task is explicitly a broad audit, architecture, deployment, or strategy task.
 
 Default stack:
 1. `AGENTS.md`
-2. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
-3. this router
-4. the active lane brief
-5. companion briefs only if the task crosses into that domain
-6. exact runtime/spec/lock files only when editing or auditing that surface
+2. `docs/PLATFORM_START_HERE.md`
+3. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+4. this router
+5. the active lane brief
+6. companion briefs only if the task crosses into that domain
+7. exact runtime/spec/lock files only when editing or auditing that surface
 
 Do not load every file linked by every related document.
+
+Heavy authority mode:
+- Use the Heavy Authority Pack in `AGENTS.md` for broad audits, architecture planning, deployment/infra work, multi-agent strategy, repo-structure changes, and full-platform review.
+- Heavy mode is curated context, not permission to bulk-load stale handoffs or legacy docs as current truth.
 
 ## Canon Anchor Rule
 Canon is the semantic authority layer above section briefs.
@@ -262,7 +267,7 @@ Use when working on:
 - onboarding
 - Home Scene resolution
 - GPS verification
-- pioneer fallback
+- major-node assignment for inactive/unavailable submitted locations
 - community identity tuple
 - first-run flow
 - registrar questions tied to onboarding

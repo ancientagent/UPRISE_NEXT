@@ -99,7 +99,7 @@ Load only if touched:
 - `ARTIST_PROFILE_SOURCE_DASHBOARD.md` for Artist Profile, source dashboard, Release Deck, or Print Shop prompts.
 - `EVENTS_ARCHIVE.md` for Events, Archive, flyers, calendar, or stats/history prompts.
 - `BUSINESS_MONETIZATION.md` for business, promo, coupon, offer, monetization, premium analytics, launch revenue prompts.
-- `ONBOARDING_HOME_SCENE.md` for onboarding, Home Scene, GPS, pioneer, or first-run prompts.
+- `ONBOARDING_HOME_SCENE.md` for onboarding, Home Scene, GPS, major-node assignment, or first-run prompts.
 - `REGISTRAR_GOVERNANCE.md` for Registrar, capability, backing, governance, or promoter capability prompts.
 
 ## Prompting Boundaries

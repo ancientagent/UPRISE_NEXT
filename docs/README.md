@@ -4,7 +4,17 @@ This folder contains operational docs, architecture references, specifications, 
 
 ## Start Here
 - `AGENTS.md` (repo root) — primary agent entry point and non-negotiables.
+- [`PLATFORM_START_HERE.md`](./PLATFORM_START_HERE.md) — five-minute platform orientation, current truths, common wrong assumptions, and lane-loading entry point.
 - [`AGENT_STRATEGY_AND_HANDOFF.md`](./AGENT_STRATEGY_AND_HANDOFF.md) — authority order, task-specific reading model, and handoff/QA protocol.
+- [`agent-briefs/CONTEXT_ROUTER.md`](./agent-briefs/CONTEXT_ROUTER.md) — focus-lane router for loading only the brief/spec/runtime files required by the active task.
+
+## Context Modes
+- Focused implementation: read `AGENTS.md`, `PLATFORM_START_HERE.md`, `AGENT_STRATEGY_AND_HANDOFF.md`, `agent-briefs/CONTEXT_ROUTER.md`, the active lane brief, and exact touched files/specs/tests.
+- Heavy authority review: for broad audits, architecture, deployment, multi-agent strategy, or full-platform planning, use the heavier authority pack named in `AGENTS.md` plus routed canon/spec/brief files.
+
+Do not bulk-load legacy docs or dated handoffs as current truth. Load them by topic when needed.
+
+## Operational References
 - [`FEATURE_DRIFT_GUARDRAILS.md`](./FEATURE_DRIFT_GUARDRAILS.md) — spec-first policy.
 - [`RUNBOOK.md`](./RUNBOOK.md) — operational rules, verification, PR metadata, and branch protection.
 - [`architecture/UPRISE_OVERVIEW.md`](./architecture/UPRISE_OVERVIEW.md) — quick repo and tier orientation.

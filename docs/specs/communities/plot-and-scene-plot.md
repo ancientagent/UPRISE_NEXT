@@ -38,10 +38,10 @@ Current MVP shell note:
   - Promotions/business surfaces are deferred and are not a current MVP Plot tab.
 - Profile strip notification requirement:
   - A notification icon is present at the top-right of the profile strip, immediately next to the `...` settings menu.
-  - Pioneer users receive an onboarding follow-up message in this notification surface after Home Scene context is loaded.
-  - Message must explain temporary nearest-active routing and that user can establish/uprise their own city scene once sufficient local users join.
+  - Users assigned to a major-node Home Scene while their submitted/GPS city is not yet active may receive a lightweight informational tooltip or notification after Home Scene context loads.
+  - Message must explain that local communities are created by local artist/band/source participation through Registrar/source onboarding, and that telling local artists to register can help bring UPRISE to their hometown.
   - Followed-source updates do **not** move into this icon by default; the feed remains the primary surface for those updates.
-  - The profile-strip notification icon is reserved for system/state-change notices, pioneer follow-up, and other explicit notification/inbox behavior.
+  - The profile-strip notification icon is reserved for system/state-change notices, major-node assignment notices, and other explicit notification/inbox behavior.
 - S.E.E.D stands for Support, Explore, Engage, Distribute.
 - Activity Feed semantics:
   - explicit community actions and followed-source updates only

@@ -3,17 +3,17 @@
 **ID:** `USER-ONBOARDING`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-19`
+**Last Updated:** `2026-06-24`
 
 ## Overview & Purpose
 
-Defines the onboarding flow for selecting a Home Scene and deterministic resolution/routing when a selected city-tier scene is inactive.
+Defines the onboarding flow for selecting a Home Scene and deterministic assignment to an active major-node Home Scene when a submitted city-tier scene is inactive or unavailable.
 
 ## User Roles & Use Cases
 
 - New Listener selects a Home Scene during onboarding.
 - Listener denies GPS and still participates without voting.
-- User enters a city/community not in DB and is treated as a pioneer.
+- User enters a city/community not yet active and is assigned to the nearest/relevant active major-node Home Scene for the same parent music community.
 
 ## Functional Requirements
 
@@ -25,6 +25,12 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Current MVP launch matrix is defined in `docs/specs/seed/launch-community-city-matrix.json` as `6` launch cities x `8` launch music communities = `48` city-tier Home Scene tuples.
 - Current MVP launch geofence readiness uses the city-center point and `50000` meter radius stored on each launch city in `docs/specs/seed/launch-community-city-matrix.json`; every music-community scene in the same launch city inherits that city geofence for exact active Home Scene voting verification.
 - Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change runtime screens, menus, tabs, actions, player behavior, or routing.
+- UPRISE starts with a fixed set of active major-node Home Scenes / music capitals for each parent music community. These nodes absorb listeners and sources from surrounding or inactive cities until enough local artist/source concentration exists to split off a new active city-tier Home Scene.
+- New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding, listener demand, or listener-side pioneer tracking. Without active local artists/music, there is no music community to activate.
+- A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
+- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
+- If a listener's submitted/GPS city differs from the assigned active Home Scene, Home may show lightweight helper copy telling the listener they can help bring UPRISE to their hometown by inviting local bands/artists to register. This is messaging only; it does not create a listener-side activation queue.
+- When a new active city-tier Home Scene splits off from a major node, future listener assignment and future source uploads attach according to the newly active Home Scene. Existing songs finish their current rotation lifecycle in their prior active scene unless a later approved spec changes the cutover rule.
 - Sects, generated channels, and sub-communities are created later through the Prime model, not through bespoke launch seed behavior.
 - Missing-music-community requests are intake only: they do not create selectable onboarding options or live city-tier scenes until repeated submissions from distinct people in distinct cities make the request eligible for review.
 - Missing-music-community intake is stored through `POST /onboarding/music-community-requests`; it records distinct requester/city review signals and does not define a final approval threshold in code.
@@ -33,12 +39,15 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Setting a Home Scene auto-joins the resolved active city-tier Scene membership.
 - GPS verification is requested only to enable voting rights.
 - If GPS is denied or unavailable, user remains affiliated but cannot vote.
-- If selected city-tier scene is inactive/unavailable, user is auto-routed to nearest active city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
-- Nearest-active fallback is distance-based when the submitted city/state can be geocoded and active candidate scenes have geofences; if coordinates are unavailable, runtime falls back to deterministic same-state/member/name ordering rather than blocking onboarding.
-- Inactive-city onboarding must persist pioneer intent and trigger pioneer notification messaging.
-- If the selected Home Scene is inactive/unavailable, GPS verification checks the submitted city/state locality while voting applies to the resolved nearest active city-tier community; the submitted city/state/music-community remains preserved as pioneer intent.
-- Pioneer notification is shown after the user is loaded into Home Scene context (routed nearest active scene when required).
-- Pioneer notification delivery UI is the top-right notification icon in the profile strip (next to the `...` settings menu).
+- If the submitted city-tier scene is inactive/unavailable, the user is assigned to the nearest/relevant active major-node city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
+- Major-node assignment must stay in-state when any same-state active major-node exists for the selected music community.
+- Cross-state major-node assignment is allowed only when no same-state active major-node exists for the selected music community.
+- Within the allowed same-state candidate set, major-node assignment is distance-based when the submitted city/state can be geocoded and active candidate scenes have geofences; if coordinates are unavailable, runtime falls back to deterministic member/name ordering rather than blocking onboarding.
+- Cross-state proxy assignment is an edge case. If unavoidable, songs may still advance through tier progression, but statewide origin/identity handling needs explicit edge-case policy before implementation depends on it.
+- Inactive-city onboarding must not persist listener-side pioneer activation queues or promise community creation from listener demand.
+- If the selected Home Scene is inactive/unavailable, GPS verification may check the submitted city/state locality while voting applies to the assigned active major-node community.
+- Home may show lightweight helper copy after Home Scene context loads when the user's submitted/GPS city differs from the assigned active Home Scene.
+- Helper copy delivery may use the top-right notification icon in the profile strip (next to the `...` settings menu) or an equivalent Home dashboard tooltip.
 
 ### Implemented Resolution Logic
 
@@ -46,19 +55,20 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - `city`, `state`, `musicCommunity`
 - Resolution:
   - Find city-tier `Community` by exact `{city, state, musicCommunity, tier='city'}`.
-  - If not found or not active, mark user as pioneer for selected `{city,state,musicCommunity}`.
-  - Resolve nearest active city-tier `Community` for the selected parent music community.
-  - When submitted city/state coordinates are available, rank active city-tier candidates by PostGIS distance from the submitted location before same-state/member-count/name tie-breakers.
-  - Set active listening/voting anchor to the nearest active city-tier community through `User.tunedSceneId`; preserve pioneer intent for the chosen city.
-  - Persist user home-scene fields as the submitted `city`, `state`, and `musicCommunity`.
+  - If not found or not active, assign the user to the nearest/relevant active major-node `Community` for the selected parent music community.
+  - If same-state active city-tier candidates exist for the selected music community, discard cross-state candidates before distance ranking.
+  - Cross-state candidates are eligible only when no same-state active major-node candidate exists.
+  - When submitted city/state coordinates are available, rank eligible active city-tier candidates by PostGIS distance from the submitted location before member-count/name tie-breakers.
+  - Set active listening/voting anchor to the assigned active major-node community through `User.tunedSceneId` where current runtime needs an explicit resolved anchor.
+  - Persist user home-scene fields as the submitted `city`, `state`, and `musicCommunity` for location context, but do not treat those fields as a listener-side community activation queue.
   - Auto-join via `CommunityMember` (idempotent; duplicate join ignored).
-  - After loading user into Home Scene context, trigger pioneer informational notification (in-app + transactional notification path) stating fallback scene and pioneer tracking.
+  - After loading user into Home Scene context, optionally show helper copy explaining major-node assignment and inviting the listener to tell local artists/bands to register if they want UPRISE to activate in their hometown.
 
 ### GPS Verification Semantics (Implemented)
 
 - Exact active Home Scene verification checks user coordinates against that Home Scene geofence/radius.
-- When the submitted Home Scene is inactive/unavailable, GPS verification checks the submitted city/state locality by reverse-geocoding the user's coordinates and comparing them to the preserved pioneer intent. It does not verify the user against the resolved fallback community geofence.
-- For inactive/unavailable Home Scenes, voting still uses the resolved active fallback scene stored in `User.tunedSceneId` after submitted locality verification succeeds.
+- When the submitted Home Scene is inactive/unavailable, GPS verification may check the submitted city/state locality by reverse-geocoding the user's coordinates and comparing them to the submitted location. It does not require the user to be physically inside the assigned major-node community geofence.
+- For inactive/unavailable Home Scenes, voting still uses the assigned active major-node scene stored in `User.tunedSceneId` after submitted locality verification succeeds.
 - Launch geofences are only a voting-readiness locality gate; they are not tier logic, state/national scope logic, discovery radius logic, or a city-specific runtime branch.
 - When GPS permission is accepted and city/state are auto-locked from GPS-derived location, onboarding treats that GPS-derived city/state as the submitted Home Scene location and rechecks stored GPS coordinates after Home Scene persistence for voting eligibility.
 - Voting is enabled only when the exact active Home Scene geofence check or submitted-location locality check succeeds.
@@ -69,7 +79,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 - Clarity: onboarding copy must avoid “genre selection” framing.
 - Consistency: Home Scene is represented as city+state+music community.
 - Safety: GPS is never required for non-civic participation.
-- Determinism: fallback routing and pioneer messaging must be deterministic and explainable.
+- Determinism: major-node assignment and any helper messaging must be deterministic and explainable.
 
 ## Architectural Boundaries
 
@@ -121,10 +131,9 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - `sceneId: string`
   - `resolvedCitySceneId: string`
   - `resolvedCitySceneLabel: string`
-  - `pioneerHomeScene: { city: string; state: string; musicCommunity: string } | null`
   - `tunedSceneId: string`
   - `votingEligible: boolean`
-  - `pioneer: boolean`
+  - legacy compatibility fields such as `pioneerHomeScene` / `pioneer` may exist until runtime cleanup, but product language must not build new listener-side pioneer activation flows around them
 
 - `POST /onboarding/gps-verify` request:
   - `latitude: number`
@@ -162,20 +171,20 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
   - rechecks stored GPS coordinates after authenticated Home Scene persistence so GPS-first onboarding can enable voting once a scene exists
   - allows authenticated users to submit a missing-music-community request without changing the selected approved parent community
   - requests GPS with clear voting-only gating copy
-  - resolves active scene fallback when city is inactive
-  - shows pioneer status and nearest active routed scene in review step
+  - resolves active major-node assignment when city is inactive
+  - shows assigned active Home Scene in review when the submitted city is not yet active
   - shows voting eligibility and failure reason in review step
 - `apps/web/src/app/plot/page.tsx`:
-  - after onboarding completion and Home Scene context load, the pioneer message is available from the notification icon in the profile strip.
-  - pioneer message copy explains fallback routing and that the user can establish/uprise their own city scene once enough local users join.
+  - after onboarding completion and Home Scene context load, Home may show major-node assignment helper copy through the notification icon or a lightweight Home dashboard tooltip.
+  - helper copy explains that local communities are activated by local artist/band/source participation through Registrar/source registration, and that inviting local artists can help bring UPRISE to the listener's hometown.
 - `apps/web/src/store/onboarding.ts`:
   - persists local onboarding state (`homeScene`, including optional `postalCode`, `gpsStatus`, `votingEligible`, `gpsReason`)
 
 ## Acceptance Tests / Test Plan
 
 - Active existing scene input resolves and persists correctly.
-- Inactive city selection marks pioneer intent and auto-routes user to nearest active city scene for selected parent community.
-- Pioneer routing returns deterministic nearest active scene label in onboarding review.
+- Inactive city selection assigns the user to the nearest/relevant active major-node city scene for the selected parent community.
+- Major-node assignment returns deterministic active scene label in onboarding review.
 - Parent community input accepts only approved selection values.
 - Duplicate scene join does not create duplicate `CommunityMember` rows.
 - Denied GPS keeps participation intact and voting disabled.
@@ -183,7 +192,9 @@ Defines the onboarding flow for selecting a Home Scene and deterministic resolut
 
 ## Future Work & Open Questions
 
-- Pioneer incentives/recruitment tooling remains open beyond baseline pioneer notification.
+- Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
+- Define the Registrar/source activation workflow and artist/source concentration threshold for splitting a new active city-tier Home Scene from a major-node community.
+- Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
 - Sect uprising motion mechanics remain governed by `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References

@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-14`
+**Last Updated:** `2026-06-24`
 
 ## Overview & Purpose
 Defines the Registrar as the listener-side civic registration surface inside The Plot where role/capability motions and prerequisite filings are formalized.
@@ -25,7 +25,16 @@ Defines the Registrar as the listener-side civic registration surface inside The
   - Artist/Band registration initiation.
   - Promoter registration initiation.
   - Registrar-stage civic prerequisite filings where active.
+- Artist/Band source registration requires the registering user to be GPS-verified before materialized source identity can count toward Home Scene activation.
+- A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
+- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
 - Sect uprising motions are registrar-mediated when threshold criteria are met (45-minute committed artist playtime threshold + explicit support).
+- Sect readiness tracking may be built before it is user-visible; visibility may remain hidden, admin-only, or read-only until beta/community calibration locks maturity and backing limits.
+- Sect readiness counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate with that sect; passive genre/style metadata does not count by itself.
+- Sect affiliation belongs in Registrar rather than as a loose self-assigned profile tag.
+- An Official Sect is a pre-Uprise Registrar-recognized subcommunity: it can appear in Registrar for discovery/affiliation and updates, but it does not grant independent broadcast authority.
+- Registrar should eventually expose Official Sect context: active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
+- Sect Uprises should mirror Home Scene behavior wherever possible while remaining scoped inside the parent Home Scene/music community; sect membership/affiliation grants sect voting authority, while listening access alone does not.
 
 ### Implemented Now
 - Registrar-link-ready Artist/Band identity foundation exists (slice 1):
@@ -249,6 +258,9 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
 - Sect motion lifecycle and approval state machine.
+- Sect readiness tracking visibility and unlock controls.
+- Official Sect affiliation, discovery, and updates-channel information architecture.
+- Source/song sect-backing limits and paid/free backing capacity after beta/community calibration.
 
 ### Policy Lock (2026-02-24, P3-REV-001)
 - `RegistrarCode` issuance authority is system-only (trusted API-tier registrar paths); no user self-issuance.
@@ -264,6 +276,7 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Registrar cannot bypass Fair Play, voting, or propagation constraints.
 - Registrar actions do not grant automatic visibility or authority.
 - Registrar must remain Scene-scoped to preserve structural locality.
+- Registrar-held sect affiliation must preserve the parent Home Scene context and must not turn sects into isolated standalone city/music-community replacements.
 - Registrar promoter capability should be interpreted as gating a source-facing Print Shop/event lane, not a listener-facing event-creation surface.
 
 ## Data Models & Migrations
@@ -271,6 +284,8 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - `RegistrarCode` (for capability completion handoff flows)
 - Project linkage to `Signal` rows for follow/blast/support
 - Sect motion artifact and committed artist-catalog references
+- Explicit registered-source sect backing/readiness references; passive tags must remain non-authoritative for realization
+- Registrar-held Official Sect affiliation records and update-channel references
 
 ### Prisma Models (Implemented)
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
@@ -331,6 +346,8 @@ Defines the Registrar as the listener-side civic registration surface inside The
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
 - Define who can submit and approve Sect uprising motions.
+- Beta-calibrate when sect progress becomes public and which paid/free backing limits are allowed.
+- Define the Registrar menu architecture for Official Sect discovery, affiliation, updates, and cross-scene uprisen-sect context.
 - Lock registrar moderation/appeal behavior for rejected motions.
 
 ## References

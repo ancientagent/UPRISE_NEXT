@@ -9,6 +9,8 @@
 
 ### Added
 
+- Added `docs/PLATFORM_START_HERE.md` as the repo-level five-minute UPRISE platform orientation and linked it from agent/docs routing so future agents start from current platform truths before lane-specific context.
+- Added `docs/handoff/2026-06-24_unsupported-product-questions-backlog.md` as a working backlog of unresolved product/architecture questions so clarification sessions can continue one question at a time without losing unsupported decisions.
 - Added `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md` to define when UPRISE should use Abacus Agent Swarm / Fusion-style workflows for complex-area mapping, independent deliverables, audit scouting, and decision packets without letting external agents become product authority.
 - Added a Task 3 onboarding browser/device QA blocker handoff documenting the current Fly CORS mismatch for the Vercel staging origins and the exact provider-side unblock path before manual/GPS/pioneer/missing-community browser QA can be claimed; see `docs/handoff/2026-06-24_onboarding-browser-qa-blocked-cors.md`.
 - Added `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` and tightened active business/economy docs so billing, subscriptions, paid promotions, coupons/offers, business dashboards, and premium analytics remain deferred until explicitly activated.
@@ -65,6 +67,15 @@
 
 ### Changed
 
+- Clarified major-node/proxy Home Scene activation behavior: matched users transfer into the newly active natural Home Scene when the source/catalog threshold is met, GPS verification controls voting rights, existing artist/source songs finish their current rotation lifecycle, and post-activation uploads attach to the new Home Scene.
+- Clarified that a new city-tier Home Scene activates through Registrar/source activity once it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts, with no single source occupying more than `20` minutes of any one Uprise rotation; listener demand alone does not activate a music community.
+- Clarified sect readiness strategy: build readiness tracking from explicit registered-source backing only, keep passive genre/style tags non-authoritative, and leave sect visibility/unlock/backing limits beta/community-calibrated until real Home Scene density can be tested.
+- Clarified the Official Sect model: sect affiliation should be Registrar-held rather than loose profile tags, official sects may appear in Registrar for discovery/affiliation and updates, and official status does not grant independent broadcast authority until Sect Uprise requirements are met.
+- Clarified the governing Sect architecture principle: Sect Uprises mirror Home Scene behavior where possible while staying inside the parent Home Scene/music community, giving niche/sub/microgenre groups purer broadcasts without isolating every niche as a separate city/community.
+- Clarified proxy-scene transfer and song lifecycle rules: proxy votes/history stay with the proxy scene/tier, existing active songs finish their proxy lifecycle, songs cannot be active in multiple Uprise rotations, same-state proxy assignment is required when available, and cross-state advancement remains a provisional edge case.
+- Reinforced invariant Home Scene/community architecture in `COMM-SCENES`: city/music-community tuples change scene data and activity, not screens, menus, tabs, player behavior, actions, or routing.
+- Corrected `COMM-SCENES` Home Scene fallback language so inactive/unavailable submitted scenes preserve pioneer intent and route to the nearest active same-parent city-tier community without creating inactive `Community` rows.
+- Reconciled the agent reading strategy into layered context mode: focused implementation now routes through platform orientation, context router, lane brief, and touched files, while broad audits/architecture/deployment work can use the Heavy Authority Pack.
 - Hardened Print Shop event creation so Artist/Band events require an explicitly selected managed source, promoter-capability events remain the allowed unattached creator lane, inactive/non-city community anchors are rejected, and listener-facing event surfaces remain read-only; see `docs/handoff/2026-06-24_print-shop-event-mvp-hardening.md`.
 - Annotated canon Plot-surface references with the current MVP runtime override so older Promotions / Statistics / Social tab language is preserved as canon context without authorizing current Plot tabs beyond Feed, Events, and Archive; see `docs/handoff/2026-06-24_plot-tab-canon-annotations.md`.
 - Hardened Release Deck MVP validation so source-owned track creation is built through a focused payload helper with nonblank title, positive duration, and hosted `http(s)` audio/cover URL validation while real upload/transcode/storage remains deferred; see `docs/handoff/2026-06-24_release-deck-mvp-validation.md`.

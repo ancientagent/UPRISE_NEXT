@@ -3,7 +3,7 @@
 **ID:** `DOCS-FRAMEWORK`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2025-12-13`
+**Last Updated:** `2026-06-24`
 
 ## Overview & Purpose
 UPRISE_NEXT is built and maintained by multiple contributors (often multiple coding agents) operating in parallel. This documentation framework standardizes how we:
@@ -18,7 +18,7 @@ UPRISE_NEXT is built and maintained by multiple contributors (often multiple cod
 - **Maintainers/reviewers:** review changes against explicit specs and documented decisions.
 
 ## Functional Requirements
-- Provide a single docs entrypoint: `docs/README.md`.
+- Provide layered entrypoints: `AGENTS.md` for agent non-negotiables, `docs/PLATFORM_START_HERE.md` for platform orientation, `docs/README.md` for docs navigation, and `docs/agent-briefs/CONTEXT_ROUTER.md` for lane routing.
 - Maintain a stable directory structure:
   - `docs/blueprints/` (workflows/patterns),
   - `docs/specs/` (module-organized specs + templates),
@@ -30,6 +30,7 @@ UPRISE_NEXT is built and maintained by multiple contributors (often multiple cod
 
 ## Non-Functional Requirements
 - **Onboarding:** new agents can find “what to read next” in < 5 minutes.
+- **Context control:** focused implementation uses lane-loaded context, while broad audits/architecture/deployment work may use the heavier authority pack defined in `AGENTS.md`.
 - **Traceability:** every substantial change links to a spec and/or handoff note.
 - **Low friction:** templates are copy/paste friendly and short enough to maintain.
 

@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-25`
+**Last Updated:** `2026-06-24`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -19,17 +19,27 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - A **Community** is the people operating within a Scene.
 - An **Uprise** is a dual-state object: the broadcast station/infrastructure operated by a Community within a Scene and the Signal of that community broadcast carried by RaDIYo.
 - A **Home Scene** is the user’s local music Scene of choice and civic anchor.
-- **Sects** are artist-based civic motions inside a Home Scene that can mature into sub-community Uprises.
-- Sect initiation belongs to the artist-facing interface, not a listener taste-tag manager.
+- **Sects** are Registrar-recognized subcommunity affiliations inside a Home Scene that can mature into sub-community Uprises.
+- Sect affiliation belongs in Registrar, not as a loose self-assigned profile tag.
+- A Sect can become an official subcommunity before it becomes a Sect Uprise. Official Sect status makes the sect visible in Registrar for discovery/affiliation and may provide an updates channel, but it does not grant independent broadcast authority.
+- A Sect Uprise should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
+- Sects exist to solve broad-community density: they let niche/sub/microgenre groups create a purer broadcast experience without forcing every niche into its own isolated city/music-community.
 - A Sect becomes an Uprise only after meeting the support threshold and having enough committed artist catalog to sustain rotation (45 minutes of total playtime from artists who back/sign the motion).
+- Sect readiness tracking counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate with that sect. Passive genre/style metadata does not count by itself.
 - When a Sect meets the threshold, a motion is entered in the Registrar to establish the Sect Uprise.
 - Artists must back/commit to the Sect Uprise for it to activate. If support is insufficient, the sect motion does not realize into an Uprise.
+- Sect members have voting rights inside their Sect Uprise. Non-members may listen when parent-scene/discovery access permits, but listening access does not grant sect voting authority.
 - Citywide is the only tier with civic infrastructure. Statewide and National are aggregate broadcasts only.
 
 ### Implemented Behavior (Current)
 - Home Scene selection currently resolves exact `{city, state, musicCommunity}` in `Community` (tier `city`).
-- If the city-tier community does not exist, the system creates it as inactive (`isActive=false`) and marks the user as pioneer.
-- Home Scene affiliation/tag context remains part of system ordering where needed for civic identity, voting rights, and visitor/local distinction; older tag-era sect assignment alone should not drive sect realization.
+- If the selected city-tier community does not exist or is inactive, onboarding assigns the user to the nearest/relevant active major-node city-tier `Community` for the same parent music community.
+- Major-node/proxy assignment must stay in-state when any same-state active major-node exists for the selected music community. Cross-state assignment is allowed only when no same-state active major-node exists, and remains an edge case for statewide identity policy.
+- Onboarding does not create inactive `Community` rows or listener-side pioneer activation queues. The active listening/voting anchor is stored through `User.tunedSceneId` where current runtime needs an explicit resolved anchor.
+- UPRISE starts with fixed active major-node Home Scenes / music capitals for each parent music community. Those nodes absorb surrounding or inactive-city listeners and sources until enough local artist/source concentration exists to split off a new city-tier `Community`.
+- New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding or listener demand. Without active local artists/music, there is no music community to activate.
+- When a new city-tier Home Scene splits off from a major node, future listener assignment and future source uploads attach according to the newly active Home Scene. Existing songs finish their current rotation lifecycle in their prior active scene unless a later approved spec changes the cutover rule.
+- Home Scene affiliation/tag context remains part of system ordering where needed for civic identity, voting rights, and visitor/local distinction; older tag-era self-assigned profile tags alone should not drive official sect affiliation or sect realization.
 - User is auto-joined to the resolved Scene via `CommunityMember`.
 - Community profile read surface is available in web at `apps/web/src/app/community/[id]/page.tsx` using:
   - `GET /communities/:id` for profile metadata
@@ -37,12 +47,18 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Registrar sect-motion submit skeleton exists:
   - `POST /registrar/sect-motion` creates a Home Scene-scoped registrar entry (`type = sect_motion`, `status = submitted`).
   - Current primitive enforces scene locality guardrails; threshold validation/approval remains deferred.
+- Sect readiness tracking may be built before public visibility is enabled; visibility may remain hidden, admin-only, or read-only until beta/community calibration locks the maturity milestone and backing limits.
+- Official Sect discovery should live in Registrar: members can see official sects in their Home Scene, inspect affiliation/update context, and choose to affiliate through the Registrar flow once the surface is enabled.
+- Registrar should eventually show official sect context such as active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
+- Sect Uprises remain part of their parent Home Scene/community context; they do not become standalone city/music-community replacements.
 - Once a sect is realized as a source, its Uprise is the sect signal and followers of the sect must be able to add that Uprise from the sect surface.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
-- Reconcile older tag-era sect assignment flows so they stop implying that tag selection alone realizes a sect.
+- Reconcile older tag-era sect assignment flows so they stop implying that profile tag selection alone creates official sect affiliation or realizes a sect.
+- Official Sect affiliation/updates channel surfaces remain deferred until Registrar information architecture is locked.
 - Registrar motion threshold validation, approval workflow, and automatic Sect-to-Uprise activation.
+- User-facing sect creation/unlock visibility, source-level backing limits, song-level backing limits, and paid/free backing capacity remain beta/community-calibrated until tested with real Home Scene density.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
 ## Non-Functional Requirements
@@ -54,6 +70,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Canon definitions come from `docs/canon/`.
 - “Genre/subgenre/microgenre” must not be used as the live sect-formation mechanism.
 - Home Scene selection uses **City**, **State**, **Music Community** labels.
+- Home Scene architecture is invariant across city/music-community instances: the tuple changes scene data, membership, content, source activity, events, and history, but not screens, menus, tabs, player behavior, action grammar, or routing.
 
 ## Data Models & Migrations
 ### Prisma Models
@@ -65,7 +82,8 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
   - Unique membership constraint on `(userId, communityId)`
 - `SectTag` / `UserTag`
   - still participate in Home Scene/tag ordering and existing runtime identity structures
-  - must not be treated as sufficient by themselves to realize a sect into an Uprise
+  - must not be treated as sufficient by themselves to make an official sect affiliation or realize a sect into an Uprise
+  - passive genre/style tag metadata may inform discovery or candidate analysis, but explicit registered-source backing is required before minutes count toward sect readiness
 - `User`
   - Home-scene affinity fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`, `gpsVerified`)
   - `homeSceneTag` remains relevant to system-order identity where that context is required
@@ -81,7 +99,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/onboarding/home-scene` | required | Resolve Home Scene and auto-join resolved active membership |
-| POST | `/onboarding/gps-verify` | required | Verify voting eligibility against exact Home Scene geofence or submitted-location fallback locality |
+| POST | `/onboarding/gps-verify` | required | Verify voting eligibility against exact Home Scene geofence or submitted-location major-node assignment locality |
 | GET | `/communities` | required | List communities |
 | GET | `/communities/:id` | required | Community details |
 | POST | `/communities` | required | Create community (supports geofence fields) |
@@ -92,7 +110,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - `POST /onboarding/home-scene` request:
   - `city`, `state`, `musicCommunity`, optional `tasteTag` / Home Scene tag context where the current flow still uses it
 - `POST /onboarding/home-scene` response:
-  - user home-scene fields + `sceneId`, `appliedTags[]` where applicable, `votingEligible`, `pioneer`
+  - user home-scene fields + `sceneId`, `appliedTags[]` where applicable, `votingEligible`; legacy `pioneer` fields may exist until runtime cleanup but are not product authority
 - `POST /onboarding/gps-verify` response:
   - `gpsVerified`, `votingEligible`, `distance`, optional reason:
     - `NO_HOME_SCENE`
@@ -105,21 +123,36 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 ## Web UI / Client Behavior
 - Onboarding prompts for **City**, **State**, **Music Community**.
 - Home Scene/tag context may still appear in onboarding/runtime because the system uses it for civic identity and ordering.
-- New sect realization UX should not rely on tag assignment alone; artist motion/backing still governs realization.
+- New sect affiliation UX should be Registrar-held rather than loose profile tagging; artist motion/backing still governs realization into a Sect Uprise.
+- Sect progress may be computed internally before it is exposed; public visibility requires an explicit product activation.
+- Sect Uprise listening access and voting authority should mirror Home Scene/visitor behavior where possible: listening may be broader than membership, but voting belongs to members.
 
 ## Acceptance Tests / Test Plan
 - Doc review: Scene, Community, and Uprise definitions align to canon.
 - UI copy review: no “genre selection” wording.
 - API behavior:
-  - Unknown city/community creates inactive pioneer Scene and auto-joins user.
+  - Unknown or inactive city/community assigns to the nearest/relevant active major-node same-parent city-tier community and auto-joins the resolved active Scene.
+  - Onboarding does not create inactive `Community` rows or listener-side pioneer activation queues.
+  - New city-tier communities split from major nodes only through artist/source concentration and Registrar/source activation.
+  - Artist/source tracks created before a split finish their existing rotation lifecycle; post-activation track uploads attach according to the source's active Home Scene.
+  - Proxy-scene listener votes and source/song voting data remain historical to the proxy scene/tier where they occurred; they do not transfer into the newly active natural Home Scene.
   - Existing city/community resolves without duplicate membership.
   - GPS verify changes voting eligibility only.
 - Tag behavior:
   - if `tasteTag` exists in onboarding/runtime, it remains valid Home Scene/tag context
-  - but tag assignment alone does not realize a sect into an Uprise
+  - but tag assignment alone does not create official sect affiliation or realize a sect into an Uprise
+  - passive genre/style tags do not count toward sect readiness without explicit registered-source backing
+- Sect behavior:
+  - Sect Uprises remain inside the parent Home Scene/music community
+  - Sect members can vote in their Sect Uprise
+  - non-members can listen only according to parent scene/discovery access and cannot vote in the Sect Uprise
 
 ## Future Work & Open Questions
-- Define formal Sect Uprise activation mechanics beyond the 45-minute artist playtime threshold (motion schema + approvals).
+- Lock the numeric/evidence requirements for artist/source concentration that justify splitting a new active city-tier community from an existing major-node/music-capital community.
+- Define the Registrar/source activation workflow for new city-tier community creation, source assignment, future upload routing, and listener helper messaging.
+- Retire or rename legacy `pioneer` runtime/test terminology once major-node assignment language is implemented end-to-end.
+- Beta-calibrate the community maturity milestone required before user-facing sect creation unlocks.
+- Define formal Official Sect and Sect Uprise mechanics beyond readiness tracking (Registrar affiliation schema, updates channel, motion schema, approvals, visibility, backing limits, and paid/free capacity).
 - Add explicit Uprise model and Scene<->Uprise lifecycle constraints.
 - Lock propagation thresholds and policy in `docs/specs/DECISIONS_REQUIRED.md`.
 

@@ -80,8 +80,12 @@ Tests / verification files:
 - Current Source Dashboard live tool cards are `Release Deck`, `Source Profile`, `Print Shop`, and `Registrar`.
 - Source posts/messages are product-valid later but not current MVP runtime; `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` keeps follower updates deferred until a dedicated implementation spec activates them.
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
+- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
 - The ad slot is not an extra song slot and not its own rotation entry.
 - Release Deck current MVP creates source-owned tracks from explicit hosted `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred.
+- When artist/source concentration justifies splitting a new active city-tier Home Scene from a major-node community, existing songs finish their current rotation lifecycle in the prior active scene; new uploads attach according to the source's active Home Scene after Registrar/source activation.
+- A song cannot be actively listed in more than one Uprise rotation at the same time.
+- After a proxy-scene lifecycle ends, the source may reuse the same song in the new natural Home Scene unless that song has already advanced to the statewide tier.
 - Media/storage activation is governed by `docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md`: current MVP remains URL-only, workers/storage stay undeployed, and Cloudflare R2 is only the recommended first staging default if/when media upload/read is explicitly activated.
 - Print Shop is source-facing infrastructure for creator/event issuance flows.
 - Print Shop event creation requires explicit venue location input; the runtime must not default coordinates or address examples to a particular launch city.

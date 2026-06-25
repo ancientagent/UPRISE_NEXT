@@ -139,6 +139,11 @@ Hard constraints:
 - `POST /tracks` currently creates a valid track row with uploader ownership, file URL, duration, and optional community attachment.
 - This is a runtime ingestion contract, not a full upload/transcoding pipeline definition.
 - Track creation support exists so artist/discover flows can be exercised through the API instead of direct DB fixture insertion.
+- When artist/source concentration justifies splitting a new active city-tier Home Scene from a major-node community, existing artist/source songs tied to the prior active scene finish their current rotation lifecycle there. New songs submitted after activation attach according to the source's active Home Scene.
+- Proxy-scene listener votes and source/song voting data stay with the scene/tier where they occurred and do not transfer into the newly active natural Home Scene.
+- A song cannot be actively listed in more than one Uprise rotation at the same time.
+- After a proxy-scene lifecycle ends, the source may reuse the same song in the new natural Home Scene unless that song has already advanced to the statewide tier.
+- If cross-state proxy assignment is unavoidable because no same-state major-node exists, songs may still advance through tier progression provisionally; statewide origin/identity handling remains an explicit edge-case policy item.
 
 ### Planned
 | Method | Path | Auth | Description |

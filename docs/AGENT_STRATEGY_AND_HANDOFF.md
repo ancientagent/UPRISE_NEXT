@@ -1,7 +1,7 @@
 # UPRISE Agent Strategy And Handoff
 **Document ID:** `AGENT_STRATEGY_AND_HANDOFF`
 **Status:** `active`
-**Last Updated:** `2026-04-21`
+**Last Updated:** `2026-06-24`
 
 This document complements `AGENTS.md`. If any guidance here conflicts with `AGENTS.md`, `AGENTS.md` wins.
 
@@ -23,7 +23,12 @@ Use this precedence when evaluating what to trust:
 
 ## Reading Model
 ### Core set
-Every coding agent should start from `AGENTS.md` and the minimum core protocol it names. Do not expand that into every active solution, handoff, or design document by default.
+Every coding agent should start from `AGENTS.md`, `docs/PLATFORM_START_HERE.md`, and the minimum core protocol named by `AGENTS.md`. Do not expand that into every active solution, handoff, canon file, or design document by default.
+
+### Layered context modes
+- Focused implementation mode: read `AGENTS.md`, `docs/PLATFORM_START_HERE.md`, this file, `docs/agent-briefs/CONTEXT_ROUTER.md`, the active lane brief, and exact touched files/specs/tests.
+- Heavy authority mode: for broad audits, architecture planning, deployment/infra work, multi-agent strategy, repo-structure changes, or explicit full-platform review, load the heavier pack in `AGENTS.md` plus the exact canon/spec/brief files routed by the task.
+- Legacy/handoff mode: load dated handoffs and legacy docs only by topic. They are context, not higher authority than current code/specs.
 
 ### Task-specific loading
 Load only the materials directly needed for the current task:

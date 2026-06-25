@@ -3,7 +3,7 @@
 **ID:** `SYS-EDGE`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-06-24`
 
 ## Overview & Purpose
 Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, and copyright compliance.
@@ -32,7 +32,7 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 ### Implemented Now
 - Home Scene is persisted on user profile.
 - GPS verification for voting eligibility is implemented and returns explicit reason codes when verification fails.
-- Unknown Home Scene input preserves pioneer intent and resolves to an active fallback voting scene; onboarding does not create inactive pioneer `Community` records.
+- Unknown or inactive submitted Home Scene locations resolve to an active major-node Home Scene for the same parent music community; onboarding does not create inactive `Community` records or listener-side pioneer activation queues.
 
 ### Deferred (Not Implemented Yet)
 - Home Scene change cooldown workflow (30-day lock and transfer process).
@@ -63,7 +63,7 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/onboarding/home-scene` | required | Set/resolve Home Scene |
-| POST | `/onboarding/gps-verify` | required | Verify exact Home Scene geofence or submitted-location fallback voting eligibility |
+| POST | `/onboarding/gps-verify` | required | Verify exact Home Scene geofence or submitted-location major-node voting eligibility |
 
 ### Planned Endpoints (Not Implemented)
 | Method | Path | Auth | Description |
