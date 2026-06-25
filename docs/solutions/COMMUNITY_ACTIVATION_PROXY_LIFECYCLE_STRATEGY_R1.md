@@ -85,7 +85,7 @@ This strategy is intentionally **no-migration at R1 doc stage**. Required model 
 3. Define whether additional derived/read-model fields are required for activation diagnostics (can be API computed first).
 4. Clarify role of existing `SectTag`/`UserTag` as non-authoritative for sect realization.
 
-Current runtime parity note: `ArtistBand.homeSceneId` is currently written from the Registrar submission `sceneId`, and Artist/Band registration only accepts existing city-tier Home Scenes matching the registering user's current Home Scene. That means inactive natural source-origin tuples routed through proxy scenes are not yet persisted as activation-readable data. Slice 3 must start by resolving source-origin persistence before exposing readiness diagnostics.
+Current runtime parity note: source-origin persistence is implemented on Registrar entries and materialized Artist/Band records. `sceneId` / `homeSceneId` remain the active operating scene, while `sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the submitted natural tuple for activation accounting. Slice 3 can now proceed to read-only activation readiness diagnostics from those fields.
 
 Out of scope for this strategy pass:
 
@@ -198,8 +198,7 @@ Sequence translates blockers into implementation order (without runtime edits in
 2. **Slice 2 – Owner Contract: Proxy Cutover + Fair Play Lifecycle Join Points**
    - Patch migration/cutover contracts and cross-state policy placeholders.
 3. **Slice 3 – Activation Metrics Read Path**
-   - First add or designate source-origin persistence so inactive natural tuples can be counted separately from proxy operating scenes.
-   - Then add internal/admin read visibility for activation readiness diagnostics.
+   - Add internal/admin read visibility for activation readiness diagnostics using persisted source-origin fields.
 4. **Slice 4 – Activation Trigger Execution Path**
    - Implement deterministic activation evaluator (scheduled/manual trigger contract).
 5. **Slice 5 – Listener/Source Notification Path**

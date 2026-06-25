@@ -49,17 +49,16 @@ This section owns the source-origin rules that connect Registrar filings, proxy-
 - Listener onboarding counts, missing-music-community requests, and passive listener demand do not activate a community.
 - Existing runtime field names such as `pioneer` may remain for compatibility until cleanup, but user-facing and owner-contract language should use submitted Home Scene, proxy scene, source origin, and activation readiness.
 
-### Runtime Parity Blocker: Source-Origin Persistence
+### Runtime Source-Origin Persistence
 
-Current Registrar runtime still submits Artist/Band registration against an existing `sceneId`, requires that scene to be city-tier, requires the registering user to be GPS-verified, rejects submissions where the scene tuple does not match the user's current Home Scene tuple, and materializes `ArtistBand.homeSceneId` to the same `sceneId`. That supports active Home Scene registration, but it is not enough to compute activation readiness for an inactive natural `city + state + music community` tuple routed through a proxy scene.
+Registrar runtime persists source origin separately from proxy/operating scene identity:
 
-Before adding activation readiness APIs or trigger automation, implementation must first persist the submitted natural source-origin tuple separately from the active/proxy operating scene. Acceptable implementation directions include:
+- `RegistrarEntry.sceneId` remains the active operating scene for the filing.
+- `RegistrarEntry.sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the submitted natural source-origin tuple from the registering user's Home Scene metadata.
+- `ArtistBand.homeSceneId` remains the active operating scene at materialization time.
+- `ArtistBand.sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the natural source-origin tuple for activation accounting.
 
-- source-origin tuple fields on the Registrar entry and/or materialized Artist/Band;
-- a dedicated source-origin/readiness model linked to Registrar and Artist/Band;
-- another owner-approved model that preserves inactive natural tuple identity without recreating listener-side pioneer workflows.
-
-Do not compute activation readiness from `ArtistBand.homeSceneId` alone while source-origin and proxy-scene identity can differ.
+Activation readiness APIs and trigger automation must read source-origin fields, not `ArtistBand.homeSceneId` alone, whenever source-origin and proxy-scene identity can differ.
 
 ## City-Tier Activation Authority
 
@@ -82,7 +81,8 @@ Registrar/source activation is the only authority path for creating or activatin
   - `POST /registrar/artist` implemented for Home Scene-scoped Artist/Band registration submissions.
   - Submission constraints enforced in service:
     - city-tier Scene only,
-    - request Scene must match authenticated user's Home Scene.
+    - request Scene must match authenticated user's Home Scene or assigned same-music-community proxy scene.
+  - Source-origin tuple persistence is implemented on `RegistrarEntry` and materialized `ArtistBand`.
 - Registrar promoter initiation primitive (slice 34):
   - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
   - Captures named production identity payload (`productionName`) for downstream capability processing.
@@ -293,7 +293,6 @@ Registrar/source activation is the only authority path for creating or activatin
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
-- Source-origin persistence for inactive natural tuples when Artist/Band registration operates through a proxy scene.
 - Automated city-tier Home Scene activation metrics, trigger execution, and cutover orchestration.
 - Sect motion lifecycle and approval state machine.
 - Sect readiness tracking visibility and unlock controls.
