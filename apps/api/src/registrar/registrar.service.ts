@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
 import type {
@@ -223,11 +223,14 @@ const PROMOTER_ADMIN_DECISION_TRANSITIONS: Record<
 export class RegistrarService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly musicCommunityPreferenceResolver = new MusicCommunityPreferenceResolverService(prisma),
+    @Optional()
+    private readonly musicCommunityPreferenceResolver?: MusicCommunityPreferenceResolverService,
   ) {}
 
   private async resolveHomeMusicCommunity(userId: string, compatibilityCommunity: string | null | undefined) {
-    return this.musicCommunityPreferenceResolver.resolveDefaultMusicCommunity(userId, compatibilityCommunity);
+    const resolver =
+      this.musicCommunityPreferenceResolver ?? new MusicCommunityPreferenceResolverService(this.prisma);
+    return resolver.resolveDefaultMusicCommunity(userId, compatibilityCommunity);
   }
 
   async applyPromoterApprovalTransition(

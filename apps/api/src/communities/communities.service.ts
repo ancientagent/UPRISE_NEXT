@@ -1,5 +1,5 @@
 
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException, Optional } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
@@ -200,11 +200,14 @@ interface DiscoverCitySceneRow {
 export class CommunitiesService {
   constructor(
     private prisma: PrismaService,
-    private readonly musicCommunityPreferenceResolver = new MusicCommunityPreferenceResolverService(prisma),
+    @Optional()
+    private readonly musicCommunityPreferenceResolver?: MusicCommunityPreferenceResolverService,
   ) {}
 
   private async resolveHomeMusicCommunity(userId: string, compatibilityCommunity: string | null | undefined) {
-    return this.musicCommunityPreferenceResolver.resolveDefaultMusicCommunity(userId, compatibilityCommunity);
+    const resolver =
+      this.musicCommunityPreferenceResolver ?? new MusicCommunityPreferenceResolverService(this.prisma);
+    return resolver.resolveDefaultMusicCommunity(userId, compatibilityCommunity);
   }
 
   private toSceneSummary(scene: {
