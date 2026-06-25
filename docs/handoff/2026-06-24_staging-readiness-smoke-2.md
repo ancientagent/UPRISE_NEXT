@@ -6,6 +6,24 @@ Runtime changed: no product behavior changed
 Provider state changed: no
 Database writes run: no
 
+## 2026-06-25 Status Update
+
+The prior Fly staging CORS mismatch is resolved for the current staging origins.
+Fly app `uprise-api-staging` accepts CORS preflight requests from:
+
+- `https://uprise-web-staging.vercel.app`
+- `https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app`
+
+Follow-up verification:
+
+```bash
+UPRISE_WEB_URL=https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app pnpm run smoke:staging:readiness
+```
+
+Result: passed API health, Neon DB, PostGIS, readiness, CORS preflight, and
+public Places checks. Web load remains `protected` behind Vercel Authentication
+for unauthenticated HTTP.
+
 ## Summary
 
 This slice adds one repeatable root smoke command for the current Vercel -> Fly -> Neon/PostGIS staging path:

@@ -77,15 +77,46 @@ Also checked the existing staging CORS blocker:
 UPRISE_WEB_URL=https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app pnpm run smoke:staging:readiness
 ```
 
-Result: failed on the known provider-side CORS mismatch: expected `https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app`, received `null`.
+Initial result: failed on the known provider-side CORS mismatch: expected `https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app`, received `null`.
 
-Local environment had `gh` but no `flyctl`/`fly` or `vercel` CLI, so no provider state could be inspected or changed safely from this branch.
+Follow-up provider fix applied after verifying Fly auth and app context:
+
+```bash
+~/.fly/bin/fly auth whoami
+~/.fly/bin/fly apps list
+~/.fly/bin/fly status -c fly.api.staging.toml
+~/.fly/bin/fly secrets set CORS_ORIGIN='https://uprise-web-staging.vercel.app,https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app' -c fly.api.staging.toml
+```
+
+Result: `uprise-api-staging` machine `2870191f055128` moved to version `10`, state `started`, with `2/2` checks passing.
+
+Direct CORS preflights now pass for both staging origins:
+
+```bash
+curl -sS -D - -o /tmp/uprise-cors-stable.out -X OPTIONS https://uprise-api-staging.fly.dev/health/ready \
+  -H "Origin: https://uprise-web-staging.vercel.app" \
+  -H 'Access-Control-Request-Method: GET'
+
+curl -sS -D - -o /tmp/uprise-cors-main.out -X OPTIONS https://uprise-api-staging.fly.dev/health/ready \
+  -H "Origin: https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app" \
+  -H 'Access-Control-Request-Method: GET'
+```
+
+Both returned `HTTP/2 204` with matching `access-control-allow-origin` and `access-control-allow-credentials: true`.
+
+Final staging readiness smoke:
+
+```bash
+UPRISE_WEB_URL=https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app pnpm run smoke:staging:readiness
+```
+
+Result: passed. API live, DB, PostGIS, ready, CORS preflight, and public Places behavior all passed. Web load was reported as `protected` because Vercel Authentication redirected unauthenticated HTTP to SSO; this is expected and does not block API/CORS readiness.
 
 ## Boundaries
 
 - No schema changes.
 - No migrations.
 - No live database audit was run.
-- No provider, Fly, Vercel, Neon, seed, deploy, or browser mutation was performed.
+- Fly staging `CORS_ORIGIN` was updated for `uprise-api-staging` only after verifying account/app context. No Vercel, Neon, seed, deploy, browser, database, schema, or migration mutation was performed.
 - `User.homeSceneCommunity` remains a compatibility shadow and must not be removed until all remaining user/profile/read paths are verified and staging data is clean.
 - Source dashboard labels and shared types may still carry compatibility reads; treat those as the next cleanup slice, not part of this branch.

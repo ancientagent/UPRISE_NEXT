@@ -6,6 +6,21 @@ Runtime changed: no
 Provider state changed: no
 Database writes run: no
 
+## 2026-06-25 Status Update
+
+Resolved for the current staging origins. Fly staging app `uprise-api-staging`
+now allows:
+
+- `https://uprise-web-staging.vercel.app`
+- `https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app`
+
+Evidence: direct CORS preflights returned `HTTP/2 204` with matching
+`access-control-allow-origin`, and
+`UPRISE_WEB_URL=https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app pnpm run smoke:staging:readiness`
+passed API live, DB, PostGIS, ready, CORS preflight, and public Places checks.
+Unauthenticated web load remains `protected` because Vercel Authentication
+redirects to SSO, which is expected.
+
 ## Summary
 
 Task 3 from the launch list is the onboarding browser/device QA pass. It should
@@ -134,4 +149,3 @@ provider login checks.
 - No database writes or seed commands were run.
 - No global installs were performed.
 - User-owned `art/` files were not touched.
-
