@@ -72,4 +72,10 @@ export class UsersController {
     const result = await this.usersService.setDefaultMusicCommunityPreference(req.user.userId, dto.musicCommunity);
     return { success: true, data: result };
   }
+
+  @Get('me/home-scene-roller')
+  async getMyHomeSceneRoller(@Request() req: { user: { userId: string } }) {
+    const result = await this.usersService.getHomeSceneRoller(req.user.userId);
+    return { success: true, data: result };
+  }
 }

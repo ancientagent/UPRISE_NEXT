@@ -10,6 +10,7 @@
 ### Added
 
 - Added the Music-Community Preference runtime foundation: Prisma persistence with backfill from the current single Home Scene music-community field, authenticated current-user preference/default API endpoints, typed web wrappers, and focused API/web tests.
+- Added the authenticated Home Scene roller read model and typed web wrapper so registered music-community preferences resolve to exact natural scenes or active proxy scenes while unresolved preferences stay out of the roller.
 - Added a Music-Community Preference runtime parity audit handoff and owner-spec status note that identified the former single-preference compatibility boundary and queued the preference/default/roller runtime work.
 - Added `docs/solutions/COMMUNITY_ACTIVATION_PROXY_LIFECYCLE_STRATEGY_R1.md` and `docs/handoff/2026-06-25_abacus-community-activation-proxy-lifecycle.md`, synthesizing Lane 1-6 findings into a repo-authority-aligned Lane 7 strategy that sequences source-origin and community-activation owner-contract work before runtime automation, preserves proxy-to-natural lifecycle locks, and records open founder decisions for activation/cutover/release-eligibility policy.
 - Added the UPRISE documentation/context framework as the owner system for contract ownership, lane-agent routing, Linear execution structure, reviewer routing, handoff promotion, and question discipline; see `docs/specs/system/documentation-framework.md`.

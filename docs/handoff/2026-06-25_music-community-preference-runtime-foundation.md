@@ -10,7 +10,7 @@ Implemented the first runtime foundation for the Music-Community Preference Cont
 
 This slice adds profile-held preference persistence, authenticated current-user API endpoints, explicit default/star mutation, migration backfill from existing `User.homeSceneCommunity`, typed web wrappers, and focused API/web tests.
 
-This is not the complete Home Scene roller/runtime parity implementation. Current-city preference resolution, roller filtering, profile UI integration, unresolved-profile visibility, GPS voting scope across all resolvable registered preferences, and eventual compatibility-field cleanup remain follow-up work.
+This is not the complete preference/default/roller runtime implementation. Current-city preference resolution and the roller read model were completed in `docs/handoff/2026-06-25_home-scene-roller-read-model.md`; profile UI integration, unresolved-profile visibility, GPS voting scope across all resolvable registered preferences, and eventual compatibility-field cleanup remain follow-up work.
 
 ## Runtime Added
 
@@ -80,9 +80,7 @@ git diff --check
 
 ## Remaining Work
 
-1. Add current-city preference resolution against active/proxy city-tier communities.
-2. Add Home Scene roller read model that includes only resolvable registered preferences in the current/default city.
-3. Add profile UI for viewing preferences, adding preferences, and starring the default.
-4. Keep unresolved preferences visible in profile while excluding them from the roller until resolvable.
-5. Extend GPS/voting logic so one verified city grants voting across all registered preferences that resolve in that city, but not across multiple cities.
-6. Decide and implement cleanup path for compatibility fields after the new preference model fully owns runtime behavior.
+1. Add profile UI for viewing preferences, adding preferences, and starring the default.
+2. Keep unresolved preferences visible in profile while excluding them from the roller until resolvable.
+3. Extend GPS/voting logic so one verified city grants voting across all registered preferences that resolve in that city, but not across multiple cities.
+4. Decide and implement cleanup path for compatibility fields after the new preference model fully owns runtime behavior.

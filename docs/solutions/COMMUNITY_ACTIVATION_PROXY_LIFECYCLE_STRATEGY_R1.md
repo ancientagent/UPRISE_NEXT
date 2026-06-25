@@ -216,8 +216,8 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Next: define implementation artifacts and visibility calibration without granting premature broadcast authority.
 8. **Slice 8 – Music-Community Preference Runtime Parity**
    - Runtime parity audit completed against the onboarding/Home Scene owner contract.
-   - Preference persistence, migration backfill from `User.homeSceneCommunity`, current-user API endpoints, explicit default-star mutation, and typed web wrappers are implemented as the runtime foundation.
-   - Next: implement current-city resolution, Home Scene roller filtering, profile UI integration, unresolved-profile visibility, GPS voting scope across resolvable preferences, and compatibility-field cleanup.
+   - Preference persistence, migration backfill from `User.homeSceneCommunity`, current-user API endpoints, explicit default-star mutation, typed web wrappers, and the Home Scene roller read model are implemented as the runtime foundation.
+   - Next: implement profile UI integration, Plot/Home roller consumption, unresolved-profile visibility outside the roller, GPS voting scope across resolvable preferences, and compatibility-field cleanup.
 
 ## Test Plan
 

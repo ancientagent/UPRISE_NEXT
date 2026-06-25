@@ -115,7 +115,8 @@ Tests / verification files:
 - `POST /onboarding/gps-verify` verifies voting eligibility against the exact active Home Scene geofence, or against submitted city/state locality when the submitted Home Scene is inactive/unavailable.
 - `POST /onboarding/music-community-requests` stores missing music-community intake without creating a `Community` or selector option.
 - `GET /users/me/music-community-preferences`, `POST /users/me/music-community-preferences`, and `POST /users/me/music-community-preferences/default` provide the current profile-held music-community preference persistence foundation.
-- Current preference runtime still needs current-city resolution, Home Scene roller filtering, profile UI integration, and GPS voting scope across all resolvable registered preferences.
+- `GET /users/me/home-scene-roller` provides the current Home Scene roller read model: exact active natural scene first, same-state proxy second, then any active proxy for the registered music-community preference.
+- Current preference runtime still needs profile UI integration, Plot/Home roller consumption, unresolved-profile visibility outside the roller, and GPS voting scope across all resolvable registered preferences.
 - Routine onboarding/Home Scene smoke planning should use `pnpm run smoke:onboarding-location:dry-run` first; full smoke writes temporary users and requires explicit confirmation before non-local API targets.
 
 ## Companion Briefs

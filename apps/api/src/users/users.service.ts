@@ -12,6 +12,16 @@ type MusicCommunityPreferenceRecord = {
   updatedAt: Date;
 };
 
+type HomeSceneRollerScene = {
+  id: string;
+  name: string;
+  city: string | null;
+  state: string | null;
+  musicCommunity: string | null;
+  tier: string;
+  isActive: boolean;
+};
+
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -107,6 +117,103 @@ export class UsersService {
     });
 
     return this.listMusicCommunityPreferences(userId);
+  }
+
+  private async resolveRollerScene(
+    city: string,
+    state: string,
+    musicCommunity: string,
+  ): Promise<{ scene: HomeSceneRollerScene; resolution: 'natural' | 'proxy' } | null> {
+    const select = {
+      id: true,
+      name: true,
+      city: true,
+      state: true,
+      musicCommunity: true,
+      tier: true,
+      isActive: true,
+    };
+    const orderBy = [{ memberCount: 'desc' as const }, { name: 'asc' as const }, { id: 'asc' as const }];
+
+    const exactScene = await this.prisma.community.findFirst({
+      where: { city, state, musicCommunity, tier: 'city', isActive: true },
+      select,
+    });
+    if (exactScene) {
+      return { scene: exactScene, resolution: 'natural' };
+    }
+
+    const sameStateProxy = await this.prisma.community.findFirst({
+      where: { state, musicCommunity, tier: 'city', isActive: true },
+      select,
+      orderBy,
+    });
+    if (sameStateProxy) {
+      return { scene: sameStateProxy, resolution: 'proxy' };
+    }
+
+    const anyProxy = await this.prisma.community.findFirst({
+      where: { musicCommunity, tier: 'city', isActive: true },
+      select,
+      orderBy,
+    });
+    if (anyProxy) {
+      return { scene: anyProxy, resolution: 'proxy' };
+    }
+
+    return null;
+  }
+
+  async getHomeSceneRoller(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+        tunedSceneId: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.listMusicCommunityPreferences(userId);
+    const preferences = await this.findMusicCommunityPreferences(userId);
+    const city = user.homeSceneCity?.trim();
+    const state = user.homeSceneState?.trim();
+
+    if (!city || !state) {
+      return {
+        currentLocation: null,
+        items: [],
+      };
+    }
+
+    const items = [];
+    for (const preference of preferences) {
+      const resolved = await this.resolveRollerScene(city, state, preference.musicCommunity);
+      if (!resolved) continue;
+
+      items.push({
+        preferenceId: preference.id,
+        musicCommunity: preference.musicCommunity,
+        isDefault: preference.isDefault,
+        sceneId: resolved.scene.id,
+        sceneName: resolved.scene.name,
+        city: resolved.scene.city,
+        state: resolved.scene.state,
+        resolution: resolved.resolution,
+        isCurrent: user.tunedSceneId === resolved.scene.id,
+      });
+    }
+
+    return {
+      currentLocation: { city, state },
+      items,
+    };
   }
 
   async create(data: {
