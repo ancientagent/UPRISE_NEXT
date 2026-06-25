@@ -65,4 +65,4 @@ Passed after adding the derived set and labels.
 
 ## Remaining Work
 
-1. Decide and implement compatibility-field cleanup after the preference/default/roller model fully owns runtime behavior.
+1. Implement the compatibility cleanup plan in `docs/handoff/2026-06-25_music-community-preference-compatibility-cleanup-plan.md` after read-path inversion, contract switch, and staging data verification.

@@ -149,7 +149,7 @@ Contracts still needing dedicated owner sections or cleanup:
 | Release Deck replacement and song-length cleanup | `docs/specs/media/release-deck-and-eligibility.md` | Active slot and 20-minute caps are owned/enforced; replacement UX and any per-song length cap still need a follow-up decision. |
 | Sect implementation artifacts and visibility calibration | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` | Boundary is owned; affiliation schema, update channels, approval state machine, visibility timing, and backing limits remain follow-up implementation decisions. |
 | Activation notification/Away Scene implementation artifacts | `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` | User-facing contract is owned; UI placement, notification persistence, and saved-scene storage remain implementation decisions. |
-| Music-community preference runtime implementation | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` | Persistence, backfill, API, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, Home Scene roller read model, Plot/Home roller consumption, and Fair Play voting across resolvable registered preferences exist; compatibility cleanup remains implementation work. |
+| Music-community preference runtime implementation | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` | Persistence, backfill, API, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, Home Scene roller read model, Plot/Home roller consumption, and Fair Play voting across resolvable registered preferences exist; compatibility cleanup is planned and remains implementation work. |
 
 ## Lane Agents
 
@@ -335,7 +335,7 @@ Recently completed owner-contract seeds: source registration/source origin (Slic
 1. Define activation notification UI/persistence and former-proxy saved Away Scene implementation artifacts after the user contract.
 2. Define remaining Release Deck replacement behavior and any explicit per-song length cap.
 3. Define sect implementation artifacts and visibility calibration after the Sect readiness / Sect Uprise boundary owner sections.
-4. Continue Music-Community Preference runtime parity: migration cleanup after the new preference/default/roller model is fully adopted.
+4. Implement the Music-Community Preference compatibility cleanup plan after read paths are inverted to prefer `UserMusicCommunityPreference.isDefault` with safe fallback.
 
 ## References
 

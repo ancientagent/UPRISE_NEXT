@@ -62,4 +62,4 @@ git diff --check
 
 ## Remaining Work
 
-1. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.
+1. Implement the compatibility cleanup plan in `docs/handoff/2026-06-25_music-community-preference-compatibility-cleanup-plan.md` after read-path inversion, contract switch, and staging data verification.

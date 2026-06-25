@@ -58,7 +58,7 @@ git diff --check
 
 ## Remaining Work
 
-1. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.
+1. Implement the compatibility cleanup plan in `docs/handoff/2026-06-25_music-community-preference-compatibility-cleanup-plan.md` after read-path inversion, contract switch, and staging data verification.
 
 Update: Home/Plot roller consumption was completed in `docs/handoff/2026-06-25_home-scene-roller-plot-consumption.md`.
 Update: Profile-visible unresolved preference labels were completed in `docs/handoff/2026-06-25_unresolved-preference-profile-visibility.md`.

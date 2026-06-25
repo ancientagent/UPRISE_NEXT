@@ -163,6 +163,34 @@ Owner references:
 - `POST /discover/tune` and `POST /discover/set-home-scene` mutate scene context by `sceneId`; they are not the final profile preference/default system.
 - Remaining runtime work: migration cleanup once compatibility fields are retired.
 
+### Compatibility Cleanup Plan (2026-06-25)
+
+Do not remove or rename Home Scene compatibility fields in one step. Current runtime still uses them across onboarding, Fair Play, Registrar/source origin, Discover, source dashboard labels, shared types, and activation cutover.
+
+Field classification:
+
+- Keep active: `User.homeSceneCity` and `User.homeSceneState` remain the submitted/default city authority for GPS verification, source registration locality, activation cutover, and scene resolution until a dedicated city-affiliation model replaces them.
+- Keep active: `User.tunedSceneId` and `User.tunedSceneUpdatedAt` remain the current resolved scene context for exact Home Scenes, proxy scenes, Away Scene tuning, and Plot/Home anchoring.
+- Cleanup candidate: `User.homeSceneCommunity` is now a compatibility shadow of the default `UserMusicCommunityPreference.isDefault` row. It should not be deleted until every read path can resolve the default music community from preferences with an explicit fallback for older rows.
+- Cleanup candidate: `User.homeSceneTag` is legacy taste-tag scaffolding. Onboarding does not collect taste tags in the current MVP.
+- Cleanup candidate: legacy `pioneer`, `pioneerHomeScene`, and `pioneerFollowUp` names may remain in internal response/store/test compatibility paths, but new product language must use submitted Home Scene, proxy scene, natural Home Scene, and Away Scene.
+
+Phased cleanup:
+
+1. Read-path inversion: add a shared server-side resolver for the user's default music-community preference and update onboarding GPS, Fair Play, Registrar/source origin, Discover context, communities reads, and user/profile reads to prefer `UserMusicCommunityPreference.isDefault` while retaining `User.homeSceneCommunity` fallback.
+2. Write-path sync: make onboarding and default-preference mutations write the preference/default model first, with `User.homeSceneCommunity` updated only as a compatibility shadow while old clients/tests still need it.
+3. Contract switch: update shared web/API types and tests so `homeSceneCommunity` is no longer required for new behavior, while city/state and tuned scene fields remain active.
+4. Staging verification: run a data audit proving every user with a `homeSceneCommunity` has an equivalent default preference row and every default preference can resolve or remain profile-only according to the roller contract.
+5. Schema cleanup: only after the steps above pass on staging, add a dedicated migration/removal slice for shadow fields. Do not bundle this with feature work.
+
+Acceptance checks before any migration:
+
+- Existing users keep their default preference.
+- GPS voting and source registration remain city-scoped.
+- Proxy-scene voting and `tunedSceneId` behavior remain intact.
+- Registered preferences still drive the Home Scene Roller and profile labels.
+- Activation cutover still re-roots matching users to the newly active natural scene.
+
 ## Data Models & Migrations
 
 ### Prisma Models
@@ -282,7 +310,7 @@ Owner references:
 ## Future Work & Open Questions
 
 - Runtime cleanup: retire or rename legacy `pioneer`/`pioneerHomeScene` fields and tests once the major-node assignment language is implemented end-to-end.
-- Continue the Music-Community Preference Contract runtime path: compatibility-field cleanup after the preference/default/roller model fully owns runtime behavior.
+- Continue the Music-Community Preference Contract runtime path: implement the compatibility cleanup plan after read-path inversion, contract switch, and staging data verification.
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
 - Implement cutover notification/Away Scene preservation using the Activation Notification and Former Proxy / Away Scene contracts above.
