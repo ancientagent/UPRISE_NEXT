@@ -65,5 +65,4 @@ git diff --check
 
 1. Wire the read model into listener profile and Home/Plot UI.
 2. Display unresolved profile preferences outside the roller.
-3. Extend GPS/voting logic so verified-city voting applies across all registered preferences that resolve in that city, while still preventing multi-city voting authority.
-4. Decide when compatibility fields can be cleaned up after preference runtime is fully adopted.
+3. Decide when compatibility fields can be cleaned up after preference runtime is fully adopted.

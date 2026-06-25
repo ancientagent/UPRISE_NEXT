@@ -155,10 +155,11 @@ Owner references:
   - `GET /users/me/home-scene-roller`
 - Typed web client wrappers exist in `apps/web/src/lib/users/client.ts`.
 - The Home Scene roller read model resolves registered preferences against the user's current/default city: exact active natural scene first, same-state active proxy scene second, then any active proxy scene for that music community. Preferences with no active resolution remain profile-only and are excluded from the roller response.
+- The Fair Play voting gate now allows a GPS-verified user to vote in any registered music-community preference that resolves from their current/default city to the target exact natural scene or active proxy scene. This does not authorize unregistered music communities, arbitrary visitor scenes, or simultaneous multi-city voting authority.
 - The Home Scene selected during onboarding still writes the compatibility fields `User.homeSceneCity`, `User.homeSceneState`, `User.homeSceneCommunity`, and `User.tunedSceneId`; preference runtime foundation does not remove those fields yet.
 - `CommunityMember` records membership in specific resolved communities, but it does not encode music-community preference order, profile affiliation intent, default-star semantics, or city-carried preference behavior.
 - `POST /discover/tune` and `POST /discover/set-home-scene` mutate scene context by `sceneId`; they are not the final profile preference/default system.
-- Remaining runtime work: profile UI integration, Plot/Home consumption of the roller read model, unresolved-profile visibility outside the roller, GPS voting scope across resolvable registered preferences, and migration cleanup once compatibility fields are retired.
+- Remaining runtime work: profile UI integration, Plot/Home consumption of the roller read model, unresolved-profile visibility outside the roller, and migration cleanup once compatibility fields are retired.
 
 ## Data Models & Migrations
 

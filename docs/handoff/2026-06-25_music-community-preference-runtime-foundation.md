@@ -10,7 +10,7 @@ Implemented the first runtime foundation for the Music-Community Preference Cont
 
 This slice adds profile-held preference persistence, authenticated current-user API endpoints, explicit default/star mutation, migration backfill from existing `User.homeSceneCommunity`, typed web wrappers, and focused API/web tests.
 
-This is not the complete preference/default/roller runtime implementation. Current-city preference resolution and the roller read model were completed in `docs/handoff/2026-06-25_home-scene-roller-read-model.md`; profile UI integration, unresolved-profile visibility, GPS voting scope across all resolvable registered preferences, and eventual compatibility-field cleanup remain follow-up work.
+This is not the complete preference/default/roller runtime implementation. Current-city preference resolution and the roller read model were completed in `docs/handoff/2026-06-25_home-scene-roller-read-model.md`; GPS voting scope across resolvable registered preferences was completed in `docs/handoff/2026-06-25_music-community-preference-voting-scope.md`; profile UI integration, unresolved-profile visibility, and eventual compatibility-field cleanup remain follow-up work.
 
 ## Runtime Added
 
@@ -82,5 +82,4 @@ git diff --check
 
 1. Add profile UI for viewing preferences, adding preferences, and starring the default.
 2. Keep unresolved preferences visible in profile while excluding them from the roller until resolvable.
-3. Extend GPS/voting logic so one verified city grants voting across all registered preferences that resolve in that city, but not across multiple cities.
-4. Decide and implement cleanup path for compatibility fields after the new preference model fully owns runtime behavior.
+3. Decide and implement cleanup path for compatibility fields after the new preference model fully owns runtime behavior.
