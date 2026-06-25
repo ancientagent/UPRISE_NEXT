@@ -85,6 +85,7 @@ Recent handoffs to use only after the locks above:
 - User profile means the listener profile / collection workspace for everyone who has onboarded into the app.
 - Source management is separate from the listener profile and should be treated as source/admin web tooling that the app reads from.
 - Music-community preferences live in the user profile and persist across cities; the detailed membership/default/roller contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
+- The expanded `/plot` listener profile includes music-community preference management: list registered affiliations, add approved parent music communities, and explicitly mark the default/starred preference.
 - The Home Scene roller is a shortcut to resolvable primary music-community preferences in the current verified/default city; saved Away Scenes stay in the profile/collection workspace.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.

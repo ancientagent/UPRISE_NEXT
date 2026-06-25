@@ -8,7 +8,7 @@ Slice: Music-Community Preference runtime parity - Fair Play voting scope
 
 Extended the Fair Play vote gate so one GPS-verified current/default city grants voting authority across the user's registered music-community preferences when each preference resolves to the target natural city-tier scene or active proxy scene.
 
-This completes the voting-scope portion of the Music-Community Preference Contract without changing profile UI, Plot/Home roller consumption, source registration, activation cutover, or compatibility-field storage.
+This completes the voting-scope portion of the Music-Community Preference Contract without changing profile UI, Plot/Home roller consumption, source registration, activation cutover, or compatibility-field storage. Expanded listener-profile preference management was completed separately in `docs/handoff/2026-06-25_music-community-preference-profile-ui.md`.
 
 ## Runtime Added
 
@@ -58,7 +58,6 @@ git diff --check
 
 ## Remaining Work
 
-1. Wire music-community preference management into the listener profile UI.
-2. Wire the Home Scene roller read model into Home/Plot.
-3. Display unresolved preferences in profile while keeping them out of the roller.
-4. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.
+1. Wire the Home Scene roller read model into Home/Plot.
+2. Display unresolved preferences in profile while keeping them out of the roller.
+3. Decide when compatibility fields can be cleaned up after the preference model fully owns runtime behavior.

@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import type { BroadcastRotation, BroadcastRotationMeta, Track } from '@uprise/types';
 import { api } from '@/lib/api';
+import { MUSIC_COMMUNITIES } from '@/data/music-communities';
 import { getActiveBroadcastRotation } from '@/lib/broadcast/client';
 import { normalizeBroadcastRuntimeError } from '@/lib/broadcast/runtime';
 import { useOnboardingStore } from '@/store/onboarding';
@@ -44,6 +45,12 @@ import {
   getRegistrarPlotSummary,
   type RegistrarPlotSummary,
 } from '@/lib/registrar/entryStatus';
+import {
+  addMusicCommunityPreference,
+  getMusicCommunityPreferences,
+  setDefaultMusicCommunityPreference,
+  type MusicCommunityPreference,
+} from '@/lib/users/client';
 
 const tabs = ['Feed', 'Events', 'Archive'] as const;
 type PlotTab = (typeof tabs)[number];
@@ -186,6 +193,14 @@ export default function PlotPage() {
   const [plotProfile, setPlotProfile] = useState<PlotProfileRead | null>(null);
   const [plotProfileLoading, setPlotProfileLoading] = useState(false);
   const [plotProfileError, setPlotProfileError] = useState<string | null>(null);
+  const [musicCommunityPreferences, setMusicCommunityPreferences] = useState<
+    MusicCommunityPreference[]
+  >([]);
+  const [musicCommunityPreferencesLoading, setMusicCommunityPreferencesLoading] = useState(false);
+  const [musicCommunityPreferencesError, setMusicCommunityPreferencesError] =
+    useState<string | null>(null);
+  const [musicCommunityPreferenceDraft, setMusicCommunityPreferenceDraft] = useState('');
+  const [musicCommunityPreferenceSaving, setMusicCommunityPreferenceSaving] = useState(false);
   const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
   const [promoterEntriesLoading, setPromoterEntriesLoading] = useState(false);
   const [promoterEntriesError, setPromoterEntriesError] = useState<string | null>(null);
@@ -447,6 +462,44 @@ export default function PlotPage() {
   useEffect(() => {
     let cancelled = false;
 
+    async function loadMusicCommunityPreferences() {
+      if (!token) {
+        setMusicCommunityPreferences([]);
+        setMusicCommunityPreferencesError(null);
+        setMusicCommunityPreferencesLoading(false);
+        return;
+      }
+
+      setMusicCommunityPreferencesLoading(true);
+      setMusicCommunityPreferencesError(null);
+
+      try {
+        const preferences = await getMusicCommunityPreferences(token);
+        if (cancelled) return;
+        setMusicCommunityPreferences(preferences);
+      } catch (error: unknown) {
+        if (cancelled) return;
+        const message =
+          error instanceof Error ? error.message : 'Unable to load music-community preferences.';
+        setMusicCommunityPreferences([]);
+        setMusicCommunityPreferencesError(message);
+      } finally {
+        if (!cancelled) {
+          setMusicCommunityPreferencesLoading(false);
+        }
+      }
+    }
+
+    loadMusicCommunityPreferences();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  useEffect(() => {
+    let cancelled = false;
+
     async function loadPromoterEntries() {
       if (!token) {
         setPromoterEntries([]);
@@ -496,6 +549,44 @@ export default function PlotPage() {
   const handleCollectionEject = () => {
     setPlayerMode('RADIYO');
     setActiveBroadcastTier((current) => current ?? selectedTier);
+  };
+
+  const handleAddMusicCommunityPreference = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!token || !musicCommunityPreferenceDraft.trim()) return;
+
+    setMusicCommunityPreferenceSaving(true);
+    setMusicCommunityPreferencesError(null);
+
+    try {
+      const preferences = await addMusicCommunityPreference(musicCommunityPreferenceDraft, token);
+      setMusicCommunityPreferences(preferences);
+      setMusicCommunityPreferenceDraft('');
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Unable to add music-community preference.';
+      setMusicCommunityPreferencesError(message);
+    } finally {
+      setMusicCommunityPreferenceSaving(false);
+    }
+  };
+
+  const handleSetDefaultMusicCommunityPreference = async (musicCommunity: string) => {
+    if (!token) return;
+
+    setMusicCommunityPreferenceSaving(true);
+    setMusicCommunityPreferencesError(null);
+
+    try {
+      const preferences = await setDefaultMusicCommunityPreference(musicCommunity, token);
+      setMusicCommunityPreferences(preferences);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Unable to set default music-community preference.';
+      setMusicCommunityPreferencesError(message);
+    } finally {
+      setMusicCommunityPreferenceSaving(false);
+    }
   };
 
   const handleTierChange = (tier: PlayerTier) => {
@@ -589,6 +680,13 @@ export default function PlotPage() {
       label: formatShelfItemPrimaryLabel(item),
       kind: 'track' as const,
     })) ?? [];
+  const availableMusicCommunityPreferences = MUSIC_COMMUNITIES.filter(
+    (musicCommunity) =>
+      !musicCommunityPreferences.some(
+        (preference) =>
+          preference.musicCommunity.trim().toLowerCase() === musicCommunity.trim().toLowerCase()
+      )
+  );
   const latestPromoterEntry = promoterEntries[0] ?? null;
   const canOpenPrintShop = Boolean(
     latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0
@@ -1025,6 +1123,104 @@ export default function PlotPage() {
                 </p>
               </div>
             </header>
+
+            <section
+              data-slot="profile-music-community-preferences"
+              className="plot-wire-card-muted p-4"
+            >
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="plot-wire-label">Music Communities</p>
+                  <h3 className="mt-1 text-base font-semibold text-black">Primary affiliations</h3>
+                  <p className="mt-1 max-w-2xl text-sm text-black/70">
+                    Preferences stay in your profile and re-resolve when your current city changes.
+                  </p>
+                </div>
+
+                {token ? (
+                  <form
+                    className="flex flex-col gap-2 sm:flex-row"
+                    onSubmit={handleAddMusicCommunityPreference}
+                  >
+                    <label className="sr-only" htmlFor="music-community-preference-select">
+                      Add a music community
+                    </label>
+                    <select
+                      id="music-community-preference-select"
+                      value={musicCommunityPreferenceDraft}
+                      onChange={(event) => setMusicCommunityPreferenceDraft(event.target.value)}
+                      className="h-9 min-w-[190px] rounded-full border border-black bg-white px-3 text-xs font-semibold uppercase tracking-[0.1em] text-black"
+                      disabled={musicCommunityPreferenceSaving}
+                    >
+                      <option value="">Add a music community</option>
+                      {availableMusicCommunityPreferences.map((musicCommunity) => (
+                        <option key={musicCommunity} value={musicCommunity}>
+                          {musicCommunity}
+                        </option>
+                      ))}
+                    </select>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      variant="outline"
+                      className="h-9 rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
+                      disabled={
+                        musicCommunityPreferenceSaving || !musicCommunityPreferenceDraft.trim()
+                      }
+                    >
+                      Save
+                    </Button>
+                  </form>
+                ) : null}
+              </div>
+
+              {!token ? (
+                <p className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                  Sign in to manage music-community preferences.
+                </p>
+              ) : musicCommunityPreferencesLoading ? (
+                <p className="mt-4 text-sm text-black/60">Loading music communities...</p>
+              ) : musicCommunityPreferencesError ? (
+                <p className="mt-4 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {musicCommunityPreferencesError}
+                </p>
+              ) : musicCommunityPreferences.length > 0 ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {musicCommunityPreferences.map((preference) => (
+                    <div
+                      key={preference.id}
+                      className="flex items-center gap-2 rounded-full border border-black bg-white px-3 py-2"
+                    >
+                      <span className="text-sm font-semibold text-black">
+                        {preference.musicCommunity}
+                      </span>
+                      {preference.isDefault ? (
+                        <span className="rounded-full bg-[#b8d63b] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black">
+                          Default Home Scene
+                        </span>
+                      ) : (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-7 rounded-full border-black bg-[#efefe2] text-[10px] font-semibold uppercase tracking-[0.12em]"
+                          disabled={musicCommunityPreferenceSaving}
+                          onClick={() =>
+                            handleSetDefaultMusicCommunityPreference(preference.musicCommunity)
+                          }
+                        >
+                          Make default
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-4 text-sm text-black/60">
+                  No music-community preferences saved yet.
+                </p>
+              )}
+            </section>
 
             <div className="plot-wire-card-muted p-4">
               <div className="flex flex-wrap gap-2">

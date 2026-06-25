@@ -10,6 +10,7 @@
 ### Added
 
 - Added the Music-Community Preference runtime foundation: Prisma persistence with backfill from the current single Home Scene music-community field, authenticated current-user preference/default API endpoints, typed web wrappers, and focused API/web tests.
+- Added expanded listener-profile music-community preference controls in `/plot`, including loading registered affiliations, adding approved parent music communities, and explicitly marking a default/starred preference.
 - Added the authenticated Home Scene roller read model and typed web wrapper so registered music-community preferences resolve to exact natural scenes or active proxy scenes while unresolved preferences stay out of the roller.
 - Added Fair Play voting-scope support for GPS-verified users across registered music-community preferences that resolve to their current/default city natural scene or active proxy scene, while rejecting unregistered preferences and non-resolved visitor scenes.
 - Added a Music-Community Preference runtime parity audit handoff and owner-spec status note that identified the former single-preference compatibility boundary and queued the preference/default/roller runtime work.

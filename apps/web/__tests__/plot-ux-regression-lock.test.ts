@@ -304,6 +304,30 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).not.toContain('Tier Snapshot');
   });
 
+  it('locks music-community preferences into the listener profile workspace', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const expandedProfileBranch = plotPageSource
+      .split('{isProfileExpanded ? (')[1]
+      .split('\n        ) : (\n          <>')[0];
+
+    expect(plotPageSource).toContain('getMusicCommunityPreferences(token)');
+    expect(plotPageSource).toContain('addMusicCommunityPreference(musicCommunityPreferenceDraft, token)');
+    expect(plotPageSource).toContain('setDefaultMusicCommunityPreference(musicCommunity, token)');
+    expect(plotPageSource).toContain("const [musicCommunityPreferenceDraft, setMusicCommunityPreferenceDraft] = useState('');");
+    expect(plotPageSource).toContain('MUSIC_COMMUNITIES.filter');
+    expect(expandedProfileBranch).toContain('Music Communities');
+    expect(expandedProfileBranch).toContain('Add a music community');
+    expect(expandedProfileBranch).toContain('Make default');
+    expect(expandedProfileBranch).toContain('Default Home Scene');
+    expect(expandedProfileBranch).toContain('Preferences stay in your profile and re-resolve when your current city changes.');
+    expect(expandedProfileBranch).not.toContain('Create community');
+    expect(expandedProfileBranch).not.toContain('Launch community');
+    expect(expandedProfileBranch).not.toContain('Source Dashboard');
+    expect(expandedProfileBranch).not.toContain('Release Deck');
+    expect(expandedProfileBranch).not.toContain('Print Shop');
+    expect(expandedProfileBranch).not.toContain('Registrar');
+  });
+
   it('locks Top Songs + Scene Activity to archive-only placement', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 

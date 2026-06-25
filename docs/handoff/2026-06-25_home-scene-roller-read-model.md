@@ -63,6 +63,6 @@ git diff --check
 
 ## Remaining Work
 
-1. Wire the read model into listener profile and Home/Plot UI.
+1. Wire the read model into Home/Plot roller UI.
 2. Display unresolved profile preferences outside the roller.
 3. Decide when compatibility fields can be cleaned up after preference runtime is fully adopted.
