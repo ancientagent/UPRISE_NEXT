@@ -356,6 +356,36 @@ describe('FairPlayService.castVote', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
+  it('rejects voting against non-city tier scenes even when tuned scene matches', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'user-1',
+      gpsVerified: true,
+      tunedSceneId: 'scene-texas-punk',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.track.findUnique.mockResolvedValue({ id: 'track-1' });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-texas-punk',
+      tier: 'state',
+      isActive: true,
+      city: null,
+      state: 'TX',
+      musicCommunity: 'Punk',
+    });
+    mockPrisma.rotationEntry.findFirst.mockResolvedValue({ id: 'entry-1' });
+
+    await expect(
+      service.castVote('user-1', 'track-1', {
+        sceneId: 'scene-texas-punk',
+        playbackSessionId: 'sess-1',
+        nowPlayingTrackId: 'track-1',
+      }),
+    ).rejects.toThrow(BadRequestException);
+    expect(mockPrisma.trackVote.create).not.toHaveBeenCalled();
+  });
+
   it('rejects duplicate vote with ConflictException', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'user-1',

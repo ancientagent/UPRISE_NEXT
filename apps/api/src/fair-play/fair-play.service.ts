@@ -451,6 +451,12 @@ export class FairPlayService {
         error: { message: 'Track is not currently in the scene broadcast' },
       });
     }
+    if (scene.tier !== 'city') {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'Voting is limited to city-tier scenes' },
+      });
+    }
 
     if (!user.gpsVerified) {
       throw new ForbiddenException({

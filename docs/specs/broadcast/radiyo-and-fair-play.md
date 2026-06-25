@@ -125,6 +125,7 @@ Owner references:
 - Proxy-scene listener votes, source/song voting data, engagement history, and recurrence evidence stay with the scene/tier where they occurred. They do not transfer into the newly active natural city-tier Home Scene.
 - The newly active natural Home Scene starts its local city-tier voting/evidence context from its own eligible songs and listeners after activation.
 - GPS-verified users routed through a proxy may vote only in their assigned active proxy scene for that music community, not in arbitrary Away Scenes.
+- Propagation voting is city-tier only in current runtime: `POST /tracks/:id/vote` must reject state-tier, national-tier, or other non-city scenes even when `User.tunedSceneId` points at that scene for listening context.
 
 ### Same-State And Cross-State Edge Policy
 
@@ -165,7 +166,7 @@ Owner references:
 |--------|------|------|-------------|
 | POST | `/tracks` | required | Create a track row for the authenticated uploader; supports community-scoped runtime ingestion for current artist/discover flows |
 | POST | `/tracks/:id/engage` | required | Record recurrence input event |
-| POST | `/tracks/:id/vote` | required | Cast propagation vote (GPS/Home Scene gated; currently-playing assertion required) |
+| POST | `/tracks/:id/vote` | required | Cast city-tier propagation vote (GPS/Home Scene gated; currently-playing assertion required; non-city scenes rejected) |
 | GET | `/broadcast/:sceneId/rotation` | required | Retrieve ordered New Releases + Main Rotation pools with metadata |
 | GET | `/broadcast/rotation` | required | Retrieve ordered pools for active scene context (tuned scene first, Home Scene fallback) |
 | GET | `/fair-play/metrics?sceneId=:sceneId` | required | Retrieve scene lifecycle/recurrence diagnostics |
@@ -191,6 +192,7 @@ Owner references:
 - Upvotes do not affect recurrence.
 - Engagement does not affect propagation.
 - Proxy-scene votes/history remain historical to the proxy scene/tier after natural Home Scene activation.
+- Vote creation rejects non-city-tier scenes; state/national tier listening or promotion context must not become a direct vote target.
 - Natural-scene activation does not create dual-active rotation placement for a song.
 - Stable behavior across density scenarios (`~6`, `15`, `25`, `35+` active new songs).
 

@@ -78,6 +78,7 @@
 
 ### Changed
 
+- Tightened Fair Play vote authority so `POST /tracks/:id/vote` rejects non-city-tier scenes even when `User.tunedSceneId` matches the target scene, preserving state/national context as listening/promotion context rather than direct vote targets.
 - Promoted activation notification and former-proxy Away Scene preservation into the onboarding/Home Scene cutover owner contract, keeping current runtime limited to listener/source re-rooting while notification persistence and saved-scene storage remain deferred.
 - Promoted Sect readiness and Sect Uprise boundaries into owner sections across the community and Registrar specs, keeping current runtime limited to sect-motion filing/readback while affiliation records, update channels, approvals, and visibility remain deferred.
 - Added Release Deck eligibility enforcement for the 3 active music-slot cap and 20-minute per-source active rotation cap, with a new owner spec at `docs/specs/media/release-deck-and-eligibility.md`.
