@@ -32,7 +32,7 @@ This completes the profile-management UI portion of the Music-Community Preferen
 - Music-community preference management stays inside the listener profile / collection workspace.
 - The UI does not create communities, launch communities, trigger activation, or expose source-dashboard tools.
 - The UI uses API endpoints only and does not cross the web-tier boundary.
-- Preferences remain profile affiliations; Home Scene roller consumption and unresolved-profile display remain follow-up work.
+- Preferences remain profile affiliations. Home Scene roller consumption was completed in `docs/handoff/2026-06-25_home-scene-roller-plot-consumption.md`; unresolved-profile display remains follow-up work.
 
 ## Files Changed
 
