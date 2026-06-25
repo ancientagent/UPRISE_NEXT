@@ -7,7 +7,7 @@ Scope: lane-findings reconciliation into strategy + handoff + changelog
 
 ## Purpose
 
-Execute Step 2 / Lane 7 synthesis using `~/swarm_shared_files/lane_findings.md` as evidence input while reconciling against repo authority order and owner specs.
+Execute Step 2 / Lane 7 synthesis using the Abacus external lane-analysis artifact as scouting input while reconciling against repo authority order and owner specs. The external lane-findings file was reported by Abacus as `~/swarm_shared_files/lane_findings.md` but is not persisted in this repository, so repo owner specs remain the durable authority.
 
 ## Deliverables
 
@@ -52,16 +52,18 @@ Preserved conclusions:
 
 ## Validation
 
-Commands required by scope:
+Commands run in the review-fix pass:
 
-- `pnpm run docs:lint`
-- `git diff --check`
+- `pnpm run docs:lint` - passed
+- `git diff --check` - passed
 
-(Results recorded after execution in this branch.)
+No runtime tests were run because this branch is docs-only.
 
 ## Exact Authority Inputs Reviewed
 
-- `~/swarm_shared_files/lane_findings.md`
+- Abacus external lane-analysis artifact reported as `~/swarm_shared_files/lane_findings.md` in the Abacus run environment; not repo-persisted and not durable authority.
+- `docs/handoff/2026-06-24_abacus-fusion-agent-swarm-strategy.md`
+- `docs/handoff/2026-06-25_hermes-reviewer-clarification-handoff.md`
 - `docs/PLATFORM_START_HERE.md`
 - `docs/specs/system/documentation-framework.md`
 - `docs/specs/users/onboarding-home-scene-resolution.md`
@@ -77,7 +79,7 @@ Commands required by scope:
 
 Patch owner specs in sequence:
 
-1. source origin contract (`registrar.md`)
+1. new source origin owner section (`registrar.md`)
 2. activation workflow owner section (`scenes-uprises-sects.md` and/or registrar owner section)
 3. proxy cutover behavior pointers (`onboarding-home-scene-resolution.md` + `radiyo-and-fair-play.md`)
-4. release eligibility owner rules (target owner doc to be designated)
+4. release eligibility owner rules (prefer a dedicated Release Deck / media eligibility owner spec or equivalent owner section)

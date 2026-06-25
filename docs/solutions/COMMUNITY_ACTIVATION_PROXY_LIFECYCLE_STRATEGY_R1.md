@@ -33,7 +33,7 @@ Authority loaded in order (`AGENTS.md` -> orientation -> owner specs -> lane bri
 
 ## Swarm Lane Findings
 
-Lane synthesis from `~/swarm_shared_files/lane_findings.md`, reconciled with owner specs:
+Lane synthesis is based on the Abacus external lane-analysis artifact reported during this run, reconciled against the repo owner specs listed in this document. The external lane-findings file was not committed to this repository, so it is treated as scouting input rather than durable authority. Future agents should rely on the repo files cited under **Exact Files Reviewed** and promote durable rules into owner specs before implementation.
 
 - **Lane 1 (Onboarding/Home Scene):** core proxy assignment and GPS locality checks are implemented; helper messaging + full profile preference persistence/move workflow still need parity.
 - **Lane 2 (Registrar/Source):** registrar intake/materialization/capability primitives are strong; source-origin/Home Scene ownership contract is still missing.
@@ -84,6 +84,13 @@ This strategy is intentionally **no-migration at R1 doc stage**. Required model 
 2. Define source-origin anchor semantics for `ArtistBand.homeSceneId` at registration and post-activation cutover.
 3. Define whether additional derived/read-model fields are required for activation diagnostics (can be API computed first).
 4. Clarify role of existing `SectTag`/`UserTag` as non-authoritative for sect realization.
+
+Out of scope for this strategy pass:
+
+- dedicated `Uprise` model decisions;
+- Project-to-Cause terminology migration / `project_registration` runtime naming cleanup;
+- Prime-model generation mechanics;
+- full media upload/storage/transcode activation.
 
 ## API Contract Implications
 
@@ -161,7 +168,7 @@ Still needs owner-level implementation detail:
 
 ## Sect Readiness / Sect Uprise Parallels
 
-Sect strategy should parallel community activation with scoped authority:
+Sect strategy should parallel community activation with scoped authority. Current Registrar language already anchors Sect readiness to a `45`-minute committed playable-music threshold plus explicit support, and requires approved playable minutes from registered source accounts that explicitly tag/back/affiliate with that sect.
 
 - use explicit registered-source backing as readiness input;
 - use approved playable minutes accounting (not passive tags);
@@ -184,7 +191,7 @@ This allows shared activation-metrics patterns without prematurely granting sect
 Sequence translates blockers into implementation order (without runtime edits in this doc pass):
 
 1. **Slice 1 – Owner Contract: Source Origin + Activation Workflow**
-   - Patch owner specs with source-origin and activation computation/trigger rules.
+   - Add a new source-origin owner section to `docs/specs/system/registrar.md` and patch community owner specs with activation computation/trigger rules.
    - No runtime changes.
 2. **Slice 2 – Owner Contract: Proxy Cutover + Fair Play Lifecycle Join Points**
    - Patch migration/cutover contracts and cross-state policy placeholders.
@@ -195,7 +202,7 @@ Sequence translates blockers into implementation order (without runtime edits in
 5. **Slice 5 – Listener/Source Notification Path**
    - Minimal UX messaging for proxy-to-natural activation transitions.
 6. **Slice 6 – Release Deck Eligibility Enforcement**
-   - Enforce owner-locked eligibility/replacement rules without widening MVP media scope.
+   - First create or designate a Release Deck / media eligibility owner spec or section, then enforce owner-locked eligibility/replacement rules without widening MVP media scope.
 7. **Slice 7 – Sect Readiness Parity Foundations**
    - Reuse activation-metrics patterns for sect readiness (visibility still deferred).
 
@@ -217,11 +224,12 @@ For follow-up runtime slices (planned, not in this doc pass):
 
 Primary owner docs to patch in order:
 
-1. `docs/specs/system/registrar.md` (source origin contract)
+1. `docs/specs/system/registrar.md` (new source origin contract owner section)
 2. `docs/specs/communities/scenes-uprises-sects.md` (activation workflow owner section)
 3. `docs/specs/users/onboarding-home-scene-resolution.md` (cutover-facing user contract pointers)
 4. `docs/specs/broadcast/radiyo-and-fair-play.md` (activation/cutover execution semantics)
-5. `docs/agent-briefs/ONBOARDING_HOME_SCENE.md` / `REGISTRAR_GOVERNANCE.md` / `ARTIST_PROFILE_SOURCE_DASHBOARD.md` (short routing updates after owner patches)
+5. `docs/specs/media/release-deck-and-eligibility.md` or an equivalent new owner section (Release Deck / media eligibility contract)
+6. `docs/agent-briefs/ONBOARDING_HOME_SCENE.md` / `REGISTRAR_GOVERNANCE.md` / `ARTIST_PROFILE_SOURCE_DASHBOARD.md` (short routing updates after owner patches)
 
 ## Risks / Drift Traps
 
@@ -234,8 +242,12 @@ Primary owner docs to patch in order:
 
 ## Exact Files Reviewed
 
-### Primary synthesis input
-- `~/swarm_shared_files/lane_findings.md`
+### External synthesis input
+- Abacus external lane-analysis artifact reported as `~/swarm_shared_files/lane_findings.md` in the Abacus run environment. This file is not repo-persisted and is not durable authority.
+
+### Prior strategy / reviewer context
+- `docs/handoff/2026-06-24_abacus-fusion-agent-swarm-strategy.md`
+- `docs/handoff/2026-06-25_hermes-reviewer-clarification-handoff.md`
 
 ### Authority and owner docs
 - `AGENTS.md`
