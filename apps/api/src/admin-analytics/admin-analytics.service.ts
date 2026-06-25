@@ -1,10 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { AdminAnalyticsQueryData } from '@uprise/types';
+import {
+  ensureLaunchCommunitySeedOwner,
+  slugifyLaunchCommunity,
+} from '../seed/launch-community-seed';
 
 type CountByTypeRow = {
   type: string;
   _count: { type?: number; trackId?: number };
+};
+
+type ActivationTriggerInput = {
+  city: string;
+  state: string;
+  musicCommunity: string;
 };
 
 const REQUIRED_PLAYABLE_SECONDS = 45 * 60;
@@ -340,6 +350,91 @@ export class AdminAnalyticsService {
           maxPlayableMinutesPerSource: MAX_PLAYABLE_SECONDS_PER_SOURCE / 60,
         },
         candidates,
+      },
+    };
+  }
+
+  async activateReadyCommunity(input: Partial<ActivationTriggerInput> = {}) {
+    const city = typeof input.city === 'string' ? input.city.trim() : '';
+    const state = typeof input.state === 'string' ? input.state.trim() : '';
+    const musicCommunity = typeof input.musicCommunity === 'string' ? input.musicCommunity.trim() : '';
+
+    if (!city || !state || !musicCommunity) {
+      throw new BadRequestException('Activation requires city, state, and musicCommunity');
+    }
+
+    const diagnostics = await this.getActivationReadinessDiagnostics();
+    const requestedKey = this.activationTupleKey(city, state, musicCommunity);
+    const candidate = diagnostics.data.candidates.find(
+      (item) => this.activationTupleKey(item.city, item.state, item.musicCommunity) === requestedKey,
+    );
+
+    const existingCommunity = await this.prisma.community.findFirst({
+      where: {
+        city,
+        state,
+        musicCommunity,
+        tier: 'city',
+      },
+      select: {
+        id: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+        isActive: true,
+      },
+    });
+
+    if (existingCommunity?.isActive) {
+      throw new ConflictException('Community is already active');
+    }
+
+    if (!candidate?.ready) {
+      throw new BadRequestException('Activation readiness threshold has not been met');
+    }
+
+    const community = existingCommunity
+      ? await this.prisma.community.update({
+          where: { id: existingCommunity.id },
+          data: { isActive: true },
+        })
+      : await this.prisma.community.create({
+          data: {
+            name: `${city}, ${state} ${musicCommunity}`,
+            slug: slugifyLaunchCommunity(city, state, musicCommunity),
+            description: `City-tier Home Scene for ${musicCommunity} in ${city}, ${state}.`,
+            city,
+            state,
+            musicCommunity,
+            tier: 'city',
+            isActive: true,
+            isPrivate: false,
+            createdById: (await ensureLaunchCommunitySeedOwner(this.prisma)).id,
+          },
+        });
+
+    const reanchoredSources = await this.prisma.artistBand.updateMany({
+      where: {
+        sourceOriginCity: city,
+        sourceOriginState: state,
+        sourceOriginMusicCommunity: musicCommunity,
+      },
+      data: { homeSceneId: community.id },
+    });
+
+    return {
+      success: true as const,
+      data: {
+        sceneId: community.id,
+        city,
+        state,
+        musicCommunity,
+        created: !existingCommunity,
+        activated: true,
+        reanchoredSourceCount: reanchoredSources.count,
+        thresholds: diagnostics.data.thresholds,
+        candidate,
       },
     };
   }

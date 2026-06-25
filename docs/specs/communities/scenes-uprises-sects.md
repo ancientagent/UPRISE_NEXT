@@ -75,6 +75,7 @@ This section owns the community-side activation workflow for splitting a natural
 ### Activation Trigger And Side Effects
 
 - Activation is source/music-driven. The operational trigger mechanism (automatic evaluator vs explicit Registrar/admin approval gate) is an implementation contract to lock before runtime automation, but listener demand is never the trigger.
+- Current MVP runtime uses an explicit authenticated admin trigger for readiness-proven tuples (`POST /admin/analytics/activation-readiness/activate`). It is not a scheduler and it cannot activate a tuple from listener demand alone.
 - When the natural Home Scene activates, future Home Scene resolution for matching listeners should route to the natural active scene.
 - Future source uploads for matching source-origin sources should attach according to the newly active natural Home Scene.
 - Existing songs already active in a proxy scene finish their current rotation lifecycle in that prior scene unless a later approved Fair Play/cutover spec changes the rule.
@@ -94,7 +95,7 @@ This section owns the community-side activation workflow for splitting a natural
 - Reconcile older tag-era sect assignment flows so they stop implying that profile tag selection alone creates official sect affiliation or realizes a sect.
 - Official Sect affiliation/updates channel surfaces remain deferred until Registrar information architecture is locked.
 - Registrar motion threshold validation, approval workflow, and automatic Sect-to-Uprise activation.
-- Automated city-tier activation metrics, trigger execution, notifications, and proxy-to-natural cutover orchestration.
+- Automated/scheduled city-tier activation, notifications, and full proxy-to-natural listener cutover orchestration.
 - User-facing sect creation/unlock visibility, source-level backing limits, song-level backing limits, and paid/free backing capacity remain beta/community-calibrated until tested with real Home Scene density.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
