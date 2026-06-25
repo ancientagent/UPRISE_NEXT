@@ -71,6 +71,21 @@ Registrar/source activation is the only authority path for creating or activatin
 - The operational trigger mechanism (automatic evaluator vs explicit Registrar/admin approval gate) is an implementation contract to lock before runtime automation. The threshold itself is source/music-driven and does not depend on listener demand.
 - Once activated, future listener resolution and future source uploads should route to the natural active Home Scene; existing proxy-scene songs and votes remain governed by the cutover/Fair Play lifecycle rules in the community and broadcast specs.
 
+## Sect Affiliation And Motion Authority
+
+This section owns the Registrar-side authority for sect affiliation, explicit
+source backing, and sect-motion filing. The community spec owns the readiness and
+Sect Uprise broadcast boundary at
+`docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`.
+
+- Official Sect affiliation belongs in Registrar. Loose profile tags, passive genre/style metadata, and listener taste tags must not become official sect affiliation by themselves.
+- Explicit registered-source backing/tagging/affiliation is required before approved playable minutes count toward sect readiness.
+- Sect-motion filing is Home Scene-scoped and does not change source origin, listener Home Scene, or parent community membership by itself.
+- Official Sect status is pre-Uprise: it can make a sect discoverable/inspectable for affiliation and updates once enabled, but it does not grant independent broadcast authority.
+- Sect Uprise realization requires the community-side readiness boundary plus Registrar approval/authority. The current runtime must not treat a submitted sect motion as an approved Sect Uprise.
+- Sect voting authority belongs to sect members once a Sect Uprise exists; listening access alone does not grant sect voting authority.
+- Beta/community calibration still owns public visibility timing, backing limits, source/song capacity rules, and paid/free backing capacity.
+
 ### Implemented Now
 - Registrar-link-ready Artist/Band identity foundation exists (slice 1):
   - `ArtistBand.registrarEntryRef` stores registrar linkage reference for canonical handoff.

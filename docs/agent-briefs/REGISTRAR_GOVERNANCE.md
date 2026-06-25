@@ -67,6 +67,7 @@ Tests / verification files:
 - Sect readiness tracking can be built before it is user-visible.
 - Sect readiness counts approved playable minutes only from registered source accounts that explicitly back/tag/affiliate with that sect.
 - Passive genre/style metadata does not count toward sect readiness or sect realization by itself.
+- Sect readiness and Sect Uprise broadcast authority are owned by `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`; Registrar-side affiliation and motion authority are owned by `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority`.
 - Sect maturity milestones, backing limits, paid/free backing capacity, and user-facing visibility are beta/community-calibrated and must not be hard-coded pre-launch.
 - Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags.
 - Official Sects are pre-Uprise Registrar-recognized subcommunities: visible/inspectable for affiliation and updates once enabled, but not independent broadcast authorities.

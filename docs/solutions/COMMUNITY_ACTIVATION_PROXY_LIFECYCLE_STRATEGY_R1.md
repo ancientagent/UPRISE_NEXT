@@ -211,7 +211,8 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Active-slot and active-duration enforcement is implemented against the new Release Deck media eligibility owner spec.
    - Next: define replacement UX and any explicit per-song length cap without widening MVP media scope.
 7. **Slice 7 – Sect Readiness Parity Foundations**
-   - Reuse activation-metrics patterns for sect readiness (visibility still deferred).
+   - Completed as owner-contract foundation: community spec owns sect readiness / Sect Uprise broadcast boundary; Registrar spec owns affiliation and motion authority.
+   - Next: define implementation artifacts and visibility calibration without granting premature broadcast authority.
 
 ## Test Plan
 

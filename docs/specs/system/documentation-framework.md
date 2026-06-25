@@ -131,6 +131,7 @@ Current owner contracts:
 | Registrar source/capability workflows | `docs/specs/system/registrar.md` |
 | Source registration and source origin | `docs/specs/system/registrar.md#source-origin-contract` |
 | Community activation threshold workflow | `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow` plus `docs/specs/system/registrar.md#city-tier-activation-authority` |
+| Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` |
 | Proxy scene music lifecycle and migration | `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points` plus `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` |
 | Plot/Home Scene shell | `docs/specs/communities/plot-and-scene-plot.md` |
 | Events/flyers | `docs/specs/events/events-and-flyers.md` |
@@ -145,7 +146,7 @@ Contracts still needing dedicated owner sections or cleanup:
 | Needed Contract | Current Best Home | Why It Matters |
 | --- | --- | --- |
 | Release Deck replacement and song-length cleanup | `docs/specs/media/release-deck-and-eligibility.md` | Active slot and 20-minute caps are owned/enforced; replacement UX and any per-song length cap still need a follow-up decision. |
-| Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md` | Controls official sects, backing, thresholds, and subcommunity broadcast authority. |
+| Sect implementation artifacts and visibility calibration | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` | Boundary is owned; affiliation schema, update channels, approval state machine, visibility timing, and backing limits remain follow-up implementation decisions. |
 
 ## Lane Agents
 
@@ -330,7 +331,7 @@ Recently completed owner-contract seeds: source registration/source origin (Slic
 
 1. Define listener/source notification and saved Away Scene/profile preservation after manual activation.
 2. Define remaining Release Deck replacement behavior and any explicit per-song length cap.
-3. Define sect readiness and Sect Uprise boundary.
+3. Define sect implementation artifacts and visibility calibration after the Sect readiness / Sect Uprise boundary owner sections.
 4. Audit runtime parity against the Music-Community Preference Contract.
 
 ## References

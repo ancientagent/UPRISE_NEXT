@@ -70,6 +70,7 @@
 
 ### Changed
 
+- Promoted Sect readiness and Sect Uprise boundaries into owner sections across the community and Registrar specs, keeping current runtime limited to sect-motion filing/readback while affiliation records, update channels, approvals, and visibility remain deferred.
 - Added Release Deck eligibility enforcement for the 3 active music-slot cap and 20-minute per-source active rotation cap, with a new owner spec at `docs/specs/media/release-deck-and-eligibility.md`.
 - Extended manual Home Scene activation cutover so matching listeners are re-rooted to the newly active natural scene via `User.tunedSceneId`, while preserving proxy-scene tracks, votes, engagement history, and rotation entries.
 - Added an authenticated manual activation trigger at `POST /admin/analytics/activation-readiness/activate` that only activates source-origin tuples already meeting the locked readiness thresholds, creates or activates the natural city-tier scene, and re-anchors matching sources for future uploads while leaving existing proxy-scene tracks/votes/history untouched.
