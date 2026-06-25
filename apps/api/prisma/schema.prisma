@@ -57,24 +57,43 @@ model User {
   capabilityAuditTargetEvents CapabilityGrantAuditLog[] @relation("CapabilityAuditTargetUser")
   capabilityAuditActorEvents  CapabilityGrantAuditLog[] @relation("CapabilityAuditActorUser")
   musicCommunityRequests      MusicCommunityRequest[]
+  musicCommunityPreferences   UserMusicCommunityPreference[]
 
   @@map("users")
 }
 
+model UserMusicCommunityPreference {
+  id             String   @id @default(uuid())
+  userId         String
+  musicCommunity String
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, musicCommunity])
+  @@index([userId, isDefault])
+  @@map("user_music_community_preferences")
+}
+
 model ArtistBand {
-  id                 String   @id @default(uuid())
-  name               String
-  slug               String   @unique
-  entityType         String   @default("artist") // artist, band
-  registrarEntryRef  String?
-  homeSceneId        String?
-  createdById        String
-  officialWebsiteUrl String?
-  merchUrl           String?
-  musicUrl           String?
-  donationUrl        String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                         String   @id @default(uuid())
+  name                       String
+  slug                       String   @unique
+  entityType                 String   @default("artist") // artist, band
+  registrarEntryRef          String?
+  homeSceneId                String?
+  sourceOriginCity           String?
+  sourceOriginState          String?
+  sourceOriginMusicCommunity String?
+  createdById                String
+  officialWebsiteUrl         String?
+  merchUrl                   String?
+  musicUrl                   String?
+  donationUrl                String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 
   createdBy        User               @relation(fields: [createdById], references: [id], onDelete: Restrict)
   homeScene        Community?         @relation(fields: [homeSceneId], references: [id], onDelete: SetNull)
@@ -84,6 +103,7 @@ model ArtistBand {
   events           Event[]
 
   @@index([homeSceneId])
+  @@index([sourceOriginCity, sourceOriginState, sourceOriginMusicCommunity])
   @@index([createdById])
   @@map("artist_bands")
 }
@@ -161,15 +181,18 @@ model MusicCommunityRequest {
 }
 
 model RegistrarEntry {
-  id           String   @id @default(uuid())
-  type         String
-  status       String   @default("submitted")
-  sceneId      String
-  createdById  String
-  artistBandId String?
-  payload      Json?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                         String   @id @default(uuid())
+  type                       String
+  status                     String   @default("submitted")
+  sceneId                    String
+  createdById                String
+  artistBandId               String?
+  sourceOriginCity           String?
+  sourceOriginState          String?
+  sourceOriginMusicCommunity String?
+  payload                    Json?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 
   scene                 Community                 @relation(fields: [sceneId], references: [id], onDelete: Restrict)
   createdBy             User                      @relation(fields: [createdById], references: [id], onDelete: Restrict)
@@ -180,6 +203,7 @@ model RegistrarEntry {
   capabilityAuditEvents CapabilityGrantAuditLog[]
 
   @@index([sceneId, type, status])
+  @@index([sourceOriginCity, sourceOriginState, sourceOriginMusicCommunity])
   @@index([createdById, createdAt])
   @@index([artistBandId])
   @@map("registrar_entries")

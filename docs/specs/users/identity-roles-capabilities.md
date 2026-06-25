@@ -21,6 +21,9 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Artist/Band accounts are separate source entities linked to User identities (many-to-many management model).
 - Source entities are managed from source-management surfaces, not from the listener user profile / collection workspace.
 - Home Scene affiliation and GPS verification determine voting eligibility; GPS gates voting only.
+- Music-community membership is an explicit user-profile affiliation: adding a music community to the profile means the user is a fan / involved with that music community.
+- The detailed preference/default/roller/city-move contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
+- Saved Away Scenes are profile/collection interests, not voting-affiliated Home Scene memberships.
 - Capability expansion is additive permissions attached to existing user identity.
 - Visitor state may listen and use non-civic actions; Visitor state cannot vote.
 - Role/capability language in docs and API must remain aligned to Registrar + linked-entity canon.

@@ -17,6 +17,8 @@ This document is not a replacement for the controlling docs. It is a context bri
 
 External assistants should also follow:
 - `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
+- `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md` when using Abacus
+  Agent Swarm / Fusion-style multi-agent workflows.
 
 ## Repo Identity
 - Repo: `UPRISE_NEXT`
@@ -126,11 +128,14 @@ Use external assistants for:
 - summarize last month of changes
 - draft implementation slice plans
 - identify stale docs that conflict with current doctrine
+- Abacus Agent Swarm read-only mapping when the work naturally splits into
+  independent deliverables across multiple lanes
 
 Do not rely on them by default for:
 - primary coding authority
 - product-truth decisions without citation
 - inference from the whole repo without a curated reading set
+- one tightly coupled implementation branch that needs a single owner
 
 ## Standing Sync Rule
 Whenever a slice materially changes:

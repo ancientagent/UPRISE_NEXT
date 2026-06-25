@@ -188,11 +188,11 @@ Runtime and tests:
 Acceptance checks:
 
 - exact active submitted Home Scene remains active Home Scene and voting anchor
-- inactive or missing submitted Home Scene preserves pioneer intent as submitted `city + state + musicCommunity`
+- inactive or missing submitted Home Scene preserves the submitted `city + state + musicCommunity` as the user's submitted Home Scene while routing listening/voting through an active proxy scene
 - fallback resolves to an active city-tier scene for the same parent music community
 - fallback stores the active listening/voting anchor in `User.tunedSceneId`
 - onboarding fallback does not create inactive `Community` rows
-- response includes `resolvedCitySceneId`, `resolvedCitySceneLabel`, and `pioneerHomeScene`
+- response includes `resolvedCitySceneId`, `resolvedCitySceneLabel`, and legacy compatibility fields such as `pioneerHomeScene` until the runtime naming cleanup lands
 - GPS remains required for voting
 - exact active Home Scene users verify GPS against the exact scene geofence
 - inactive/unavailable submitted Home Scene users verify GPS against the submitted city/state locality, then vote in the resolved fallback scene

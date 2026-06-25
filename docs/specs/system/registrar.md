@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-14`
+**Last Updated:** `2026-06-25`
 
 ## Overview & Purpose
 Defines the Registrar as the listener-side civic registration surface inside The Plot where role/capability motions and prerequisite filings are formalized.
@@ -25,7 +25,66 @@ Defines the Registrar as the listener-side civic registration surface inside The
   - Artist/Band registration initiation.
   - Promoter registration initiation.
   - Registrar-stage civic prerequisite filings where active.
+- Artist/Band source registration requires the registering user to be GPS-verified before materialized source identity can count toward Home Scene activation.
+- A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
+- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
 - Sect uprising motions are registrar-mediated when threshold criteria are met (45-minute committed artist playtime threshold + explicit support).
+- Sect readiness tracking may be built before it is user-visible; visibility may remain hidden, admin-only, or read-only until beta/community calibration locks maturity and backing limits.
+- Sect readiness counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate with that sect; passive genre/style metadata does not count by itself.
+- Sect affiliation belongs in Registrar rather than as a loose self-assigned profile tag.
+- An Official Sect is a pre-Uprise Registrar-recognized subcommunity: it can appear in Registrar for discovery/affiliation and updates, but it does not grant independent broadcast authority.
+- Registrar should eventually expose Official Sect context: active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
+- Sect Uprises should mirror Home Scene behavior wherever possible while remaining scoped inside the parent Home Scene/music community; sect membership/affiliation grants sect voting authority, while listening access alone does not.
+
+## Source Origin Contract
+
+This section owns the source-origin rules that connect Registrar filings, proxy-scene routing, and city-tier Home Scene activation. It is an owner contract for follow-up implementation slices; current runtime may still need parity work before every rule is enforced automatically.
+
+- Source origin is the source's submitted natural `city + state + music community`, verified through Registrar/GPS authority. It is not silently replaced by the proxy scene where a listener/source operator is temporarily routed.
+- Artist/Band source registration can only materialize into activation-eligible source identity when the registering user is GPS-verified for the submitted source-origin location.
+- If the submitted source-origin Home Scene is active, new source uploads attach to that natural Home Scene.
+- If the submitted source-origin Home Scene is inactive/unavailable, the source may operate through the assigned active proxy scene under the current Release Deck/Fair Play rules, but its submitted origin still counts toward activation readiness for the natural tuple.
+- Source origin is stable after materialization unless a future explicit Registrar workflow changes it. Proxy assignment, visitor listening, or Away Scene browsing must not mutate source origin.
+- Activation accounting uses registered source origin, approved playable minutes, distinct registered source count, and the per-source rotation cap.
+- Listener onboarding counts, missing-music-community requests, and passive listener demand do not activate a community.
+- Existing runtime field names such as `pioneer` may remain for compatibility until cleanup, but user-facing and owner-contract language should use submitted Home Scene, proxy scene, source origin, and activation readiness.
+
+### Runtime Source-Origin Persistence
+
+Registrar runtime persists source origin separately from proxy/operating scene identity:
+
+- `RegistrarEntry.sceneId` remains the active operating scene for the filing.
+- `RegistrarEntry.sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the submitted natural source-origin tuple from the registering user's Home Scene metadata.
+- `ArtistBand.homeSceneId` remains the active operating scene at materialization time.
+- `ArtistBand.sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the natural source-origin tuple for activation accounting.
+
+Activation readiness APIs and trigger automation must read source-origin fields, not `ArtistBand.homeSceneId` alone, whenever source-origin and proxy-scene identity can differ.
+
+## City-Tier Activation Authority
+
+Registrar/source activation is the only authority path for creating or activating a new city-tier Home Scene from a major-node/proxy pattern.
+
+- A candidate activation tuple is an inactive/unavailable `city + state + music community` with registered source-origin activity.
+- The readiness threshold is at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
+- No single source may contribute more than `20` minutes to any one Uprise rotation at a time.
+- Only approved playable music from sources whose source origin matches the candidate tuple counts toward that candidate's city-tier activation readiness.
+- The operational trigger mechanism (automatic evaluator vs explicit Registrar/admin approval gate) is an implementation contract to lock before runtime automation. The threshold itself is source/music-driven and does not depend on listener demand.
+- Once activated, future listener resolution and future source uploads should route to the natural active Home Scene; existing proxy-scene songs and votes remain governed by the cutover/Fair Play lifecycle rules in the community and broadcast specs.
+
+## Sect Affiliation And Motion Authority
+
+This section owns the Registrar-side authority for sect affiliation, explicit
+source backing, and sect-motion filing. The community spec owns the readiness and
+Sect Uprise broadcast boundary at
+`docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`.
+
+- Official Sect affiliation belongs in Registrar. Loose profile tags, passive genre/style metadata, and listener taste tags must not become official sect affiliation by themselves.
+- Explicit registered-source backing/tagging/affiliation is required before approved playable minutes count toward sect readiness.
+- Sect-motion filing is Home Scene-scoped and does not change source origin, listener Home Scene, or parent community membership by itself.
+- Official Sect status is pre-Uprise: it can make a sect discoverable/inspectable for affiliation and updates once enabled, but it does not grant independent broadcast authority.
+- Sect Uprise realization requires the community-side readiness boundary plus Registrar approval/authority. The current runtime must not treat a submitted sect motion as an approved Sect Uprise.
+- Sect voting authority belongs to sect members once a Sect Uprise exists; listening access alone does not grant sect voting authority.
+- Beta/community calibration still owns public visibility timing, backing limits, source/song capacity rules, and paid/free backing capacity.
 
 ### Implemented Now
 - Registrar-link-ready Artist/Band identity foundation exists (slice 1):
@@ -37,7 +96,21 @@ Defines the Registrar as the listener-side civic registration surface inside The
   - `POST /registrar/artist` implemented for Home Scene-scoped Artist/Band registration submissions.
   - Submission constraints enforced in service:
     - city-tier Scene only,
-    - request Scene must match authenticated user's Home Scene.
+    - request Scene must match authenticated user's Home Scene or assigned same-music-community proxy scene.
+  - Source-origin tuple persistence is implemented on `RegistrarEntry` and materialized `ArtistBand`.
+- Activation readiness diagnostics exist under `GET /admin/analytics/activation-readiness`:
+  - read-only/admin-facing;
+  - counts ready Artist/Band-backed tracks by persisted source-origin tuple;
+  - caps each source at `20` playable minutes;
+  - excludes already-active city-tier scenes.
+- Manual activation trigger primitive exists under `POST /admin/analytics/activation-readiness/activate`:
+  - authenticated/admin-facing with RBAC deferred;
+  - accepts a `city + state + musicCommunity` tuple;
+  - reuses source-origin readiness diagnostics and refuses activation unless the tuple meets the locked thresholds;
+  - creates the natural city-tier `Community` when no row exists, or marks an inactive matching row active;
+  - re-anchors matching `ArtistBand.homeSceneId` values to the natural scene for future uploads;
+  - re-roots matching listener `User.tunedSceneId` values to the natural scene for Home/Plot resolution after activation;
+  - does not move existing track rows, copy votes, transfer engagement history, schedule jobs, emit notifications, or persist saved Away Scene/profile context.
 - Registrar promoter initiation primitive (slice 34):
   - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
   - Captures named production identity payload (`productionName`) for downstream capability processing.
@@ -248,7 +321,11 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Outbound invite email sender worker/provider integration (dispatch rows are now queued).
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
+- Automated city-tier Home Scene trigger execution and cutover orchestration.
 - Sect motion lifecycle and approval state machine.
+- Sect readiness tracking visibility and unlock controls.
+- Official Sect affiliation, discovery, and updates-channel information architecture.
+- Source/song sect-backing limits and paid/free backing capacity after beta/community calibration.
 
 ### Policy Lock (2026-02-24, P3-REV-001)
 - `RegistrarCode` issuance authority is system-only (trusted API-tier registrar paths); no user self-issuance.
@@ -264,13 +341,18 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Registrar cannot bypass Fair Play, voting, or propagation constraints.
 - Registrar actions do not grant automatic visibility or authority.
 - Registrar must remain Scene-scoped to preserve structural locality.
+- Registrar-held sect affiliation must preserve the parent Home Scene context and must not turn sects into isolated standalone city/music-community replacements.
 - Registrar promoter capability should be interpreted as gating a source-facing Print Shop/event lane, not a listener-facing event-creation surface.
+- Registrar source-origin authority must not be overridden by proxy-scene routing or source-dashboard context.
 
 ## Data Models & Migrations
 ### Target Models (Planned)
 - `RegistrarCode` (for capability completion handoff flows)
 - Project linkage to `Signal` rows for follow/blast/support
 - Sect motion artifact and committed artist-catalog references
+- Explicit registered-source sect backing/readiness references; passive tags must remain non-authoritative for realization
+- Registrar-held Official Sect affiliation records and update-channel references
+- Activation diagnostics/read models for source-origin readiness may be added later, but no migration is required by this R1 contract.
 
 ### Prisma Models (Implemented)
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
@@ -317,9 +399,13 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
 - Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.
 - Registrar web panel may only expose explicit, spec-authorized registrar follow-up actions (no auto-materialization/auto-dispatch).
+- Registrar/source activation status may be exposed as read-only context after owner implementation, but it must not create public listener-side activation promises.
 
 ## Acceptance Tests / Test Plan
 - Registrar submissions are Scene-scoped and auditable.
+- Artist/Band source origin is preserved separately from temporary proxy assignment.
+- Activation readiness counts only approved playable music from matching source-origin sources.
+- Listener onboarding or missing-community request counts do not satisfy city-tier activation readiness.
 - Duplicate submissions are idempotent or explicitly versioned by state.
 - Registrar outcomes never alter Fair Play ordering directly.
 - DB-backed integration coverage validates invite delivery lifecycle:
@@ -330,7 +416,10 @@ Defines the Registrar as the listener-side civic registration surface inside The
 
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
+- Lock implementation details for activation metrics storage/read path, trigger authority, notification path, and source-origin cutover side effects.
 - Define who can submit and approve Sect uprising motions.
+- Beta-calibrate when sect progress becomes public and which paid/free backing limits are allowed.
+- Define the Registrar menu architecture for Official Sect discovery, affiliation, updates, and cross-scene uprisen-sect context.
 - Lock registrar moderation/appeal behavior for rejected motions.
 
 ## References

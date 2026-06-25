@@ -616,8 +616,7 @@ export default function OnboardingPage() {
                 </select>
                 <p className="text-xs text-black/50">
                   Selection only from the approved parent communities. If your city is not active
-                  yet, we will preserve your pioneer intent and show the active fallback scene
-                  review.
+                  yet, we will show the active proxy scene review for that music community.
                 </p>
               </div>
 
@@ -693,7 +692,7 @@ export default function OnboardingPage() {
 
                 <div className="rounded-2xl border border-black/10 bg-white p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-black/50">
-                    {isPioneer ? 'Fallback listening scene' : 'Listening scene'}
+                    {isPioneer ? 'Proxy listening scene' : 'Listening scene'}
                   </p>
                   <p className="mt-2 text-base text-black">
                     {reviewSceneLabel ?? 'Active scene review is unavailable right now.'}
@@ -701,8 +700,8 @@ export default function OnboardingPage() {
                   <p className="mt-1 text-sm text-black/60">
                     {isPioneer
                       ? reviewSceneLabel
-                        ? `${selectedHomeSceneLabel} stays saved as your Home Scene pioneer intent while this active city scene carries your initial listening context.`
-                        : `${selectedHomeSceneLabel} stays saved as your Home Scene pioneer intent while active fallback details are unavailable.`
+                        ? `${selectedHomeSceneLabel} stays saved as your submitted Home Scene while this active city scene carries your initial listening context.`
+                        : `${selectedHomeSceneLabel} stays saved as your submitted Home Scene while active proxy details are unavailable.`
                       : 'Your selected Home Scene is active and will anchor your first session.'}
                   </p>
                 </div>

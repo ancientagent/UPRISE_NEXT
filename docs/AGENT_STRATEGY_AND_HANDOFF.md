@@ -1,7 +1,7 @@
 # UPRISE Agent Strategy And Handoff
 **Document ID:** `AGENT_STRATEGY_AND_HANDOFF`
 **Status:** `active`
-**Last Updated:** `2026-04-21`
+**Last Updated:** `2026-06-25`
 
 This document complements `AGENTS.md`. If any guidance here conflicts with `AGENTS.md`, `AGENTS.md` wins.
 
@@ -9,6 +9,7 @@ This document complements `AGENTS.md`. If any guidance here conflicts with `AGEN
 - Define agent-document authority and loading order.
 - Prevent stale handoff memory from outranking current repo truth.
 - Standardize multi-agent execution, QA, and checkpoint behavior.
+- Route cross-system rules through owner contracts so agents know what they are building without duplicating micro-rules across docs.
 - Pair with `docs/solutions/SEAMLESS_AGENT_CONTINUITY_PROTOCOL_R1.md` when packaging a new-session or new-agent transfer.
 
 ## Authority Order
@@ -23,7 +24,12 @@ Use this precedence when evaluating what to trust:
 
 ## Reading Model
 ### Core set
-Every coding agent should start from `AGENTS.md` and the minimum core protocol it names. Do not expand that into every active solution, handoff, or design document by default.
+Every coding agent should start from `AGENTS.md`, `docs/PLATFORM_START_HERE.md`, and the minimum core protocol named by `AGENTS.md`. Do not expand that into every active solution, handoff, canon file, or design document by default.
+
+### Layered context modes
+- Focused implementation mode: read `AGENTS.md`, `docs/PLATFORM_START_HERE.md`, this file, `docs/agent-briefs/CONTEXT_ROUTER.md`, the active lane brief, and exact touched files/specs/tests.
+- Heavy authority mode: for broad audits, architecture planning, deployment/infra work, multi-agent strategy, repo-structure changes, or explicit full-platform review, load the heavier pack in `AGENTS.md` plus the exact canon/spec/brief files routed by the task.
+- Legacy/handoff mode: load dated handoffs and legacy docs only by topic. They are context, not higher authority than current code/specs.
 
 ### Task-specific loading
 Load only the materials directly needed for the current task:
@@ -41,6 +47,12 @@ Load only the materials directly needed for the current task:
 - If a task edits runtime behavior, load the matching route/component files and the specific lock that authorizes the change.
 - If a task edits canon/specs, load the exact canon/spec file being changed and any directly referenced authority.
 
+### Contract owner rule
+- Cross-system behavior belongs in one owner spec or owner section under `docs/specs/**`.
+- Lane briefs should summarize the current truth and point to the owner contract.
+- Handoffs are temporary evidence; promote accepted founder decisions or reviewer findings into the owner contract.
+- Use `docs/specs/system/documentation-framework.md` for lane-agent ownership, Linear issue structure, question discipline, reviewer routing, and handoff promotion rules.
+
 ### What not to do
 - Do not bulk-load old batch plans, old phase notes, or large handoff sets by default.
 - Do not make agents read every document that mentions a surface just because they are working in that area.
@@ -49,6 +61,7 @@ Load only the materials directly needed for the current task:
 - Keep context lean: prefer concise summaries over transcript dumps, salvage dense threads early, and use `docs/solutions/LEAN_CONTEXT_OPERATING_RULES_R1.md` when a thread is starting to bloat.
 - When founder clarification changes product truth or MVP boundary, promote it in the same pass using `docs/solutions/FOUNDER_DECISION_CAPTURE_PROTOCOL_R1.md`; do not leave it in chat-only memory.
 - When founder clarification changes a section's active workflow or screen truth, patch the matching `docs/agent-briefs/` file in the same pass so future agents start from repo-visible section context instead of chat memory.
+- When founder clarification affects multiple systems, patch the owner spec first and keep brief/orientation updates short.
 - When a slice materially changes product doctrine, active surface behavior, or major runtime shape, also update the current external-memory bridge for NotebookLM or add a dated NotebookLM sync note in the same pass. Do not let NotebookLM drift a month behind the repo.
 - For external assistants and delegation products, also apply `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md` so context acquisition, verification, and anti-trope rules stay explicit.
 

@@ -3,7 +3,7 @@
 **ID:** `SOCIAL-MSG`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-20`
+**Last Updated:** `2026-06-25`
 
 ## Overview & Purpose
 Defines scene communication surfaces and BLAST behavior. Public discourse is Scene-bound; private communication is group-scoped; BLAST remains a signal action, not a chat primitive.
@@ -17,8 +17,10 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 ## Functional Requirements
 - Public communication is restricted to Scene-bound boards/threads.
 - Group communication is private to group membership.
+- Official Sect update channels are allowed once Registrar recognizes the sect as an official subcommunity, but the channel is an update/discourse surface, not broadcast authority.
 - Sect-level discourse occurs inside Scene social structures, not as separate authority layers.
-- Sect broadcast command (`/sectname`) sends a message to all members of the addressed sect.
+- Sect broadcast command (`/sectname`) sends a message to all members of the addressed official sect when sect-channel surfaces are enabled.
+- Sect Uprise listening can be broader than sect membership when parent scene/discovery access permits, but voting and civic authority inside the Sect Uprise belong to sect members.
 - One-way entity-to-follower messaging is supported for registered entities.
 - User-to-user DM is allowed only when both users follow each other.
 - Artist accounts cannot receive direct DMs; artist messaging is public follower-facing broadcast only.
@@ -38,6 +40,7 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 - Scene message boards, posts, and threads.
 - Group membership + group messaging.
 - Sect thread/room surfaces.
+- Official Sect update channels linked from Registrar.
 - One-way entity messaging timelines.
 - Mutual-follow DM channel rules and enforcement.
 
@@ -82,8 +85,8 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 | POST | `/social/dm/:userId` | required | Send DM to mutual-follow user (non-artist targets only) |
 
 ## Web UI / Client Behavior
-- Current Plot shell includes a Social tab placeholder only.
-- Future Social tab hosts boards, threads, and group access.
+- Current Plot shell does not expose a Social tab or Social placeholder. MVP Plot tabs remain `Feed`, `Events`, and `Archive`.
+- Future Social tab or social surfaces may host boards, threads, and group access only after an explicit UI/API contract ships.
 - BLAST-origin activity is visible through shared activity surfaces (non-personalized).
 - BLAST must not be repurposed as a generic source-profile or event-page action.
 

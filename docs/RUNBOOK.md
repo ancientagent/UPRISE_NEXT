@@ -1,8 +1,8 @@
 # 🧭 UPRISE RUNBOOK — Developer & Agent Operations Manual
 
-**Repository:** `music-community-platform`  
-**Last Updated:** November 12, 2025 (America/Chicago)  
-**Applies To:** All UPRISE Agents (DeepAgent, Claude Code, Codex CLI, Cursor, etc.)
+**Repository:** `music-community-platform`
+**Last Updated:** November 12, 2025 (America/Chicago)
+**Applies To:** All UPRISE Agents (Supercomputer, Claude Code, Codex CLI, Cursor, etc.)
 
 ---
 
@@ -10,7 +10,7 @@
 
 | File | Purpose | Status |
 |------|--------|--------|
-| [STRATEGY_CRITICAL_INFRA_NOTE.md](./STRATEGY_CRITICAL_INFRA_NOTE.md) | Defines “DeepAgent = Foundry only” rule; production targets (Vercel, Fly, AWS, Neon). | 🔴 Critical |
+| [STRATEGY_CRITICAL_INFRA_NOTE.md](./STRATEGY_CRITICAL_INFRA_NOTE.md) | Defines “Supercomputer = Foundry only” rule; production targets (Vercel, Fly, AWS, Neon). | 🔴 Critical |
 | [PHASE1_COMPLETION_REPORT.md](./PHASE1_COMPLETION_REPORT.md) | Historical milestone context for the monorepo foundation. | 🗂️ Historical |
 
 > Default agent onboarding and task routing now live in `AGENTS.md`. Use this runbook for operational policy and environment behavior, not as a broader replacement for the current agent reading path.
@@ -79,7 +79,7 @@ See [ENVIRONMENTS.md](./ENVIRONMENTS.md) for full setup.
 - **Mobile (RN 0.66.x):** Windows non‑admin PowerShell (Hermes, Gradle 7.0.2, JDK 11)
 - **Node:** v22.x (fnm or nvm)
 - **Package Manager:** pnpm 9.x (corepack)
-- **Database:** Postgres with **PostGIS** (dev: DeepAgent container; prod: Neon or AWS RDS)
+- **Database:** Postgres with **PostGIS** (dev: Supercomputer container; prod: Neon or AWS RDS)
 - **Optional:** Docker for local workers/DB
 
 ---
@@ -112,8 +112,8 @@ infra/
 
 ## 🚀 Deployment Flow
 
-**Default pipeline:**  
-DeepAgent (dev/CI) → GitHub PR → External Deploy (Vercel / Fly / AWS) → Production (Neon Postgres)
+**Default pipeline:**
+Supercomputer (dev/CI) → GitHub PR → External Deploy (Vercel / Fly / AWS) → Production (Neon Postgres)
 
 Each PR MUST include:
 ```
@@ -151,8 +151,8 @@ The UPRISE monorepo uses GitHub Actions for comprehensive continuous integration
 ### Workflows
 
 #### 1. Main CI Pipeline (`ci.yml`)
-**Triggers:** Pull requests and pushes to `main` and `develop` branches  
-**Purpose:** Comprehensive validation of all code changes  
+**Triggers:** Pull requests and pushes to `main` and `develop` branches
+**Purpose:** Comprehensive validation of all code changes
 
 **Jobs:**
 - **Install Dependencies** - Installs and caches pnpm dependencies
@@ -173,8 +173,8 @@ The UPRISE monorepo uses GitHub Actions for comprehensive continuous integration
 **View Status:** [![CI Pipeline](https://i.ytimg.com/vi/NpPcMf-IpsM/maxresdefault.jpg)
 
 #### 2. Secrets Scanning (`secrets-check.yml`)
-**Triggers:** Pull requests, pushes to `main`/`develop`, weekly schedule (Sundays)  
-**Purpose:** Detect accidentally committed secrets and sensitive data  
+**Triggers:** Pull requests, pushes to `main`/`develop`, weekly schedule (Sundays)
+**Purpose:** Detect accidentally committed secrets and sensitive data
 
 **Scanners:**
 - **Gitleaks** - Industry-standard secret detection
@@ -199,8 +199,8 @@ The UPRISE monorepo uses GitHub Actions for comprehensive continuous integration
 **View Status:** [![Secrets Scan](https://i.sstatic.net/V03aiVth.png)
 
 #### 3. Infrastructure Policy Check (`infra-policy-check.yml`)
-**Triggers:** Changes to `apps/web/**` or policy scripts, manual dispatch  
-**Purpose:** Enforce web-tier contract boundaries (T5)  
+**Triggers:** Changes to `apps/web/**` or policy scripts, manual dispatch
+**Purpose:** Enforce web-tier contract boundaries (T5)
 
 **What It Checks:**
 - No direct database imports in web tier
@@ -507,7 +507,7 @@ import { api } from '@/lib/api';
 
 ## 🧩 Agent Rules
 
-1. **Follow the Critical Infra Note** — DeepAgent may run tests, not production workloads.
+1. **Follow the Critical Infra Note** — Supercomputer may run tests, not production workloads.
 2. **Keep Docs Current** — Every merged PR must update `CHANGELOG.md` and, if scope touches architecture or ops, update this `RUNBOOK.md`.
 3. **Annotate PRs** — Link to affected specification(s) in `/docs/specs` (and `/docs/Specifications` while legacy IDs are still referenced).
 4. **Blockers** — Any CI error tagged `infra-policy-check` halts merge until fixed.
@@ -518,9 +518,9 @@ import { api } from '@/lib/api';
 
 | Interval | Task | Owner |
 |----------|------|-------|
-| Daily | CI: lint/type/build pass | DeepAgent |
-| Nightly | E2E (web) + socket smoke | DeepAgent |
-| Weekly | Update CHANGELOG from merged PRs | DeepAgent |
+| Daily | CI: lint/type/build pass | Supercomputer |
+| Nightly | E2E (web) + socket smoke | Supercomputer |
+| Weekly | Update CHANGELOG from merged PRs | Supercomputer |
 | Per Phase | Publish phase completion report | PM/Lead Agent |
 
 ---

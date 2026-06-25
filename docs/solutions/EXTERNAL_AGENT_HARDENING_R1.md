@@ -143,6 +143,12 @@ Do:
 3. consolidate outputs into one source-grounded summary
 4. verify output consistency before returning
 
+For Abacus Agent Swarm / Fusion-style work, also use
+`docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md`. Swarms should be
+reserved for independent deliverables, read-only complex-area mapping, parallel
+audit scouting, and decision packets. Do not use a swarm as the default owner
+for one tightly coupled implementation branch.
+
 ## Good Prompts Should Explicitly Include
 - authority files to read first
 - conflict-resolution instruction

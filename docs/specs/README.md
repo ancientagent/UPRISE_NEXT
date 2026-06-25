@@ -6,6 +6,12 @@ Feature and system specifications, organized by module. Specs are the source of 
 - [`communities/`](./communities/README.md) — Community + geo features (PostGIS, verification, discovery).
 - [`users/`](./users/README.md) — Auth, onboarding, roles, profiles.
 - [`system/`](./system/README.md) — Cross-cutting concerns (logging, analytics, CI/CD, observability).
+- [`media/`](./media/README.md) — Release Deck media eligibility and deferred media pipeline contracts.
+
+## Contract Ownership
+- Cross-system rules should have one owner spec or one clearly named owner section under `docs/specs/**`.
+- Briefs and handoffs should summarize or link to the owner spec, not duplicate every rule.
+- Use [`system/documentation-framework.md`](./system/documentation-framework.md) for the lane-agent model, Linear issue structure, reviewer routing, question discipline, and handoff promotion rules.
 
 ## Templates
 - [`TEMPLATE.md`](./TEMPLATE.md) — Standard spec template (copy to start a new spec).
@@ -74,6 +80,10 @@ This roadmap lists new product specs to be authored from `docs/canon/`.
 - `economy/revenue-and-pricing.md` — **Revenue and Pricing** (`ECON-REVENUE`)
   Canon sources:
   - `Legacy Narrative plus Context .md (21.x)`
+  - `Master Revenue Strategy Canonon.md`
+- `media/release-deck-and-eligibility.md` — **Release Deck And Eligibility** (`MEDIA-RELEASE-DECK`)
+  Canon sources:
+  - `Master Application Surfaces, Capabilities & Lifecycle Canon.md`
   - `Master Revenue Strategy Canonon.md`
 - `engagement/activity-points-and-analytics.md` — **Activity Points and Analytics** (`ENG-ACTIVITY`)
   Canon sources:

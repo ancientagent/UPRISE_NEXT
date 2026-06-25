@@ -5,6 +5,8 @@ Do not implement these items until they are locked.
 
 ## 1) Scene & Broadcast Thresholds
 - **Sect Uprise activation threshold**: when artists in the Sect sign a motion totaling **45 minutes of playtime**, the Sect Uprise becomes available.
+- **City-tier community split/activation threshold**: define the numeric/evidence requirements for registered local artists/sources, committed catalog, and source activity that justify splitting a new active city-tier Home Scene from an existing major-node/music-capital community. Listener demand or onboarding counts alone must not activate a music community.
+- **Community activation/cutover workflow**: define the Registrar/source workflow for creating the new active city-tier `Community`, assigning source entities, routing future uploads, and messaging listeners whose submitted/GPS city differs from their assigned major-node Home Scene.
 - **City → State propagation threshold**
 - **State → National propagation threshold**
 

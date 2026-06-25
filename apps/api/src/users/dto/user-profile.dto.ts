@@ -5,3 +5,9 @@ export const SetCollectionDisplaySchema = z.object({
 });
 
 export type SetCollectionDisplayDto = z.infer<typeof SetCollectionDisplaySchema>;
+
+export const MusicCommunityPreferenceSchema = z.object({
+  musicCommunity: z.string().min(1),
+});
+
+export type MusicCommunityPreferenceDto = z.infer<typeof MusicCommunityPreferenceSchema>;

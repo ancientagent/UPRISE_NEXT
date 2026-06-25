@@ -5,6 +5,9 @@ import { engagementToScore, isValidEngagementScore } from './engagement.utils';
 import type { TrackEngageDto, EngagementType } from './dto/track-engage.dto';
 import type { CreateTrackDto } from './dto/create-track.dto';
 
+const RELEASE_DECK_MAX_ACTIVE_ROTATION_SECONDS = 20 * 60;
+const RELEASE_DECK_MAX_READY_MUSIC_SLOTS = 3;
+
 @Injectable()
 export class TracksService {
   constructor(private prisma: PrismaService) {}
@@ -54,6 +57,8 @@ export class TracksService {
       }
     }
 
+    const status = dto.status ?? 'ready';
+
     if (dto.communityId) {
       const community = await this.prisma.community.findUnique({
         where: { id: dto.communityId },
@@ -61,6 +66,40 @@ export class TracksService {
       });
       if (!community) {
         throw new NotFoundException({ success: false, error: { message: 'Community not found' } });
+      }
+    }
+
+    if (managedArtistBand && dto.communityId && status === 'ready') {
+      const existingReadyTrackCount = await this.prisma.track.count({
+        where: {
+          artistBandId: managedArtistBand.id,
+          communityId: dto.communityId,
+          status: 'ready',
+        },
+      });
+
+      if (existingReadyTrackCount >= RELEASE_DECK_MAX_READY_MUSIC_SLOTS) {
+        throw new BadRequestException(
+          'Release Deck allows 3 active music slots per source per community',
+        );
+      }
+
+      const existingReadyDuration = await this.prisma.track.aggregate({
+        where: {
+          artistBandId: managedArtistBand.id,
+          communityId: dto.communityId,
+          status: 'ready',
+        },
+        _sum: {
+          duration: true,
+        },
+      });
+
+      const activeRotationSeconds = (existingReadyDuration._sum.duration ?? 0) + dto.duration;
+      if (activeRotationSeconds > RELEASE_DECK_MAX_ACTIVE_ROTATION_SECONDS) {
+        throw new BadRequestException(
+          'Release Deck active rotation cap is 20 minutes per source per community',
+        );
       }
     }
 
@@ -74,7 +113,7 @@ export class TracksService {
         fileUrl: dto.fileUrl,
         coverArt: dto.coverArt ?? null,
         communityId: dto.communityId ?? null,
-        status: dto.status ?? 'ready',
+        status,
         uploadedById: userId,
       },
     });

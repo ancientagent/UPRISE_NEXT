@@ -304,6 +304,53 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).not.toContain('Tier Snapshot');
   });
 
+  it('locks music-community preferences into the listener profile workspace', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const expandedProfileBranch = plotPageSource
+      .split('{isProfileExpanded ? (')[1]
+      .split('\n        ) : (\n          <>')[0];
+
+    expect(plotPageSource).toContain('getMusicCommunityPreferences(token)');
+    expect(plotPageSource).toContain('addMusicCommunityPreference(musicCommunityPreferenceDraft, token)');
+    expect(plotPageSource).toContain('setDefaultMusicCommunityPreference(musicCommunity, token)');
+    expect(plotPageSource).toContain("const [musicCommunityPreferenceDraft, setMusicCommunityPreferenceDraft] = useState('');");
+    expect(plotPageSource).toContain('MUSIC_COMMUNITIES.filter');
+    expect(plotPageSource).toContain('resolvedRollerMusicCommunities');
+    expect(plotPageSource).toContain('homeSceneRoller.items.map((item) => item.musicCommunity.trim().toLowerCase())');
+    expect(plotPageSource).toContain('resolvedRollerMusicCommunities.has(');
+    expect(expandedProfileBranch).toContain('Music Communities');
+    expect(expandedProfileBranch).toContain('Add a music community');
+    expect(expandedProfileBranch).toContain('Make default');
+    expect(expandedProfileBranch).toContain('Default Home Scene');
+    expect(expandedProfileBranch).toContain('In Home Scene Roller');
+    expect(expandedProfileBranch).toContain('Profile-only until active scene');
+    expect(expandedProfileBranch).toContain('Preferences stay in your profile and re-resolve when your current city changes.');
+    expect(expandedProfileBranch).not.toContain('Create community');
+    expect(expandedProfileBranch).not.toContain('Launch community');
+    expect(expandedProfileBranch).not.toContain('Source Dashboard');
+    expect(expandedProfileBranch).not.toContain('Release Deck');
+    expect(expandedProfileBranch).not.toContain('Print Shop');
+    expect(expandedProfileBranch).not.toContain('Registrar');
+  });
+
+  it('locks Home Scene roller into Plot as the active scene shortcut', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('getHomeSceneRoller(token)');
+    expect(plotPageSource).toContain('tuneDiscoverScene(item.sceneId, token)');
+    expect(plotPageSource).toContain('getCommunityById(item.sceneId, token)');
+    expect(plotPageSource).toContain('setSelectedCommunity(nextCommunity)');
+    expect(plotPageSource).toContain('setDiscoveryContext(context)');
+    expect(plotPageSource).toContain('data-slot="home-scene-roller"');
+    expect(plotPageSource).toContain('Home Scene Roller');
+    expect(plotPageSource).toContain('homeSceneRoller.items.map((item) =>');
+    expect(plotPageSource).toContain('handleHomeSceneRollerSelect(item)');
+    expect(plotPageSource).toContain(
+      "item.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'"
+    );
+    expect(plotPageSource).not.toContain('Saved Away Scene Roller');
+  });
+
   it('locks Top Songs + Scene Activity to archive-only placement', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
@@ -378,7 +425,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).not.toContain('comparative artist scoring');
   });
 
-  it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
+  it('locks proxy scene notice discoverability to the existing notification icon on /plot', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain('playerTier,');
@@ -395,10 +442,10 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('onPointerDown={(event) => {');
     expect(plotPageSource).toContain('event.stopPropagation();');
     expect(plotPageSource).toContain('setIsNotificationPanelOpen((open) => !open)');
-    expect(plotPageSource).toContain('Pioneer Follow-up');
-    expect(plotPageSource).toContain('Your Home Scene is still pioneering.');
+    expect(plotPageSource).toContain('Proxy Scene Notice');
+    expect(plotPageSource).toContain('Your submitted Home Scene is not active yet.');
     expect(plotPageSource).toContain('nearest active city');
-    expect(plotPageSource).toContain('establish or uprise your own city scene');
+    expect(plotPageSource).toContain('tell local bands and artists to register with UPRISE');
     expect(plotPageSource).toContain('aria-label="More menu"');
   });
 

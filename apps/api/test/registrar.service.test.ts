@@ -2917,6 +2917,57 @@ describe('RegistrarService', () => {
     await expect(service.submitArtistBandRegistration('u-1', validDto)).rejects.toThrow(ForbiddenException);
   });
 
+  it('allows proxy-scene artist registration while preserving natural source origin', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-austin-punk',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      gpsVerified: true,
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'punk',
+      tunedSceneId: 'scene-austin-punk',
+    });
+    mockPrisma.registrarEntry.create.mockResolvedValue({
+      id: 'reg-proxy-1',
+      type: 'artist_band_registration',
+      status: 'submitted',
+      sceneId: 'scene-austin-punk',
+      sourceOriginCity: 'El Paso',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
+      createdById: 'u-1',
+      payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+      createdAt: new Date('2026-02-20T14:10:00.000Z'),
+    });
+    mockPrisma.user.findMany.mockResolvedValue([]);
+    mockPrisma.registrarArtistMember.createMany.mockResolvedValue({ count: 2 });
+
+    const result = await service.submitArtistBandRegistration('u-1', {
+      ...validDto,
+      sceneId: 'scene-austin-punk',
+    });
+
+    expect(mockPrisma.registrarEntry.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          sceneId: 'scene-austin-punk',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        }),
+      }),
+    );
+    expect(result.sourceOriginCity).toBe('El Paso');
+    expect(result.sourceOriginState).toBe('TX');
+    expect(result.sourceOriginMusicCommunity).toBe('punk');
+  });
+
   it('creates submitted registrar entry and member invite records', async () => {
     mockPrisma.community.findUnique.mockResolvedValue({
       id: 'scene-1',
@@ -2953,6 +3004,9 @@ describe('RegistrarService', () => {
           status: 'submitted',
           sceneId: 'scene-1',
           createdById: 'u-1',
+          sourceOriginCity: 'Austin',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
         }),
       }),
     );
@@ -2978,6 +3032,9 @@ describe('RegistrarService', () => {
       sceneId: 'scene-1',
       createdById: 'u-1',
       artistBandId: null,
+      sourceOriginCity: 'El Paso',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
       payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
     });
     mockPrisma.artistBand.create.mockResolvedValue({
@@ -2986,6 +3043,9 @@ describe('RegistrarService', () => {
       slug: 'static-signal',
       entityType: 'band',
       homeSceneId: 'scene-1',
+      sourceOriginCity: 'El Paso',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
       createdById: 'u-1',
       registrarEntryRef: 'reg-2',
       createdAt: new Date('2026-02-20T17:10:00.000Z'),
@@ -3006,6 +3066,16 @@ describe('RegistrarService', () => {
 
     expect(result.materialized).toBe(true);
     expect(result.artistBand.id).toBe('ab-1');
+    expect(mockPrisma.artistBand.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          homeSceneId: 'scene-1',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        }),
+      }),
+    );
     expect(mockPrisma.artistBandMember.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

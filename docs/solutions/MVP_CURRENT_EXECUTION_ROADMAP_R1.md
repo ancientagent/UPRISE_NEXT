@@ -44,7 +44,7 @@ Explicitly not part of the current MVP core:
 - No platform-trope drift.
 - No web-tier DB access or secret leakage.
 - No mobile-first planning against the current repo unless explicitly scoped as a separate mobile pass.
-- DeepAgent/local infra is dev/CI only; hosted/shared environment targets are external.
+- Supercomputer/local infra is dev/CI only; hosted/shared environment targets are external.
 
 ## MVP Phases
 
@@ -124,7 +124,7 @@ Execution focus:
 - Move hosted DB target to Neon Postgres + PostGIS.
 - Keep local Postgres/PostGIS for local development.
 - Wire hosted env vars and migration flow cleanly.
-- Ensure web/api deployment targets are explicit and non-DeepAgent.
+- Ensure web/api deployment targets are explicit and non-Supercomputer.
 
 Exit criteria:
 - Shared/staging environment exists.

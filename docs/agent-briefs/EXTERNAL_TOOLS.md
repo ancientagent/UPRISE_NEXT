@@ -38,6 +38,7 @@ External guidance:
 
 - `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`
 - `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
+- `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md`
 - `docs/solutions/AGENT_WIKI_STEERING_R1.md`
 - `docs/solutions/REPO_AUTHORITY_MAP_R1.md`
 - `.devin/wiki.json`
@@ -62,6 +63,10 @@ Handoffs:
 ## Current Truth
 
 - External assistants never outrank repo truth.
+- Abacus Agent Swarms / Fusion-style workflows are best for independent
+  deliverables, read-only mapping, audit scouting, and decision packets; they
+  should not be used as the default owner for one tightly coupled implementation
+  slice.
 - External assistants should acquire context before answering or designing.
 - External assistants must separate locked now, implemented now, deferred, and historical/later-version context.
 - Hermes should be used as a read-only auditor or launch reviewer unless the user explicitly changes the task to implementation.
@@ -76,6 +81,9 @@ Handoffs:
 
 - `.devin/wiki.json` provides generated-wiki steering and page plan.
 - `.deepagent-desktop/rules/uprise_next_rules.md` provides Abacus/Desktop-style external assistant rules.
+- `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md` defines when to use
+  Abacus Agent Swarms for UPRISE, how to split worker lanes, and how to evaluate
+  the first swarm experiment.
 - `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md` provides the reusable read-only Hermes auditor role and current audit prompt.
 - `docs/agent-briefs/UPRISE_HERMES_LAUNCH_REVIEWER.md` provides the narrower post-implementation / post-merge Hermes reviewer role for one named issue, PR, commit, or launch-readiness slice.
 - `docs/handoff/agent-control/HERMES_LAUNCH_REVIEW_SHIM.md` provides copy-paste launch prompts and queue wiring for Hermes launch reviews.
@@ -91,7 +99,7 @@ Load only if touched:
 - `ARTIST_PROFILE_SOURCE_DASHBOARD.md` for Artist Profile, source dashboard, Release Deck, or Print Shop prompts.
 - `EVENTS_ARCHIVE.md` for Events, Archive, flyers, calendar, or stats/history prompts.
 - `BUSINESS_MONETIZATION.md` for business, promo, coupon, offer, monetization, premium analytics, launch revenue prompts.
-- `ONBOARDING_HOME_SCENE.md` for onboarding, Home Scene, GPS, pioneer, or first-run prompts.
+- `ONBOARDING_HOME_SCENE.md` for onboarding, Home Scene, GPS, major-node assignment, or first-run prompts.
 - `REGISTRAR_GOVERNANCE.md` for Registrar, capability, backing, governance, or promoter capability prompts.
 
 ## Prompting Boundaries

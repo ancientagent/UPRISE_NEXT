@@ -12,10 +12,10 @@ Status: operational guidance derived from `docs/solutions/NARRATIVE_RECONCILIATI
 
 ## Carry Forward As Already Known
 
-These points should be treated as part of working understanding unless a newer repo-canon source explicitly narrows them:
+These points should be treated as part of working understanding unless a newer active owner spec explicitly narrows them:
 
 ### Structural locks from repo canon
-- nearest-active onboarding fallback and preserved pioneer intent
+- nearest-active onboarding fallback for inactive submitted Home Scenes, with submitted `city + state + music community` preserved as Home Scene metadata and user-facing language framed as proxy-scene assignment rather than listener-side pioneer activation
 - users tune into Uprises through RaDIYo; do not collapse `Scene` and `Uprise` into the same thing
 - Fair Play is Two-Pool Broadcast V1, with recurrence and propagation separated
 - Registrar scope includes artist, promoter, and project activation

@@ -6,7 +6,7 @@ Last updated: 2026-06-15
 
 ## Purpose
 
-Define the practical path from the current DeepAgent/dev environment into the
+Define the practical path from the current Supercomputer dev environment into the
 intended hosted stack without weakening existing architecture rules.
 
 This document does not replace `docs/STRATEGY_CRITICAL_INFRA_NOTE.md`,
@@ -28,7 +28,7 @@ The repo is already shaped as a hosted multi-service system:
   Postgres or AWS RDS.
 - Media storage target is S3 or Cloudflare R2.
 
-DeepAgent remains valid for development, CI, local orchestration, test runners,
+Supercomputer remains valid for development, CI, local orchestration, test runners,
 and agent throughput. It must not become the production host, production
 database, production API, worker compute, or media storage layer.
 
@@ -205,7 +205,7 @@ Recommended before production:
 
 ## Do Not Do Yet
 
-- Do not bind production to DeepAgent.
+- Do not bind production to Supercomputer.
 - Do not move production data into the local Docker Postgres.
 - Do not expose database credentials to `apps/web`.
 - Do not add paid billing or business-dashboard runtime as part of deployment

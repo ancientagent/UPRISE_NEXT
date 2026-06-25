@@ -1511,6 +1511,7 @@ export class RegistrarService {
           homeSceneCity: true,
           homeSceneState: true,
           homeSceneCommunity: true,
+          tunedSceneId: true,
         },
       }),
     ]);
@@ -1531,6 +1532,9 @@ export class RegistrarService {
     const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
     const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
     const homeCommunity = (user.homeSceneCommunity ?? '').trim().toLowerCase();
+    const sourceOriginCity = (user.homeSceneCity ?? '').trim();
+    const sourceOriginState = (user.homeSceneState ?? '').trim();
+    const sourceOriginMusicCommunity = (user.homeSceneCommunity ?? '').trim();
     const sceneCity = (scene.city ?? '').trim().toLowerCase();
     const sceneState = (scene.state ?? '').trim().toLowerCase();
     const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
@@ -1539,7 +1543,12 @@ export class RegistrarService {
       throw new ForbiddenException('Registrar access requires an established Home Scene');
     }
 
-    if (homeCity !== sceneCity || homeState !== sceneState || homeCommunity !== sceneCommunity) {
+    const isNaturalHomeScene = homeCity === sceneCity && homeState === sceneState && homeCommunity === sceneCommunity;
+    const isAssignedProxyScene = Boolean(
+      user.tunedSceneId === scene.id && sceneCity && sceneState && homeCommunity === sceneCommunity,
+    );
+
+    if (!isNaturalHomeScene && !isAssignedProxyScene) {
       throw new ForbiddenException('Registrar submissions are limited to your Home Scene');
     }
 
@@ -1549,6 +1558,9 @@ export class RegistrarService {
         status: 'submitted',
         sceneId: scene.id,
         createdById: user.id,
+        sourceOriginCity,
+        sourceOriginState,
+        sourceOriginMusicCommunity,
         payload: {
           name: dto.name,
           slug: dto.slug,
@@ -1561,6 +1573,9 @@ export class RegistrarService {
         status: true,
         sceneId: true,
         createdById: true,
+        sourceOriginCity: true,
+        sourceOriginState: true,
+        sourceOriginMusicCommunity: true,
         payload: true,
         createdAt: true,
       },
@@ -1611,6 +1626,9 @@ export class RegistrarService {
         sceneId: true,
         createdById: true,
         artistBandId: true,
+        sourceOriginCity: true,
+        sourceOriginState: true,
+        sourceOriginMusicCommunity: true,
         payload: true,
       },
     });
@@ -1634,6 +1652,9 @@ export class RegistrarService {
           slug: true,
           entityType: true,
           homeSceneId: true,
+          sourceOriginCity: true,
+          sourceOriginState: true,
+          sourceOriginMusicCommunity: true,
           createdById: true,
           registrarEntryRef: true,
           createdAt: true,
@@ -1667,6 +1688,9 @@ export class RegistrarService {
             slug,
             entityType,
             homeSceneId: entry.sceneId,
+            sourceOriginCity: entry.sourceOriginCity,
+            sourceOriginState: entry.sourceOriginState,
+            sourceOriginMusicCommunity: entry.sourceOriginMusicCommunity,
             createdById: userId,
             registrarEntryRef: entry.id,
           },
@@ -1676,6 +1700,9 @@ export class RegistrarService {
             slug: true,
             entityType: true,
             homeSceneId: true,
+            sourceOriginCity: true,
+            sourceOriginState: true,
+            sourceOriginMusicCommunity: true,
             createdById: true,
             registrarEntryRef: true,
             createdAt: true,

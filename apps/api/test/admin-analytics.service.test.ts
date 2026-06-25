@@ -1,11 +1,11 @@
 import { AdminAnalyticsService } from '../src/admin-analytics/admin-analytics.service';
 
 const mockPrisma = {
-  user: { count: jest.fn() },
-  community: { count: jest.fn() },
-  artistBand: { count: jest.fn() },
+  user: { count: jest.fn(), upsert: jest.fn(), updateMany: jest.fn() },
+  community: { count: jest.fn(), findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
+  artistBand: { count: jest.fn(), updateMany: jest.fn() },
   event: { count: jest.fn() },
-  track: { count: jest.fn(), aggregate: jest.fn(), findMany: jest.fn() },
+  track: { count: jest.fn(), aggregate: jest.fn(), findMany: jest.fn(), updateMany: jest.fn() },
   signal: { count: jest.fn() },
   follow: { count: jest.fn() },
   signalAction: { groupBy: jest.fn() },
@@ -110,5 +110,344 @@ describe('AdminAnalyticsService', () => {
         state: 2,
       },
     });
+  });
+
+  it('returns activation readiness diagnostics from source-origin approved playable minutes', async () => {
+    mockPrisma.track.findMany.mockResolvedValue([
+      {
+        id: 'el-paso-track-1',
+        duration: 900,
+        artistBand: {
+          id: 'source-1',
+          name: 'Static Signal',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+      {
+        id: 'el-paso-track-2',
+        duration: 600,
+        artistBand: {
+          id: 'source-1',
+          name: 'Static Signal',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+      {
+        id: 'el-paso-track-3',
+        duration: 600,
+        artistBand: {
+          id: 'source-2',
+          name: 'Border Current',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+      {
+        id: 'el-paso-track-4',
+        duration: 600,
+        artistBand: {
+          id: 'source-3',
+          name: 'Desert Choir',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+      {
+        id: 'el-paso-track-5',
+        duration: 600,
+        artistBand: {
+          id: 'source-4',
+          name: 'Franklin Static',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+      {
+        id: 'el-paso-track-6',
+        duration: 600,
+        artistBand: {
+          id: 'source-5',
+          name: 'Sun City Feedback',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+      {
+        id: 'austin-track-1',
+        duration: 500,
+        artistBand: {
+          id: 'source-austin',
+          name: 'Austin Source',
+          sourceOriginCity: 'Austin',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+    ]);
+    mockPrisma.community.findMany.mockResolvedValue([
+      {
+        id: 'scene-austin-punk',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'punk',
+        tier: 'city',
+        isActive: true,
+      },
+    ]);
+
+    const result = await service.getActivationReadinessDiagnostics();
+
+    expect(mockPrisma.track.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: 'ready',
+          artistBandId: { not: null },
+        }),
+      }),
+    );
+    expect(result.success).toBe(true);
+    expect(result.data.thresholds).toEqual({
+      requiredPlayableSeconds: 2700,
+      requiredPlayableMinutes: 45,
+      requiredDistinctSources: 5,
+      maxPlayableSecondsPerSource: 1200,
+      maxPlayableMinutesPerSource: 20,
+    });
+    expect(result.data.candidates).toEqual([
+      expect.objectContaining({
+        city: 'El Paso',
+        state: 'TX',
+        musicCommunity: 'punk',
+        distinctSourceCount: 5,
+        rawPlayableSeconds: 3900,
+        cappedPlayableSeconds: 3600,
+        cappedPlayableMinutes: 60,
+        ready: true,
+        existingActiveSceneId: null,
+      }),
+    ]);
+  });
+
+  it('excludes tracks without ready status or source-origin identity from activation readiness', async () => {
+    mockPrisma.track.findMany.mockResolvedValue([
+      {
+        id: 'processing-track',
+        duration: 600,
+        status: 'processing',
+        artistBand: {
+          id: 'source-processing',
+          name: 'Processing Source',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+      {
+        id: 'missing-origin-track',
+        duration: 600,
+        artistBand: {
+          id: 'source-missing-origin',
+          name: 'Missing Origin Source',
+          sourceOriginCity: null,
+          sourceOriginState: 'TX',
+          sourceOriginMusicCommunity: 'punk',
+        },
+      },
+    ]);
+    mockPrisma.community.findMany.mockResolvedValue([]);
+
+    const result = await service.getActivationReadinessDiagnostics();
+
+    expect(mockPrisma.track.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: 'ready',
+        }),
+      }),
+    );
+    expect(result.data.candidates).toEqual([]);
+  });
+
+  it('creates a missing natural scene and re-anchors matching sources when a ready tuple is manually activated', async () => {
+    mockPrisma.track.findMany.mockResolvedValue([
+      ...[1, 2, 3, 4, 5].map((index) => ({
+        id: `el-paso-track-${index}`,
+        duration: 600,
+        artistBand: {
+          id: `source-${index}`,
+          name: `El Paso Source ${index}`,
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'Texas',
+          sourceOriginMusicCommunity: 'Punk',
+        },
+      })),
+    ]);
+    mockPrisma.community.findMany.mockResolvedValue([]);
+    mockPrisma.community.findFirst.mockResolvedValue(null);
+    mockPrisma.user.upsert.mockResolvedValue({ id: 'system-user-1' });
+    mockPrisma.community.create.mockResolvedValue({
+      id: 'scene-el-paso-punk',
+      name: 'El Paso, Texas Punk',
+      city: 'El Paso',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.artistBand.updateMany.mockResolvedValue({ count: 5 });
+    mockPrisma.user.updateMany.mockResolvedValue({ count: 12 });
+
+    const result = await service.activateReadyCommunity({
+      city: 'El Paso',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+    });
+
+    expect(mockPrisma.community.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        name: 'El Paso, Texas Punk',
+        slug: 'home-scene-el-paso-texas-punk',
+        city: 'El Paso',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+        tier: 'city',
+        isActive: true,
+        createdById: 'system-user-1',
+      }),
+    });
+    expect(mockPrisma.artistBand.updateMany).toHaveBeenCalledWith({
+      where: {
+        sourceOriginCity: 'El Paso',
+        sourceOriginState: 'Texas',
+        sourceOriginMusicCommunity: 'Punk',
+      },
+      data: { homeSceneId: 'scene-el-paso-punk' },
+    });
+    expect(mockPrisma.user.updateMany).toHaveBeenCalledWith({
+      where: {
+        homeSceneCity: 'El Paso',
+        homeSceneState: 'Texas',
+        homeSceneCommunity: 'Punk',
+      },
+      data: expect.objectContaining({
+        tunedSceneId: 'scene-el-paso-punk',
+        tunedSceneUpdatedAt: expect.any(Date),
+      }),
+    });
+    expect(mockPrisma.track.updateMany).not.toHaveBeenCalled();
+    expect(result.data).toEqual(
+      expect.objectContaining({
+        sceneId: 'scene-el-paso-punk',
+        city: 'El Paso',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+        created: true,
+        activated: true,
+        reanchoredSourceCount: 5,
+        cutoverListenerCount: 12,
+      }),
+    );
+  });
+
+  it('activates an existing inactive natural scene without creating a duplicate', async () => {
+    mockPrisma.track.findMany.mockResolvedValue([
+      ...[1, 2, 3, 4, 5].map((index) => ({
+        id: `el-paso-track-${index}`,
+        duration: 600,
+        artistBand: {
+          id: `source-${index}`,
+          name: `El Paso Source ${index}`,
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'Texas',
+          sourceOriginMusicCommunity: 'Punk',
+        },
+      })),
+    ]);
+    mockPrisma.community.findMany.mockResolvedValue([]);
+    mockPrisma.community.findFirst.mockResolvedValue({
+      id: 'inactive-el-paso-punk',
+      city: 'El Paso',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: false,
+    });
+    mockPrisma.community.update.mockResolvedValue({
+      id: 'inactive-el-paso-punk',
+      city: 'El Paso',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+    mockPrisma.artistBand.updateMany.mockResolvedValue({ count: 5 });
+    mockPrisma.user.updateMany.mockResolvedValue({ count: 7 });
+
+    const result = await service.activateReadyCommunity({
+      city: 'El Paso',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+    });
+
+    expect(mockPrisma.community.update).toHaveBeenCalledWith({
+      where: { id: 'inactive-el-paso-punk' },
+      data: { isActive: true },
+    });
+    expect(mockPrisma.community.create).not.toHaveBeenCalled();
+    expect(result.data.created).toBe(false);
+    expect(result.data.sceneId).toBe('inactive-el-paso-punk');
+    expect(result.data.cutoverListenerCount).toBe(7);
+  });
+
+  it('rejects manual activation when the source-origin tuple is not ready', async () => {
+    mockPrisma.track.findMany.mockResolvedValue([
+      {
+        id: 'short-track',
+        duration: 600,
+        artistBand: {
+          id: 'source-1',
+          name: 'One Source',
+          sourceOriginCity: 'El Paso',
+          sourceOriginState: 'Texas',
+          sourceOriginMusicCommunity: 'Punk',
+        },
+      },
+    ]);
+    mockPrisma.community.findMany.mockResolvedValue([]);
+
+    await expect(
+      service.activateReadyCommunity({
+        city: 'El Paso',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+      }),
+    ).rejects.toThrow('Activation readiness threshold has not been met');
+
+    expect(mockPrisma.community.create).not.toHaveBeenCalled();
+    expect(mockPrisma.community.update).not.toHaveBeenCalled();
+    expect(mockPrisma.artistBand.updateMany).not.toHaveBeenCalled();
+    expect(mockPrisma.user.updateMany).not.toHaveBeenCalled();
+  });
+
+  it('rejects manual activation requests with missing tuple fields as bad requests', async () => {
+    await expect(
+      service.activateReadyCommunity({
+        city: 'El Paso',
+        state: '',
+      } as any),
+    ).rejects.toThrow('Activation requires city, state, and musicCommunity');
+
+    expect(mockPrisma.track.findMany).not.toHaveBeenCalled();
+    expect(mockPrisma.community.create).not.toHaveBeenCalled();
+    expect(mockPrisma.artistBand.updateMany).not.toHaveBeenCalled();
+    expect(mockPrisma.user.updateMany).not.toHaveBeenCalled();
   });
 });

@@ -18,9 +18,31 @@ interface BroadcastSceneAnchor {
   tier: string;
 }
 
+type VoteUserContext = {
+  id: string;
+  gpsVerified: boolean;
+  tunedSceneId: string | null;
+  homeSceneCity: string | null;
+  homeSceneState: string | null;
+  homeSceneCommunity: string | null;
+};
+
+type VoteSceneContext = {
+  id: string;
+  tier: string;
+  isActive: boolean;
+  city: string | null;
+  state: string | null;
+  musicCommunity: string | null;
+};
+
 @Injectable()
 export class FairPlayService {
   constructor(private prisma: PrismaService) {}
+
+  private normalizeVoteScopeValue(value?: string | null) {
+    return (value ?? '').trim().toLowerCase();
+  }
 
   private buildEmptyRotationMeta(
     scene: Pick<BroadcastSceneAnchor, 'id' | 'name' | 'city' | 'state' | 'musicCommunity' | 'tier'>,
@@ -177,6 +199,57 @@ export class FairPlayService {
     }
 
     return stateScene;
+  }
+
+  private async isRegisteredPreferenceVotingScene(userId: string, user: VoteUserContext, scene: VoteSceneContext) {
+    const homeCity = user.homeSceneCity?.trim();
+    const homeState = user.homeSceneState?.trim();
+    const sceneMusicCommunity = scene.musicCommunity?.trim();
+
+    if (!homeCity || !homeState || !sceneMusicCommunity || scene.tier !== 'city' || !scene.isActive) {
+      return false;
+    }
+
+    const preference = await this.prisma.userMusicCommunityPreference.findUnique({
+      where: { userId_musicCommunity: { userId, musicCommunity: sceneMusicCommunity } },
+      select: { id: true },
+    });
+
+    if (!preference) {
+      return false;
+    }
+
+    const sceneCity = this.normalizeVoteScopeValue(scene.city);
+    const sceneState = this.normalizeVoteScopeValue(scene.state);
+    if (sceneCity === this.normalizeVoteScopeValue(homeCity) && sceneState === this.normalizeVoteScopeValue(homeState)) {
+      return true;
+    }
+
+    const exactScene = await this.prisma.community.findFirst({
+      where: { city: homeCity, state: homeState, musicCommunity: sceneMusicCommunity, tier: 'city', isActive: true },
+      select: { id: true },
+    });
+    if (exactScene) {
+      return exactScene.id === scene.id;
+    }
+
+    const proxyOrder = [{ memberCount: 'desc' as const }, { name: 'asc' as const }, { id: 'asc' as const }];
+    const sameStateProxy = await this.prisma.community.findFirst({
+      where: { state: homeState, musicCommunity: sceneMusicCommunity, tier: 'city', isActive: true },
+      select: { id: true },
+      orderBy: proxyOrder,
+    });
+    if (sameStateProxy) {
+      return sameStateProxy.id === scene.id;
+    }
+
+    const anyProxy = await this.prisma.community.findFirst({
+      where: { musicCommunity: sceneMusicCommunity, tier: 'city', isActive: true },
+      select: { id: true },
+      orderBy: proxyOrder,
+    });
+
+    return anyProxy?.id === scene.id;
   }
 
   private async getFairPlayConfigSnapshot() {
@@ -347,6 +420,7 @@ export class FairPlayService {
         select: {
           id: true,
           tier: true,
+          isActive: true,
           city: true,
           state: true,
           musicCommunity: true,
@@ -377,6 +451,12 @@ export class FairPlayService {
         error: { message: 'Track is not currently in the scene broadcast' },
       });
     }
+    if (scene.tier !== 'city') {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'Voting is limited to city-tier scenes' },
+      });
+    }
 
     if (!user.gpsVerified) {
       throw new ForbiddenException({
@@ -385,12 +465,12 @@ export class FairPlayService {
       });
     }
 
-    const homeCity = (user.homeSceneCity ?? '').toLowerCase();
-    const homeState = (user.homeSceneState ?? '').toLowerCase();
-    const homeCommunity = (user.homeSceneCommunity ?? '').toLowerCase();
-    const sceneCity = (scene.city ?? '').toLowerCase();
-    const sceneState = (scene.state ?? '').toLowerCase();
-    const sceneCommunity = (scene.musicCommunity ?? '').toLowerCase();
+    const homeCity = this.normalizeVoteScopeValue(user.homeSceneCity);
+    const homeState = this.normalizeVoteScopeValue(user.homeSceneState);
+    const homeCommunity = this.normalizeVoteScopeValue(user.homeSceneCommunity);
+    const sceneCity = this.normalizeVoteScopeValue(scene.city);
+    const sceneState = this.normalizeVoteScopeValue(scene.state);
+    const sceneCommunity = this.normalizeVoteScopeValue(scene.musicCommunity);
 
     const isHomeSceneMatch =
       Boolean(homeCity && homeState && homeCommunity) &&
@@ -398,11 +478,17 @@ export class FairPlayService {
       homeState === sceneState &&
       homeCommunity === sceneCommunity;
     const isFallbackVotingScene = Boolean(user.tunedSceneId && user.tunedSceneId === scene.id);
+    const isRegisteredPreferenceScene =
+      !isHomeSceneMatch && !isFallbackVotingScene
+        ? await this.isRegisteredPreferenceVotingScene(userId, user, scene)
+        : false;
 
-    if (!isHomeSceneMatch && !isFallbackVotingScene) {
+    if (!isHomeSceneMatch && !isFallbackVotingScene && !isRegisteredPreferenceScene) {
       throw new ForbiddenException({
         success: false,
-        error: { message: 'Voting is limited to your GPS-verified Home Scene or fallback voting scene' },
+        error: {
+          message: 'Voting is limited to your GPS-verified Home Scene, fallback scene, or registered music-community preferences',
+        },
       });
     }
 
