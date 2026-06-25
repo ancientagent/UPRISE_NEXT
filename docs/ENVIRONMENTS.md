@@ -1,6 +1,6 @@
 # 🌍 ENVIRONMENTS.md — Local & CI Setup
 
-**Repository:** `music-community-platform`  
+**Repository:** `music-community-platform`
 **Last Updated:** November 12, 2025 (America/Chicago)
 
 ---
@@ -8,7 +8,7 @@
 ## 📌 Policy (must-read)
 - **WSL-first** for web/api/socket/workers.
 - **Windows (non-admin PowerShell)** only for Android/React Native 0.66.x builds.
-- User-writable paths only (e.g., `D:\uprise_mob`, `C:\tools`, or WSL home).  
+- User-writable paths only (e.g., `D:\uprise_mob`, `C:\tools`, or WSL home).
 - **No** symlinks, **no** registry edits, **no** Set-ExecutionPolicy.
 
 See also: [`STRATEGY_CRITICAL_INFRA_NOTE.md`](./STRATEGY_CRITICAL_INFRA_NOTE.md)
@@ -41,7 +41,7 @@ pnpm -r build
 pnpm -r dev
 ```
 
-**Env vars:** copy `.env.example` → `.env` in root and per app as needed.  
+**Env vars:** copy `.env.example` → `.env` in root and per app as needed.
 Database defaults to a local/CI Postgres with **PostGIS**. For prod, use Neon/AWS RDS.
 
 ---
@@ -72,7 +72,7 @@ Database defaults to a local/CI Postgres with **PostGIS**. For prod, use Neon/AW
 ## 🗄️ Databases
 
 **Dev/CI:**
-- Prefer DeepAgent’s Postgres with **PostGIS** enabled; if unavailable, use Docker:
+- Prefer Supercomputer's Postgres with **PostGIS** enabled; if unavailable, use Docker:
 ```yaml
 # docker-compose.yml (dev only)
 services:
@@ -132,7 +132,7 @@ CORS_ORIGIN=
 
 ## 🔒 Security & Policy
 - Secrets never committed; use repo/environment secrets.
-- CI enforces **infra-policy-check** to block DeepAgent lock‑in.
+- CI enforces **infra-policy-check** to block Supercomputer lock‑in.
 - Web bundle must not reference secrets (`process.env`) in client components.
 
 ---

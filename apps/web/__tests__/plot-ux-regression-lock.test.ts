@@ -378,7 +378,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).not.toContain('comparative artist scoring');
   });
 
-  it('locks pioneer follow-up discoverability to the existing notification icon on /plot', () => {
+  it('locks proxy scene notice discoverability to the existing notification icon on /plot', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 
     expect(plotPageSource).toContain('playerTier,');
@@ -395,10 +395,10 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('onPointerDown={(event) => {');
     expect(plotPageSource).toContain('event.stopPropagation();');
     expect(plotPageSource).toContain('setIsNotificationPanelOpen((open) => !open)');
-    expect(plotPageSource).toContain('Pioneer Follow-up');
-    expect(plotPageSource).toContain('Your Home Scene is still pioneering.');
+    expect(plotPageSource).toContain('Proxy Scene Notice');
+    expect(plotPageSource).toContain('Your submitted Home Scene is not active yet.');
     expect(plotPageSource).toContain('nearest active city');
-    expect(plotPageSource).toContain('establish or uprise your own city scene');
+    expect(plotPageSource).toContain('tell local bands and artists to register with UPRISE');
     expect(plotPageSource).toContain('aria-label="More menu"');
   });
 

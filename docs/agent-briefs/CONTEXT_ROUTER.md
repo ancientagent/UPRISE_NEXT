@@ -379,7 +379,7 @@ Use when working on:
 - web-tier boundary
 - QA reports
 - environment failures
-- DeepAgent-to-hosted-stack transition planning
+- Supercomputer-to-hosted-stack transition planning
 - deploy environment variables and provider readiness
 
 Default load:
@@ -402,7 +402,7 @@ Work aims while focused:
 - classify issue as bug, stale, environment, fixture/data, or product decision
 - fix the narrow failure
 - verify on the current branch state
-- keep DeepAgent as dev/CI/control-plane only, not production infrastructure
+- keep Supercomputer as dev/CI/control-plane only, not production infrastructure
 - promote hosted staging in the order env matrix, healthchecks, manifests, Neon/PostGIS, storage, then production
 
 Exit criteria:

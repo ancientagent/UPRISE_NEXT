@@ -35,7 +35,7 @@ describe('/onboarding regression lock', () => {
     expect(onboardingSource).not.toContain('setMusicCommunity(missingMusicCommunityRequest');
   });
 
-  it('keeps unsigned review and pioneer fallback guidance available before auth-backed resolution exists', () => {
+  it('keeps unsigned review and proxy fallback guidance available before auth-backed resolution exists', () => {
     const onboardingSource = readRepoFile('src/app/onboarding/page.tsx');
 
     expect(onboardingSource).toContain('setHomeScene(selection);');
@@ -49,9 +49,9 @@ describe('/onboarding regression lock', () => {
       'const [stateSceneOptions, setStateSceneOptions] = useState<string[]>([]);'
     );
     expect(onboardingSource).toContain(
-      "{isPioneer ? 'Fallback listening scene' : 'Listening scene'}"
+      "{isPioneer ? 'Proxy listening scene' : 'Listening scene'}"
     );
-    expect(onboardingSource).toContain('stays saved as your Home Scene pioneer intent');
+    expect(onboardingSource).toContain('stays saved as your submitted Home Scene');
     expect(onboardingSource).toContain('Your selected city is not active yet.');
     expect(onboardingSource).toContain(
       "Active scenes in {state.trim()}: {stateSceneOptions.join(' · ')}"

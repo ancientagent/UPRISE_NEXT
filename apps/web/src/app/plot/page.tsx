@@ -928,18 +928,18 @@ export default function PlotPage() {
                     id="plot-pioneer-follow-up"
                     className="absolute right-0 top-10 z-20 w-72 rounded-[1.1rem] border border-black bg-[#f7f7ef] p-4 text-left shadow-[4px_4px_0_rgba(0,0,0,0.3)]"
                   >
-                    <p className="plot-wire-label">Pioneer Follow-up</p>
+                    <p className="plot-wire-label">Proxy Scene Notice</p>
                     <p className="mt-2 text-sm font-medium text-black">
                       {pioneerNotificationHomeScene.city}, {pioneerNotificationHomeScene.state} •{' '}
                       {pioneerNotificationHomeScene.musicCommunity}
                     </p>
                     <p className="mt-2 text-sm text-black/70">
-                      Your Home Scene is still pioneering. You are temporarily routed through the
-                      nearest active city scene for {pioneerNotificationHomeScene.musicCommunity}{' '}
-                      while your city builds.
+                      Your submitted Home Scene is not active yet. You are temporarily routed
+                      through the nearest active city scene for{' '}
+                      {pioneerNotificationHomeScene.musicCommunity}.
                     </p>
                     <p className="mt-2 text-sm text-black/70">
-                      Once enough local users join, you can establish or uprise your own city scene.
+                      To help that scene open, tell local bands and artists to register with UPRISE.
                     </p>
                   </div>
                 ) : null}

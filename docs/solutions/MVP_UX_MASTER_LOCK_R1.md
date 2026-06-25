@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: Founder + product engineering
-Last updated: 2026-04-25
+Last updated: 2026-06-25
 
 ## 1) Purpose
 Provide one deterministic UX source for current MVP implementation so agents do not drift across legacy references, partial docs, or conflicting prior drafts.
@@ -109,8 +109,9 @@ Social:
 Required onboarding semantics:
 - Home Scene resolution is required before stable Plot anchoring.
 - GPS is a voting eligibility gate only (participation still allowed without GPS).
-- If selected city-tier scene is inactive, auto-route to nearest active city scene for selected parent community.
-- Persist pioneer intent and show pioneer follow-up message via profile-strip notification icon.
+- If the submitted city-tier scene is inactive, route to the nearest active proxy city scene for the selected parent music community.
+- Preserve the submitted `city + state + music community` as the user's submitted Home Scene metadata, but do not create listener-side pioneer activation queues or promise community creation from listener demand.
+- If user messaging is needed, use proxy-scene language and point users toward local artist/source registration.
 
 ## 6) Expanded Profile Collection Workspace (MVP Lock)
 Locked section order:
@@ -133,7 +134,7 @@ Calendar rule:
 
 ### 7.2 Different from legacy (intentional)
 - Canon-first civic Plot semantics (no recommendation/ranking feed behavior)
-- Deterministic onboarding Home Scene routing + pioneer fallback messaging
+- Deterministic onboarding Home Scene routing + proxy-scene messaging for inactive submitted cities
 - Explicit MVP deferrals enforced (no speculative role/registrar/profile surfaces outside spec lock)
 - Engagement and player/profile interactions constrained by locked state model, not ad-hoc UI behavior
 
