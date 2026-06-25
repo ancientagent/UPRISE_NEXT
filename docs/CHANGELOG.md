@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added the UPRISE documentation/context framework as the owner system for contract ownership, lane-agent routing, Linear execution structure, reviewer routing, handoff promotion, and question discipline; see `docs/specs/system/documentation-framework.md`.
 - Added a Hermes reviewer clarification handoff that directs future review toward high-value source/activation/Fair Play/media/sect questions and away from repeated Home Scene roller micro-questions; see `docs/handoff/2026-06-25_hermes-reviewer-clarification-handoff.md`.
 - Added `docs/PLATFORM_START_HERE.md` as the repo-level five-minute UPRISE platform orientation and linked it from agent/docs routing so future agents start from current platform truths before lane-specific context.
 - Added `docs/handoff/2026-06-24_unsupported-product-questions-backlog.md` as a working backlog of unresolved product/architecture questions so clarification sessions can continue one question at a time without losing unsupported decisions.

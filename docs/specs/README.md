@@ -7,6 +7,11 @@ Feature and system specifications, organized by module. Specs are the source of 
 - [`users/`](./users/README.md) — Auth, onboarding, roles, profiles.
 - [`system/`](./system/README.md) — Cross-cutting concerns (logging, analytics, CI/CD, observability).
 
+## Contract Ownership
+- Cross-system rules should have one owner spec or one clearly named owner section under `docs/specs/**`.
+- Briefs and handoffs should summarize or link to the owner spec, not duplicate every rule.
+- Use [`system/documentation-framework.md`](./system/documentation-framework.md) for the lane-agent model, Linear issue structure, reviewer routing, question discipline, and handoff promotion rules.
+
 ## Templates
 - [`TEMPLATE.md`](./TEMPLATE.md) — Standard spec template (copy to start a new spec).
 

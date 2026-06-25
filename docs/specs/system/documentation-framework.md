@@ -1,68 +1,345 @@
 # Documentation Framework
 
-**ID:** `DOCS-FRAMEWORK`  
-**Status:** `active`  
-**Owner:** `platform`  
-**Last Updated:** `2026-06-24`
+**ID:** `DOCS-FRAMEWORK`
+**Status:** `active`
+**Owner:** `context-steward`
+**Last Updated:** `2026-06-25`
 
 ## Overview & Purpose
-UPRISE_NEXT is built and maintained by multiple contributors (often multiple coding agents) operating in parallel. This documentation framework standardizes how we:
-- describe architecture and boundaries,
-- write specs and templates,
-- capture decisions during implementation,
-- hand off work across agents without context loss.
 
-## User Roles & Use Cases
-- **New agents/contributors:** onboard quickly via a predictable doc entrypoint.
-- **Active implementers:** keep specs and handoffs current during work.
-- **Maintainers/reviewers:** review changes against explicit specs and documented decisions.
+UPRISE is built by multiple agents across product, code, design, QA, and provider lanes. This framework defines how those agents stay aware of what they are building without loading the entire repository history or inventing new product truth.
 
-## Functional Requirements
-- Provide layered entrypoints: `AGENTS.md` for agent non-negotiables, `docs/PLATFORM_START_HERE.md` for platform orientation, `docs/README.md` for docs navigation, and `docs/agent-briefs/CONTEXT_ROUTER.md` for lane routing.
-- Maintain a stable directory structure:
-  - `docs/blueprints/` (workflows/patterns),
-  - `docs/specs/` (module-organized specs + templates),
-  - `docs/handoff/` (agent docs + phase reports),
-  - `docs/solutions/` (recurring-issue playbooks),
-  - `docs/architecture/` (overviews and boundaries).
-- Keep the legacy canonical index intact while migration is ongoing: `docs/Specifications/`.
-- Ensure every docs folder has a `README.md` describing purpose and listing files.
+The goal is a contract-owned, lane-routed documentation system:
 
-## Non-Functional Requirements
-- **Onboarding:** new agents can find “what to read next” in < 5 minutes.
-- **Context control:** focused implementation uses lane-loaded context, while broad audits/architecture/deployment work may use the heavier authority pack defined in `AGENTS.md`.
-- **Traceability:** every substantial change links to a spec and/or handoff note.
-- **Low friction:** templates are copy/paste friendly and short enough to maintain.
+- orientation docs explain the platform quickly;
+- lane briefs route agents to the right context;
+- owner specs hold durable product/runtime contracts;
+- handoffs capture temporary execution history;
+- Linear tracks work execution, not product truth;
+- reviewers check outputs against owner contracts.
 
-## Architectural Boundaries
-- Docs must not contradict the web-tier contract (`apps/web/WEB_TIER_BOUNDARY.md`).
-- Spec changes that affect shared contracts should be mirrored in `packages/types`.
-- Keep legacy spec IDs stable until migration completes.
+This framework exists to prevent two failure modes:
 
-## Data Models & Migrations
-- None.
+1. agents lack enough context and build the wrong thing;
+2. agents load too much stale context and drift into contradictions or micro-question loops.
 
-## API Design
-- None.
+## Authority Model
 
-## Web UI / Client Behavior
-- None.
+Authority order remains:
+
+1. `AGENTS.md`
+2. `docs/canon/**` for doctrine and terminology
+3. active specs under `docs/specs/**`
+4. founder locks, active execution docs, and `docs/agent-briefs/**`
+5. current runtime code and tests
+6. dated handoffs under `docs/handoff/**`
+7. chat memory, external-agent output, and legacy docs
+
+If a newer active spec/brief intentionally overrides older canon wording, report the override and update routing docs as needed. Do not flatten the conflict by bulk-editing canon.
+
+## Document Layers
+
+### Layer 1: Orientation
+
+Purpose: give every agent a fast, current mental model.
+
+Files:
+
+- `AGENTS.md`
+- `docs/PLATFORM_START_HERE.md`
+- `docs/README.md`
+- `docs/agent-briefs/CONTEXT_ROUTER.md`
+
+Rules:
+
+- Keep orientation concise.
+- Include current truths, wrong assumptions, and where to load next.
+- Do not store detailed edge cases here.
+- Link to owner specs instead of duplicating contract detail.
+
+### Layer 2: Lane Briefs
+
+Purpose: route agents by work area.
+
+Files:
+
+- `docs/agent-briefs/*.md`
+
+Rules:
+
+- State the lane's current truth in short form.
+- Link the owner contract(s).
+- List exact runtime/test files likely touched.
+- Include forbidden drift.
+- Do not become full product specs.
+
+### Layer 3: Owner Specs
+
+Purpose: hold durable product, runtime, data, and API contracts.
+
+Files:
+
+- `docs/specs/**`
+
+Rules:
+
+- Each cross-system behavior has one owner spec or one clearly named owner section.
+- If a founder clarification changes behavior, promote it into the owner spec in the same slice.
+- Briefs and handoffs should point to the owner spec instead of repeating the full rule.
+- Owner specs include settled questions when repeated misunderstandings occur.
+
+### Layer 4: Handoffs And Audit Artifacts
+
+Purpose: record execution history, reviewer output, and temporary synthesis.
+
+Files:
+
+- `docs/handoff/**`
+
+Rules:
+
+- Handoffs are context, not permanent authority.
+- A handoff should say whether accepted truths need promotion to an owner spec.
+- Prefer one reconciliation note over parallel memory artifacts.
+- After promotion, future agents should load the owner spec first and the handoff only when they need historical evidence.
+
+### Layer 5: Legacy / External Imports
+
+Purpose: retain reference material without letting it become accidental current truth.
+
+Files:
+
+- `docs/legacy/**`
+- raw NotebookLM / external exports staged under `docs/legacy/` or a clearly labeled inventory folder
+
+Rules:
+
+- Never bulk-overwrite `docs/canon/**` from imports.
+- Treat external sources as scouting/context until reconciled into owner specs.
+- Use imports to find gaps, not to override current contracts.
+
+## Contract Ownership
+
+A rule belongs in an owner contract when it affects more than one system, such as API, UI, data model, source registration, voting, community activation, or agent behavior.
+
+Current owner contracts:
+
+| Contract | Owner Spec |
+| --- | --- |
+| Music-community preferences, default Home Scene, roller, city move, GPS voting scope | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` |
+| Identity, roles, capabilities, listener/source separation | `docs/specs/users/identity-roles-capabilities.md` |
+| Registrar source/capability workflows | `docs/specs/system/registrar.md` |
+| Plot/Home Scene shell | `docs/specs/communities/plot-and-scene-plot.md` |
+| Events/flyers | `docs/specs/events/events-and-flyers.md` |
+| Broadcast/Fair Play | `docs/specs/broadcast/radiyo-and-fair-play.md` |
+| Print Shop / promotions boundary | `docs/specs/economy/print-shop-and-promotions.md` |
+| Revenue/pricing doctrine | `docs/specs/economy/revenue-and-pricing.md` |
+| Documentation/context system | `docs/specs/system/documentation-framework.md` |
+
+Contracts still needing dedicated owner sections or cleanup:
+
+| Needed Contract | Current Best Home | Why It Matters |
+| --- | --- | --- |
+| Source registration and source origin | `docs/specs/system/registrar.md` | Controls GPS authority, source Home Scene, activation accounting, and source dashboard behavior. |
+| Community activation threshold workflow | `docs/specs/communities/scenes-uprises-sects.md` or `docs/specs/system/registrar.md` | Controls when a city/music-community becomes active and how Registrar/source notifications work. |
+| Proxy scene music lifecycle and migration | `docs/specs/users/onboarding-home-scene-resolution.md` plus community spec | Controls source/song/vote behavior when a natural Home Scene activates. |
+| Release Deck media eligibility | artist/source or future media spec | Controls 3-song / 20-minute / song-length / active-rotation limits. |
+| Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md` | Controls official sects, backing, thresholds, and subcommunity broadcast authority. |
+
+## Lane Agents
+
+Lane agents own work areas, not product truth. Product truth lives in owner contracts.
+
+| Lane Agent | Owns | Default Docs | Common Work |
+| --- | --- | --- | --- |
+| `uprise-context-steward` | documentation authority, contract ownership, handoff promotion, stale-doc cleanup | this spec, `PLATFORM_START_HERE`, `CONTEXT_ROUTER` | prevent drift; promote accepted decisions to owner specs |
+| `uprise-onboarding-home` | onboarding, Home Scene, GPS voting, music-community preferences | `ONBOARDING_HOME_SCENE`, onboarding spec | Home Scene resolution, location authority, profile preference runtime |
+| `uprise-registrar-source` | Registrar, source registration, source origin, source dashboard boundaries | `REGISTRAR_GOVERNANCE`, `ARTIST_PROFILE_SOURCE_DASHBOARD`, registrar spec | artist/band/source intake, GPS source gates, source admin separation |
+| `uprise-community-activation` | city activation, proxy scenes, community lifecycle | community specs, onboarding spec, registrar spec | music-content and source-diversity activation thresholds, proxy cutover |
+| `uprise-fairplay-broadcast` | RADIYO, voting, rotation, tier propagation | `ACTIONS_AND_SIGNALS`, broadcast/Fair Play spec | action grammar, votes, Fair Play, tier lifecycle |
+| `uprise-media-release` | Release Deck, media limits, upload/transcode boundaries | artist/source brief, media/storage decision docs | song limits, active rotation eligibility, deferred media pipeline |
+| `uprise-events-archive` | Events, Archive, flyers, descriptive history | `EVENTS_ARCHIVE`, event specs | prevent Statistics/Promotions drift, event read/write boundaries |
+| `uprise-sects-governance` | sect affiliation, official sects, Sect Uprises | Registrar/community sect specs | sect readiness, official status, Uprise threshold |
+| `uprise-business-later` | monetization doctrine and deferred boundaries | `BUSINESS_MONETIZATION`, economy specs | prevent premature billing/promotions/analytics implementation |
+| `uprise-design-ui` | screen hierarchy, visual handoffs, design-agent prompts | `UI_CURRENT`, relevant owner specs | Claude/Stitch/Uizard/v0 prompts, screen states, visual direction |
+| `uprise-infra-hosting` | Vercel/Fly/Neon/provider deployment and smokes | Heavy Authority Pack, deploy env docs | hosted stack readiness, env, CI, smoke scripts |
+
+A lane agent may propose changes, but Codex or the current implementation owner must reconcile cross-lane impacts before merge.
+
+## Linear Execution Model
+
+Linear tracks execution. It does not replace repo docs.
+
+Use Linear for:
+
+- issue queue;
+- lane labels;
+- priority and blockers;
+- owner assignment;
+- PR/commit links;
+- validation evidence;
+- status tracking.
+
+Do not use Linear for:
+
+- product canon;
+- final founder decisions;
+- detailed durable specs;
+- replacing owner contracts.
+
+Recommended project structure:
+
+- `UPRISE Phase 1: Contract System + Launch Readiness`
+- later phases can cover runtime parity, source/Registrar, Fair Play, media, design, and monetization.
+
+Recommended labels:
+
+- `lane:context-steward`
+- `lane:onboarding-home`
+- `lane:registrar-source`
+- `lane:community-activation`
+- `lane:fairplay-broadcast`
+- `lane:media-release`
+- `lane:events-archive`
+- `lane:sects-governance`
+- `lane:business-later`
+- `lane:design-ui`
+- `lane:infra-hosting`
+- `type:bug`
+- `type:stale`
+- `type:environment`
+- `type:fixture-data`
+- `type:product-decision`
+- `type:docs-cleanup`
+- `type:runtime-cleanup`
+
+Issue template:
+
+```md
+## Lane
+<lane name>
+
+## Owner Contract
+<docs/specs/... path and section>
+
+## Problem
+<what is unclear, missing, stale, or not implemented>
+
+## Scope
+Do:
+- ...
+
+Do not:
+- ...
+
+## Acceptance Criteria
+- ...
+
+## Validation
+- pnpm run docs:lint
+- pnpm --filter <pkg> test -- <targeted tests>
+- pnpm --filter <pkg> typecheck
+
+## Docs Required
+- docs/CHANGELOG.md
+- owner spec if behavior changes
+- dated handoff if multi-step
+
+## Founder Decision Required
+yes/no
+```
+
+## Handoff Promotion Rule
+
+When a handoff contains a founder clarification or accepted reviewer finding:
+
+1. Identify the owner spec.
+2. Promote the durable rule into that owner spec.
+3. Patch the relevant lane brief with a short pointer if agents in that lane need it.
+4. Add/adjust tests when behavior is runtime-visible.
+5. Update `docs/CHANGELOG.md`.
+6. Leave the handoff as historical evidence.
+
+Do not scatter the same rule across many docs. Put the full rule in the owner spec and short summaries/pointers elsewhere.
+
+## Question Discipline
+
+Ask founder questions only when the answer changes one or more of:
+
+- data model;
+- API contract;
+- runtime behavior;
+- voting/authority;
+- source ownership;
+- activation workflow;
+- launch scope;
+- cross-lane documentation authority.
+
+Do not ask if the question only changes:
+
+- wording;
+- UI microcopy;
+- a small visual control detail;
+- an already-settled owner contract.
+
+For clarification sessions:
+
+1. State the documented assumption.
+2. Explain why it affects multiple systems.
+3. Ask exactly one question.
+4. If answered, patch the owner spec or backlog it explicitly.
+
+## Reviewer Routing
+
+Use reviewers as second-pass checks, not source of truth.
+
+- `uprisereviewer`: narrow review of a named slice, contract, PR, or post-clarification state.
+- `upriseauditor`: broad drift audit across docs/code/strategy.
+- Cloud Codex / OpenClaw / Abacus: scoped implementation/audit/design support when the repo and branch are available.
+
+Reviewer prompts must include:
+
+- branch/commit;
+- docs to load;
+- owner contract path;
+- exact scope;
+- no-edit/no-provider/no-DB boundaries unless edits/actions are intended;
+- output format.
 
 ## Acceptance Tests / Test Plan
-- Link hygiene: key docs reachable from `docs/README.md`.
-- Template availability: `docs/specs/TEMPLATE.md`, `docs/handoff/TEMPLATE_*.md`.
-- Solutions template available: `docs/solutions/TEMPLATE.md`.
-- Manual review checklist for PRs:
-  - Spec links included (new: `docs/specs/`; legacy: `docs/Specifications/` as needed).
-  - Agent handoff doc created/updated for multi-step work.
 
-## Future Work & Open Questions
-- Add/maintain a lightweight CI job to validate doc structure and prevent PDFs from being committed.
-- Decide when legacy `docs/Specifications/` is fully migrated and can be frozen.
+Documentation-system slices must run:
+
+- `pnpm run docs:lint`
+- `git diff --check`
+
+When changing agent routing or context policy, also inspect:
+
+- `AGENTS.md`
+- `docs/README.md`
+- `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+- `docs/agent-briefs/CONTEXT_ROUTER.md`
+- relevant lane brief(s)
+
+## Current Initial Issues
+
+Seed these as Linear or repo-tracked work items when ready:
+
+1. Define source registration / source origin contract.
+2. Define community activation workflow around music-content and source-diversity thresholds.
+3. Define proxy scene music lifecycle and migration contract.
+4. Define Release Deck media eligibility contract.
+5. Define Fair Play / proxy vote / tier propagation contract.
+6. Define sect readiness and Sect Uprise boundary.
+7. Audit runtime parity against the Music-Community Preference Contract.
 
 ## References
+
+- `AGENTS.md`
+- `docs/PLATFORM_START_HERE.md`
 - `docs/README.md`
-- `docs/blueprints/MULTI_AGENT_DOCUMENTATION_STRATEGY.md`
+- `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+- `docs/agent-briefs/CONTEXT_ROUTER.md`
 - `docs/specs/README.md`
 - `docs/handoff/README.md`
-- `docs/architecture/UPRISE_OVERVIEW.md`
+- `docs/handoff/2026-06-25_hermes-reviewer-clarification-handoff.md`

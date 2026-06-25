@@ -7,6 +7,7 @@ This folder contains operational docs, architecture references, specifications, 
 - [`PLATFORM_START_HERE.md`](./PLATFORM_START_HERE.md) — five-minute platform orientation, current truths, common wrong assumptions, and lane-loading entry point.
 - [`AGENT_STRATEGY_AND_HANDOFF.md`](./AGENT_STRATEGY_AND_HANDOFF.md) — authority order, task-specific reading model, and handoff/QA protocol.
 - [`agent-briefs/CONTEXT_ROUTER.md`](./agent-briefs/CONTEXT_ROUTER.md) — focus-lane router for loading only the brief/spec/runtime files required by the active task.
+- [`specs/system/documentation-framework.md`](./specs/system/documentation-framework.md) — contract ownership, lane-agent model, Linear execution structure, reviewer routing, and handoff promotion rules.
 
 ## Context Modes
 - Focused implementation: read `AGENTS.md`, `PLATFORM_START_HERE.md`, `AGENT_STRATEGY_AND_HANDOFF.md`, `agent-briefs/CONTEXT_ROUTER.md`, the active lane brief, and exact touched files/specs/tests.
@@ -39,6 +40,7 @@ Do not bulk-load legacy docs or dated handoffs as current truth. Load them by to
 ## Multi-Agent Workflow
 - Use current specs/code/runtime before dated handoffs.
 - For section work such as UI, load the matching `docs/agent-briefs/` packet first; use linked docs selectively instead of making agents read every related file.
+- Put durable cross-system rules in one owner spec or owner section; keep briefs and handoffs as pointers/context.
 - Audit only committed branch state, not mixed worktrees.
 - Prefer a single reconciliation note over parallel memory docs.
 - Use [`solutions/AGENT_WORKFLOW_PROTOCOL_R1.md`](./solutions/AGENT_WORKFLOW_PROTOCOL_R1.md) for the current recommended operating protocol.

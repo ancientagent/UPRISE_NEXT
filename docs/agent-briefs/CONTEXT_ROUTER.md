@@ -1,7 +1,7 @@
 # Context Router And Focus Lanes
 
 Status: active
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
 
 ## Purpose
 Keep agent context light, flexible, and accurate by routing work through the current focus lane.
@@ -27,6 +27,14 @@ Default stack:
 7. exact runtime/spec/lock files only when editing or auditing that surface
 
 Do not load every file linked by every related document.
+
+## Contract Owner Rule
+Durable product truth belongs in owner specs, not in this router.
+
+- Use `docs/specs/system/documentation-framework.md` for the documentation/context management system, lane-agent ownership, Linear execution model, reviewer routing, and question discipline.
+- Use lane briefs to find the relevant owner spec.
+- If a clarification affects multiple systems, patch the owner spec first and keep this router/brief summaries short.
+- Do not scatter the same micro-rule across orientation docs, briefs, handoffs, and canon.
 
 Heavy authority mode:
 - Use the Heavy Authority Pack in `AGENTS.md` for broad audits, architecture planning, deployment/infra work, multi-agent strategy, repo-structure changes, and full-platform review.
@@ -83,6 +91,10 @@ When pivoting lanes:
 - do not keep carrying prior-lane feature detail forward unless it affects the new lane
 
 ## Focus Lanes
+
+Lane agents own work areas, not product truth. Product truth lives in owner contracts.
+
+The current lane-agent ownership model lives in `docs/specs/system/documentation-framework.md#lane-agents`.
 
 ### UX_UI
 Use when working on:
