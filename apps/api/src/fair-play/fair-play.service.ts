@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { TrackVoteDto } from './dto/track-vote.dto';
+import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
 
 const ROTATION_POOL = {
   NEW_RELEASES: 'NEW_RELEASES',
@@ -38,7 +39,10 @@ type VoteSceneContext = {
 
 @Injectable()
 export class FairPlayService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private musicCommunityPreferenceResolver = new MusicCommunityPreferenceResolverService(prisma),
+  ) {}
 
   private normalizeVoteScopeValue(value?: string | null) {
     return (value ?? '').trim().toLowerCase();
@@ -467,7 +471,11 @@ export class FairPlayService {
 
     const homeCity = this.normalizeVoteScopeValue(user.homeSceneCity);
     const homeState = this.normalizeVoteScopeValue(user.homeSceneState);
-    const homeCommunity = this.normalizeVoteScopeValue(user.homeSceneCommunity);
+    const defaultMusicCommunity = await this.musicCommunityPreferenceResolver.resolveDefaultMusicCommunity(
+      userId,
+      user.homeSceneCommunity,
+    );
+    const homeCommunity = this.normalizeVoteScopeValue(defaultMusicCommunity);
     const sceneCity = this.normalizeVoteScopeValue(scene.city);
     const sceneState = this.normalizeVoteScopeValue(scene.state);
     const sceneCommunity = this.normalizeVoteScopeValue(scene.musicCommunity);
