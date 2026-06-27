@@ -1,7 +1,7 @@
 # External Tools Agent Brief
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-06-26
 
 ## Use When
 
@@ -36,6 +36,7 @@ External tools are departments, not authorities. Load the active product lane br
 
 External guidance:
 
+- `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 - `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`
 - `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
 - `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md`
@@ -81,6 +82,7 @@ Handoffs:
 
 - `.devin/wiki.json` provides generated-wiki steering and page plan.
 - `.deepagent-desktop/rules/uprise_next_rules.md` provides Abacus/Desktop-style external assistant rules.
+- `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` provides the concise current map for which UPRISE tool/agent lane to use and how outputs are reconciled.
 - `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md` defines when to use
   Abacus Agent Swarms for UPRISE, how to split worker lanes, and how to evaluate
   the first swarm experiment.

@@ -3,7 +3,7 @@
 **ID:** `DOCS-FRAMEWORK`
 **Status:** `active`
 **Owner:** `context-steward`
-**Last Updated:** `2026-06-25`
+**Last Updated:** `2026-06-26`
 
 ## Overview & Purpose
 
@@ -16,6 +16,7 @@ The goal is a contract-owned, lane-routed documentation system:
 - owner specs hold durable product/runtime contracts;
 - handoffs capture temporary execution history;
 - Linear tracks work execution, not product truth;
+- the AI stack/lane map summarizes which tool or external agent should handle each task shape;
 - reviewers check outputs against owner contracts.
 
 This framework exists to prevent two failure modes:
@@ -141,6 +142,7 @@ Current owner contracts:
 | Print Shop / promotions boundary | `docs/specs/economy/print-shop-and-promotions.md` |
 | Revenue/pricing doctrine | `docs/specs/economy/revenue-and-pricing.md` |
 | Documentation/context system | `docs/specs/system/documentation-framework.md` |
+| AI stack and agent/tool routing summary | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
 
 Contracts still needing dedicated owner sections or cleanup:
 
@@ -170,6 +172,8 @@ Lane agents own work areas, not product truth. Product truth lives in owner cont
 | `uprise-infra-hosting` | Vercel/Fly/Neon/provider deployment and smokes | Heavy Authority Pack, deploy env docs | hosted stack readiness, env, CI, smoke scripts |
 
 A lane agent may propose changes, but Codex or the current implementation owner must reconcile cross-lane impacts before merge.
+
+For concise tool-to-lane routing across Codex local, Cloud Codex, Hermes, Abacus / Agent Swarm, NotebookLM, design tools, Linear, and generated wikis, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`.
 
 ## Linear Execution Model
 

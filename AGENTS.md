@@ -26,7 +26,7 @@ Load only the minimum additional material required for the task.
 - Spec/doc work: `docs/README.md` + `docs/specs/README.md` + `docs/specs/system/documentation-framework.md` when authority/routing/contract ownership is touched + relevant canon/spec files
 - Architecture/repo-shape/deployment work: the Heavy Authority Pack above
 - Recurring incidents / operating failures: `docs/solutions/README.md` + only the relevant playbook
-- Multi-agent execution / handoff review: `docs/handoff/README.md` + the latest relevant dated handoff(s)
+- Multi-agent/tooling strategy or handoff review: `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` + `docs/specs/system/documentation-framework.md` + `docs/handoff/README.md` + the latest relevant dated handoff(s)
 
 ## Legacy Reference Archives (Non-Canon)
 - `docs/legacy/uprise_mob/` — prior mobile-era documentation set (reference only)

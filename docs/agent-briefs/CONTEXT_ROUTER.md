@@ -1,7 +1,7 @@
 # Context Router And Focus Lanes
 
 Status: active
-Last Updated: 2026-06-25
+Last Updated: 2026-06-26
 
 ## Purpose
 Keep agent context light, flexible, and accurate by routing work through the current focus lane.
@@ -32,6 +32,7 @@ Do not load every file linked by every related document.
 Durable product truth belongs in owner specs, not in this router.
 
 - Use `docs/specs/system/documentation-framework.md` for the documentation/context management system, lane-agent ownership, Linear execution model, reviewer routing, and question discipline.
+- Use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` for concise tool-to-lane routing across Codex, Cloud Codex, Hermes, Abacus, NotebookLM, design tools, Linear, and generated wikis.
 - Use lane briefs to find the relevant owner spec.
 - If a clarification affects multiple systems, patch the owner spec first and keep this router/brief summaries short.
 - Do not scatter the same micro-rule across orientation docs, briefs, handoffs, and canon.
@@ -350,6 +351,7 @@ Use when working on:
 
 Default load:
 - `docs/agent-briefs/EXTERNAL_TOOLS.md`
+- `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 
 Load only if touched:
 - the active product lane brief for the subject being handed off
