@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: product engineering
-Last updated: 2026-04-21
+Last updated: 2026-06-26
 
 ## Purpose
 Give external assistants such as Abacus CoWork/Desktop a controlled understanding of the UPRISE_NEXT repo so they can help with:
@@ -15,7 +15,10 @@ Give external assistants such as Abacus CoWork/Desktop a controlled understandin
 
 This document is not a replacement for the controlling docs. It is a context bridge so external tools do not have to infer the repo from raw file sprawl.
 
+For current AI/tool routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` first. This older repo brief remains a context bridge for external assistants; it does not replace the current stack/lane routing map.
+
 External assistants should also follow:
+- `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 - `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
 - `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md` when using Abacus
   Agent Swarm / Fusion-style multi-agent workflows.

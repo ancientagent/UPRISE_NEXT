@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` as the concise AI/tool stack and lane-agent routing map for Codex, Cloud Codex, Hermes, Abacus, NotebookLM, design tools, Linear, and generated wiki workflows.
 - Added a Music-Community Preference compatibility cleanup plan that classifies active Home Scene fields, identifies `homeSceneCommunity` as the main default-preference shadow, and gates any schema cleanup behind read-path inversion plus staging data verification.
 - Added unresolved music-community preference visibility in the expanded `/plot` listener profile by labeling preferences as either in the Home Scene Roller or profile-only until an active scene exists.
 - Added `/plot` Home Scene roller consumption: the Plot shell now loads the authenticated roller read model, renders registered/resolvable music-community shortcuts, tunes selected scenes through the existing Discover scene-context endpoint, and keeps saved Away Scenes out of the roller.
@@ -78,6 +79,7 @@
 
 ### Changed
 
+- Updated external-tool and multi-agent routing pointers so future agents load the AI stack/lane map and no longer treat the historical Hermes launch-community branch as a standing auditor default.
 - Refreshed the Music-Community Preference runtime parity audit after PR #116 merged, confirming preference persistence, default/star selection, Home Scene Roller, profile-only unresolved labels, and registered-preference voting are implemented while narrowing remaining work to read-path inversion, write-path sync, and staging data audit.
 - Tightened Fair Play vote authority so `POST /tracks/:id/vote` rejects non-city-tier scenes even when `User.tunedSceneId` matches the target scene, preserving state/national context as listening/promotion context rather than direct vote targets.
 - Promoted activation notification and former-proxy Away Scene preservation into the onboarding/Home Scene cutover owner contract, keeping current runtime limited to listener/source re-rooting while notification persistence and saved-scene storage remain deferred.

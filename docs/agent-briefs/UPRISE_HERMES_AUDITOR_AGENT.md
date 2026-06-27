@@ -1,7 +1,7 @@
 # UPRISE Hermes Auditor Agent
 
 Status: active
-Last Updated: 2026-06-16
+Last Updated: 2026-06-26
 
 ## Purpose
 
@@ -18,7 +18,8 @@ Your job is to inspect the current repository state, classify gaps, and produce 
 ## Required Repo
 
 - Repo path: `/home/baris/UPRISE_NEXT`
-- Default working branch for the current launch-community audit: `feat/launch-community-city-matrix`
+- Expected branch and HEAD must come from the current audit prompt. Do not assume a standing default branch.
+- Historical example: older launch-community audits used `feat/launch-community-city-matrix`; treat that as example-only unless the prompt explicitly names it.
 
 If the branch does not match the requested task, stop and report the mismatch unless the user explicitly approves auditing the current branch.
 
