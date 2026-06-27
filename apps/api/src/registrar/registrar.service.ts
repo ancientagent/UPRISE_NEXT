@@ -1,5 +1,6 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
 import type {
   ArtistBandRegistrationDto,
   PromoterRegistrationDto,
@@ -220,7 +221,17 @@ const PROMOTER_ADMIN_DECISION_TRANSITIONS: Record<
 
 @Injectable()
 export class RegistrarService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional()
+    private readonly musicCommunityPreferenceResolver?: MusicCommunityPreferenceResolverService,
+  ) {}
+
+  private async resolveHomeMusicCommunity(userId: string, compatibilityCommunity: string | null | undefined) {
+    const resolver =
+      this.musicCommunityPreferenceResolver ?? new MusicCommunityPreferenceResolverService(this.prisma);
+    return resolver.resolveDefaultMusicCommunity(userId, compatibilityCommunity);
+  }
 
   async applyPromoterApprovalTransition(
     registrarEntryId: string,
@@ -755,7 +766,8 @@ export class RegistrarService {
 
     const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
     const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
-    const homeCommunity = (user.homeSceneCommunity ?? '').trim().toLowerCase();
+    const homeMusicCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
+    const homeCommunity = (homeMusicCommunity ?? '').trim().toLowerCase();
     const sceneCity = (scene.city ?? '').trim().toLowerCase();
     const sceneState = (scene.state ?? '').trim().toLowerCase();
     const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
@@ -825,7 +837,8 @@ export class RegistrarService {
 
     const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
     const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
-    const homeCommunity = (user.homeSceneCommunity ?? '').trim().toLowerCase();
+    const homeMusicCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
+    const homeCommunity = (homeMusicCommunity ?? '').trim().toLowerCase();
     const sceneCity = (scene.city ?? '').trim().toLowerCase();
     const sceneState = (scene.state ?? '').trim().toLowerCase();
     const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
@@ -895,7 +908,8 @@ export class RegistrarService {
 
     const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
     const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
-    const homeCommunity = (user.homeSceneCommunity ?? '').trim().toLowerCase();
+    const homeMusicCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
+    const homeCommunity = (homeMusicCommunity ?? '').trim().toLowerCase();
     const sceneCity = (scene.city ?? '').trim().toLowerCase();
     const sceneState = (scene.state ?? '').trim().toLowerCase();
     const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
@@ -1531,10 +1545,11 @@ export class RegistrarService {
 
     const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
     const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
-    const homeCommunity = (user.homeSceneCommunity ?? '').trim().toLowerCase();
+    const homeMusicCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
+    const homeCommunity = (homeMusicCommunity ?? '').trim().toLowerCase();
     const sourceOriginCity = (user.homeSceneCity ?? '').trim();
     const sourceOriginState = (user.homeSceneState ?? '').trim();
-    const sourceOriginMusicCommunity = (user.homeSceneCommunity ?? '').trim();
+    const sourceOriginMusicCommunity = (homeMusicCommunity ?? '').trim();
     const sceneCity = (scene.city ?? '').trim().toLowerCase();
     const sceneState = (scene.state ?? '').trim().toLowerCase();
     const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();

@@ -11,6 +11,10 @@ function createPrismaMock() {
     community: {
       update: jest.fn(),
     },
+    userMusicCommunityPreference: {
+      updateMany: jest.fn(),
+      upsert: jest.fn(),
+    },
   };
 
   const prisma = {
@@ -97,6 +101,47 @@ describe('OnboardingService home-scene resolution', () => {
       pioneerHomeScene: null,
       votingEligible: true,
       pioneer: false,
+    });
+  });
+
+  it('writes the selected music community as the default preference during Home Scene onboarding', async () => {
+    const prisma = createPrismaMock();
+    const service = new OnboardingService(prisma as any);
+    const exactScene = {
+      id: 'scene-austin-punk',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+      isActive: true,
+    };
+    prisma.community.findFirst.mockResolvedValue(exactScene);
+    prisma.__tx.user.update.mockResolvedValue({
+      id: 'user-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      homeSceneTag: null,
+      tunedSceneId: exactScene.id,
+      gpsVerified: false,
+    });
+    prisma.__tx.communityMember.create.mockResolvedValue({ id: 'member-1' });
+    prisma.__tx.community.update.mockResolvedValue({ id: exactScene.id });
+
+    await service.setHomeScene('user-1', {
+      city: 'Austin',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+    });
+
+    expect(prisma.__tx.userMusicCommunityPreference.updateMany).toHaveBeenCalledWith({
+      where: { userId: 'user-1', isDefault: true },
+      data: { isDefault: false },
+    });
+    expect(prisma.__tx.userMusicCommunityPreference.upsert).toHaveBeenCalledWith({
+      where: { userId_musicCommunity: { userId: 'user-1', musicCommunity: 'Punk' } },
+      update: { isDefault: true },
+      create: { userId: 'user-1', musicCommunity: 'Punk', isDefault: true },
     });
   });
 

@@ -26,6 +26,7 @@ const mockPrisma = {
   },
   userMusicCommunityPreference: {
     findUnique: jest.fn(),
+    findFirst: jest.fn(),
   },
   $transaction: jest.fn(),
 };
@@ -34,7 +35,7 @@ describe('FairPlayService.castVote', () => {
   let service: FairPlayService;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
     service = new FairPlayService(mockPrisma as any);
   });
 
@@ -136,6 +137,47 @@ describe('FairPlayService.castVote', () => {
 
     expect(result.success).toBe(true);
     expect(result.data.id).toBe('vote-1');
+  });
+
+  it('uses the explicit default music-community preference before the compatibility homeSceneCommunity field', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'user-1',
+      gpsVerified: true,
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue({
+      musicCommunity: 'Metal',
+    });
+    mockPrisma.userMusicCommunityPreference.findUnique.mockResolvedValue(null);
+    mockPrisma.track.findUnique.mockResolvedValue({ id: 'track-1' });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-austin-metal',
+      tier: 'city',
+      isActive: true,
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Metal',
+    });
+    mockPrisma.rotationEntry.findFirst.mockResolvedValue({ id: 'entry-1' });
+    mockPrisma.trackVote.create.mockResolvedValue({
+      id: 'vote-1',
+      userId: 'user-1',
+      trackId: 'track-1',
+      sceneId: 'scene-austin-metal',
+      tier: 'city',
+    });
+
+    const result = await service.castVote('user-1', 'track-1', {
+      sceneId: 'scene-austin-metal',
+      playbackSessionId: 'sess-1',
+      nowPlayingTrackId: 'track-1',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data.sceneId).toBe('scene-austin-metal');
+    expect(mockPrisma.userMusicCommunityPreference.findUnique).not.toHaveBeenCalled();
   });
 
   it('creates vote for GPS-verified pioneer user in fallback voting scene', async () => {

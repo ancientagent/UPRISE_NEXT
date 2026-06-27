@@ -8,8 +8,10 @@ import { RegistrarInviteDeliveryTriggerService } from './registrar-invite-delive
 import { INVITE_DELIVERY_PROVIDER } from './invite-delivery.provider';
 import { WebhookInviteDeliveryProvider } from './webhook-invite-delivery.provider';
 import { selectInviteDeliveryProvider } from './invite-delivery-provider-selector';
+import { UsersModule } from '../users/users.module';
 
 @Module({
+  imports: [UsersModule],
   controllers: [RegistrarController],
   providers: [
     RegistrarService,

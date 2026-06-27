@@ -19,6 +19,9 @@ describe('AuthService.registerFromInvite', () => {
     user: {
       create: jest.fn(),
     },
+    userMusicCommunityPreference: {
+      upsert: jest.fn(),
+    },
     $transaction: jest.fn(),
   };
 
@@ -101,6 +104,11 @@ describe('AuthService.registerFromInvite', () => {
         }),
       }),
     );
+    expect(mockPrisma.userMusicCommunityPreference.upsert).toHaveBeenCalledWith({
+      where: { userId_musicCommunity: { userId: 'u-99', musicCommunity: 'punk' } },
+      update: { isDefault: true },
+      create: { userId: 'u-99', musicCommunity: 'punk', isDefault: true },
+    });
     expect(result.accessToken).toBe('jwt-token');
   });
 

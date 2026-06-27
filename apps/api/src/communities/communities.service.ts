@@ -1,7 +1,8 @@
 
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException, Optional } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
 import {
   CreateCommunityWithGeoDto,
   FindNearbyCommunitiesDto,
@@ -197,7 +198,17 @@ interface DiscoverCitySceneRow {
 
 @Injectable()
 export class CommunitiesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Optional()
+    private readonly musicCommunityPreferenceResolver?: MusicCommunityPreferenceResolverService,
+  ) {}
+
+  private async resolveHomeMusicCommunity(userId: string, compatibilityCommunity: string | null | undefined) {
+    const resolver =
+      this.musicCommunityPreferenceResolver ?? new MusicCommunityPreferenceResolverService(this.prisma);
+    return resolver.resolveDefaultMusicCommunity(userId, compatibilityCommunity);
+  }
 
   private toSceneSummary(scene: {
     id: string;
@@ -463,7 +474,8 @@ export class CommunitiesService {
     const limit = query.limit;
     const homeSceneCity = user?.homeSceneCity ?? null;
     const homeSceneState = user?.homeSceneState ?? null;
-    const homeSceneCommunity = user?.homeSceneCommunity ?? null;
+    const homeSceneCommunity =
+      userId && user ? await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity) : null;
 
     const baseWhere: {
       tier: 'city';
@@ -1121,12 +1133,14 @@ export class CommunitiesService {
     }
 
     let homeSceneId: string | null = null;
-    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
+    const homeSceneCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
+
+    if (user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
       const homeScene = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,
           state: user.homeSceneState,
-          musicCommunity: user.homeSceneCommunity,
+          musicCommunity: homeSceneCommunity,
           tier: 'city',
         },
         select: { id: true },
@@ -1190,12 +1204,14 @@ export class CommunitiesService {
     }
 
     let homeSceneId: string | null = null;
-    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
+    const homeSceneCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
+
+    if (user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
       const homeScene = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,
           state: user.homeSceneState,
-          musicCommunity: user.homeSceneCommunity,
+          musicCommunity: homeSceneCommunity,
           tier: 'city',
         },
         select: { id: true },
@@ -1302,12 +1318,14 @@ export class CommunitiesService {
     }
 
     let previousHomeSceneId: string | null = null;
-    if (user.homeSceneCity && user.homeSceneState && user.homeSceneCommunity) {
+    const previousHomeMusicCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
+
+    if (user.homeSceneCity && user.homeSceneState && previousHomeMusicCommunity) {
       const previousHome = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,
           state: user.homeSceneState,
-          musicCommunity: user.homeSceneCommunity,
+          musicCommunity: previousHomeMusicCommunity,
           tier: 'city',
         },
         select: { id: true },
@@ -1326,6 +1344,18 @@ export class CommunitiesService {
           tunedSceneUpdatedAt: new Date(),
         },
       });
+
+      if (scene.musicCommunity) {
+        await tx.userMusicCommunityPreference.updateMany({
+          where: { userId, isDefault: true },
+          data: { isDefault: false },
+        });
+        await tx.userMusicCommunityPreference.upsert({
+          where: { userId_musicCommunity: { userId, musicCommunity: scene.musicCommunity } },
+          update: { isDefault: true },
+          create: { userId, musicCommunity: scene.musicCommunity, isDefault: true },
+        });
+      }
 
       try {
         await tx.communityMember.create({
