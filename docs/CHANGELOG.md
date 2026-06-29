@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Release Deck six-minute single-song enforcement, reject-only at-cap guidance, Registrar GPS materialization re-checks, and staging source-origin readiness smoke evidence; see `docs/handoff/2026-06-29_release-deck-song-cap-registrar-gps.md`.
 - Added a staging closeout for the authenticated `GET /users/me` route hardening, including Fly API deployment image, health checks, authenticated smoke result, and temporary user cleanup evidence.
 - Added a current-user API route hardening slice so authenticated `GET /users/me` returns the JWT user and current-user `me/*` routes stay registered before parameterized `/users/:id` routes.
 - Added an authenticated onboarding persistence smoke command that registers temporary users, verifies Home Scene/default preference/Home Scene Roller state after login, covers GPS-skipped, GPS-verified, and proxy-scene scenarios, and requires host/database-scoped confirmation for non-local writes.

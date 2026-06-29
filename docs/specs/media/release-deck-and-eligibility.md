@@ -3,7 +3,7 @@
 **ID:** `MEDIA-RELEASE-DECK`
 **Status:** `active`
 **Owner:** `uprise-media-release`
-**Last Updated:** `2026-06-25`
+**Last Updated:** `2026-06-29`
 
 ## Overview And Purpose
 
@@ -34,17 +34,20 @@ by a later media/storage implementation spec.
 
 - Release Deck has `3` active music slots per managed Artist/Band source per city-tier community.
 - The paid `4th` ad-attachment slot is not a music slot and is not a standalone rotation entry.
+- No single Release Deck song may exceed `6` minutes (`360` seconds).
 - No single source may occupy more than `15` minutes (`900` seconds) of any one Uprise rotation at a time.
 - Current API enforcement applies to `ready` tracks for the same `artistBandId + communityId`.
 - Current MVP media ingest accepts explicit hosted `http(s)` audio URLs only.
 - A song cannot be actively listed in more than one Uprise rotation at the same time.
 - Source-owned tracks must attach to the managed source Home Scene; proxy-to-natural activation updates future upload routing through `ArtistBand.homeSceneId`.
+- MVP replacement behavior is reject-only: when a source is at the `3`-slot, `6`-minute song, or `15`-minute source cap, the current create path rejects the new track and tells the source to choose a different active song combination. It does not silently delete, mutate, or replace existing tracks.
 
 ## Current Runtime Enforcement
 
 Implemented in `apps/api/src/tracks/tracks.service.ts`:
 
 - when a signed-in user creates a `ready` track for a managed Artist/Band source and community, the API counts existing `ready` tracks for the same `artistBandId + communityId`;
+- if the new ready track is longer than `360` seconds, the API rejects the upload;
 - if there are already `3` ready tracks, the API rejects the upload;
 - the API sums existing ready duration for the same `artistBandId + communityId`;
 - if existing ready duration plus the new track duration exceeds `900` seconds, the API rejects the upload;
@@ -55,6 +58,7 @@ Implemented in `apps/api/src/tracks/tracks.service.ts`:
 - Error handling: rejections must be explicit `BadRequestException` responses.
 - Data safety: enforcement must not mutate existing tracks, votes, rotation entries, or engagement history.
 - Scope safety: this spec does not activate storage, transcoding, paid ad-slot runtime, or bulk replacement tooling.
+- Replacement safety: the MVP create path is reject-only at cap boundaries because existing tracks may already carry rotation, vote, engagement, or tier lifecycle history.
 
 ## Architectural Boundaries
 
@@ -86,6 +90,7 @@ Current fields used:
 ### Request / Response Notes
 
 - `duration` is stored in seconds.
+- source-owned `ready` Release Deck tracks must be `360` seconds or shorter.
 - omitted `status` defaults to `ready`.
 - `artistBandId` must resolve to a source managed by the signed-in user.
 - `communityId` must exist and must match the managed source Home Scene when that source has one.
@@ -94,20 +99,22 @@ Current fields used:
 
 - `/source-dashboard/release-deck` remains the MVP Release Deck route.
 - The route may present hosted URL input for now.
+- The route must block obvious over-length submissions before the API call and still treat the API as the source of truth.
+- At cap boundaries, the route should present reject-only guidance: choose a different active song combination. It must not imply existing track history will be silently replaced.
 - It must not imply real upload/storage/transcoding exists until a later spec activates it.
 - It must not present the paid ad slot as another music upload slot.
 
 ## Acceptance Tests / Test Plan
 
 - API unit tests reject a fourth ready music slot for the same `artistBandId + communityId`.
+- API unit tests reject source-owned ready Release Deck tracks longer than `360` seconds.
 - API unit tests reject ready tracks that would push the same source above `900` active seconds in one community.
+- Web validation tests reject source-owned Release Deck payloads longer than `360` seconds before submit.
 - API typecheck must pass.
 - Docs lint must pass.
 
 ## Future Work And Open Questions
 
-- Define replacement behavior when a source is already at the 3-slot or 15-minute active cap.
-- Decide whether there is an explicit per-song length cap separate from the 15-minute active rotation cap.
-- Define UI copy for cap failures and replacement flow.
+- Define an explicit history-safe replacement/edit endpoint only if a future slice needs track replacement after rotation/vote/engagement lifecycle semantics are owned.
 - Define if and when paid ad-slot runtime becomes visible.
 - Define storage/upload/transcode/waveform lifecycle if media infrastructure is activated.

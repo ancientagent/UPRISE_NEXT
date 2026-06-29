@@ -11,6 +11,8 @@ type ReleaseDeckFormInput = {
 
 export const hostedAudioUrlMessage = 'Audio File URL must be an http(s) URL for the current hosted-file MVP.';
 export const hostedCoverUrlMessage = 'Cover Art URL must be an http(s) URL for the current hosted-file MVP.';
+export const releaseDeckMaxTrackSeconds = 6 * 60;
+export const releaseDeckMaxTrackDurationMessage = 'Release Deck tracks cannot exceed 6 minutes.';
 
 function normalizeHttpUrl(value: string, errorMessage: string) {
   const trimmed = value.trim();
@@ -51,6 +53,9 @@ export function buildReleaseDeckTrackPayload(
   const duration = Number(form.duration.trim());
   if (!Number.isFinite(duration) || duration <= 0) {
     throw new Error('Duration must be a positive number of seconds.');
+  }
+  if (duration > releaseDeckMaxTrackSeconds) {
+    throw new Error(releaseDeckMaxTrackDurationMessage);
   }
 
   return {

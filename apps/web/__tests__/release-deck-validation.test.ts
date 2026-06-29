@@ -2,6 +2,7 @@ import {
   buildReleaseDeckTrackPayload,
   hostedAudioUrlMessage,
   hostedCoverUrlMessage,
+  releaseDeckMaxTrackDurationMessage,
 } from '../src/lib/source/release-deck-validation';
 
 const activeSource = {
@@ -44,6 +45,12 @@ describe('Release Deck validation', () => {
     );
     expect(() => buildReleaseDeckTrackPayload({ ...baseForm, duration: 'nope' }, activeSource, 'community-1')).toThrow(
       'Duration must be a positive number of seconds.',
+    );
+  });
+
+  it('rejects single tracks longer than the 6-minute Release Deck cap', () => {
+    expect(() => buildReleaseDeckTrackPayload({ ...baseForm, duration: '361' }, activeSource, 'community-1')).toThrow(
+      releaseDeckMaxTrackDurationMessage,
     );
   });
 

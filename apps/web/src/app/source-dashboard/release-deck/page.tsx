@@ -210,10 +210,12 @@ export default function ReleaseDeckPage() {
                 </p>
               </div>
               <p className="text-sm text-black/70">
-                Release Deck is the source-side lane for singles entering the citywide Uprise. Music upload capacity remains capped at three songs, while the separate paid ad slot stays outside the current runtime.
+                Release Deck is the source-side lane for singles entering the citywide Uprise. Music upload capacity remains capped at three songs, six minutes per song, and 15 minutes total, while the separate paid ad slot stays outside the current runtime.
               </p>
               <div className="flex flex-wrap gap-2 text-xs text-black/55">
                 <span className="plot-wire-chip">Music slots: 3</span>
+                <span className="plot-wire-chip">Single cap: 6 min</span>
+                <span className="plot-wire-chip">Source cap: 15 min</span>
                 <span className="plot-wire-chip">Paid ad slot: defined, not active here</span>
                 <span className="plot-wire-chip">Home Scene: {homeSceneLabel}</span>
               </div>
@@ -359,6 +361,7 @@ export default function ReleaseDeckPage() {
                   className="mt-2 w-full rounded-[1rem] border border-black bg-white px-4 py-3 text-sm text-black"
                   placeholder="210"
                 />
+                <span className="mt-1 block text-xs text-black/55">Maximum 360 seconds for one Release Deck song.</span>
               </label>
 
               <label className="block text-sm text-black">

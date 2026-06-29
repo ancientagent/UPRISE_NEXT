@@ -7,6 +7,9 @@ import type { CreateTrackDto } from './dto/create-track.dto';
 
 const RELEASE_DECK_MAX_ACTIVE_ROTATION_SECONDS = 15 * 60;
 const RELEASE_DECK_MAX_READY_MUSIC_SLOTS = 3;
+const RELEASE_DECK_MAX_TRACK_SECONDS = 6 * 60;
+const RELEASE_DECK_CAP_GUIDANCE =
+  'Choose a different active song combination before adding another track.';
 
 @Injectable()
 export class TracksService {
@@ -70,6 +73,12 @@ export class TracksService {
     }
 
     if (managedArtistBand && dto.communityId && status === 'ready') {
+      if (dto.duration > RELEASE_DECK_MAX_TRACK_SECONDS) {
+        throw new BadRequestException(
+          'Release Deck tracks cannot exceed 6 minutes',
+        );
+      }
+
       const existingReadyTrackCount = await this.prisma.track.count({
         where: {
           artistBandId: managedArtistBand.id,
@@ -80,7 +89,7 @@ export class TracksService {
 
       if (existingReadyTrackCount >= RELEASE_DECK_MAX_READY_MUSIC_SLOTS) {
         throw new BadRequestException(
-          'Release Deck allows 3 active music slots per source per community',
+          `Release Deck allows 3 active music slots per source per community. ${RELEASE_DECK_CAP_GUIDANCE}`,
         );
       }
 
@@ -98,7 +107,7 @@ export class TracksService {
       const activeRotationSeconds = (existingReadyDuration._sum.duration ?? 0) + dto.duration;
       if (activeRotationSeconds > RELEASE_DECK_MAX_ACTIVE_ROTATION_SECONDS) {
         throw new BadRequestException(
-          'Release Deck active rotation cap is 15 minutes per source per community',
+          `Release Deck active rotation cap is 15 minutes per source per community. ${RELEASE_DECK_CAP_GUIDANCE}`,
         );
       }
     }

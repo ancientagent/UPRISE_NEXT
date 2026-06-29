@@ -22,7 +22,7 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 5. New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding or listener-side pioneer tracking. Listener demand can inform messaging, but without active local artists/music there is no music community to activate.
 6. A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
 7. No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
-8. Release Deck has `3` active music slots per managed Artist/Band source per city-tier community; the paid ad attachment is not a fourth music slot.
+8. Release Deck has `3` active music slots per managed Artist/Band source per city-tier community, a `6` minute cap per song, and a `15` minute total active-rotation cap per source; the paid ad attachment is not a fourth music slot.
 9. If a listener's submitted/GPS city differs from the assigned active Home Scene, Home may show a lightweight tooltip encouraging them to tell local bands/artists to register with UPRISE; this is messaging, not a community-creation workflow.
 10. Home contains Plot; Plot is not a standalone destination.
 11. Current Plot tabs are exactly `Feed`, `Events`, and `Archive`.

@@ -1686,6 +1686,20 @@ export class RegistrarService {
       };
     }
 
+    const submitter = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        gpsVerified: true,
+      },
+    });
+    if (!submitter) {
+      throw new NotFoundException('User not found');
+    }
+    if (!submitter.gpsVerified) {
+      throw new ForbiddenException('Registrar artist/band materialization requires GPS-verified Home Scene account');
+    }
+
     const payload = (entry.payload ?? {}) as Record<string, unknown>;
     const name = typeof payload.name === 'string' ? payload.name.trim() : '';
     const slug = typeof payload.slug === 'string' ? payload.slug.trim() : '';

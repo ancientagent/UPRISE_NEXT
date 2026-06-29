@@ -2880,7 +2880,11 @@ describe('RegistrarService', () => {
       homeSceneCommunity: 'punk',
     });
 
-    await expect(service.submitArtistBandRegistration('u-1', validDto)).rejects.toThrow(ForbiddenException);
+    await expect(service.submitArtistBandRegistration('u-1', validDto)).rejects.toThrow(
+      'Registrar artist/band registration requires GPS-verified Home Scene account',
+    );
+    expect(mockPrisma.registrarEntry.create).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarArtistMember.createMany).not.toHaveBeenCalled();
   });
 
   it('enforces city-tier Home Scene registrar boundary', async () => {
@@ -3097,6 +3101,10 @@ describe('RegistrarService', () => {
       sourceOriginMusicCommunity: 'punk',
       payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
     });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      gpsVerified: true,
+    });
     mockPrisma.artistBand.create.mockResolvedValue({
       id: 'ab-1',
       name: 'Static Signal',
@@ -3154,6 +3162,32 @@ describe('RegistrarService', () => {
         }),
       }),
     );
+  });
+
+  it('rejects materialization for an unmaterialized legacy entry when submitter is not GPS verified', async () => {
+    mockPrisma.registrarEntry.findUnique.mockResolvedValue({
+      id: 'reg-legacy-unverified',
+      type: 'artist_band_registration',
+      status: 'submitted',
+      sceneId: 'scene-1',
+      createdById: 'u-1',
+      artistBandId: null,
+      sourceOriginCity: 'El Paso',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
+      payload: { name: 'Static Signal', slug: 'static-signal', entityType: 'band' },
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      gpsVerified: false,
+    });
+
+    await expect(service.materializeArtistBandRegistration('u-1', 'reg-legacy-unverified')).rejects.toThrow(
+      'Registrar artist/band materialization requires GPS-verified Home Scene account',
+    );
+    expect(mockPrisma.artistBand.create).not.toHaveBeenCalled();
+    expect(mockPrisma.artistBandMember.create).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarEntry.update).not.toHaveBeenCalled();
   });
 
   it('materialize is idempotent when artistBand already linked', async () => {
