@@ -34,7 +34,7 @@ by a later media/storage implementation spec.
 
 - Release Deck has `3` active music slots per managed Artist/Band source per city-tier community.
 - The paid `4th` ad-attachment slot is not a music slot and is not a standalone rotation entry.
-- No single source may occupy more than `20` minutes (`1200` seconds) of any one Uprise rotation at a time.
+- No single source may occupy more than `15` minutes (`900` seconds) of any one Uprise rotation at a time.
 - Current API enforcement applies to `ready` tracks for the same `artistBandId + communityId`.
 - Current MVP media ingest accepts explicit hosted `http(s)` audio URLs only.
 - A song cannot be actively listed in more than one Uprise rotation at the same time.
@@ -47,7 +47,7 @@ Implemented in `apps/api/src/tracks/tracks.service.ts`:
 - when a signed-in user creates a `ready` track for a managed Artist/Band source and community, the API counts existing `ready` tracks for the same `artistBandId + communityId`;
 - if there are already `3` ready tracks, the API rejects the upload;
 - the API sums existing ready duration for the same `artistBandId + communityId`;
-- if existing ready duration plus the new track duration exceeds `1200` seconds, the API rejects the upload;
+- if existing ready duration plus the new track duration exceeds `900` seconds, the API rejects the upload;
 - `processing` and `failed` tracks are not counted as active rotation occupancy.
 
 ## Non-Functional Requirements
@@ -100,14 +100,14 @@ Current fields used:
 ## Acceptance Tests / Test Plan
 
 - API unit tests reject a fourth ready music slot for the same `artistBandId + communityId`.
-- API unit tests reject ready tracks that would push the same source above `1200` active seconds in one community.
+- API unit tests reject ready tracks that would push the same source above `900` active seconds in one community.
 - API typecheck must pass.
 - Docs lint must pass.
 
 ## Future Work And Open Questions
 
-- Define replacement behavior when a source is already at the 3-slot or 20-minute active cap.
-- Decide whether there is an explicit per-song length cap separate from the 20-minute active rotation cap.
+- Define replacement behavior when a source is already at the 3-slot or 15-minute active cap.
+- Decide whether there is an explicit per-song length cap separate from the 15-minute active rotation cap.
 - Define UI copy for cap failures and replacement flow.
 - Define if and when paid ad-slot runtime becomes visible.
 - Define storage/upload/transcode/waveform lifecycle if media infrastructure is activated.

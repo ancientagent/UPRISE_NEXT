@@ -80,7 +80,7 @@ Tests / verification files:
 - Current Source Dashboard live tool cards are `Release Deck`, `Source Profile`, `Print Shop`, and `Registrar`.
 - Source posts/messages are product-valid later but not current MVP runtime; `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` keeps follower updates deferred until a dedicated implementation spec activates them.
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
-- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
+- No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
 - The ad slot is not an extra song slot and not its own rotation entry.
 - Release Deck current MVP creates source-owned tracks from explicit hosted `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred.
 - Release Deck active-slot and active-duration eligibility is owned by `docs/specs/media/release-deck-and-eligibility.md`; replacement UX and any per-song length cap remain follow-up decisions there.

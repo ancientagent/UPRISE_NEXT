@@ -186,7 +186,7 @@ describe('TracksService.createTrack', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
-  it('rejects ready Release Deck tracks that would exceed 20 active minutes for the source in one community', async () => {
+  it('rejects ready Release Deck tracks that would exceed 15 active minutes for the source in one community', async () => {
     mockPrisma.artistBand.findFirst.mockResolvedValue({
       id: 'artist-band-1',
       name: 'Youngblood QA Source',
@@ -195,7 +195,7 @@ describe('TracksService.createTrack', () => {
     mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
     mockPrisma.track.aggregate.mockResolvedValue({
       _sum: {
-        duration: 1_050,
+        duration: 850,
       },
     });
 
@@ -274,7 +274,7 @@ describe('TracksService.createTrack', () => {
     mockPrisma.track.count.mockResolvedValue(3);
     mockPrisma.track.aggregate.mockResolvedValue({
       _sum: {
-        duration: 1_200,
+        duration: 900,
       },
     });
     mockPrisma.track.create.mockResolvedValue(createdTrack);

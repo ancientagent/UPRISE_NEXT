@@ -27,7 +27,7 @@ Defines the Registrar as the listener-side civic registration surface inside The
   - Registrar-stage civic prerequisite filings where active.
 - Artist/Band source registration requires the registering user to be GPS-verified before materialized source identity can count toward Home Scene activation.
 - A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
-- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
+- No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
 - Sect uprising motions are registrar-mediated when threshold criteria are met (45-minute committed artist playtime threshold + explicit support).
 - Sect readiness tracking may be built before it is user-visible; visibility may remain hidden, admin-only, or read-only until beta/community calibration locks maturity and backing limits.
 - Sect readiness counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate with that sect; passive genre/style metadata does not count by itself.
@@ -66,7 +66,7 @@ Registrar/source activation is the only authority path for creating or activatin
 
 - A candidate activation tuple is an inactive/unavailable `city + state + music community` with registered source-origin activity.
 - The readiness threshold is at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
-- No single source may contribute more than `20` minutes to any one Uprise rotation at a time.
+- No single source may contribute more than `15` minutes to any one Uprise rotation at a time.
 - Only approved playable music from sources whose source origin matches the candidate tuple counts toward that candidate's city-tier activation readiness.
 - The operational trigger mechanism (automatic evaluator vs explicit Registrar/admin approval gate) is an implementation contract to lock before runtime automation. The threshold itself is source/music-driven and does not depend on listener demand.
 - Once activated, future listener resolution and future source uploads should route to the natural active Home Scene; existing proxy-scene songs and votes remain governed by the cutover/Fair Play lifecycle rules in the community and broadcast specs.
@@ -101,7 +101,7 @@ Sect Uprise broadcast boundary at
 - Activation readiness diagnostics exist under `GET /admin/analytics/activation-readiness`:
   - read-only/admin-facing;
   - counts ready Artist/Band-backed tracks by persisted source-origin tuple;
-  - caps each source at `20` playable minutes;
+  - caps each source at `15` playable minutes;
   - excludes already-active city-tier scenes.
 - Manual activation trigger primitive exists under `POST /admin/analytics/activation-readiness/activate`:
   - authenticated/admin-facing with RBAC deferred;
