@@ -1,10 +1,10 @@
 import { AdminAnalyticsService } from '../src/admin-analytics/admin-analytics.service';
 
 const mockPrisma = {
-  user: { count: jest.fn(), upsert: jest.fn(), updateMany: jest.fn() },
+  user: { count: jest.fn(), upsert: jest.fn(), findMany: jest.fn(), updateMany: jest.fn() },
   userMusicCommunityPreference: { findMany: jest.fn() },
   community: { count: jest.fn(), findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
-  artistBand: { count: jest.fn(), updateMany: jest.fn() },
+  artistBand: { count: jest.fn(), findMany: jest.fn(), updateMany: jest.fn() },
   event: { count: jest.fn() },
   track: { count: jest.fn(), aggregate: jest.fn(), findMany: jest.fn(), updateMany: jest.fn() },
   signal: { count: jest.fn() },
@@ -12,6 +12,10 @@ const mockPrisma = {
   signalAction: { groupBy: jest.fn() },
   trackVote: { count: jest.fn(), groupBy: jest.fn() },
   rotationEntry: { findMany: jest.fn() },
+  userSavedScene: { createMany: jest.fn() },
+  userActivationNotice: { createMany: jest.fn() },
+  communityActivationAudit: { create: jest.fn() },
+  $transaction: jest.fn(),
 };
 
 describe('AdminAnalyticsService', () => {
@@ -19,6 +23,12 @@ describe('AdminAnalyticsService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrisma.$transaction.mockImplementation(async (callback: any) => callback(mockPrisma));
+    mockPrisma.artistBand.findMany.mockResolvedValue([]);
+    mockPrisma.user.findMany.mockResolvedValue([]);
+    mockPrisma.userSavedScene.createMany.mockResolvedValue({ count: 0 });
+    mockPrisma.userActivationNotice.createMany.mockResolvedValue({ count: 0 });
+    mockPrisma.communityActivationAudit.create.mockResolvedValue({ id: 'activation-audit-1' });
     service = new AdminAnalyticsService(mockPrisma as any);
   });
 
@@ -303,8 +313,21 @@ describe('AdminAnalyticsService', () => {
       tier: 'city',
       isActive: true,
     });
+    mockPrisma.artistBand.findMany.mockResolvedValue([
+      { id: 'source-1' },
+      { id: 'source-2' },
+      { id: 'source-3' },
+      { id: 'source-4' },
+      { id: 'source-5' },
+    ]);
     mockPrisma.artistBand.updateMany.mockResolvedValue({ count: 5 });
-    mockPrisma.user.updateMany.mockResolvedValue({ count: 12 });
+    mockPrisma.user.findMany.mockResolvedValue([
+      { id: 'listener-1', tunedSceneId: 'scene-austin-punk' },
+      { id: 'listener-2', tunedSceneId: null },
+    ]);
+    mockPrisma.userSavedScene.createMany.mockResolvedValue({ count: 1 });
+    mockPrisma.userActivationNotice.createMany.mockResolvedValue({ count: 2 });
+    mockPrisma.user.updateMany.mockResolvedValue({ count: 2 });
 
     const result = await service.activateReadyCommunity({
       city: 'El Paso',
@@ -332,7 +355,7 @@ describe('AdminAnalyticsService', () => {
       },
       data: { homeSceneId: 'scene-el-paso-punk' },
     });
-    expect(mockPrisma.user.updateMany).toHaveBeenCalledWith({
+    expect(mockPrisma.user.findMany).toHaveBeenCalledWith({
       where: {
         homeSceneCity: 'El Paso',
         homeSceneState: 'Texas',
@@ -348,22 +371,74 @@ describe('AdminAnalyticsService', () => {
           },
         ],
       },
+      select: {
+        id: true,
+        tunedSceneId: true,
+      },
+      orderBy: { id: 'asc' },
+    });
+    expect(mockPrisma.userSavedScene.createMany).toHaveBeenCalledWith({
+      data: [
+        expect.objectContaining({
+          userId: 'listener-1',
+          communityId: 'scene-austin-punk',
+          reason: 'former_proxy_cutover',
+        }),
+      ],
+      skipDuplicates: true,
+    });
+    expect(mockPrisma.userActivationNotice.createMany).toHaveBeenCalledWith({
+      data: [
+        expect.objectContaining({
+          userId: 'listener-1',
+          fromSceneId: 'scene-austin-punk',
+          toSceneId: 'scene-el-paso-punk',
+          reason: 'natural_home_scene_activated',
+        }),
+        expect.objectContaining({
+          userId: 'listener-2',
+          fromSceneId: null,
+          toSceneId: 'scene-el-paso-punk',
+          reason: 'natural_home_scene_activated',
+        }),
+      ],
+      skipDuplicates: true,
+    });
+    expect(mockPrisma.user.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ['listener-1', 'listener-2'] } },
       data: expect.objectContaining({
         tunedSceneId: 'scene-el-paso-punk',
         tunedSceneUpdatedAt: expect.any(Date),
       }),
     });
+    expect(mockPrisma.communityActivationAudit.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        sceneId: 'scene-el-paso-punk',
+        city: 'El Paso',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+        createdScene: true,
+        reanchoredSourceIds: ['source-1', 'source-2', 'source-3', 'source-4', 'source-5'],
+        cutoverListenerIds: ['listener-1', 'listener-2'],
+        savedAwaySceneCount: 1,
+        activationNoticeCount: 2,
+      }),
+      select: { id: true },
+    });
     expect(mockPrisma.track.updateMany).not.toHaveBeenCalled();
     expect(result.data).toEqual(
       expect.objectContaining({
         sceneId: 'scene-el-paso-punk',
+        activationAuditId: 'activation-audit-1',
         city: 'El Paso',
         state: 'Texas',
         musicCommunity: 'Punk',
         created: true,
         activated: true,
         reanchoredSourceCount: 5,
-        cutoverListenerCount: 12,
+        cutoverListenerCount: 2,
+        savedAwaySceneCount: 1,
+        activationNoticeCount: 2,
       }),
     );
   });
@@ -395,7 +470,10 @@ describe('AdminAnalyticsService', () => {
       isActive: true,
     });
     mockPrisma.artistBand.updateMany.mockResolvedValue({ count: 5 });
-    mockPrisma.user.updateMany.mockResolvedValue({ count: 9 });
+    mockPrisma.user.findMany.mockResolvedValue([{ id: 'listener-default', tunedSceneId: 'scene-austin-punk' }]);
+    mockPrisma.userSavedScene.createMany.mockResolvedValue({ count: 1 });
+    mockPrisma.userActivationNotice.createMany.mockResolvedValue({ count: 1 });
+    mockPrisma.user.updateMany.mockResolvedValue({ count: 1 });
 
     await service.activateReadyCommunity({
       city: 'El Paso',
@@ -403,7 +481,7 @@ describe('AdminAnalyticsService', () => {
       musicCommunity: 'Punk',
     });
 
-    expect(mockPrisma.user.updateMany).toHaveBeenCalledWith({
+    expect(mockPrisma.user.findMany).toHaveBeenCalledWith({
       where: {
         homeSceneCity: 'El Paso',
         homeSceneState: 'Texas',
@@ -419,6 +497,14 @@ describe('AdminAnalyticsService', () => {
           },
         ],
       },
+      select: {
+        id: true,
+        tunedSceneId: true,
+      },
+      orderBy: { id: 'asc' },
+    });
+    expect(mockPrisma.user.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ['listener-default'] } },
       data: expect.objectContaining({
         tunedSceneId: 'scene-el-paso-punk',
         tunedSceneUpdatedAt: expect.any(Date),
@@ -458,7 +544,10 @@ describe('AdminAnalyticsService', () => {
       isActive: true,
     });
     mockPrisma.artistBand.updateMany.mockResolvedValue({ count: 5 });
-    mockPrisma.user.updateMany.mockResolvedValue({ count: 7 });
+    mockPrisma.user.findMany.mockResolvedValue([{ id: 'listener-1', tunedSceneId: 'scene-austin-punk' }]);
+    mockPrisma.userSavedScene.createMany.mockResolvedValue({ count: 1 });
+    mockPrisma.userActivationNotice.createMany.mockResolvedValue({ count: 1 });
+    mockPrisma.user.updateMany.mockResolvedValue({ count: 1 });
 
     const result = await service.activateReadyCommunity({
       city: 'El Paso',
@@ -473,7 +562,8 @@ describe('AdminAnalyticsService', () => {
     expect(mockPrisma.community.create).not.toHaveBeenCalled();
     expect(result.data.created).toBe(false);
     expect(result.data.sceneId).toBe('inactive-el-paso-punk');
-    expect(result.data.cutoverListenerCount).toBe(7);
+    expect(result.data.cutoverListenerCount).toBe(1);
+    expect(result.data.savedAwaySceneCount).toBe(1);
   });
 
   it('rejects manual activation when the source-origin tuple is not ready', async () => {

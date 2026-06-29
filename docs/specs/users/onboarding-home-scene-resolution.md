@@ -87,7 +87,7 @@ Owner references:
 - `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points`
 
 - When a submitted/default Home Scene tuple becomes active after source-driven activation, matching users should resolve to the natural active Home Scene on the next supported Home Scene resolution/cutover path.
-- Current MVP runtime performs this minimal cutover in the manual activation trigger by updating matching users' `tunedSceneId` to the newly active natural scene. Notification delivery and saved Away Scene/profile preservation for the former proxy context remain follow-up work.
+- Current MVP runtime performs cutover in the manual activation trigger by updating matching users' `tunedSceneId` to the newly active natural scene, persisting a lightweight activation notice, and saving the former proxy scene as profile/collection Away Scene context when the user had a distinct prior proxy `tunedSceneId`.
 - User profile music-community preferences remain the user's declared affiliations/interests; activation changes which scene those preferences resolve to, not the fact that the user holds the preference.
 - If a user was routed through a proxy scene for a music community, that proxy scene may remain available as an Away Scene or saved/listenable context where profile/collection support exists.
 - Voting authority follows the currently verified/default city and the resolved active Home Scene/proxy rules. Activation of the natural scene does not preserve city-tier voting authority in the former proxy scene unless the user is visiting it as an Away Scene under separate visitor rules.
@@ -100,8 +100,8 @@ Owner references:
 - The activation event should create lightweight context for affected listeners and sources explaining that their submitted/default natural Home Scene is now active.
 - Listener-facing copy should say the community activated because source/music readiness was met. It must not imply listener demand, onboarding counts, or missing-community requests created the community.
 - Source-facing copy should explain that future uploads attach to the newly active natural Home Scene while existing proxy-scene songs finish their current lifecycle in the prior active scene.
-- Current MVP may surface this context through Home/Profile strip notification affordances, a Home dashboard tooltip, Registrar/source-dashboard status context, or a future notification record.
-- Until a notification persistence model exists, activation messaging may remain a read-only/contextual UI requirement rather than a stored inbox event.
+- Current MVP surfaces persisted activation notice context in the expanded listener profile. Home dashboard tooltip placement and source-dashboard status context may still be added in later UI slices.
+- Stored activation notices are lightweight context records, not a voting-authority or source-origin mutation path.
 - Notification delivery must not change voting authority, source origin, existing track placement, votes, engagement history, or rotation evidence.
 
 ### Former Proxy / Away Scene Preservation Contract
@@ -110,8 +110,8 @@ Owner references:
 - Preserving the former proxy scene does not keep it in the Home Scene roller. The roller remains for resolvable primary music-community preferences in the user's current/default city.
 - Preserving the former proxy scene does not preserve city-tier voting authority there. The user may visit/listen under Away Scene behavior, but voting follows current verified/default city and Home Scene rules.
 - The former proxy scene should not be duplicated as a second registered Home Scene affiliation for the same music-community preference.
-- Existing collection/signal shelves may be used for future saved Uprise/Away Scene representation only if the signal type and shelf semantics are explicitly locked; this slice does not introduce that storage model.
-- If an implementation later persists a saved Away Scene record, it must store enough context to distinguish historical proxy context from active Home Scene membership.
+- Current MVP persists former proxy scenes in `user_saved_scenes` with `reason='former_proxy_cutover'` and activation context metadata, separate from signal collection shelves.
+- Saved former-proxy Away Scene records must store enough context to distinguish historical proxy context from active Home Scene membership.
 
 ## Non-Functional Requirements
 
@@ -316,8 +316,7 @@ Acceptance checks before any migration:
 - Continue the Music-Community Preference Contract runtime path: implement the compatibility cleanup plan after read-path inversion, contract switch, and staging data verification.
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
-- Implement cutover notification/Away Scene preservation using the Activation Notification and Former Proxy / Away Scene contracts above.
-- Lock final UI placement/copy and any notification/saved-scene persistence model before adding stored notification records.
+- Extend cutover notification/Away Scene preservation beyond the expanded listener profile only after final Home dashboard/source-dashboard placement is locked.
 - Sect uprising motion mechanics remain governed by `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References

@@ -332,6 +332,21 @@ export class UsersService {
         metadata: Record<string, unknown> | null;
       }>;
     }> = [];
+    let savedAwayScenes: Array<{
+      id: string;
+      reason: string;
+      savedAt: string;
+      context: Record<string, unknown> | null;
+      scene: {
+        id: string;
+        name: string;
+        city: string | null;
+        state: string | null;
+        musicCommunity: string | null;
+        tier: string;
+        isActive: boolean;
+      };
+    }> = [];
 
     if (canViewCollection) {
       const collections = await this.prisma.collection.findMany({
@@ -404,7 +419,80 @@ export class UsersService {
           items,
         };
       });
+
+      const savedScenes = await this.prisma.userSavedScene.findMany({
+        where: { userId: targetUserId },
+        include: {
+          community: {
+            select: {
+              id: true,
+              name: true,
+              city: true,
+              state: true,
+              musicCommunity: true,
+              tier: true,
+              isActive: true,
+            },
+          },
+        },
+        orderBy: [{ savedAt: 'desc' }, { id: 'asc' }],
+      });
+
+      savedAwayScenes = savedScenes.map((savedScene: {
+        id: string;
+        reason: string;
+        savedAt: Date;
+        context: unknown;
+        community: {
+          id: string;
+          name: string;
+          city: string | null;
+          state: string | null;
+          musicCommunity: string | null;
+          tier: string;
+          isActive: boolean;
+        };
+      }) => ({
+        id: savedScene.id,
+        reason: savedScene.reason,
+        savedAt: savedScene.savedAt.toISOString(),
+        context: (savedScene.context as Record<string, unknown> | null) ?? null,
+        scene: savedScene.community,
+      }));
     }
+
+    const activationNotices =
+      viewerUserId !== targetUserId
+        ? []
+        : await this.prisma.userActivationNotice.findMany({
+            where: { userId: targetUserId, status: 'unread' },
+            include: {
+              fromScene: {
+                select: {
+                  id: true,
+                  name: true,
+                  city: true,
+                  state: true,
+                  musicCommunity: true,
+                  tier: true,
+                  isActive: true,
+                },
+              },
+              toScene: {
+                select: {
+                  id: true,
+                  name: true,
+                  city: true,
+                  state: true,
+                  musicCommunity: true,
+                  tier: true,
+                  isActive: true,
+                },
+              },
+            },
+            orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+            take: 5,
+          });
 
     const artistBandCount = await this.prisma.artistBandMember.count({
       where: { userId: targetUserId },
@@ -437,6 +525,46 @@ export class UsersService {
       },
       canViewCollection,
       collectionShelves,
+      savedAwayScenes,
+      activationNotices: activationNotices.map((notice: {
+        id: string;
+        reason: string;
+        status: string;
+        message: string | null;
+        city: string;
+        state: string;
+        musicCommunity: string;
+        createdAt: Date;
+        fromScene: {
+          id: string;
+          name: string;
+          city: string | null;
+          state: string | null;
+          musicCommunity: string | null;
+          tier: string;
+          isActive: boolean;
+        } | null;
+        toScene: {
+          id: string;
+          name: string;
+          city: string | null;
+          state: string | null;
+          musicCommunity: string | null;
+          tier: string;
+          isActive: boolean;
+        };
+      }) => ({
+        id: notice.id,
+        reason: notice.reason,
+        status: notice.status,
+        message: notice.message,
+        city: notice.city,
+        state: notice.state,
+        musicCommunity: notice.musicCommunity,
+        createdAt: notice.createdAt.toISOString(),
+        fromScene: notice.fromScene,
+        toScene: notice.toScene,
+      })),
       managedArtistBands: managedArtistBands.map((artistBand: any) => ({
         id: artistBand.id,
         name: artistBand.name,

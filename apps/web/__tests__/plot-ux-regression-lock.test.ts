@@ -274,7 +274,7 @@ describe('/plot UX regression lock', () => {
       /Saved playlist groupings appear here when they are available in your\s*collection\./
     );
     expect(plotPageSource).toContain('No saved event artifacts or fliers yet.');
-    expect(plotPageSource).toContain('No saved Uprises yet.');
+    expect(plotPageSource).toContain('No saved Uprises or Away Scenes yet.');
     expect(plotPageSource).toMatch(
       /Saved promos and coupons appear here with status and expiration when\s*collection support is available\./
     );
@@ -349,6 +349,25 @@ describe('/plot UX regression lock', () => {
       "item.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'"
     );
     expect(plotPageSource).not.toContain('Saved Away Scene Roller');
+  });
+
+  it('keeps activation context and saved Away Scenes in the listener profile, not the roller', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const expandedProfileBranch = plotPageSource
+      .split('{isProfileExpanded ? (')[1]
+      .split('\n        ) : (\n          <>')[0];
+    const rollerBranch = plotPageSource
+      .split('data-slot="home-scene-roller"')[1]
+      .split('{isProfileExpanded ? null : playerPanel}')[0];
+
+    expect(plotPageSource).toContain('savedAwayScenes: []');
+    expect(plotPageSource).toContain('activationNotices: []');
+    expect(expandedProfileBranch).toContain('data-slot="profile-activation-notices"');
+    expect(expandedProfileBranch).toContain('data-slot="profile-saved-away-scenes"');
+    expect(expandedProfileBranch).toContain('Former proxy scene saved for listening context.');
+    expect(expandedProfileBranch).toContain('Voting follows your current verified Home Scene.');
+    expect(rollerBranch).not.toContain('savedAwayScenes');
+    expect(rollerBranch).not.toContain('profile-saved-away-scenes');
   });
 
   it('locks Top Songs + Scene Activity to archive-only placement', () => {

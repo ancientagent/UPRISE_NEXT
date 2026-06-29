@@ -83,6 +83,49 @@ interface PlotCollectionShelf {
 interface PlotProfileRead {
   canViewCollection: boolean;
   collectionShelves: PlotCollectionShelf[];
+  savedAwayScenes: Array<{
+    id: string;
+    reason: string;
+    savedAt: string;
+    context: Record<string, unknown> | null;
+    scene: {
+      id: string;
+      name: string;
+      city: string | null;
+      state: string | null;
+      musicCommunity: string | null;
+      tier: string;
+      isActive: boolean;
+    };
+  }>;
+  activationNotices: Array<{
+    id: string;
+    reason: string;
+    status: string;
+    message: string | null;
+    city: string;
+    state: string;
+    musicCommunity: string;
+    createdAt: string;
+    fromScene: {
+      id: string;
+      name: string;
+      city: string | null;
+      state: string | null;
+      musicCommunity: string | null;
+      tier: string;
+      isActive: boolean;
+    } | null;
+    toScene: {
+      id: string;
+      name: string;
+      city: string | null;
+      state: string | null;
+      musicCommunity: string | null;
+      tier: string;
+      isActive: boolean;
+    };
+  }>;
   managedArtistBands: Array<{
     id: string;
     name: string;
@@ -486,12 +529,14 @@ export default function PlotPage() {
         if (cancelled) return;
 
         setPlotProfile(
-          response.data ?? {
-            canViewCollection: true,
-            collectionShelves: [],
-            managedArtistBands: [],
-          }
-        );
+            response.data ?? {
+              canViewCollection: true,
+              collectionShelves: [],
+              savedAwayScenes: [],
+              activationNotices: [],
+              managedArtistBands: [],
+            }
+          );
       } catch (error: unknown) {
         if (cancelled) return;
 
@@ -753,6 +798,8 @@ export default function PlotPage() {
   const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);
   const collectionShelves = plotProfile?.collectionShelves ?? [];
   const canViewCollection = Boolean(plotProfile?.canViewCollection);
+  const savedAwayScenes = plotProfile?.savedAwayScenes ?? [];
+  const activationNotices = plotProfile?.activationNotices ?? [];
   const managedArtistBands = plotProfile?.managedArtistBands ?? [];
   const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === 'singles') ?? null;
   const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === 'fliers') ?? null;
@@ -1296,6 +1343,28 @@ export default function PlotPage() {
               </div>
             </header>
 
+            {activationNotices.length > 0 ? (
+              <section
+                data-slot="profile-activation-notices"
+                className="plot-wire-card-muted border-[#b8d63b] bg-[#f2f7d7] p-4"
+              >
+                <p className="plot-wire-label">Home Scene Update</p>
+                <div className="mt-2 space-y-2">
+                  {activationNotices.slice(0, 2).map((notice) => (
+                    <div key={notice.id} className="rounded-xl border border-black/10 bg-white p-3">
+                      <p className="text-sm font-semibold text-black">
+                        {notice.toScene.name || `${notice.city}, ${notice.state} ${notice.musicCommunity}`} is active
+                      </p>
+                      <p className="mt-1 text-xs text-black/65">
+                        {notice.message ??
+                          'Your submitted Home Scene is now active because enough local music is ready.'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
             <section
               data-slot="profile-music-community-preferences"
               className="plot-wire-card-muted p-4"
@@ -1600,21 +1669,41 @@ export default function PlotPage() {
                       <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
                         {plotProfileError}
                       </p>
-                    ) : (uprisesShelf?.items.length ?? 0) > 0 ? (
-                      <ul className="space-y-2">
-                        {uprisesShelf?.items.slice(0, 6).map((item) => (
-                          <li key={item.signalId} className="plot-wire-card-muted p-3">
-                            <p className="text-sm font-medium text-black">
-                              {formatShelfItemPrimaryLabel(item)}
-                            </p>
-                            <p className="mt-1 text-xs text-black/55">
-                              {formatShelfItemSecondaryLabel(item)}
-                            </p>
-                          </li>
-                        ))}
-                      </ul>
                     ) : (
-                      <p className="text-sm text-black/60">No saved Uprises yet.</p>
+                      <>
+                        {savedAwayScenes.length > 0 ? (
+                          <div data-slot="profile-saved-away-scenes" className="space-y-2">
+                            <p className="plot-wire-label">Away Scenes</p>
+                            {savedAwayScenes.slice(0, 6).map((savedScene) => (
+                              <div key={savedScene.id} className="plot-wire-card-muted p-3">
+                                <p className="text-sm font-medium text-black">
+                                  {savedScene.scene.name}
+                                </p>
+                                <p className="mt-1 text-xs text-black/55">
+                                  Former proxy scene saved for listening context. Voting follows your current verified Home Scene.
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+
+                        {(uprisesShelf?.items.length ?? 0) > 0 ? (
+                          <ul className="space-y-2">
+                            {uprisesShelf?.items.slice(0, 6).map((item) => (
+                              <li key={item.signalId} className="plot-wire-card-muted p-3">
+                                <p className="text-sm font-medium text-black">
+                                  {formatShelfItemPrimaryLabel(item)}
+                                </p>
+                                <p className="mt-1 text-xs text-black/55">
+                                  {formatShelfItemSecondaryLabel(item)}
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : savedAwayScenes.length === 0 ? (
+                          <p className="text-sm text-black/60">No saved Uprises or Away Scenes yet.</p>
+                        ) : null}
+                      </>
                     )}
                   </div>
                 ) : (

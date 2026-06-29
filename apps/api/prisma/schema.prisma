@@ -46,6 +46,8 @@ model User {
   signalActions               SignalAction[]
   follows                     Follow[]
   collections                 Collection[]
+  savedScenes                 UserSavedScene[]
+  activationNotices           UserActivationNotice[]
   trackEngagements            TrackEngagement[]
   trackVotes                  TrackVote[]
   createdArtistBands          ArtistBand[]
@@ -155,8 +157,76 @@ model Community {
   trackVotes       TrackVote[]
   artistBands      ArtistBand[]
   registrarEntries RegistrarEntry[]
+  savedByUsers     UserSavedScene[]
+  activationNoticesTo   UserActivationNotice[] @relation("ActivationNoticeToScene")
+  activationNoticesFrom UserActivationNotice[] @relation("ActivationNoticeFromScene")
+  activationAudits      CommunityActivationAudit[]
 
   @@map("communities")
+}
+
+model UserSavedScene {
+  id          String   @id @default(uuid())
+  userId      String
+  communityId String
+  reason      String   @default("former_proxy_cutover")
+  context     Json?
+  savedAt     DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, communityId, reason])
+  @@index([userId, savedAt])
+  @@index([communityId])
+  @@map("user_saved_scenes")
+}
+
+model UserActivationNotice {
+  id             String    @id @default(uuid())
+  userId         String
+  fromSceneId    String?
+  toSceneId      String
+  city           String
+  state          String
+  musicCommunity String
+  reason         String    @default("natural_home_scene_activated")
+  status         String    @default("unread")
+  message        String?
+  createdAt      DateTime  @default(now())
+  readAt         DateTime?
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromScene Community? @relation("ActivationNoticeFromScene", fields: [fromSceneId], references: [id], onDelete: SetNull)
+  toScene   Community  @relation("ActivationNoticeToScene", fields: [toSceneId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, toSceneId, reason])
+  @@index([userId, status, createdAt])
+  @@index([toSceneId])
+  @@index([fromSceneId])
+  @@map("user_activation_notices")
+}
+
+model CommunityActivationAudit {
+  id                      String   @id @default(uuid())
+  sceneId                 String
+  city                    String
+  state                   String
+  musicCommunity          String
+  createdScene            Boolean
+  reanchoredSourceIds     Json
+  cutoverListenerIds      Json
+  savedAwaySceneCount     Int      @default(0)
+  activationNoticeCount   Int      @default(0)
+  thresholds              Json
+  createdAt               DateTime @default(now())
+
+  scene Community @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+
+  @@index([sceneId, createdAt])
+  @@index([city, state, musicCommunity])
+  @@map("community_activation_audits")
 }
 
 model MusicCommunityRequest {
