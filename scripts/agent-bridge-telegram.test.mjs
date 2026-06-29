@@ -4,6 +4,7 @@ import {
   buildHelpText,
   compactSummaryText,
   computeClaimableTasks,
+  isTelegramPollingConflict,
   parseNonNegativeInteger,
   parseBridgeCommand,
   parseTelegramList,
@@ -95,6 +96,19 @@ function testHelpText() {
   assert.equal(text.includes('/requeue'), true);
 }
 
+function testTelegramPollingConflictDetection() {
+  assert.equal(
+    isTelegramPollingConflict(
+      new Error('Telegram API getUpdates failed (409): {"ok":false,"error_code":409,"description":"Conflict: terminated by other getUpdates request"}'),
+    ),
+    true,
+  );
+  assert.equal(
+    isTelegramPollingConflict(new Error('Telegram API sendMessage failed (401): unauthorized')),
+    false,
+  );
+}
+
 function main() {
   testParseTelegramList();
   testParseNonNegativeInteger();
@@ -102,6 +116,7 @@ function main() {
   testComputeClaimableTasks();
   testCompactSummaryText();
   testHelpText();
+  testTelegramPollingConflictDetection();
 }
 
 main();
