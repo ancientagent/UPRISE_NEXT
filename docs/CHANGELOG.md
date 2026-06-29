@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a staging closeout for the authenticated `GET /users/me` route hardening, including Fly API deployment image, health checks, authenticated smoke result, and temporary user cleanup evidence.
 - Added a current-user API route hardening slice so authenticated `GET /users/me` returns the JWT user and current-user `me/*` routes stay registered before parameterized `/users/:id` routes.
 - Added an authenticated onboarding persistence smoke command that registers temporary users, verifies Home Scene/default preference/Home Scene Roller state after login, covers GPS-skipped, GPS-verified, and proxy-scene scenarios, and requires host/database-scoped confirmation for non-local writes.
 - Added a repeatable hosted migration runner for Fly API staging: `apps/api` now owns `migrate:deploy`, includes Prisma CLI in the production package, and has a production-deploy verification helper plus operator docs.
