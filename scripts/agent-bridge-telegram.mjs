@@ -5,6 +5,7 @@ import {
   buildHelpText,
   compactSummaryText,
   computeClaimableTasks,
+  isTelegramPollingConflict,
   parseNonNegativeInteger,
   parseBridgeCommand,
   parseTelegramList,
@@ -319,6 +320,11 @@ async function main() {
 }
 
 main().catch((error) => {
+  if (isTelegramPollingConflict(error)) {
+    console.warn(`[agent-bridge-telegram] ${error.message}`);
+    console.warn('[agent-bridge-telegram] Another Telegram getUpdates poller is active; exiting cleanly for this tick.');
+    return;
+  }
   console.error(`[agent-bridge-telegram] ${error.message}`);
   process.exitCode = 1;
 });

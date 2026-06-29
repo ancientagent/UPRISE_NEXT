@@ -14,6 +14,13 @@ export function parseNonNegativeInteger(value, fallback) {
   return Math.floor(parsed);
 }
 
+export function isTelegramPollingConflict(error) {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  return message.includes('Telegram API getUpdates failed (409)')
+    || message.includes('"error_code":409')
+    || message.includes('Conflict: terminated by other getUpdates request');
+}
+
 function stripCommandPrefix(token) {
   if (!token.startsWith('/')) return null;
   return token.slice(1).split('@')[0].toLowerCase();
