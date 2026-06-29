@@ -181,16 +181,17 @@ Listening scene, displays `Submitted location: Austin, Texas 78701`, and keeps
 voting disabled because GPS was skipped.
 
 Operational note: Fly API staging is currently healthy on image
-`deployment-01KW99A3ANNA4QFRXA64ZE8W18`, deployed from PR #128's hotfix code and
-then merged to `main` as `6c4534b`. The current production API image does not
-package Prisma CLI, so hosted migrations need a dedicated command/path before
-the next schema change.
+`deployment-01KW9DPX6XRYAJZ5DACM7N40WW`, deployed from merged `main` at
+`817b896`. This image packages Prisma CLI and has verified the hosted migration
+runner path. The pending `20260625120000_add_registrar_source_origin` migration
+was applied to Neon staging through the hosted runner, and
+`prisma migrate status` now reports the database schema is up to date.
 
 Hosted migration runner:
 
 - `apps/api` owns the deploy-time migration command:
   `pnpm --filter api run migrate:deploy`.
-- The API production package must include Prisma CLI so the Fly image can run
+- The API production package includes Prisma CLI so the Fly image can run
   migrations without falling back to Neon MCP/manual metadata updates.
 - Verify this packaging locally before deploy with
   `pnpm --filter api run verify:prod-migration-runner`; this command builds a

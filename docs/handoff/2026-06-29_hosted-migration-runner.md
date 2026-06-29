@@ -91,3 +91,29 @@ UPRISE_API_URL=https://uprise-api-staging.fly.dev pnpm run smoke:staging:api
 Authenticated onboarding persistence QA still requires a controlled staging
 user/token path or an explicitly authorized temporary-user flow. Do not claim
 that QA from this migration-runner slice.
+
+## Hosted Closeout
+
+Run after PR #130 merged to `main` as `817b896`.
+
+Provider state changed: yes, Fly API staging deployed from merged `main`
+Database writes run: yes, Neon staging migration deploy applied one pending migration
+Secrets read or changed: no
+
+Results:
+
+- Fly API staging is deployed on image
+  `deployment-01KW9DPX6XRYAJZ5DACM7N40WW`.
+- Machine `2870191f055128` is version `14`, region `ord`, `started`, with
+  `2` of `2` checks passing.
+- Hosted Prisma CLI is present in `/app/node_modules/.bin/prisma`.
+- Hosted Prisma CLI version is `5.22.0` with `@prisma/client` `5.22.0`.
+- Read-only `migrate status` initially reported one pending migration:
+  `20260625120000_add_registrar_source_origin`.
+- The target was confirmed by command output as PostgreSQL database
+  `uprise_staging`, schema `public`, on Neon.
+- `prisma migrate deploy --schema prisma/schema.prisma` applied
+  `20260625120000_add_registrar_source_origin`.
+- Follow-up `migrate status` reports `Database schema is up to date!`.
+- `UPRISE_API_URL=https://uprise-api-staging.fly.dev pnpm run smoke:staging:api`
+  passed `/health/live`, `/health/db`, `/health/postgis`, and `/health/ready`.
