@@ -38,7 +38,7 @@ Lane synthesis is based on the Abacus external lane-analysis artifact reported d
 - **Lane 1 (Onboarding/Home Scene):** core proxy assignment and GPS locality checks are implemented; helper messaging + full profile preference persistence/move workflow still need parity.
 - **Lane 2 (Registrar/Source):** registrar intake/materialization/capability primitives are strong; source-origin/Home Scene ownership contract is still missing.
 - **Lane 3 (Community Activation):** threshold values are documented, but no activation metrics job + trigger + side-effects contract exists yet.
-- **Lane 4 (Release Deck/Eligibility):** 3-song + 20-min constraints are documented, but eligibility/replacement/song-length contracts need owner-level lock.
+- **Lane 4 (Release Deck/Eligibility):** 3-song, 6-minute per-song, 15-minute per-source, and reject-only at-cap constraints are owner-locked; future history-safe replacement/edit tooling remains deferred unless explicitly needed.
 - **Lane 5 (Fair Play):** lifecycle model is documented; graduation/promotion jobs and cutover mechanics need explicit implementation contract.
 - **Lane 6 (Sects):** principles are clear and intentionally deferred in many areas; readiness/authority should reuse activation logic patterns where possible.
 
@@ -128,17 +128,17 @@ Existing truths preserved:
 
 - 3-song batch model (+ separate paid ad slot);
 - 15-minute per-source cap per rotation;
+- 6-minute per-song cap;
 - URL-only media ingest for current MVP.
 
 Owner contract promoted:
 
-- `docs/specs/media/release-deck-and-eligibility.md` now owns the 3 active music slots, 15-minute active rotation cap, and URL-only MVP ingest boundary.
+- `docs/specs/media/release-deck-and-eligibility.md` now owns the 3 active music slots, 6-minute per-song cap, 15-minute active rotation cap, reject-only at-cap behavior, and URL-only MVP ingest boundary.
 
 Owner contract follow-ups still needed for:
 
-1. explicit per-song length cap, if any;
-2. replacement behavior when source is at active cap;
-3. enforcement method for single-active-rotation exclusivity beyond current create-time guardrails.
+1. explicit history-safe replacement/edit endpoint only if a future slice needs to alter accepted tracks after rotation/vote/engagement lifecycle history exists;
+2. enforcement method for single-active-rotation exclusivity beyond current create-time guardrails.
 
 ## Fair Play and Voting Implications
 
@@ -188,7 +188,7 @@ This allows shared activation-metrics patterns without prematurely granting sect
 2. **Activation counting semantics**: do readiness minutes count all approved-playable tracks or only active-rotation-eligible tracks?
 3. **Activation trigger authority**: automatic system activation on threshold vs explicit Registrar/admin approval gate?
 4. **Proxy cross-state advancement policy**: how statewide identity is assigned when proxy assignment is cross-state edge case.
-5. **Release Deck hard eligibility contract**: song length cap and replacement behavior at 3-song/20-min constraints.
+5. **Release Deck future replacement tooling**: whether a history-safe replacement/edit endpoint is needed beyond the current reject-only behavior at 3-song, 6-minute, and 15-minute cap boundaries.
 6. **Cutover UX trigger**: when and where users/sources are notified and whether reassignment is immediate or session-bound.
 
 ## Implementation Slices
@@ -209,8 +209,8 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Activation notification and former-proxy Away Scene preservation are now owner-locked in the onboarding/Home Scene cutover user contract.
    - Next: implement UI placement/persistence for cutover context and saved proxy scene representation without preserving proxy voting authority.
 6. **Slice 6 – Release Deck Eligibility Enforcement**
-   - Active-slot and active-duration enforcement is implemented against the new Release Deck media eligibility owner spec.
-   - Next: define replacement UX and any explicit per-song length cap without widening MVP media scope.
+   - Active-slot, per-song, active-duration, and reject-only at-cap enforcement is implemented against the new Release Deck media eligibility owner spec.
+   - Next: define history-safe replacement/edit tooling only if a future source-management slice needs it without widening MVP media scope.
 7. **Slice 7 – Sect Readiness Parity Foundations**
    - Completed as owner-contract foundation: community spec owns sect readiness / Sect Uprise broadcast boundary; Registrar spec owns affiliation and motion authority.
    - Next: define implementation artifacts and visibility calibration without granting premature broadcast authority.
@@ -241,7 +241,7 @@ Primary owner docs to patch in order:
 2. `docs/specs/communities/scenes-uprises-sects.md` (activation workflow owner section)
 3. `docs/specs/users/onboarding-home-scene-resolution.md` (cutover-facing user contract pointers)
 4. `docs/specs/broadcast/radiyo-and-fair-play.md` (activation/cutover execution semantics)
-5. `docs/specs/media/release-deck-and-eligibility.md` (replacement UX and any per-song length cap follow-up)
+5. `docs/specs/media/release-deck-and-eligibility.md` (future history-safe replacement/edit tooling only if explicitly activated)
 6. `docs/agent-briefs/ONBOARDING_HOME_SCENE.md` / `REGISTRAR_GOVERNANCE.md` / `ARTIST_PROFILE_SOURCE_DASHBOARD.md` (short routing updates after owner patches)
 
 ## Risks / Drift Traps

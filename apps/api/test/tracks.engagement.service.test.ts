@@ -1,5 +1,5 @@
 import { TracksService } from '../src/tracks/tracks.service';
-import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 
 // Mock PrismaService with trackEngagement
 const mockPrisma = {
@@ -208,7 +208,9 @@ describe('TracksService.createTrack', () => {
         fileUrl: 'https://example.com/audio.mp3',
         communityId: 'community-1',
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toThrow(
+      'Release Deck active rotation cap is 15 minutes per source per community. Choose a different active song combination before adding another track.',
+    );
 
     expect(mockPrisma.track.aggregate).toHaveBeenCalledWith({
       where: {
@@ -241,7 +243,9 @@ describe('TracksService.createTrack', () => {
         fileUrl: 'https://example.com/audio.mp3',
         communityId: 'community-1',
       }),
-    ).rejects.toThrow(BadRequestException);
+    ).rejects.toThrow(
+      'Release Deck allows 3 active music slots per source per community. Choose a different active song combination before adding another track.',
+    );
 
     expect(mockPrisma.track.count).toHaveBeenCalledWith({
       where: {
@@ -250,6 +254,30 @@ describe('TracksService.createTrack', () => {
         status: 'ready',
       },
     });
+    expect(mockPrisma.track.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects ready Release Deck tracks longer than 6 minutes', async () => {
+    mockPrisma.artistBand.findFirst.mockResolvedValue({
+      id: 'artist-band-1',
+      name: 'Youngblood QA Source',
+      homeSceneId: 'community-1',
+    });
+    mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
+
+    await expect(
+      service.createTrack('user-1', {
+        title: 'Long Single',
+        artist: 'QA Artist',
+        artistBandId: 'artist-band-1',
+        duration: 361,
+        fileUrl: 'https://example.com/audio.mp3',
+        communityId: 'community-1',
+      }),
+    ).rejects.toThrow('Release Deck tracks cannot exceed 6 minutes');
+
+    expect(mockPrisma.track.count).not.toHaveBeenCalled();
+    expect(mockPrisma.track.aggregate).not.toHaveBeenCalled();
     expect(mockPrisma.track.create).not.toHaveBeenCalled();
   });
 

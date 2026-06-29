@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-25`
+**Last Updated:** `2026-06-29`
 
 ## Overview & Purpose
 Defines the Registrar as the listener-side civic registration surface inside The Plot where role/capability motions and prerequisite filings are formalized.
@@ -42,6 +42,7 @@ This section owns the source-origin rules that connect Registrar filings, proxy-
 
 - Source origin is the source's submitted natural `city + state + music community`, verified through Registrar/GPS authority. It is not silently replaced by the proxy scene where a listener/source operator is temporarily routed.
 - Artist/Band source registration can only materialize into activation-eligible source identity when the registering user is GPS-verified for the submitted source-origin location.
+- Materialization must re-check GPS verification before creating an Artist/Band source from an unmaterialized registrar entry, so legacy/stale rows cannot bypass the source-registration GPS gate.
 - If the submitted source-origin Home Scene is active, new source uploads attach to that natural Home Scene.
 - If the submitted source-origin Home Scene is inactive/unavailable, the source may operate through the assigned active proxy scene under the current Release Deck/Fair Play rules, but its submitted origin still counts toward activation readiness for the natural tuple.
 - Source origin is stable after materialization unless a future explicit Registrar workflow changes it. Proxy assignment, visitor listening, or Away Scene browsing must not mutate source origin.
@@ -59,6 +60,7 @@ Registrar runtime persists source origin separately from proxy/operating scene i
 - `ArtistBand.sourceOriginCity`, `sourceOriginState`, and `sourceOriginMusicCommunity` preserve the natural source-origin tuple for activation accounting.
 
 Activation readiness APIs and trigger automation must read source-origin fields, not `ArtistBand.homeSceneId` alone, whenever source-origin and proxy-scene identity can differ.
+Artist/Band materialization creates source identity only after the submitting user passes the current GPS verification guard; existing already-materialized source reads remain idempotent and do not create new source rows.
 
 ## City-Tier Activation Authority
 
