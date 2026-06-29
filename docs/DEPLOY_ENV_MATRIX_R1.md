@@ -181,11 +181,10 @@ Listening scene, displays `Submitted location: Austin, Texas 78701`, and keeps
 voting disabled because GPS was skipped.
 
 Operational note: Fly API staging is currently healthy on image
-`deployment-01KW9DPX6XRYAJZ5DACM7N40WW`, deployed from merged `main` at
-`817b896`. This image packages Prisma CLI and has verified the hosted migration
-runner path. The pending `20260625120000_add_registrar_source_origin` migration
-was applied to Neon staging through the hosted runner, and
-`prisma migrate status` now reports the database schema is up to date.
+`deployment-01KWAGNQ5M73QFMN4P7N31MZMF`, deployed from merged `main` at
+`9961e93`. This image packages Prisma CLI, has verified the hosted migration
+runner path, and `prisma migrate status` reports the Neon `uprise_staging`
+database schema is up to date.
 
 Hosted migration runner:
 
