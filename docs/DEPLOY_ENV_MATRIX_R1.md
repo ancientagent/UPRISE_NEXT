@@ -155,8 +155,8 @@ bypass, or a stable authenticated browser session for full page proof.
 Add `UPRISE_EXPECTED_CORS_ORIGIN=<confirmed web origin>` to the command when
 verifying CORS for a specific Vercel preview or stable staging domain.
 
-Current 2026-06-29 smoke note: API, Neon/PostGIS, stable Vercel web load,
-Google Places, and Vercel-to-Fly CORS checks pass against
+Current 2026-06-29 post-deploy smoke note: API, Neon/PostGIS, stable Vercel
+web load, Google Places, and Vercel-to-Fly CORS checks pass against
 `https://uprise-api-staging.fly.dev` for:
 
 - `https://uprise-web-staging.vercel.app`
@@ -168,17 +168,23 @@ but its API CORS preflight passes.
 
 Launch-readiness DB verification on 2026-06-29 confirmed the Neon staging
 database has the expected `48` active, geofenced city-tier launch-community
-tuples and no duplicate city/music-community/tier tuples. The same pass found
-that staging has not applied the
-`20260625150000_add_user_music_community_preferences` migration yet; the
-`user_music_community_preferences` table is absent, so the read-only
-music-community preference verifier cannot be claimed against staging until
-migrations are applied.
+tuples and no duplicate city/music-community/tier tuples. The pending
+`20260625150000_add_user_music_community_preferences` migration was applied to
+Neon staging after PR #127 merged. `user_music_community_preferences` now
+exists, and `_prisma_migrations` contains the matching checksum
+`b113438d394b42128afc82a2e362e478d6e61d3dbad5222ffc959c02b0648c4e`.
 
-Browser onboarding QA on 2026-06-29 found the deployed staging build still
-treated manual `TX` input as different from seeded `Texas` scenes. The fix lives
-in `chore/launch-readiness-verification-2026-06-29`; deploy and re-run browser
-QA before claiming the staging browser flow fully clean.
+Browser onboarding QA on 2026-06-29 passed after PR #128 deployed to stable
+Vercel staging. Signed-out `/onboarding` with GPS denied and
+`Austin / TX / 78701 / Punk` displays `Austin, Texas • Punk` for Home Scene and
+Listening scene, displays `Submitted location: Austin, Texas 78701`, and keeps
+voting disabled because GPS was skipped.
+
+Operational note: Fly API staging is currently healthy on image
+`deployment-01KW99A3ANNA4QFRXA64ZE8W18`, deployed from PR #128's hotfix code and
+then merged to `main` as `6c4534b`. The current production API image does not
+package Prisma CLI, so hosted migrations need a dedicated command/path before
+the next schema change.
 
 Launch community seed guard:
 
