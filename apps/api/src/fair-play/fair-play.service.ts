@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { TrackVoteDto } from './dto/track-vote.dto';
 import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
@@ -41,7 +41,8 @@ type VoteSceneContext = {
 export class FairPlayService {
   constructor(
     private prisma: PrismaService,
-    private musicCommunityPreferenceResolver = new MusicCommunityPreferenceResolverService(prisma),
+    @Optional()
+    private readonly musicCommunityPreferenceResolver?: MusicCommunityPreferenceResolverService,
   ) {}
 
   private normalizeVoteScopeValue(value?: string | null) {
@@ -471,7 +472,9 @@ export class FairPlayService {
 
     const homeCity = this.normalizeVoteScopeValue(user.homeSceneCity);
     const homeState = this.normalizeVoteScopeValue(user.homeSceneState);
-    const defaultMusicCommunity = await this.musicCommunityPreferenceResolver.resolveDefaultMusicCommunity(
+    const musicCommunityPreferenceResolver =
+      this.musicCommunityPreferenceResolver ?? new MusicCommunityPreferenceResolverService(this.prisma);
+    const defaultMusicCommunity = await musicCommunityPreferenceResolver.resolveDefaultMusicCommunity(
       userId,
       user.homeSceneCommunity,
     );

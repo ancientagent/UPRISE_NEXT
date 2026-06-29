@@ -51,7 +51,7 @@ function isMatchingSelection(item: DiscoverCitySceneItem, selection: HomeSceneSe
 
 function buildSceneLabel(city: string | null | undefined, state: string | null | undefined, musicCommunity: string | null | undefined): string {
   const cityLabel = city?.trim();
-  const stateLabel = state?.trim();
+  const stateLabel = normalizeUsStateName(state)?.trim();
   const communityLabel = musicCommunity?.trim();
 
   if (cityLabel && stateLabel && communityLabel) return `${cityLabel}, ${stateLabel} • ${communityLabel}`;
