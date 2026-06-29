@@ -1,4 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { UsersController } from '../src/users/users.controller';
 import { UsersService } from '../src/users/users.service';
 
@@ -385,6 +387,7 @@ describe('UsersService.getProfileWithCollection', () => {
 
 describe('UsersController music-community preferences', () => {
   const usersService = {
+    findById: jest.fn(),
     listMusicCommunityPreferences: jest.fn(),
     addMusicCommunityPreference: jest.fn(),
     setDefaultMusicCommunityPreference: jest.fn(),
@@ -396,6 +399,41 @@ describe('UsersController music-community preferences', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     controller = new UsersController(usersService as any);
+  });
+
+  it('registers current-user routes before parameterized user routes', () => {
+    const source = readFileSync(join(__dirname, '../src/users/users.controller.ts'), 'utf8');
+    const currentUserRoute = source.indexOf("@Get('me')");
+    const musicPreferencesRoute = source.indexOf("@Get('me/music-community-preferences')");
+    const rollerRoute = source.indexOf("@Get('me/home-scene-roller')");
+    const parameterizedUserRoute = source.indexOf("@Get(':id')");
+
+    expect(currentUserRoute).toBeGreaterThan(-1);
+    expect(currentUserRoute).toBeLessThan(parameterizedUserRoute);
+    expect(musicPreferencesRoute).toBeLessThan(parameterizedUserRoute);
+    expect(rollerRoute).toBeLessThan(parameterizedUserRoute);
+  });
+
+  it('returns the authenticated current user from /users/me', async () => {
+    usersService.findById.mockResolvedValue({
+      id: 'user-1',
+      username: 'verified-listener',
+      displayName: 'Verified Listener',
+    });
+
+    const response = await controller.findMe({
+      user: { userId: 'user-1' },
+    });
+
+    expect(usersService.findById).toHaveBeenCalledWith('user-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        id: 'user-1',
+        username: 'verified-listener',
+        displayName: 'Verified Listener',
+      },
+    });
   });
 
   it('returns the current user music-community preferences', async () => {

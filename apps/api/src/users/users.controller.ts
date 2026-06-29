@@ -25,16 +25,10 @@ export class UsersController {
     };
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const user = await this.usersService.findById(id);
+  @Get('me')
+  async findMe(@Request() req: { user: { userId: string } }) {
+    const user = await this.usersService.findById(req.user.userId);
     return { success: true, data: user };
-  }
-
-  @Get(':id/profile')
-  async getProfile(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
-    const profile = await this.usersService.getProfileWithCollection(req.user.userId, id);
-    return { success: true, data: profile };
   }
 
   @Post('me/collection-display')
@@ -77,5 +71,17 @@ export class UsersController {
   async getMyHomeSceneRoller(@Request() req: { user: { userId: string } }) {
     const result = await this.usersService.getHomeSceneRoller(req.user.userId);
     return { success: true, data: result };
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const user = await this.usersService.findById(id);
+    return { success: true, data: user };
+  }
+
+  @Get(':id/profile')
+  async getProfile(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
+    const profile = await this.usersService.getProfileWithCollection(req.user.userId, id);
+    return { success: true, data: profile };
   }
 }
