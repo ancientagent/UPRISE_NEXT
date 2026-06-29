@@ -89,6 +89,7 @@
 
 ### Changed
 
+- Hardened manual Home Scene activation cutover so readiness is revalidated inside the transaction and source/listener cutover uses normalized tuple matching instead of exact request casing; see `docs/handoff/2026-06-29_activation-cutover-transaction-revalidation.md`.
 - Fixed cloud workflow hygiene so push-event TruffleHog scans compare against `github.event.before` instead of resolving `main` and `HEAD` to the same commit, and Telegram bridge `409` polling conflicts now exit cleanly as an already-active poller condition; see `docs/handoff/2026-06-29_cloud-workflow-ci-hygiene.md`.
 - Changed the Release Deck / activation readiness per-source cap from `20` minutes (`1200` seconds) to `15` minutes (`900` seconds) for any one Uprise rotation.
 - Recorded authenticated staging browser QA for signed-in manual Austin/Texas/Punk onboarding with GPS denied, Plot/Home Scene Roller/profile verification, temporary user cleanup, and the non-blocking bare `/users/me` route-order observation.

@@ -18,6 +18,8 @@ type ActivationTriggerInput = {
   musicCommunity: string;
 };
 
+type ActivationReadinessClient = Pick<PrismaService, 'track' | 'community'>;
+
 const REQUIRED_PLAYABLE_SECONDS = 45 * 60;
 const MAX_PLAYABLE_SECONDS_PER_SOURCE = 15 * 60;
 const REQUIRED_DISTINCT_SOURCES = 5;
@@ -218,7 +220,11 @@ export class AdminAnalyticsService {
   }
 
   async getActivationReadinessDiagnostics() {
-    const tracks = await this.prisma.track.findMany({
+    return this.buildActivationReadinessDiagnostics(this.prisma);
+  }
+
+  private async buildActivationReadinessDiagnostics(client: ActivationReadinessClient) {
+    const tracks = await client.track.findMany({
       where: {
         status: 'ready',
         artistBandId: { not: null },
@@ -239,7 +245,7 @@ export class AdminAnalyticsService {
       },
     });
 
-    const activeScenes = await this.prisma.community.findMany({
+    const activeScenes = await client.community.findMany({
       where: {
         tier: 'city',
         isActive: true,
@@ -370,22 +376,7 @@ export class AdminAnalyticsService {
       (item) => this.activationTupleKey(item.city, item.state, item.musicCommunity) === requestedKey,
     );
 
-    const existingCommunity = await this.prisma.community.findFirst({
-      where: {
-        city,
-        state,
-        musicCommunity,
-        tier: 'city',
-      },
-      select: {
-        id: true,
-        city: true,
-        state: true,
-        musicCommunity: true,
-        tier: true,
-        isActive: true,
-      },
-    });
+    const existingCommunity = await this.findCityTierCommunityByTuple(this.prisma, city, state, musicCommunity);
 
     if (existingCommunity?.isActive) {
       throw new ConflictException('Community is already active');
@@ -395,28 +386,41 @@ export class AdminAnalyticsService {
       throw new BadRequestException('Activation readiness threshold has not been met');
     }
 
-    const sourceOriginWhere = {
-      sourceOriginCity: city,
-      sourceOriginState: state,
-      sourceOriginMusicCommunity: musicCommunity,
-    };
-    const listenerWhere = this.buildActivationListenerWhere(city, state, musicCommunity);
     const activatedAt = new Date();
 
     const cutover = await this.prisma.$transaction(async (tx) => {
-      const community = existingCommunity
+      const txDiagnostics = await this.buildActivationReadinessDiagnostics(tx as unknown as ActivationReadinessClient);
+      const txCandidate = txDiagnostics.data.candidates.find(
+        (item) => this.activationTupleKey(item.city, item.state, item.musicCommunity) === requestedKey,
+      );
+      const txExistingCommunity = await this.findCityTierCommunityByTuple(tx, city, state, musicCommunity);
+
+      if (txExistingCommunity?.isActive) {
+        throw new ConflictException('Community is already active');
+      }
+
+      if (!txCandidate?.ready) {
+        throw new BadRequestException('Activation readiness threshold has not been met');
+      }
+
+      const activationCity = txCandidate.city;
+      const activationState = txCandidate.state;
+      const activationMusicCommunity = txCandidate.musicCommunity;
+      const sourceIds = txCandidate.sources.map((source: { sourceId: string }) => source.sourceId).sort();
+
+      const community = txExistingCommunity
         ? await tx.community.update({
-            where: { id: existingCommunity.id },
+            where: { id: txExistingCommunity.id },
             data: { isActive: true },
           })
         : await tx.community.create({
             data: {
-              name: `${city}, ${state} ${musicCommunity}`,
-              slug: slugifyLaunchCommunity(city, state, musicCommunity),
-              description: `City-tier Home Scene for ${musicCommunity} in ${city}, ${state}.`,
-              city,
-              state,
-              musicCommunity,
+              name: `${activationCity}, ${activationState} ${activationMusicCommunity}`,
+              slug: slugifyLaunchCommunity(activationCity, activationState, activationMusicCommunity),
+              description: `City-tier Home Scene for ${activationMusicCommunity} in ${activationCity}, ${activationState}.`,
+              city: activationCity,
+              state: activationState,
+              musicCommunity: activationMusicCommunity,
               tier: 'city',
               isActive: true,
               isPrivate: false,
@@ -424,25 +428,15 @@ export class AdminAnalyticsService {
             },
           });
 
-      const matchingSources = await tx.artistBand.findMany({
-        where: sourceOriginWhere,
-        select: { id: true },
-        orderBy: { id: 'asc' },
-      });
-      const sourceIds = matchingSources.map((source: { id: string }) => source.id);
-      const reanchoredSources = await tx.artistBand.updateMany({
-        where: sourceOriginWhere,
-        data: { homeSceneId: community.id },
-      });
+      const reanchoredSources =
+        sourceIds.length === 0
+          ? { count: 0 }
+          : await tx.artistBand.updateMany({
+              where: { id: { in: sourceIds } },
+              data: { homeSceneId: community.id },
+            });
 
-      const listeners = await tx.user.findMany({
-        where: listenerWhere,
-        select: {
-          id: true,
-          tunedSceneId: true,
-        },
-        orderBy: { id: 'asc' },
-      });
+      const listeners = await this.findActivationListeners(tx, activationCity, activationState, activationMusicCommunity);
       const listenerIds = listeners.map((listener: { id: string }) => listener.id);
       const formerProxyScenes = listeners.filter(
         (listener: { tunedSceneId: string | null }) => Boolean(listener.tunedSceneId) && listener.tunedSceneId !== community.id,
@@ -459,9 +453,9 @@ export class AdminAnalyticsService {
                 context: {
                   from: 'activation_cutover',
                   activatedSceneId: community.id,
-                  city,
-                  state,
-                  musicCommunity,
+                  city: activationCity,
+                  state: activationState,
+                  musicCommunity: activationMusicCommunity,
                   activatedAt: activatedAt.toISOString(),
                 },
               })),
@@ -476,12 +470,12 @@ export class AdminAnalyticsService {
                 userId: listener.id,
                 fromSceneId: listener.tunedSceneId === community.id ? null : listener.tunedSceneId,
                 toSceneId: community.id,
-                city,
-                state,
-                musicCommunity,
+                city: activationCity,
+                state: activationState,
+                musicCommunity: activationMusicCommunity,
                 reason: 'natural_home_scene_activated',
                 status: 'unread',
-                message: `${city}, ${state} ${musicCommunity} is now active because enough local source music is ready. Your former proxy scene stays available as an Away Scene where supported.`,
+                message: `${activationCity}, ${activationState} ${activationMusicCommunity} is now active because enough local source music is ready. Your former proxy scene stays available as an Away Scene where supported.`,
               })),
               skipDuplicates: true,
             });
@@ -500,26 +494,32 @@ export class AdminAnalyticsService {
       const audit = await tx.communityActivationAudit.create({
         data: {
           sceneId: community.id,
-          city,
-          state,
-          musicCommunity,
-          createdScene: !existingCommunity,
+          city: activationCity,
+          state: activationState,
+          musicCommunity: activationMusicCommunity,
+          createdScene: !txExistingCommunity,
           reanchoredSourceIds: sourceIds as unknown as Prisma.JsonArray,
           cutoverListenerIds: listenerIds as unknown as Prisma.JsonArray,
           savedAwaySceneCount: savedAwayScenes.count,
           activationNoticeCount: activationNotices.count,
-          thresholds: diagnostics.data.thresholds as unknown as Prisma.JsonObject,
+          thresholds: txDiagnostics.data.thresholds as unknown as Prisma.JsonObject,
         },
         select: { id: true },
       });
 
       return {
         sceneId: community.id,
+        city: activationCity,
+        state: activationState,
+        musicCommunity: activationMusicCommunity,
+        created: !txExistingCommunity,
         activationAuditId: audit.id,
         reanchoredSourceCount: reanchoredSources.count,
         cutoverListenerCount: cutoverListeners.count,
         savedAwaySceneCount: savedAwayScenes.count,
         activationNoticeCount: activationNotices.count,
+        thresholds: txDiagnostics.data.thresholds,
+        candidate: txCandidate,
       };
     });
 
@@ -527,18 +527,18 @@ export class AdminAnalyticsService {
       success: true as const,
       data: {
         sceneId: cutover.sceneId,
-        city,
-        state,
-        musicCommunity,
-        created: !existingCommunity,
+        city: cutover.city,
+        state: cutover.state,
+        musicCommunity: cutover.musicCommunity,
+        created: cutover.created,
         activated: true,
         activationAuditId: cutover.activationAuditId,
         reanchoredSourceCount: cutover.reanchoredSourceCount,
         cutoverListenerCount: cutover.cutoverListenerCount,
         savedAwaySceneCount: cutover.savedAwaySceneCount,
         activationNoticeCount: cutover.activationNoticeCount,
-        thresholds: diagnostics.data.thresholds,
-        candidate,
+        thresholds: cutover.thresholds,
+        candidate: cutover.candidate,
       },
     };
   }
@@ -547,21 +547,77 @@ export class AdminAnalyticsService {
     return [city, state, musicCommunity].map((part) => (part ?? '').trim().toLowerCase()).join('::');
   }
 
-  private buildActivationListenerWhere(city: string, state: string, musicCommunity: string) {
-    return {
-      homeSceneCity: city,
-      homeSceneState: state,
-      OR: [
-        { homeSceneCommunity: musicCommunity },
-        {
-          musicCommunityPreferences: {
-            some: {
-              musicCommunity,
-              isDefault: true,
+  private async findCityTierCommunityByTuple(client: any, city: string, state: string, musicCommunity: string) {
+    return client.community.findFirst({
+      where: {
+        city: { equals: city, mode: 'insensitive' },
+        state: { equals: state, mode: 'insensitive' },
+        musicCommunity: { equals: musicCommunity, mode: 'insensitive' },
+        tier: 'city',
+      },
+      select: {
+        id: true,
+        city: true,
+        state: true,
+        musicCommunity: true,
+        tier: true,
+        isActive: true,
+      },
+    });
+  }
+
+  private async findActivationListeners(client: any, city: string, state: string, musicCommunity: string) {
+    const targetCityStateKey = this.activationTupleKey(city, state, '');
+    const targetTupleKey = this.activationTupleKey(city, state, musicCommunity);
+    const candidates = await client.user.findMany({
+      where: {
+        homeSceneCity: { contains: city.trim(), mode: 'insensitive' },
+        homeSceneState: { contains: state.trim(), mode: 'insensitive' },
+        OR: [
+          { homeSceneCommunity: { not: null } },
+          {
+            musicCommunityPreferences: {
+              some: { isDefault: true },
             },
           },
+        ],
+      },
+      select: {
+        id: true,
+        tunedSceneId: true,
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+        musicCommunityPreferences: {
+          where: { isDefault: true },
+          select: { musicCommunity: true },
         },
-      ],
-    };
+      },
+      orderBy: { id: 'asc' },
+    });
+
+    return candidates
+      .filter((listener: {
+        homeSceneCity: string | null;
+        homeSceneState: string | null;
+        homeSceneCommunity: string | null;
+        musicCommunityPreferences?: Array<{ musicCommunity: string }>;
+      }) => {
+        if (this.activationTupleKey(listener.homeSceneCity, listener.homeSceneState, '') !== targetCityStateKey) {
+          return false;
+        }
+
+        if (this.activationTupleKey(listener.homeSceneCity, listener.homeSceneState, listener.homeSceneCommunity) === targetTupleKey) {
+          return true;
+        }
+
+        return (listener.musicCommunityPreferences ?? []).some(
+          (preference) => this.activationTupleKey(listener.homeSceneCity, listener.homeSceneState, preference.musicCommunity) === targetTupleKey,
+        );
+      })
+      .map((listener: { id: string; tunedSceneId: string | null }) => ({
+        id: listener.id,
+        tunedSceneId: listener.tunedSceneId,
+      }));
   }
 }
