@@ -5,7 +5,7 @@ import { engagementToScore, isValidEngagementScore } from './engagement.utils';
 import type { TrackEngageDto, EngagementType } from './dto/track-engage.dto';
 import type { CreateTrackDto } from './dto/create-track.dto';
 
-const RELEASE_DECK_MAX_ACTIVE_ROTATION_SECONDS = 20 * 60;
+const RELEASE_DECK_MAX_ACTIVE_ROTATION_SECONDS = 15 * 60;
 const RELEASE_DECK_MAX_READY_MUSIC_SLOTS = 3;
 
 @Injectable()
@@ -98,7 +98,7 @@ export class TracksService {
       const activeRotationSeconds = (existingReadyDuration._sum.duration ?? 0) + dto.duration;
       if (activeRotationSeconds > RELEASE_DECK_MAX_ACTIVE_ROTATION_SECONDS) {
         throw new BadRequestException(
-          'Release Deck active rotation cap is 20 minutes per source per community',
+          'Release Deck active rotation cap is 15 minutes per source per community',
         );
       }
     }

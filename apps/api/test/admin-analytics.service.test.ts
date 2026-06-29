@@ -219,8 +219,8 @@ describe('AdminAnalyticsService', () => {
       requiredPlayableSeconds: 2700,
       requiredPlayableMinutes: 45,
       requiredDistinctSources: 5,
-      maxPlayableSecondsPerSource: 1200,
-      maxPlayableMinutesPerSource: 20,
+      maxPlayableSecondsPerSource: 900,
+      maxPlayableMinutesPerSource: 15,
     });
     expect(result.data.candidates).toEqual([
       expect.objectContaining({
@@ -229,8 +229,8 @@ describe('AdminAnalyticsService', () => {
         musicCommunity: 'punk',
         distinctSourceCount: 5,
         rawPlayableSeconds: 3900,
-        cappedPlayableSeconds: 3600,
-        cappedPlayableMinutes: 60,
+        cappedPlayableSeconds: 3300,
+        cappedPlayableMinutes: 55,
         ready: true,
         existingActiveSceneId: null,
       }),

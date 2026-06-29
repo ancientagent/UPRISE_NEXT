@@ -67,7 +67,7 @@ This section owns the community-side activation workflow for splitting a natural
 ### Readiness Criteria
 
 - A city-tier Home Scene is ready to activate when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
-- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
+- No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
 - Only approved playable music from sources whose source origin matches the candidate tuple counts toward that tuple's activation readiness.
 - Readiness accounting should use approved playable minutes and source-origin metadata, not loose profile tags, listener taste metadata, follower counts, or onboarding demand.
 - Exact metric storage/read APIs are implementation details for follow-up slices; this section locks the counting semantics.
@@ -213,7 +213,7 @@ justify subcommunity broadcast authority.
   - Unknown or inactive city/community assigns to the nearest/relevant active major-node same-parent city-tier community and auto-joins the resolved active Scene.
   - Onboarding does not create inactive `Community` rows or listener-side pioneer activation queues.
   - New city-tier communities split from major nodes only through artist/source concentration and Registrar/source activation.
-  - Activation readiness uses source-origin-matching approved playable minutes, at least `5` distinct registered source accounts, and the `20` minute per-source rotation cap.
+  - Activation readiness uses source-origin-matching approved playable minutes, at least `5` distinct registered source accounts, and the `15` minute per-source rotation cap.
   - Artist/source tracks created before a split finish their existing rotation lifecycle; post-activation track uploads attach according to the source's active Home Scene.
   - Proxy-scene listener votes and source/song voting data remain historical to the proxy scene/tier where they occurred; they do not transfer into the newly active natural Home Scene.
   - Existing city/community resolves without duplicate membership.

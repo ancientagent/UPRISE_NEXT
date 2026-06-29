@@ -18,7 +18,7 @@ type ActivationTriggerInput = {
 };
 
 const REQUIRED_PLAYABLE_SECONDS = 45 * 60;
-const MAX_PLAYABLE_SECONDS_PER_SOURCE = 20 * 60;
+const MAX_PLAYABLE_SECONDS_PER_SOURCE = 15 * 60;
 const REQUIRED_DISTINCT_SOURCES = 5;
 
 @Injectable()

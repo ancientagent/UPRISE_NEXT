@@ -57,7 +57,7 @@ Tests / verification files:
 - Source origin is owned by `docs/specs/system/registrar.md#source-origin-contract`: it is the submitted natural `city + state + music community` verified through Registrar/GPS authority, not the temporary proxy scene.
 - Current runtime persists source origin on Registrar Artist/Band filings and materialized Artist/Band records separately from the active/proxy operating scene.
 - Artist/Band source registration can count toward Home Scene activation only after the registering user is GPS-verified for the submitted source-origin location.
-- City-tier Home Scene activation is Registrar/source-driven: at least `45` minutes of approved playable music from at least `5` distinct registered source accounts, with no single source occupying more than `20` minutes of one Uprise rotation.
+- City-tier Home Scene activation is Registrar/source-driven: at least `45` minutes of approved playable music from at least `5` distinct registered source accounts, with no single source occupying more than `15` minutes of one Uprise rotation.
 - Listener onboarding counts, missing-music-community requests, and passive listener demand do not activate a community.
 - Promoter capability is additive to the base user identity, not a separate account tree.
 - Promoter capability unlocks source-facing event workflows rather than creating listener event-authoring.

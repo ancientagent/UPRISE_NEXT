@@ -23,7 +23,7 @@ This plan preserves current product locks:
 Authority loaded in order (`AGENTS.md` -> orientation -> owner specs -> lane briefs -> runtime evidence) is consistent on the following:
 
 1. **Community identity** is `city + state + music community`.
-2. **Activation thresholds are already product truth**: at least `45` minutes approved playable music from at least `5` distinct registered source accounts, with `20` minute max per source per rotation.
+2. **Activation thresholds are already product truth**: at least `45` minutes approved playable music from at least `5` distinct registered source accounts, with `15` minute max per source per rotation.
 3. **Activation is source/Registrar-driven**, not listener-demand/onboarding-driven.
 4. **Proxy assignment** remains in-state when possible; cross-state is edge-case only.
 5. **GPS gates voting/source-registration authority**, not ordinary listening participation.
@@ -127,12 +127,12 @@ Until owner decision, keep current registrar runtime untouched and treat source-
 Existing truths preserved:
 
 - 3-song batch model (+ separate paid ad slot);
-- 20-minute per-source cap per rotation;
+- 15-minute per-source cap per rotation;
 - URL-only media ingest for current MVP.
 
 Owner contract promoted:
 
-- `docs/specs/media/release-deck-and-eligibility.md` now owns the 3 active music slots, 20-minute active rotation cap, and URL-only MVP ingest boundary.
+- `docs/specs/media/release-deck-and-eligibility.md` now owns the 3 active music slots, 15-minute active rotation cap, and URL-only MVP ingest boundary.
 
 Owner contract follow-ups still needed for:
 

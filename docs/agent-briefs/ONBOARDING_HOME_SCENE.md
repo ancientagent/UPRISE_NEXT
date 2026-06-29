@@ -73,7 +73,7 @@ Tests / verification files:
 - UPRISE starts with fixed active major-node Home Scenes / music capitals for each parent music community. Surrounding or inactive cities are assigned into those active nodes until enough local artist/source concentration exists to split off a new city-tier Home Scene.
 - New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding or listener-side pioneer tracking. Listener demand can motivate copy, but without active local artists/music there is no music community to activate.
 - A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
-- No single source may occupy more than `20` minutes of any one Uprise rotation at a time.
+- No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
 - Activation readiness and source-origin authority are owned by `docs/specs/system/registrar.md#source-origin-contract` and `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow`.
 - If a listener's submitted/GPS city differs from the assigned active Home Scene, Home may show lightweight helper copy encouraging the listener to tell local bands/artists to register with UPRISE.
 - Sects, generated channels, and sub-communities happen later through the Prime model rather than as launch seed architecture variants.
