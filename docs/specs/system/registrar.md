@@ -109,6 +109,8 @@ Sect Uprise broadcast boundary at
   - authenticated/admin-facing with RBAC deferred;
   - accepts a `city + state + musicCommunity` tuple;
   - reuses source-origin readiness diagnostics and refuses activation unless the tuple meets the locked thresholds;
+  - revalidates source-origin readiness inside the activation transaction before any scene/source/listener writes;
+  - matches activation source IDs and listener submitted/default music-community tuples with normalized `city + state + music community` comparison so casing/spacing drift does not skip eligible cutover rows;
   - creates the natural city-tier `Community` when no row exists, or marks an inactive matching row active;
   - re-anchors matching `ArtistBand.homeSceneId` values to the natural scene for future uploads;
   - re-roots matching listener `User.tunedSceneId` values to the natural scene for Home/Plot resolution after activation;
