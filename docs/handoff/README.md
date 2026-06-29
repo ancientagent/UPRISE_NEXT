@@ -19,7 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
-- [`2026-06-29_launch-readiness-verification.md`](./2026-06-29_launch-readiness-verification.md) — current launch-readiness verification pass: Google Places and launch-community DB verification pass, focused API/web contracts pass, staging lacks the music-community preference table migration, and onboarding state-abbreviation normalization is fixed in branch pending deploy verification.
+- [`2026-06-29_launch-readiness-verification.md`](./2026-06-29_launch-readiness-verification.md) — current launch-readiness verification pass and post-deploy closeout: Google Places, launch-community DB verification, focused API/web contracts, stable Vercel/Fly/Neon smoke, staging preference migration, and signed-out onboarding browser QA now pass after PR #127 and PR #128.
 - [`2026-06-29_staging-truth-refresh.md`](./2026-06-29_staging-truth-refresh.md) — previous read-only staging baseline: Vercel stable web load, Fly API health, Neon/PostGIS readiness, and Vercel-to-Fly CORS passed before the later launch-readiness pass ran Places and direct DB verification.
 - [`2026-06-19_distance-based-pioneer-fallback.md`](./2026-06-19_distance-based-pioneer-fallback.md) — makes unavailable Home Scene fallback actually distance-based when submitted city coordinates and active scene geofences are available.
 - [`2026-06-18_fake-location-provider-smoke.md`](./2026-06-18_fake-location-provider-smoke.md) — local fake location provider and onboarding smoke command for manual, GPS-first, and pioneer fallback flows without routine Google Maps API calls.
