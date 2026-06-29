@@ -211,7 +211,7 @@ describe('onboarding review resolution', () => {
     expect(
       formatHomeSceneLabel({
         city: 'Austin',
-        state: 'Texas',
+        state: 'TX',
         postalCode: '78704',
         musicCommunity: 'Punk',
       })
@@ -222,7 +222,7 @@ describe('onboarding review resolution', () => {
     expect(
       formatSubmittedLocationLabel({
         city: 'Austin',
-        state: 'Texas',
+        state: 'TX',
         postalCode: '78704',
         musicCommunity: 'Punk',
       })
