@@ -83,6 +83,7 @@
 
 ### Changed
 
+- Refreshed staging truth for the current Vercel/Fly/Neon path: stable Vercel web load, Fly API health, Neon/PostGIS readiness, and Vercel-to-Fly CORS now pass for the documented staging origins; Google Places and direct DB verifier scripts remain intentionally not run in this pass.
 - Updated external-tool and multi-agent routing pointers so future agents load the AI stack/lane map and no longer treat the historical Hermes launch-community branch as a standing auditor default.
 - Refreshed the Music-Community Preference runtime parity audit after PR #116 merged, confirming preference persistence, default/star selection, Home Scene Roller, profile-only unresolved labels, and registered-preference voting are implemented while narrowing remaining work to read-path inversion, write-path sync, and staging data audit.
 - Updated Fly staging `CORS_ORIGIN` for `uprise-api-staging` to allow the stable staging web domain and current Vercel main-branch alias; follow-up staging readiness smoke now passes API health, Neon DB, PostGIS, CORS preflight, and public Places checks, while unauthenticated web load remains Vercel-SSO protected.
