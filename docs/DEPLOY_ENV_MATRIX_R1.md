@@ -186,6 +186,23 @@ then merged to `main` as `6c4534b`. The current production API image does not
 package Prisma CLI, so hosted migrations need a dedicated command/path before
 the next schema change.
 
+Hosted migration runner:
+
+- `apps/api` owns the deploy-time migration command:
+  `pnpm --filter api run migrate:deploy`.
+- The API production package must include Prisma CLI so the Fly image can run
+  migrations without falling back to Neon MCP/manual metadata updates.
+- Verify this packaging locally before deploy with
+  `pnpm --filter api run verify:prod-migration-runner`; this command builds a
+  temporary production deploy folder and fails if `node_modules/.bin/prisma` is
+  missing.
+- On Fly staging, run migrations only after confirming the app and database
+  target are `uprise-api-staging` and `uprise_staging`:
+
+  ```bash
+  ~/.fly/bin/flyctl ssh console -a uprise-api-staging -C "/bin/sh -lc 'cd /app && ./node_modules/.bin/prisma migrate deploy --schema prisma/schema.prisma'"
+  ```
+
 Launch community seed guard:
 
 - Use `pnpm --filter api run seed:launch-communities:dry-run` before any write

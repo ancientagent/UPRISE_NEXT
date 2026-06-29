@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a repeatable hosted migration runner for Fly API staging: `apps/api` now owns `migrate:deploy`, includes Prisma CLI in the production package, and has a production-deploy verification helper plus operator docs.
 - Added `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` as the concise AI/tool stack and lane-agent routing map for Codex, Cloud Codex, Hermes, Abacus, NotebookLM, design tools, Linear, and generated wiki workflows.
 - Added runtime adoption for the shared default music-community preference resolver across Registrar/source-origin checks, Discover/community context reads, onboarding and invite write sync, activation cutover matching, and a read-only `verify:music-community-preferences` staging audit command.
 - Added a shared API `MusicCommunityPreferenceResolverService` and wired Fair Play exact Home Scene voting to prefer the explicit default `UserMusicCommunityPreference` before falling back to the compatibility `User.homeSceneCommunity` field.
