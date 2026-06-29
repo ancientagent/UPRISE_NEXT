@@ -83,6 +83,7 @@
 
 ### Changed
 
+- Fixed onboarding state-abbreviation handling so GPS/manual `TX` resolves to seeded `Texas` Home Scenes instead of false proxy review, and recorded the 2026-06-29 launch-readiness verification pass covering Places, Neon launch-community data, focused contracts, and the remaining staging preference-migration blocker.
 - Refreshed staging truth for the current Vercel/Fly/Neon path: stable Vercel web load, Fly API health, Neon/PostGIS readiness, and Vercel-to-Fly CORS now pass for the documented staging origins; Google Places and direct DB verifier scripts remain intentionally not run in this pass.
 - Updated external-tool and multi-agent routing pointers so future agents load the AI stack/lane map and no longer treat the historical Hermes launch-community branch as a standing auditor default.
 - Refreshed the Music-Community Preference runtime parity audit after PR #116 merged, confirming preference persistence, default/star selection, Home Scene Roller, profile-only unresolved labels, and registered-preference voting are implemented while narrowing remaining work to read-path inversion, write-path sync, and staging data audit.

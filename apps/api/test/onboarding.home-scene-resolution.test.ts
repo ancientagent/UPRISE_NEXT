@@ -104,6 +104,54 @@ describe('OnboardingService home-scene resolution', () => {
     });
   });
 
+  it('normalizes state abbreviations before exact scene lookup and persistence', async () => {
+    const prisma = createPrismaMock();
+    const service = new OnboardingService(prisma as any);
+    const exactScene = {
+      id: 'scene-austin-punk',
+      name: 'Austin Punk',
+      city: 'Austin',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+      isActive: true,
+    };
+
+    prisma.community.findFirst.mockResolvedValue(exactScene);
+    prisma.__tx.user.update.mockResolvedValue({
+      id: 'user-1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      homeSceneTag: null,
+      tunedSceneId: 'scene-austin-punk',
+      gpsVerified: false,
+    });
+
+    const result = await service.setHomeScene('user-1', {
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'Punk',
+    });
+
+    expect(prisma.community.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { city: 'Austin', state: 'Texas', musicCommunity: 'Punk', tier: 'city' },
+      })
+    );
+    expect(prisma.__tx.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          homeSceneState: 'Texas',
+        }),
+      })
+    );
+    expect(result).toMatchObject({
+      pioneer: false,
+      resolvedCitySceneLabel: 'Austin, Texas • Punk',
+      pioneerHomeScene: null,
+    });
+  });
+
   it('writes the selected music community as the default preference during Home Scene onboarding', async () => {
     const prisma = createPrismaMock();
     const service = new OnboardingService(prisma as any);

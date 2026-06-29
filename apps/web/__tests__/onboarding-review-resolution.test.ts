@@ -68,6 +68,48 @@ describe('onboarding review resolution', () => {
     });
   });
 
+  it('normalizes state abbreviations before exact active home-scene resolution', async () => {
+    const readScenes = jest
+      .fn<Promise<DiscoverItem[]>, [any, string | undefined]>()
+      .mockResolvedValueOnce([
+        {
+          entryType: 'city_scene',
+          sceneId: 'scene-austin-punk',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'Texas',
+          musicCommunity: 'Punk',
+          memberCount: 12,
+          isActive: true,
+          isHomeScene: false,
+        },
+      ]);
+
+    const result = await resolveOnboardingReviewState(
+      {
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Punk',
+      },
+      undefined,
+      readScenes
+    );
+
+    expect(readScenes).toHaveBeenCalledWith(
+      {
+        tier: 'city',
+        city: 'Austin',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+      },
+      undefined
+    );
+    expect(result.pioneer).toBe(false);
+    expect(result.resolutionMode).toBe('exact');
+    expect(result.resolvedSceneLabel).toBe('Austin, Texas • Punk');
+    expect(result.discoveryContext?.isVisitor).toBe(false);
+  });
+
   it('falls back to the first active scene in-state and preserves pioneer intent', async () => {
     const readScenes = jest
       .fn<Promise<DiscoverItem[]>, [any, string | undefined]>()

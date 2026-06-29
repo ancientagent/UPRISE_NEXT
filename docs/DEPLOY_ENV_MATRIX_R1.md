@@ -2,7 +2,7 @@
 
 Status: Active planning document
 Owner: Founder + product engineering
-Last updated: 2026-06-15
+Last updated: 2026-06-29
 
 ## Purpose
 
@@ -155,16 +155,30 @@ bypass, or a stable authenticated browser session for full page proof.
 Add `UPRISE_EXPECTED_CORS_ORIGIN=<confirmed web origin>` to the command when
 verifying CORS for a specific Vercel preview or stable staging domain.
 
-Current 2026-06-29 smoke note: API, Neon/PostGIS, stable Vercel web load, and
-Vercel-to-Fly CORS checks pass against `https://uprise-api-staging.fly.dev` for:
+Current 2026-06-29 smoke note: API, Neon/PostGIS, stable Vercel web load,
+Google Places, and Vercel-to-Fly CORS checks pass against
+`https://uprise-api-staging.fly.dev` for:
 
 - `https://uprise-web-staging.vercel.app`
 - `https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app`
 
 The stable staging web URL returns `200` to unauthenticated HTTP. The Git-driven
 `main` branch alias may still be Vercel-auth protected for direct web-page load,
-but its API CORS preflight passes. Google Places and direct DB verifier scripts
-were not run in the 2026-06-29 pass.
+but its API CORS preflight passes.
+
+Launch-readiness DB verification on 2026-06-29 confirmed the Neon staging
+database has the expected `48` active, geofenced city-tier launch-community
+tuples and no duplicate city/music-community/tier tuples. The same pass found
+that staging has not applied the
+`20260625150000_add_user_music_community_preferences` migration yet; the
+`user_music_community_preferences` table is absent, so the read-only
+music-community preference verifier cannot be claimed against staging until
+migrations are applied.
+
+Browser onboarding QA on 2026-06-29 found the deployed staging build still
+treated manual `TX` input as different from seeded `Texas` scenes. The fix lives
+in `chore/launch-readiness-verification-2026-06-29`; deploy and re-run browser
+QA before claiming the staging browser flow fully clean.
 
 Launch community seed guard:
 

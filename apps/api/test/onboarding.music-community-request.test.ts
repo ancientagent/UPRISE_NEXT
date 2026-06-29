@@ -8,7 +8,7 @@ describe('OnboardingService music community requests', () => {
           id: 'request-1',
           requestedName: 'Hardcore',
           city: 'Austin',
-          state: 'TX',
+          state: 'Texas',
           status: 'submitted',
           createdAt: new Date('2026-06-16T00:00:00.000Z'),
           updatedAt: new Date('2026-06-16T00:00:00.000Z'),
@@ -17,8 +17,8 @@ describe('OnboardingService music community requests', () => {
           .fn()
           .mockResolvedValueOnce([{ userId: 'user-1' }, { userId: 'user-2' }])
           .mockResolvedValueOnce([
-            { cityNormalized: 'austin', stateNormalized: 'tx' },
-            { cityNormalized: 'houston', stateNormalized: 'tx' },
+            { cityNormalized: 'austin', stateNormalized: 'texas' },
+            { cityNormalized: 'houston', stateNormalized: 'texas' },
           ]),
       },
       community: {
@@ -40,7 +40,7 @@ describe('OnboardingService music community requests', () => {
             userId: 'user-1',
             requestedNameNormalized: 'hardcore',
             cityNormalized: 'austin',
-            stateNormalized: 'tx',
+            stateNormalized: 'texas',
           },
         },
         create: expect.objectContaining({
@@ -49,8 +49,8 @@ describe('OnboardingService music community requests', () => {
           requestedNameNormalized: 'hardcore',
           city: 'Austin',
           cityNormalized: 'austin',
-          state: 'TX',
-          stateNormalized: 'tx',
+          state: 'Texas',
+          stateNormalized: 'texas',
           status: 'submitted',
         }),
       })
