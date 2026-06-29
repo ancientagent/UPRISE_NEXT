@@ -68,6 +68,13 @@ const US_STATE_NAMES_BY_ABBREVIATION = Object.fromEntries(
   ])
 );
 
+const US_STATE_LABELS_BY_ABBREVIATION = Object.fromEntries(
+  Object.entries(US_STATE_ABBREVIATIONS).map(([name, abbreviation]) => [
+    abbreviation.toLowerCase(),
+    name,
+  ])
+);
+
 function normalizeIntakeText(value: string): string {
   return value.trim().replace(/\s+/g, ' ');
 }
@@ -80,6 +87,18 @@ function normalizeStateKey(value: string | null | undefined): string {
   if (!value) return '';
   const normalized = normalizeIntakeKey(value);
   return US_STATE_NAMES_BY_ABBREVIATION[normalized] ?? normalized;
+}
+
+function normalizeStateLabel(value: string): string {
+  const normalizedText = normalizeIntakeText(value);
+  const normalizedKey = normalizedText.toLowerCase();
+  const abbreviationMatch = US_STATE_LABELS_BY_ABBREVIATION[normalizedKey];
+  if (abbreviationMatch) return abbreviationMatch;
+
+  const nameMatch = Object.keys(US_STATE_ABBREVIATIONS).find(
+    (stateName) => stateName.toLowerCase() === normalizedKey
+  );
+  return nameMatch ?? normalizedText;
 }
 
 function formatSceneLabel(scene: {
@@ -191,7 +210,7 @@ export class OnboardingService {
 
   async setHomeScene(userId: string, dto: HomeSceneSelectionDto) {
     const city = dto.city.trim();
-    const state = dto.state.trim();
+    const state = normalizeStateLabel(dto.state);
     const musicCommunity = dto.musicCommunity.trim();
     const tasteTag = dto.tasteTag?.trim() || null;
 
@@ -447,7 +466,7 @@ export class OnboardingService {
   async requestMusicCommunity(userId: string, dto: MusicCommunityRequestDto) {
     const requestedName = normalizeIntakeText(dto.requestedName);
     const city = normalizeIntakeText(dto.city);
-    const state = normalizeIntakeText(dto.state);
+    const state = normalizeStateLabel(dto.state);
     const requestedNameNormalized = normalizeIntakeKey(requestedName);
     const cityNormalized = normalizeIntakeKey(city);
     const stateNormalized = normalizeIntakeKey(state);

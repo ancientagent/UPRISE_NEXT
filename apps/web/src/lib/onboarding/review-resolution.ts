@@ -1,4 +1,5 @@
 import { MUSIC_COMMUNITIES } from '@/data/music-communities';
+import { normalizeUsStateName } from '@/data/us-states';
 import {
   listDiscoverScenes,
   type DiscoverCitySceneItem,
@@ -32,6 +33,10 @@ function normalizeText(value: string | null | undefined): string {
   return value?.trim().toLowerCase() ?? '';
 }
 
+function normalizeStateText(value: string | null | undefined): string {
+  return normalizeText(normalizeUsStateName(value));
+}
+
 function isDiscoverCitySceneItem(item: DiscoverItem): item is DiscoverCitySceneItem {
   return item.entryType === 'city_scene';
 }
@@ -39,7 +44,7 @@ function isDiscoverCitySceneItem(item: DiscoverItem): item is DiscoverCitySceneI
 function isMatchingSelection(item: DiscoverCitySceneItem, selection: HomeSceneSelection): boolean {
   return (
     normalizeText(item.city) === normalizeText(selection.city) &&
-    normalizeText(item.state) === normalizeText(selection.state) &&
+    normalizeStateText(item.state) === normalizeStateText(selection.state) &&
     normalizeText(item.musicCommunity) === normalizeText(selection.musicCommunity)
   );
 }
@@ -111,7 +116,7 @@ export async function resolveOnboardingReviewState(
     {
       tier: 'city',
       city: selection.city,
-      state: selection.state,
+      state: normalizeUsStateName(selection.state),
       musicCommunity: selection.musicCommunity,
     },
     token,
@@ -137,7 +142,7 @@ export async function resolveOnboardingReviewState(
   const stateResponse = await readScenes(
     {
       tier: 'city',
-      state: selection.state,
+      state: normalizeUsStateName(selection.state),
       musicCommunity: selection.musicCommunity,
     },
     token,
@@ -148,7 +153,7 @@ export async function resolveOnboardingReviewState(
     .filter(
       (item) =>
         item.isActive &&
-        normalizeText(item.state) === normalizeText(selection.state) &&
+        normalizeStateText(item.state) === normalizeStateText(selection.state) &&
         normalizeText(item.musicCommunity) === normalizeText(selection.musicCommunity),
     );
 

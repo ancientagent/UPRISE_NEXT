@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import { api } from '@/lib/api';
 import { MUSIC_COMMUNITIES } from '@/data/music-communities';
-import { US_STATES } from '@/data/us-states';
+import { US_STATES, normalizeUsStateName } from '@/data/us-states';
 import {
   formatHomeSceneLabel,
   formatSubmittedLocationLabel,
@@ -148,7 +148,7 @@ export default function OnboardingPage() {
 
     const selection = {
       city: city.trim(),
-      state: state.trim(),
+      state: normalizeUsStateName(state),
       musicCommunity: approvedMusicCommunity,
       postalCode: postalCode.trim() || undefined,
     };
@@ -335,7 +335,7 @@ export default function OnboardingPage() {
         );
         if (detected?.city && detected?.state) {
           setCity(detected.city);
-          setState(detected.state);
+          setState(normalizeUsStateName(detected.state));
           if (detected.postalCode) setPostalCode(detected.postalCode);
           setManualLocationMode(false);
         } else {
@@ -398,7 +398,7 @@ export default function OnboardingPage() {
         {
           requestedName,
           city: city.trim(),
-          state: state.trim(),
+          state: normalizeUsStateName(state),
         },
         { token }
       );
