@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added an activation cutover fixture smoke command that creates synthetic source/listener/proxy rows, calls the real manual activation API endpoint, verifies source reanchor/listener reroot/Away Scene/notice/audit persistence, and cleans up fixture rows; see `docs/handoff/2026-06-29_activation-cutover-fixture-smoke.md`.
 - Added activation cutover persistence for manual source-driven Home Scene activation: former proxy scenes are saved as profile Away Scenes, listener activation notices are created, and a cutover audit records source/listener IDs without moving existing tracks or votes; merged PR #139 was deployed to Fly API staging, the hosted migration was applied to Neon `uprise_staging`, and staging health/readiness/schema smokes passed; see `docs/handoff/2026-06-29_activation-cutover-away-scene.md`.
 - Added Release Deck six-minute single-song enforcement, reject-only at-cap guidance, Registrar GPS materialization re-checks, and staging source-origin readiness smoke evidence; see `docs/handoff/2026-06-29_release-deck-song-cap-registrar-gps.md`.
 - Added a staging closeout for the authenticated `GET /users/me` route hardening, including Fly API deployment image, health checks, authenticated smoke result, and temporary user cleanup evidence.
