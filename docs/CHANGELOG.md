@@ -9,7 +9,7 @@
 
 ### Added
 
-- Added activation cutover persistence for manual source-driven Home Scene activation: former proxy scenes are saved as profile Away Scenes, listener activation notices are created, and a cutover audit records source/listener IDs without moving existing tracks or votes; see `docs/handoff/2026-06-29_activation-cutover-away-scene.md`.
+- Added activation cutover persistence for manual source-driven Home Scene activation: former proxy scenes are saved as profile Away Scenes, listener activation notices are created, and a cutover audit records source/listener IDs without moving existing tracks or votes; merged PR #139 was deployed to Fly API staging, the hosted migration was applied to Neon `uprise_staging`, and staging health/readiness/schema smokes passed; see `docs/handoff/2026-06-29_activation-cutover-away-scene.md`.
 - Added Release Deck six-minute single-song enforcement, reject-only at-cap guidance, Registrar GPS materialization re-checks, and staging source-origin readiness smoke evidence; see `docs/handoff/2026-06-29_release-deck-song-cap-registrar-gps.md`.
 - Added a staging closeout for the authenticated `GET /users/me` route hardening, including Fly API deployment image, health checks, authenticated smoke result, and temporary user cleanup evidence.
 - Added a current-user API route hardening slice so authenticated `GET /users/me` returns the JWT user and current-user `me/*` routes stay registered before parameterized `/users/:id` routes.

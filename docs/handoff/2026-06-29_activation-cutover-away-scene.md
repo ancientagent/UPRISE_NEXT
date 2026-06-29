@@ -60,7 +60,19 @@ Plot UI:
 - `pnpm run infra-policy-check`
 - `git diff --check`
 
-## Remaining Before Merge
+## Staging Closeout
 
-- Open PR with required metadata.
-- Because this slice adds a migration, deploy/smoke staging after merge before claiming complete runtime rollout.
+Merged PR: `#139`
+Merge commit: `2c09d6f`
+Fly app: `uprise-api-staging`
+Fly image: `registry.fly.io/uprise-api-staging:deployment-01KW9ZXBRRQWKPW4189183Q8T0`
+
+Post-merge staging steps completed:
+- Deployed merged `main` to Fly API staging with `~/.fly/bin/flyctl deploy --config fly.api.staging.toml --app uprise-api-staging --remote-only --now`.
+- Applied Prisma migration `20260629120000_add_activation_cutover_context` through the hosted migration runner.
+- Verified `prisma migrate status --schema prisma/schema.prisma` reports the hosted Neon `uprise_staging` schema is up to date.
+- Ran `UPRISE_API_URL=https://uprise-api-staging.fly.dev pnpm run smoke:staging:api`; `/health/live`, `/health/db`, `/health/postgis`, and `/health/ready` returned healthy.
+- Ran `UPRISE_API_URL=https://uprise-api-staging.fly.dev UPRISE_WEB_URL=https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app pnpm run smoke:staging:readiness`; API health, DB, PostGIS, CORS preflight, and Places behavior passed. The unauthenticated web load remains Vercel-auth protected as expected.
+- Ran a read-only hosted Prisma schema smoke against the new models: `userSavedScene.count()`, `userActivationNotice.count()`, and `communityActivationAudit.count()` all executed successfully and returned `0` on staging before any activation event.
+
+No seed, activation write, temporary user write, or provider secret mutation was performed during closeout.
