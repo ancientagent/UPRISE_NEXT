@@ -38,6 +38,8 @@
     "smoke:staging:api": "pnpm --filter api run smoke:staging:api",
     "smoke:staging:readiness": "node scripts/smoke-staging-readiness.mjs",
     "smoke:onboarding-location:dry-run": "pnpm --filter api run smoke:onboarding-location:dry-run",
+    "smoke:activation-cutover:dry-run": "pnpm --filter api run smoke:activation-cutover:dry-run",
+    "smoke:activation-cutover": "pnpm --filter api run smoke:activation-cutover",
     "agent:queue": "node scripts/agent-control.mjs",
     "agent:queue:test": "node scripts/agent-control.test.mjs",
     "agent:bridge:tick": "node scripts/agent-bridge-tick.mjs",
