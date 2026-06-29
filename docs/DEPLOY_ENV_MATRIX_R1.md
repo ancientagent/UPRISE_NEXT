@@ -155,11 +155,16 @@ bypass, or a stable authenticated browser session for full page proof.
 Add `UPRISE_EXPECTED_CORS_ORIGIN=<confirmed web origin>` to the command when
 verifying CORS for a specific Vercel preview or stable staging domain.
 
-Current 2026-06-24 smoke note: API, Neon/PostGIS, and public Places checks pass
-against `https://uprise-api-staging.fly.dev`, but Fly staging does not currently
-return `access-control-allow-origin` for the current Vercel `main` branch alias.
-Update Fly `CORS_ORIGIN` only after confirming the intended stable staging web
-origin(s).
+Current 2026-06-29 smoke note: API, Neon/PostGIS, stable Vercel web load, and
+Vercel-to-Fly CORS checks pass against `https://uprise-api-staging.fly.dev` for:
+
+- `https://uprise-web-staging.vercel.app`
+- `https://uprise-web-staging-git-main-ben-risemans-projects.vercel.app`
+
+The stable staging web URL returns `200` to unauthenticated HTTP. The Git-driven
+`main` branch alias may still be Vercel-auth protected for direct web-page load,
+but its API CORS preflight passes. Google Places and direct DB verifier scripts
+were not run in the 2026-06-29 pass.
 
 Launch community seed guard:
 
