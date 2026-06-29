@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-29_authenticated-onboarding-browser-qa.md`](./2026-06-29_authenticated-onboarding-browser-qa.md) — records signed-in staging browser QA for manual Austin/Texas/Punk onboarding with GPS denied, Plot/Home Scene Roller/profile verification, temporary user cleanup, and the non-blocking bare `/users/me` route-order observation.
 - [`2026-06-29_authenticated-onboarding-persistence-smoke.md`](./2026-06-29_authenticated-onboarding-persistence-smoke.md) — adds the authenticated onboarding persistence smoke path for temporary-user Home Scene/default preference/Home Scene Roller verification after login, with host/database-scoped confirmation for staging writes.
 - [`2026-06-29_hosted-migration-runner.md`](./2026-06-29_hosted-migration-runner.md) — closes the Fly API production-image Prisma CLI gap by adding an API-owned `migrate:deploy` command, production-deploy verification helper, and the exact Fly staging migration command to use before the next schema change.
 - [`2026-06-29_launch-readiness-verification.md`](./2026-06-29_launch-readiness-verification.md) — current launch-readiness verification pass and post-deploy closeout: Google Places, launch-community DB verification, focused API/web contracts, stable Vercel/Fly/Neon smoke, staging preference migration, and signed-out onboarding browser QA now pass after PR #127 and PR #128.
