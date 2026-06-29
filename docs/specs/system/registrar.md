@@ -112,7 +112,9 @@ Sect Uprise broadcast boundary at
   - creates the natural city-tier `Community` when no row exists, or marks an inactive matching row active;
   - re-anchors matching `ArtistBand.homeSceneId` values to the natural scene for future uploads;
   - re-roots matching listener `User.tunedSceneId` values to the natural scene for Home/Plot resolution after activation;
-  - does not move existing track rows, copy votes, transfer engagement history, schedule jobs, emit notifications, or persist saved Away Scene/profile context.
+  - persists a `CommunityActivationAudit` row with re-anchored source IDs, cutover listener IDs, thresholds, and cutover counts;
+  - creates lightweight listener activation notices and saves distinct former proxy scenes as profile/collection Away Scene context;
+  - does not move existing track rows, copy votes, transfer engagement history, or schedule jobs.
 - Registrar promoter initiation primitive (slice 34):
   - `POST /registrar/promoter` implemented for Home Scene-scoped promoter registration submissions.
   - Captures named production identity payload (`productionName`) for downstream capability processing.
@@ -401,7 +403,7 @@ Sect Uprise broadcast boundary at
 - Artist/Band registration must remain explicit action-driven (`Band / Artist Registration`) before form submission.
 - Registrar form submit behavior must preserve Home Scene + GPS preconditions prior to API write attempts.
 - Registrar web panel may only expose explicit, spec-authorized registrar follow-up actions (no auto-materialization/auto-dispatch).
-- Registrar/source activation status may be exposed as read-only context after owner implementation, but it must not create public listener-side activation promises.
+- Registrar/source activation status may be exposed as read-only context, but it must not create public listener-side activation promises.
 
 ## Acceptance Tests / Test Plan
 - Registrar submissions are Scene-scoped and auditable.
@@ -418,7 +420,7 @@ Sect Uprise broadcast boundary at
 
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
-- Lock implementation details for activation metrics storage/read path, trigger authority, notification path, and source-origin cutover side effects.
+- Lock any future scheduler/approval workflow for activation metrics and trigger authority before replacing the current manual admin trigger.
 - Define who can submit and approve Sect uprising motions.
 - Beta-calibrate when sect progress becomes public and which paid/free backing limits are allowed.
 - Define the Registrar menu architecture for Official Sect discovery, affiliation, updates, and cross-scene uprisen-sect context.

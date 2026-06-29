@@ -1,4 +1,5 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import type { AdminAnalyticsQueryData } from '@uprise/types';
 import {
@@ -394,68 +395,148 @@ export class AdminAnalyticsService {
       throw new BadRequestException('Activation readiness threshold has not been met');
     }
 
-    const community = existingCommunity
-      ? await this.prisma.community.update({
-          where: { id: existingCommunity.id },
-          data: { isActive: true },
-        })
-      : await this.prisma.community.create({
-          data: {
-            name: `${city}, ${state} ${musicCommunity}`,
-            slug: slugifyLaunchCommunity(city, state, musicCommunity),
-            description: `City-tier Home Scene for ${musicCommunity} in ${city}, ${state}.`,
-            city,
-            state,
-            musicCommunity,
-            tier: 'city',
-            isActive: true,
-            isPrivate: false,
-            createdById: (await ensureLaunchCommunitySeedOwner(this.prisma)).id,
-          },
-        });
+    const sourceOriginWhere = {
+      sourceOriginCity: city,
+      sourceOriginState: state,
+      sourceOriginMusicCommunity: musicCommunity,
+    };
+    const listenerWhere = this.buildActivationListenerWhere(city, state, musicCommunity);
+    const activatedAt = new Date();
 
-    const reanchoredSources = await this.prisma.artistBand.updateMany({
-      where: {
-        sourceOriginCity: city,
-        sourceOriginState: state,
-        sourceOriginMusicCommunity: musicCommunity,
-      },
-      data: { homeSceneId: community.id },
-    });
-
-    const cutoverListeners = await this.prisma.user.updateMany({
-      where: {
-        homeSceneCity: city,
-        homeSceneState: state,
-        OR: [
-          { homeSceneCommunity: musicCommunity },
-          {
-            musicCommunityPreferences: {
-              some: {
-                musicCommunity,
-                isDefault: true,
-              },
+    const cutover = await this.prisma.$transaction(async (tx) => {
+      const community = existingCommunity
+        ? await tx.community.update({
+            where: { id: existingCommunity.id },
+            data: { isActive: true },
+          })
+        : await tx.community.create({
+            data: {
+              name: `${city}, ${state} ${musicCommunity}`,
+              slug: slugifyLaunchCommunity(city, state, musicCommunity),
+              description: `City-tier Home Scene for ${musicCommunity} in ${city}, ${state}.`,
+              city,
+              state,
+              musicCommunity,
+              tier: 'city',
+              isActive: true,
+              isPrivate: false,
+              createdById: (await ensureLaunchCommunitySeedOwner(tx as any)).id,
             },
-          },
-        ],
-      },
-      data: {
-        tunedSceneId: community.id,
-        tunedSceneUpdatedAt: new Date(),
-      },
+          });
+
+      const matchingSources = await tx.artistBand.findMany({
+        where: sourceOriginWhere,
+        select: { id: true },
+        orderBy: { id: 'asc' },
+      });
+      const sourceIds = matchingSources.map((source: { id: string }) => source.id);
+      const reanchoredSources = await tx.artistBand.updateMany({
+        where: sourceOriginWhere,
+        data: { homeSceneId: community.id },
+      });
+
+      const listeners = await tx.user.findMany({
+        where: listenerWhere,
+        select: {
+          id: true,
+          tunedSceneId: true,
+        },
+        orderBy: { id: 'asc' },
+      });
+      const listenerIds = listeners.map((listener: { id: string }) => listener.id);
+      const formerProxyScenes = listeners.filter(
+        (listener: { tunedSceneId: string | null }) => Boolean(listener.tunedSceneId) && listener.tunedSceneId !== community.id,
+      );
+
+      const savedAwayScenes =
+        formerProxyScenes.length === 0
+          ? { count: 0 }
+          : await tx.userSavedScene.createMany({
+              data: formerProxyScenes.map((listener: { id: string; tunedSceneId: string | null }) => ({
+                userId: listener.id,
+                communityId: listener.tunedSceneId as string,
+                reason: 'former_proxy_cutover',
+                context: {
+                  from: 'activation_cutover',
+                  activatedSceneId: community.id,
+                  city,
+                  state,
+                  musicCommunity,
+                  activatedAt: activatedAt.toISOString(),
+                },
+              })),
+              skipDuplicates: true,
+            });
+
+      const activationNotices =
+        listeners.length === 0
+          ? { count: 0 }
+          : await tx.userActivationNotice.createMany({
+              data: listeners.map((listener: { id: string; tunedSceneId: string | null }) => ({
+                userId: listener.id,
+                fromSceneId: listener.tunedSceneId === community.id ? null : listener.tunedSceneId,
+                toSceneId: community.id,
+                city,
+                state,
+                musicCommunity,
+                reason: 'natural_home_scene_activated',
+                status: 'unread',
+                message: `${city}, ${state} ${musicCommunity} is now active because enough local source music is ready. Your former proxy scene stays available as an Away Scene where supported.`,
+              })),
+              skipDuplicates: true,
+            });
+
+      const cutoverListeners =
+        listenerIds.length === 0
+          ? { count: 0 }
+          : await tx.user.updateMany({
+              where: { id: { in: listenerIds } },
+              data: {
+                tunedSceneId: community.id,
+                tunedSceneUpdatedAt: activatedAt,
+              },
+            });
+
+      const audit = await tx.communityActivationAudit.create({
+        data: {
+          sceneId: community.id,
+          city,
+          state,
+          musicCommunity,
+          createdScene: !existingCommunity,
+          reanchoredSourceIds: sourceIds as unknown as Prisma.JsonArray,
+          cutoverListenerIds: listenerIds as unknown as Prisma.JsonArray,
+          savedAwaySceneCount: savedAwayScenes.count,
+          activationNoticeCount: activationNotices.count,
+          thresholds: diagnostics.data.thresholds as unknown as Prisma.JsonObject,
+        },
+        select: { id: true },
+      });
+
+      return {
+        sceneId: community.id,
+        activationAuditId: audit.id,
+        reanchoredSourceCount: reanchoredSources.count,
+        cutoverListenerCount: cutoverListeners.count,
+        savedAwaySceneCount: savedAwayScenes.count,
+        activationNoticeCount: activationNotices.count,
+      };
     });
 
     return {
       success: true as const,
       data: {
-        sceneId: community.id,
+        sceneId: cutover.sceneId,
         city,
         state,
         musicCommunity,
         created: !existingCommunity,
         activated: true,
-        reanchoredSourceCount: reanchoredSources.count,
-        cutoverListenerCount: cutoverListeners.count,
+        activationAuditId: cutover.activationAuditId,
+        reanchoredSourceCount: cutover.reanchoredSourceCount,
+        cutoverListenerCount: cutover.cutoverListenerCount,
+        savedAwaySceneCount: cutover.savedAwaySceneCount,
+        activationNoticeCount: cutover.activationNoticeCount,
         thresholds: diagnostics.data.thresholds,
         candidate,
       },
@@ -464,5 +545,23 @@ export class AdminAnalyticsService {
 
   private activationTupleKey(city: string | null | undefined, state: string | null | undefined, musicCommunity: string | null | undefined) {
     return [city, state, musicCommunity].map((part) => (part ?? '').trim().toLowerCase()).join('::');
+  }
+
+  private buildActivationListenerWhere(city: string, state: string, musicCommunity: string) {
+    return {
+      homeSceneCity: city,
+      homeSceneState: state,
+      OR: [
+        { homeSceneCommunity: musicCommunity },
+        {
+          musicCommunityPreferences: {
+            some: {
+              musicCommunity,
+              isDefault: true,
+            },
+          },
+        },
+      ],
+    };
   }
 }

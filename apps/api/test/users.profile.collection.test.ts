@@ -19,6 +19,12 @@ describe('UsersService.getProfileWithCollection', () => {
     collection: {
       findMany: jest.fn(),
     },
+    userSavedScene: {
+      findMany: jest.fn(),
+    },
+    userActivationNotice: {
+      findMany: jest.fn(),
+    },
     community: {
       findFirst: jest.fn(),
     },
@@ -38,6 +44,8 @@ describe('UsersService.getProfileWithCollection', () => {
     jest.clearAllMocks();
     mockPrisma.$transaction.mockImplementation(async (callback: any) => callback(mockPrisma));
     mockPrisma.artistBand.findMany.mockResolvedValue([]);
+    mockPrisma.userSavedScene.findMany.mockResolvedValue([]);
+    mockPrisma.userActivationNotice.findMany.mockResolvedValue([]);
     service = new UsersService(mockPrisma as any);
   });
 
@@ -66,9 +74,13 @@ describe('UsersService.getProfileWithCollection', () => {
 
     expect(result.canViewCollection).toBe(false);
     expect(result.collectionShelves).toEqual([]);
+    expect(result.savedAwayScenes).toEqual([]);
+    expect(result.activationNotices).toEqual([]);
     expect(result.managedArtistBands).toEqual([]);
     expect(result.user.hasArtistBand).toBe(false);
     expect(mockPrisma.collection.findMany).not.toHaveBeenCalled();
+    expect(mockPrisma.userSavedScene.findMany).not.toHaveBeenCalled();
+    expect(mockPrisma.userActivationNotice.findMany).not.toHaveBeenCalled();
   });
 
   it('returns fixed shelves for owner and maps shelf items', async () => {
@@ -115,6 +127,53 @@ describe('UsersService.getProfileWithCollection', () => {
         items: [],
       },
     ]);
+    mockPrisma.userSavedScene.findMany.mockResolvedValue([
+      {
+        id: 'saved-away-1',
+        reason: 'former_proxy_cutover',
+        savedAt: new Date('2026-06-29T12:00:00.000Z'),
+        context: { from: 'activation_cutover' },
+        community: {
+          id: 'scene-austin-punk',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'Texas',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+      },
+    ]);
+    mockPrisma.userActivationNotice.findMany.mockResolvedValue([
+      {
+        id: 'notice-1',
+        reason: 'natural_home_scene_activated',
+        status: 'unread',
+        message: 'El Paso, Texas Punk is now active because enough local source music is ready.',
+        city: 'El Paso',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+        createdAt: new Date('2026-06-29T12:00:00.000Z'),
+        fromScene: {
+          id: 'scene-austin-punk',
+          name: 'Austin Punk',
+          city: 'Austin',
+          state: 'Texas',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+        toScene: {
+          id: 'scene-el-paso-punk',
+          name: 'El Paso Punk',
+          city: 'El Paso',
+          state: 'Texas',
+          musicCommunity: 'Punk',
+          tier: 'city',
+          isActive: true,
+        },
+      },
+    ]);
 
     const result = await service.getProfileWithCollection('target', 'target');
 
@@ -133,6 +192,22 @@ describe('UsersService.getProfileWithCollection', () => {
     const singles = result.collectionShelves.find((s) => s.shelf === 'singles');
     expect(singles?.itemCount).toBe(1);
     expect(singles?.items[0].signalId).toBe('signal-1');
+    expect(result.savedAwayScenes).toEqual([
+      expect.objectContaining({
+        id: 'saved-away-1',
+        reason: 'former_proxy_cutover',
+        savedAt: '2026-06-29T12:00:00.000Z',
+        scene: expect.objectContaining({ id: 'scene-austin-punk', name: 'Austin Punk' }),
+      }),
+    ]);
+    expect(result.activationNotices).toEqual([
+      expect.objectContaining({
+        id: 'notice-1',
+        reason: 'natural_home_scene_activated',
+        status: 'unread',
+        toScene: expect.objectContaining({ id: 'scene-el-paso-punk' }),
+      }),
+    ]);
   });
 
   it('findById returns canonical artist-band bridge fields', async () => {

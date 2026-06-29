@@ -76,13 +76,13 @@ This section owns the community-side activation workflow for splitting a natural
 
 - Activation is source/music-driven. The operational trigger mechanism (automatic evaluator vs explicit Registrar/admin approval gate) is an implementation contract to lock before runtime automation, but listener demand is never the trigger.
 - Current MVP runtime uses an explicit authenticated admin trigger for readiness-proven tuples (`POST /admin/analytics/activation-readiness/activate`). It is not a scheduler and it cannot activate a tuple from listener demand alone.
-- The current trigger creates/activates the natural scene, re-anchors matching source accounts for future uploads, and re-roots matching listeners to the natural scene by updating their active tuned scene.
+- The current trigger creates/activates the natural scene, re-anchors matching source accounts for future uploads, re-roots matching listeners to the natural scene by updating their active tuned scene, records a cutover audit, creates lightweight activation notices, and saves distinct former proxy scenes as Away Scene/profile context.
 - When the natural Home Scene activates, future Home Scene resolution for matching listeners should route to the natural active scene.
 - Future source uploads for matching source-origin sources should attach according to the newly active natural Home Scene.
 - Existing songs already active in a proxy scene finish their current rotation lifecycle in that prior scene unless a later approved Fair Play/cutover spec changes the rule.
 - A song cannot be actively listed in more than one Uprise rotation at the same time.
 - Proxy-scene listener votes, source/song voting data, and history remain historical to the proxy scene/tier where they occurred; they do not transfer into the newly active natural Home Scene.
-- If profile/collection support exists, the prior proxy scene may remain available as an Away Scene or saved context, but it no longer acts as the user's natural Home Scene when the matching natural scene is active.
+- The prior proxy scene may remain available as an Away Scene or saved profile context, but it no longer acts as the user's natural Home Scene when the matching natural scene is active.
 - Listener/source activation messaging and former-proxy saved-context behavior are owned by `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract`.
 
 ### Source And Listener Re-Resolution
@@ -135,7 +135,7 @@ justify subcommunity broadcast authority.
 - Reconcile older tag-era sect assignment flows so they stop implying that profile tag selection alone creates official sect affiliation or realizes a sect.
 - Official Sect affiliation records and updates-channel surfaces remain deferred until Registrar information architecture is locked.
 - Registrar motion threshold validation, approval workflow, and automatic Sect-to-Uprise activation.
-- Automated/scheduled city-tier activation, notification delivery, and saved Away Scene/profile preservation for prior proxy context.
+- Automated/scheduled city-tier activation and external notification delivery beyond the current profile notice context.
 - User-facing sect creation/unlock visibility, source-level backing limits, song-level backing limits, and paid/free backing capacity remain beta/community-calibrated until tested with real Home Scene density.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
