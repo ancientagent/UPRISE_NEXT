@@ -85,6 +85,7 @@
 
 ### Changed
 
+- Recorded the hosted staging closeout for authenticated onboarding persistence: Fly API staging was deployed on image `deployment-01KW9FNEH61S4R908FS7QCP5WT`, the smoke passed against Neon `uprise_staging`, and all temporary users/memberships were cleaned up.
 - Deployed merged `main` with the hosted migration runner to Fly API staging image `deployment-01KW9DPX6XRYAJZ5DACM7N40WW`, applied the pending `20260625120000_add_registrar_source_origin` migration through the hosted Prisma CLI path, and verified API/DB/PostGIS readiness.
 - Closed the 2026-06-29 launch-readiness staging loop: restored Fly API boot with a Fair Play DI hotfix, applied the staging music-community preference migration, verified stable Vercel/Fly/Neon readiness smoke, and reran signed-out onboarding browser QA for `Austin / TX / 78701 / Punk`.
 - Fixed onboarding state-abbreviation handling so GPS/manual `TX` resolves to seeded `Texas` Home Scenes instead of false proxy review, and recorded the 2026-06-29 launch-readiness verification pass covering Places, Neon launch-community data, focused contracts, and the remaining staging preference-migration blocker.
