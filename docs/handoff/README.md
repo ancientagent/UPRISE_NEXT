@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-29_activation-cutover-transaction-revalidation.md`](./2026-06-29_activation-cutover-transaction-revalidation.md) — hardens manual Home Scene activation cutover with transaction-time readiness revalidation, normalized source/listener tuple matching, and post-merge Fly staging deploy/read-only smoke evidence.
 - [`2026-06-29_release-deck-song-cap-registrar-gps.md`](./2026-06-29_release-deck-song-cap-registrar-gps.md) — records the Release Deck 6-minute per-song cap, reject-only at-cap behavior, Registrar GPS materialization re-check, and staging source-origin readiness smoke cleanup evidence.
 - [`2026-06-29_release-deck-15-minute-source-cap.md`](./2026-06-29_release-deck-15-minute-source-cap.md) — records the founder decision changing the Release Deck / activation readiness per-source cap from 20 minutes to 15 minutes per Uprise rotation, with owner docs and runtime constants updated.
 - [`2026-06-29_users-me-current-route-staging-closeout.md`](./2026-06-29_users-me-current-route-staging-closeout.md) — records the post-merge Fly API staging deploy, health checks, authenticated `/users/me` smoke, and temporary user cleanup for PR #135.
