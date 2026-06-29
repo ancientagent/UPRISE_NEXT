@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-29_users-me-current-route-staging-closeout.md`](./2026-06-29_users-me-current-route-staging-closeout.md) — records the post-merge Fly API staging deploy, health checks, authenticated `/users/me` smoke, and temporary user cleanup for PR #135.
 - [`2026-06-29_users-me-current-route.md`](./2026-06-29_users-me-current-route.md) — fixes the authenticated bare `GET /users/me` route-order gap found during staging browser QA and locks current-user `me/*` routes ahead of parameterized `/users/:id` routes.
 - [`2026-06-29_authenticated-onboarding-browser-qa.md`](./2026-06-29_authenticated-onboarding-browser-qa.md) — records signed-in staging browser QA for manual Austin/Texas/Punk onboarding with GPS denied, Plot/Home Scene Roller/profile verification, temporary user cleanup, and the non-blocking bare `/users/me` route-order observation.
 - [`2026-06-29_authenticated-onboarding-persistence-smoke.md`](./2026-06-29_authenticated-onboarding-persistence-smoke.md) — adds the authenticated onboarding persistence smoke path for temporary-user Home Scene/default preference/Home Scene Roller verification after login, with host/database-scoped confirmation for staging writes.
