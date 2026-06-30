@@ -143,6 +143,7 @@ Owner references:
 - The starred default music-community preference determines the Home Scene the user is anchored to and loaded into on login.
 - The Home Scene roller is a shortcut to the user's resolvable primary music-community preferences in the current verified/default city.
 - The currently selected roller item is the scene the user is in.
+- In Plot, the preferred roller presentation is a centered active Home Scene with left/right arrow controls and horizontal swipe to adjacent resolvable preferences. It should not render saved Away Scenes or a full visible management list; profile remains the management surface.
 
 ### Runtime Parity Status (2026-06-25)
 
@@ -156,7 +157,7 @@ Owner references:
 - Typed web client wrappers exist in `apps/web/src/lib/users/client.ts`.
 - The expanded listener profile in `/plot` now loads current preferences, shows registered music-community affiliations, marks whether each preference is currently in the Home Scene Roller or profile-only until an active scene exists, lets the user add approved parent music communities, and lets the user explicitly mark a default/starred preference.
 - The Home Scene roller read model resolves registered preferences against the user's current/default city: exact active natural scene first, same-state active proxy scene second, then any active proxy scene for that music community. Preferences with no active resolution remain profile-only and are excluded from the roller response.
-- `/plot` now consumes `GET /users/me/home-scene-roller` as the Home Scene Roller shortcut. Selecting a roller item tunes the user's scene context with `POST /discover/tune`, updates the active Plot community anchor, and keeps saved Away Scenes out of the roller.
+- `/plot` now consumes `GET /users/me/home-scene-roller` as the Home Scene Roller shortcut. Selecting a roller item through the left/right arrow or swipe control tunes the user's scene context with `POST /discover/tune`, updates the active Plot community anchor, and keeps saved Away Scenes out of the roller.
 - The Fair Play voting gate now allows a GPS-verified user to vote in any registered music-community preference that resolves from their current/default city to the target exact natural scene or active proxy scene. This does not authorize unregistered music communities, arbitrary visitor scenes, or simultaneous multi-city voting authority.
 - `POST /tracks/:id/vote` remains city-tier only: a state-tier, national-tier, or other non-city `Community` is rejected even when it matches `User.tunedSceneId` for listening context.
 - `MusicCommunityPreferenceResolverService` now provides the shared server-side default music-community resolver. Fair Play exact Home Scene voting, Registrar/source-origin checks, Discover/community context reads, and activation cutover logic prefer explicit `UserMusicCommunityPreference.isDefault` before falling back to the compatibility `User.homeSceneCommunity` field.

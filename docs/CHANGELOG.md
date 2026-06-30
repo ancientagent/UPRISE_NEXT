@@ -9,6 +9,8 @@
 
 ### Added
 
+- Added the `/plot` Home Scene Roller arrow/swipe presentation so the active Home Scene is centered with previous/next controls while saved Away Scenes remain profile-only.
+- Added Plot Feed card-family and avatar-wearable merch design guidance so the Home Scene Feed remains the default Plot mainpage and future avatar/merch work uses a shared layered fit-model approach rather than bespoke one-off cards or over-rendered avatar assets.
 - Added an activation cutover fixture smoke command that creates synthetic source/listener/proxy rows, calls the real manual activation API endpoint, verifies source reanchor/listener reroot/Away Scene/notice/audit persistence, and cleans up fixture rows; see `docs/handoff/2026-06-29_activation-cutover-fixture-smoke.md`.
 - Added activation cutover persistence for manual source-driven Home Scene activation: former proxy scenes are saved as profile Away Scenes, listener activation notices are created, and a cutover audit records source/listener IDs without moving existing tracks or votes; merged PR #139 was deployed to Fly API staging, the hosted migration was applied to Neon `uprise_staging`, and staging health/readiness/schema smokes passed; see `docs/handoff/2026-06-29_activation-cutover-away-scene.md`.
 - Added Release Deck six-minute single-song enforcement, reject-only at-cap guidance, Registrar GPS materialization re-checks, and staging source-origin readiness smoke evidence; see `docs/handoff/2026-06-29_release-deck-song-cap-registrar-gps.md`.

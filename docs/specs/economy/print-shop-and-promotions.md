@@ -56,6 +56,11 @@ commercial Print Shop or Promotions behavior into runtime.
 - Dedicated Promotions domain models (`Offer`, billing linkage, carry/redeem ledger) beyond read projection.
 - Limited flier minting variants are deferred (not required in current MVP phase).
 - Shirt creation flows are deferred until avatar-wearable framing is implemented; shirts may appear as non-actionable "coming soon" catalog entries.
+- Avatar-wearable framing should treat the avatar as a stable fit model for
+  merch, not as the primary collectible object: reuse a shared base/body model
+  and layer interchangeable pieces such as shirts, jackets, pants, shoes, hats,
+  and accessories so band artwork stays readable and clothing swaps do not
+  require regenerating the full avatar.
 - Business promotion submission and auto-publish runtime.
 
 ## Non-Functional Requirements

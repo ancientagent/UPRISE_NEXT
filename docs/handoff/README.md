@@ -19,6 +19,8 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-06-29_home-scene-roller-arrows-swipe.md`](./2026-06-29_home-scene-roller-arrows-swipe.md) — updates `/plot` Home Scene Roller presentation to centered active scene plus left/right arrows and swipe, while keeping saved Away Scenes profile-only.
+- [`2026-06-29_plot-feed-avatar-merch-clarification.md`](./2026-06-29_plot-feed-avatar-merch-clarification.md) — captures the Feed-as-Home-Scene-mainpage clarification, reusable feed card-family taxonomy, and deferred avatar-wearable merch fit-model direction for future design agents.
 - [`2026-06-29_activation-cutover-fixture-smoke.md`](./2026-06-29_activation-cutover-fixture-smoke.md) — adds the API-owned fixture-backed activation write smoke for synthetic source/listener/proxy cutover verification, with dry-run and host/database-scoped confirmation before non-local writes.
 - [`2026-06-29_activation-cutover-transaction-revalidation.md`](./2026-06-29_activation-cutover-transaction-revalidation.md) — hardens manual Home Scene activation cutover with transaction-time readiness revalidation, normalized source/listener tuple matching, and post-merge Fly staging deploy/read-only smoke evidence.
 - [`2026-06-29_release-deck-song-cap-registrar-gps.md`](./2026-06-29_release-deck-song-cap-registrar-gps.md) — records the Release Deck 6-minute per-song cap, reject-only at-cap behavior, Registrar GPS materialization re-check, and staging source-origin readiness smoke cleanup evidence.
