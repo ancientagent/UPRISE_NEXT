@@ -30,6 +30,8 @@ Current MVP shell note:
 ## Functional Requirements
 
 - The Plot is the primary Home-side participation interface inside `Home`.
+- The Home Scene mainpage/default state is the Feed tab inside Plot, not a
+  separate homepage/feed route.
 - Plot tab surfaces:
   - Activity Feed (S.E.E.D Feed) (default)
   - Events
@@ -48,6 +50,11 @@ Current MVP shell note:
   - identical for all listeners in the same Home Scene
   - no ranking, personalization, or recommendation inference
   - followed-source updates must surface through the same feed grammar rather than a separate algorithmic notification feed
+  - feed rows/cards should use reusable message-family archetypes, not bespoke
+    one-off card systems for every event
+  - active feed message families are listener `Blast` activity,
+    artist/source updates, track releases, event/show updates, and
+    community/system updates
   - stats-driven discovery material may surface intermittently as inserted feed carousels while `Discover` remains deferred
   - these insertions are not fixed feed furniture and should appear as occasional scoped informational moments
   - inserted discovery carousels are read-only launch surfaces, not inline action strips
@@ -73,7 +80,10 @@ Current MVP shell note:
 ### Implemented Behavior (Current)
 
 - Web app ships Plot shell at `apps/web/src/app/plot/page.tsx`.
-- Current shell includes tab switching and Home Scene identity summary.
+- Current shell includes tab switching and a Home Scene roller/switcher identity
+  control. The switcher centers the active Home Scene and uses left/right arrows
+  plus horizontal swipe to move between adjacent registered/resolvable
+  music-community preferences.
 - Copy and framing align with canon (“anchor this dashboard”).
 - Archive surface renders read-only descriptive modules in the current MVP body:
   - `TopSongsPanel`, backed by the existing statistics endpoint for song context.

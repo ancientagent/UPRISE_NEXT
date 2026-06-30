@@ -189,6 +189,22 @@ const formatPlotCommunityLabel = (
   return community.name ?? null;
 };
 
+const formatHomeSceneRollerItemPrimaryLabel = (item: HomeSceneRollerItem): string => {
+  if (item.city && item.musicCommunity) {
+    return `${item.city} ${item.musicCommunity}`;
+  }
+
+  return item.sceneName;
+};
+
+const formatHomeSceneRollerItemSecondaryLabel = (item: HomeSceneRollerItem): string => {
+  if (item.city && item.state) {
+    return `${item.city}, ${item.state}`;
+  }
+
+  return item.sceneName;
+};
+
 export default function PlotPage() {
   const router = useRouter();
   const {
@@ -262,6 +278,7 @@ export default function PlotPage() {
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
+  const homeSceneRollerDragStartX = useRef<number | null>(null);
 
   const discoveryContextFallback = useMemo(
     () => ({
@@ -286,6 +303,30 @@ export default function PlotPage() {
     [selectedCommunity]
   );
   const selectedCommunityId = selectedCommunity?.id ?? null;
+  const homeSceneRollerActiveIndex = useMemo(() => {
+    if (homeSceneRoller.items.length === 0) return -1;
+
+    const selectedIndex = homeSceneRoller.items.findIndex(
+      (item) => item.sceneId === selectedCommunityId
+    );
+    if (selectedIndex >= 0) return selectedIndex;
+
+    const currentIndex = homeSceneRoller.items.findIndex((item) => item.isCurrent);
+    return currentIndex >= 0 ? currentIndex : 0;
+  }, [homeSceneRoller.items, selectedCommunityId]);
+  const homeSceneRollerActiveItem =
+    homeSceneRollerActiveIndex >= 0 ? homeSceneRoller.items[homeSceneRollerActiveIndex] : null;
+  const homeSceneRollerPreviousItem =
+    homeSceneRoller.items.length > 1 && homeSceneRollerActiveIndex >= 0
+      ? homeSceneRoller.items[
+          (homeSceneRollerActiveIndex - 1 + homeSceneRoller.items.length) %
+            homeSceneRoller.items.length
+        ]
+      : null;
+  const homeSceneRollerNextItem =
+    homeSceneRoller.items.length > 1 && homeSceneRollerActiveIndex >= 0
+      ? homeSceneRoller.items[(homeSceneRollerActiveIndex + 1) % homeSceneRoller.items.length]
+      : null;
   const resolvedRollerMusicCommunities = useMemo(
     () => new Set(homeSceneRoller.items.map((item) => item.musicCommunity.trim().toLowerCase())),
     [homeSceneRoller.items]
@@ -721,6 +762,31 @@ export default function PlotPage() {
     } finally {
       setHomeSceneRollerSelectingSceneId(null);
     }
+  };
+
+  const handleHomeSceneRollerAdjacentSelect = (item: HomeSceneRollerItem | null) => {
+    if (!item) return;
+    void handleHomeSceneRollerSelect(item);
+  };
+
+  const handleHomeSceneRollerPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (homeSceneRoller.items.length < 2) return;
+    homeSceneRollerDragStartX.current = event.clientX;
+  };
+
+  const handleHomeSceneRollerPointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    if (homeSceneRoller.items.length < 2) return;
+
+    const startX = homeSceneRollerDragStartX.current;
+    homeSceneRollerDragStartX.current = null;
+    if (startX === null) return;
+
+    const deltaX = event.clientX - startX;
+    if (Math.abs(deltaX) < 48) return;
+
+    handleHomeSceneRollerAdjacentSelect(
+      deltaX > 0 ? homeSceneRollerPreviousItem : homeSceneRollerNextItem
+    );
   };
 
   const handleTierChange = (tier: PlayerTier) => {
@@ -1232,55 +1298,90 @@ export default function PlotPage() {
             <p className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
               {homeSceneRollerError}
             </p>
-          ) : homeSceneRoller.items.length > 0 ? (
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-              {homeSceneRoller.items.map((item) => {
-                const isSelected =
-                  selectedCommunityId === item.sceneId ||
-                  (!selectedCommunityId && item.isCurrent);
-                const isSelecting = homeSceneRollerSelectingSceneId === item.sceneId;
+          ) : homeSceneRollerActiveItem ? (
+            <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(11rem,1.2fr)_minmax(0,1fr)] items-stretch gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                aria-label="Switch to previous Home Scene"
+                className="min-h-[5rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5 disabled:opacity-45"
+                disabled={!homeSceneRollerPreviousItem || Boolean(homeSceneRollerSelectingSceneId)}
+                onClick={() => handleHomeSceneRollerAdjacentSelect(homeSceneRollerPreviousItem)}
+              >
+                <span className="block w-full">
+                  <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
+                    ← Previous
+                  </span>
+                  <span className="mt-1 block truncate text-sm font-semibold">
+                    {homeSceneRollerPreviousItem
+                      ? formatHomeSceneRollerItemPrimaryLabel(homeSceneRollerPreviousItem)
+                      : 'Previous Home Scene'}
+                  </span>
+                </span>
+              </Button>
 
-                return (
-                  <Button
-                    key={item.preferenceId}
-                    type="button"
-                    size="sm"
-                    variant={isSelected ? 'default' : 'outline'}
-                    aria-pressed={isSelected}
-                    className={
-                      isSelected
-                        ? 'min-w-[11rem] justify-start rounded-[1rem] border-black bg-[#b8d63b] px-3 py-2 text-left text-black hover:bg-[#b8d63b]/90'
-                        : 'min-w-[11rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5'
-                    }
-                    disabled={Boolean(homeSceneRollerSelectingSceneId)}
-                    onClick={() => handleHomeSceneRollerSelect(item)}
-                  >
-                    <span className="block w-full">
-                      <span className="block text-sm font-semibold">{item.musicCommunity}</span>
-                      <span className="mt-0.5 block text-[11px] text-black/65">
-                        {item.city && item.state
-                          ? `${item.city}, ${item.state}`
-                          : item.sceneName}
-                      </span>
-                      <span className="mt-1 flex flex-wrap gap-1">
-                        <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
-                          {item.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'}
-                        </span>
-                        {item.isDefault ? (
-                          <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
-                            Default
-                          </span>
-                        ) : null}
-                        {isSelecting ? (
-                          <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
-                            Switching
-                          </span>
-                        ) : null}
-                      </span>
+              <div
+                role="group"
+                aria-label="Current Home Scene"
+                onPointerDown={handleHomeSceneRollerPointerDown}
+                onPointerUp={handleHomeSceneRollerPointerUp}
+                onPointerCancel={() => {
+                  homeSceneRollerDragStartX.current = null;
+                }}
+                className="select-none rounded-[1.15rem] border border-black bg-[#b8d63b] px-4 py-3 text-center text-black shadow-[2px_2px_0_rgba(0,0,0,0.22)]"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">
+                  Current Home Scene
+                </p>
+                <p className="mt-1 text-lg font-black leading-tight">
+                  {formatHomeSceneRollerItemPrimaryLabel(homeSceneRollerActiveItem)}
+                </p>
+                <p className="mt-0.5 text-xs text-black/65">
+                  {formatHomeSceneRollerItemSecondaryLabel(homeSceneRollerActiveItem)}
+                </p>
+                <span className="mt-2 inline-flex flex-wrap justify-center gap-1">
+                  <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
+                    {homeSceneRollerActiveItem.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'}
+                  </span>
+                  {homeSceneRollerActiveItem.isDefault ? (
+                    <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
+                      Default
                     </span>
-                  </Button>
-                );
-              })}
+                  ) : null}
+                  {homeSceneRollerSelectingSceneId === homeSceneRollerActiveItem.sceneId ? (
+                    <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
+                      Switching
+                    </span>
+                  ) : null}
+                </span>
+                {homeSceneRoller.items.length > 1 ? (
+                  <p className="mt-2 text-[11px] font-medium text-black/55">
+                    Swipe or use arrows to switch scenes.
+                  </p>
+                ) : null}
+              </div>
+
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                aria-label="Switch to next Home Scene"
+                className="min-h-[5rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5 disabled:opacity-45"
+                disabled={!homeSceneRollerNextItem || Boolean(homeSceneRollerSelectingSceneId)}
+                onClick={() => handleHomeSceneRollerAdjacentSelect(homeSceneRollerNextItem)}
+              >
+                <span className="block w-full">
+                  <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
+                    Next →
+                  </span>
+                  <span className="mt-1 block truncate text-sm font-semibold">
+                    {homeSceneRollerNextItem
+                      ? formatHomeSceneRollerItemPrimaryLabel(homeSceneRollerNextItem)
+                      : 'Next Home Scene'}
+                  </span>
+                </span>
+              </Button>
             </div>
           ) : (
             <p className="mt-3 text-sm text-black/60">

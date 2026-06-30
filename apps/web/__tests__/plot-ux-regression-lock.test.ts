@@ -335,6 +335,9 @@ describe('/plot UX regression lock', () => {
 
   it('locks Home Scene roller into Plot as the active scene shortcut', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const rollerBranch = plotPageSource
+      .split('data-slot="home-scene-roller"')[1]
+      .split('{isProfileExpanded ? null : playerPanel}')[0];
 
     expect(plotPageSource).toContain('getHomeSceneRoller(token)');
     expect(plotPageSource).toContain('tuneDiscoverScene(item.sceneId, token)');
@@ -343,10 +346,17 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('setDiscoveryContext(context)');
     expect(plotPageSource).toContain('data-slot="home-scene-roller"');
     expect(plotPageSource).toContain('Home Scene Roller');
-    expect(plotPageSource).toContain('homeSceneRoller.items.map((item) =>');
-    expect(plotPageSource).toContain('handleHomeSceneRollerSelect(item)');
+    expect(plotPageSource).toContain('homeSceneRollerActiveItem');
+    expect(plotPageSource).toContain('homeSceneRollerPreviousItem');
+    expect(plotPageSource).toContain('homeSceneRollerNextItem');
+    expect(plotPageSource).toContain('Switch to previous Home Scene');
+    expect(plotPageSource).toContain('Switch to next Home Scene');
+    expect(plotPageSource).toContain('handleHomeSceneRollerPointerDown');
+    expect(plotPageSource).toContain('handleHomeSceneRollerPointerUp');
+    expect(plotPageSource).toContain('handleHomeSceneRollerAdjacentSelect');
+    expect(rollerBranch).not.toContain('homeSceneRoller.items.map((item) =>');
     expect(plotPageSource).toContain(
-      "item.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'"
+      "homeSceneRollerActiveItem.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'"
     );
     expect(plotPageSource).not.toContain('Saved Away Scene Roller');
   });

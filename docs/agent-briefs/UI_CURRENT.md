@@ -79,6 +79,7 @@ Recent handoffs to use only after the locks above:
 - `Archive` is the descriptive stats/history lane. Do not call the active tab `Statistics`.
 - There is no current MVP `Promotions` tab.
 - Feed is the default Plot tab.
+- Feed is the Home Scene mainpage/default state inside Plot.
 - Feed inserts are `Popular Singles`, `Buzz`, and `Upcoming Events`.
 - Feed inserts are read-only launch points, not inline action cards.
 - Artist Profile is direct-listen, discovery, information, and sharing outside `RADIYO`.
@@ -87,6 +88,7 @@ Recent handoffs to use only after the locks above:
 - Music-community preferences live in the user profile and persist across cities; the detailed membership/default/roller contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
 - The expanded `/plot` listener profile includes music-community preference management: list registered affiliations, label whether each preference is in the Home Scene Roller or profile-only until active, add approved parent music communities, and explicitly mark the default/starred preference.
 - The Home Scene roller is a shortcut to resolvable primary music-community preferences in the current verified/default city; saved Away Scenes stay in the profile/collection workspace.
+- Current Plot presentation for the roller is a centered active Home Scene with left/right arrow controls and horizontal swipe between adjacent resolvable preferences, not a full visible preference-management list.
 - `/plot` renders the Home Scene roller from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
@@ -180,6 +182,14 @@ Allowed feed families:
 - event/show updates
 - community/system updates
 
+Card taxonomy rule:
+
+- map feed/message cards to the reusable families above
+- do not create bespoke one-off card behavior for every feed row
+- preserve deterministic Home Scene Feed semantics: no personalized ranking, no
+  inline engagement actions on insert cards, and no separate notification feed
+  replacing the main Feed
+
 Current inserts:
 
 - `Popular Singles`
@@ -192,6 +202,23 @@ Boundaries:
 - no inline `Collect`, `Blast`, `Follow`, or wheel actions on insert cards
 - music insert cards hand into Artist Profile listening
 - event inserts preview only; full event handling belongs in Events
+
+## Avatar / Merch Visual Boundary
+
+The Home identity avatar is part of the listener/player composition. Avatar
+customization and avatar-interactive merch behavior remain deferred, but design
+work should not over-render the avatar in a way that blocks future merch
+wearables.
+
+Current design guidance:
+
+- use a stable shared avatar base/body model where possible
+- support interchangeable clothing/body-piece layers such as shirts, jackets,
+  pants, shoes, hats, and accessories
+- treat the avatar as a stylized fit model for band merch; clothing and band art
+  should remain readable
+- clothing/artwork swaps should not require regenerating the full avatar
+- do not turn this into a fashion/customization toy or listener marketplace
 
 ## Events Tab
 
