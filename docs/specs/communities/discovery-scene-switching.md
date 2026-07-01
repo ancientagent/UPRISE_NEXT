@@ -23,12 +23,14 @@ Current live MVP note:
 - Listener tunes into another Scene broadcast as a visitor once cross-community travel is live.
 - Listener can set a new Home Scene explicitly (outside passive discovery).
 - Artist/listener travels Discover across city/state/national scopes while keeping the current community context inherited from the active Home Scene or tuned community.
+- Listener transport means leaving the user's Home Scene context for an Away Scene/listening context. The current intended entry points are Discover and saved Uprises in the user's collection.
 
 ## Functional Requirements
 - Discovery is explicit user action only:
   - Scene switching via swipe.
   - Manual Scene selection in Discover map/list.
   - Tier toggling (city/state/national).
+  - Selecting saved Uprises from the user's collection once that collection transport surface is enabled.
 - No recommendation feed, ranking, or personalization in discovery flows.
 - Current MVP does not expose active cross-community discovery on the live `/discover` route.
 - Discovery remains bounded by the inherited current player/community scope when later-phase travel reopens.
@@ -92,6 +94,7 @@ Current live MVP note:
 
 ## Architectural Boundaries
 - Discovery is transport/navigation behavior, not authority behavior.
+- Transport is Away Scene/listening-context movement. It must not be used for Home Scene selector switching, which stays in the user's Home Scene context.
 - Upvotes and governance actions remain Home Scene-gated by GPS rules.
 - Web tier discovery surfaces must consume API endpoints only.
 

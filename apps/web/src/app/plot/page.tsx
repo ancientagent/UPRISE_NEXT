@@ -12,6 +12,7 @@ import { normalizeBroadcastRuntimeError } from '@/lib/broadcast/runtime';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
+import HomeSceneSelector from '@/components/plot/HomeSceneSelector';
 import PlotPrimaryTabBody from '@/components/plot/PlotPrimaryTabBody';
 import RadiyoPlayerPanel, {
   type PlayerMode,
@@ -48,7 +49,7 @@ import {
   getHomeSceneSelector,
   getMusicCommunityPreferences,
   setDefaultMusicCommunityPreference,
-  type HomeSceneSelector,
+  type HomeSceneSelector as HomeSceneSelectorReadModel,
   type HomeSceneSelectorItem,
   type MusicCommunityPreference,
 } from '@/lib/users/client';
@@ -187,22 +188,6 @@ const formatPlotCommunityLabel = (
   return community.name ?? null;
 };
 
-const formatHomeSceneSelectorItemPrimaryLabel = (item: HomeSceneSelectorItem): string => {
-  if (item.city && item.musicCommunity) {
-    return `${item.city} ${item.musicCommunity}`;
-  }
-
-  return item.sceneName;
-};
-
-const formatHomeSceneSelectorItemSecondaryLabel = (item: HomeSceneSelectorItem): string => {
-  if (item.city && item.state) {
-    return `${item.city}, ${item.state}`;
-  }
-
-  return item.sceneName;
-};
-
 export default function PlotPage() {
   const router = useRouter();
   const {
@@ -226,7 +211,7 @@ export default function PlotPage() {
     initialPlayerTier
   );
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
-  const [homeSceneSelector, setHomeSceneSelector] = useState<HomeSceneSelector>({
+  const [homeSceneSelector, setHomeSceneSelector] = useState<HomeSceneSelectorReadModel>({
     currentLocation: null,
     items: [],
   });
@@ -276,7 +261,6 @@ export default function PlotPage() {
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
-  const homeSceneSelectorDragStartX = useRef<number | null>(null);
 
   const discoveryContextFallback = useMemo(
     () => ({
@@ -300,31 +284,6 @@ export default function PlotPage() {
     () => formatPlotCommunityLabel(selectedCommunity),
     [selectedCommunity]
   );
-  const selectedCommunityId = selectedCommunity?.id ?? null;
-  const homeSceneSelectorActiveIndex = useMemo(() => {
-    if (homeSceneSelector.items.length === 0) return -1;
-
-    const selectedIndex = homeSceneSelector.items.findIndex(
-      (item) => item.sceneId === selectedCommunityId
-    );
-    if (selectedIndex >= 0) return selectedIndex;
-
-    const currentIndex = homeSceneSelector.items.findIndex((item) => item.isCurrent);
-    return currentIndex >= 0 ? currentIndex : 0;
-  }, [homeSceneSelector.items, selectedCommunityId]);
-  const homeSceneSelectorActiveItem =
-    homeSceneSelectorActiveIndex >= 0 ? homeSceneSelector.items[homeSceneSelectorActiveIndex] : null;
-  const homeSceneSelectorPreviousItem =
-    homeSceneSelector.items.length > 1 && homeSceneSelectorActiveIndex >= 0
-      ? homeSceneSelector.items[
-          (homeSceneSelectorActiveIndex - 1 + homeSceneSelector.items.length) %
-            homeSceneSelector.items.length
-        ]
-      : null;
-  const homeSceneSelectorNextItem =
-    homeSceneSelector.items.length > 1 && homeSceneSelectorActiveIndex >= 0
-      ? homeSceneSelector.items[(homeSceneSelectorActiveIndex + 1) % homeSceneSelector.items.length]
-      : null;
   const resolvedSelectorMusicCommunities = useMemo(
     () => new Set(homeSceneSelector.items.map((item) => item.musicCommunity.trim().toLowerCase())),
     [homeSceneSelector.items]
@@ -760,31 +719,6 @@ export default function PlotPage() {
     } finally {
       setHomeSceneSelectorSelectingSceneId(null);
     }
-  };
-
-  const handleHomeSceneSelectorAdjacentSelect = (item: HomeSceneSelectorItem | null) => {
-    if (!item) return;
-    void handleHomeSceneSelectorSelect(item);
-  };
-
-  const handleHomeSceneSelectorPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (homeSceneSelector.items.length < 2) return;
-    homeSceneSelectorDragStartX.current = event.clientX;
-  };
-
-  const handleHomeSceneSelectorPointerUp = (event: PointerEvent<HTMLDivElement>) => {
-    if (homeSceneSelector.items.length < 2) return;
-
-    const startX = homeSceneSelectorDragStartX.current;
-    homeSceneSelectorDragStartX.current = null;
-    if (startX === null) return;
-
-    const deltaX = event.clientX - startX;
-    if (Math.abs(deltaX) < 48) return;
-
-    handleHomeSceneSelectorAdjacentSelect(
-      deltaX > 0 ? homeSceneSelectorPreviousItem : homeSceneSelectorNextItem
-    );
   };
 
   const handleTierChange = (tier: PlayerTier) => {
@@ -1224,122 +1158,15 @@ export default function PlotPage() {
           </div>
         </section>
 
-        <section
-          data-slot="home-scene-selector"
-          className="mt-3 rounded-[1.15rem] border border-black bg-[#efefe2] p-3 shadow-[2px_2px_0_rgba(0,0,0,0.2)]"
-        >
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm font-semibold text-black">
-                {homeSceneSelector.currentLocation
-                  ? `${homeSceneSelector.currentLocation.city}, ${homeSceneSelector.currentLocation.state}`
-                  : selectedCommunityLabel ?? 'Current city context'}
-              </p>
-            </div>
-            <p className="max-w-xl text-xs text-black/60">
-              Switch between registered music communities that resolve in your current city
-              context. Saved Away Scenes stay in your profile collection.
-            </p>
-          </div>
-
-          {homeSceneSelectorLoading ? (
-            <p className="mt-3 text-sm text-black/60">Loading Home Scene options...</p>
-          ) : homeSceneSelectorError ? (
-            <p className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {homeSceneSelectorError}
-            </p>
-          ) : homeSceneSelectorActiveItem ? (
-            <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(11rem,1.2fr)_minmax(0,1fr)] items-stretch gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                aria-label="Switch to previous Home Scene"
-                className="min-h-[5rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5 disabled:opacity-45"
-                disabled={!homeSceneSelectorPreviousItem || Boolean(homeSceneSelectorSelectingSceneId)}
-                onClick={() => handleHomeSceneSelectorAdjacentSelect(homeSceneSelectorPreviousItem)}
-              >
-                <span className="block w-full">
-                  <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
-                    ← Previous
-                  </span>
-                  <span className="mt-1 block truncate text-sm font-semibold">
-                    {homeSceneSelectorPreviousItem
-                      ? formatHomeSceneSelectorItemPrimaryLabel(homeSceneSelectorPreviousItem)
-                      : 'Previous Home Scene'}
-                  </span>
-                </span>
-              </Button>
-
-              <div
-                role="group"
-                aria-label="Current Home Scene"
-                onPointerDown={handleHomeSceneSelectorPointerDown}
-                onPointerUp={handleHomeSceneSelectorPointerUp}
-                onPointerCancel={() => {
-                  homeSceneSelectorDragStartX.current = null;
-                }}
-                className="select-none rounded-[1.15rem] border border-black bg-[#b8d63b] px-4 py-3 text-center text-black shadow-[2px_2px_0_rgba(0,0,0,0.22)]"
-              >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55">
-                  Current Home Scene
-                </p>
-                <p className="mt-1 text-lg font-black leading-tight">
-                  {formatHomeSceneSelectorItemPrimaryLabel(homeSceneSelectorActiveItem)}
-                </p>
-                <p className="mt-0.5 text-xs text-black/65">
-                  {formatHomeSceneSelectorItemSecondaryLabel(homeSceneSelectorActiveItem)}
-                </p>
-                <span className="mt-2 inline-flex flex-wrap justify-center gap-1">
-                  <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
-                    {homeSceneSelectorActiveItem.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'}
-                  </span>
-                  {homeSceneSelectorActiveItem.isDefault ? (
-                    <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
-                      Default
-                    </span>
-                  ) : null}
-                  {homeSceneSelectorSelectingSceneId === homeSceneSelectorActiveItem.sceneId ? (
-                    <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
-                      Switching
-                    </span>
-                  ) : null}
-                </span>
-                {homeSceneSelector.items.length > 1 ? (
-                  <p className="mt-2 text-[11px] font-medium text-black/55">
-                    Swipe or use arrows to switch scenes.
-                  </p>
-                ) : null}
-              </div>
-
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                aria-label="Switch to next Home Scene"
-                className="min-h-[5rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5 disabled:opacity-45"
-                disabled={!homeSceneSelectorNextItem || Boolean(homeSceneSelectorSelectingSceneId)}
-                onClick={() => handleHomeSceneSelectorAdjacentSelect(homeSceneSelectorNextItem)}
-              >
-                <span className="block w-full">
-                  <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
-                    Next →
-                  </span>
-                  <span className="mt-1 block truncate text-sm font-semibold">
-                    {homeSceneSelectorNextItem
-                      ? formatHomeSceneSelectorItemPrimaryLabel(homeSceneSelectorNextItem)
-                      : 'Next Home Scene'}
-                  </span>
-                </span>
-              </Button>
-            </div>
-          ) : (
-            <p className="mt-3 text-sm text-black/60">
-              No additional registered music-community Home Scenes are available in this city
-              context yet.
-            </p>
-          )}
-        </section>
+        <HomeSceneSelector
+          selector={homeSceneSelector}
+          selectedCommunityId={selectedCommunity?.id ?? null}
+          selectedCommunityLabel={selectedCommunityLabel}
+          loading={homeSceneSelectorLoading}
+          error={homeSceneSelectorError}
+          selectingSceneId={homeSceneSelectorSelectingSceneId}
+          onSelect={handleHomeSceneSelectorSelect}
+        />
 
         {isProfileExpanded ? null : playerPanel}
 

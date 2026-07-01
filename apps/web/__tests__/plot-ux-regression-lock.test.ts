@@ -335,42 +335,44 @@ describe('/plot UX regression lock', () => {
 
   it('locks Home Scene selector into Plot as the active scene shortcut', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
-    const selectorBranch = plotPageSource
-      .split('data-slot="home-scene-selector"')[1]
-      .split('{isProfileExpanded ? null : playerPanel}')[0];
+    const selectorSource = readRepoFile('src/components/plot/HomeSceneSelector.tsx');
 
+    expect(plotPageSource).toContain(
+      "import HomeSceneSelector from '@/components/plot/HomeSceneSelector';"
+    );
+    expect(plotPageSource).toContain('<HomeSceneSelector');
+    expect(plotPageSource).toContain('selector={homeSceneSelector}');
+    expect(plotPageSource).toContain('selectedCommunityId={selectedCommunity?.id ?? null}');
+    expect(plotPageSource).toContain('onSelect={handleHomeSceneSelectorSelect}');
     expect(plotPageSource).toContain('getHomeSceneSelector(token)');
     expect(plotPageSource).toContain('tuneDiscoverScene(item.sceneId, token)');
     expect(plotPageSource).toContain('getCommunityById(item.sceneId, token)');
     expect(plotPageSource).toContain('setSelectedCommunity(nextCommunity)');
     expect(plotPageSource).toContain('setDiscoveryContext(context)');
-    expect(plotPageSource).toContain('data-slot="home-scene-selector"');
-    expect(plotPageSource).not.toContain('Home Scene Roller');
-    expect(plotPageSource).not.toContain('Home Scene Selector</p>');
+    expect(selectorSource).toContain('data-slot="home-scene-selector"');
+    expect(selectorSource).not.toContain('Home Scene Roller');
+    expect(selectorSource).not.toContain('Home Scene Selector</p>');
     expect(plotPageSource).not.toContain('homeSceneRoller');
-    expect(plotPageSource).toContain('homeSceneSelectorActiveItem');
-    expect(plotPageSource).toContain('homeSceneSelectorPreviousItem');
-    expect(plotPageSource).toContain('homeSceneSelectorNextItem');
-    expect(plotPageSource).toContain('Switch to previous Home Scene');
-    expect(plotPageSource).toContain('Switch to next Home Scene');
-    expect(plotPageSource).toContain('handleHomeSceneSelectorPointerDown');
-    expect(plotPageSource).toContain('handleHomeSceneSelectorPointerUp');
-    expect(plotPageSource).toContain('handleHomeSceneSelectorAdjacentSelect');
-    expect(selectorBranch).not.toContain('homeSceneSelector.items.map((item) =>');
-    expect(plotPageSource).toContain(
-      "homeSceneSelectorActiveItem.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'"
+    expect(selectorSource).toContain('const activeItem =');
+    expect(selectorSource).toContain('const previousItem =');
+    expect(selectorSource).toContain('const nextItem =');
+    expect(selectorSource).toContain('Switch to previous Home Scene');
+    expect(selectorSource).toContain('Switch to next Home Scene');
+    expect(selectorSource).toContain('handlePointerDown');
+    expect(selectorSource).toContain('handlePointerUp');
+    expect(selectorSource).not.toContain('selector.items.map((item) =>');
+    expect(selectorSource).toContain(
+      "activeItem.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'"
     );
-    expect(plotPageSource).not.toContain('Saved Away Scene Selector');
+    expect(selectorSource).not.toContain('Saved Away Scene Selector');
   });
 
   it('keeps activation context and saved Away Scenes in the listener profile, not the selector', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const selectorSource = readRepoFile('src/components/plot/HomeSceneSelector.tsx');
     const expandedProfileBranch = plotPageSource
       .split('{isProfileExpanded ? (')[1]
       .split('\n        ) : (\n          <>')[0];
-    const selectorBranch = plotPageSource
-      .split('data-slot="home-scene-selector"')[1]
-      .split('{isProfileExpanded ? null : playerPanel}')[0];
 
     expect(plotPageSource).toContain('savedAwayScenes: []');
     expect(plotPageSource).toContain('activationNotices: []');
@@ -378,8 +380,8 @@ describe('/plot UX regression lock', () => {
     expect(expandedProfileBranch).toContain('data-slot="profile-saved-away-scenes"');
     expect(expandedProfileBranch).toContain('Former proxy scene saved for listening context.');
     expect(expandedProfileBranch).toContain('Voting follows your current verified Home Scene.');
-    expect(selectorBranch).not.toContain('savedAwayScenes');
-    expect(selectorBranch).not.toContain('profile-saved-away-scenes');
+    expect(selectorSource).not.toContain('savedAwayScenes');
+    expect(selectorSource).not.toContain('profile-saved-away-scenes');
   });
 
   it('locks Top Songs + Scene Activity to archive-only placement', () => {
