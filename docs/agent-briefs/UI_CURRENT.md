@@ -1,7 +1,7 @@
 # UI Current Agent Brief
 
 Status: active
-Last Updated: 2026-06-24
+Last Updated: 2026-07-01
 
 ## Use When
 
@@ -91,6 +91,7 @@ Recent handoffs to use only after the locks above:
 - Current Plot presentation for the selector is a centered active Home Scene with left/right arrow controls and horizontal swipe between adjacent resolvable preferences, not a full visible preference-management list.
 - `/plot` renders the Home Scene selector from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
 - Use `switch`, `select`, or `tune` for Home Scene selector movement. Reserve `transport` for Away Scene movement because the user is leaving their Home Scene context; intended transport entry points are Discover and saved Uprises in the user's collection.
+- Discover transport is not part of Plot. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, and saved Uprises belong to personal-player/Away Scene listening rather than the Home Scene selector.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
 - `RADIYO` uses `Play It Loud` and `Upvote`.

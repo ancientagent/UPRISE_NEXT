@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-04-25`
+**Last Updated:** `2026-07-01`
 
 ## Overview & Purpose
 
@@ -32,6 +32,7 @@ Current MVP shell note:
 - The Plot is the primary Home-side participation interface inside `Home`.
 - The Home Scene mainpage/default state is the Feed tab inside Plot, not a
   separate homepage/feed route.
+- Plot is the community dashboard/neighborhood for the listener's active Home Scene context. It does not originate Discover transport or Away Scene travel.
 - Plot tab surfaces:
   - Activity Feed (S.E.E.D Feed) (default)
   - Events
@@ -122,6 +123,9 @@ Current MVP shell note:
 ## Architectural Boundaries
 
 - Plot is a civic interface, not a recommendation surface.
+- Plot is not a transport surface. Use the Home Scene selector to switch/select/tune among the listener's resolvable Home Scene music-community preferences in the current city. Reserve transport for Away Scene movement through Discover or saved Uprises/collection paths.
+- Plot may link to Artist Profiles, event/calendar actions, songs, and tour-date surfaces while the user is listening to an Uprise. Those links do not make Plot a Discover transport system.
+- Transported visitors must not land inside the member Plot/community dashboard for a visited community; Discover owns the visitor-facing front-door/back-door model.
 - Promotions are non-governing signals and must not affect Fair Play.
 - Web tier may not import DB/server modules directly; data flows through API endpoints.
 - If deferred discovery material is surfaced in Plot/feed during MVP, it must remain scene-scoped, deterministic, and intermittent rather than becoming a second fixed discovery route.

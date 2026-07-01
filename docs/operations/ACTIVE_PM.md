@@ -22,9 +22,9 @@ This file is not product doctrine, canon, or an owner spec. Durable product trut
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Current `main` HEAD: `aac8ccd` (`fix(web): keep print shop source facing (#165)`)
-- Local worktree state at refresh: clean before this docs refresh branch
-- Active implementation branch: `docs/active-pm-refresh-after-plot-cleanup`
+- Current `main` HEAD: `6d240f7` (`docs: refresh active pm after plot cleanup (#166)`)
+- Local worktree state at refresh: clean before this docs owner-spec promotion branch
+- Active implementation branch: `docs/discover-transport-owner-spec-promotion` until merge; none after merge.
 - Open PR queue at refresh: none (`gh pr list --state open --limit 100` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -37,12 +37,12 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `uprise-context-steward` / branch hygiene |
-| Branch | `docs/active-pm-refresh-after-plot-cleanup` |
-| Scope | Refresh this PM snapshot after the Plot/Home/Profile/Print Shop cleanup run so future agents do not start from the old `3d8f2ff` cleanup state. |
+| Lane | `UX_UI` / `COMM_DISCOVERY` docs promotion |
+| Branch | `docs/discover-transport-owner-spec-promotion` until merge; none after merge. |
+| Scope | Promote accepted Discover/transport founder-session decisions into owner specs and active UI brief without implementing runtime UI. |
 | Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine changes, runtime code, provider state, database/schema changes, art changes. |
-| Owner Contract | `docs/specs/system/documentation-framework.md` |
-| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`; relevant dated handoffs listed below |
+| Owner Contract | `docs/specs/communities/discovery-scene-switching.md`; `docs/specs/communities/plot-and-scene-plot.md` |
+| Companion Docs | `docs/agent-briefs/UI_CURRENT.md`; `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`; `docs/specs/system/documentation-framework.md` |
 | Validation | `pnpm run docs:lint`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
@@ -75,7 +75,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `main` / current PM refresh branch | `aac8ccd` before this docs branch | clean before refresh |
+| `/home/baris/UPRISE_NEXT` | `main` / current Discover transport docs branch | `6d240f7` before this docs branch | clean before refresh |
 
 ### Preserved UX Reference Worktrees
 
@@ -112,10 +112,10 @@ Treat these as branch-hygiene candidates only, not product work.
 
 ## Next Queue
 
-1. Finish this PM refresh PR and merge if docs lint / diff check pass.
+1. Finish this Discover/transport owner-spec promotion PR and merge if docs lint / diff check pass.
 2. Continue small Plot structural cleanup from clean `main` only if a region is clearly named and behavior is already locked by tests.
 3. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
-4. If touching Discover/transport, promote only approved founder-session decisions into owner specs; do not implement transport UI inside Plot.
+4. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
 5. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
 6. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
 
