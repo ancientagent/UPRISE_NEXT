@@ -97,6 +97,14 @@ describe('plot tab contract locks', () => {
     expect(promotionsSource).toContain("metadataValue(item.metadata, ['expiresAt', 'expiration'])");
   });
 
+  it('marks retained deferred Plot panels as non-current import targets', () => {
+    const statisticsSource = readRepoFile('src/components/plot/StatisticsPanel.tsx');
+    const promotionsSource = readRepoFile('src/components/plot/PlotPromotionsPanel.tsx');
+
+    expect(statisticsSource).toContain('DEFERRED_PLOT_PANEL_DO_NOT_IMPORT_IN_ACTIVE_PLOT');
+    expect(promotionsSource).toContain('DEFERRED_PLOT_PANEL_DO_NOT_IMPORT_IN_ACTIVE_PLOT');
+  });
+
   it('passes structural community labels into current feed and events headers', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const feedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');

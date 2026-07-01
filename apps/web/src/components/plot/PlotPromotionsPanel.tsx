@@ -1,5 +1,9 @@
 'use client';
 
+// DEFERRED_PLOT_PANEL_DO_NOT_IMPORT_IN_ACTIVE_PLOT
+// Retained as an explicit/deferred promotions read seam. Current MVP `/plot`
+// has no Promotions tab and must not mount this panel.
+
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@uprise/ui';
 import {
