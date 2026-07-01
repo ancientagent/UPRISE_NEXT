@@ -3,7 +3,7 @@
 **ID:** `COMM-DISCOVERY`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-04-16`
+**Last Updated:** `2026-07-01`
 
 ## Overview & Purpose
 Defines explicit, non-algorithmic discovery flows for changing listening context across Scenes and tiers once borders open. Discovery is user-initiated only and does not alter civic authority unless the user explicitly changes Home Scene.
@@ -25,14 +25,67 @@ Current live MVP note:
 - Artist/listener travels Discover across city/state/national scopes while keeping the current community context inherited from the active Home Scene or tuned community.
 - Listener transport means leaving the user's Home Scene context for an Away Scene/listening context. The current intended entry points are Discover and saved Uprises in the user's collection.
 
+## Discover Transport Model
+
+Discover transport is a later-phase Away Scene/listening-context system. It is not part of Plot and does not grant civic authority in the visited community.
+
+### Front Door
+
+The Discover `front door` starts from the listener's current Home context:
+
+- the listener has not left their Home Scene yet;
+- the Home Scene Uprise/player context may continue while the listener explores options;
+- content points outward to music outside the listener's own community, but related enough to help them start checking things out;
+- example module families include neighboring citywide Uprises from the listener's primary music community, artists touring through the listener's city, and outside-community suggestions surfaced through explicit community signals;
+- front-door modules must remain deterministic/scoped and must not become a hidden recommendation engine.
+
+### Map View
+
+Discover map view is entered from the Discover front door when later-phase transport is enabled.
+
+- The working visual direction is a landscape-oriented player + map surface.
+- Map points represent existing communities and should communicate community presence, size, and activity level.
+- If the listener enters map view while listening at citywide scope, the default map view should show city communities in the current state.
+- If the listener enters map view while listening at statewide scope, the default map view should open at statewide scale.
+- The default map filter should inherit the listener's current/Home music community, with an explicit way to unfilter and inspect other music communities.
+- Future touring/event visibility may appear on the map only when the Events/touring contracts are ready.
+
+### Seek Mode
+
+Seek mode is an explicit random-discovery control, not a recommendation engine.
+
+- Working direction: one seek control can jump to a random state and another can jump to a random city within the selected/current state.
+- Seek should default to the inherited/current music community unless the listener has explicitly removed that filter.
+- Player-swipe transport is not the approved final control. Do not assume swipe gestures for transport while Home Scene selector/swiper semantics occupy the active Home/Plot shell.
+
+### Back Door
+
+Arriving at another community through Discover lands the listener at that community's `back door`:
+
+- visitor-facing community preview, not the member Plot/community dashboard;
+- content is about the visited community according to that community: highlights, popular material, artists, events, and listening context;
+- visitor listening and browsing are allowed;
+- Home Scene membership, voting authority, and civic actions do not change;
+- the back door must not flatten into the same generic page as the front door.
+
+### Saved Uprises
+
+Saved Uprises may become a collection/personal-player transport entry point.
+
+- Loading a saved Uprise belongs to personal-player/Away Scene listening context.
+- Saved Uprises do not appear in the Home Scene selector.
+- Saved Uprise listening does not grant voting authority.
+
 ## Functional Requirements
 - Discovery is explicit user action only:
-  - Scene switching via swipe.
+  - Scene switching via approved Discover controls.
   - Manual Scene selection in Discover map/list.
+  - Seek-mode traversal when implemented.
   - Tier toggling (city/state/national).
   - Selecting saved Uprises from the user's collection once that collection transport surface is enabled.
 - No recommendation feed, ranking, or personalization in discovery flows.
 - Current MVP does not expose active cross-community discovery on the live `/discover` route.
+- Discover transport/travel remains deferred until the platform has enough community activity for cross-community travel to matter.
 - Discovery remains bounded by the inherited current player/community scope when later-phase travel reopens.
 - Community-native lookup should live on the `community` page rather than inside Discover itself.
 - Discovery does not imply “join” semantics:
@@ -95,6 +148,8 @@ Current live MVP note:
 ## Architectural Boundaries
 - Discovery is transport/navigation behavior, not authority behavior.
 - Transport is Away Scene/listening-context movement. It must not be used for Home Scene selector switching, which stays in the user's Home Scene context.
+- Transport must not originate inside Plot. Plot may contain links to Artist Profiles, event/calendar actions, or other related surfaces, but those outbound links are not Discover transport.
+- Transport arrival must not drop visitors into the member Plot/community dashboard. Use the Discover back-door visitor surface for visited communities.
 - Upvotes and governance actions remain Home Scene-gated by GPS rules.
 - Web tier discovery surfaces must consume API endpoints only.
 
@@ -144,6 +199,10 @@ Current live MVP note:
   - scope toggle (`city/state/national`)
   - current tuned Scene vs Home Scene badges
   - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status
+- Later-phase Discover front door should show outward-looking, deterministic modules about music outside the listener's own community.
+- Later-phase Discover back door should show the visited community's own highlights and popular material according to that community.
+- Later-phase map view should show community markers with size/activity meaning; marker design is not locked here.
+- Seek controls are explicit Discover controls and must not be implemented as hidden personalization.
 - Snippet content must remain subordinate to the player/title card and inherit the same current scope.
 - Community-native lookup belongs on the `community` page, not Discover.
 - Access-limit/entitlement messaging is deferred in MVP until pricing/entitlement contracts are locked in canon/spec.
@@ -161,10 +220,16 @@ Current live MVP note:
 - Discovery results are deterministic for identical queries.
 - No UI copy uses “Join Community” for discovery/tuning.
 - Tier scope changes only aggregation/result scope, not parent music-community filter.
+- Plot contains no Discover transport UI.
+- Discover front-door and back-door content are distinct: front door is outward-looking from the user's Home context; back door is inward-looking for the visited community.
+- Seek does not mutate Home Scene or voting authority.
+- Saved Uprises do not appear in the Home Scene selector and do not grant voting authority.
 
 ## Future Work & Open Questions
-- Add “swipe” gesture semantics once mobile interaction layer is implemented.
+- Finalize the Discover transport control design. Swipe gestures are not currently approved as the final transport control because Home Scene selector/swiper behavior already uses nearby interaction semantics.
 - Finalize discover pagination windows and caching strategy.
+- Define map marker visual/data contract for community size and activity.
+- Define collection/personal-player saved-Uprise transport contract.
 
 ## References
 - `docs/canon/Master Narrative Canon.md` (2.3, 6.x)
