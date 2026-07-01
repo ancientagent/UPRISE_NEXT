@@ -93,6 +93,7 @@ Recent handoffs to use only after the locks above:
 - Use `switch`, `select`, or `tune` for Home Scene selector movement. Reserve `transport` for Away Scene movement because the user is leaving their Home Scene context; intended transport entry points are Discover and saved Uprises in the user's collection.
 - Discover transport is not part of Plot. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, and saved Uprises belong to personal-player/Away Scene listening rather than the Home Scene selector.
 - Non-expanded Plot should not force a companion context panel beside Feed, Events, or Archive. Source identity access may appear inside the expanded listener profile for users who manage Artist/Band sources, but source tools still live in source/admin surfaces. Registrar placement is inside Archive/community information with Registrar on top and records/status history below.
+- The non-expanded `/plot` top shell groups listener identity, the Home Scene selector, and the top RADIYO player as one visual cockpit. This is presentation-only; it does not authorize Discover transport, map/seek controls, source tools, or side panels inside Plot.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
 - `RADIYO` uses `Play It Loud` and `Upvote`.

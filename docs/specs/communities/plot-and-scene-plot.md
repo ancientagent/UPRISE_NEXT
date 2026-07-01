@@ -86,6 +86,9 @@ Current MVP shell note:
   control. The switcher centers the active Home Scene and uses left/right arrows
   plus horizontal swipe to move between adjacent registered/resolvable
   music-community preferences.
+- The non-expanded Plot top shell groups listener identity, the Home Scene
+  selector, and the top RADIYO player into one visual composition while keeping
+  the same selector/tune, player, and profile-pull-down behavior.
 - Copy and framing align with canon (“anchor this dashboard”).
 - Archive surface renders read-only descriptive modules in the current MVP body:
   - `Registrar` community-information entry/control and records/status history, with the Registrar entry on top and records below.

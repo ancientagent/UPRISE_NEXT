@@ -9,6 +9,7 @@
 
 ### Added
 
+- Tightened the non-expanded `/plot` top shell so listener identity, the Home Scene selector, and the top RADIYO player read as one visual cockpit without adding transport behavior; see `docs/handoff/2026-07-01_plot-top-shell-visual-composition.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #172 so the current-work snapshot points at the merged Archive Registrar placement slice; see `docs/handoff/2026-07-01_active-pm-post-archive-registrar-refresh.md`.
 - Added Registrar placement inside `/plot` Archive/community information with Registrar entry on top and records/status history below; see `docs/handoff/2026-07-01_archive-registrar-community-info.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #170 so the current-work snapshot points at the merged profile source identity access slice; see `docs/handoff/2026-07-01_active-pm-post-profile-source-refresh.md`.
