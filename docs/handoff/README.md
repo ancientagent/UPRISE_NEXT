@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_active-pm-post-archive-registrar-refresh.md`](./2026-07-01_active-pm-post-archive-registrar-refresh.md) — refreshes `ACTIVE_PM` after PR #172, records current `main`, empty PR queue, and completed Archive Registrar placement slice.
 - [`2026-07-01_archive-registrar-community-info.md`](./2026-07-01_archive-registrar-community-info.md) — implements Registrar placement inside `/plot` Archive/community information with the entry/control on top and records/status history below.
 - [`2026-07-01_active-pm-post-profile-source-refresh.md`](./2026-07-01_active-pm-post-profile-source-refresh.md) — refreshes `ACTIVE_PM` after PR #170, records current `main`, empty PR queue, and completed profile source identity access slice.
 - [`2026-07-01_profile-source-identity-access.md`](./2026-07-01_profile-source-identity-access.md) — moves source account identity access into the expanded `/plot` listener profile while keeping source tools out of non-expanded Plot and listener collection body.
