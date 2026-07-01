@@ -9,6 +9,7 @@
 
 ### Added
 
+- Refreshed `docs/operations/ACTIVE_PM.md` after the Plot/Home/Profile/Print Shop cleanup run so future agents start from current `main` and preserve the remaining UX reference worktrees; see `docs/handoff/2026-07-01_active-pm-post-plot-cleanup-refresh.md`.
 - Removed the direct `/plot` Print Shop shortcut and locked Print Shop as source-facing while preserving Source Dashboard/source-profile availability; see `docs/handoff/2026-07-01_print-shop-source-facing-boundary.md`.
 - Extracted the expanded `/plot` listener profile body into `PlotListenerProfile` while keeping route-owned API/state/player behavior unchanged; see `docs/handoff/2026-07-01_plot-listener-profile-component-extraction.md`.
 - Added a founder-session capture for Discover/transport front-door, back-door, map-view, seek-mode, saved-Uprises, and no-transport-inside-Plot direction; see `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`.

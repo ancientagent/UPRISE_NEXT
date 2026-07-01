@@ -18,154 +18,106 @@ Use it to answer:
 
 This file is not product doctrine, canon, or an owner spec. Durable product truth remains in `docs/specs/**`, canon, active briefs, current runtime code, and tests. Linear remains execution state. This file only helps agents avoid stale branches, duplicated audits, and context overloading.
 
-## Update Rule
-
-Update this file when any of the following changes:
-
-- active implementation branch or PR;
-- active goal or next slice;
-- open PR queue;
-- branch/worktree cleanup status;
-- provider/db/schema/canon risk state;
-- blocker that affects which agent should work next.
-
-Keep updates small. Do not paste full audit reports here. Link to the owner spec, handoff, Linear issue, or PR instead.
-
 ## Current Workspace Snapshot
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Base HEAD at approved cleanup closeout: `3d8f2ff` (`docs: refresh active pm after ux review (#158)`)
-- Active implementation branch: `docs/active-pm-approved-cleanup-closeout` until closeout PR merges; none after merge.
-- Last PM update source: approved branch/worktree cleanup closeout
-- Open PR queue at snapshot: none
-- Main worktree state at snapshot: clean before this docs slice
+- Current `main` HEAD: `aac8ccd` (`fix(web): keep print shop source facing (#165)`)
+- Local worktree state at refresh: clean before this docs refresh branch
+- Active implementation branch: `docs/active-pm-refresh-after-plot-cleanup`
+- Open PR queue at refresh: none (`gh pr list --state open --limit 100` returned `[]`)
+- Provider/db/schema/art state: not touched by this refresh
+- Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
-Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes / Abacus tasks start from current `main`, understand which leftover branches are safe cleanup candidates, and do not disturb unmerged worktrees without approval.
+Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes / Abacus tasks start from current `main`, load the right lane context, and do not disturb preserved UX reference work without explicit approval.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
 | Lane | `uprise-context-steward` / branch hygiene |
-| Branch | `docs/active-pm-approved-cleanup-closeout` until closeout PR merges; none after merge. |
-| Scope | Record approved cleanup of reviewed superseded branches/worktrees and leave only protected UX reference branches. |
-| Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine, runtime code, provider state, database/schema changes. |
+| Branch | `docs/active-pm-refresh-after-plot-cleanup` |
+| Scope | Refresh this PM snapshot after the Plot/Home/Profile/Print Shop cleanup run so future agents do not start from the old `3d8f2ff` cleanup state. |
+| Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine changes, runtime code, provider state, database/schema changes, art changes. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
-| Companion Doc | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
+| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`; relevant dated handoffs listed below |
 | Validation | `pnpm run docs:lint`, `git diff --check` |
 
-## Branch Triage Snapshot
+## Recently Completed Since Prior PM Snapshot
 
-Captured after PR #150 merged and `main` fast-forwarded to `99b0072`.
+The previous PM snapshot still pointed at the approved cleanup closeout around `3d8f2ff`. Current `main` has since advanced through these relevant slices:
 
-### Cleanup Candidates Removed
+- PR #159 / `04df9ef`: captured Plot/Home Scene visual-skin founder-session direction.
+- PR #161 / `ef6ed5d`: replaced old Home Scene switching terminology with Home Scene selector/swiper language.
+- PR #162 / `981d083`: extracted `/plot` Home Scene selector presentation into `HomeSceneSelector`.
+- PR #163 / `7a16d6b`: captured Discover/transport front-door, back-door, map-view, seek-mode, saved-Uprises, and no-transport-inside-Plot founder-session direction.
+- PR #164 / `3725a6f`: extracted expanded `/plot` listener profile body into `PlotListenerProfile`.
+- PR #165 / `aac8ccd`: removed direct `/plot` Print Shop shortcut and kept Print Shop source-facing.
 
-Completed after PR #152 merged:
+Use these handoffs for the current cleanup trail:
 
-- pruned stale remote-tracking refs;
-- removed behind-only worktree `/home/baris/UPRISE_NEXT_batch18`;
-- deleted local branch `feat/ux-batch18`;
-- deleted local and remote cleanup branches that were patch-equivalent or already absorbed:
-  - `test/activation-cutover-fixture-smoke`
-  - `docs/post-deploy-launch-readiness-2026-06-29`
-  - `chore/launch-readiness-verification-2026-06-29`
-  - `chore/track-art-assets`
-  - `docs/browser-qa-lane-readiness`
-  - `docs/uprise-ai-stack-agent-lanes`
-  - `feat/archive-event-terminology-cleanup`
-- confirmed PM branch remote heads were already gone after PR merges:
-  - `docs/active-pm-current-work`
-  - `docs/active-pm-branch-triage`
-  - `docs/active-pm-stable-snapshot-wording`
+- `docs/handoff/2026-07-01_home-scene-selector-terminology.md`
+- `docs/handoff/2026-07-01_home-scene-selector-component-extraction.md`
+- `docs/handoff/2026-07-01_plot-listener-profile-component-extraction.md`
+- `docs/handoff/2026-07-01_print-shop-source-facing-boundary.md`
+- `docs/founder-sessions/2026-07-01_plot-home-scene-visual-skin.md`
+- `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`
 
-No `art/` files were directly edited or removed by this cleanup.
+## Current Branch / Worktree State
 
-### Approved Cleanup Completed: Superseded Branches / Worktrees
+### Open PR Queue
 
-The reviewed superseded resolver/onboarding, docs/audit, and Phase3 automation/runtime branches were removed after explicit founder approval. See `docs/handoff/2026-07-01_approved-branch-worktree-cleanup.md` for exact command evidence and branch/worktree lists.
+None at refresh time.
 
-Removed worktrees:
+### Main Worktree
 
-- `/home/baris/UPRISE_NEXT_runtime` -> `phase3-no-automation-rollback`
-- `/home/baris/UPRISE_NEXT/.worktrees/batch18` -> `feat/ux-batch18-prep`
-- `/home/baris/UPRISE_NEXT/.worktrees/batch19` -> `feat/ux-batch19-prep`
+| Path | Branch | HEAD | State |
+| --- | --- | --- | --- |
+| `/home/baris/UPRISE_NEXT` | `main` / current PM refresh branch | `aac8ccd` before this docs branch | clean before refresh |
 
-Deleted local branches:
-
-- `fix/fair-play-resolver-di-staging`
-- `feat/default-music-community-preference-resolver`
-- `feat/preference-resolver-runtime-adoption`
-- `feat/missing-community-request-intake`
-- `audit/home-scene-community-cleanup-plan`
-- `audit/registrar-source-origin-compatibility`
-- `docs/artist-identity-canon-fix`
-- `phase3-mvp-roadmap-slice88-runtime`
-- `review-risk-p3-rev-002`
-- `phase3-runtime-followups`
-- `backup/phase3-runtime-followups-20260224-150716`
-- `phase3-no-automation-rollback`
-- `feat/ux-batch18-prep`
-- `feat/ux-batch19-prep`
-
-Deleted matching remote branches where they still existed. Remote branches that were already absent were left as-is.
-
-### Reviewed UX / Prototype Branches
-
-These UX/prototype branches were reviewed after PR #156 merged. Queue/prep branches and their worktrees were removed after explicit approval. The remaining broad branches are hundreds of commits behind current `main` and touch active `/plot`, onboarding, Discover, RADIYO/player, source-dashboard, and artist-dashboard prototype surfaces, so they should be treated as design/runtime references until a founder/design owner decides what to extract.
-
-Evidence checked:
-
-- `git rev-list --left-right --count main...<branch>`
-- `git cherry -v main <branch>`
-- `git diff --name-status main...<branch>`
-- `git worktree list --porcelain`
-
-Detailed handoff: `docs/handoff/2026-07-01_ux-prototype-branch-review.md`.
-
-| Branch | Review Result | Recommended Action |
-| --- | --- | --- |
-| `feat/ux-batch17` | Old UX/Reliant batch output. Includes queue/runtime files, Discover/Plot/RADIYO/statistics tests, Reliant script changes, and many March handoffs. | Do not merge wholesale. Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
-| `feat/ux-batch18-run` | Old UX/Reliant batch run output. Includes queue/runtime files, Plot/Discover/player tests, Reliant automation edits, Social-hidden MVP note, and handoffs. | Do not merge wholesale. Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
-| `ux-mobile-r1-build` | Broad mobile-first UX prototype. Touches onboarding, Plot, community page, RADIYO player, subgenre range helper, mobile UX specs, and many March handoffs. Attached worktree. | Preserve as design/runtime reference. Requires explicit founder/design extraction decision before cleanup. |
-| `ux-implementation` | Broad Plot/profile/player/source-dashboard prototype. Adds Plot UI state machine/store, player strip, profile expansion panel, artist dashboard prototype docs, and several spec edits. Attached worktree. | Preserve as design/runtime reference. Requires explicit founder/design extraction decision before cleanup. |
-
-## Next Queue
-
-1. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
-2. If UX extraction is approved, create fresh small branches from current `main`; do not merge prototype branches wholesale.
-3. Otherwise, start the next implementation slice from clean `main`.
-
-## Branches And Worktrees To Preserve Until Explicit Approval
+### Preserved UX Reference Worktrees
 
 These worktrees/branches contain unmerged, separately staged, or intentionally preserved UX reference work. Do not remove, reset, rebase, force-push, or delete them without explicit approval.
 
-| Path | Branch | Snapshot HEAD | Note |
-| --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | UX implementation branch, remote exists. Preserve as design/runtime reference until extraction or archive decision. |
-| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | Mobile UX branch, remote exists. Preserve as design/runtime reference until extraction or archive decision. |
+| Path | Branch | Snapshot HEAD | Main divergence at refresh | Note |
+| --- | --- | --- | --- | --- |
+| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `521` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. |
+| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `353` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. |
 
-## Recently Completed / Cleaned Up
+### Preserved UX Batch Branches
 
-- PR #150 merged into `main` at `99b0072`.
-- PR #151 merged into `main` at `c1afc9c`.
-- PR #152 merged into `main` at `c8909c4`.
-- PR #153 merged into `main` at `83108f1`.
-- PR #154 merged into `main` at `a14801e`.
-- PR #155 merged into `main` at `c9afdcc`.
-- PR #156 merged into `main` at `ee171b5`.
-- PR #157 merged into `main` at `f76d4b6`.
-- PR #158 merged into `main` at `3d8f2ff`.
-- Approved cleanup-candidate branches and worktrees were removed after explicit approval; see `docs/handoff/2026-07-01_approved-branch-worktree-cleanup.md`.
-- Earlier cleanup-candidate branches and the behind-only `feat/ux-batch18` worktree were removed after approval in the prior cleanup pass.
-- Pruned stale remote-tracking refs for the already-merged PR branches:
-  - `origin/chore/plot-deferred-panel-quarantine`
-  - `origin/docs/execution-closeout-packets`
-  - `origin/refactor/plot-page-section-extraction`
-- Deleted local branches already merged into `main`, excluding attached worktree branches.
-- Open PR queue was empty after cleanup and after PR #150 merge.
+These are old UX/Reliant batch-output references. Do not merge wholesale. Preserve or archive only after explicit approval.
+
+| Branch | Main divergence at refresh | Recommended Action |
+| --- | --- | --- |
+| `feat/ux-batch17` | `337` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch18-run` | `337` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+
+### Remote Tracking Notes
+
+`git branch -r --merged origin/main` still shows many remote-tracking refs that are already merged or historical. This refresh did not prune or delete anything. Use `uprise-branch-pr-hygiene` and explicit founder approval before any cleanup action.
+
+Recent merged PR branch refs also still appeared locally as remote-tracking refs at refresh time, including:
+
+- `origin/fix/print-shop-source-facing-boundary`
+- `origin/refactor/plot-listener-profile-component`
+- `origin/docs/discover-transport-founder-session`
+- `origin/refactor/plot-home-scene-selector-component`
+- `origin/fix/home-scene-switcher-terminology`
+- `origin/docs/founder-session-plot-visual-skin`
+
+Treat these as branch-hygiene candidates only, not product work.
+
+## Next Queue
+
+1. Finish this PM refresh PR and merge if docs lint / diff check pass.
+2. Continue small Plot structural cleanup from clean `main` only if a region is clearly named and behavior is already locked by tests.
+3. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
+4. If touching Discover/transport, promote only approved founder-session decisions into owner specs; do not implement transport UI inside Plot.
+5. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
+6. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
 
 ## PM Usage Rules For Agents
 
