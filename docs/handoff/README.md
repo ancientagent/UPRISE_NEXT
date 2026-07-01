@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_docs-audit-branch-review.md`](./2026-07-01_docs-audit-branch-review.md) — reviews the remaining docs/audit preserved branches and classifies them as superseded cleanup candidates while preserving them pending explicit deletion approval.
 - [`2026-07-01_resolver-onboarding-branch-review.md`](./2026-07-01_resolver-onboarding-branch-review.md) — reviews resolver/onboarding preserved branches and classifies them as superseded cleanup candidates while preserving them pending explicit deletion approval.
 - [`2026-07-01_active-pm-post-cleanup.md`](./2026-07-01_active-pm-post-cleanup.md) — records the approved cleanup-candidate branch/worktree removal and updates `docs/operations/ACTIVE_PM.md` to leave only preserve/review branches in queue.
 - [`2026-07-01_active-pm-branch-triage.md`](./2026-07-01_active-pm-branch-triage.md) — refreshes `docs/operations/ACTIVE_PM.md` after PR #150 with cleanup-candidate and preserve/review branch classifications.
