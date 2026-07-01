@@ -23,7 +23,7 @@ This file is not product doctrine, canon, or an owner spec. Durable product trut
 - Snapshot date: 2026-07-01
 - Base branch: `main`
 - Current `main` HEAD: `3e07c0e` (`docs: refresh active pm after archive registrar (#173)`)
-- Local worktree state at refresh: clean before `feat/plot-top-shell-visual-composition` work began
+- Local worktree state at refresh: clean after `63d5111` on `feat/plot-top-shell-visual-composition`
 - Active implementation branch: `feat/plot-top-shell-visual-composition`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 100` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
@@ -85,7 +85,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `feat/plot-top-shell-visual-composition` | `3e07c0e` | active clean-base branch before local edits |
+| `/home/baris/UPRISE_NEXT` | `feat/plot-top-shell-visual-composition` | `63d5111` | clean after Plot top-shell composition commit |
 
 ### Preserved UX Reference Worktrees
 
