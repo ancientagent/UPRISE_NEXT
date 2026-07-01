@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_plot-primary-tab-body-extraction.md`](./2026-07-01_plot-primary-tab-body-extraction.md) — extracts the active `/plot` Feed/Events/Archive body renderer into `PlotPrimaryTabBody` as the first low-risk route-shell cleanup from the structural integrity roadmap.
 - [`2026-07-01_plot-deferred-panel-quarantine.md`](./2026-07-01_plot-deferred-panel-quarantine.md) — marks retained `StatisticsPanel` and `PlotPromotionsPanel` files as deferred/non-current import targets and adds Plot component-folder guidance so future agents do not revive stale Statistics/Promotions tabs.
 - [`2026-06-29_home-scene-roller-arrows-swipe.md`](./2026-06-29_home-scene-roller-arrows-swipe.md) — updates `/plot` Home Scene Roller presentation to centered active scene plus left/right arrows and swipe, while keeping saved Away Scenes profile-only.
 - [`2026-06-29_plot-feed-avatar-merch-clarification.md`](./2026-06-29_plot-feed-avatar-merch-clarification.md) — captures the Feed-as-Home-Scene-mainpage clarification, reusable feed card-family taxonomy, and deferred avatar-wearable merch fit-model direction for future design agents.

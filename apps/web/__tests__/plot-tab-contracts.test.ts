@@ -29,14 +29,17 @@ describe('plot tab contract locks', () => {
 
   it('keeps Archive as read-only descriptive history instead of the Statistics explorer', () => {
     const plotSource = readRepoFile('src/app/plot/page.tsx');
+    const tabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
 
-    expect(plotSource).toContain("if (activeTab === 'Archive')");
-    expect(plotSource).toContain('TopSongsPanel');
-    expect(plotSource).toContain('Scene Activity Snapshot');
-    expect(plotSource).toContain('Archive is read-only descriptive history for the current Plot context.');
-    expect(plotSource).toContain('not a ranking or authority');
-    expect(plotSource).not.toContain('<StatisticsPanel');
-    expect(plotSource).not.toContain("from '@/components/plot/StatisticsPanel'");
+    expect(plotSource).toContain('renderPrimaryPlotTabBody()');
+    expect(plotSource).toContain('<PlotPrimaryTabBody');
+    expect(tabBodySource).toContain("if (activeTab === 'Archive')");
+    expect(tabBodySource).toContain('TopSongsPanel');
+    expect(tabBodySource).toContain('Scene Activity Snapshot');
+    expect(tabBodySource).toContain('Archive is read-only descriptive history for the current Plot context.');
+    expect(tabBodySource).toContain('not a ranking or authority');
+    expect(tabBodySource).not.toContain('<StatisticsPanel');
+    expect(tabBodySource).not.toContain("from '@/components/plot/StatisticsPanel'");
   });
 
   it('removes the fake NYC fallback from statistics city scope', () => {
@@ -107,10 +110,12 @@ describe('plot tab contract locks', () => {
 
   it('passes structural community labels into current feed and events headers', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const tabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
     const feedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
     const eventsSource = readRepoFile('src/components/plot/PlotEventsPanel.tsx');
 
     expect(plotPageSource).toContain('communityLabel={selectedCommunityLabel}');
+    expect(tabBodySource).toContain('communityLabel={communityLabel}');
     expect(feedSource).toContain('communityLabel?: string | null;');
     expect(feedSource).toContain("return `S.E.E.D Feed • ${communityLabel}`;");
     expect(feedSource).toContain('scene anchor: ${communityLabel}');

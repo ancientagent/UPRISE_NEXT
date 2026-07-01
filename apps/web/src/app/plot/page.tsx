@@ -12,9 +12,7 @@ import { normalizeBroadcastRuntimeError } from '@/lib/broadcast/runtime';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { CommunityWithDistance } from '@/lib/types/community';
 import { useAuthStore } from '@/store/auth';
-import TopSongsPanel from '@/components/plot/TopSongsPanel';
-import SeedFeedPanel from '@/components/plot/SeedFeedPanel';
-import PlotEventsPanel from '@/components/plot/PlotEventsPanel';
+import PlotPrimaryTabBody from '@/components/plot/PlotPrimaryTabBody';
 import RadiyoPlayerPanel, {
   type PlayerMode,
   type PlayerTier,
@@ -1034,62 +1032,15 @@ export default function PlotPage() {
   );
 
   const renderPrimaryPlotTabBody = () => {
-    if (activeTab === 'Archive') {
-      return (
-        <div className="space-y-4">
-          <TopSongsPanel communityId={selectedCommunity?.id ?? null} selectedTier={selectedTier} />
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <h3 className="mb-2 font-semibold text-black">Scene Activity Snapshot</h3>
-            <p className="text-sm text-black/60">
-              Descriptive context for the current archive scope. This is not a ranking or authority
-              signal.
-            </p>
-            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                ['Members', expandedProfileStats?.metrics.totalMembers ?? 0],
-                ['Active Sects', expandedProfileStats?.metrics.activeSects ?? 0],
-                ['Events This Week', expandedProfileStats?.metrics.eventsThisWeek ?? 0],
-                ['Active Tracks', expandedProfileStats?.metrics.activeTracks ?? 0],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                  <p className="text-lg font-semibold text-black">
-                    {typeof value === 'number' ? value.toLocaleString() : value}
-                  </p>
-                  <p className="text-xs uppercase tracking-[0.12em] text-black/55">{label}</p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-4 text-xs text-black/50">
-              Archive is read-only descriptive history for the current Plot context.
-              {selectedCommunity && (
-                <span> Selected: {selectedCommunityLabel ?? selectedCommunity.name}.</span>
-              )}
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    if (activeTab === 'Feed') {
-      return (
-        <SeedFeedPanel
-          communityId={selectedCommunity?.id ?? null}
-          communityLabel={selectedCommunityLabel}
-          selectedTier={selectedTier}
-        />
-      );
-    }
-
-    if (activeTab === 'Events') {
-      return (
-        <PlotEventsPanel
-          communityId={selectedCommunity?.id ?? null}
-          communityLabel={selectedCommunityLabel}
-        />
-      );
-    }
-
-    return null;
+    return (
+      <PlotPrimaryTabBody
+        activeTab={activeTab}
+        communityId={selectedCommunity?.id ?? null}
+        communityLabel={selectedCommunityLabel}
+        selectedTier={selectedTier}
+        metrics={expandedProfileStats?.metrics ?? null}
+      />
+    );
   };
 
   const playerPanel = (
