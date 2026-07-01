@@ -35,8 +35,9 @@ Keep updates small. Do not paste full audit reports here. Link to the owner spec
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Base HEAD: `99b0072` (`docs: add active PM current work snapshot (#150)`)
-- Current docs slice branch: `docs/active-pm-branch-triage`
+- Base HEAD: `c1afc9c` (`docs: refresh active pm branch triage (#151)`)
+- Active implementation branch: none recorded after PR #151 merge
+- Last PM update source: `docs/active-pm-branch-triage` / PR #151
 - Open PR queue at snapshot: none
 - Main worktree state at snapshot: clean before this docs slice
 
@@ -49,8 +50,8 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 | Field | Current Value |
 | --- | --- |
 | Lane | `uprise-context-steward` / branch hygiene |
-| Branch | `docs/active-pm-branch-triage` |
-| Scope | Record post-PR #150 branch/worktree triage and next cleanup signals. |
+| Branch | none active; snapshot reflects `main` after PR #151 |
+| Scope | Record post-PR #150/#151 branch/worktree triage and next cleanup signals. |
 | Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine, runtime code, provider state, database/schema changes. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
 | Companion Doc | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
