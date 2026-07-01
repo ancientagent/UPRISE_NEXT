@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_founder-session-plot-visual-skin.md`](./2026-07-01_founder-session-plot-visual-skin.md) — captures founder clarification for Plot/Home Scene switching, invariant shell, and variable community visual-skin direction.
 - [`2026-07-01_approved-branch-worktree-cleanup.md`](./2026-07-01_approved-branch-worktree-cleanup.md) — records the founder-approved cleanup of reviewed superseded branches and worktrees, leaving only protected UX reference branches/worktrees.
 - [`2026-07-01_ux-prototype-branch-review.md`](./2026-07-01_ux-prototype-branch-review.md) — reviews remaining UX/prototype branches, classifies queue/prep branches as cleanup candidates pending explicit worktree/branch removal approval, and preserves broader UX prototype branches as design/runtime references.
 - [`2026-07-01_phase3-automation-runtime-branch-review.md`](./2026-07-01_phase3-automation-runtime-branch-review.md) — reviews Phase3 automation/runtime branches and classifies them as superseded cleanup candidates while preserving branches/worktrees pending explicit deletion/removal approval.

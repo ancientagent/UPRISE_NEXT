@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a founder-session capture for Plot/Home Scene visual-skin direction, preserving the current arrow/swipe Home Scene switcher clarification and invariant-shell/community-skin boundary; see `docs/founder-sessions/2026-07-01_plot-home-scene-visual-skin.md`.
 - Added an approved branch/worktree cleanup closeout that records removal of reviewed superseded resolver/onboarding, docs/audit, Phase3, and UX queue/prep branches while preserving UX reference branches; see `docs/handoff/2026-07-01_approved-branch-worktree-cleanup.md`.
 - Added a UX/prototype branch review that classifies remaining queue/prep branches as cleanup candidates and preserves broad mobile/profile/player prototypes as design-runtime references pending explicit extraction or cleanup approval; see `docs/handoff/2026-07-01_ux-prototype-branch-review.md`.
 - Added a Phase3 automation/runtime branch review that classifies old agent-control/Telegram/runtime branches as superseded cleanup candidates without merging, deleting branches, or removing worktrees; see `docs/handoff/2026-07-01_phase3-automation-runtime-branch-review.md`.
