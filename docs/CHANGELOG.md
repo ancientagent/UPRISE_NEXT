@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a Phase3 automation/runtime branch review that classifies old agent-control/Telegram/runtime branches as superseded cleanup candidates without merging, deleting branches, or removing worktrees; see `docs/handoff/2026-07-01_phase3-automation-runtime-branch-review.md`.
 - Added a docs/audit branch review that classifies remaining stale audit/canon-fix branches as superseded cleanup candidates without merging or deleting them; see `docs/handoff/2026-07-01_docs-audit-branch-review.md`.
 - Added a resolver/onboarding branch review that classifies stale preserved branches as superseded cleanup candidates without merging or deleting them; see `docs/handoff/2026-07-01_resolver-onboarding-branch-review.md`.
 - Added an Active PM post-cleanup refresh that records approved cleanup-candidate branch/worktree removal and leaves only preserve/review branches in the queue; see `docs/handoff/2026-07-01_active-pm-post-cleanup.md`.
