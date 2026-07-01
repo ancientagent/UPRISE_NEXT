@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a resolver/onboarding branch review that classifies stale preserved branches as superseded cleanup candidates without merging or deleting them; see `docs/handoff/2026-07-01_resolver-onboarding-branch-review.md`.
 - Added an Active PM post-cleanup refresh that records approved cleanup-candidate branch/worktree removal and leaves only preserve/review branches in the queue; see `docs/handoff/2026-07-01_active-pm-post-cleanup.md`.
 - Added a post-PR #150 Active PM branch/worktree triage refresh that separates cleanup candidates from preserved unique branches; see `docs/handoff/2026-07-01_active-pm-branch-triage.md`.
 - Added `docs/operations/ACTIVE_PM.md` as a lightweight current-work snapshot for active branch/PR/blocker/worktree state, with routing pointers so agents check execution state without treating it as product doctrine; see `docs/handoff/2026-07-01_active-pm-current-work.md`.
