@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added an approved branch/worktree cleanup closeout that records removal of reviewed superseded resolver/onboarding, docs/audit, Phase3, and UX queue/prep branches while preserving UX reference branches; see `docs/handoff/2026-07-01_approved-branch-worktree-cleanup.md`.
 - Added a UX/prototype branch review that classifies remaining queue/prep branches as cleanup candidates and preserves broad mobile/profile/player prototypes as design-runtime references pending explicit extraction or cleanup approval; see `docs/handoff/2026-07-01_ux-prototype-branch-review.md`.
 - Added a Phase3 automation/runtime branch review that classifies old agent-control/Telegram/runtime branches as superseded cleanup candidates without merging, deleting branches, or removing worktrees; see `docs/handoff/2026-07-01_phase3-automation-runtime-branch-review.md`.
 - Added a docs/audit branch review that classifies remaining stale audit/canon-fix branches as superseded cleanup candidates without merging or deleting them; see `docs/handoff/2026-07-01_docs-audit-branch-review.md`.
