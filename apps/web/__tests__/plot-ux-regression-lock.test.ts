@@ -381,9 +381,9 @@ describe('/plot UX regression lock', () => {
   });
 
   it('locks Top Songs + Scene Activity to archive-only placement', () => {
-    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const plotPrimaryTabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
 
-    expect(plotPageSource).toMatch(
+    expect(plotPrimaryTabBodySource).toMatch(
       /activeTab === 'Archive'[\s\S]*TopSongsPanel[\s\S]*Scene Activity Snapshot/
     );
   });
@@ -423,17 +423,18 @@ describe('/plot UX regression lock', () => {
 
   it('locks primary Plot tab ownership to explicit Feed/Events/Archive bodies', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const plotPrimaryTabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
 
     expect(plotPageSource).toContain("const tabs = ['Feed', 'Events', 'Archive'] as const;");
     expect(plotPageSource).not.toContain('Social');
-    expect(plotPageSource).toContain("if (activeTab === 'Feed')");
-    expect(plotPageSource).toContain('SeedFeedPanel');
-    expect(plotPageSource).toContain("if (activeTab === 'Events')");
-    expect(plotPageSource).toContain('PlotEventsPanel');
-    expect(plotPageSource).toContain("if (activeTab === 'Archive')");
+    expect(plotPrimaryTabBodySource).toContain("if (activeTab === 'Feed')");
+    expect(plotPrimaryTabBodySource).toContain('SeedFeedPanel');
+    expect(plotPrimaryTabBodySource).toContain("if (activeTab === 'Events')");
+    expect(plotPrimaryTabBodySource).toContain('PlotEventsPanel');
+    expect(plotPrimaryTabBodySource).toContain("if (activeTab === 'Archive')");
     expect(plotPageSource).not.toContain('StatisticsPanel');
-    expect(plotPageSource).toContain('TopSongsPanel');
-    expect(plotPageSource).toContain('Scene Activity Snapshot');
+    expect(plotPrimaryTabBodySource).toContain('TopSongsPanel');
+    expect(plotPrimaryTabBodySource).toContain('Scene Activity Snapshot');
     expect(plotPageSource).not.toContain("if (activeTab === 'Promotions')");
     expect(plotPageSource).not.toContain('PlotPromotionsPanel');
     expect(plotPageSource).not.toContain("if (activeTab === 'Statistics')");
@@ -442,12 +443,13 @@ describe('/plot UX regression lock', () => {
 
   it('keeps Archive descriptive instead of reviving map or analytics exploration', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const plotPrimaryTabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
 
     expect(plotPageSource).toContain("const plotTabHeading = activeTab === 'Archive' ? 'Scene Archive' : activeTab;");
-    expect(plotPageSource).toContain('Archive is read-only descriptive history for the current Plot context.');
-    expect(plotPageSource).toContain('This is not a ranking or authority');
-    expect(plotPageSource).not.toContain('Archive & Map');
-    expect(plotPageSource).not.toContain('SceneMap');
+    expect(plotPrimaryTabBodySource).toContain('Archive is read-only descriptive history for the current Plot context.');
+    expect(plotPrimaryTabBodySource).toContain('This is not a ranking or authority');
+    expect(plotPrimaryTabBodySource).not.toContain('Archive & Map');
+    expect(plotPrimaryTabBodySource).not.toContain('SceneMap');
     expect(plotPageSource).not.toContain('nearby-community');
     expect(plotPageSource).not.toContain('leaderboard');
     expect(plotPageSource).not.toContain('predictive analytics');
