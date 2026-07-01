@@ -143,6 +143,7 @@ Owner references:
 - The starred default music-community preference determines the Home Scene the user is anchored to and loaded into on login.
 - The Home Scene selector is a shortcut to the user's resolvable primary music-community preferences in the current verified/default city.
 - The currently selected selector item is the scene the user is in.
+- Switching between Home Scene selector items should use `switch`, `select`, `tune`, or active-context language. Reserve `transport` for Away Scene movement where the user leaves their Home Scene context.
 - In Plot, the preferred Home Scene swiper presentation is a centered active Home Scene with left/right arrow controls and horizontal swipe to adjacent resolvable preferences. It should not render saved Away Scenes or a full visible management list; profile remains the management surface.
 
 ### Runtime Parity Status (2026-06-25)

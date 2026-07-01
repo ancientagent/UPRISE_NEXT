@@ -9,6 +9,7 @@
 
 ### Added
 
+- Extracted the `/plot` Home Scene selector presentation into a dedicated component while preserving route-owned selector loading/tuning and clarifying switch/select/tune versus Away Scene transport language; see `docs/handoff/2026-07-01_home-scene-selector-component-extraction.md`.
 - Replaced active Home Scene switching terminology with Home Scene selector/swiper across owner docs, `/plot`, users API/client wrappers, smoke coverage, and regression locks; see `docs/handoff/2026-07-01_home-scene-selector-terminology.md`.
 - Added a founder-session capture for Plot/Home Scene visual-skin direction, preserving the current arrow/swipe Home Scene switcher clarification and invariant-shell/community-skin boundary; see `docs/founder-sessions/2026-07-01_plot-home-scene-visual-skin.md`.
 - Added an approved branch/worktree cleanup closeout that records removal of reviewed superseded resolver/onboarding, docs/audit, Phase3, and UX queue/prep branches while preserving UX reference branches; see `docs/handoff/2026-07-01_approved-branch-worktree-cleanup.md`.

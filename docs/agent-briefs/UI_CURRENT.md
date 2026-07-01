@@ -90,6 +90,7 @@ Recent handoffs to use only after the locks above:
 - The Home Scene selector is a shortcut to resolvable primary music-community preferences in the current verified/default city; saved Away Scenes stay in the profile/collection workspace.
 - Current Plot presentation for the selector is a centered active Home Scene with left/right arrow controls and horizontal swipe between adjacent resolvable preferences, not a full visible preference-management list.
 - `/plot` renders the Home Scene selector from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
+- Use `switch`, `select`, or `tune` for Home Scene selector movement. Reserve `transport` for Away Scene movement because the user is leaving their Home Scene context; intended transport entry points are Discover and saved Uprises in the user's collection.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
 - `RADIYO` uses `Play It Loud` and `Upvote`.
