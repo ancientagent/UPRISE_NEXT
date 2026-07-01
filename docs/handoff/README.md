@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_plot-context-panel-removal.md`](./2026-07-01_plot-context-panel-removal.md) — removes the forced non-expanded `/plot` community context panel and records the Archive/community information placement clarification.
 - [`2026-07-01_discover-transport-owner-spec-promotion.md`](./2026-07-01_discover-transport-owner-spec-promotion.md) — promotes Discover front-door/back-door, map-view, seek-mode, saved-Uprise, and no-transport-inside-Plot founder-session decisions into active owner docs.
 - [`2026-07-01_active-pm-post-plot-cleanup-refresh.md`](./2026-07-01_active-pm-post-plot-cleanup-refresh.md) — refreshes `ACTIVE_PM` after the Plot/Home/Profile/Print Shop cleanup run, records current `main`, empty PR queue, and preserved UX reference worktrees.
 - [`2026-07-01_print-shop-source-facing-boundary.md`](./2026-07-01_print-shop-source-facing-boundary.md) — removes the direct `/plot` Print Shop shortcut, preserves source-facing availability through Source Dashboard/source profile routes, and records the founder clarification.

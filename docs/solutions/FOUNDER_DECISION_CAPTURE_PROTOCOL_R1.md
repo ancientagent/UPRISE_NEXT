@@ -17,7 +17,7 @@ Do not rely on "we already talked about this" as durable memory.
 ## What Must Be Captured
 Promote the decision if it does any of the following:
 - changes MVP vs later-version scope
-- changes terminology (`project` -> `cause`, `Statistics` -> `The Scenery`, etc.)
+- changes terminology (`project` -> `cause`, `Statistics` -> `Archive/community information`, etc.)
 - changes lifecycle or ontology
 - changes who owns an action or update
 - adds or removes a user-facing capability

@@ -89,7 +89,7 @@ Defines the Scene Map and statistics contract as an inherent descriptive surface
   - `points[]` with tier-scoped markers/rollups (`community` at city scope, city rollups at state scope, state rollups at national scope)
   - `center` and rollup metadata (`tierScope`, `rollupUnit`, `timeWindow`)
 - Interactive `StatisticsPanel` / tier map / nearby-community exploration is retained code, but it is not the current MVP Archive body.
-- Scene Map payloads remain implemented API/runtime infrastructure for future Scenery/expanded Archive surfaces.
+- Scene Map payloads remain implemented API/runtime infrastructure for future Archive/community information surfaces.
 - Any existing `topSongs` payload may be rendered as a descriptive Archive module, but Top 40 / billboard-style ranking remains deferred until explicitly re-locked.
 
 ### Deferred (Not Implemented Yet)
@@ -107,7 +107,7 @@ Defines the Scene Map and statistics contract as an inherent descriptive surface
 
 ## Architectural Boundaries
 
-- Scene Map is a future Scenery/expanded Archive descriptive surface, not a feed.
+- Scene Map is a future Archive/community information descriptive surface, not a feed.
 - Metrics must not influence Fair Play outcomes.
 - Parent context persistence across tier toggle is mandatory.
 - Web tier consumes stats/map through API only.

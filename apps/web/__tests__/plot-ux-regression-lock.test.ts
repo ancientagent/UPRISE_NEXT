@@ -403,8 +403,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain(
       'return `${community.city}, ${community.state} • ${community.musicCommunity}`;'
     );
-    expect(plotPageSource).toContain('{selectedCommunityLabel ??');
-    expect(plotPageSource).toContain('{selectedCommunityLabel ?? selectedCommunity.name}');
+    expect(plotPageSource).toContain('selectedCommunityLabel={selectedCommunityLabel}');
   });
 
   it('locks bottom nav and center UPRISE wheel trigger onto the /plot route', () => {
@@ -495,7 +494,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).not.toContain('if (!hasHomeScene) {\n    return null;');
   });
 
-  it('locks registrar access/status context onto the resolved plot route', () => {
+  it('keeps registrar and source tools out of the non-expanded Plot body', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const sourceDashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
     const artistSource = readRepoFile('src/app/artist-bands/[id]/page.tsx');
@@ -507,14 +506,12 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain(
       'setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []))'
     );
-    expect(plotPageSource).toContain('SourceAccountSwitcher');
-    expect(plotPageSource).toContain('Registrar Access');
-    expect(plotPageSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
-    expect(plotPageSource).toContain(
-      'Sign in to view registrar status and continue registration work.'
-    );
-    expect(plotPageSource).toContain('No Artist/Band registrar entries yet.');
-    expect(plotPageSource).toContain('Open Registrar');
+    expect(plotPageSource).not.toContain('PlotCommunityContextPanel');
+    expect(plotPageSource).not.toContain('SourceAccountSwitcher');
+    expect(plotPageSource).not.toContain('Registrar Access');
+    expect(plotPageSource).not.toContain('Open Registrar');
+    expect(plotPageSource).not.toContain('Selected Community');
+    expect(plotPageSource).not.toContain('Open Community');
     expect(plotPageSource).not.toContain("router.push('/print-shop')");
     expect(plotPageSource).not.toContain('Open Print Shop');
     expect(sourceDashboardSource).toContain('<Link href="/print-shop">Open Print Shop</Link>');
@@ -631,8 +628,6 @@ describe('/plot UX regression lock', () => {
     );
     expect(plotPageSource).not.toContain('SceneContextBadge');
     expect(listenerProfileSource).toContain('Scene Context');
-    expect(plotPageSource).toContain('Selected Community');
-    expect(plotPageSource).toContain('Open Community');
     expect(plotPageSource).toContain(
       'Complete onboarding to anchor your Home Scene and unlock Plot context.'
     );

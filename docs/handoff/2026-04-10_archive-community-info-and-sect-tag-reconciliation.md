@@ -1,8 +1,8 @@
-# 2026-04-10 — Scenery And Sect Tag Reconciliation
+# 2026-04-10 — Archive Community Info And Sect Tag Reconciliation
 
 ## Summary
-- Locked the direction that the dry `Statistics` surface should give way to `The Scenery` as the broader community-information area.
-- Locked that `Registrar` should live inside `The Scenery` as a feature/module with `Register` as the primary CTA, not as its own peer default-screen section.
+- Locked the direction that the dry `Statistics` surface should give way to `Archive/community information` as the broader community-information area.
+- Locked that `Registrar` should live inside `Archive/community information` as a feature/module with `Register` as the primary CTA, not as its own peer default-screen section.
 - Reconciled sect language so new MVP work stops treating taste-tag structures as the live sect substrate.
 
 ## Key Founder Direction Captured
