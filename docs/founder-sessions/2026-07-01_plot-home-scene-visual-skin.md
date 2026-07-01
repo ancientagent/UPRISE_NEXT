@@ -26,6 +26,10 @@ Owner spec candidates: docs/specs/communities/plot-and-scene-plot.md; docs/specs
 
 > if anything what makes the user change from one homescene to another homescene is the homescene swiper / selector depending on if the user selects the arrows or just swipes the upper part of the app
 
+> so the print shop is only source facing
+
+> this should be availableyes this is correct
+
 ## Clarifications
 
 ### Home Scene Swiper / Selector Presentation
@@ -44,6 +48,15 @@ Owner spec candidates: docs/specs/communities/plot-and-scene-plot.md; docs/specs
 - This applies to small bug-fix/edge-case instructions as well as large feature-design conversations.
 - Type: settled workflow rule
 - Likely owner: local Codex skill `uprise-founder-session-capture`; docs/specs/system/documentation-framework.md if the repo workflow needs a durable agent-facing patch later
+
+### Print Shop Source-Facing Boundary
+
+- Print Shop is source-facing only.
+- Print Shop should remain available from source-facing context; source-facing means scoped to source operations, not removed or hidden from eligible source users.
+- It should not be treated as a listener-facing utility, a listener profile action, or general Plot dashboard action.
+- This is already covered by active docs: `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` and `docs/specs/events/events-and-flyers.md`.
+- Type: settled; already documented
+- Likely owner: docs/specs/events/events-and-flyers.md; docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md; apps/web source-dashboard/print-shop surfaces
 
 ## Feature Sets
 
@@ -85,5 +98,6 @@ Owner spec candidates: docs/specs/communities/plot-and-scene-plot.md; docs/specs
 - Do not call the Home Scene swiper/selector a `roller` in active docs, code, tests, or user-facing copy.
 - Do not turn the Home Scene selector into a full preference-management list.
 - Do not put saved Away Scenes in the Home Scene selector.
+- Do not model Print Shop as listener-facing Plot/profile functionality.
 - Do not vary app architecture per community; vary only data/context and approved visual skin layers.
 - Do not summarize exact founder bug-fix instructions without preserving the raw wording somewhere durable first.
