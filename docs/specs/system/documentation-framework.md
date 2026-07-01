@@ -14,6 +14,7 @@ The goal is a contract-owned, lane-routed documentation system:
 - orientation docs explain the platform quickly;
 - lane briefs route agents to the right context;
 - owner specs hold durable product/runtime contracts;
+- operations docs track current execution state without becoming product truth;
 - handoffs capture temporary execution history;
 - Linear tracks work execution, not product truth;
 - the AI stack/lane map summarizes which tool or external agent should handle each task shape;
@@ -103,6 +104,22 @@ Rules:
 - A handoff should say whether accepted truths need promotion to an owner spec.
 - Prefer one reconciliation note over parallel memory artifacts.
 - After promotion, future agents should load the owner spec first and the handoff only when they need historical evidence.
+
+### Layer 4b: Operations / Active PM
+
+Purpose: show current execution state so agents do not restart stale work, miss active blockers, or load old handoffs before checking the current queue.
+
+Files:
+
+- `docs/operations/ACTIVE_PM.md`
+
+Rules:
+
+- Operations docs are execution state, not product doctrine.
+- Keep them short and current: active branch/PR queue, blockers, worktrees to preserve, next execution signal, and validation seed.
+- Link to owner specs, handoffs, PRs, and Linear instead of duplicating long reports.
+- Refresh when active branch, PR queue, blocker, preserved-worktree list, or next execution signal changes.
+- If operations state conflicts with owner specs or runtime evidence, report the conflict and update operations state; do not rewrite product truth from operations notes.
 
 ### Layer 5: Legacy / External Imports
 

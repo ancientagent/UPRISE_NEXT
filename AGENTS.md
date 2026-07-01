@@ -27,6 +27,7 @@ Load only the minimum additional material required for the task.
 - Architecture/repo-shape/deployment work: the Heavy Authority Pack above
 - Recurring incidents / operating failures: `docs/solutions/README.md` + only the relevant playbook
 - Multi-agent/tooling strategy or handoff review: `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` + `docs/specs/system/documentation-framework.md` + `docs/handoff/README.md` + the latest relevant dated handoff(s)
+- Current execution state / PM queue: `docs/operations/ACTIVE_PM.md` after the focused default docs; use it for active branch, PR, blocker, and worktree state only, not product doctrine.
 
 ## Legacy Reference Archives (Non-Canon)
 - `docs/legacy/uprise_mob/` — prior mobile-era documentation set (reference only)

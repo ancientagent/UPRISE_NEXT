@@ -32,11 +32,14 @@ Start with the normal repo entry rules, `CONTEXT_ROUTER.md`, then this brief.
 
 External tools are departments, not authorities. Load the active product lane brief for the subject being handed off, then give the external tool a narrow task and stop condition.
 
+When an external-agent task depends on current branch, PR queue, blocker, or worktree state, check `docs/operations/ACTIVE_PM.md` before prompting the external tool. Treat that file as execution state only.
+
 ## Section Pointers
 
 External guidance:
 
 - `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
+- `docs/operations/ACTIVE_PM.md` for current execution-state snapshot when branch/PR/blocker context matters
 - `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`
 - `docs/solutions/EXTERNAL_AGENT_HARDENING_R1.md`
 - `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md`

@@ -31,10 +31,11 @@ If external output conflicts with current repo authority, classify it as scoutin
 Route by lane first, tool second.
 
 1. Identify the focus lane in `docs/agent-briefs/CONTEXT_ROUTER.md`.
-2. Load the lane brief and owner spec named by that lane.
-3. Pick the tool whose strength matches the task shape.
-4. Require branch/commit evidence, exact scope, stop conditions, and validation evidence.
-5. Promote accepted decisions into owner specs, not only handoffs or chat memory.
+2. If the task depends on current execution state, check `docs/operations/ACTIVE_PM.md` for active branch, PR queue, blockers, worktrees to preserve, and next signal.
+3. Load the lane brief and owner spec named by that lane.
+4. Pick the tool whose strength matches the task shape.
+5. Require branch/commit evidence, exact scope, stop conditions, and validation evidence.
+6. Promote accepted decisions into owner specs, not only handoffs or chat memory.
 
 ## Tool Stack
 
@@ -48,6 +49,7 @@ Route by lane first, tool second.
 | NotebookLM | External memory over large source packs, philosophical/doctrine comparison, source-list exploration | direct implementation, deciding current runtime truth | claims inventory, gap list, source map, current-vs-historical caveats |
 | Design tools: Claude Designer, Stitch, Gemini, Uizard, v0 | visual exploration, mockups, screen hierarchy options, UI direction | redefining action grammar, product surfaces, data contracts, or runtime architecture | annotated design options tied to current lane brief and constraints |
 | Linear | execution queue, owner assignment, blockers, status, PR/commit links | product canon, durable specs, final founder decisions | issue with lane, owner contract, scope, acceptance criteria, validation |
+| Active PM doc | current branch/PR/worktree/blocker snapshot and next execution signal | product doctrine, final decisions, detailed specs, replacing Linear | short state update linked to owner specs, handoffs, PRs, and Linear |
 | Generated wiki / Devin / DeepWiki | navigation map, file discovery, orientation aid | authority, doctrine, current MVP truth without verification | map references back to repo files and owner specs |
 
 ## Lane Agents
@@ -209,6 +211,8 @@ Use Linear issues to record:
 
 Do not use Linear as the only place for founder decisions, product doctrine, or durable API/data contracts. Promote durable rules into `docs/specs/**`.
 
+Use `docs/operations/ACTIVE_PM.md` as the repo-visible companion snapshot for local agents that may not have Linear context loaded. It should summarize active execution state and point back to Linear/PRs/handoffs rather than duplicating them.
+
 ## Review Routing
 
 - Use `uprisereviewer` for a named PR, commit, issue, or launch-readiness slice.
@@ -232,6 +236,8 @@ gh pr list --state open --limit 50
 
 Do not delete, rebase, reset, close, or clean branches/worktrees without explicit approval. Report stale or prunable branches as cleanup candidates.
 
+After branch/PR/worktree cleanup or when the active branch changes, refresh `docs/operations/ACTIVE_PM.md` if the next agent would make a different routing decision from the old snapshot.
+
 ## Safety Rules
 
 - No provider/env/database mutation without explicit approval.
@@ -253,6 +259,8 @@ Patch this document when:
 - generated wiki or design-tool rules change.
 
 When this document changes, also check whether `docs/agent-briefs/EXTERNAL_TOOLS.md`, `docs/agent-briefs/CONTEXT_ROUTER.md`, and `docs/specs/system/documentation-framework.md` need a pointer update.
+
+When `docs/operations/ACTIVE_PM.md` changes substantially, no product-doc update is required unless the change also affects agent/tool routing, owner contracts, or durable workflow policy.
 
 ## References
 
