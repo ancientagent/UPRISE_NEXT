@@ -38,7 +38,7 @@ Runtime files:
 - `apps/web/src/store/onboarding.ts`
 - `apps/web/src/lib/onboarding/review-resolution.ts`
 - `apps/web/src/app/plot/page.tsx`
-- `apps/api/src/onboarding/onboarding.controller.ts`
+- `apps/api/src/onboarding/onboarding.contselector.ts`
 - `apps/api/src/communities/`
 
 Specs / locks:
@@ -87,10 +87,10 @@ Tests / verification files:
 - Setting a Home Scene auto-joins the resolved active city-tier scene membership.
 - The Home Scene selected during onboarding becomes the user's initial active/default Home Scene.
 - Onboarding does not collect multiple music-community preferences; it asks for the user's primary scene of choice.
-- Profile-held music-community preferences, default-scene, roller, city-move, and voting behavior are owned by the `Music-Community Preference Contract` in `docs/specs/users/onboarding-home-scene-resolution.md`.
+- Profile-held music-community preferences, default-scene, selector, city-move, and voting behavior are owned by the `Music-Community Preference Contract` in `docs/specs/users/onboarding-home-scene-resolution.md`.
 - GPS verification proves location authority for voting and source registration; it must not automatically enroll the user into every active music community in their verified city.
-- Saved Away Scenes belong in the profile/collection area, not in the Home Scene roller.
-- Activation notification and former-proxy Away Scene preservation are owned by `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract`: messaging must explain source/music activation, and saved proxy context must not preserve proxy voting authority or appear as a Home Scene roller item.
+- Saved Away Scenes belong in the profile/collection area, not in the Home Scene selector.
+- Activation notification and former-proxy Away Scene preservation are owned by `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract`: messaging must explain source/music activation, and saved proxy context must not preserve proxy voting authority or appear as a Home Scene selector item.
 - GPS is requested to enable voting rights only.
 - Users can participate without GPS but cannot vote when GPS is denied/unavailable.
 - If the selected city-tier scene is inactive/unavailable, assign the user to the nearest/relevant active major-node city scene for the selected parent community regardless of whether the submitted city/state came from manual input or GPS detection.
@@ -115,9 +115,9 @@ Tests / verification files:
 - `POST /onboarding/gps-verify` verifies voting eligibility against the exact active Home Scene geofence, or against submitted city/state locality when the submitted Home Scene is inactive/unavailable.
 - `POST /onboarding/music-community-requests` stores missing music-community intake without creating a `Community` or selector option.
 - `GET /users/me/music-community-preferences`, `POST /users/me/music-community-preferences`, and `POST /users/me/music-community-preferences/default` provide the current profile-held music-community preference persistence foundation.
-- `/plot` expanded listener profile now loads and manages music-community preferences, including adding approved parent music communities, showing whether each preference is in the Home Scene Roller or profile-only until active, and explicitly marking a default/starred preference.
-- `GET /users/me/home-scene-roller` provides the current Home Scene roller read model: exact active natural scene first, same-state proxy second, then any active proxy for the registered music-community preference.
-- `/plot` now renders the Home Scene Roller from `GET /users/me/home-scene-roller`; selecting an item calls `POST /discover/tune` through the existing discovery client and updates the selected Plot community anchor for Feed, Events, Archive, and profile stats.
+- `/plot` expanded listener profile now loads and manages music-community preferences, including adding approved parent music communities, showing whether each preference is in the Home Scene selector or profile-only until active, and explicitly marking a default/starred preference.
+- `GET /users/me/home-scene-selector` provides the current Home Scene selector read model: exact active natural scene first, same-state proxy second, then any active proxy for the registered music-community preference.
+- `/plot` now renders the Home Scene selector from `GET /users/me/home-scene-selector`; selecting an item calls `POST /discover/tune` through the existing discovery client and updates the selected Plot community anchor for Feed, Events, Archive, and profile stats.
 - `POST /tracks/:id/vote` now allows GPS-verified voting across the user's registered music-community preferences when each preference resolves from the current/default city to the target natural or active proxy scene.
 - Compatibility-field cleanup is planned in the owner spec. Do not remove `homeSceneCity`, `homeSceneState`, or `tunedSceneId`; those fields still carry active city authority and scene-context semantics. `homeSceneCommunity` is the main compatibility shadow to retire only after read paths prefer the default preference row with fallback.
 - Routine onboarding/Home Scene smoke planning should use `pnpm run smoke:onboarding-location:dry-run` first; full smoke writes temporary users and requires explicit confirmation before non-local API targets.

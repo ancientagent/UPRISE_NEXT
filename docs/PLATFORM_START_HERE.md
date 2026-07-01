@@ -30,13 +30,13 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 13. Source Dashboard is the MVP monorepo stand-in for future separate source/admin tooling.
 14. GPS gates voting rights, not ordinary participation.
 15. Onboarding collects one primary scene-of-choice music community; additional music-community preferences are added later from the user profile.
-16. GPS verification proves location authority for voting and source registration; it does not automatically add every active music community in the verified city to the user's Home Scene roller.
+16. GPS verification proves location authority for voting and source registration; it does not automatically add every active music community in the verified city to the user's Home Scene selector.
 17. One successful GPS verification for a city grants voting rights across the user's registered music-community preferences that resolve in that verified city.
 18. Verifying a new city replaces the user's prior city voting authority; users do not hold voting authority in multiple cities at the same time.
 19. Music-community preferences persist across cities; when the verified/default city changes, Home/Plot/RADIYO/Feed/Events/Archive content re-resolves to that city's active or proxy scenes.
 20. The Home Scene selected during onboarding is the user's initial active/default Home Scene.
-21. The starred default music-community preference determines the Home Scene loaded on login; the Home Scene roller is only a shortcut to resolvable primary communities in the current city.
-22. Saved Away Scenes live in the user profile/collection, not in the Home Scene roller.
+21. The starred default music-community preference determines the Home Scene loaded on login; the Home Scene selector is only a shortcut to resolvable primary communities in the current city.
+22. Saved Away Scenes live in the user profile/collection, not in the Home Scene selector.
 23. Missing music-community requests are intake/review only; they do not create live communities.
 24. Sect readiness tracking may be built before it is visible, but user-facing sect creation, sect backing limits, and unlock criteria remain beta/community-calibrated.
 25. Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags; Official Sects may become visible subcommunities with update channels, but they do not gain independent broadcast authority until they Uprise.
@@ -54,7 +54,7 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 - Do not treat missing music-community requests or listener onboarding counts as community activation signals.
 - Do not build listener-side pioneer tracking or activation queues; inactive-location users are assigned to active major-node Home Scenes until artist/source registration justifies a split.
 - Do not auto-enroll a GPS-verified user into every active music community in their city; Home Scene membership is an explicit user-profile affiliation.
-- Do not put saved Away Scenes in the Home Scene roller; the roller is for resolvable primary music-community preferences in the current city.
+- Do not put saved Away Scenes in the Home Scene selector; the selector is for resolvable primary music-community preferences in the current city.
 - Do not treat every music-community preference as the default. Onboarding sets the initial default, and later default changes must be explicit.
 - Do not auto-create Sects from passive genre/style tags; explicit registered-source backing is required, and visibility/unlock rules remain beta-calibrated.
 - Do not use loose profile tags as the official sect affiliation mechanism; route official sect affiliation through Registrar.

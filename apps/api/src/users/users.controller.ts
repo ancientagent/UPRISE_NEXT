@@ -67,9 +67,9 @@ export class UsersController {
     return { success: true, data: result };
   }
 
-  @Get('me/home-scene-roller')
-  async getMyHomeSceneRoller(@Request() req: { user: { userId: string } }) {
-    const result = await this.usersService.getHomeSceneRoller(req.user.userId);
+  @Get('me/home-scene-selector')
+  async getMyHomeSceneSelector(@Request() req: { user: { userId: string } }) {
+    const result = await this.usersService.getHomeSceneSelector(req.user.userId);
     return { success: true, data: result };
   }
 

@@ -8,7 +8,7 @@ export interface MusicCommunityPreference {
   updatedAt?: string;
 }
 
-export interface HomeSceneRollerItem {
+export interface HomeSceneSelectorItem {
   preferenceId: string;
   musicCommunity: string;
   isDefault: boolean;
@@ -20,9 +20,9 @@ export interface HomeSceneRollerItem {
   isCurrent: boolean;
 }
 
-export interface HomeSceneRoller {
+export interface HomeSceneSelector {
   currentLocation: { city: string; state: string } | null;
-  items: HomeSceneRollerItem[];
+  items: HomeSceneSelectorItem[];
 }
 
 export async function getMusicCommunityPreferences(token: string): Promise<MusicCommunityPreference[]> {
@@ -54,7 +54,7 @@ export async function setDefaultMusicCommunityPreference(
   return response.data ?? [];
 }
 
-export async function getHomeSceneRoller(token: string): Promise<HomeSceneRoller> {
-  const response = await api.get<HomeSceneRoller>('/users/me/home-scene-roller', { token });
+export async function getHomeSceneSelector(token: string): Promise<HomeSceneSelector> {
+  const response = await api.get<HomeSceneSelector>('/users/me/home-scene-selector', { token });
   return response.data ?? { currentLocation: null, items: [] };
 }

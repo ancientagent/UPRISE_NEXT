@@ -12,7 +12,7 @@ type MusicCommunityPreferenceRecord = {
   updatedAt: Date;
 };
 
-type HomeSceneRollerScene = {
+type HomeSceneSelectorScene = {
   id: string;
   name: string;
   city: string | null;
@@ -119,11 +119,11 @@ export class UsersService {
     return this.listMusicCommunityPreferences(userId);
   }
 
-  private async resolveRollerScene(
+  private async resolveHomeSceneSelectorScene(
     city: string,
     state: string,
     musicCommunity: string,
-  ): Promise<{ scene: HomeSceneRollerScene; resolution: 'natural' | 'proxy' } | null> {
+  ): Promise<{ scene: HomeSceneSelectorScene; resolution: 'natural' | 'proxy' } | null> {
     const select = {
       id: true,
       name: true,
@@ -164,7 +164,7 @@ export class UsersService {
     return null;
   }
 
-  async getHomeSceneRoller(userId: string) {
+  async getHomeSceneSelector(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -194,7 +194,7 @@ export class UsersService {
 
     const items = [];
     for (const preference of preferences) {
-      const resolved = await this.resolveRollerScene(city, state, preference.musicCommunity);
+      const resolved = await this.resolveHomeSceneSelectorScene(city, state, preference.musicCommunity);
       if (!resolved) continue;
 
       items.push({

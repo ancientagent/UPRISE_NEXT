@@ -1,6 +1,6 @@
 import {
   addMusicCommunityPreference,
-  getHomeSceneRoller,
+  getHomeSceneSelector,
   getMusicCommunityPreferences,
   setDefaultMusicCommunityPreference,
 } from '../src/lib/users/client';
@@ -89,7 +89,7 @@ describe('users client music-community preferences', () => {
     );
   });
 
-  it('loads the current Home Scene roller read model', async () => {
+  it('loads the current Home Scene selector read model', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -101,11 +101,11 @@ describe('users client music-community preferences', () => {
       }),
     });
 
-    const result = await getHomeSceneRoller('token-user');
+    const result = await getHomeSceneSelector('token-user');
 
     expect(result.items[0]).toMatchObject({ musicCommunity: 'Punk', resolution: 'proxy' });
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://localhost:4000/users/me/home-scene-roller',
+      'http://localhost:4000/users/me/home-scene-selector',
       expect.objectContaining({
         method: 'GET',
         headers: expect.objectContaining({ Authorization: 'Bearer token-user' }),
