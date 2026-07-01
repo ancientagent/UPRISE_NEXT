@@ -1,7 +1,8 @@
 # Structural Integrity Cleanup Audit — 2026-06-30
 
-Audit branch: `audit/structural-integrity-cleanup-plan-2026-06-30`  
-Verified base: `7c04fc1`  
+Audit branch: `codex/audit-uprise-structural-integrity-for-cleanup`
+Original requested local audit branch: `audit/structural-integrity-cleanup-plan-2026-06-30`
+Verified base: `7c04fc1`
 Mode: read-only audit of platform/runtime/provider state; docs-only audit output is allowed.
 
 ## 1. Branch / HEAD / Worktree State
