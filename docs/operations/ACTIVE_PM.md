@@ -35,9 +35,9 @@ Keep updates small. Do not paste full audit reports here. Link to the owner spec
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Base HEAD: `c1afc9c` (`docs: refresh active pm branch triage (#151)`)
-- Active implementation branch: none recorded after PR #151 merge
-- Last PM update source: `docs/active-pm-branch-triage` / PR #151
+- Base HEAD at cleanup execution: `c8909c4` (`docs: stabilize active PM snapshot wording (#152)`)
+- Active implementation branch: none recorded after cleanup
+- Last PM update source: cleanup-candidate branch/worktree removal pass
 - Open PR queue at snapshot: none
 - Main worktree state at snapshot: clean before this docs slice
 
@@ -50,8 +50,8 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 | Field | Current Value |
 | --- | --- |
 | Lane | `uprise-context-steward` / branch hygiene |
-| Branch | none active; snapshot reflects `main` after PR #151 |
-| Scope | Record post-PR #150/#151 branch/worktree triage and next cleanup signals. |
+| Branch | none active; snapshot reflects `main` after cleanup-candidate removal |
+| Scope | Record branch/worktree cleanup completion and remaining preserve/review queue. |
 | Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine, runtime code, provider state, database/schema changes. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
 | Companion Doc | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
@@ -61,21 +61,27 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 
 Captured after PR #150 merged and `main` fast-forwarded to `99b0072`.
 
-### Cleanup Candidates: Patch-Equivalent Or Already Absorbed
+### Cleanup Candidates Removed
 
-These branches showed patch-equivalent commits with `git cherry -v main <branch>` (`-` marker) or no unique diff. They are cleanup candidates, but deletion still requires explicit approval.
+Completed after PR #152 merged:
 
-| Branch | Evidence | Recommended Action |
-| --- | --- | --- |
-| `docs/active-pm-current-work` | PR #150 merged; patch-equivalent commit `38c3a90`; remote branch still visible after merge. | Delete local/remote branch after approval. |
-| `test/activation-cutover-fixture-smoke` | Patch-equivalent commit `b0fb8d6`; content already present on `main`. | Delete branch after approval. |
-| `docs/post-deploy-launch-readiness-2026-06-29` | Patch-equivalent commit `8ae04f4`; content already present on `main`. | Delete branch after approval. |
-| `chore/launch-readiness-verification-2026-06-29` | Patch-equivalent commit `bca4aa0`; content already present on `main`. | Delete branch after approval. |
-| `chore/track-art-assets` | Patch-equivalent commit `d9912fe`; art assets already absorbed. | Delete branch after approval; do not touch `art/` files directly. |
-| `docs/browser-qa-lane-readiness` | Patch-equivalent commit `335dd29`; content already present on `main`. | Delete branch after approval. |
-| `docs/uprise-ai-stack-agent-lanes` | Patch-equivalent commit `3bb59b2`; content already present on `main`. | Delete branch after approval. |
-| `feat/archive-event-terminology-cleanup` | Patch-equivalent commit `f121067`; content already present on `main`. | Delete branch after approval. |
-| `feat/ux-batch18` | No commits unique to branch; attached worktree is behind `main`. | Remove attached worktree and delete branch after approval. |
+- pruned stale remote-tracking refs;
+- removed behind-only worktree `/home/baris/UPRISE_NEXT_batch18`;
+- deleted local branch `feat/ux-batch18`;
+- deleted local and remote cleanup branches that were patch-equivalent or already absorbed:
+  - `test/activation-cutover-fixture-smoke`
+  - `docs/post-deploy-launch-readiness-2026-06-29`
+  - `chore/launch-readiness-verification-2026-06-29`
+  - `chore/track-art-assets`
+  - `docs/browser-qa-lane-readiness`
+  - `docs/uprise-ai-stack-agent-lanes`
+  - `feat/archive-event-terminology-cleanup`
+- confirmed PM branch remote heads were already gone after PR merges:
+  - `docs/active-pm-current-work`
+  - `docs/active-pm-branch-triage`
+  - `docs/active-pm-stable-snapshot-wording`
+
+No `art/` files were directly edited or removed by this cleanup.
 
 ### Preserve / Review Before Any Cleanup
 
@@ -104,13 +110,12 @@ These branches still have unique commits or broad diffs against `main`. Do not d
 
 ## Next Queue
 
-1. If approved, delete the cleanup-candidate branches listed above. For `feat/ux-batch18`, remove the attached worktree first, then delete the branch.
-2. Review the preserved unique branches in groups:
+1. Review the preserved unique branches in groups:
    - resolver/onboarding: `fix/fair-play-resolver-di-staging`, `feat/preference-resolver-runtime-adoption`, `feat/default-music-community-preference-resolver`, `feat/missing-community-request-intake`
    - UX batches/prototypes: `feat/ux-batch17`, `feat/ux-batch18-prep`, `feat/ux-batch18-run`, `feat/ux-batch19-prep`, `ux-mobile-r1-build`, `ux-implementation`
    - phase3 automation/runtime: `phase3-no-automation-rollback`, `phase3-runtime-followups`, `backup/phase3-runtime-followups-20260224-150716`, `phase3-mvp-roadmap-slice88-runtime`, `review-risk-p3-rev-002`
    - docs/audit: `audit/home-scene-community-cleanup-plan`, `audit/registrar-source-origin-compatibility`, `docs/artist-identity-canon-fix`
-3. Start the next implementation slice only after branch hygiene decisions are made or explicitly deferred.
+2. Start the next implementation slice only after the preserved unique branches are either reviewed or explicitly deferred.
 
 ## Branches And Worktrees To Preserve Until Reviewed
 
@@ -120,7 +125,6 @@ These worktrees/branches contain unmerged or separately staged work. Do not remo
 | --- | --- | --- | --- |
 | `/home/baris/UPRISE_NEXT/.worktrees/batch18` | `feat/ux-batch18-prep` | `629a39e` | UX batch prep, remote exists. |
 | `/home/baris/UPRISE_NEXT/.worktrees/batch19` | `feat/ux-batch19-prep` | `7a66a72` | UX batch prep, remote exists. |
-| `/home/baris/UPRISE_NEXT_batch18` | `feat/ux-batch18` | `38f7124` | Behind-only worktree; cleanup candidate after approval. |
 | `/home/baris/UPRISE_NEXT_runtime` | `phase3-no-automation-rollback` | `f370438` | Runtime/agent-control history, review before action. |
 | `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | UX implementation branch, remote exists. |
 | `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | Mobile UX branch, remote exists. |
@@ -128,6 +132,9 @@ These worktrees/branches contain unmerged or separately staged work. Do not remo
 ## Recently Completed / Cleaned Up
 
 - PR #150 merged into `main` at `99b0072`.
+- PR #151 merged into `main` at `c1afc9c`.
+- PR #152 merged into `main` at `c8909c4`.
+- Cleanup-candidate branches and the behind-only `feat/ux-batch18` worktree were removed after approval.
 - Pruned stale remote-tracking refs for the already-merged PR branches:
   - `origin/chore/plot-deferred-panel-quarantine`
   - `origin/docs/execution-closeout-packets`

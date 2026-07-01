@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_active-pm-post-cleanup.md`](./2026-07-01_active-pm-post-cleanup.md) — records the approved cleanup-candidate branch/worktree removal and updates `docs/operations/ACTIVE_PM.md` to leave only preserve/review branches in queue.
 - [`2026-07-01_active-pm-branch-triage.md`](./2026-07-01_active-pm-branch-triage.md) — refreshes `docs/operations/ACTIVE_PM.md` after PR #150 with cleanup-candidate and preserve/review branch classifications.
 - [`2026-07-01_active-pm-current-work.md`](./2026-07-01_active-pm-current-work.md) — adds the lightweight `docs/operations/ACTIVE_PM.md` current-work snapshot so agents can check active branch/PR/blocker/worktree state without treating it as product doctrine.
 - [`2026-07-01_plot-primary-tab-body-extraction.md`](./2026-07-01_plot-primary-tab-body-extraction.md) — extracts the active `/plot` Feed/Events/Archive body renderer into `PlotPrimaryTabBody` as the first low-risk route-shell cleanup from the structural integrity roadmap.
