@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a structural integrity cleanup audit for Plot/Home/Profile/Player, onboarding preferences, Fair Play, activation cutover, source/admin boundaries, and docs/test drift; see `docs/handoff/2026-06-30_structural-integrity-cleanup-audit.md`.
 - Added the `/plot` Home Scene Roller arrow/swipe presentation so the active Home Scene is centered with previous/next controls while saved Away Scenes remain profile-only.
 - Added Plot Feed card-family and avatar-wearable merch design guidance so the Home Scene Feed remains the default Plot mainpage and future avatar/merch work uses a shared layered fit-model approach rather than bespoke one-off cards or over-rendered avatar assets.
 - Added an activation cutover fixture smoke command that creates synthetic source/listener/proxy rows, calls the real manual activation API endpoint, verifies source reanchor/listener reroot/Away Scene/notice/audit persistence, and cleans up fixture rows; see `docs/handoff/2026-06-29_activation-cutover-fixture-smoke.md`.
