@@ -35,9 +35,9 @@ Keep updates small. Do not paste full audit reports here. Link to the owner spec
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Base HEAD at UX prototype review: `ee171b5` (`docs: review phase3 automation branches (#156)`)
-- Active implementation branch: `docs/active-pm-ux-prototype-review`
-- Last PM update source: UX/prototype preserved-branch review pass
+- Base HEAD after UX prototype review: `f76d4b6` (`docs: review ux prototype branches (#157)`)
+- Active implementation branch: none; `main` is current after PR #157.
+- Last PM update source: post-PR #157 Active PM refresh
 - Open PR queue at snapshot: none
 - Main worktree state at snapshot: clean before this docs slice
 
@@ -50,8 +50,8 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 | Field | Current Value |
 | --- | --- |
 | Lane | `uprise-context-steward` / branch hygiene |
-| Branch | `docs/active-pm-ux-prototype-review` |
-| Scope | Record remaining UX/prototype branch review and preserve/cleanup recommendations. |
+| Branch | none; `main` is current after PR #157. |
+| Scope | Cleanup candidates are identified; remaining action requires explicit branch/worktree removal approval or a design/runtime extraction decision. |
 | Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine, runtime code, provider state, database/schema changes. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
 | Companion Doc | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
@@ -167,7 +167,7 @@ Evidence checked:
 Detailed handoff: `docs/handoff/2026-07-01_ux-prototype-branch-review.md`.
 
 | Branch | Review Result | Recommended Action |
-| --- | --- |
+| --- | --- | --- |
 | `feat/ux-batch17` | Old UX/Reliant batch output. Includes queue/runtime files, Discover/Plot/RADIYO/statistics tests, Reliant script changes, and many March handoffs. | Do not merge wholesale. Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
 | `feat/ux-batch18-prep` | Queue/prep-only branch for batch 18. Attached worktree. | Cleanup candidate after explicit worktree/branch removal approval; do not merge directly. |
 | `feat/ux-batch18-run` | Old UX/Reliant batch run output. Includes queue/runtime files, Plot/Discover/player tests, Reliant automation edits, Social-hidden MVP note, and handoffs. | Do not merge wholesale. Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
@@ -203,6 +203,7 @@ These worktrees/branches contain unmerged, separately staged, or intentionally p
 - PR #154 merged into `main` at `a14801e`.
 - PR #155 merged into `main` at `c9afdcc`.
 - PR #156 merged into `main` at `ee171b5`.
+- PR #157 merged into `main` at `f76d4b6`.
 - Cleanup-candidate branches and the behind-only `feat/ux-batch18` worktree were removed after approval.
 - Pruned stale remote-tracking refs for the already-merged PR branches:
   - `origin/chore/plot-deferred-panel-quarantine`
