@@ -88,6 +88,7 @@ Current MVP shell note:
   music-community preferences.
 - Copy and framing align with canon (“anchor this dashboard”).
 - Archive surface renders read-only descriptive modules in the current MVP body:
+  - `Registrar` community-information entry/control and records/status history, with the Registrar entry on top and records below.
   - `TopSongsPanel`, backed by the existing statistics endpoint for song context.
   - `Scene Activity Snapshot`, backed by scene-scoped descriptive metrics already loaded for the Plot context.
 - Interactive StatisticsPanel / tier map / nearby-community exploration is not the current MVP Archive body.
@@ -105,7 +106,7 @@ Current MVP shell note:
 - Plot player controls and Archive descriptive reads clamp active MVP tier selection to `city` and `state`.
 - Plot no longer renders a forced non-expanded Registrar/context companion panel.
 - Expanded listener profile status cards may still derive read-only registrar-linked identity status from `GET /registrar/artist/entries`.
-- Future Registrar placement should use the Archive/community information rule above instead of a generic always-visible Plot box.
+- Registrar placement now uses the Archive/community information rule above instead of a generic always-visible Plot box.
 - Plot Archive descriptive reads share a unified selected-community anchor in the page state to keep tier/context reads consistent across modules.
 - Plot and statistics read endpoints now flow through typed web client wrappers (`apps/web/src/lib/communities/client.ts`, `apps/web/src/lib/discovery/client.ts`) for centralized route contract management.
 

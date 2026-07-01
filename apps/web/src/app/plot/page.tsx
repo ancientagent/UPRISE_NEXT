@@ -839,6 +839,11 @@ export default function PlotPage() {
         communityLabel={selectedCommunityLabel}
         selectedTier={selectedTier}
         metrics={expandedProfileStats?.metrics ?? null}
+        registrarSummary={registrarSummary}
+        registrarSummaryLoading={registrarSummaryLoading}
+        registrarSummaryError={registrarSummaryError}
+        latestPromoterEntry={latestPromoterEntry}
+        formatRegistrarStatus={formatRegistrarEntryStatus}
       />
     );
   };

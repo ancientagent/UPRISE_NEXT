@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Registrar placement inside `/plot` Archive/community information with Registrar entry on top and records/status history below; see `docs/handoff/2026-07-01_archive-registrar-community-info.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #170 so the current-work snapshot points at the merged profile source identity access slice; see `docs/handoff/2026-07-01_active-pm-post-profile-source-refresh.md`.
 - Added expanded `/plot` profile source identity access for users who manage Artist/Band accounts while keeping source tools out of non-expanded Plot and listener collection body; see `docs/handoff/2026-07-01_profile-source-identity-access.md`.
 - Removed the forced non-expanded `/plot` community context panel and deprecated community-information naming in favor of Archive/community information language; see `docs/handoff/2026-07-01_plot-context-panel-removal.md`.
