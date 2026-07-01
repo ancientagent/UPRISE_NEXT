@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a founder-session capture for Discover/transport front-door, back-door, map-view, seek-mode, saved-Uprises, and no-transport-inside-Plot direction; see `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`.
 - Extracted the `/plot` Home Scene selector presentation into a dedicated component while preserving route-owned selector loading/tuning and clarifying switch/select/tune versus Away Scene transport language; see `docs/handoff/2026-07-01_home-scene-selector-component-extraction.md`.
 - Replaced active Home Scene switching terminology with Home Scene selector/swiper across owner docs, `/plot`, users API/client wrappers, smoke coverage, and regression locks; see `docs/handoff/2026-07-01_home-scene-selector-terminology.md`.
 - Added a founder-session capture for Plot/Home Scene visual-skin direction, preserving the current arrow/swipe Home Scene switcher clarification and invariant-shell/community-skin boundary; see `docs/founder-sessions/2026-07-01_plot-home-scene-visual-skin.md`.
