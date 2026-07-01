@@ -26,6 +26,8 @@ Default stack:
 6. companion briefs only if the task crosses into that domain
 7. exact runtime/spec/lock files only when editing or auditing that surface
 
+If the task depends on what is active now, also check `docs/operations/ACTIVE_PM.md` for branch/PR/blocker/worktree execution state before opening old handoffs or external-agent reports. Do not treat the PM snapshot as product authority.
+
 Do not load every file linked by every related document.
 
 ## Contract Owner Rule
