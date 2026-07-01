@@ -80,7 +80,7 @@ Current MVP shell note:
 ### Implemented Behavior (Current)
 
 - Web app ships Plot shell at `apps/web/src/app/plot/page.tsx`.
-- Current shell includes tab switching and a Home Scene roller/switcher identity
+- Current shell includes tab switching and a Home Scene selector/switcher identity
   control. The switcher centers the active Home Scene and uses left/right arrows
   plus horizontal swipe to move between adjacent registered/resolvable
   music-community preferences.

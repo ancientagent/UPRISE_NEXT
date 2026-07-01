@@ -85,11 +85,11 @@ Recent handoffs to use only after the locks above:
 - Artist Profile is direct-listen, discovery, information, and sharing outside `RADIYO`.
 - User profile means the listener profile / collection workspace for everyone who has onboarded into the app.
 - Source management is separate from the listener profile and should be treated as source/admin web tooling that the app reads from.
-- Music-community preferences live in the user profile and persist across cities; the detailed membership/default/roller contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
-- The expanded `/plot` listener profile includes music-community preference management: list registered affiliations, label whether each preference is in the Home Scene Roller or profile-only until active, add approved parent music communities, and explicitly mark the default/starred preference.
-- The Home Scene roller is a shortcut to resolvable primary music-community preferences in the current verified/default city; saved Away Scenes stay in the profile/collection workspace.
-- Current Plot presentation for the roller is a centered active Home Scene with left/right arrow controls and horizontal swipe between adjacent resolvable preferences, not a full visible preference-management list.
-- `/plot` renders the Home Scene roller from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
+- Music-community preferences live in the user profile and persist across cities; the detailed membership/default/selector contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
+- The expanded `/plot` listener profile includes music-community preference management: list registered affiliations, label whether each preference is in the Home Scene selector or profile-only until active, add approved parent music communities, and explicitly mark the default/starred preference.
+- The Home Scene selector is a shortcut to resolvable primary music-community preferences in the current verified/default city; saved Away Scenes stay in the profile/collection workspace.
+- Current Plot presentation for the selector is a centered active Home Scene with left/right arrow controls and horizontal swipe between adjacent resolvable preferences, not a full visible preference-management list.
+- `/plot` renders the Home Scene selector from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
 - `RADIYO` uses `Play It Loud` and `Upvote`.
@@ -132,7 +132,7 @@ This is not the same surface as Artist Profile.
 
 It is also not the same surface as source management. Artists, bands, promoters, and future businesses are separate source entities managed from source/admin tooling, not from this listener profile workspace.
 
-Onboarding collects one primary scene-of-choice music community; additional music-community preferences are added later from the profile. The detailed membership/default/roller contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
+Onboarding collects one primary scene-of-choice music community; additional music-community preferences are added later from the profile. The detailed membership/default/selector contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
 
 Top-to-bottom when expanded:
 

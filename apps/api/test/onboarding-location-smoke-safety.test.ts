@@ -46,7 +46,7 @@ describe('onboarding location smoke safety contract', () => {
     expect(script).toContain('writesDatabase: false');
     expect(script).toContain('/auth/login');
     expect(script).toContain('/users/me/music-community-preferences');
-    expect(script).toContain('/users/me/home-scene-roller');
+    expect(script).toContain('/users/me/home-scene-selector');
     expect(script).toContain('manual_austin_gps_skipped_persists_after_login');
     expect(script).toContain('manual_austin_gps_verified_persists_after_login');
     expect(script).toContain('manual_el_paso_proxy_persists_after_login');

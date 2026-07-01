@@ -80,7 +80,7 @@ function buildDryRunPlan() {
       {
         name: 'manual_el_paso_proxy_persists_after_login',
         proves:
-          'Inactive submitted Home Scene persists as submitted city/state/music-community while the roller resolves to an active proxy scene.',
+          'Inactive submitted Home Scene persists as submitted city/state/music-community while the selector resolves to an active proxy scene.',
       },
     ],
   };
@@ -161,9 +161,9 @@ async function fetchPersistenceState(email, token) {
   });
 
   const preferences = await request('/users/me/music-community-preferences', { token });
-  const roller = await request('/users/me/home-scene-roller', { token });
+  const selector = await request('/users/me/home-scene-selector', { token });
 
-  return { user, preferences, roller };
+  return { user, preferences, selector };
 }
 
 function assertDefaultPreference(state, musicCommunity) {
@@ -184,25 +184,25 @@ function assertDefaultPreference(state, musicCommunity) {
   });
 }
 
-function assertRollerItem(state, expectation) {
-  const item = state.roller.items.find((candidate) => candidate.musicCommunity === expectation.musicCommunity);
-  assert(Boolean(item), 'Home Scene roller item missing', {
-    roller: state.roller,
+function assertSelectorItem(state, expectation) {
+  const item = state.selector.items.find((candidate) => candidate.musicCommunity === expectation.musicCommunity);
+  assert(Boolean(item), 'Home Scene selector item missing', {
+    selector: state.selector,
     musicCommunity: expectation.musicCommunity,
   });
-  assert(item.isDefault === true, 'Home Scene roller item is not default', { item });
-  assert(item.resolution === expectation.resolution, 'Home Scene roller resolution mismatch', {
+  assert(item.isDefault === true, 'Home Scene selector item is not default', { item });
+  assert(item.resolution === expectation.resolution, 'Home Scene selector resolution mismatch', {
     item,
     expected: expectation.resolution,
   });
   if (expectation.sceneId) {
-    assert(item.sceneId === expectation.sceneId, 'Home Scene roller sceneId mismatch', {
+    assert(item.sceneId === expectation.sceneId, 'Home Scene selector sceneId mismatch', {
       item,
       expected: expectation.sceneId,
     });
   }
   if (expectation.current === true) {
-    assert(item.isCurrent === true, 'Home Scene roller item is not current', { item });
+    assert(item.isCurrent === true, 'Home Scene selector item is not current', { item });
   }
   return item;
 }
@@ -227,7 +227,7 @@ async function runManualAustinGpsSkipped() {
   assert(state.user?.gpsVerified === false, 'GPS skipped scenario should not grant GPS verification', state.user);
   assert(homeScene.votingEligible === false, 'GPS skipped scenario should not be voting eligible', homeScene);
   assertDefaultPreference(state, 'Punk');
-  const rollerItem = assertRollerItem(state, {
+  const selectorItem = assertSelectorItem(state, {
     musicCommunity: 'Punk',
     resolution: 'natural',
     sceneId: homeScene.sceneId,
@@ -242,7 +242,7 @@ async function runManualAustinGpsSkipped() {
     resolvedCitySceneLabel: homeScene.resolvedCitySceneLabel,
     votingEligible: homeScene.votingEligible,
     gpsVerified: state.user.gpsVerified,
-    rollerItem,
+    selectorItem,
   };
 }
 
@@ -269,7 +269,7 @@ async function runManualAustinGpsVerified() {
     homeScene,
   });
   assertDefaultPreference(state, 'Punk');
-  const rollerItem = assertRollerItem(state, {
+  const selectorItem = assertSelectorItem(state, {
     musicCommunity: 'Punk',
     resolution: 'natural',
     sceneId: homeScene.sceneId,
@@ -284,7 +284,7 @@ async function runManualAustinGpsVerified() {
     votingEligible: gps.votingEligible,
     votingSceneId: gps.votingSceneId,
     gpsVerified: state.user.gpsVerified,
-    rollerItem,
+    selectorItem,
   };
 }
 
@@ -307,7 +307,7 @@ async function runManualElPasoProxy() {
   });
   assert(homeScene.pioneer === true, 'El Paso should resolve through proxy compatibility path', homeScene);
   assertDefaultPreference(state, 'Punk');
-  const rollerItem = assertRollerItem(state, {
+  const selectorItem = assertSelectorItem(state, {
     musicCommunity: 'Punk',
     resolution: 'proxy',
     sceneId: homeScene.sceneId,
@@ -322,7 +322,7 @@ async function runManualElPasoProxy() {
     resolvedCitySceneLabel: homeScene.resolvedCitySceneLabel,
     sceneId: homeScene.sceneId,
     gpsVerified: state.user.gpsVerified,
-    rollerItem,
+    selectorItem,
   };
 }
 

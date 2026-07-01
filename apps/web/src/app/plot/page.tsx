@@ -45,11 +45,11 @@ import {
 } from '@/lib/registrar/entryStatus';
 import {
   addMusicCommunityPreference,
-  getHomeSceneRoller,
+  getHomeSceneSelector,
   getMusicCommunityPreferences,
   setDefaultMusicCommunityPreference,
-  type HomeSceneRoller,
-  type HomeSceneRollerItem,
+  type HomeSceneSelector,
+  type HomeSceneSelectorItem,
   type MusicCommunityPreference,
 } from '@/lib/users/client';
 
@@ -187,7 +187,7 @@ const formatPlotCommunityLabel = (
   return community.name ?? null;
 };
 
-const formatHomeSceneRollerItemPrimaryLabel = (item: HomeSceneRollerItem): string => {
+const formatHomeSceneSelectorItemPrimaryLabel = (item: HomeSceneSelectorItem): string => {
   if (item.city && item.musicCommunity) {
     return `${item.city} ${item.musicCommunity}`;
   }
@@ -195,7 +195,7 @@ const formatHomeSceneRollerItemPrimaryLabel = (item: HomeSceneRollerItem): strin
   return item.sceneName;
 };
 
-const formatHomeSceneRollerItemSecondaryLabel = (item: HomeSceneRollerItem): string => {
+const formatHomeSceneSelectorItemSecondaryLabel = (item: HomeSceneSelectorItem): string => {
   if (item.city && item.state) {
     return `${item.city}, ${item.state}`;
   }
@@ -226,13 +226,13 @@ export default function PlotPage() {
     initialPlayerTier
   );
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithDistance | null>(null);
-  const [homeSceneRoller, setHomeSceneRoller] = useState<HomeSceneRoller>({
+  const [homeSceneSelector, setHomeSceneSelector] = useState<HomeSceneSelector>({
     currentLocation: null,
     items: [],
   });
-  const [homeSceneRollerLoading, setHomeSceneRollerLoading] = useState(false);
-  const [homeSceneRollerError, setHomeSceneRollerError] = useState<string | null>(null);
-  const [homeSceneRollerSelectingSceneId, setHomeSceneRollerSelectingSceneId] =
+  const [homeSceneSelectorLoading, setHomeSceneSelectorLoading] = useState(false);
+  const [homeSceneSelectorError, setHomeSceneSelectorError] = useState<string | null>(null);
+  const [homeSceneSelectorSelectingSceneId, setHomeSceneSelectorSelectingSceneId] =
     useState<string | null>(null);
   const [profilePanelState, setProfilePanelState] = useState<'collapsed' | 'peek' | 'expanded'>(
     'collapsed'
@@ -276,7 +276,7 @@ export default function PlotPage() {
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
-  const homeSceneRollerDragStartX = useRef<number | null>(null);
+  const homeSceneSelectorDragStartX = useRef<number | null>(null);
 
   const discoveryContextFallback = useMemo(
     () => ({
@@ -301,33 +301,33 @@ export default function PlotPage() {
     [selectedCommunity]
   );
   const selectedCommunityId = selectedCommunity?.id ?? null;
-  const homeSceneRollerActiveIndex = useMemo(() => {
-    if (homeSceneRoller.items.length === 0) return -1;
+  const homeSceneSelectorActiveIndex = useMemo(() => {
+    if (homeSceneSelector.items.length === 0) return -1;
 
-    const selectedIndex = homeSceneRoller.items.findIndex(
+    const selectedIndex = homeSceneSelector.items.findIndex(
       (item) => item.sceneId === selectedCommunityId
     );
     if (selectedIndex >= 0) return selectedIndex;
 
-    const currentIndex = homeSceneRoller.items.findIndex((item) => item.isCurrent);
+    const currentIndex = homeSceneSelector.items.findIndex((item) => item.isCurrent);
     return currentIndex >= 0 ? currentIndex : 0;
-  }, [homeSceneRoller.items, selectedCommunityId]);
-  const homeSceneRollerActiveItem =
-    homeSceneRollerActiveIndex >= 0 ? homeSceneRoller.items[homeSceneRollerActiveIndex] : null;
-  const homeSceneRollerPreviousItem =
-    homeSceneRoller.items.length > 1 && homeSceneRollerActiveIndex >= 0
-      ? homeSceneRoller.items[
-          (homeSceneRollerActiveIndex - 1 + homeSceneRoller.items.length) %
-            homeSceneRoller.items.length
+  }, [homeSceneSelector.items, selectedCommunityId]);
+  const homeSceneSelectorActiveItem =
+    homeSceneSelectorActiveIndex >= 0 ? homeSceneSelector.items[homeSceneSelectorActiveIndex] : null;
+  const homeSceneSelectorPreviousItem =
+    homeSceneSelector.items.length > 1 && homeSceneSelectorActiveIndex >= 0
+      ? homeSceneSelector.items[
+          (homeSceneSelectorActiveIndex - 1 + homeSceneSelector.items.length) %
+            homeSceneSelector.items.length
         ]
       : null;
-  const homeSceneRollerNextItem =
-    homeSceneRoller.items.length > 1 && homeSceneRollerActiveIndex >= 0
-      ? homeSceneRoller.items[(homeSceneRollerActiveIndex + 1) % homeSceneRoller.items.length]
+  const homeSceneSelectorNextItem =
+    homeSceneSelector.items.length > 1 && homeSceneSelectorActiveIndex >= 0
+      ? homeSceneSelector.items[(homeSceneSelectorActiveIndex + 1) % homeSceneSelector.items.length]
       : null;
-  const resolvedRollerMusicCommunities = useMemo(
-    () => new Set(homeSceneRoller.items.map((item) => item.musicCommunity.trim().toLowerCase())),
-    [homeSceneRoller.items]
+  const resolvedSelectorMusicCommunities = useMemo(
+    () => new Set(homeSceneSelector.items.map((item) => item.musicCommunity.trim().toLowerCase())),
+    [homeSceneSelector.items]
   );
 
   useEffect(() => {
@@ -385,35 +385,35 @@ export default function PlotPage() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadHomeSceneRoller() {
+    async function loadHomeSceneSelector() {
       if (!token || !hasHomeScene) {
-        setHomeSceneRoller({ currentLocation: null, items: [] });
-        setHomeSceneRollerError(null);
-        setHomeSceneRollerLoading(false);
+        setHomeSceneSelector({ currentLocation: null, items: [] });
+        setHomeSceneSelectorError(null);
+        setHomeSceneSelectorLoading(false);
         return;
       }
 
-      setHomeSceneRollerLoading(true);
-      setHomeSceneRollerError(null);
+      setHomeSceneSelectorLoading(true);
+      setHomeSceneSelectorError(null);
 
       try {
-        const roller = await getHomeSceneRoller(token);
+        const selector = await getHomeSceneSelector(token);
         if (cancelled) return;
-        setHomeSceneRoller(roller);
+        setHomeSceneSelector(selector);
       } catch (error: unknown) {
         if (cancelled) return;
         const message =
-          error instanceof Error ? error.message : 'Unable to load Home Scene roller.';
-        setHomeSceneRoller({ currentLocation: null, items: [] });
-        setHomeSceneRollerError(message);
+          error instanceof Error ? error.message : 'Unable to load Home Scene options.';
+        setHomeSceneSelector({ currentLocation: null, items: [] });
+        setHomeSceneSelectorError(message);
       } finally {
         if (!cancelled) {
-          setHomeSceneRollerLoading(false);
+          setHomeSceneSelectorLoading(false);
         }
       }
     }
 
-    loadHomeSceneRoller();
+    loadHomeSceneSelector();
 
     return () => {
       cancelled = true;
@@ -727,12 +727,12 @@ export default function PlotPage() {
     }
   };
 
-  const handleHomeSceneRollerSelect = async (item: HomeSceneRollerItem) => {
+  const handleHomeSceneSelectorSelect = async (item: HomeSceneSelectorItem) => {
     if (!token) return;
-    if (homeSceneRollerSelectingSceneId) return;
+    if (homeSceneSelectorSelectingSceneId) return;
 
-    setHomeSceneRollerSelectingSceneId(item.sceneId);
-    setHomeSceneRollerError(null);
+    setHomeSceneSelectorSelectingSceneId(item.sceneId);
+    setHomeSceneSelectorError(null);
 
     try {
       const nextCommunity = await getCommunityById(item.sceneId, token);
@@ -747,43 +747,43 @@ export default function PlotPage() {
       setSelectedCommunity(nextCommunity);
       setSelectedCollectionItem(null);
       setPlayerMode('RADIYO');
-      setHomeSceneRoller((current) => ({
+      setHomeSceneSelector((current) => ({
         ...current,
-        items: current.items.map((rollerItem) => ({
-          ...rollerItem,
-          isCurrent: rollerItem.sceneId === item.sceneId,
+        items: current.items.map((selectorItem) => ({
+          ...selectorItem,
+          isCurrent: selectorItem.sceneId === item.sceneId,
         })),
       }));
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unable to switch Home Scene.';
-      setHomeSceneRollerError(message);
+      setHomeSceneSelectorError(message);
     } finally {
-      setHomeSceneRollerSelectingSceneId(null);
+      setHomeSceneSelectorSelectingSceneId(null);
     }
   };
 
-  const handleHomeSceneRollerAdjacentSelect = (item: HomeSceneRollerItem | null) => {
+  const handleHomeSceneSelectorAdjacentSelect = (item: HomeSceneSelectorItem | null) => {
     if (!item) return;
-    void handleHomeSceneRollerSelect(item);
+    void handleHomeSceneSelectorSelect(item);
   };
 
-  const handleHomeSceneRollerPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (homeSceneRoller.items.length < 2) return;
-    homeSceneRollerDragStartX.current = event.clientX;
+  const handleHomeSceneSelectorPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (homeSceneSelector.items.length < 2) return;
+    homeSceneSelectorDragStartX.current = event.clientX;
   };
 
-  const handleHomeSceneRollerPointerUp = (event: PointerEvent<HTMLDivElement>) => {
-    if (homeSceneRoller.items.length < 2) return;
+  const handleHomeSceneSelectorPointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    if (homeSceneSelector.items.length < 2) return;
 
-    const startX = homeSceneRollerDragStartX.current;
-    homeSceneRollerDragStartX.current = null;
+    const startX = homeSceneSelectorDragStartX.current;
+    homeSceneSelectorDragStartX.current = null;
     if (startX === null) return;
 
     const deltaX = event.clientX - startX;
     if (Math.abs(deltaX) < 48) return;
 
-    handleHomeSceneRollerAdjacentSelect(
-      deltaX > 0 ? homeSceneRollerPreviousItem : homeSceneRollerNextItem
+    handleHomeSceneSelectorAdjacentSelect(
+      deltaX > 0 ? homeSceneSelectorPreviousItem : homeSceneSelectorNextItem
     );
   };
 
@@ -1225,15 +1225,14 @@ export default function PlotPage() {
         </section>
 
         <section
-          data-slot="home-scene-roller"
+          data-slot="home-scene-selector"
           className="mt-3 rounded-[1.15rem] border border-black bg-[#efefe2] p-3 shadow-[2px_2px_0_rgba(0,0,0,0.2)]"
         >
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="plot-wire-label">Home Scene Roller</p>
               <p className="text-sm font-semibold text-black">
-                {homeSceneRoller.currentLocation
-                  ? `${homeSceneRoller.currentLocation.city}, ${homeSceneRoller.currentLocation.state}`
+                {homeSceneSelector.currentLocation
+                  ? `${homeSceneSelector.currentLocation.city}, ${homeSceneSelector.currentLocation.state}`
                   : selectedCommunityLabel ?? 'Current city context'}
               </p>
             </div>
@@ -1243,13 +1242,13 @@ export default function PlotPage() {
             </p>
           </div>
 
-          {homeSceneRollerLoading ? (
-            <p className="mt-3 text-sm text-black/60">Loading Home Scene roller...</p>
-          ) : homeSceneRollerError ? (
+          {homeSceneSelectorLoading ? (
+            <p className="mt-3 text-sm text-black/60">Loading Home Scene options...</p>
+          ) : homeSceneSelectorError ? (
             <p className="mt-3 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {homeSceneRollerError}
+              {homeSceneSelectorError}
             </p>
-          ) : homeSceneRollerActiveItem ? (
+          ) : homeSceneSelectorActiveItem ? (
             <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(11rem,1.2fr)_minmax(0,1fr)] items-stretch gap-2">
               <Button
                 type="button"
@@ -1257,16 +1256,16 @@ export default function PlotPage() {
                 variant="outline"
                 aria-label="Switch to previous Home Scene"
                 className="min-h-[5rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5 disabled:opacity-45"
-                disabled={!homeSceneRollerPreviousItem || Boolean(homeSceneRollerSelectingSceneId)}
-                onClick={() => handleHomeSceneRollerAdjacentSelect(homeSceneRollerPreviousItem)}
+                disabled={!homeSceneSelectorPreviousItem || Boolean(homeSceneSelectorSelectingSceneId)}
+                onClick={() => handleHomeSceneSelectorAdjacentSelect(homeSceneSelectorPreviousItem)}
               >
                 <span className="block w-full">
                   <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
                     ← Previous
                   </span>
                   <span className="mt-1 block truncate text-sm font-semibold">
-                    {homeSceneRollerPreviousItem
-                      ? formatHomeSceneRollerItemPrimaryLabel(homeSceneRollerPreviousItem)
+                    {homeSceneSelectorPreviousItem
+                      ? formatHomeSceneSelectorItemPrimaryLabel(homeSceneSelectorPreviousItem)
                       : 'Previous Home Scene'}
                   </span>
                 </span>
@@ -1275,10 +1274,10 @@ export default function PlotPage() {
               <div
                 role="group"
                 aria-label="Current Home Scene"
-                onPointerDown={handleHomeSceneRollerPointerDown}
-                onPointerUp={handleHomeSceneRollerPointerUp}
+                onPointerDown={handleHomeSceneSelectorPointerDown}
+                onPointerUp={handleHomeSceneSelectorPointerUp}
                 onPointerCancel={() => {
-                  homeSceneRollerDragStartX.current = null;
+                  homeSceneSelectorDragStartX.current = null;
                 }}
                 className="select-none rounded-[1.15rem] border border-black bg-[#b8d63b] px-4 py-3 text-center text-black shadow-[2px_2px_0_rgba(0,0,0,0.22)]"
               >
@@ -1286,27 +1285,27 @@ export default function PlotPage() {
                   Current Home Scene
                 </p>
                 <p className="mt-1 text-lg font-black leading-tight">
-                  {formatHomeSceneRollerItemPrimaryLabel(homeSceneRollerActiveItem)}
+                  {formatHomeSceneSelectorItemPrimaryLabel(homeSceneSelectorActiveItem)}
                 </p>
                 <p className="mt-0.5 text-xs text-black/65">
-                  {formatHomeSceneRollerItemSecondaryLabel(homeSceneRollerActiveItem)}
+                  {formatHomeSceneSelectorItemSecondaryLabel(homeSceneSelectorActiveItem)}
                 </p>
                 <span className="mt-2 inline-flex flex-wrap justify-center gap-1">
                   <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
-                    {homeSceneRollerActiveItem.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'}
+                    {homeSceneSelectorActiveItem.resolution === 'proxy' ? 'Proxy Scene' : 'Home Scene'}
                   </span>
-                  {homeSceneRollerActiveItem.isDefault ? (
+                  {homeSceneSelectorActiveItem.isDefault ? (
                     <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
                       Default
                     </span>
                   ) : null}
-                  {homeSceneRollerSelectingSceneId === homeSceneRollerActiveItem.sceneId ? (
+                  {homeSceneSelectorSelectingSceneId === homeSceneSelectorActiveItem.sceneId ? (
                     <span className="rounded-full border border-black/20 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/70">
                       Switching
                     </span>
                   ) : null}
                 </span>
-                {homeSceneRoller.items.length > 1 ? (
+                {homeSceneSelector.items.length > 1 ? (
                   <p className="mt-2 text-[11px] font-medium text-black/55">
                     Swipe or use arrows to switch scenes.
                   </p>
@@ -1319,16 +1318,16 @@ export default function PlotPage() {
                 variant="outline"
                 aria-label="Switch to next Home Scene"
                 className="min-h-[5rem] justify-start rounded-[1rem] border-black bg-white px-3 py-2 text-left text-black hover:bg-black/5 disabled:opacity-45"
-                disabled={!homeSceneRollerNextItem || Boolean(homeSceneRollerSelectingSceneId)}
-                onClick={() => handleHomeSceneRollerAdjacentSelect(homeSceneRollerNextItem)}
+                disabled={!homeSceneSelectorNextItem || Boolean(homeSceneSelectorSelectingSceneId)}
+                onClick={() => handleHomeSceneSelectorAdjacentSelect(homeSceneSelectorNextItem)}
               >
                 <span className="block w-full">
                   <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-black/45">
                     Next →
                   </span>
                   <span className="mt-1 block truncate text-sm font-semibold">
-                    {homeSceneRollerNextItem
-                      ? formatHomeSceneRollerItemPrimaryLabel(homeSceneRollerNextItem)
+                    {homeSceneSelectorNextItem
+                      ? formatHomeSceneSelectorItemPrimaryLabel(homeSceneSelectorNextItem)
                       : 'Next Home Scene'}
                   </span>
                 </span>
@@ -1480,7 +1479,7 @@ export default function PlotPage() {
               ) : musicCommunityPreferences.length > 0 ? (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {musicCommunityPreferences.map((preference) => {
-                    const isResolvedInRoller = resolvedRollerMusicCommunities.has(
+                    const isResolvedInSelector = resolvedSelectorMusicCommunities.has(
                       preference.musicCommunity.trim().toLowerCase()
                     );
 
@@ -1493,8 +1492,8 @@ export default function PlotPage() {
                           {preference.musicCommunity}
                         </span>
                         <span className="rounded-full border border-black/15 bg-[#efefe2] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/65">
-                          {isResolvedInRoller
-                            ? 'In Home Scene Roller'
+                          {isResolvedInSelector
+                            ? 'Shown in Home'
                             : 'Profile-only until active scene'}
                         </span>
                         {preference.isDefault ? (

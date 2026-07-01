@@ -375,7 +375,7 @@ describe('UsersService.getProfileWithCollection', () => {
     expect(result[0]).toMatchObject({ musicCommunity: 'Metal', isDefault: true });
   });
 
-  it('resolves Home Scene roller items from registered preferences and excludes unresolved preferences', async () => {
+  it('resolves Home Scene selector items from registered preferences and excludes unresolved preferences', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'target',
       homeSceneCity: 'El Paso',
@@ -435,7 +435,7 @@ describe('UsersService.getProfileWithCollection', () => {
       return null;
     });
 
-    const result = await service.getHomeSceneRoller('target');
+    const result = await service.getHomeSceneSelector('target');
 
     expect(result.currentLocation).toEqual({ city: 'El Paso', state: 'Texas' });
     expect(result.items).toEqual([
@@ -466,7 +466,7 @@ describe('UsersController music-community preferences', () => {
     listMusicCommunityPreferences: jest.fn(),
     addMusicCommunityPreference: jest.fn(),
     setDefaultMusicCommunityPreference: jest.fn(),
-    getHomeSceneRoller: jest.fn(),
+    getHomeSceneSelector: jest.fn(),
   };
 
   let controller: UsersController;
@@ -480,13 +480,13 @@ describe('UsersController music-community preferences', () => {
     const source = readFileSync(join(__dirname, '../src/users/users.controller.ts'), 'utf8');
     const currentUserRoute = source.indexOf("@Get('me')");
     const musicPreferencesRoute = source.indexOf("@Get('me/music-community-preferences')");
-    const rollerRoute = source.indexOf("@Get('me/home-scene-roller')");
+    const selectorRoute = source.indexOf("@Get('me/home-scene-selector')");
     const parameterizedUserRoute = source.indexOf("@Get(':id')");
 
     expect(currentUserRoute).toBeGreaterThan(-1);
     expect(currentUserRoute).toBeLessThan(parameterizedUserRoute);
     expect(musicPreferencesRoute).toBeLessThan(parameterizedUserRoute);
-    expect(rollerRoute).toBeLessThan(parameterizedUserRoute);
+    expect(selectorRoute).toBeLessThan(parameterizedUserRoute);
   });
 
   it('returns the authenticated current user from /users/me', async () => {
@@ -557,17 +557,17 @@ describe('UsersController music-community preferences', () => {
     expect(response.data[0]).toMatchObject({ musicCommunity: 'Metal', isDefault: true });
   });
 
-  it('returns the current user Home Scene roller read model', async () => {
-    usersService.getHomeSceneRoller.mockResolvedValue({
+  it('returns the current user Home Scene selector read model', async () => {
+    usersService.getHomeSceneSelector.mockResolvedValue({
       currentLocation: { city: 'El Paso', state: 'Texas' },
       items: [{ musicCommunity: 'Punk', sceneId: 'scene-austin-punk', resolution: 'proxy' }],
     });
 
-    const response = await controller.getMyHomeSceneRoller({
+    const response = await controller.getMyHomeSceneSelector({
       user: { userId: 'user-1' },
     });
 
-    expect(usersService.getHomeSceneRoller).toHaveBeenCalledWith('user-1');
+    expect(usersService.getHomeSceneSelector).toHaveBeenCalledWith('user-1');
     expect(response.data.items[0]).toMatchObject({
       musicCommunity: 'Punk',
       sceneId: 'scene-austin-punk',

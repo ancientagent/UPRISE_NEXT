@@ -144,7 +144,7 @@ Current owner contracts:
 
 | Contract | Owner Spec |
 | --- | --- |
-| Music-community preferences, default Home Scene, roller, city move, GPS voting scope | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` |
+| Music-community preferences, default Home Scene, selector, city move, GPS voting scope | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` |
 | Identity, roles, capabilities, listener/source separation | `docs/specs/users/identity-roles-capabilities.md` |
 | Registrar source/capability workflows | `docs/specs/system/registrar.md` |
 | Source registration and source origin | `docs/specs/system/registrar.md#source-origin-contract` |
@@ -167,7 +167,7 @@ Contracts still needing dedicated owner sections or cleanup:
 | --- | --- | --- |
 | Sect implementation artifacts and visibility calibration | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` | Boundary is owned; affiliation schema, update channels, approval state machine, visibility timing, and backing limits remain follow-up implementation decisions. |
 | Activation notification/Away Scene implementation artifacts | `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` | User-facing contract is owned; UI placement, notification persistence, and saved-scene storage remain implementation decisions. |
-| Music-community preference runtime implementation | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` | Persistence, backfill, API, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, Home Scene roller read model, Plot/Home roller consumption, and Fair Play voting across resolvable registered preferences exist; compatibility cleanup is planned and remains implementation work. |
+| Music-community preference runtime implementation | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` | Persistence, backfill, API, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, Home Scene selector read model, Plot/Home selector consumption, and Fair Play voting across resolvable registered preferences exist; compatibility cleanup is planned and remains implementation work. |
 
 ## Lane Agents
 
