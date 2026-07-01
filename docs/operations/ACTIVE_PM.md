@@ -35,9 +35,9 @@ Keep updates small. Do not paste full audit reports here. Link to the owner spec
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Base HEAD at docs/audit review: `a14801e` (`docs: review resolver onboarding branches (#154)`)
-- Active implementation branch: `docs/active-pm-docs-audit-review`
-- Last PM update source: docs/audit preserved-branch review pass
+- Base HEAD at Phase3 review: `c9afdcc` (`docs: review docs audit branches (#155)`)
+- Active implementation branch: `docs/active-pm-phase3-branch-review`
+- Last PM update source: Phase3 automation/runtime preserved-branch review pass
 - Open PR queue at snapshot: none
 - Main worktree state at snapshot: clean before this docs slice
 
@@ -50,8 +50,8 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 | Field | Current Value |
 | --- | --- |
 | Lane | `uprise-context-steward` / branch hygiene |
-| Branch | `docs/active-pm-docs-audit-review` |
-| Scope | Record docs/audit branch review and remaining preserve/review queue. |
+| Branch | `docs/active-pm-phase3-branch-review` |
+| Scope | Record Phase3 automation/runtime branch review and remaining preserve/review queue. |
 | Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine, runtime code, provider state, database/schema changes. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
 | Companion Doc | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
@@ -125,6 +125,34 @@ Evidence checked on current `main`:
 | `audit/registrar-source-origin-compatibility` | Superseded. The unique handoff flagged Registrar source-origin resolver adoption as a follow-up; current `main` already implements and tests default-preference source-origin behavior plus current activation readiness/cutover source-origin rules. | Cleanup candidate after approval; do not merge branch. |
 | `docs/artist-identity-canon-fix` | Superseded / unsafe wholesale. Current `main` already carries Registrar-linked Artist/Band identity, source-management separation, Print Shop/event boundaries, social messaging locks, Release Deck caps, and newer business-account boundaries. The old branch also includes outdated anonymous/auto-publish business promotion language and a broad stale snapshot. | Cleanup candidate after approval; do not merge branch. |
 
+### Reviewed Superseded Branches: Phase3 Automation / Runtime
+
+These Phase3 automation/runtime branches were reviewed after PR #155 merged. Do not merge them wholesale: current `main` already contains the agent-control scripts, Telegram bridge, workflows, RegistrarCode/capability-code surfaces, current specs, and runbooks. Snapshot diffs from these old branches would delete current `.reliant` queues, provider/deploy setup, docs, and other later work. Deletion still requires explicit approval because branch/worktree removal is destructive.
+
+Evidence checked on current `main`:
+
+- `scripts/agent-control.mjs`, `scripts/agent-control.test.mjs`
+- `scripts/agent-bridge-tick.mjs`, `scripts/agent-bridge-tick.test.mjs`
+- `scripts/agent-bridge-telegram.mjs`, `scripts/agent-bridge-telegram-lib.mjs`, `scripts/agent-bridge-telegram.test.mjs`
+- `.github/workflows/agent-queue-bridge.yml`
+- `.github/workflows/agent-telegram-bridge.yml`
+- `docs/handoff/agent-control/README.md`
+- `docs/handoff/agent-control/AGENT_DIRECTIVES.md`
+- `docs/solutions/AUTONOMOUS_AGENT_BRIDGE_RUNBOOK.md`
+- `docs/specs/system/registrar.md`
+- `docs/specs/users/identity-roles-capabilities.md`
+- `apps/web/src/app/registrar/page.tsx`
+- `apps/web/src/lib/registrar/client.ts`
+- `apps/web/src/lib/registrar/contractInventory.ts`
+
+| Branch | Review Result | Recommended Action |
+| --- | --- | --- |
+| `phase3-mvp-roadmap-slice88-runtime` | Superseded / unsafe wholesale. Older Phase3 sequence through Telegram bridge MVP; current `main` already has agent-control/Telegram bridge files and newer queue/runtime/docs. | Cleanup candidate after approval; do not merge branch. |
+| `review-risk-p3-rev-002` | Duplicate of `phase3-mvp-roadmap-slice88-runtime` at the same HEAD. | Cleanup candidate after approval; do not merge branch. |
+| `phase3-no-automation-rollback` | Superseded / unsafe wholesale. Attached worktree branch includes early RegistrarCode and agent-control/task-brief work; current `main` already has current equivalents and newer safety/runner docs. | Cleanup candidate after approval; do not merge branch or remove worktree without explicit approval. |
+| `phase3-runtime-followups` | Superseded / unsafe wholesale. Extends Phase3 work through autonomous lane worker/runtime queue tasks; current `main` already has current agent-control/bridge implementation and later docs. | Cleanup candidate after approval; do not merge branch. |
+| `backup/phase3-runtime-followups-20260224-150716` | Duplicate backup of `phase3-runtime-followups` at the same HEAD. | Cleanup candidate after approval; do not merge branch. |
+
 ### Preserve / Review Before Any Cleanup
 
 These branches still have unique commits or broad diffs against `main`. Do not delete, rebase, or remove their worktrees without explicit owner review.
@@ -137,18 +165,11 @@ These branches still have unique commits or broad diffs against `main`. Do not d
 | `feat/ux-batch19-prep` | Attached worktree with queue/prep docs. Preserve until UX batch decision. |
 | `ux-mobile-r1-build` | Attached worktree; broad mobile UX/onboarding/plot changes. Needs design/runtime review before any cleanup. |
 | `ux-implementation` | Attached worktree; broad Plot/profile/player/source dashboard prototype work. Needs design/runtime review before any cleanup. |
-| `phase3-no-automation-rollback` | Attached worktree; agent-control / registrar-code / automation bridge history. Preserve until automation/runtime owner decision. |
-| `phase3-runtime-followups` | Similar phase3 automation/runtime work; overlaps with backup branch. Review for duplicate/obsolete state. |
-| `backup/phase3-runtime-followups-20260224-150716` | Backup of phase3 runtime followups. Keep until phase3 branch owner confirms safe archival/removal. |
-| `phase3-mvp-roadmap-slice88-runtime` | Older phase3 runtime branch. Review with phase3 set. |
-| `review-risk-p3-rev-002` | Older phase3 review branch. Review with phase3 set. |
 
 ## Next Queue
 
-1. If approved, delete reviewed superseded resolver/onboarding and docs/audit branches listed above.
-2. Review the remaining preserved unique branches in groups:
-   - UX batches/prototypes: `feat/ux-batch17`, `feat/ux-batch18-prep`, `feat/ux-batch18-run`, `feat/ux-batch19-prep`, `ux-mobile-r1-build`, `ux-implementation`
-   - phase3 automation/runtime: `phase3-no-automation-rollback`, `phase3-runtime-followups`, `backup/phase3-runtime-followups-20260224-150716`, `phase3-mvp-roadmap-slice88-runtime`, `review-risk-p3-rev-002`
+1. If approved, delete reviewed superseded resolver/onboarding, docs/audit, and Phase3 automation/runtime branches listed above.
+2. Review the remaining preserved UX/prototype branches: `feat/ux-batch17`, `feat/ux-batch18-prep`, `feat/ux-batch18-run`, `feat/ux-batch19-prep`, `ux-mobile-r1-build`, `ux-implementation`.
 3. Start the next implementation slice only after the preserved unique branches are either reviewed or explicitly deferred.
 
 ## Branches And Worktrees To Preserve Until Reviewed
@@ -159,7 +180,7 @@ These worktrees/branches contain unmerged or separately staged work. Do not remo
 | --- | --- | --- | --- |
 | `/home/baris/UPRISE_NEXT/.worktrees/batch18` | `feat/ux-batch18-prep` | `629a39e` | UX batch prep, remote exists. |
 | `/home/baris/UPRISE_NEXT/.worktrees/batch19` | `feat/ux-batch19-prep` | `7a66a72` | UX batch prep, remote exists. |
-| `/home/baris/UPRISE_NEXT_runtime` | `phase3-no-automation-rollback` | `f370438` | Runtime/agent-control history, review before action. |
+| `/home/baris/UPRISE_NEXT_runtime` | `phase3-no-automation-rollback` | `f370438` | Reviewed as superseded/unsafe wholesale; remove only after explicit worktree-removal approval. |
 | `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | UX implementation branch, remote exists. |
 | `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | Mobile UX branch, remote exists. |
 
@@ -170,6 +191,7 @@ These worktrees/branches contain unmerged or separately staged work. Do not remo
 - PR #152 merged into `main` at `c8909c4`.
 - PR #153 merged into `main` at `83108f1`.
 - PR #154 merged into `main` at `a14801e`.
+- PR #155 merged into `main` at `c9afdcc`.
 - Cleanup-candidate branches and the behind-only `feat/ux-batch18` worktree were removed after approval.
 - Pruned stale remote-tracking refs for the already-merged PR branches:
   - `origin/chore/plot-deferred-panel-quarantine`
