@@ -89,6 +89,7 @@ Current MVP shell note:
   - `TopSongsPanel`, backed by the existing statistics endpoint for song context.
   - `Scene Activity Snapshot`, backed by scene-scoped descriptive metrics already loaded for the Plot context.
 - Interactive StatisticsPanel / tier map / nearby-community exploration is not the current MVP Archive body.
+- Retained source files such as `StatisticsPanel.tsx` and `PlotPromotionsPanel.tsx` must stay marked as deferred and must not be imported into the active `/plot` shell unless a future owner-spec slice reactivates those surfaces.
 - Feed tab now renders server-driven S.E.E.D activity via `GET /communities/:id/feed` (cursor-paginated, non-personalized).
 - Events tab now renders scene-scoped listings via `GET /communities/:id/events`.
 - Promotions read endpoints may remain as retained/deferred runtime seams, but there is no current MVP Promotions tab.

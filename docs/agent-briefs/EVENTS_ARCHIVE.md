@@ -81,6 +81,7 @@ Tests / verification files:
 
 - `/plot` routes the third MVP tab to read-only Archive modules such as Top Songs and Scene Activity Snapshot.
 - Runtime component names may still contain `StatisticsPanel`; current user-facing language should be `Archive`.
+- Retained deferred Plot panel files should carry the `DEFERRED_PLOT_PANEL_DO_NOT_IMPORT_IN_ACTIVE_PLOT` marker and remain out of `apps/web/src/app/plot/page.tsx`.
 - Events read through scene-scoped community event endpoints.
 - Print Shop owns current source-facing event creation flow.
 
