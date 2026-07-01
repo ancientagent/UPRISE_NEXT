@@ -87,7 +87,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-plot-top-shell-refresh` | `e548633` | active docs-only PM refresh branch |
+| `/home/baris/UPRISE_NEXT` | `main` | `e548633` | clean after PR #174 merge; ready for the next branch |
 
 ### Preserved UX Reference Worktrees
 
