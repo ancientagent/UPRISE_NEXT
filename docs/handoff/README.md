@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_print-shop-source-facing-boundary.md`](./2026-07-01_print-shop-source-facing-boundary.md) — removes the direct `/plot` Print Shop shortcut, preserves source-facing availability through Source Dashboard/source profile routes, and records the founder clarification.
 - [`2026-07-01_plot-listener-profile-component-extraction.md`](./2026-07-01_plot-listener-profile-component-extraction.md) — extracts the expanded `/plot` listener profile body into `PlotListenerProfile` while preserving route-owned profile state, player placement, collection reads, Home Scene selector behavior, and source/admin separation.
 - [`2026-07-01_home-scene-selector-component-extraction.md`](./2026-07-01_home-scene-selector-component-extraction.md) — extracts the `/plot` Home Scene selector presentation into a focused component while preserving route-owned selector loading/tuning and clarifying switch/select/tune versus Away Scene transport language.
 - [`2026-07-01_home-scene-selector-terminology.md`](./2026-07-01_home-scene-selector-terminology.md) — supersedes the old Home Scene switching term with Home Scene selector/swiper language, updates active docs/runtime endpoint names, and keeps older terminology only as historical handoff context.

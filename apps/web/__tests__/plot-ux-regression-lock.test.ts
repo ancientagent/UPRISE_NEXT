@@ -497,6 +497,8 @@ describe('/plot UX regression lock', () => {
 
   it('locks registrar access/status context onto the resolved plot route', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const sourceDashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
+    const artistSource = readRepoFile('src/app/artist-bands/[id]/page.tsx');
 
     expect(plotPageSource).toContain(
       'const [registrarSummary, setRegistrarSummary] = useState<RegistrarPlotSummary | null>(null)'
@@ -504,9 +506,6 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('listArtistBandRegistrations(token)');
     expect(plotPageSource).toContain(
       'setRegistrarSummary(getRegistrarPlotSummary(response.entries ?? []))'
-    );
-    expect(plotPageSource).toMatch(
-      /const canOpenPrintShop = Boolean\(\s*latestPromoterEntry\?\.promoterCapability\.granted \|\| managedArtistBands\.length > 0\s*\);/
     );
     expect(plotPageSource).toContain('SourceAccountSwitcher');
     expect(plotPageSource).toContain('Registrar Access');
@@ -516,7 +515,12 @@ describe('/plot UX regression lock', () => {
     );
     expect(plotPageSource).toContain('No Artist/Band registrar entries yet.');
     expect(plotPageSource).toContain('Open Registrar');
-    expect(plotPageSource).toContain('Open Print Shop');
+    expect(plotPageSource).not.toContain("router.push('/print-shop')");
+    expect(plotPageSource).not.toContain('Open Print Shop');
+    expect(sourceDashboardSource).toContain('<Link href="/print-shop">Open Print Shop</Link>');
+    expect(artistSource).toContain(
+      '<Link href="/print-shop" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>'
+    );
   });
 
   it('avoids protected community resolution reads for unsigned /plot states', () => {

@@ -692,9 +692,6 @@ export default function PlotPage() {
       )
   );
   const latestPromoterEntry = promoterEntries[0] ?? null;
-  const canOpenPrintShop = Boolean(
-    latestPromoterEntry?.promoterCapability.granted || managedArtistBands.length > 0
-  );
   const bandStatusCard =
     managedArtistBands.length > 0 || (registrarSummary?.totalEntries ?? 0) > 0
       ? {
@@ -1181,16 +1178,6 @@ export default function PlotPage() {
                       >
                         Open Registrar
                       </Button>
-                      {canOpenPrintShop ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
-                          onClick={() => router.push('/print-shop')}
-                        >
-                          Open Print Shop
-                        </Button>
-                      ) : null}
                     </div>
                   </div>
                 </div>
