@@ -257,6 +257,73 @@ Do not:
 yes/no
 ```
 
+### Execution Packet Blocks
+
+Use the following blocks for significant/risky issues, cross-lane cleanup, provider/db/schema/canon/doc-authority work, or external-agent handoffs. They are optional for tiny surgical docs-only or local cleanup PRs when the branch owner can prove the scope is low-risk.
+
+Linear may track these fields as execution state, but it does not become product truth. Durable product/canon/API/runtime rules still belong in owner specs under `docs/specs/**`.
+
+#### Execution Packet
+
+```md
+## Execution Packet
+Lane:
+Owner Contract:
+Starting Branch / HEAD:
+Must Read:
+Do Not Read By Default:
+Source Drift / Behavior To Correct:
+Files Likely Touched:
+Tests / Validation Seed:
+Expansion Conditions:
+Stop Conditions:
+Branch Owner:
+Subagent Use:
+```
+
+#### Executor Readiness
+
+```md
+## Executor Readiness
+issue_active: yes/no
+branch_verified: yes/no
+owner_contract_identified: yes/no
+source_drift_or_bug_identified: yes/no/not_applicable
+files_and_tests_clear: yes/no
+risk_impacts_named: yes/no
+provider_or_db_risk: yes/no
+ready_for_executor: yes/no
+blockers:
+```
+
+#### Closeout Contract
+
+```md
+## Closeout Contract
+executor_completed: yes/no
+tests_passed: yes/no
+reviewer_required: yes/no
+reviewer_passed: yes/no/not_required
+qa_required: yes/no
+qa_passed: yes/no/not_required
+drift_source_corrected_or_quarantined: yes/no/not_applicable
+owner_spec_changed: yes/no
+owner_spec_verified: yes/no/not_required
+docs_handoff_required: yes/no
+docs_handoff_done: yes/no/not_required
+changelog_required: yes/no
+changelog_done: yes/no/not_required
+provider_state_touched: yes/no
+provider_identity_verified: yes/no/not_required
+schema_or_migration_touched: yes/no
+schema_or_migration_verified: yes/no/not_required
+linear_ready_to_close: yes/no
+blockers:
+next_signal:
+```
+
+Do not require `reviewer_passed` or `qa_passed` for every PR. Use `reviewer_required` and `qa_required` to make those gates explicit only when the work needs them.
+
 ## Handoff Promotion Rule
 
 When a handoff contains a founder clarification or accepted reviewer finding:

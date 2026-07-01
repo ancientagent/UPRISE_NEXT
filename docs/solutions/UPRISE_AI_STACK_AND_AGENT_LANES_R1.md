@@ -139,6 +139,59 @@ For implementation prompts, also require:
 - dated handoff for multi-step work;
 - no direct `main` edits.
 
+For significant/risky implementation, cross-lane cleanup, provider/db/schema/canon/doc-authority work, or external-agent handoffs, include or request the three execution blocks from `docs/specs/system/documentation-framework.md`:
+
+```md
+## Execution Packet
+Lane:
+Owner Contract:
+Starting Branch / HEAD:
+Must Read:
+Do Not Read By Default:
+Source Drift / Behavior To Correct:
+Files Likely Touched:
+Tests / Validation Seed:
+Expansion Conditions:
+Stop Conditions:
+Branch Owner:
+Subagent Use:
+
+## Executor Readiness
+issue_active: yes/no
+branch_verified: yes/no
+owner_contract_identified: yes/no
+source_drift_or_bug_identified: yes/no/not_applicable
+files_and_tests_clear: yes/no
+risk_impacts_named: yes/no
+provider_or_db_risk: yes/no
+ready_for_executor: yes/no
+blockers:
+
+## Closeout Contract
+executor_completed: yes/no
+tests_passed: yes/no
+reviewer_required: yes/no
+reviewer_passed: yes/no/not_required
+qa_required: yes/no
+qa_passed: yes/no/not_required
+drift_source_corrected_or_quarantined: yes/no/not_applicable
+owner_spec_changed: yes/no
+owner_spec_verified: yes/no/not_required
+docs_handoff_required: yes/no
+docs_handoff_done: yes/no/not_required
+changelog_required: yes/no
+changelog_done: yes/no/not_required
+provider_state_touched: yes/no
+provider_identity_verified: yes/no/not_required
+schema_or_migration_touched: yes/no
+schema_or_migration_verified: yes/no/not_required
+linear_ready_to_close: yes/no
+blockers:
+next_signal:
+```
+
+These blocks are optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove the scope is low-risk. Do not create per-issue context-packet files by default and do not introduce a separate PM harness from these blocks.
+
 ## Linear Role
 
 Linear tracks execution, not truth.

@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added lightweight Execution Packet, Executor Readiness, and Closeout Contract templates for significant UPRISE issues and external-agent handoffs without creating a new PM harness or per-issue context files; see `docs/handoff/2026-07-01_execution-closeout-packets.md`.
 - Added deferred Plot panel quarantine markers and component-folder guidance so retained `StatisticsPanel` / `PlotPromotionsPanel` seams are not mistaken for active MVP `/plot` import targets; see `docs/handoff/2026-07-01_plot-deferred-panel-quarantine.md`.
 - Added a structural integrity cleanup audit for Plot/Home/Profile/Player, onboarding preferences, Fair Play, activation cutover, source/admin boundaries, and docs/test drift; see `docs/handoff/2026-06-30_structural-integrity-cleanup-audit.md`.
 - Added the `/plot` Home Scene Roller arrow/swipe presentation so the active Home Scene is centered with previous/next controls while saved Away Scenes remain profile-only.
