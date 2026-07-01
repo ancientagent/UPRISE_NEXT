@@ -1,6 +1,7 @@
 import type { FormEvent, ReactNode } from 'react';
 import { Button } from '@uprise/ui';
 import type { PlayerMode } from '@/components/plot/RadiyoPlayerPanel';
+import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
 import type { MusicCommunityPreference } from '@/lib/users/client';
 
 export const expandedProfileSections = [
@@ -117,6 +118,8 @@ interface PlotListenerProfileProps {
   canViewCollection: boolean;
   collectionShelves: PlotCollectionShelf[];
   savedAwayScenes: PlotProfileRead['savedAwayScenes'];
+  managedArtistBands: PlotProfileRead['managedArtistBands'];
+  currentUserId: string | null;
   selectedCollectionItem: CollectionSelection | null;
   playerMode: PlayerMode;
   playerPanel: ReactNode;
@@ -125,6 +128,7 @@ interface PlotListenerProfileProps {
   onSetDefaultMusicCommunityPreference: (musicCommunity: string) => void;
   onActiveProfileSectionChange: (section: ExpandedProfileSection) => void;
   onCollectionSelection: (item: CollectionSelection) => void;
+  onOpenSourceDashboard: () => void;
   onReturnToPlotTabs: () => void;
 }
 
@@ -193,6 +197,8 @@ export default function PlotListenerProfile({
   canViewCollection,
   collectionShelves,
   savedAwayScenes,
+  managedArtistBands,
+  currentUserId,
   selectedCollectionItem,
   playerMode,
   playerPanel,
@@ -201,6 +207,7 @@ export default function PlotListenerProfile({
   onSetDefaultMusicCommunityPreference,
   onActiveProfileSectionChange,
   onCollectionSelection,
+  onOpenSourceDashboard,
   onReturnToPlotTabs,
 }: PlotListenerProfileProps) {
   const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === 'singles') ?? null;
@@ -250,6 +257,16 @@ export default function PlotListenerProfile({
               </div>
             ))}
           </div>
+
+          {managedArtistBands.length > 0 ? (
+            <div data-slot="profile-source-identity-access">
+              <SourceAccountSwitcher
+                sources={managedArtistBands}
+                currentUserId={currentUserId}
+                onSelectSource={onOpenSourceDashboard}
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="plot-wire-card-muted bg-white p-4">

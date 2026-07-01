@@ -291,7 +291,10 @@ describe('/plot UX regression lock', () => {
     expect(listenerProfileSource).toContain('data-slot="expanded-profile-player-strip"');
     expect(listenerProfileSource).toContain('{playerPanel}');
     expect(listenerProfileSource).toContain('Return to Plot Tabs');
-    expect(listenerProfileSource).not.toContain('SourceAccountSwitcher');
+    expect(listenerProfileSource).toContain('SourceAccountSwitcher');
+    expect(listenerProfileSource).toContain('data-slot="profile-source-identity-access"');
+    expect(listenerProfileSource).toContain('managedArtistBands.length > 0');
+    expect(listenerProfileSource).toContain('onSelectSource={onOpenSourceDashboard}');
     expect(listenerProfileSource).not.toContain('Source Dashboard');
     expect(listenerProfileSource).not.toContain('Release Deck');
     expect(listenerProfileSource).not.toContain('Print Shop');
