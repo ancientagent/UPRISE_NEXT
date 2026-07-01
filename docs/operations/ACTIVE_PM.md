@@ -35,9 +35,9 @@ Keep updates small. Do not paste full audit reports here. Link to the owner spec
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Base HEAD at resolver/onboarding review: `83108f1` (`docs: refresh active PM after cleanup (#153)`)
-- Active implementation branch: `docs/active-pm-resolver-onboarding-review`
-- Last PM update source: resolver/onboarding preserved-branch review pass
+- Base HEAD at docs/audit review: `a14801e` (`docs: review resolver onboarding branches (#154)`)
+- Active implementation branch: `docs/active-pm-docs-audit-review`
+- Last PM update source: docs/audit preserved-branch review pass
 - Open PR queue at snapshot: none
 - Main worktree state at snapshot: clean before this docs slice
 
@@ -50,8 +50,8 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 | Field | Current Value |
 | --- | --- |
 | Lane | `uprise-context-steward` / branch hygiene |
-| Branch | `docs/active-pm-resolver-onboarding-review` |
-| Scope | Record resolver/onboarding branch review and remaining preserve/review queue. |
+| Branch | `docs/active-pm-docs-audit-review` |
+| Scope | Record docs/audit branch review and remaining preserve/review queue. |
 | Out of Scope | Branch deletion, worktree removal, destructive git operations, product doctrine, runtime code, provider state, database/schema changes. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
 | Companion Doc | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
@@ -102,14 +102,35 @@ Result: 4 suites passed, 16 tests passed.
 | `feat/preference-resolver-runtime-adoption` | Superseded / unsafe wholesale. Current `main` already includes resolver adoption across Fair Play, Registrar, Communities, Admin Analytics, auth/invite, smoke verification script, tests, and docs; branch snapshot would delete current later work and tracked art assets. | Cleanup candidate after approval; do not merge branch. |
 | `feat/missing-community-request-intake` | Superseded / unsafe wholesale. Current `main` already includes `MusicCommunityRequest` schema/migration, `POST /onboarding/music-community-requests`, API/web tests, onboarding UI, and owner-spec/brief docs; branch snapshot is far behind and would delete later work. | Cleanup candidate after approval; do not merge branch. |
 
+### Reviewed Superseded Branches: Docs / Audit
+
+These docs/audit branches were reviewed after PR #154 merged. Do not merge them wholesale: snapshot diffs against current `main` would remove current migrations, smokes, Active PM docs, tracked `art/` assets, and/or newer current owner-spec corrections. Current `main` already contains the durable rules and implementation coverage these branches were trying to capture. Deletion still requires explicit approval because branch removal is destructive.
+
+Evidence checked on current `main`:
+
+- `docs/PLATFORM_START_HERE.md`
+- `docs/specs/users/identity-roles-capabilities.md`
+- `docs/specs/system/registrar.md`
+- `docs/specs/media/release-deck-and-eligibility.md`
+- `docs/specs/economy/print-shop-and-promotions.md`
+- `docs/specs/events/events-and-flyers.md`
+- `docs/specs/social/message-boards-groups-blast.md`
+- `docs/handoff/README.md`
+- `docs/CHANGELOG.md`
+- focused API tests and runtime references for preference resolver, Registrar source origin, activation cutover, Release Deck caps, and profile/Away Scene notices.
+
+| Branch | Review Result | Recommended Action |
+| --- | --- | --- |
+| `audit/home-scene-community-cleanup-plan` | Superseded. The unique handoff inventoried `homeSceneCommunity` read paths, but current `main` already has the shared preference resolver, runtime adoption, write sync, activation matching, staging audit command, owner-spec notes, and newer handoffs. | Cleanup candidate after approval; do not merge branch. |
+| `audit/registrar-source-origin-compatibility` | Superseded. The unique handoff flagged Registrar source-origin resolver adoption as a follow-up; current `main` already implements and tests default-preference source-origin behavior plus current activation readiness/cutover source-origin rules. | Cleanup candidate after approval; do not merge branch. |
+| `docs/artist-identity-canon-fix` | Superseded / unsafe wholesale. Current `main` already carries Registrar-linked Artist/Band identity, source-management separation, Print Shop/event boundaries, social messaging locks, Release Deck caps, and newer business-account boundaries. The old branch also includes outdated anonymous/auto-publish business promotion language and a broad stale snapshot. | Cleanup candidate after approval; do not merge branch. |
+
 ### Preserve / Review Before Any Cleanup
 
 These branches still have unique commits or broad diffs against `main`. Do not delete, rebase, or remove their worktrees without explicit owner review.
 
 | Branch | Triage |
 | --- | --- |
-| `audit/home-scene-community-cleanup-plan` | Unique audit handoff. Preserve until reviewed for current relevance. |
-| `audit/registrar-source-origin-compatibility` | Unique audit handoff. Preserve until reviewed for current relevance. |
 | `feat/ux-batch17` | Older UX/Reliant queue outputs and runtime/test changes. Preserve until UX queue owner decides archival value. |
 | `feat/ux-batch18-prep` | Attached worktree with queue/prep docs. Preserve until UX batch decision. |
 | `feat/ux-batch18-run` | Batch 18 run outputs and UI/test changes. Preserve until UX batch decision. |
@@ -121,15 +142,13 @@ These branches still have unique commits or broad diffs against `main`. Do not d
 | `backup/phase3-runtime-followups-20260224-150716` | Backup of phase3 runtime followups. Keep until phase3 branch owner confirms safe archival/removal. |
 | `phase3-mvp-roadmap-slice88-runtime` | Older phase3 runtime branch. Review with phase3 set. |
 | `review-risk-p3-rev-002` | Older phase3 review branch. Review with phase3 set. |
-| `docs/artist-identity-canon-fix` | Unique docs/canon-aligned identity fixes. Needs review against current identity specs before cleanup. |
 
 ## Next Queue
 
-1. If approved, delete reviewed superseded resolver/onboarding branches listed above.
+1. If approved, delete reviewed superseded resolver/onboarding and docs/audit branches listed above.
 2. Review the remaining preserved unique branches in groups:
    - UX batches/prototypes: `feat/ux-batch17`, `feat/ux-batch18-prep`, `feat/ux-batch18-run`, `feat/ux-batch19-prep`, `ux-mobile-r1-build`, `ux-implementation`
    - phase3 automation/runtime: `phase3-no-automation-rollback`, `phase3-runtime-followups`, `backup/phase3-runtime-followups-20260224-150716`, `phase3-mvp-roadmap-slice88-runtime`, `review-risk-p3-rev-002`
-   - docs/audit: `audit/home-scene-community-cleanup-plan`, `audit/registrar-source-origin-compatibility`, `docs/artist-identity-canon-fix`
 3. Start the next implementation slice only after the preserved unique branches are either reviewed or explicitly deferred.
 
 ## Branches And Worktrees To Preserve Until Reviewed
@@ -149,6 +168,8 @@ These worktrees/branches contain unmerged or separately staged work. Do not remo
 - PR #150 merged into `main` at `99b0072`.
 - PR #151 merged into `main` at `c1afc9c`.
 - PR #152 merged into `main` at `c8909c4`.
+- PR #153 merged into `main` at `83108f1`.
+- PR #154 merged into `main` at `a14801e`.
 - Cleanup-candidate branches and the behind-only `feat/ux-batch18` worktree were removed after approval.
 - Pruned stale remote-tracking refs for the already-merged PR branches:
   - `origin/chore/plot-deferred-panel-quarantine`
