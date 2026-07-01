@@ -139,10 +139,12 @@ describe('/plot UX regression lock', () => {
 
     expect(plotPageSource).not.toContain("user?.displayName?.[0] || user?.username?.[0] || 'U'");
     expect(plotPageSource).not.toContain('{profilePanelState}');
+    expect(plotPageSource).toContain('data-slot="plot-top-shell"');
     expect(plotPageSource).toContain('data-slot="home-identity-layer"');
     expect(plotPageSource).toContain('data-slot="listener-avatar-bust"');
     expect(plotPageSource).toContain('data-slot="listener-recommendation-bubble"');
     expect(plotPageSource).toContain('data-slot="home-identity-copy"');
+    expect(plotPageSource).toContain('data-slot="plot-top-shell-selector-player"');
     expect(plotPageSource).toContain('flex-wrap');
     expect(plotPageSource).toContain('sm:flex-nowrap');
     expect(plotPageSource).toContain('basis-full');
@@ -151,6 +153,20 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('UPRISE {homeCityLabel}');
     expect(plotPageSource).toContain('aria-label="Notifications"');
     expect(plotPageSource).toContain('aria-label="More menu"');
+  });
+
+  it('keeps the Plot top shell as identity plus Home Scene selector plus player, not transport', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+
+    expect(plotPageSource).toContain('data-slot="plot-top-shell"');
+    expect(plotPageSource).toContain('data-slot="home-identity-layer"');
+    expect(plotPageSource).toContain('<HomeSceneSelector');
+    expect(plotPageSource).toContain('{isProfileExpanded ? null : playerPanel}');
+    expect(plotPageSource).toContain('data-slot="plot-top-shell-selector-player"');
+    expect(plotPageSource).toContain("placement={isProfileExpanded ? 'profile-bottom' : 'top'}");
+    expect(plotPageSource).not.toContain('data-slot="plot-transport"');
+    expect(plotPageSource).not.toContain('Seek mode');
+    expect(plotPageSource).not.toContain('Map view');
   });
 
   it('keeps player controls tier-driven and wheel-driven instead of exposing forbidden transport buttons', () => {
