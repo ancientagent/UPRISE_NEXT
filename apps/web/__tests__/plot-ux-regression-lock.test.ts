@@ -79,6 +79,7 @@ describe('/plot UX regression lock', () => {
   it('locks SPACE mode to selection entry and explicit return to RADIYO', () => {
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
 
     expect(plotPageSource).toContain(
       "const [playerMode, setPlayerMode] = useState<PlayerMode>('RADIYO')"
@@ -93,7 +94,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toMatch(
       /const collectionBroadcastLabel =\s*selectedCollectionItem\?\.label \?\?/
     );
-    expect(plotPageSource).toMatch(
+    expect(listenerProfileSource).toMatch(
       /selectedCollectionItem\?\.id === collectionItem\.id &&\s*playerMode === 'SPACE'/
     );
     expect(plotPageSource).toContain('const handleCollectionEject = () => {');
@@ -126,7 +127,7 @@ describe('/plot UX regression lock', () => {
     expect(playerSource).not.toContain('setPlayerMode');
     expect(plotPageSource).toContain('collectionTitle={selectedCollectionItem?.label ?? null}');
     expect(plotPageSource).toContain('broadcastLabel={playerMode ===');
-    expect(plotPageSource).toMatch(
+    expect(listenerProfileSource).toMatch(
       /selectedCollectionItem\?\.id === collectionItem\.id &&\s*playerMode === 'SPACE'/
     );
     expect(plotPageSource).toContain('setSelectedCollectionItem(item)');
@@ -221,6 +222,7 @@ describe('/plot UX regression lock', () => {
 
   it('locks expanded-profile behavior to swap out Plot tabs/body', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
     const expandedProfileBranch = plotPageSource
       .split('{isProfileExpanded ? (')[1]
       .split('\n        ) : (\n          <>')[0];
@@ -230,26 +232,29 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("placement={isProfileExpanded ? 'profile-bottom' : 'top'}");
     expect(plotPageSource).toContain('{isProfileExpanded ? null : playerPanel}');
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
-    expect(plotPageSource).toMatch(
+    expect(plotPageSource).toContain('<PlotListenerProfile');
+    expect(plotPageSource).toContain('playerPanel={playerPanel}');
+    expect(plotPageSource).toContain('onReturnToPlotTabs={toggleProfilePanel}');
+    expect(listenerProfileSource).toMatch(
       /<header[\s\S]*Profile Summary[\s\S]*Activity Score[\s\S]*Calendar[\s\S]*<\/header>[\s\S]*expandedProfileSections\.map[\s\S]*data-slot="expanded-profile-player-strip"[\s\S]*\{playerPanel\}[\s\S]*Return to Plot Tabs/
     );
     expect(plotPageSource).not.toContain('Player Context');
-    expect(plotPageSource).toMatch(
-      /const expandedProfileSections = \[\s*'Singles\/Playlists',\s*'Events',\s*'Photos',\s*'Merch',\s*'Saved Uprises',\s*'Saved Promos\/Coupons',\s*\] as const;/
+    expect(listenerProfileSource).toMatch(
+      /export const expandedProfileSections = \[\s*'Singles\/Playlists',\s*'Events',\s*'Photos',\s*'Merch',\s*'Saved Uprises',\s*'Saved Promos\/Coupons',\s*\] as const;/
     );
-    expect(plotPageSource).toContain('{expandedProfileSections.map((section) => (');
-    expect(plotPageSource).toContain('Singles/Playlists');
-    expect(plotPageSource).toContain('Events');
-    expect(plotPageSource).toContain('Photos');
-    expect(plotPageSource).toContain('Merch');
-    expect(plotPageSource).toContain('Saved Uprises');
-    expect(plotPageSource).toContain('Saved Promos/Coupons');
-    expect(plotPageSource).toContain('Activity Score');
-    expect(plotPageSource).toContain('Calendar');
+    expect(listenerProfileSource).toContain('{expandedProfileSections.map((section) => (');
+    expect(listenerProfileSource).toContain('Singles/Playlists');
+    expect(listenerProfileSource).toContain('Events');
+    expect(listenerProfileSource).toContain('Photos');
+    expect(listenerProfileSource).toContain('Merch');
+    expect(listenerProfileSource).toContain('Saved Uprises');
+    expect(listenerProfileSource).toContain('Saved Promos/Coupons');
+    expect(listenerProfileSource).toContain('Activity Score');
+    expect(listenerProfileSource).toContain('Calendar');
     expect(plotPageSource).toMatch(
       /const \[activeProfileSection, setActiveProfileSection\] =\s*useState<ExpandedProfileSection>\('Singles\/Playlists'\)/
     );
-    expect(plotPageSource).toContain('Return to Plot Tabs');
+    expect(listenerProfileSource).toContain('Return to Plot Tabs');
     expect(plotPageSource).not.toContain(
       "const collectionShelves = ['Tracks', 'Playlists', 'Saved']"
     );
@@ -261,35 +266,36 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain(
       'api.get<PlotProfileRead>(`/users/${user.id}/profile`, { token })'
     );
-    expect(plotPageSource).toContain(
+    expect(listenerProfileSource).toContain(
       "const singlesShelf = collectionShelves.find((shelf) => shelf.shelf === 'singles') ?? null;"
     );
-    expect(plotPageSource).toContain(
+    expect(listenerProfileSource).toContain(
       "const uprisesShelf = collectionShelves.find((shelf) => shelf.shelf === 'uprises') ?? null;"
     );
-    expect(plotPageSource).toContain(
+    expect(listenerProfileSource).toContain(
       "const fliersShelf = collectionShelves.find((shelf) => shelf.shelf === 'fliers') ?? null;"
     );
-    expect(plotPageSource).toMatch(
+    expect(listenerProfileSource).toMatch(
       /Saved playlist groupings appear here when they are available in your\s*collection\./
     );
-    expect(plotPageSource).toContain('No saved event artifacts or fliers yet.');
-    expect(plotPageSource).toContain('No saved Uprises or Away Scenes yet.');
-    expect(plotPageSource).toMatch(
+    expect(listenerProfileSource).toContain('No saved event artifacts or fliers yet.');
+    expect(listenerProfileSource).toContain('No saved Uprises or Away Scenes yet.');
+    expect(listenerProfileSource).toMatch(
       /Saved promos and coupons appear here with status and expiration when\s*collection support is available\./
     );
     expect(plotPageSource).not.toContain("router.push(`/users");
     expect(plotPageSource).not.toContain('href={`/users');
     expect(plotPageSource).not.toContain('href="/users');
-    expect(expandedProfileBranch).toContain('Profile Summary');
-    expect(expandedProfileBranch).toContain('data-slot="expanded-profile-player-strip"');
-    expect(expandedProfileBranch).toContain('{playerPanel}');
-    expect(expandedProfileBranch).toContain('Return to Plot Tabs');
-    expect(expandedProfileBranch).not.toContain('SourceAccountSwitcher');
-    expect(expandedProfileBranch).not.toContain('Source Dashboard');
-    expect(expandedProfileBranch).not.toContain('Release Deck');
-    expect(expandedProfileBranch).not.toContain('Print Shop');
-    expect(expandedProfileBranch).not.toContain('Registrar');
+    expect(expandedProfileBranch).toContain('<PlotListenerProfile');
+    expect(listenerProfileSource).toContain('Profile Summary');
+    expect(listenerProfileSource).toContain('data-slot="expanded-profile-player-strip"');
+    expect(listenerProfileSource).toContain('{playerPanel}');
+    expect(listenerProfileSource).toContain('Return to Plot Tabs');
+    expect(listenerProfileSource).not.toContain('SourceAccountSwitcher');
+    expect(listenerProfileSource).not.toContain('Source Dashboard');
+    expect(listenerProfileSource).not.toContain('Release Deck');
+    expect(listenerProfileSource).not.toContain('Print Shop');
+    expect(listenerProfileSource).not.toContain('Registrar');
   });
 
   it('locks expanded profile header to conditional band and promoter status cards', () => {
@@ -306,9 +312,7 @@ describe('/plot UX regression lock', () => {
 
   it('locks music-community preferences into the listener profile workspace', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
-    const expandedProfileBranch = plotPageSource
-      .split('{isProfileExpanded ? (')[1]
-      .split('\n        ) : (\n          <>')[0];
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
 
     expect(plotPageSource).toContain('getMusicCommunityPreferences(token)');
     expect(plotPageSource).toContain('addMusicCommunityPreference(musicCommunityPreferenceDraft, token)');
@@ -317,20 +321,20 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('MUSIC_COMMUNITIES.filter');
     expect(plotPageSource).toContain('resolvedSelectorMusicCommunities');
     expect(plotPageSource).toContain('homeSceneSelector.items.map((item) => item.musicCommunity.trim().toLowerCase())');
-    expect(plotPageSource).toContain('resolvedSelectorMusicCommunities.has(');
-    expect(expandedProfileBranch).toContain('Music Communities');
-    expect(expandedProfileBranch).toContain('Add a music community');
-    expect(expandedProfileBranch).toContain('Make default');
-    expect(expandedProfileBranch).toContain('Default Home Scene');
-    expect(expandedProfileBranch).toContain('Shown in Home');
-    expect(expandedProfileBranch).toContain('Profile-only until active scene');
-    expect(expandedProfileBranch).toContain('Preferences stay in your profile and re-resolve when your current city changes.');
-    expect(expandedProfileBranch).not.toContain('Create community');
-    expect(expandedProfileBranch).not.toContain('Launch community');
-    expect(expandedProfileBranch).not.toContain('Source Dashboard');
-    expect(expandedProfileBranch).not.toContain('Release Deck');
-    expect(expandedProfileBranch).not.toContain('Print Shop');
-    expect(expandedProfileBranch).not.toContain('Registrar');
+    expect(listenerProfileSource).toContain('resolvedSelectorMusicCommunities.has(');
+    expect(listenerProfileSource).toContain('Music Communities');
+    expect(listenerProfileSource).toContain('Add a music community');
+    expect(listenerProfileSource).toContain('Make default');
+    expect(listenerProfileSource).toContain('Default Home Scene');
+    expect(listenerProfileSource).toContain('Shown in Home');
+    expect(listenerProfileSource).toContain('Profile-only until active scene');
+    expect(listenerProfileSource).toContain('Preferences stay in your profile and re-resolve when your current city changes.');
+    expect(listenerProfileSource).not.toContain('Create community');
+    expect(listenerProfileSource).not.toContain('Launch community');
+    expect(listenerProfileSource).not.toContain('Source Dashboard');
+    expect(listenerProfileSource).not.toContain('Release Deck');
+    expect(listenerProfileSource).not.toContain('Print Shop');
+    expect(listenerProfileSource).not.toContain('Registrar');
   });
 
   it('locks Home Scene selector into Plot as the active scene shortcut', () => {
@@ -370,16 +374,14 @@ describe('/plot UX regression lock', () => {
   it('keeps activation context and saved Away Scenes in the listener profile, not the selector', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const selectorSource = readRepoFile('src/components/plot/HomeSceneSelector.tsx');
-    const expandedProfileBranch = plotPageSource
-      .split('{isProfileExpanded ? (')[1]
-      .split('\n        ) : (\n          <>')[0];
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
 
     expect(plotPageSource).toContain('savedAwayScenes: []');
     expect(plotPageSource).toContain('activationNotices: []');
-    expect(expandedProfileBranch).toContain('data-slot="profile-activation-notices"');
-    expect(expandedProfileBranch).toContain('data-slot="profile-saved-away-scenes"');
-    expect(expandedProfileBranch).toContain('Former proxy scene saved for listening context.');
-    expect(expandedProfileBranch).toContain('Voting follows your current verified Home Scene.');
+    expect(listenerProfileSource).toContain('data-slot="profile-activation-notices"');
+    expect(listenerProfileSource).toContain('data-slot="profile-saved-away-scenes"');
+    expect(listenerProfileSource).toContain('Former proxy scene saved for listening context.');
+    expect(listenerProfileSource).toContain('Voting follows your current verified Home Scene.');
     expect(selectorSource).not.toContain('savedAwayScenes');
     expect(selectorSource).not.toContain('profile-saved-away-scenes');
   });
@@ -617,13 +619,14 @@ describe('/plot UX regression lock', () => {
 
   it('keeps Plot continuity visible through player context and does not point no-context users into locked Discover', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
 
     expect(plotPageSource).toContain('const discoveryContextFallback = useMemo(');
     expect(plotPageSource).toContain(
       'mergeDiscoveryContextPatch(response, discoveryContextFallback)'
     );
     expect(plotPageSource).not.toContain('SceneContextBadge');
-    expect(plotPageSource).toContain('Scene Context');
+    expect(listenerProfileSource).toContain('Scene Context');
     expect(plotPageSource).toContain('Selected Community');
     expect(plotPageSource).toContain('Open Community');
     expect(plotPageSource).toContain(
