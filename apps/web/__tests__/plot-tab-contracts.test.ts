@@ -42,6 +42,27 @@ describe('plot tab contract locks', () => {
     expect(tabBodySource).not.toContain("from '@/components/plot/StatisticsPanel'");
   });
 
+  it('places Registrar at the top of Archive community information with records below', () => {
+    const plotSource = readRepoFile('src/app/plot/page.tsx');
+    const tabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
+
+    expect(plotSource).toContain('registrarSummary={registrarSummary}');
+    expect(plotSource).toContain('registrarSummaryLoading={registrarSummaryLoading}');
+    expect(plotSource).toContain('registrarSummaryError={registrarSummaryError}');
+    expect(plotSource).toContain('latestPromoterEntry={latestPromoterEntry}');
+    expect(tabBodySource).toContain('data-slot="archive-community-information"');
+    expect(tabBodySource).toContain('data-slot="archive-registrar-entry"');
+    expect(tabBodySource).toContain('data-slot="archive-registrar-records"');
+    expect(tabBodySource.indexOf('data-slot="archive-registrar-entry"')).toBeLessThan(
+      tabBodySource.indexOf('data-slot="archive-registrar-records"')
+    );
+    expect(tabBodySource).toContain('Open Registrar');
+    expect(tabBodySource).toContain('Records / Status History');
+    expect(tabBodySource).not.toContain('Open Release Deck');
+    expect(tabBodySource).not.toContain('Open Print Shop');
+    expect(tabBodySource).not.toContain('SourceAccountSwitcher');
+  });
+
   it('removes the fake NYC fallback from statistics city scope', () => {
     const statisticsSource = readRepoFile('src/components/plot/StatisticsPanel.tsx');
 
