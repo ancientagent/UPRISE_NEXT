@@ -17,6 +17,7 @@ Defines the Registrar as the listener-side civic registration surface inside The
 ## Functional Requirements
 - Registrar is a Home Scene civic surface (Activity Feed context in canon narrative).
 - Registrar records and tracks registration intent/status.
+- When Registrar is surfaced inside Plot Archive/community information, the Registrar entry/control belongs on top and registrar records/status history belong below it.
 - Registrar actor rule:
   - Registrar belongs to the listener/base identity side
   - source-facing routes may still expose transitional links into `/registrar` during current MVP runtime, but that bridge does not change the actor model or make Registrar a source-side tool
@@ -241,7 +242,8 @@ Sect Uprise broadcast boundary at
   - Submitter-only action for materialized registrations.
   - Idempotently links eligible registrar members (`existing_user` + `claimed`) into canonical `ArtistBandMember` rows.
 - Registrar web entrypoint + intake UI (slice 10):
-  - Plot scene activity panel includes explicit `Open Registrar` action.
+  - Dedicated `/registrar` web intake exists for Registrar workflows.
+  - The previous non-expanded Plot Registrar shortcut/context panel is removed; future Plot placement should follow the Archive/community information rule with Registrar on top and records/status history below.
   - `/registrar` route now presents `Band / Artist Registration` option before form entry.
   - Form captures `name`, `entityType`, and member roster (`name`, `email`, `city`, `instrument`).
   - Client resolves Home Scene tuple to city-tier scene ID and enforces GPS-verified submit gate before API call.

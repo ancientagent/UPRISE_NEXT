@@ -66,11 +66,12 @@ Current MVP shell note:
   - following a source is awareness subscription, not automatic event-calendar population under the intended action model
   - calendar behavior may sync/export to Google / Apple calendars
 - Promotions/business surfaces are distinct from Activity Feed, but are deferred from the current MVP Plot tab set.
-- Registrar entry is part of Plot civic workflow and should be accessed from within The Scenery.
-- Scenery / Scene Map rule:
-  - Scene Map is inherent to the Scene and lives inside The Scenery surface.
-  - The Scenery is the dedicated community-information surface within The Plot (not a mini widget).
-  - Registrar lives within The Scenery as a feature/module, not as a separate peer default-screen section.
+- Registrar entry is part of Plot civic workflow and should be accessed from within Archive/community information.
+- Archive/community information / Scene Map rule:
+  - Scene Map is inherent to the Scene and lives inside the Archive/community information surface.
+  - Archive/community information is the dedicated community-information surface within The Plot (not a mini widget).
+  - Registrar lives within Archive/community information as a feature/module, not as a separate peer default-screen section.
+  - When Registrar is rendered in this surface, the Registrar entry/control belongs on top and registrar records/status history belong below it.
   - Current MVP Plot tier toggles expose `city` and `state` only.
   - The broader platform model may still retain `national`, but `national` is deferred from the live MVP Plot surface until population justifies it.
   - Parent community context remains anchored to the active community identity (`city + state + music community`) during tier toggles unless explicitly changed by user.
@@ -102,9 +103,9 @@ Current MVP shell note:
   - `GET /communities/active/statistics`
 - Current Archive modules consume active-scene statistics fallback when no explicit community anchor is selected; this is descriptive read-only context, not an interactive statistics tab.
 - Plot player controls and Archive descriptive reads clamp active MVP tier selection to `city` and `state`.
-- Plot Scene Activity panel now integrates registrar status read context:
-  - fetches submitter-owned Artist/Band registrar entry summary from `GET /registrar/artist/entries`,
-  - displays registration totals/status summary while retaining explicit `Open Registrar` navigation.
+- Plot no longer renders a forced non-expanded Registrar/context companion panel.
+- Expanded listener profile status cards may still derive read-only registrar-linked identity status from `GET /registrar/artist/entries`.
+- Future Registrar placement should use the Archive/community information rule above instead of a generic always-visible Plot box.
 - Plot Archive descriptive reads share a unified selected-community anchor in the page state to keep tier/context reads consistent across modules.
 - Plot and statistics read endpoints now flow through typed web client wrappers (`apps/web/src/lib/communities/client.ts`, `apps/web/src/lib/discovery/client.ts`) for centralized route contract management.
 
@@ -188,7 +189,7 @@ Current MVP shell note:
 ## Future Work & Open Questions
 
 - Add registrar entry component and motion lifecycle surfaces.
-- Continue Scene Map/statistics payload contract work in `docs/specs/communities/scene-map-and-metrics.md` for future Scenery/expanded Archive surfaces.
+- Continue Scene Map/statistics payload contract work in `docs/specs/communities/scene-map-and-metrics.md` for future Archive/community information surfaces.
 - Execute the dedicated statistics design checklist only when that later surface is reactivated.
 - Lock the exact notification/update rendering split between feed-post expressions and the profile-strip notification icon.
 

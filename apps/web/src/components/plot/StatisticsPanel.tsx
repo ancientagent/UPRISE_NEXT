@@ -1,7 +1,7 @@
 'use client';
 
 // DEFERRED_PLOT_PANEL_DO_NOT_IMPORT_IN_ACTIVE_PLOT
-// Retained for future Scenery/Archive exploration only. Current MVP `/plot`
+// Retained for future Archive/community information/Archive exploration only. Current MVP `/plot`
 // Archive uses read-only descriptive modules, not this interactive explorer.
 
 import { useState, useEffect } from 'react';

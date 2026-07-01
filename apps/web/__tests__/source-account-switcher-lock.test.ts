@@ -11,6 +11,7 @@ describe('source account switcher lock', () => {
   it('keeps the one-account source-context switcher language in the component', () => {
     const switcherSource = readRepoFile('src/components/source/SourceAccountSwitcher.tsx');
     const plotSource = readRepoFile('src/app/plot/page.tsx');
+    const sourceDashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
 
     expect(switcherSource).toContain('Source Accounts');
     expect(switcherSource).toContain('Switch account context');
@@ -19,7 +20,10 @@ describe('source account switcher lock', () => {
     expect(switcherSource).toContain('currentUserId');
     expect(switcherSource).toContain('activeSourceUserId === currentUserId');
     expect(switcherSource).toContain('setActiveSourceId(source.id, currentUserId)');
-    expect(plotSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
-    expect(plotSource).toContain('currentUserId={user?.id ?? null}');
+    expect(sourceDashboardSource).toContain('SourceAccountSwitcher');
+    expect(sourceDashboardSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
+    expect(sourceDashboardSource).toContain('currentUserId={user?.id ?? null}');
+    expect(plotSource).not.toContain('SourceAccountSwitcher');
+    expect(plotSource).not.toContain("onSelectSource={() => router.push('/source-dashboard')}");
   });
 });

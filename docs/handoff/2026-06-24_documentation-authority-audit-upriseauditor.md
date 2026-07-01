@@ -708,7 +708,7 @@ Proposed new docs/indexes:
       - Phase 3 (source entities): Artist/Band, Release Deck URL-only,
         Print Shop event creation, source attribution.
       - Phase 4 (events/archive/community history): read-only events,
-        archive descriptive, future Scenery.
+        archive descriptive, future Archive/community information.
       - Phase 5 (hosted stack): Vercel/Fly/Neon staging, deploy matrix,
         env ownership.
       - Phase 6 (business/monetization): DEFERRED.
@@ -766,7 +766,7 @@ What gets phased out later:
 | Support button              | Derived state, not a button                      | canon/Master Narrative §3.2 still lists SUPPORT as action; old stats docs                                | Agent adds Support button                                   | Reconcile Narrative §3.2; extend docs-lint                        | no                       |
 | project vs cause            | cause is canonical product term                  | runtime uses type=project_registration; registrar.md uses project                                          | Agent uses project in new user-facing copy                  | Migrate in single bounded pass or annotate registrar.md that cause is forward term | yes                     |
 | Promotional slot            | 4th paid ad-attachment slot in Release Deck, not extra song | canon Revenue Strategy §"4th Release Deck Slot" vs identity spec §4.2 "3 + 4th"; some docs read "3 OR 4" | Agent models slot as alternate music slot                    | Spec-side reconciliation; brief summary                          | no                       |
-| Stats/Scene Map as Plot tab | Descriptive only, no interactive StatisticsPanel | statistics-page-design-task-list.md is "active design backlog"; SceneMap spec has interactive StatisticsPanel as future Scenery | Agent tries to reactivate Statistics tab                    | plot-and-scene-plot.md + scene-map-and-metrics.md alignment is good; brief note | no                       |
+| Stats/Scene Map as Plot tab | Descriptive only, no interactive StatisticsPanel | statistics-page-design-task-list.md is "active design backlog"; SceneMap spec has interactive StatisticsPanel as future Archive/community information | Agent tries to reactivate Statistics tab                    | plot-and-scene-plot.md + scene-map-and-metrics.md alignment is good; brief note | no                       |
 | Genre Selection copy        | "Music Community" required                       | Glossary says deprecated; no enforcement                                                                   | Agent writes "Genre Selection" in onboarding                | Add docs-lint rule for "Genre Selection" / "genre selection"      | no                       |
 | Observer term               | Deprecated; use Visitor                         | Glossary says deprecated; no enforcement                                                                   | Agent uses Observer                                          | Add docs-lint rule                                              | no                       |
 | Print Shop as source-facing | Print Shop is source-facing                     | MVP_SOURCE_AND_FEED_RULES calls it out; spec/business-monetization boundary packet says it's the only source-facing event lane | Agent models listener-facing event creation in Plot          | Already covered; reinforce in WHATS_DEFERRED                     | no                       |

@@ -23,7 +23,6 @@ import RadiyoPlayerPanel, {
   type PlayerTier,
   type RotationPool,
 } from '@/components/plot/RadiyoPlayerPanel';
-import { SourceAccountSwitcher } from '@/components/source/SourceAccountSwitcher';
 import { getEngagementWheelActions } from '@/components/plot/engagement-wheel';
 import {
   buildRadiyoBroadcastLabel,
@@ -1092,9 +1091,8 @@ export default function PlotPage() {
               ))}
             </section>
 
-            {/* Main Content Grid */}
-            <section className="grid gap-4 border border-black bg-[#d8d8c8] p-3 lg:grid-cols-[minmax(0,1.75fr)_300px]">
-              {/* Left Panel - Active Plot Surface */}
+            {/* Active Plot Surface */}
+            <section className="border border-black bg-[#d8d8c8] p-3">
               <div className="plot-wire-panel">
                 <div className="mb-4 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
                   <p className="plot-wire-label">Active Surface</p>
@@ -1112,107 +1110,6 @@ export default function PlotPage() {
                 </div>
 
                 {renderPrimaryPlotTabBody()}
-              </div>
-
-              {/* Right Panel - Selected Community Info */}
-              <div className="space-y-4">
-                {token && managedArtistBands.length > 0 ? (
-                  <SourceAccountSwitcher
-                    sources={managedArtistBands}
-                    currentUserId={user?.id ?? null}
-                    onSelectListener={() => router.push('/plot')}
-                    onSelectSource={() => router.push('/source-dashboard')}
-                  />
-                ) : null}
-
-                <div className="plot-wire-panel">
-                  <h3 className="mb-2 font-semibold text-black">Registrar Access</h3>
-                  <p className="text-sm text-black/65">
-                    Artist/Band registration status stays visible here so Plot keeps registrar
-                    access inside the civic workflow.
-                  </p>
-
-                  {!token ? (
-                    <p className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-                      Sign in to view registrar status and continue registration work.
-                    </p>
-                  ) : registrarSummaryLoading ? (
-                    <p className="mt-4 text-sm text-black/60">Loading registrar status...</p>
-                  ) : registrarSummaryError ? (
-                    <p className="mt-4 rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
-                      {registrarSummaryError}
-                    </p>
-                  ) : registrarSummary && registrarSummary.totalEntries > 0 ? (
-                    <div className="plot-wire-card-muted mt-4 p-4">
-                      <p className="plot-wire-label">Latest Status</p>
-                      <p className="mt-1 text-sm font-medium text-black">
-                        {registrarSummary.latestStatus
-                          ? formatRegistrarEntryStatus(registrarSummary.latestStatus)
-                          : 'No recent status'}
-                      </p>
-                      <p className="mt-3 text-sm text-black/70">
-                        Entries: {registrarSummary.totalEntries} • Submitted:{' '}
-                        {registrarSummary.submittedCount} • Materialized:{' '}
-                        {registrarSummary.materializedCount}
-                      </p>
-                      <p className="mt-1 text-xs text-black/55">
-                        Invites pending: {registrarSummary.pendingInviteCount} • queued:{' '}
-                        {registrarSummary.queuedInviteCount} • sent:{' '}
-                        {registrarSummary.sentInviteCount} • failed:{' '}
-                        {registrarSummary.failedInviteCount}
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="mt-4 text-sm text-black/60">
-                      No Artist/Band registrar entries yet.
-                    </p>
-                  )}
-
-                  <div className="mt-4">
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
-                        onClick={() => router.push('/registrar')}
-                      >
-                        Open Registrar
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {selectedCommunity && (
-                  <div className="plot-wire-panel">
-                    <h3 className="mb-3 font-semibold text-black">Selected Community</h3>
-                    <div className="plot-wire-card-muted p-4">
-                      <p className="font-medium text-black">
-                        {selectedCommunityLabel ?? selectedCommunity.name}
-                      </p>
-                      <p className="mt-1 text-sm text-black/60">
-                        {selectedCommunity.memberCount?.toLocaleString()} members
-                      </p>
-                      {selectedCommunity.distance && (
-                        <p className="mt-1 text-xs text-black/50">
-                          Distance:{' '}
-                          {selectedCommunity.distance < 1000
-                            ? `${Math.round(selectedCommunity.distance)}m`
-                            : `${(selectedCommunity.distance / 1000).toFixed(1)}km`}
-                        </p>
-                      )}
-                      <div className="mt-3">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-full border-black bg-white text-xs font-semibold uppercase tracking-[0.12em]"
-                          onClick={() => router.push(`/community/${selectedCommunity.id}`)}
-                        >
-                          Open Community
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </section>
           </>

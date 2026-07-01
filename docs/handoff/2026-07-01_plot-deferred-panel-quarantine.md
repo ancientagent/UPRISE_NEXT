@@ -40,7 +40,7 @@ Retained Plot panel source files for `StatisticsPanel` and `PlotPromotionsPanel`
 - No provider or environment changes.
 
 ## Outstanding Questions & Recommendations
-- Recommended next step: if future work reactivates Statistics, Promotions, or Scenery-style exploration, update the owner spec first and change the regression locks in the same slice.
+- Recommended next step: if future work reactivates Statistics, Promotions, or Archive/community-information-style exploration, update the owner spec first and change the regression locks in the same slice.
 
 ## References
 - Specs:
