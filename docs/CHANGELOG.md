@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added expanded `/plot` profile source identity access for users who manage Artist/Band accounts while keeping source tools out of non-expanded Plot and listener collection body; see `docs/handoff/2026-07-01_profile-source-identity-access.md`.
 - Removed the forced non-expanded `/plot` community context panel and deprecated community-information naming in favor of Archive/community information language; see `docs/handoff/2026-07-01_plot-context-panel-removal.md`.
 - Promoted Discover transport front-door/back-door, map-view, seek-mode, saved-Uprise, and no-transport-inside-Plot rules into active owner docs; see `docs/handoff/2026-07-01_discover-transport-owner-spec-promotion.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` after the Plot/Home/Profile/Print Shop cleanup run so future agents start from current `main` and preserve the remaining UX reference worktrees; see `docs/handoff/2026-07-01_active-pm-post-plot-cleanup-refresh.md`.

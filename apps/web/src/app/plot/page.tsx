@@ -1060,6 +1060,8 @@ export default function PlotPage() {
             canViewCollection={canViewCollection}
             collectionShelves={collectionShelves}
             savedAwayScenes={savedAwayScenes}
+            managedArtistBands={managedArtistBands}
+            currentUserId={user?.id ?? null}
             selectedCollectionItem={selectedCollectionItem}
             playerMode={playerMode}
             playerPanel={playerPanel}
@@ -1068,6 +1070,7 @@ export default function PlotPage() {
             onSetDefaultMusicCommunityPreference={handleSetDefaultMusicCommunityPreference}
             onActiveProfileSectionChange={setActiveProfileSection}
             onCollectionSelection={handleCollectionSelection}
+            onOpenSourceDashboard={() => router.push('/source-dashboard')}
             onReturnToPlotTabs={toggleProfilePanel}
           />
         ) : (

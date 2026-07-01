@@ -92,7 +92,7 @@ Recent handoffs to use only after the locks above:
 - `/plot` renders the Home Scene selector from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
 - Use `switch`, `select`, or `tune` for Home Scene selector movement. Reserve `transport` for Away Scene movement because the user is leaving their Home Scene context; intended transport entry points are Discover and saved Uprises in the user's collection.
 - Discover transport is not part of Plot. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, and saved Uprises belong to personal-player/Away Scene listening rather than the Home Scene selector.
-- Non-expanded Plot should not force a companion context panel beside Feed, Events, or Archive. Source selector access should route through profile/source identity in a separate slice, and Registrar placement belongs in Archive/community information with Registrar on top and records/status history below.
+- Non-expanded Plot should not force a companion context panel beside Feed, Events, or Archive. Source identity access may appear inside the expanded listener profile for users who manage Artist/Band sources, but source tools still live in source/admin surfaces. Registrar placement belongs in Archive/community information with Registrar on top and records/status history below.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
 - `RADIYO` uses `Play It Loud` and `Upvote`.
@@ -171,7 +171,7 @@ Boundaries:
 - do not make follower counts or clout metrics primary
 - do not make it a separate route for current Home-side interaction
 - do not confuse this collection workspace with Artist Profile
-- do not place Release Deck, Print Shop, source-posting, or source-management controls here
+- do not place Release Deck, Print Shop, source-posting, or source-management tools here; the only approved source-side affordance in this workspace is source identity/account switching for users who manage Artist/Band sources
 
 ## Feed Tab
 
@@ -295,7 +295,7 @@ For Claude Designer, Stitch, Gemini, or similar tools:
 - stop the tool if it says Plot is a standalone screen
 - stop the tool if it creates `Statistics` or `Promotions` as current MVP tabs
 - stop the tool if it places the engagement wheel on Artist Profile
-- stop the tool if it puts source-management tools inside the listener profile
+- stop the tool if it puts source-management tools inside the listener profile; source identity/account switching is allowed only as a profile header access point for managed Artist/Band accounts
 - stop the tool if it designs a Spotify/TikTok/Instagram clone
 
 ## Current Upload / Context Pack

@@ -11,6 +11,7 @@ describe('source account switcher lock', () => {
   it('keeps the one-account source-context switcher language in the component', () => {
     const switcherSource = readRepoFile('src/components/source/SourceAccountSwitcher.tsx');
     const plotSource = readRepoFile('src/app/plot/page.tsx');
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
     const sourceDashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
 
     expect(switcherSource).toContain('Source Accounts');
@@ -24,6 +25,10 @@ describe('source account switcher lock', () => {
     expect(sourceDashboardSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
     expect(sourceDashboardSource).toContain('currentUserId={user?.id ?? null}');
     expect(plotSource).not.toContain('SourceAccountSwitcher');
-    expect(plotSource).not.toContain("onSelectSource={() => router.push('/source-dashboard')}");
+    expect(listenerProfileSource).toContain('SourceAccountSwitcher');
+    expect(listenerProfileSource).toContain('data-slot="profile-source-identity-access"');
+    expect(listenerProfileSource).toContain('onSelectSource={onOpenSourceDashboard}');
+    expect(listenerProfileSource).not.toContain('Release Deck');
+    expect(listenerProfileSource).not.toContain('Print Shop');
   });
 });
