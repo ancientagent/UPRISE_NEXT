@@ -22,8 +22,8 @@ This file is not product doctrine, canon, or an owner spec. Durable product trut
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Current `main` HEAD: `a19e863` (`fix(web): remove plot context panel (#168)`)
-- Local worktree state at refresh: clean after PR #168 merge
+- Current `main` HEAD: `1ce5607` (`feat(web): add profile source identity access (#170)`)
+- Local worktree state at refresh: clean after PR #170 merge
 - Active implementation branch: none.
 - Open PR queue at refresh: none (`gh pr list --state open --limit 100` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
@@ -56,6 +56,7 @@ The previous PM snapshot still pointed at the approved cleanup closeout around `
 - PR #164 / `3725a6f`: extracted expanded `/plot` listener profile body into `PlotListenerProfile`.
 - PR #165 / `aac8ccd`: removed direct `/plot` Print Shop shortcut and kept Print Shop source-facing.
 - PR #168 / `a19e863`: removed the forced non-expanded `/plot` context panel, removed deprecated community-information terminology, and locked Registrar future placement as Archive/community information with Registrar on top and records below.
+- PR #170 / `1ce5607`: added source identity/account switching inside the expanded `/plot` listener profile for users who manage Artist/Band sources while keeping source tools out of non-expanded Plot and listener collection body.
 
 Use these handoffs for the current cleanup trail:
 
@@ -66,6 +67,7 @@ Use these handoffs for the current cleanup trail:
 - `docs/founder-sessions/2026-07-01_plot-home-scene-visual-skin.md`
 - `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`
 - `docs/handoff/2026-07-01_plot-context-panel-removal.md`
+- `docs/handoff/2026-07-01_profile-source-identity-access.md`
 - `docs/founder-sessions/2026-07-01_plot-archive-registrar-placement.md`
 
 ## Current Branch / Worktree State
@@ -78,7 +80,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `main` | `a19e863` | clean after PR #168 merge |
+| `/home/baris/UPRISE_NEXT` | `main` | `1ce5607` | clean after PR #170 merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -115,13 +117,12 @@ Treat these as branch-hygiene candidates only, not product work.
 
 ## Next Queue
 
-1. If needed, scope a separate expanded-profile/source-identity slice for source selector access. Do not reintroduce source switching into non-expanded Plot.
-2. If building Registrar placement, start from `docs/specs/communities/plot-and-scene-plot.md` and `docs/specs/system/registrar.md`: Registrar on top, records/status history below, inside Archive/community information.
-3. Continue small Plot structural cleanup from clean `main` only if a region is clearly named and behavior is already locked by tests.
-4. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
-5. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
-6. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
-7. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
+1. If building Registrar placement, start from `docs/specs/communities/plot-and-scene-plot.md` and `docs/specs/system/registrar.md`: Registrar on top, records/status history below, inside Archive/community information.
+2. Continue small Plot structural cleanup from clean `main` only if a region is clearly named and behavior is already locked by tests.
+3. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
+4. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
+5. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
+6. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
 
 ## PM Usage Rules For Agents
 

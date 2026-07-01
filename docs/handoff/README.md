@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_active-pm-post-profile-source-refresh.md`](./2026-07-01_active-pm-post-profile-source-refresh.md) — refreshes `ACTIVE_PM` after PR #170, records current `main`, empty PR queue, and completed profile source identity access slice.
 - [`2026-07-01_profile-source-identity-access.md`](./2026-07-01_profile-source-identity-access.md) — moves source account identity access into the expanded `/plot` listener profile while keeping source tools out of non-expanded Plot and listener collection body.
 - [`2026-07-01_plot-context-panel-removal.md`](./2026-07-01_plot-context-panel-removal.md) — removes the forced non-expanded `/plot` community context panel and records the Archive/community information placement clarification.
 - [`2026-07-01_discover-transport-owner-spec-promotion.md`](./2026-07-01_discover-transport-owner-spec-promotion.md) — promotes Discover front-door/back-door, map-view, seek-mode, saved-Uprise, and no-transport-inside-Plot founder-session decisions into active owner docs.
