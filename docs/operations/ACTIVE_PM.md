@@ -24,7 +24,7 @@ This file is not product doctrine, canon, or an owner spec. Durable product trut
 - Base branch: `main`
 - Current `main` HEAD at refresh start: `4e6aab8` (`Capture reviewer/auditor cleanup protocol (#178)`)
 - Local worktree state at refresh: clean after PR #178 merge
-- Active implementation branch: `docs/active-pm-post-reviewer-protocol-refresh` (docs-only PM closeout branch)
+- Active implementation branch after this refresh merges: none; start the next selected slice from current `main`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 50` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -37,9 +37,9 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 
 | Field | Current Value |
 | --- | --- |
-| Lane | context-steward / branch hygiene |
-| Branch | `docs/active-pm-post-reviewer-protocol-refresh` |
-| Scope | Refresh `ACTIVE_PM` after PR #178 and the founder-approved branch cleanup. |
+| Lane | none active after this refresh merges |
+| Branch | none after this refresh merges |
+| Scope | Await next selected cleanup/design/runtime slice from current `main`. |
 | Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, branch/worktree deletion beyond the already-completed approved cleanup. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
 | Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md` |
