@@ -24,9 +24,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-02
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `9285b25` (`Docs: refresh PM after UX inventory (#184)`)
-- Local worktree state at refresh: clean after PR #184 merge
-- Active implementation branch during this refresh: `test/plot-profile-player-state-contract`
+- Current `main` HEAD at refresh start: `861f05b` (`Test: lock Plot profile/player state contract (#185)`)
+- Local worktree state at refresh: clean after PR #185 merge
+- Active implementation branch during this refresh: `docs/active-pm-post-plot-profile-player-state-refresh`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -40,12 +40,12 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex su
 | Field | Current Value |
 | --- | --- |
 | Lane | `UX_UI` |
-| Branch | `test/plot-profile-player-state-contract` |
-| Scope | Add current-compatible Plot profile/player state contract tests inspired by preserved UX state-machine reference work, without importing old prototype runtime/components. |
-| Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, branch/worktree deletion beyond the already-completed approved cleanup. |
-| Owner Contract | `docs/specs/communities/plot-and-scene-plot.md` |
-| Companion Docs | `docs/agent-briefs/UI_CURRENT.md`, `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
-| Validation | `pnpm --filter web test -- plot-profile-player-state-contract.test.ts plot-ux-regression-lock.test.ts`, `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
+| Branch | `docs/active-pm-post-plot-profile-player-state-refresh` |
+| Scope | Refresh Active PM and branch workspace registry after PR #185 merged. |
+| Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, and preserved reference branch/worktree cleanup. |
+| Owner Contract | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/operations/ACTIVE_PM.md` |
+| Companion Docs | `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`, `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md` |
+| Validation | `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
 
@@ -73,11 +73,13 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #182 / `79467df`: refreshed `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #181 merged.
 - PR #183 / `4ecbb37`: inventoried preserved UX reference branches/worktrees and recorded selective extraction guidance without merging prototype code.
 - PR #184 / `9285b25`: refreshed `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #183 merged.
-- Current branch follow-up: adds Plot profile/player state contract tests and closes PR #184 registry state.
+- PR #185 / `861f05b`: added current-compatible Plot profile/player state contract tests and closed PR #184 registry state.
+- Current branch follow-up: refreshes Active PM and branch registry after PR #185 merged.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
+- `docs/handoff/2026-07-02_active-pm-post-plot-profile-player-state-refresh.md`
 - `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`
 - `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md`
 - `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`
@@ -108,15 +110,13 @@ Use these handoffs / founder-session notes for the current cleanup trail:
 
 ### Open PR Queue
 
-| PR | Branch | Scope | Status | Next Signal |
-| --- | --- | --- | --- | --- |
-| #185 | `test/plot-profile-player-state-contract` | Focused Plot profile/player state contract regression test plus execution-state docs. | Open | Watch checks; squash merge if green, then return workspace to `main` and refresh registry/PM on the next substantive branch. |
+None at refresh time.
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `test/plot-profile-player-state-contract` until this test slice merges; `main` after merge | `9285b25` at refresh start | clean after PR #184 merge; this test/docs branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-plot-profile-player-state-refresh` until this PM refresh merges; `main` after merge | `861f05b` at refresh start | clean after PR #185 merge; this docs branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
