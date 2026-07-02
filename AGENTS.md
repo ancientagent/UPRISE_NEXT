@@ -28,6 +28,7 @@ Load only the minimum additional material required for the task.
 - Recurring incidents / operating failures: `docs/solutions/README.md` + only the relevant playbook
 - Multi-agent/tooling strategy or handoff review: `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` + `docs/specs/system/documentation-framework.md` + `docs/handoff/README.md` + the latest relevant dated handoff(s)
 - Current execution state / PM queue: `docs/operations/ACTIVE_PM.md` after the focused default docs; use it for active branch, PR, blocker, and worktree state only, not product doctrine.
+- Branch/worktree/workspace creation or cleanup: `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` + `docs/operations/ACTIVE_PM.md`; creation is not complete until the registry has the branch/worktree/agent assignment entry.
 
 ## Legacy Reference Archives (Non-Canon)
 - `docs/legacy/uprise_mob/` — prior mobile-era documentation set (reference only)
@@ -47,10 +48,12 @@ Load only the minimum additional material required for the task.
 - **Canon import rule:** never bulk-overwrite `docs/canon/*.md` from external exports; stage raw imports in `docs/legacy/` and apply intentional canon edits separately.
 - **Contract owner rule:** cross-system product rules must live in one owner spec or owner section under `docs/specs/**`; lane briefs and handoffs should summarize/link instead of duplicating full rules. Use `docs/specs/system/documentation-framework.md`.
 - **Rollback checkpoint rule:** for multi-agent throughput runs, follow `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` and default to non-destructive rollback (`git switch`/`git revert`); use `git reset --hard` only with explicit in-thread approval.
+- **Branch/workspace registry rule:** before creating, assigning, pushing, preserving, closing, merging, or deleting a branch/worktree/external-agent workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` with branch name, path, status, owner, assigned agents, scope, base/head, PR/Linear link, and closeout plan. Run `pnpm run workspace:audit` before push/PR/closeout.
 
 ## Working Rules
 - Prefer current repo truth over stale handoff memory.
 - Do not audit or implement against a mixed uncommitted worktree unless you are the explicit implementation owner.
+- Do not create off-book branches or worktrees. If a branch/worktree exists, it must be registered or explicitly classified for cleanup.
 - QA findings must be tied to a commit/branch state and fixture/setup context.
 - Classify issues before acting: `bug`, `stale`, `environment`, `fixture/data`, or `product decision`.
 - Use dated handoffs as context, not as higher authority than current code/specs.

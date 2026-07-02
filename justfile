@@ -4,6 +4,13 @@ set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
 default:
     @just --list
 
+# Register/audit UPRISE branch, worktree, and PR workspace state.
+workspace-audit:
+    node scripts/workspace-registry.mjs audit
+
+workspace-register +args:
+    node scripts/workspace-registry.mjs add {{args}}
+
 # Deprecated for UPRISE review/audit gates.
 # Use Codex subagents instead:
 # - basic/small: gpt-5.3-codex-spark

@@ -18,6 +18,8 @@ Use it to answer:
 
 This file is not product doctrine, canon, or an owner spec. Durable product truth remains in `docs/specs/**`, canon, active briefs, current runtime code, and tests. Linear remains execution state. This file only helps agents avoid stale branches, duplicated audits, and context overloading.
 
+For branch/worktree ownership, assigned agents, what is on each branch, and closeout plan, use `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`. Any branch/worktree/workspace creation or cleanup must update that registry and pass `pnpm run workspace:audit`.
+
 ## Current Workspace Snapshot
 
 - Snapshot date: 2026-07-02
@@ -42,8 +44,8 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex su
 | Scope | Await next selected cleanup/design/runtime slice from current `main`. |
 | Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, branch/worktree deletion beyond the already-completed approved cleanup. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
-| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/agent-briefs/EXTERNAL_TOOLS.md`, `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md` |
-| Validation | `pnpm run docs:lint`, `git diff --check` |
+| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/agent-briefs/EXTERNAL_TOOLS.md`, `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md` |
+| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
 
@@ -67,11 +69,13 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #178 / `4e6aab8`: captured and promoted the reviewer/auditor cleanup protocol so large refactors, complex issues, prototype branches, and uncertain branch-absorption cleanup require independent reviewer/auditor classification before merge/delete decisions.
 - PR #179 / `58b0216`: refreshed `ACTIVE_PM` after PR #178.
 - PR #180 / `7e130ce`: routed UPRISE review/audit gates through Codex agents by default, kept `uprisewatchdog` heartbeat-only, and marked Hermes reviewer/auditor briefs as manual fallback scaffolding.
+- Current branch / PR #181 follow-up: added the Branch / Workspace Registry so future branches, worktrees, PR heads, preserved refs, and external-agent workspaces must be recorded with owner, assigned agents, scope, status, and closeout plan.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
 - `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`
+- `docs/handoff/2026-07-02_active-pm-post-codex-routing-refresh.md`
 - `docs/handoff/2026-07-01_active-pm-post-reviewer-protocol-refresh.md`
 - `docs/handoff/2026-07-01_active-pm-post-plot-top-shell-component-refresh.md`
 - `docs/handoff/2026-07-01_plot-top-shell-component-extraction.md`
@@ -149,6 +153,7 @@ The following audited, absorbed/superseded branches were deleted locally and rem
 - If a task is tiny and low-risk, do not create a process packet unless it helps.
 - If a task is significant/risky, cross-lane, provider/db/schema/canon/doc-authority work, complex refactor, broad branch/worktree cleanup, prototype branch absorption, or an external-agent handoff, require the execution packet blocks named in the active documentation framework and use an independent reviewer/auditor pass when branch absorption or cleanup risk is non-trivial.
 - For review/audit model routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`: `gpt-5.3-codex-spark` for basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
+- Before creating, assigning, pushing, preserving, merging, closing, or deleting a branch/worktree/workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` and run `pnpm run workspace:audit`.
 
 ## Refresh Checklist
 

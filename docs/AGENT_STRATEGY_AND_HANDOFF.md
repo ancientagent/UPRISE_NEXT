@@ -33,7 +33,7 @@ Every coding agent should start from `AGENTS.md`, `docs/PLATFORM_START_HERE.md`,
 
 ### Task-specific loading
 Load only the materials directly needed for the current task:
-- Current execution-state check: use `docs/operations/ACTIVE_PM.md` to see the active branch/PR queue, blockers, worktrees to preserve, and next execution signal. It is not product truth and should not replace owner specs or current runtime evidence.
+- Current execution-state check: use `docs/operations/ACTIVE_PM.md` to see the active branch/PR queue, blockers, worktrees to preserve, and next execution signal. Use `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` to verify branch/worktree/external-agent workspace ownership, assigned agents, scope, status, and closeout plan. These files are not product truth and should not replace owner specs or current runtime evidence.
 - Section-specific work: load `docs/agent-briefs/CONTEXT_ROUTER.md` first, then the matching focus-lane brief in `docs/agent-briefs/`. Treat those briefs as routers; follow only the code/spec/lock links that match the files or surface being changed.
 - Web route/UI work: `apps/web/WEB_TIER_BOUNDARY.md` + route specs/founder locks
 - API/runtime work: relevant module specs + shared types/contracts
@@ -107,6 +107,8 @@ Before closing a batch or slice:
 - final QA rerun on current committed `HEAD`
 - changelog + dated handoff updated
 - `docs/operations/ACTIVE_PM.md` refreshed when the active branch, PR queue, blockers, preserved worktrees, or next execution signal changed
+- `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` updated when branch/worktree/PR status, assigned agents, scope, or closeout plan changed
+- `pnpm run workspace:audit` passed before push, PR creation, branch cleanup, and closeout
 
 ## Handoff Rules
 ### What handoffs are for

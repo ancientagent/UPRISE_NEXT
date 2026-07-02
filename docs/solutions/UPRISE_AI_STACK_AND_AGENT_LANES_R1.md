@@ -52,6 +52,7 @@ Route by lane first, tool second.
 | Design tools: Claude Designer, Stitch, Gemini, Uizard, v0 | visual exploration, mockups, screen hierarchy options, UI direction | redefining action grammar, product surfaces, data contracts, or runtime architecture | annotated design options tied to current lane brief and constraints |
 | Linear | execution queue, owner assignment, blockers, status, PR/commit links | product canon, durable specs, final founder decisions | issue with lane, owner contract, scope, acceptance criteria, validation |
 | Active PM doc | current branch/PR/worktree/blocker snapshot and next execution signal | product doctrine, final decisions, detailed specs, replacing Linear | short state update linked to owner specs, handoffs, PRs, and Linear |
+| Branch / Workspace Registry | branch, worktree, PR head, preserved prototype, and external-agent workspace ownership | product doctrine, detailed specs, replacing Linear/PM status | branch/path/status/owner/agents/scope/base/head/closeout entry and `workspace:audit` evidence |
 | Generated wiki / Devin / DeepWiki | navigation map, file discovery, orientation aid | authority, doctrine, current MVP truth without verification | map references back to repo files and owner specs |
 
 ## Lane Agents
@@ -303,11 +304,12 @@ git rev-parse --short HEAD
 git status --short
 git worktree list --porcelain
 gh pr list --state open --limit 50
+pnpm run workspace:audit
 ```
 
-Do not delete, rebase, reset, close, or clean branches/worktrees without explicit approval. Report stale or prunable branches as cleanup candidates.
+Do not create, assign, push, delete, rebase, reset, close, or clean branches/worktrees without a matching entry in `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`. Report stale or prunable branches as cleanup candidates.
 
-After branch/PR/worktree cleanup or when the active branch changes, refresh `docs/operations/ACTIVE_PM.md` if the next agent would make a different routing decision from the old snapshot.
+After branch/PR/worktree cleanup or when the active branch changes, refresh `docs/operations/ACTIVE_PM.md` if the next agent would make a different routing decision from the old snapshot, and update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` whenever branch status, assigned agents, scope, or closeout plan changes.
 
 ## Safety Rules
 
