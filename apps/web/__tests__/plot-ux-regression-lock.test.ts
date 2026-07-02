@@ -443,22 +443,35 @@ describe('/plot UX regression lock', () => {
 
   it('locks bottom nav and center UPRISE wheel trigger onto the /plot route', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const bottomNavSource = readRepoFile('src/components/plot/PlotBottomNav.tsx');
 
-    expect(plotPageSource).toContain('aria-label="Plot bottom navigation"');
-    expect(plotPageSource).toContain('data-slot="plot-bottom-nav"');
-    expect(plotPageSource).toContain('href="/plot"');
-    expect(plotPageSource).toContain('plot-wire-nav-button');
-    expect(plotPageSource).toContain('plot-wire-nav-center');
-    expect(plotPageSource).toContain('Open UPRISE engagement wheel');
-    expect(plotPageSource).toContain('UPRISE Wheel');
-    expect(plotPageSource).toContain('Discover');
+    expect(plotPageSource).toContain("import PlotBottomNav from '@/components/plot/PlotBottomNav';");
+    expect(plotPageSource).toContain('<PlotBottomNav');
+    expect(plotPageSource).toContain('isEngagementWheelOpen={isEngagementWheelOpen}');
+    expect(plotPageSource).toContain('playerMode={playerMode}');
+    expect(plotPageSource).toContain('wheelActions={wheelActions}');
     expect(plotPageSource).toContain(
+      'onToggleEngagementWheel={() => setIsEngagementWheelOpen((value) => !value)}'
+    );
+    expect(plotPageSource).toContain(
+      'onCloseEngagementWheel={() => setIsEngagementWheelOpen(false)}'
+    );
+    expect(plotPageSource).toContain('const bottomNav = (');
+    expect(plotPageSource).toContain('{bottomNav}');
+    expect(bottomNavSource).toContain('aria-label="Plot bottom navigation"');
+    expect(bottomNavSource).toContain('data-slot="plot-bottom-nav"');
+    expect(bottomNavSource).toContain('href="/plot"');
+    expect(bottomNavSource).toContain('plot-wire-nav-button');
+    expect(bottomNavSource).toContain('plot-wire-nav-center');
+    expect(bottomNavSource).toContain('Open UPRISE engagement wheel');
+    expect(bottomNavSource).toContain('UPRISE Wheel');
+    expect(bottomNavSource).toContain('Discover');
+    expect(bottomNavSource).toContain(
       'Discover is coming soon while MVP stays local-community-only.'
     );
-    expect(plotPageSource).toContain('Soon');
-    expect(plotPageSource).toContain('aria-disabled="true"');
+    expect(bottomNavSource).toContain('Soon');
+    expect(bottomNavSource).toContain('aria-disabled="true"');
     expect(plotPageSource).toContain('getEngagementWheelActions(playerMode)');
-    expect(plotPageSource).toContain('renderBottomNav()');
   });
 
   it('locks primary Plot tab ownership to explicit Feed/Events/Archive bodies', () => {

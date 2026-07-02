@@ -6,6 +6,10 @@ Current active `/plot` surfaces are `Feed`, `Events`, and `Archive`.
 
 `PlotPrimaryTabBody.tsx` owns the current active `Feed`, `Events`, and `Archive` body selection. Keep the route shell responsible for Plot state and selected-scene context; keep primary tab body rendering in this component unless a broader route extraction slice replaces it.
 
+## Shell Components
+
+`PlotTopShell.tsx` owns the non-expanded top shell presentation. `PlotBottomNav.tsx` owns the bottom navigation and UPRISE wheel overlay markup. Keep route-owned state, selected-scene context, and mode/tier transitions in `apps/web/src/app/plot/page.tsx`; pass only the display state and callbacks required by these shell components.
+
 ## Deferred Panels
 
 `StatisticsPanel.tsx` and `PlotPromotionsPanel.tsx` are retained implementation seams, not active MVP Plot panels.
