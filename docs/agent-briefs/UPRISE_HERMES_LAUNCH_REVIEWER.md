@@ -3,6 +3,12 @@
 Status: active
 Last Updated: 2026-06-16
 
+> Current routing note (2026-07-02): UPRISE reviews are Codex-first. Use
+> `gpt-5.3-codex-spark` for basic/small review passes and `gpt-5.5` with
+> `reasoning_effort=xhigh` for heavy/final review gates. This Hermes brief is
+> legacy/manual fallback scaffolding only when PM explicitly names
+> Hermes-specific value.
+
 ## Purpose
 
 Use this brief to configure Hermes as a post-implementation launch reviewer for a specific UPRISE issue, PR, merge commit, or release-readiness slice.

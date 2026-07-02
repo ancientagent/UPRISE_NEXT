@@ -1,5 +1,11 @@
 # Hermes Launch Review Shim
 
+Current routing note (2026-07-02): UPRISE reviews/audits are Codex-first. Use
+`gpt-5.3-codex-spark` for basic/small passes and `gpt-5.5` with
+`reasoning_effort=xhigh` for heavy/final gates. This shim is
+legacy/manual fallback scaffolding only when PM explicitly names
+Hermes-specific value.
+
 Use this shim to launch Hermes as a read-only reviewer for a named UPRISE slice.
 
 This is not a product authority document. It points Hermes to the current repo authority docs and constrains the review so it does not become a broad audit or implementation run.

@@ -9,6 +9,8 @@
 
 ### Added
 
+- Clarified UPRISE Codex-first audit/review routing so routine branch checks, stale/fixed-work checks, changed-file reviews, packet sanity, test-output summaries, PM closeout review, and final safety gates use Codex by default, with `gpt-5.3-codex-spark` for basic/small work and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final reviews or audits; see `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`.
+- Added UPRISE Hermes watchdog/manual-fallback routing: `uprisewatchdog` remains heartbeat-only, reviewer/auditor shortcuts fail closed to manual fallback pointers, legacy Hermes briefs now carry Codex-first fallback banners, and the local Codex skill documents Codex-first review/audit routing; see `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #178 and the founder-approved branch cleanup so future agents start from current `main`, preserve UX reference branches, and apply the reviewer/auditor cleanup gate; see `docs/handoff/2026-07-01_active-pm-post-reviewer-protocol-refresh.md`.
 - Added a founder-session capture and owner-doc workflow rule requiring independent reviewer/auditor classification before merge/delete decisions for large refactors, complex issues, prototype branches, or uncertain branch absorption.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #176 so the current-work snapshot points at merged `main` after Plot top-shell component extraction; see `docs/handoff/2026-07-01_active-pm-post-plot-top-shell-component-refresh.md`.
