@@ -19,6 +19,7 @@ Dated execution notes, QA reports, closeout memos, and carry-forward corrections
 - If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
 
 ## Current High-Value Handoffs
+- [`2026-07-01_plot-top-shell-component-extraction.md`](./2026-07-01_plot-top-shell-component-extraction.md) — extracts the non-expanded `/plot` top shell into `PlotTopShell` while preserving route-owned selector, player, profile, and notification behavior.
 - [`2026-07-01_active-pm-post-plot-top-shell-refresh.md`](./2026-07-01_active-pm-post-plot-top-shell-refresh.md) — refreshes `ACTIVE_PM` after PR #174, records current `main`, empty PR queue, and completed Plot top-shell composition slice.
 - [`2026-07-01_plot-top-shell-visual-composition.md`](./2026-07-01_plot-top-shell-visual-composition.md) — groups listener identity, the Home Scene selector, and the top RADIYO player into one non-expanded `/plot` visual cockpit without adding transport behavior.
 - [`2026-07-01_active-pm-post-archive-registrar-refresh.md`](./2026-07-01_active-pm-post-archive-registrar-refresh.md) — refreshes `ACTIVE_PM` after PR #172, records current `main`, empty PR queue, and completed Archive Registrar placement slice.
