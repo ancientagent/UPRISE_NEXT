@@ -9,6 +9,7 @@
 
 ### Added
 
+- Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #183 merged so the next slice starts from current `main` with `test/plot-profile-player-state-contract` as the next execution signal; see `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md`.
 - Added a read-only UX reference extraction inventory for the preserved `ux-implementation`, `ux-mobile-r1-build`, `feat/ux-batch17`, and `feat/ux-batch18-run` branches so future work selectively extracts current-compatible ideas without merging old prototype branches wholesale; see `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #181 merged so current `main` and the merged branch status are accurate; see `docs/handoff/2026-07-02_active-pm-post-branch-registry-refresh.md`.
 - Added a mandatory Branch / Workspace Registry with `workspace:register` and `workspace:audit` tooling so new branches, worktrees, open PR heads, preserved refs, and external-agent workspaces must be recorded with owner, assigned agents, scope, status, and closeout plan; see `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` and `docs/handoff/2026-07-02_active-pm-post-codex-routing-refresh.md`.
