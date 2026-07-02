@@ -9,6 +9,7 @@
 
 ### Added
 
+- Clarified UPRISE Codex-first audit/review routing so routine branch checks, stale/fixed-work checks, changed-file reviews, packet sanity, and test-output summaries use Codex by default while Hermes basic/heavy lanes remain specialist or final-gate escalations; see `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`.
 - Added UPRISE Hermes basic/heavy reviewer and auditor routing: GLM-backed `uprisereviewer+` / `upriseauditor+` final gates, MiniMax-backed `uprisereviewer-` / `upriseauditor-` basic evidence passes, repo-local `just` shortcuts, and a local Codex skill; see `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #178 and the founder-approved branch cleanup so future agents start from current `main`, preserve UX reference branches, and apply the reviewer/auditor cleanup gate; see `docs/handoff/2026-07-01_active-pm-post-reviewer-protocol-refresh.md`.
 - Added a founder-session capture and owner-doc workflow rule requiring independent reviewer/auditor classification before merge/delete decisions for large refactors, complex issues, prototype branches, or uncertain branch absorption.

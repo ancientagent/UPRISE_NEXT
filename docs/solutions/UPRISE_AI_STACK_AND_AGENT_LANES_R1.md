@@ -41,10 +41,10 @@ Route by lane first, tool second.
 
 | Tool / Agent | Best Use | Avoid Using For | Required Output |
 | --- | --- | --- | --- |
-| Codex local | Tightly coupled implementation, docs patches, validation, commits, PR coordination | broad unsupervised rewrites, provider mutation without explicit approval | changed files, tests run, branch/commit state, handoff when multi-step |
-| Cloud Codex | Isolated branch work, focused implementation slices, large repo scans, contract hardening | tasks needing live local browser sessions or local provider auth state | branch, commit, files changed, tests, PR or patch |
-| Hermes `uprisereviewer+` / `uprisereviewer-` | Narrow post-implementation or launch review of one issue, PR, commit, deployment slice, or light packet scan | broad doctrine audits or implementation | accept/reject findings only from heavy; light returns evidence/recommendations |
-| Hermes `upriseauditor+` / `upriseauditor-` | Broad read-only drift audits, documentation audits, cross-lane consistency reviews, or light evidence scans | code edits, PR ownership, provider changes | classified findings with authority evidence and follow-up issues; final blocks only from heavy |
+| Codex local | Tightly coupled implementation, docs patches, validation, commits, PR coordination, default first-pass review/audit | broad unsupervised rewrites, provider mutation without explicit approval | changed files, tests run, branch/commit state, handoff when multi-step |
+| Cloud Codex | Isolated branch work, focused implementation slices, large repo scans, contract hardening, repo-only audit branches | tasks needing live local browser sessions or local provider auth state | branch, commit, files changed, tests, PR or patch |
+| Hermes `uprisereviewer+` / `uprisereviewer-` | Specialist post-implementation or launch review when profile memory, second opinion, or final gate is worth the cost | default branch audits, broad doctrine audits, or implementation | accept/reject findings only from heavy; light returns evidence/recommendations |
+| Hermes `upriseauditor+` / `upriseauditor-` | Specialist drift/documentation/consistency audit when Codex needs profile-memory support or a heavy final gate | default stale checks, routine changed-file scans, code edits, PR ownership, provider changes | classified findings with authority evidence and follow-up issues; final blocks only from heavy |
 | Abacus / Agent Swarm | Complex cross-lane mapping with independent worker lanes, decision packets, architecture scouting | one tightly coupled implementation slice, source of final product truth | lane findings, synthesis, provenance, owner-spec patch recommendations |
 | NotebookLM | External memory over large source packs, philosophical/doctrine comparison, source-list exploration | direct implementation, deciding current runtime truth | claims inventory, gap list, source map, current-vs-historical caveats |
 | Design tools: Claude Designer, Stitch, Gemini, Uizard, v0 | visual exploration, mockups, screen hierarchy options, UI direction | redefining action grammar, product surfaces, data contracts, or runtime architecture | annotated design options tied to current lane brief and constraints |
@@ -79,22 +79,31 @@ Use Codex local or Cloud Codex when:
 - a branch needs implementation, tests, docs, and PR-ready validation;
 - a scoped docs patch needs exact repo edits;
 - a runtime behavior must be verified against code/tests.
+- a routine audit/review can be handled from current repo docs, changed files, test output, and issue packets without Hermes profile memory.
 
 Use Hermes `uprisereviewer` when:
 
 - a PR, commit, or launch slice needs a second-pass read-only review;
 - the output should be accept/reject with concrete findings;
-- the task is narrow enough that broad audit context would create noise.
+- the task is narrow enough that broad audit context would create noise;
+- PM explicitly wants Hermes profile memory, a second opinion after Codex, or a heavy final safe/not-safe gate.
 
 Use Hermes `upriseauditor` when:
 
 - the task is a broad drift audit across docs/specs/runtime;
 - the goal is to classify gaps, stale language, and missing owner contracts;
-- no edits should be made during the pass.
+- no edits should be made during the pass;
+- PM explicitly wants Hermes profile memory, a specialist owner-spec/docs drift pass, or a heavy final audit gate.
+
+## Codex-First Audit Rule
+
+Ordinary audits and reviews are Codex-first. Use Codex for branch diffs, stale/fixed-work checks, changed-file review, test-output summaries, packet sanity, and first-pass implementation review. Escalate to Hermes only when the prompt names the added Hermes value: profile memory, owner-spec/docs specialization, QA planning state, second opinion, synthesis across worker outputs, feedback/profile-skill learning, or a heavy final safe/not-safe gate.
+
+Do not spend heavy Hermes/GLM runs on routine scouting. Basic Hermes can gather evidence and recommend; it cannot approve safety, merge readiness, owner-spec promotion, provider/database changes, branch deletion, or closeout. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex unless a Hermes-specific final gate is required.
 
 ## Hermes Model Budget Rule
 
-Use explicit basic/heavy calls so UPRISE can save model budget without weakening final gates:
+Use explicit basic/heavy calls only after the Codex-first rule says Hermes is worth using, so UPRISE can save model budget without weakening final gates:
 
 | Call | Command/profile | Model tier | Authority |
 | --- | --- | --- | --- |
