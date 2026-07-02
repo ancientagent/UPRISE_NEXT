@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added UPRISE Hermes basic/heavy reviewer and auditor routing: GLM-backed `uprisereviewer+` / `upriseauditor+` final gates, MiniMax-backed `uprisereviewer-` / `upriseauditor-` basic evidence passes, repo-local `just` shortcuts, and a local Codex skill; see `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #178 and the founder-approved branch cleanup so future agents start from current `main`, preserve UX reference branches, and apply the reviewer/auditor cleanup gate; see `docs/handoff/2026-07-01_active-pm-post-reviewer-protocol-refresh.md`.
 - Added a founder-session capture and owner-doc workflow rule requiring independent reviewer/auditor classification before merge/delete decisions for large refactors, complex issues, prototype branches, or uncertain branch absorption.
 - Refreshed `docs/operations/ACTIVE_PM.md` after PR #176 so the current-work snapshot points at merged `main` after Plot top-shell component extraction; see `docs/handoff/2026-07-01_active-pm-post-plot-top-shell-component-refresh.md`.
