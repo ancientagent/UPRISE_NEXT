@@ -105,7 +105,7 @@ Use explicit basic/heavy calls so UPRISE can save model budget without weakening
 
 Heavy can approve or block. Basic can gather, classify, and recommend a heavy gate, but cannot approve safety, merge, branch deletion, product truth, provider changes, database changes, or closeout.
 
-Before every new Hermes review/audit packet, clear carried Hermes session context with `/clear` or launch a fresh one-shot worker. Keep context only when the same Hermes profile is intentionally continuing one larger sequential investigation and the prompt says so. Then include repo path, branch, short HEAD, lane, owner spec, changed files/artifacts, expected profile, and a requirement to verify repo state before reviewing.
+Before every new Hermes review/audit packet, prefer a fresh one-shot worker. In a persistent Hermes chat, `/clear` clears the screen and starts a new session by discarding conversation history; it is not a mid-task context compactor. Keep context only when the same Hermes profile is intentionally continuing one larger sequential investigation and the prompt says so. Then include repo path, branch, short HEAD, lane, owner spec, changed files/artifacts, expected profile, and a requirement to verify repo state before reviewing.
 
 Preferred local shortcuts:
 
