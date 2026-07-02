@@ -14,7 +14,7 @@ Owner spec candidates: docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md, doc
 
 - Branch cleanup after broad/complex work should not rely only on the implementation agent's local judgment; for large refactors, complex issues, or uncertain branch absorption, use an independent reviewer/auditor check before delete/merge decisions.
 - Type: settled
-- Likely owner: docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md and docs/specs/system/documentation-framework.md already contain conditional reviewer/auditor gates; keep this founder-session note as the raw wording behind future protocol patches.
+- Likely owner: docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md and docs/specs/system/documentation-framework.md; keep this founder-session note as the raw wording behind the promoted protocol.
 
 - The approved deletion applied to the audited absorbed branches only: `docs/active-pm-post-context-panel-removal`, `docs/active-pm-refresh-after-plot-cleanup`, `docs/discover-transport-owner-spec-promotion`, and `refactor/plot-community-context-panel`.
 - Type: implementation detail
@@ -31,7 +31,7 @@ Owner spec candidates: docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md, doc
 - Excluded / not activated:
   - This does not require reviewer + QA gates for every small PR.
   - This does not authorize deleting preserved UX/reference worktrees or prototype branches without explicit approval.
-- Status: settled as workflow guidance; owner-doc promotion optional because current AI stack/docs framework already contain conditional review gates.
+- Status: settled as workflow guidance; promoted into the AI stack and documentation-framework owner docs by this PR.
 
 ## Working Interpretation
 

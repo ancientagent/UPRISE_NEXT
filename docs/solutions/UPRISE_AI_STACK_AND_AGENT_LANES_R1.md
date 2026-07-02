@@ -194,6 +194,14 @@ next_signal:
 
 These blocks are optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove the scope is low-risk. Do not create per-issue context-packet files by default and do not introduce a separate PM harness from these blocks.
 
+For large refactors, complex issues, broad branch/worktree cleanup, or any
+branch-absorption decision where valuable product/spec/runtime content may be
+hidden in stale-looking work, require an independent reviewer/auditor pass
+before merge/delete decisions. Use `uprisereviewer` for one named branch, PR, or
+slice; use `upriseauditor` when the comparison spans multiple branches, docs,
+runtime files, or lanes. The review should classify content as absorbed,
+superseded, extract-only, preserve-only, or unsafe to merge before cleanup.
+
 ## Linear Role
 
 Linear tracks execution, not truth.
@@ -217,6 +225,10 @@ Use `docs/operations/ACTIVE_PM.md` as the repo-visible companion snapshot for lo
 
 - Use `uprisereviewer` for a named PR, commit, issue, or launch-readiness slice.
 - Use `upriseauditor` for broad repo/documentation drift audits.
+- Use an independent reviewer/auditor before deleting or merging branches from
+  large refactors, complex issues, prototype work, or uncertain branch
+  absorption. Do not rely only on the implementation agent's summary when a
+  branch might contain unpromoted product/spec/runtime work.
 - Use Codex local for final reconciliation, staging, commits, PR creation, and validation coordination.
 - Use Abacus / Agent Swarm only when the work can be split into independent lanes with a final synthesis pass.
 
