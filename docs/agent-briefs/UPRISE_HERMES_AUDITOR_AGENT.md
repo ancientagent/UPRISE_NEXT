@@ -3,6 +3,12 @@
 Status: active
 Last Updated: 2026-06-26
 
+> Current routing note (2026-07-02): UPRISE audits are Codex-first. Use
+> `gpt-5.3-codex-spark` for basic/small audit passes and `gpt-5.5` with
+> `reasoning_effort=xhigh` for heavy/final audit gates. This Hermes brief is
+> legacy/manual fallback scaffolding only when PM explicitly names
+> Hermes-specific value.
+
 ## Purpose
 
 Use this brief to configure Hermes as a read-only UPRISE audit agent.

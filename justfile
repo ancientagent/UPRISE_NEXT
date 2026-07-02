@@ -8,6 +8,11 @@ default:
 # Use Codex subagents instead:
 # - basic/small: gpt-5.3-codex-spark
 # - heavy/final: gpt-5.5 with reasoning_effort=xhigh
+
+# The watchdog is not a review/audit gate; it remains the only normal Hermes route.
+hermes-watchdog prompt_file:
+    scripts/agent-bridge/ask-hermes.sh --agent "uprisewatchdog" "{{prompt_file}}"
+
 # These review/audit recipes are kept only as fail-closed manual fallback affordances.
 hermes-review-heavy prompt:
     @echo "Deprecated: use Codex gpt-5.5 with reasoning_effort=xhigh for heavy/final UPRISE review. Manual Hermes fallback: scripts/agent-bridge/ask-hermes.sh --agent uprisereviewer+ '{{prompt}}'" >&2

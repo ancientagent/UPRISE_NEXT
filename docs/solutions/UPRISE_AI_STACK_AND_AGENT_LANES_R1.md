@@ -112,6 +112,12 @@ Escalate beyond `gpt-5.5` with `reasoning_effort=xhigh` only when PM names the r
 
 Do not spend Hermes fallback runs on routine scouting or final gates. Basic Hermes can gather evidence and recommend; heavy Hermes can provide a manual fallback opinion only when PM explicitly asks for it. Codex remains the approving/blocking gate. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex.
 
+## Hermes Watchdog Rule
+
+Use `uprisewatchdog` for PM heartbeat checks only. It should run the lowest-cost configured Hermes model, use the minimal `hermes-cli` toolset, and keep prompts bounded to repo/git/branch state, PM artifacts, worker logs, PR state, and expected handoff paths.
+
+`uprisewatchdog` may wake the right Codex, Cloud Codex, Windows proof, or manually approved specialist lane, and may report blocked/stalled/missing agents back to PM. It must not perform review/audit gates, approve merge readiness, mutate Linear, edit repo files, inspect secrets, browse provider dashboards, or load broad optional toolsets. If a heartbeat check reveals real review work, route that to Codex by model tier.
+
 ## Hermes Manual Fallback Rule
 
 Use explicit basic/heavy Hermes calls only after the Codex-first rule says Hermes adds value:
@@ -130,13 +136,14 @@ Before every new Hermes review/audit packet, prefer a fresh one-shot worker. In 
 Hermes just shortcuts:
 
 ```bash
+just hermes-watchdog path/to/prompt.md
 just hermes-review-heavy path/to/prompt.md
 just hermes-review-basic path/to/prompt.md
 just hermes-audit-heavy path/to/prompt.md
 just hermes-audit-basic path/to/prompt.md
 ```
 
-The review/audit recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: `gpt-5.3-codex-spark` for basic/small review or audit, and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final review or audit.
+`just hermes-watchdog` is the only normal Hermes recipe here. The review/audit recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: `gpt-5.3-codex-spark` for basic/small review or audit, and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final review or audit.
 
 Prompts should direct Hermes to use bounded subagents or an agent swarm when independent read-only slices can lower context, wall time, or model cost. Each subagent must get one lane, named docs/files, no edits, no secrets, no provider mutation, no branch deletion, and a concise output cap. Preserve disagreements in the synthesis instead of averaging them away.
 

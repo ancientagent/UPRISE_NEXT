@@ -73,7 +73,8 @@ Handoffs:
   slice.
 - External assistants should acquire context before answering or designing.
 - External assistants must separate locked now, implemented now, deferred, and historical/later-version context.
-- Hermes should be used as a read-only auditor or launch reviewer unless the user explicitly changes the task to implementation.
+- UPRISE audits and reviews are Codex-first: use `gpt-5.3-codex-spark` for basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only when the prompt names Hermes-specific value.
+- `uprisewatchdog` is the only normal Hermes lane; it is heartbeat/wake-up only, not a review/audit gate.
 - Design tools can explore visual/layout options but cannot redefine action grammar or surface boundaries.
 - Writing tools can draft briefs/emails/docs but cannot invent doctrine.
 - Coding/delegation agents must implement only from active specs/locks/runtime evidence.
@@ -89,9 +90,9 @@ Handoffs:
 - `docs/solutions/ABACUS_FUSION_AGENT_SWARM_STRATEGY_R1.md` defines when to use
   Abacus Agent Swarms for UPRISE, how to split worker lanes, and how to evaluate
   the first swarm experiment.
-- `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md` provides the reusable read-only Hermes auditor role and current audit prompt.
-- `docs/agent-briefs/UPRISE_HERMES_LAUNCH_REVIEWER.md` provides the narrower post-implementation / post-merge Hermes reviewer role for one named issue, PR, commit, or launch-readiness slice.
-- `docs/handoff/agent-control/HERMES_LAUNCH_REVIEW_SHIM.md` provides copy-paste launch prompts and queue wiring for Hermes launch reviews.
+- `docs/agent-briefs/UPRISE_HERMES_AUDITOR_AGENT.md` provides the legacy/manual-fallback Hermes auditor role. Use Codex review/audit routing first.
+- `docs/agent-briefs/UPRISE_HERMES_LAUNCH_REVIEWER.md` provides the legacy/manual-fallback Hermes reviewer role for one named issue, PR, commit, or launch-readiness slice. Use Codex review/audit routing first.
+- `docs/handoff/agent-control/HERMES_LAUNCH_REVIEW_SHIM.md` provides historical launch-review prompts and queue wiring for Hermes launch reviews; treat it as fallback scaffolding, not current default routing.
 - `docs/solutions/AGENT_WIKI_STEERING_R1.md` defines generated wiki priorities.
 - `docs/agent-briefs/CONTEXT_ROUTER.md` selects the active focus lane before prompting an external tool.
 
