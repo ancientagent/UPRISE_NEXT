@@ -2,6 +2,7 @@
 
 Date: 2026-07-02
 Branch: `docs/active-pm-post-codex-routing-v2-refresh`
+PR: #188 (draft)
 Base: `main` @ `eea674c` (`Docs: formalize Codex-first review routing (#187)`)
 Owner: Codex local
 
