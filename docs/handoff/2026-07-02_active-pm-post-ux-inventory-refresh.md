@@ -44,6 +44,8 @@ Results:
 - `pnpm run workspace:audit` - passed; 9 registry entries cover local branches, worktrees, and open PR heads.
 - `pnpm run docs:lint` - passed, including `canon:lint`.
 - `git diff --check` - passed.
+- Branch pushed to `origin/docs/active-pm-post-ux-inventory-refresh`.
+- PR opened: #184.
 
 ## Files Changed
 

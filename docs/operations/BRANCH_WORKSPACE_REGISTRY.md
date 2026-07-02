@@ -77,7 +77,7 @@ node scripts/workspace-registry.mjs audit --include-remote
 | ux-batch18-reference | preserved-branch | feat/ux-batch18-run | - | - | older main snapshot | 77d2e26 | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Historical UX/Reliant batch-output reference with Social-hidden MVP precedence notes. | 2026-07-02 | preserve until extraction/archive decision |
 | active-pm-post-branch-registry-refresh | branch | docs/active-pm-post-branch-registry-refresh | - | PR #182 | main | 79467df | merged | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #181 merged. | 2026-07-02 | merged in PR #182; remote branch deleted |
 | ux-reference-extraction-inventory | branch | docs/ux-reference-extraction-inventory | - | PR #183 | main | 4ecbb37 | merged | Codex local | Codex local | Read-only extraction inventory for preserved UX reference worktrees ux-implementation and ux-mobile-r1-build. | 2026-07-02 | merged in PR #183; remote branch deleted |
-| active-pm-post-ux-inventory-refresh | branch | docs/active-pm-post-ux-inventory-refresh | /home/baris/UPRISE_NEXT | - | main | pending | active | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #183 UX reference extraction inventory merged. | 2026-07-02 | merge docs refresh via PR if green |
+| active-pm-post-ux-inventory-refresh | branch | docs/active-pm-post-ux-inventory-refresh | /home/baris/UPRISE_NEXT | PR #184 | main | pending | open-pr | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #183 UX reference extraction inventory merged. | 2026-07-02 | merge docs refresh via PR if green |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches

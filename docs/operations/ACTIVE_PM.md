@@ -27,7 +27,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Current `main` HEAD at refresh start: `4ecbb37` (`Docs: add UX reference extraction inventory (#183)`)
 - Local worktree state at refresh: clean after PR #183 merge
 - Active implementation branch during this refresh: `docs/active-pm-post-ux-inventory-refresh`; after this docs-only refresh merges, start the Plot profile/player state-contract test slice from current `main`
-- Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
+- Open PR queue at refresh: none before this branch; PR #184 opened for `docs/active-pm-post-ux-inventory-refresh` after the refresh commit
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -106,7 +106,7 @@ Use these handoffs / founder-session notes for the current cleanup trail:
 
 ### Open PR Queue
 
-None at refresh time.
+PR #184 is the current docs-only Active PM post-UX-inventory refresh branch.
 
 ### Main Worktree
 
