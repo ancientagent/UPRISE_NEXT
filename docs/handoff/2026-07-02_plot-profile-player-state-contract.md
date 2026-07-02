@@ -2,6 +2,7 @@
 
 Date: 2026-07-02
 Branch: `test/plot-profile-player-state-contract`
+PR: #185
 Base: `main` @ `9285b25`
 Mode: focused web test + execution-state refresh
 

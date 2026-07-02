@@ -108,7 +108,9 @@ Use these handoffs / founder-session notes for the current cleanup trail:
 
 ### Open PR Queue
 
-None at refresh time.
+| PR | Branch | Scope | Status | Next Signal |
+| --- | --- | --- | --- | --- |
+| #185 | `test/plot-profile-player-state-contract` | Focused Plot profile/player state contract regression test plus execution-state docs. | Open | Watch checks; squash merge if green, then return workspace to `main` and refresh registry/PM on the next substantive branch. |
 
 ### Main Worktree
 
