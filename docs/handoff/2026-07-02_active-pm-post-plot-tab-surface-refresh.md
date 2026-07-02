@@ -2,6 +2,7 @@
 
 Date: 2026-07-02
 Branch: `docs/active-pm-post-plot-tab-surface-refresh`
+PR: #191 (draft)
 Base: `main` @ `66556d7` (`Refactor: extract Plot tab surface (#190)`)
 Owner: Codex local
 
