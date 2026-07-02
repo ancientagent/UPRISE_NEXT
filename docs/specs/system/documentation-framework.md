@@ -121,6 +121,23 @@ Rules:
 - Refresh when active branch, PR queue, blocker, preserved-worktree list, or next execution signal changes.
 - If operations state conflicts with owner specs or runtime evidence, report the conflict and update operations state; do not rewrite product truth from operations notes.
 
+### Layer 4c: Branch / Workspace Registry
+
+Purpose: prevent off-book branches, worktrees, external-agent workspaces, and preserved prototype refs.
+
+Files:
+
+- `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`
+
+Rules:
+
+- Branch/worktree/workspace creation is incomplete until the registry has an entry.
+- Every entry must state branch name, worktree/path if any, PR/Linear link if any, base/head, status, accountable owner, assigned agents, what is on it, last update date, and closeout plan.
+- Update the registry when creating, assigning, pushing, opening a PR, preserving, merging, closing, deleting, or archiving branch/worktree work.
+- Run `pnpm run workspace:audit` before push, PR creation, branch cleanup, and closeout. The audit fails on unregistered local branches, worktree branches, and open PR heads.
+- Remote-only historical branches may require a dedicated cleanup pass; use `node scripts/workspace-registry.mjs audit --include-remote` to inventory them without making them product truth.
+- This registry is execution state, not product doctrine. It should point to owner specs, PRs, handoffs, and Linear instead of duplicating product rules.
+
 ### Layer 5: Legacy / External Imports
 
 Purpose: retain reference material without letting it become accidental current truth.
@@ -418,6 +435,10 @@ Documentation-system slices must run:
 
 - `pnpm run docs:lint`
 - `git diff --check`
+
+Branch/workspace management slices must also run:
+
+- `pnpm run workspace:audit`
 
 When changing agent routing or context policy, also inspect:
 
