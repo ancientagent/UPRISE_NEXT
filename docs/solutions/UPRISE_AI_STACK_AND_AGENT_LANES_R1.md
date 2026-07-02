@@ -43,9 +43,8 @@ Route by lane first, tool second.
 | --- | --- | --- | --- |
 | Codex local | Tightly coupled implementation, docs patches, validation, commits, PR coordination, default first-pass review/audit | broad unsupervised rewrites, provider mutation without explicit approval | changed files, tests run, branch/commit state, handoff when multi-step |
 | Cloud Codex | Isolated branch work, focused implementation slices, large repo scans, contract hardening, repo-only audit branches | tasks needing live local browser sessions or local provider auth state | branch, commit, files changed, tests, PR or patch |
-| Codex GPT-5.3 Spark | Light review/audit, packet sanity, stale/fixed-work checks, changed-file skims, and test-output summaries | final safety gates, provider/db/security risk, branch absorption | concise evidence summary and next signal |
-| Codex GPT-5.5 high | Normal implementation review, PM closeout review, and ordinary multi-file branch review | broad heavy audits, provider/db/security risk, branch absorption | accept/reject findings with exact files/tests |
-| Codex GPT-5.5 extra-high | Heavy audits, provider/db/security risk, branch absorption, owner-spec promotion risk, and layered/drift-prone cleanup | small packet sanity or routine changed-file scans | final safe/not-safe gate with blocking findings |
+| Codex `gpt-5.3-codex-spark` | Basic/small review or audit, packet sanity, stale/fixed-work checks, changed-file skims, and test-output summaries | final safety gates, provider/db/security risk, branch absorption | concise evidence summary and next signal |
+| Codex `gpt-5.5` with `reasoning_effort=xhigh` | Heavy/final review or audit, provider/db/security risk, branch absorption, owner-spec promotion risk, layered/drift-prone cleanup, and closeout gates | small packet sanity or routine changed-file scans | final safe/not-safe gate with blocking findings |
 | Hermes `uprisereviewer+` / `uprisereviewer-` | Explicit manual fallback or second opinion when PM names Hermes-specific value | default branch audits, final gates, broad doctrine audits, or implementation | evidence/recommendations for PM/Codex decision |
 | Hermes `upriseauditor+` / `upriseauditor-` | Explicit manual fallback for specialist drift/docs/owner-spec evidence when PM names Hermes-specific value | default stale checks, routine changed-file scans, code edits, PR ownership, provider changes | classified findings for PM/Codex review, not automatic approval |
 | Abacus / Agent Swarm | Complex cross-lane mapping with independent worker lanes, decision packets, architecture scouting | one tightly coupled implementation slice, source of final product truth | lane findings, synthesis, provenance, owner-spec patch recommendations |
@@ -106,13 +105,12 @@ PM should choose the lightest Codex model that protects the task:
 
 | Task class | Preferred Codex model | Examples |
 | --- | --- | --- |
-| Light review/audit | GPT-5.3 Codex Spark | Docs sanity, packet review, stale/fixed-work check, changed-file skim, test-output summary |
-| Normal review | GPT-5.5 high | Implementation review, multi-file UI/state review, PM closeout review, normal branch audit |
-| Heavy audit | GPT-5.5 extra-high | Cross-lane audit, provider/db/security risk, branch absorption, owner-spec promotion risk, layered/drift-prone cleanup |
+| Basic/small review or audit | `gpt-5.3-codex-spark` | Docs sanity, packet review, stale/fixed-work check, changed-file skim, test-output summary |
+| Heavy/final review or audit | `gpt-5.5` with `reasoning_effort=xhigh` | Implementation review, multi-file UI/state review, PM closeout review, cross-lane audit, provider/db/security risk, branch absorption, owner-spec promotion risk, layered/drift-prone cleanup |
 
-Escalate beyond GPT-5.5 extra-high only when PM names the reason. Claude Opus and Fugu/Fugu Ultra are backup or exceptional heavyweight lanes, not default routing.
+Escalate beyond `gpt-5.5` with `reasoning_effort=xhigh` only when PM names the reason. Claude Opus and Fugu/Fugu Ultra are backup or exceptional heavyweight lanes, not default routing.
 
-Do not spend Hermes/GLM runs on routine scouting or final gates. Basic Hermes can gather evidence and recommend; heavy Hermes can provide a manual fallback opinion only when PM explicitly asks for it. Codex remains the approving/blocking gate. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex.
+Do not spend Hermes fallback runs on routine scouting or final gates. Basic Hermes can gather evidence and recommend; heavy Hermes can provide a manual fallback opinion only when PM explicitly asks for it. Codex remains the approving/blocking gate. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex.
 
 ## Hermes Manual Fallback Rule
 
@@ -120,10 +118,10 @@ Use explicit basic/heavy Hermes calls only after the Codex-first rule says Herme
 
 | Call | Command/profile | Model tier | Authority |
 | --- | --- | --- | --- |
-| `reviewer-heavy` | `uprisereviewer+` / `uprisereviewerplus` | GLM 5.2, `z-ai/glm-5.2` | Manual fallback specialist opinion for PR, merge, closeout, provider/db risk, owner-spec changes, branch absorption, or high-impact runtime behavior. |
-| `reviewer-basic` | `uprisereviewer-` / `uprisereviewerminus` | MiniMax-M3 now; Qwen 3.7 Plus later when the key is installed | Non-approving changed-file scan, packet sanity, stale/duplicate evidence, or second opinion. |
-| `auditor-heavy` | `upriseauditor+` / `upriseauditorplus` | GLM 5.2, `z-ai/glm-5.2` | Manual fallback specialist drift/safety opinion for branch cleanup, merge, owner-spec promotion, or closeout. |
-| `auditor-basic` | `upriseauditor-` / `upriseauditorminus` | MiniMax-M3 now; Qwen 3.7 Plus later when the key is installed | Preliminary drift map, docs/source scan, stale branch search, or evidence gathering. |
+| `reviewer-heavy` | `uprisereviewer+` / `uprisereviewerplus` | Manual fallback profile; model is operational, not authority | Advisory specialist opinion for PR, merge, closeout, provider/db risk, owner-spec changes, branch absorption, or high-impact runtime behavior. |
+| `reviewer-basic` | `uprisereviewer-` / `uprisereviewerminus` | Manual fallback profile; model is operational, not authority | Non-approving changed-file scan, packet sanity, stale/duplicate evidence, or second opinion. |
+| `auditor-heavy` | `upriseauditor+` / `upriseauditorplus` | Manual fallback profile; model is operational, not authority | Advisory specialist drift/safety opinion for branch cleanup, merge, owner-spec promotion, or closeout. |
+| `auditor-basic` | `upriseauditor-` / `upriseauditorminus` | Manual fallback profile; model is operational, not authority | Preliminary drift map, docs/source scan, stale branch search, or evidence gathering. |
 
 Hermes results are inputs for PM/Codex, not automatic approvals. They cannot independently approve safety, merge, branch deletion, product truth, provider changes, database changes, or closeout.
 
@@ -138,7 +136,7 @@ just hermes-audit-heavy path/to/prompt.md
 just hermes-audit-basic path/to/prompt.md
 ```
 
-These review/audit recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: GPT-5.3 Codex Spark for light review/audit, GPT-5.5 high for normal review, and GPT-5.5 extra-high for heavy audits.
+The review/audit recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: `gpt-5.3-codex-spark` for basic/small review or audit, and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final review or audit.
 
 Prompts should direct Hermes to use bounded subagents or an agent swarm when independent read-only slices can lower context, wall time, or model cost. Each subagent must get one lane, named docs/files, no edits, no secrets, no provider mutation, no branch deletion, and a concise output cap. Preserve disagreements in the synthesis instead of averaging them away.
 
@@ -247,10 +245,12 @@ These blocks are optional for tiny surgical docs-only or local cleanup PRs where
 For large refactors, complex issues, broad branch/worktree cleanup, or any
 branch-absorption decision where valuable product/spec/runtime content may be
 hidden in stale-looking work, require an independent reviewer/auditor pass
-before merge/delete decisions. Use `uprisereviewer` for one named branch, PR, or
-slice; use `upriseauditor` when the comparison spans multiple branches, docs,
-runtime files, or lanes. The review should classify content as absorbed,
-superseded, extract-only, preserve-only, or unsafe to merge before cleanup.
+before merge/delete decisions. Use a Codex reviewer/auditor by default:
+`gpt-5.3-codex-spark` for basic branch evidence and `gpt-5.5` with
+`reasoning_effort=xhigh` when the result can decide merge, deletion,
+absorption, provider/db risk, owner-spec promotion, or closeout. The review
+should classify content as absorbed, superseded, extract-only, preserve-only, or
+unsafe to merge before cleanup.
 
 ## Linear Role
 
@@ -273,9 +273,8 @@ Use `docs/operations/ACTIVE_PM.md` as the repo-visible companion snapshot for lo
 
 ## Review Routing
 
-- Use GPT-5.3 Codex Spark for basic packet sanity, changed-file scans, stale/duplicate evidence, and test-output summaries.
-- Use GPT-5.5 high for normal implementation review, PM closeout review, and ordinary multi-file branch review.
-- Use GPT-5.5 extra-high for heavy audits that can block branch cleanup, merge, owner-spec promotion, provider/db risk, or closeout.
+- Use `gpt-5.3-codex-spark` for basic packet sanity, changed-file scans, stale/duplicate evidence, and test-output summaries.
+- Use `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final reviews or audits that can block branch cleanup, merge, owner-spec promotion, provider/db risk, or closeout.
 - Use `uprisereviewer+`, `uprisereviewer-`, `upriseauditor+`, or `upriseauditor-` only as manual fallback when PM names Hermes-specific value: profile memory, second opinion, owner-spec/docs specialization, synthesis, or feedback learning.
 - Use an independent reviewer/auditor before deleting or merging branches from
   large refactors, complex issues, prototype work, or uncertain branch
@@ -317,7 +316,7 @@ After branch/PR/worktree cleanup or when the active branch changes, refresh `doc
 Patch this document when:
 
 - a new AI tool becomes part of the UPRISE workflow;
-- Hermes profile usage changes;
+- review/audit model routing or Hermes profile usage changes;
 - Abacus / Agent Swarm routing changes;
 - Linear label/project structure changes;
 - NotebookLM sync behavior changes;
