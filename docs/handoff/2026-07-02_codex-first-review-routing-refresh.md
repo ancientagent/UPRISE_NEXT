@@ -2,6 +2,7 @@
 
 Date: 2026-07-02
 Branch: `docs/codex-first-review-routing-refresh`
+PR: #187
 Base: `main` @ `ce6c841`
 Mode: docs/tooling routing refresh
 
