@@ -11,6 +11,10 @@ workspace-audit:
 workspace-register +args:
     node scripts/workspace-registry.mjs add {{args}}
 
+# Create a Windows-backed artifact directory and ignored repo-local pointer for viewer files.
+artifacts slug:
+    scripts/agent-bridge/windows-artifact-dir.mjs "{{slug}}"
+
 # Deprecated for UPRISE review/audit gates.
 # Use Codex subagents instead:
 # - basic/small: gpt-5.3-codex-spark

@@ -85,6 +85,7 @@ node scripts/workspace-registry.mjs audit --include-remote
 | main-workspace | primary | main | /home/baris/UPRISE_NEXT | - | origin/main | 66556d7 | primary | Codex local | current branch owner | Primary UPRISE workspace on current main after PR #190. | 2026-07-02 | keep current and clean |
 | plot-tab-surface-component | branch | refactor/plot-tab-surface-component | - | PR #190 | main | 66556d7 | merged | Codex local | Codex local | Extracted /plot non-expanded tab bar and active surface frame into a focused component while preserving route-owned tab state and tab body rendering. | 2026-07-02 | merged in PR #190; remote branch deleted |
 | active-pm-post-plot-tab-surface-refresh | branch | docs/active-pm-post-plot-tab-surface-refresh | /home/baris/UPRISE_NEXT | PR #191 | main | pending | open-pr | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #190 Plot tab surface extraction merged. | 2026-07-02 | merge docs-only PM refresh via PR if green |
+| windows-visible-artifact-bridge | branch | chore/windows-visible-artifact-bridge | /home/baris/UPRISE_NEXT | - | origin/main | pending | active | Codex local | Codex local | Add Windows-backed artifact helper and agent rule so WSL-generated user-visible outputs are saved somewhere Windows can open; clarify this does not force Codex native artifact-viewer rendering. | 2026-07-02 | open PR, merge if checks pass, then delete branch |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches
