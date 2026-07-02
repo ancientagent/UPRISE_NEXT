@@ -2,6 +2,7 @@
 
 Date: 2026-07-02
 Branch: `refactor/plot-bottom-nav-component`
+PR: #189 (draft)
 Base: `main` @ `0ab9ce2` (`Docs: refresh PM after Codex routing merge (#188)`)
 Owner: Codex local
 
