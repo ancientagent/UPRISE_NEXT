@@ -2,6 +2,7 @@
 
 Date: 2026-07-02
 Branch: `refactor/plot-tab-surface-component`
+PR: #190 (draft)
 Base: `main` @ `0cd181e` (`Refactor: extract Plot bottom nav (#189)`)
 Owner: Codex local
 
