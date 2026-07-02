@@ -408,23 +408,31 @@ For clarification sessions:
 
 ## Reviewer Routing
 
-Use reviewers as second-pass checks, not source of truth.
+Use reviewers as second-pass checks, not source of truth. Codex subagents are the default UPRISE review/audit lane.
 
-- `uprisereviewer`: narrow review of a named slice, contract, PR, or post-clarification state.
-- `upriseauditor`: broad drift audit across docs/code/strategy.
+- `gpt-5.3-codex-spark`: basic/small review or audit, including docs drift, stale branch checks, changed-file sanity, PM packet checks, low-risk UI/test/docs PRs, and test-output summaries.
+- `gpt-5.5` with `reasoning_effort=xhigh`: heavy/final review or audit for high-impact merges, branch deletion, schema/provider/database/security/canon/owner-spec changes, broad cleanup audits, closeout gates, and any review whose result can approve/block action.
+- `uprisewatchdog`: Hermes heartbeat/wake-up checks only. It may report stalled or missing outputs, but it does not approve merges, closeout, branch deletion, or product truth.
+- `uprisereviewer+`, `uprisereviewer-`, `upriseauditor+`, `upriseauditor-`: Hermes manual fallback/advisory profiles only when explicitly assigned.
 - Cloud Codex / OpenClaw / Abacus: scoped implementation/audit/design support when the repo and branch are available.
+
+Linear tracks execution state only. Durable product/canon/API/runtime truth remains in owner specs and current repo docs/code/tests. Product ambiguity stops for founder clarification, then the answer must be recorded in the owner spec, founder-session note, handoff, or backlog item named by the task.
 
 For large refactors, complex issues, prototype/reference branches, and branch
 cleanup where absorption is uncertain, run an independent reviewer/auditor pass
-before merge/delete decisions. The review should classify what is already on
-current `main`, what should be extracted into a fresh branch, what is stale, and
-what must remain preserve-only.
+before merge/delete decisions. Route that gate to Codex by default: use
+`gpt-5.3-codex-spark` for preliminary branch evidence and `gpt-5.5` with
+`reasoning_effort=xhigh` when the result can decide merge, deletion, absorption,
+provider/database risk, owner-spec promotion, or closeout. The review should
+classify what is already on current `main`, what should be extracted into a fresh
+branch, what is stale, and what must remain preserve-only.
 
 Reviewer prompts must include:
 
 - branch/commit;
 - docs to load;
 - owner contract path;
+- exact model routing and whether the pass is basic/small or heavy/final;
 - exact scope;
 - no-edit/no-provider/no-DB boundaries unless edits/actions are intended;
 - output format.
