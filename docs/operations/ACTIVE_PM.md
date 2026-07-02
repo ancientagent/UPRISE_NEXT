@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-02
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `4ecbb37` (`Docs: add UX reference extraction inventory (#183)`)
-- Local worktree state at refresh: clean after PR #183 merge
-- Active implementation branch during this refresh: `docs/active-pm-post-ux-inventory-refresh`; after this docs-only refresh merges, start the Plot profile/player state-contract test slice from current `main`
-- Open PR queue at refresh: none before this branch; PR #184 opened for `docs/active-pm-post-ux-inventory-refresh` after the refresh commit
+- Current `main` HEAD at refresh start: `9285b25` (`Docs: refresh PM after UX inventory (#184)`)
+- Local worktree state at refresh: clean after PR #184 merge
+- Active implementation branch during this refresh: `test/plot-profile-player-state-contract`
+- Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -39,13 +39,13 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex su
 
 | Field | Current Value |
 | --- | --- |
-| Lane | operations / `UX_UI` next-slice routing |
-| Branch | `docs/active-pm-post-ux-inventory-refresh` |
-| Scope | Refresh `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #183 merged so the next implementation branch starts from accurate execution state. |
+| Lane | `UX_UI` |
+| Branch | `test/plot-profile-player-state-contract` |
+| Scope | Add current-compatible Plot profile/player state contract tests inspired by preserved UX state-machine reference work, without importing old prototype runtime/components. |
 | Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, branch/worktree deletion beyond the already-completed approved cleanup. |
-| Owner Contract | none; this is execution-state inventory, not product doctrine |
-| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`, `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md` |
-| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Owner Contract | `docs/specs/communities/plot-and-scene-plot.md` |
+| Companion Docs | `docs/agent-briefs/UI_CURRENT.md`, `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
+| Validation | `pnpm --filter web test -- plot-profile-player-state-contract.test.ts plot-ux-regression-lock.test.ts`, `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
 
@@ -72,11 +72,13 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #181 / `fe048ce`: added the Branch / Workspace Registry so future branches, worktrees, PR heads, preserved refs, and external-agent workspaces must be recorded with owner, assigned agents, scope, status, and closeout plan.
 - PR #182 / `79467df`: refreshed `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #181 merged.
 - PR #183 / `4ecbb37`: inventoried preserved UX reference branches/worktrees and recorded selective extraction guidance without merging prototype code.
-- Current branch follow-up: refreshes `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #183 merged.
+- PR #184 / `9285b25`: refreshed `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #183 merged.
+- Current branch follow-up: adds Plot profile/player state contract tests and closes PR #184 registry state.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
+- `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`
 - `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md`
 - `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`
 - `docs/handoff/2026-07-02_active-pm-post-branch-registry-refresh.md`
@@ -106,13 +108,13 @@ Use these handoffs / founder-session notes for the current cleanup trail:
 
 ### Open PR Queue
 
-PR #184 is the current docs-only Active PM post-UX-inventory refresh branch.
+None at refresh time.
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-ux-inventory-refresh` until this refresh merges; `main` after merge | `4ecbb37` at refresh start | clean after PR #183 merge; this docs-only refresh branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `test/plot-profile-player-state-contract` until this test slice merges; `main` after merge | `9285b25` at refresh start | clean after PR #184 merge; this test/docs branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -143,12 +145,11 @@ The following audited, absorbed/superseded branches were deleted locally and rem
 
 ## Next Queue
 
-1. Start `test/plot-profile-player-state-contract` from current `main`: add current-compatible Plot profile/player state contract tests inspired by the old prototype state-machine work without importing old runtime/components.
-2. Continue small Plot structural cleanup from clean `main` only if a region is clearly named and behavior is already locked by tests.
-3. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
-4. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
-5. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
-6. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
+1. After this branch merges, continue small Plot structural cleanup from clean `main` only if a region is clearly named and behavior is already locked by tests.
+2. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
+3. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
+4. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
+5. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
 
 ## PM Usage Rules For Agents
 
