@@ -214,6 +214,8 @@ find docs/solutions -maxdepth 1 -type f | grep -E 'UX|PLOT|PLAYER|SCREEN|SURFACE
 pnpm run workspace:audit
 pnpm run docs:lint
 git diff --check
+git push -u origin docs/ux-reference-extraction-inventory
+gh pr create --base main --head docs/ux-reference-extraction-inventory --title "Docs: add UX reference extraction inventory"
 ```
 
 ## Validation
@@ -221,6 +223,8 @@ git diff --check
 - `pnpm run workspace:audit` - passed; 8 registry entries cover local branches, worktrees, and open PR heads.
 - `pnpm run docs:lint` - passed, including `canon:lint`.
 - `git diff --check` - passed.
+- Branch pushed to `origin/docs/ux-reference-extraction-inventory`.
+- PR opened: #183.
 
 ## Files Changed By This Slice
 
