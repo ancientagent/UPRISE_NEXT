@@ -17,6 +17,7 @@ import PlotListenerProfile, {
 } from '@/components/plot/PlotListenerProfile';
 import PlotBottomNav from '@/components/plot/PlotBottomNav';
 import PlotPrimaryTabBody from '@/components/plot/PlotPrimaryTabBody';
+import PlotTabSurface from '@/components/plot/PlotTabSurface';
 import PlotTopShell from '@/components/plot/PlotTopShell';
 import RadiyoPlayerPanel, {
   type PlayerMode,
@@ -751,7 +752,13 @@ export default function PlotPage() {
       : activeTab === 'Events'
         ? 'Scene events listing from your selected community anchor.'
         : activeTab === 'Archive'
-          ? null
+          ? (
+              <>
+                Descriptive scene history and activity from{' '}
+                <span className="capitalize">{selectedTier}</span> tier
+                {!homeScene && '. Complete onboarding to see your local scene.'}
+              </>
+            )
           : 'Message boards and listening rooms.';
 
   const bottomNav = (
@@ -904,48 +911,14 @@ export default function PlotPage() {
             onReturnToPlotTabs={toggleProfilePanel}
           />
         ) : (
-          <>
-            {/* Tab Navigation */}
-            <section className="mt-4 flex flex-wrap items-end justify-start gap-2 overflow-x-auto px-2 pt-1">
-              {tabs.map((tab) => (
-                <Button
-                  key={tab}
-                  size="sm"
-                  variant={activeTab === tab ? 'default' : 'outline'}
-                  className={
-                    activeTab === tab
-                      ? 'plot-wire-tab plot-wire-tab-active h-auto'
-                      : 'plot-wire-tab h-auto hover:bg-[#e7e7d8]'
-                  }
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab}
-                </Button>
-              ))}
-            </section>
-
-            {/* Active Plot Surface */}
-            <section className="border border-black bg-[#d8d8c8] p-3">
-              <div className="plot-wire-panel">
-                <div className="mb-4 rounded-[1rem] border border-black bg-[#efefe2] px-4 py-3">
-                  <p className="plot-wire-label">Active Surface</p>
-                  <h2 className="mt-1 text-lg font-semibold text-black">{plotTabHeading}</h2>
-                  <p className="mt-1 text-sm text-black/65">
-                    {plotTabDescription}
-                    {activeTab === 'Archive' && (
-                      <>
-                        Descriptive scene history and activity from{' '}
-                        <span className="capitalize">{selectedTier}</span> tier
-                        {!homeScene && '. Complete onboarding to see your local scene.'}
-                      </>
-                    )}
-                  </p>
-                </div>
-
-                {renderPrimaryPlotTabBody()}
-              </div>
-            </section>
-          </>
+          <PlotTabSurface
+            tabs={tabs}
+            activeTab={activeTab}
+            heading={plotTabHeading}
+            description={plotTabDescription}
+            body={renderPrimaryPlotTabBody()}
+            onTabChange={setActiveTab}
+          />
         )}
       </div>
       <div id="plot-engagement-wheel">{bottomNav}</div>

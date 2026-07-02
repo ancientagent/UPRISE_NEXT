@@ -15,10 +15,18 @@ function readWorkspaceFile(relativePath: string): string {
 describe('plot tab contract locks', () => {
   it('locks active Plot tabs to Feed, Events, and Archive only', () => {
     const plotSource = readRepoFile('src/app/plot/page.tsx');
+    const tabSurfaceSource = readRepoFile('src/components/plot/PlotTabSurface.tsx');
 
     expect(plotSource).toContain("const tabs = ['Feed', 'Events', 'Archive'] as const;");
     expect(plotSource).toContain('type PlotTab = (typeof tabs)[number];');
-    expect(plotSource).toContain('tabs.map((tab) =>');
+    expect(plotSource).toContain("import PlotTabSurface from '@/components/plot/PlotTabSurface';");
+    expect(plotSource).toContain('<PlotTabSurface');
+    expect(plotSource).toContain('tabs={tabs}');
+    expect(plotSource).toContain('activeTab={activeTab}');
+    expect(plotSource).toContain('onTabChange={setActiveTab}');
+    expect(tabSurfaceSource).toContain('tabs.map((tab) =>');
+    expect(tabSurfaceSource).toContain('plot-wire-tab plot-wire-tab-active h-auto');
+    expect(tabSurfaceSource).toContain('Active Surface');
     expect(plotSource).not.toContain("'Promotions'");
     expect(plotSource).not.toContain('"Promotions"');
     expect(plotSource).not.toContain("'Statistics'");

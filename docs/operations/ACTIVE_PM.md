@@ -24,9 +24,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-02
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `0ab9ce2` (`Docs: refresh PM after Codex routing merge (#188)`)
-- Local worktree state at refresh: clean after PR #188 merge
-- Active implementation branch during this refresh: `refactor/plot-bottom-nav-component`
+- Current `main` HEAD at refresh start: `0cd181e` (`Refactor: extract Plot bottom nav (#189)`)
+- Local worktree state at refresh: clean after PR #189 merge
+- Active implementation branch during this refresh: `refactor/plot-tab-surface-component`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -40,8 +40,8 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex su
 | Field | Current Value |
 | --- | --- |
 | Lane | `UI_CURRENT` / `PLOT` |
-| Branch | `refactor/plot-bottom-nav-component` |
-| Scope | Extract `/plot` bottom navigation and UPRISE wheel overlay into `PlotBottomNav` while preserving route-owned state, labels, disabled Discover behavior, and existing Plot regression locks. |
+| Branch | `refactor/plot-tab-surface-component` |
+| Scope | Extract `/plot` non-expanded tab bar and active surface frame into `PlotTabSurface` while preserving route-owned tab state and existing Plot tab/body regression locks. |
 | Out of Scope | Runtime behavior changes, Discover transport, provider state, database/schema changes, art changes, UX prototype merging, product doctrine changes, and preserved reference branch/worktree cleanup. |
 | Owner Contract | `docs/specs/communities/plot-and-scene-plot.md`, `docs/agent-briefs/UI_CURRENT.md` |
 | Companion Docs | `apps/web/src/app/plot/page.tsx`, `apps/web/src/components/plot/README.md`, `apps/web/__tests__/plot-ux-regression-lock.test.ts` |
@@ -77,11 +77,13 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #186 / `ce6c841`: refreshed Active PM and branch registry after PR #185 merged.
 - PR #187 / `eea674c`: formalized Codex-first review/audit routing, superseded stale model-routing pointers, and kept Hermes watchdog/manual fallback only.
 - PR #188 / `0ab9ce2`: refreshed Active PM and branch registry after PR #187 merged.
-- Current branch follow-up: extracts `/plot` bottom navigation and UPRISE wheel overlay into a focused component without changing Plot behavior.
+- PR #189 / `0cd181e`: extracted `/plot` bottom navigation and UPRISE wheel overlay into a focused component without changing Plot behavior.
+- Current branch follow-up: extracts `/plot` non-expanded tab bar and active surface frame into a focused component without changing Plot behavior.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
+- `docs/handoff/2026-07-02_plot-tab-surface-component-extraction.md`
 - `docs/handoff/2026-07-02_plot-bottom-nav-component-extraction.md`
 - `docs/handoff/2026-07-02_active-pm-post-codex-routing-v2-refresh.md`
 - `docs/handoff/2026-07-02_codex-first-review-routing-refresh.md`
@@ -122,7 +124,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `refactor/plot-bottom-nav-component` until this Plot cleanup merges; `main` after merge | `0ab9ce2` at refresh start | clean after PR #188 merge; this focused UI branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `refactor/plot-tab-surface-component` until this Plot cleanup merges; `main` after merge | `0cd181e` at refresh start | clean after PR #189 merge; this focused UI branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -153,7 +155,7 @@ The following audited, absorbed/superseded branches were deleted locally and rem
 
 ## Next Queue
 
-1. After this Plot bottom-nav cleanup merges, continue small Plot structural cleanup from clean `main` only if another region is clearly named and behavior is already locked by tests.
+1. After this Plot tab-surface cleanup merges, continue small Plot structural cleanup from clean `main` only if another region is clearly named and behavior is already locked by tests.
 2. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
 3. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
 4. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
