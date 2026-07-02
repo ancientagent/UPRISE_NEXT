@@ -2,6 +2,7 @@
 
 Date: 2026-07-02
 Branch: `docs/active-pm-post-plot-profile-player-state-refresh`
+PR: #186
 Base: `main` @ `861f05b`
 Mode: execution-state refresh
 
