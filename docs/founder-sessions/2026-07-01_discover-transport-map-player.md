@@ -285,3 +285,55 @@ Owner spec candidates:
 
 - Do not classify Discover transport as required before beta.
 - Do not defer Discover transport beyond beta by default; it is eligible for beta release when justified by activity and implementation readiness.
+
+## Raw Founder Notes - Back Door / Front Door Shared Screen Clarification
+
+> discover is where the user travels around the map manually or through using "seek mode"  which we talked about earlier, which takes the user around the map randomly. going to different community backdoors where they can listen to their uprise, and learn a bit about their top artists, and different contexts about that community. they can save or "add" the uprise to their collection. so when they are back in their homescene they can pop it on, talk about it, promote it to their community members. another way a user can learn about / visit / discover new uprises is if someone in their community blasts one and it shows up in their feed they can click on it to listen to it (the player will load the uprise and say which one it is) and if they like it and want to discover more about the community they can transport to it learn about the other artists, sects, etc.  (also there will eventually be merch tables there so visitors can collect more merch form other communities)
+
+> yes the back door for visitors is the same screen as the front door for nativs the context is just switched. you did document our discover discussion from yesterday when we talked about all this correct? please use your document / context skill that saves to the clarification doc
+
+## Clarifications - Back Door / Front Door Shared Screen
+
+- Discover is where users travel around the map manually or through `Seek Mode`.
+- Type: settled clarification, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/discovery-scene-switching.md`
+
+- `Seek Mode` randomly takes the user around the map to different communities/back doors.
+- Type: settled clarification, pending control/API design
+- Likely owner: `docs/specs/communities/discovery-scene-switching.md`
+
+- A visited community back door lets the visitor listen to that community's Uprise and learn about that community's top artists, sects, and other community context.
+- Type: settled clarification, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/discovery-scene-switching.md`
+
+- The back door for visitors is the same screen as the front door for natives; the context is switched to the visited community.
+- Type: settled clarification, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/discovery-scene-switching.md`
+
+- Users can save/collect a visited Uprise to their collection. Where the raw note says they can later play it from their Home Scene context, that should be read with the later RADIYO/SPACE correction: saved/custom Uprise playback is Discover/collection-owned, not launched from the Plot top shell. The Home Scene relevance is conversation/promotion back to their community members, not a new Plot playback launcher.
+- Type: settled clarification with superseded playback wording, pending collection/player contract
+- Likely owner: `docs/specs/communities/discovery-scene-switching.md` and future collection/personal-player contract
+
+- A Home Scene Feed blast can expose another Uprise. Clicking it can load that Uprise into the player with a clear label for which Uprise is playing. If the user wants deeper context, Plot should hand off to Discover/back-door context rather than originate transport inside the Feed or Plot surface.
+- Type: settled clarification, pending Feed/player/Discover contract
+- Likely owner: `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, and future feed/player tests
+
+- Future visited-community back doors may include merch tables so visitors can collect merch from other communities.
+- Type: deferred/future feature direction
+- Likely owner: future Discover/commerce/merch specs
+
+## Working Interpretation - Back Door / Front Door Shared Screen
+
+- Front door and back door should not be implemented as unrelated screen architectures. They can share a reusable screen pattern, but their content semantics stay different.
+- A native Discover front door remains outward-looking from the user's Home context: it surfaces related music/scenes/signals outside the user's community.
+- A visitor back door presents the same kind of community context for visitors after transport, without granting membership, voting authority, or Plot/community-dashboard access.
+- Discover travel can start from manual map exploration or Seek Mode; a Feed blast can load another Uprise and offer a handoff into Discover/back-door context without adding transport UI inside Plot.
+- Saving/collecting an outside Uprise creates a collection/listening artifact for Discover-owned playback and later Home Scene conversation/promotion; it does not change Home Scene membership.
+
+## Do Not Drift - Back Door / Front Door Shared Screen
+
+- Do not build separate unrelated front-door and back-door screen architectures.
+- Do not make visited-community listening equivalent to joining or voting in that community.
+- Do not put saved outside Uprises in the Home Scene selector.
+- Do not make a Feed blast transport the user automatically into another community; clicking can load/listen, and deeper context must hand off to Discover rather than originate transport inside Plot.
+- Do not treat merch tables as current MVP unless explicitly scoped later.
