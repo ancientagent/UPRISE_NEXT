@@ -24,9 +24,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-02
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `861f05b` (`Test: lock Plot profile/player state contract (#185)`)
-- Local worktree state at refresh: clean after PR #185 merge
-- Active implementation branch during this refresh: `docs/active-pm-post-plot-profile-player-state-refresh`
+- Current `main` HEAD at refresh start: `ce6c841` (`Docs: refresh PM after Plot profile/player tests (#186)`)
+- Local worktree state at refresh: clean after PR #186 merge
+- Active implementation branch during this refresh: `docs/codex-first-review-routing-refresh`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -39,12 +39,12 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex su
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `UX_UI` |
-| Branch | `docs/active-pm-post-plot-profile-player-state-refresh` |
-| Scope | Refresh Active PM and branch workspace registry after PR #185 merged. |
-| Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, and preserved reference branch/worktree cleanup. |
-| Owner Contract | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/operations/ACTIVE_PM.md` |
-| Companion Docs | `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`, `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md` |
+| Lane | `EXTERNAL_TOOLS` / `DOCS_OPS` |
+| Branch | `docs/codex-first-review-routing-refresh` |
+| Scope | Formalize Codex-first review/audit routing in the documentation framework, AI stack doc, Active PM, and local routing skill; keep Hermes watchdog/manual fallback only. |
+| Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, product doctrine changes, and preserved reference branch/worktree cleanup. |
+| Owner Contract | `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
+| Companion Docs | `docs/operations/ACTIVE_PM.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/agent-briefs/EXTERNAL_TOOLS.md` |
 | Validation | `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
@@ -74,11 +74,13 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #183 / `4ecbb37`: inventoried preserved UX reference branches/worktrees and recorded selective extraction guidance without merging prototype code.
 - PR #184 / `9285b25`: refreshed `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #183 merged.
 - PR #185 / `861f05b`: added current-compatible Plot profile/player state contract tests and closed PR #184 registry state.
-- Current branch follow-up: refreshes Active PM and branch registry after PR #185 merged.
+- PR #186 / `ce6c841`: refreshed Active PM and branch registry after PR #185 merged.
+- Current branch follow-up: formalizes Codex-first review/audit routing and Hermes fallback/watchdog boundaries in the framework and local skill.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
+- `docs/handoff/2026-07-02_codex-first-review-routing-refresh.md`
 - `docs/handoff/2026-07-02_active-pm-post-plot-profile-player-state-refresh.md`
 - `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`
 - `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md`
@@ -116,7 +118,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-plot-profile-player-state-refresh` until this PM refresh merges; `main` after merge | `861f05b` at refresh start | clean after PR #185 merge; this docs branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `docs/codex-first-review-routing-refresh` until this routing refresh merges; `main` after merge | `ce6c841` at refresh start | clean after PR #186 merge; this docs/tooling branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -161,7 +163,7 @@ The following audited, absorbed/superseded branches were deleted locally and rem
 - If this file conflicts with an owner spec or runtime evidence, report the conflict and refresh this file.
 - If a task is tiny and low-risk, do not create a process packet unless it helps.
 - If a task is significant/risky, cross-lane, provider/db/schema/canon/doc-authority work, complex refactor, broad branch/worktree cleanup, prototype branch absorption, or an external-agent handoff, require the execution packet blocks named in the active documentation framework and use an independent reviewer/auditor pass when branch absorption or cleanup risk is non-trivial.
-- For review/audit model routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`: `gpt-5.3-codex-spark` for basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
+- For review/audit model routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`: Codex subagents are default; `gpt-5.3-codex-spark` handles basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
 - Before creating, assigning, pushing, preserving, merging, closing, or deleting a branch/worktree/workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` and run `pnpm run workspace:audit`.
 
 ## Refresh Checklist

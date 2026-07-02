@@ -25,9 +25,12 @@ These templates are the canonical operating prompts for lane-specialized Codex a
 - If DevTools MCP smoke test fails, agents must stop relying on it for that session and fall back to screenshots / normal browser / Playwright as appropriate.
 
 ## Recommended Model Split
-- Orchestrator / planner / lead integrator: `gpt-5.4` with `high` reasoning
-- Coding lanes (API / web / docs when implementing): `gpt-5.3-codex` with `high` reasoning
-- QA / audit lanes: `gpt-5.4-mini` with `medium` reasoning by default (`high` only for subtle repros)
+Current AI/tool routing is owned by `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`.
+
+- Basic/small review or audit: `gpt-5.3-codex-spark`.
+- Heavy/final review or audit: `gpt-5.5` with `reasoning_effort=xhigh`.
+- Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
+- Implementation/planning model choices should use the fastest available model that still fits the role without overriding the current AI stack doc for review/audit gates.
 
 ## Parallel Guardrails (enforced by queue)
 - Orchestrator is spawn authority by default.
@@ -40,7 +43,7 @@ These templates are the canonical operating prompts for lane-specialized Codex a
   - `--rollback-note <TEXT>`
 
 ## Orchestrator Template (`codex-orchestrator`)
-Recommended model: `gpt-5.4` (`high`)
+Recommended model: see `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 
 Role:
 - Assign tasks, sequence dependencies, review completion reports, acknowledge or requeue.
@@ -51,7 +54,7 @@ Required behavior:
 - Do not implement product code directly when lane work can proceed in parallel.
 
 ## API Template (`codex-api-1`)
-Recommended model: `gpt-5.3-codex` (`high`)
+Recommended model: see `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 
 Role:
 - Backend/API/schema/migration changes and API tests.
@@ -62,7 +65,7 @@ Required behavior:
 - Do not edit web-only paths.
 
 ## Web Template (`codex-web-1`)
-Recommended model: `gpt-5.3-codex` (`high`)
+Recommended model: see `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 
 Role:
 - Web contract wiring and web-tier-safe client scaffolding.
@@ -73,7 +76,7 @@ Required behavior:
 - Do not add unauthorized user-facing actions.
 
 ## QA Template (`codex-qa-1`)
-Recommended model: `gpt-5.4-mini` (`medium`, raise to `high` only for subtle repros)
+Recommended model: `gpt-5.3-codex-spark` for basic QA/audit, or `gpt-5.5` with `reasoning_effort=xhigh` for final/risky review gates
 
 Role:
 - Validation lanes, test harness updates, CI checks.
@@ -84,7 +87,7 @@ Required behavior:
 - Escalate blockers with concrete failing command and root cause.
 
 ## Docs Template (`codex-docs-1`)
-Recommended model: `gpt-5.3-codex` (`high`) for implementation docs, `gpt-5.4` (`high`) for cross-cutting protocol/planning docs
+Recommended model: see `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`; use the fastest adequate implementation/planning model, and route review/audit gates through the Codex-first tiers
 
 Role:
 - Specs/changelog/handoff and roadmap hygiene.
@@ -95,7 +98,7 @@ Required behavior:
 - Link exact files and commands in handoff reports.
 
 ## Review Template (`codex-review-1`)
-Recommended model: `gpt-5.4` (`high`)
+Recommended model: see `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 
 Role:
 - Risk findings, rollback checks, drift prevention signoff.

@@ -45,4 +45,4 @@ Do not bulk-load legacy docs or dated handoffs as current truth. Load them by to
 - Put durable cross-system rules in one owner spec or owner section; keep briefs and handoffs as pointers/context.
 - Audit only committed branch state, not mixed worktrees.
 - Prefer a single reconciliation note over parallel memory docs.
-- Use [`solutions/AGENT_WORKFLOW_PROTOCOL_R1.md`](./solutions/AGENT_WORKFLOW_PROTOCOL_R1.md) for the current recommended operating protocol.
+- Use [`solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`](./solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md) for current AI/tool routing, review/audit model tiers, and Hermes fallback rules; use [`solutions/AGENT_WORKFLOW_PROTOCOL_R1.md`](./solutions/AGENT_WORKFLOW_PROTOCOL_R1.md) for the reusable multi-agent operating protocol.

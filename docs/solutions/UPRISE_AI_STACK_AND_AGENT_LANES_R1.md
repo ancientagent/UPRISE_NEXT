@@ -100,6 +100,15 @@ Use Hermes `upriseauditor` only as manual fallback when:
 
 ## Codex-First Audit Rule
 
+Current default model:
+
+- Codex subagents are the default review/audit lane.
+- `gpt-5.3-codex-spark` handles basic/small review and audit packets.
+- `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates.
+- Hermes is watchdog/manual fallback only; `/clear` starts a fresh Hermes session and is not a mid-task context compactor.
+- Linear tracks execution state only; durable truth stays in owner specs/current repo docs/code/tests.
+- Product ambiguity stops for founder clarification, then the answer is recorded in the appropriate owner doc or handoff/backlog.
+
 Ordinary audits and reviews are Codex-first. Use Codex for branch diffs, stale/fixed-work checks, changed-file review, test-output summaries, packet sanity, first-pass implementation review, PM closeout review, and final safe/not-safe gates. Use Hermes only as an explicit manual fallback when the prompt names the added Hermes value: profile memory, owner-spec/docs specialization, QA planning state, second opinion, synthesis across worker outputs, or feedback/profile-skill learning.
 
 PM should choose the lightest Codex model that protects the task:
