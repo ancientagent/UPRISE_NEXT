@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-01
+Last Updated: 2026-07-02
 
 ## Purpose
 
@@ -20,10 +20,10 @@ This file is not product doctrine, canon, or an owner spec. Durable product trut
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-01
+- Snapshot date: 2026-07-02
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `4e6aab8` (`Capture reviewer/auditor cleanup protocol (#178)`)
-- Local worktree state at refresh: clean after PR #178 merge
+- Current `main` HEAD at refresh start: `7e130ce` (`Docs: route UPRISE reviews through Codex agents (#180)`)
+- Local worktree state at refresh: clean after PR #180 merge
 - Active implementation branch after this refresh merges: none; start the next selected slice from current `main`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 50` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
@@ -31,7 +31,7 @@ This file is not product doctrine, canon, or an owner spec. Durable product trut
 
 ## Active Goal
 
-Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes / Abacus tasks start from current `main`, load the right lane context, and do not disturb preserved UX reference work without explicit approval.
+Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex subagent / Abacus tasks start from current `main`, load the right lane context, and do not disturb preserved UX reference work without explicit approval. Hermes remains watchdog/manual fallback only per the active AI stack doc.
 
 ## Active Slice
 
@@ -42,7 +42,7 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 | Scope | Await next selected cleanup/design/runtime slice from current `main`. |
 | Out of Scope | Runtime changes, provider state, database/schema changes, art changes, UX prototype merging, branch/worktree deletion beyond the already-completed approved cleanup. |
 | Owner Contract | `docs/specs/system/documentation-framework.md` |
-| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md` |
+| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/agent-briefs/EXTERNAL_TOOLS.md`, `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md` |
 | Validation | `pnpm run docs:lint`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
@@ -65,10 +65,13 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #177 / `45cf5a1`: refreshed `ACTIVE_PM` after PR #176.
 - Branch cleanup / no PR: deleted the audited absorbed local and remote branches `docs/active-pm-post-context-panel-removal`, `docs/active-pm-refresh-after-plot-cleanup`, `docs/discover-transport-owner-spec-promotion`, and `refactor/plot-community-context-panel` after Hermes `upriseauditor` classified their durable content as absorbed or superseded.
 - PR #178 / `4e6aab8`: captured and promoted the reviewer/auditor cleanup protocol so large refactors, complex issues, prototype branches, and uncertain branch-absorption cleanup require independent reviewer/auditor classification before merge/delete decisions.
+- PR #179 / `58b0216`: refreshed `ACTIVE_PM` after PR #178.
+- PR #180 / `7e130ce`: routed UPRISE review/audit gates through Codex agents by default, kept `uprisewatchdog` heartbeat-only, and marked Hermes reviewer/auditor briefs as manual fallback scaffolding.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
+- `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`
 - `docs/handoff/2026-07-01_active-pm-post-reviewer-protocol-refresh.md`
 - `docs/handoff/2026-07-01_active-pm-post-plot-top-shell-component-refresh.md`
 - `docs/handoff/2026-07-01_plot-top-shell-component-extraction.md`
@@ -99,7 +102,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `main` after this refresh merges | `4e6aab8` at refresh start | clean after PR #178 merge; this docs-only refresh branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `main` after this refresh merges | `7e130ce` at refresh start | clean after PR #180 merge; this docs-only refresh branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -107,8 +110,8 @@ These worktrees/branches contain unmerged, separately staged, or intentionally p
 
 | Path | Branch | Snapshot HEAD | Main divergence at refresh | Note |
 | --- | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `534` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
-| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `366` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `536` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `368` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
 
 ### Preserved UX Batch Branches
 
@@ -116,8 +119,8 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 | Branch | Main divergence at refresh | Recommended Action |
 | --- | --- | --- |
-| `feat/ux-batch17` | `350` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
-| `feat/ux-batch18-run` | `350` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch17` | `352` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch18-run` | `352` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
 
 ### Cleanup Completed
 
@@ -145,6 +148,7 @@ The following audited, absorbed/superseded branches were deleted locally and rem
 - If this file conflicts with an owner spec or runtime evidence, report the conflict and refresh this file.
 - If a task is tiny and low-risk, do not create a process packet unless it helps.
 - If a task is significant/risky, cross-lane, provider/db/schema/canon/doc-authority work, complex refactor, broad branch/worktree cleanup, prototype branch absorption, or an external-agent handoff, require the execution packet blocks named in the active documentation framework and use an independent reviewer/auditor pass when branch absorption or cleanup risk is non-trivial.
+- For review/audit model routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`: `gpt-5.3-codex-spark` for basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
 
 ## Refresh Checklist
 
