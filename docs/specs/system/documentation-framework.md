@@ -341,6 +341,14 @@ next_signal:
 
 Do not require `reviewer_passed` or `qa_passed` for every PR. Use `reviewer_required` and `qa_required` to make those gates explicit only when the work needs them.
 
+Set `reviewer_required: yes` for large refactors, complex issues, broad
+branch/worktree cleanup, or branch-absorption decisions where stale-looking work
+may still contain valuable product/spec/runtime content. The reviewer/auditor
+must classify branch content before merge/delete decisions using practical
+classes such as absorbed, superseded, extract-only, preserve-only, and unsafe to
+merge wholesale. Tiny surgical docs-only or local cleanup PRs may keep
+`reviewer_required: no` when the branch owner can prove low risk.
+
 ## Handoff Promotion Rule
 
 When a handoff contains a founder clarification or accepted reviewer finding:
@@ -388,6 +396,12 @@ Use reviewers as second-pass checks, not source of truth.
 - `uprisereviewer`: narrow review of a named slice, contract, PR, or post-clarification state.
 - `upriseauditor`: broad drift audit across docs/code/strategy.
 - Cloud Codex / OpenClaw / Abacus: scoped implementation/audit/design support when the repo and branch are available.
+
+For large refactors, complex issues, prototype/reference branches, and branch
+cleanup where absorption is uncertain, run an independent reviewer/auditor pass
+before merge/delete decisions. The review should classify what is already on
+current `main`, what should be extracted into a fresh branch, what is stale, and
+what must remain preserve-only.
 
 Reviewer prompts must include:
 

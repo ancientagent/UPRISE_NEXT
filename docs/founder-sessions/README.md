@@ -13,5 +13,6 @@ Each session note should separate:
 
 ## Current Sessions
 
+- [`2026-07-01_reviewer-auditor-cleanup-protocol.md`](./2026-07-01_reviewer-auditor-cleanup-protocol.md) — raw protocol clarification that large refactors, complex issues, and uncertain branch cleanup should receive independent reviewer/auditor classification before merge/delete decisions.
 - [`2026-07-01_discover-transport-map-player.md`](./2026-07-01_discover-transport-map-player.md) — raw Discover/transport front-door, back-door, map-view, seek-mode, saved-Uprises, and no-transport-inside-Plot clarification.
 - [`2026-07-01_plot-home-scene-visual-skin.md`](./2026-07-01_plot-home-scene-visual-skin.md) — raw Plot/Home Scene visual-skin and Home Scene switcher clarification.
