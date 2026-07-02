@@ -22,9 +22,9 @@ This file is not product doctrine, canon, or an owner spec. Durable product trut
 
 - Snapshot date: 2026-07-01
 - Base branch: `main`
-- Current `main` HEAD: `3e07c0e` (`docs: refresh active pm after archive registrar (#173)`)
-- Local worktree state at refresh: clean after `63d5111` on `feat/plot-top-shell-visual-composition`
-- Active implementation branch: `feat/plot-top-shell-visual-composition`
+- Current `main` HEAD: `e548633` (`Tighten Plot top shell composition (#174)`)
+- Local worktree state at refresh: clean after PR #174 merge
+- Active implementation branch: none.
 - Open PR queue at refresh: none (`gh pr list --state open --limit 100` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -37,13 +37,13 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Hermes /
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `UX_UI` |
-| Branch | `feat/plot-top-shell-visual-composition` |
-| Scope | Presentation-only `/plot` top-shell visual composition: group listener identity, Home Scene selector, and top RADIYO player into one cockpit. |
-| Out of Scope | Discover transport, map/seek controls, source tools in non-expanded Plot, branch deletion, worktree removal, destructive git operations, provider state, database/schema changes, art changes, broad UX prototype merging. |
-| Owner Contract | `docs/specs/communities/plot-and-scene-plot.md` |
-| Companion Docs | `docs/agent-briefs/UI_CURRENT.md`; `docs/handoff/2026-07-01_plot-top-shell-visual-composition.md` |
-| Validation | `pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.test.ts --runInBand`; `pnpm --filter web typecheck`; `pnpm run docs:lint`; `git diff --check` |
+| Lane | none active |
+| Branch | none |
+| Scope | Await next explicitly selected cleanup slice. |
+| Out of Scope | Branch deletion, worktree removal, destructive git operations, provider state, database/schema changes, art changes, broad UX prototype merging. |
+| Owner Contract | route by next task |
+| Companion Docs | `docs/handoff/2026-07-01_plot-top-shell-visual-composition.md` for the completed top-shell composition slice |
+| Validation | choose by next slice |
 
 ## Recently Completed Since Prior PM Snapshot
 
@@ -59,6 +59,7 @@ The previous PM snapshot still pointed at the approved cleanup closeout around `
 - PR #170 / `1ce5607`: added source identity/account switching inside the expanded `/plot` listener profile for users who manage Artist/Band sources while keeping source tools out of non-expanded Plot and listener collection body.
 - PR #172 / `58752c4`: placed Registrar inside `/plot` Archive/community information with Registrar entry/control above records/status history.
 - PR #173 / `3e07c0e`: refreshed `ACTIVE_PM` after PR #172.
+- PR #174 / `e548633`: tightened `/plot` top shell composition so listener identity, Home Scene selector, and top RADIYO player read as one visual cockpit without adding transport behavior.
 
 Use these handoffs for the current cleanup trail:
 
@@ -73,6 +74,7 @@ Use these handoffs for the current cleanup trail:
 - `docs/handoff/2026-07-01_archive-registrar-community-info.md`
 - `docs/handoff/2026-07-01_active-pm-post-archive-registrar-refresh.md`
 - `docs/handoff/2026-07-01_plot-top-shell-visual-composition.md`
+- `docs/handoff/2026-07-01_active-pm-post-plot-top-shell-refresh.md`
 - `docs/founder-sessions/2026-07-01_plot-archive-registrar-placement.md`
 
 ## Current Branch / Worktree State
@@ -85,7 +87,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `feat/plot-top-shell-visual-composition` | `63d5111` | clean after Plot top-shell composition commit |
+| `/home/baris/UPRISE_NEXT` | `main` | `e548633` | clean after PR #174 merge; ready for the next branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -122,7 +124,7 @@ Treat these as branch-hygiene candidates only, not product work.
 
 ## Next Queue
 
-1. Complete `feat/plot-top-shell-visual-composition`, then merge through PR if checks pass.
+1. Continue small Plot structural cleanup from clean `main` only if a region is clearly named and behavior is already locked by tests.
 2. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
 3. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
 4. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
