@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added an Active PM / branch workspace registry refresh after PR #185 merged, closing the Plot profile/player state contract branch state.
 - Added focused Plot profile/player state contract tests that preserve route-owned profile/player state, `RADIYO`/`SPACE` behavior, MVP tier clamping, and the no-transport-inside-Plot boundary while keeping old UX prototype runtime out; see `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #183 merged so the next slice starts from current `main` with `test/plot-profile-player-state-contract` as the next execution signal; see `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md`.
 - Added a read-only UX reference extraction inventory for the preserved `ux-implementation`, `ux-mobile-r1-build`, `feat/ux-batch17`, and `feat/ux-batch18-run` branches so future work selectively extracts current-compatible ideas without merging old prototype branches wholesale; see `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`.
