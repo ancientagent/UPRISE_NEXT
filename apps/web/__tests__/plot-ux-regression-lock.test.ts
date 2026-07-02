@@ -42,6 +42,7 @@ describe('/plot UX regression lock', () => {
   it('locks panel-state ownership to the /plot route container', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const playerSource = readRepoFile('src/components/plot/RadiyoPlayerPanel.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
 
     expect(plotPageSource).toMatch(
       /useState<'collapsed' \| 'peek' \| 'expanded'>\(\s*'collapsed'\s*\)/
@@ -51,9 +52,10 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain("'Pull up or tap to collapse profile'");
     expect(plotPageSource).toContain("'Release to collapse or keep pulling to expand'");
     expect(plotPageSource).toContain("'Pull down profile'");
-    expect(plotPageSource).toContain('onClick={toggleProfilePanel}');
-    expect(plotPageSource).toContain('aria-controls="plot-profile-panel"');
-    expect(plotPageSource).toContain('aria-expanded={isProfileExpanded}');
+    expect(plotPageSource).toContain('onToggleProfilePanel={toggleProfilePanel}');
+    expect(topShellSource).toContain('onClick={onToggleProfilePanel}');
+    expect(topShellSource).toContain('aria-controls="plot-profile-panel"');
+    expect(topShellSource).toContain('aria-expanded={isProfileExpanded}');
     expect(playerSource).not.toContain("useState<'collapsed' | 'peek' | 'expanded'>");
     expect(playerSource).not.toContain('setProfilePanelState');
   });
@@ -136,37 +138,46 @@ describe('/plot UX regression lock', () => {
 
   it('keeps the collapsed profile strip to username plus notifications and options only', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
 
     expect(plotPageSource).not.toContain("user?.displayName?.[0] || user?.username?.[0] || 'U'");
-    expect(plotPageSource).not.toContain('{profilePanelState}');
-    expect(plotPageSource).toContain('data-slot="plot-top-shell"');
-    expect(plotPageSource).toContain('data-slot="home-identity-layer"');
-    expect(plotPageSource).toContain('data-slot="listener-avatar-bust"');
-    expect(plotPageSource).toContain('data-slot="listener-recommendation-bubble"');
-    expect(plotPageSource).toContain('data-slot="home-identity-copy"');
-    expect(plotPageSource).toContain('data-slot="plot-top-shell-selector-player"');
-    expect(plotPageSource).toContain('flex-wrap');
-    expect(plotPageSource).toContain('sm:flex-nowrap');
-    expect(plotPageSource).toContain('basis-full');
-    expect(plotPageSource).toContain('sm:basis-auto');
-    expect(plotPageSource).toContain('Current recommendation');
-    expect(plotPageSource).toContain('UPRISE {homeCityLabel}');
-    expect(plotPageSource).toContain('aria-label="Notifications"');
-    expect(plotPageSource).toContain('aria-label="More menu"');
+    expect(plotPageSource).not.toContain('<span>{profilePanelState}</span>');
+    expect(topShellSource).not.toContain('<span>{profilePanelState}</span>');
+    expect(plotPageSource).toContain("import PlotTopShell from '@/components/plot/PlotTopShell';");
+    expect(plotPageSource).toContain('<PlotTopShell');
+    expect(topShellSource).toContain('data-slot="plot-top-shell"');
+    expect(topShellSource).toContain('data-slot="home-identity-layer"');
+    expect(topShellSource).toContain('data-slot="listener-avatar-bust"');
+    expect(topShellSource).toContain('data-slot="listener-recommendation-bubble"');
+    expect(topShellSource).toContain('data-slot="home-identity-copy"');
+    expect(topShellSource).toContain('data-slot="plot-top-shell-selector-player"');
+    expect(topShellSource).toContain('flex-wrap');
+    expect(topShellSource).toContain('sm:flex-nowrap');
+    expect(topShellSource).toContain('basis-full');
+    expect(topShellSource).toContain('sm:basis-auto');
+    expect(topShellSource).toContain('Current recommendation');
+    expect(topShellSource).toContain('UPRISE {homeCityLabel}');
+    expect(topShellSource).toContain('aria-label="Notifications"');
+    expect(topShellSource).toContain('aria-label="More menu"');
   });
 
   it('keeps the Plot top shell as identity plus Home Scene selector plus player, not transport', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
 
-    expect(plotPageSource).toContain('data-slot="plot-top-shell"');
-    expect(plotPageSource).toContain('data-slot="home-identity-layer"');
-    expect(plotPageSource).toContain('<HomeSceneSelector');
-    expect(plotPageSource).toContain('{isProfileExpanded ? null : playerPanel}');
-    expect(plotPageSource).toContain('data-slot="plot-top-shell-selector-player"');
+    expect(plotPageSource).toContain('<PlotTopShell');
+    expect(topShellSource).toContain('data-slot="plot-top-shell"');
+    expect(topShellSource).toContain('data-slot="home-identity-layer"');
+    expect(topShellSource).toContain('<HomeSceneSelector');
+    expect(topShellSource).toContain('{isProfileExpanded ? null : playerPanel}');
+    expect(topShellSource).toContain('data-slot="plot-top-shell-selector-player"');
     expect(plotPageSource).toContain("placement={isProfileExpanded ? 'profile-bottom' : 'top'}");
     expect(plotPageSource).not.toContain('data-slot="plot-transport"');
     expect(plotPageSource).not.toContain('Seek mode');
     expect(plotPageSource).not.toContain('Map view');
+    expect(topShellSource).not.toContain('data-slot="plot-transport"');
+    expect(topShellSource).not.toContain('Seek mode');
+    expect(topShellSource).not.toContain('Map view');
   });
 
   it('keeps player controls tier-driven and wheel-driven instead of exposing forbidden transport buttons', () => {
@@ -239,6 +250,7 @@ describe('/plot UX regression lock', () => {
   it('locks expanded-profile behavior to swap out Plot tabs/body', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
     const expandedProfileBranch = plotPageSource
       .split('{isProfileExpanded ? (')[1]
       .split('\n        ) : (\n          <>')[0];
@@ -246,7 +258,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('const isProfileExpanded = profilePanelState ===');
     expect(plotPageSource).toContain('const playerPanel = (');
     expect(plotPageSource).toContain("placement={isProfileExpanded ? 'profile-bottom' : 'top'}");
-    expect(plotPageSource).toContain('{isProfileExpanded ? null : playerPanel}');
+    expect(topShellSource).toContain('{isProfileExpanded ? null : playerPanel}');
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
     expect(plotPageSource).toContain('<PlotListenerProfile');
     expect(plotPageSource).toContain('playerPanel={playerPanel}');
@@ -359,14 +371,18 @@ describe('/plot UX regression lock', () => {
   it('locks Home Scene selector into Plot as the active scene shortcut', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const selectorSource = readRepoFile('src/components/plot/HomeSceneSelector.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
 
     expect(plotPageSource).toContain(
-      "import HomeSceneSelector from '@/components/plot/HomeSceneSelector';"
+      "import PlotTopShell from '@/components/plot/PlotTopShell';"
     );
-    expect(plotPageSource).toContain('<HomeSceneSelector');
-    expect(plotPageSource).toContain('selector={homeSceneSelector}');
-    expect(plotPageSource).toContain('selectedCommunityId={selectedCommunity?.id ?? null}');
-    expect(plotPageSource).toContain('onSelect={handleHomeSceneSelectorSelect}');
+    expect(plotPageSource).toContain('<PlotTopShell');
+    expect(topShellSource).toContain("import HomeSceneSelector from '@/components/plot/HomeSceneSelector';");
+    expect(topShellSource).toContain('<HomeSceneSelector');
+    expect(topShellSource).toContain('selector={homeSceneSelector}');
+    expect(topShellSource).toContain('selectedCommunityId={selectedCommunityId}');
+    expect(topShellSource).toContain('onSelect={onHomeSceneSelect}');
+    expect(plotPageSource).toContain('onHomeSceneSelect={handleHomeSceneSelectorSelect}');
     expect(plotPageSource).toContain('getHomeSceneSelector(token)');
     expect(plotPageSource).toContain('tuneDiscoverScene(item.sceneId, token)');
     expect(plotPageSource).toContain('getCommunityById(item.sceneId, token)');
@@ -482,6 +498,7 @@ describe('/plot UX regression lock', () => {
 
   it('locks proxy scene notice discoverability to the existing notification icon on /plot', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
 
     expect(plotPageSource).toContain('playerTier,');
     expect(plotPageSource).toContain(
@@ -490,18 +507,18 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain(
       'const hasPioneerFollowUp = Boolean(pioneerNotificationHomeScene && hasHomeScene);'
     );
-    expect(plotPageSource).toContain('aria-label="Notifications"');
-    expect(plotPageSource).toContain(
+    expect(topShellSource).toContain('aria-label="Notifications"');
+    expect(topShellSource).toContain(
       "aria-controls={hasPioneerFollowUp ? 'plot-pioneer-follow-up' : undefined}"
     );
-    expect(plotPageSource).toContain('onPointerDown={(event) => {');
-    expect(plotPageSource).toContain('event.stopPropagation();');
+    expect(topShellSource).toContain('onPointerDown={(event) => {');
+    expect(topShellSource).toContain('event.stopPropagation();');
     expect(plotPageSource).toContain('setIsNotificationPanelOpen((open) => !open)');
-    expect(plotPageSource).toContain('Proxy Scene Notice');
-    expect(plotPageSource).toContain('Your submitted Home Scene is not active yet.');
-    expect(plotPageSource).toContain('nearest active city');
-    expect(plotPageSource).toContain('tell local bands and artists to register with UPRISE');
-    expect(plotPageSource).toContain('aria-label="More menu"');
+    expect(topShellSource).toContain('Proxy Scene Notice');
+    expect(topShellSource).toContain('Your submitted Home Scene is not active yet.');
+    expect(topShellSource).toContain('nearest active city');
+    expect(topShellSource).toContain('tell local bands and artists to register with UPRISE');
+    expect(topShellSource).toContain('aria-label="More menu"');
   });
 
   it('keeps /plot reachable with an unresolved Home Scene guidance state instead of redirecting to onboarding', () => {
