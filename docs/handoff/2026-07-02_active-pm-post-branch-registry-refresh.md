@@ -3,6 +3,7 @@
 Date: 2026-07-02
 Agent: Codex local
 Branch: `docs/active-pm-post-branch-registry-refresh`
+PR: #182
 Base: `main` at `fe048ce` (`Docs: add branch workspace registry (#181)`)
 
 ## Summary
