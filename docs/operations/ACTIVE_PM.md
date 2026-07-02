@@ -24,9 +24,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-02
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `7e130ce` (`Docs: route UPRISE reviews through Codex agents (#180)`)
-- Local worktree state at refresh: clean after PR #180 merge
-- Active implementation branch after this refresh merges: none; start the next selected slice from current `main`
+- Current `main` HEAD at refresh start: `fe048ce` (`Docs: add branch workspace registry (#181)`)
+- Local worktree state at refresh: clean after PR #181 merge
+- Active implementation branch during this refresh: `docs/active-pm-post-branch-registry-refresh`; after this refresh merges, start the next selected slice from current `main`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 50` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -69,11 +69,13 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #178 / `4e6aab8`: captured and promoted the reviewer/auditor cleanup protocol so large refactors, complex issues, prototype branches, and uncertain branch-absorption cleanup require independent reviewer/auditor classification before merge/delete decisions.
 - PR #179 / `58b0216`: refreshed `ACTIVE_PM` after PR #178.
 - PR #180 / `7e130ce`: routed UPRISE review/audit gates through Codex agents by default, kept `uprisewatchdog` heartbeat-only, and marked Hermes reviewer/auditor briefs as manual fallback scaffolding.
-- Current branch / PR #181 follow-up: added the Branch / Workspace Registry so future branches, worktrees, PR heads, preserved refs, and external-agent workspaces must be recorded with owner, assigned agents, scope, status, and closeout plan.
+- PR #181 / `fe048ce`: added the Branch / Workspace Registry so future branches, worktrees, PR heads, preserved refs, and external-agent workspaces must be recorded with owner, assigned agents, scope, status, and closeout plan.
+- Current branch follow-up: refreshes `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #181 merged.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
+- `docs/handoff/2026-07-02_active-pm-post-branch-registry-refresh.md`
 - `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`
 - `docs/handoff/2026-07-02_active-pm-post-codex-routing-refresh.md`
 - `docs/handoff/2026-07-01_active-pm-post-reviewer-protocol-refresh.md`
@@ -106,7 +108,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `main` after this refresh merges | `7e130ce` at refresh start | clean after PR #180 merge; this docs-only refresh branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-branch-registry-refresh` until this refresh merges; `main` after merge | `fe048ce` at refresh start | clean after PR #181 merge; this docs-only refresh branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -114,8 +116,8 @@ These worktrees/branches contain unmerged, separately staged, or intentionally p
 
 | Path | Branch | Snapshot HEAD | Main divergence at refresh | Note |
 | --- | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `536` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
-| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `368` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `537` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `369` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
 
 ### Preserved UX Batch Branches
 
@@ -123,8 +125,8 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 | Branch | Main divergence at refresh | Recommended Action |
 | --- | --- | --- |
-| `feat/ux-batch17` | `352` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
-| `feat/ux-batch18-run` | `352` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch17` | `353` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch18-run` | `353` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
 
 ### Cleanup Completed
 

@@ -69,15 +69,15 @@ node scripts/workspace-registry.mjs audit --include-remote
 <!-- workspace-registry:start -->
 | ID | Kind | Branch | Worktree / Path | PR / Linear | Base | HEAD | Status | Owner | Agents | What is on it | Last Updated | Closeout |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| main-workspace | primary | main | /home/baris/UPRISE_NEXT | - | origin/main | 7e130ce | primary | Codex local | current branch owner | Primary UPRISE workspace on current main after PR #180. | 2026-07-02 | keep current and clean |
-| active-pm-codex-routing-refresh | branch | docs/active-pm-post-codex-routing-refresh | /home/baris/UPRISE_NEXT | PR #181 | main | pending | open-pr | Codex local | Codex local | Active PM refresh after PR #180, plus branch/workspace registry system added in this follow-up. | 2026-07-02 | merge via PR if green, then delete branch |
+| main-workspace | primary | main | /home/baris/UPRISE_NEXT | - | origin/main | fe048ce | primary | Codex local | current branch owner | Primary UPRISE workspace on current main after PR #181. | 2026-07-02 | keep current and clean |
+| active-pm-codex-routing-refresh | branch | docs/active-pm-post-codex-routing-refresh | - | PR #181 | main | fe048ce | merged | Codex local | Codex local | Active PM refresh after PR #180, plus branch/workspace registry system added in this follow-up. | 2026-07-02 | merged in PR #181; remote branch deleted |
 | ux-implementation-reference | worktree | ux-implementation | /home/baris/UPRISE_NEXT_uximpl | - | older main snapshot | be4ddde | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference; do not merge wholesale. | 2026-07-02 | extract intentionally or archive after review |
 | ux-mobile-r1-reference | worktree | ux-mobile-r1-build | /home/baris/UPRISE_NEXT_uxmobile | - | older main snapshot | b59a63c | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Broad mobile-first UX prototype. Preserve as design/runtime reference; do not merge wholesale. | 2026-07-02 | extract intentionally or archive after review |
 | ux-batch17-reference | preserved-branch | feat/ux-batch17 | - | - | older main snapshot | 9fb382e | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Historical UX/Reliant batch-output reference with canonical blockers documented. | 2026-07-02 | preserve until extraction/archive decision |
 | ux-batch18-reference | preserved-branch | feat/ux-batch18-run | - | - | older main snapshot | 77d2e26 | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Historical UX/Reliant batch-output reference with Social-hidden MVP precedence notes. | 2026-07-02 | preserve until extraction/archive decision |
+| active-pm-post-branch-registry-refresh | branch | docs/active-pm-post-branch-registry-refresh | /home/baris/UPRISE_NEXT | - | main | pending | active | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #181 merged. | 2026-07-02 | merge via PR if green, then delete branch |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches
 
 Remote-only refs may predate this registry. Do not assume they are safe to delete. Use `node scripts/workspace-registry.mjs audit --include-remote` to list unregistered remote refs, then classify them in a dedicated cleanup pass before deletion.
-
