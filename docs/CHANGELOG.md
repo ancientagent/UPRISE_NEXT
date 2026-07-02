@@ -9,6 +9,7 @@
 
 ### Added
 
+- Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #190 merged so current execution state points at `main` @ `66556d7` and the Plot tab-surface branch is closed; see `docs/handoff/2026-07-02_active-pm-post-plot-tab-surface-refresh.md`.
 - Extracted the `/plot` non-expanded tab bar and active surface frame into `PlotTabSurface` while preserving route-owned tab state and Feed / Events / Archive body locks; see `docs/handoff/2026-07-02_plot-tab-surface-component-extraction.md`.
 - Extracted the `/plot` bottom navigation and UPRISE wheel overlay into `PlotBottomNav` while preserving route-owned state, disabled Discover behavior, and existing Plot regression locks; see `docs/handoff/2026-07-02_plot-bottom-nav-component-extraction.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #187 merged so current execution state points at `main` @ `eea674c` and the Codex-first routing branch is closed; see `docs/handoff/2026-07-02_active-pm-post-codex-routing-v2-refresh.md`.
