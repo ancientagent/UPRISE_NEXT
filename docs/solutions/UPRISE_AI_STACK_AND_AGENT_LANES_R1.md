@@ -43,6 +43,7 @@ Route by lane first, tool second.
 | --- | --- | --- | --- |
 | Codex local | Tightly coupled implementation, docs patches, validation, commits, PR coordination, default first-pass review/audit | broad unsupervised rewrites, provider mutation without explicit approval | changed files, tests run, branch/commit state, handoff when multi-step |
 | Cloud Codex | Isolated branch work, focused implementation slices, large repo scans, contract hardening, repo-only audit branches | tasks needing live local browser sessions or local provider auth state | branch, commit, files changed, tests, PR or patch |
+| Hermes `uprisewatchdog` | Lightweight PM heartbeat, branch/log/artifact checks, and wake-up routing using MiniMax-M3 with `hermes-cli` only | review/audit gates, broad repo inspection, product decisions, provider/db changes | PM status note, stalled/missing-agent report, or wake-up prompt |
 | Hermes `uprisereviewer+` / `uprisereviewer-` | Specialist post-implementation or launch review when profile memory, second opinion, or final gate is worth the cost | default branch audits, broad doctrine audits, or implementation | accept/reject findings only from heavy; light returns evidence/recommendations |
 | Hermes `upriseauditor+` / `upriseauditor-` | Specialist drift/documentation/consistency audit when Codex needs profile-memory support or a heavy final gate | default stale checks, routine changed-file scans, code edits, PR ownership, provider changes | classified findings with authority evidence and follow-up issues; final blocks only from heavy |
 | Abacus / Agent Swarm | Complex cross-lane mapping with independent worker lanes, decision packets, architecture scouting | one tightly coupled implementation slice, source of final product truth | lane findings, synthesis, provenance, owner-spec patch recommendations |
@@ -111,6 +112,12 @@ Escalate beyond GPT-5.5 extra-high only when PM names the reason. Claude Opus an
 
 Do not spend heavy Hermes/GLM runs on routine scouting. Basic Hermes can gather evidence and recommend; it cannot approve safety, merge readiness, owner-spec promotion, provider/database changes, branch deletion, or closeout. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex unless a Hermes-specific final gate is required.
 
+## Hermes Watchdog Rule
+
+Use `uprisewatchdog` for PM heartbeat checks only. It should run MiniMax-M3, use the minimal `hermes-cli` toolset, and keep prompts bounded to repo/git/branch state, PM artifacts, worker logs, PR state, and expected handoff paths.
+
+`uprisewatchdog` may wake the right Codex, Cloud Codex, Windows proof, or Hermes specialist lane, and may report blocked/stalled/missing agents back to PM. It must not perform review/audit gates, approve merge readiness, mutate Linear, edit repo files, inspect secrets, browse provider dashboards, or load broad optional toolsets. If a heartbeat check reveals real review work, route that to Codex by model tier or to an explicitly approved Hermes specialist gate.
+
 ## Hermes Model Budget Rule
 
 Use explicit basic/heavy calls only after the Codex-first rule says Hermes is worth using, so UPRISE can save model budget without weakening final gates:
@@ -126,16 +133,19 @@ Heavy can approve or block. Basic can gather, classify, and recommend a heavy ga
 
 Before every new Hermes review/audit packet, prefer a fresh one-shot worker. In a persistent Hermes chat, `/clear` clears the screen and starts a new session by discarding conversation history; it is not a mid-task context compactor. Keep context only when the same Hermes profile is intentionally continuing one larger sequential investigation and the prompt says so. Then include repo path, branch, short HEAD, lane, owner spec, changed files/artifacts, expected profile, and a requirement to verify repo state before reviewing.
 
-Deprecated Hermes just shortcuts:
+Hermes just shortcuts:
 
 ```bash
+just hermes-watchdog path/to/prompt.md
 just hermes-review-heavy path/to/prompt.md
 just hermes-review-basic path/to/prompt.md
 just hermes-audit-heavy path/to/prompt.md
 just hermes-audit-basic path/to/prompt.md
 ```
 
-These recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: GPT-5.3 Codex Spark for light review/audit, GPT-5.5 high for normal review, and GPT-5.5 extra-high for heavy audits.
+`just hermes-watchdog` is the only normal Hermes recipe here. It uses the MiniMax/minimal-tool watchdog lane for heartbeat and wake-up routing.
+
+The review/audit recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: GPT-5.3 Codex Spark for light review/audit, GPT-5.5 high for normal review, and GPT-5.5 extra-high for heavy audits.
 
 Prompts should direct Hermes to use bounded subagents or an agent swarm when independent read-only slices can lower context, wall time, or model cost. Each subagent must get one lane, named docs/files, no edits, no secrets, no provider mutation, no branch deletion, and a concise output cap. Preserve disagreements in the synthesis instead of averaging them away.
 
@@ -273,6 +283,7 @@ Use `docs/operations/ACTIVE_PM.md` as the repo-visible companion snapshot for lo
 - Use GPT-5.3 Codex Spark for basic packet sanity, changed-file scans, stale/duplicate evidence, and test-output summaries.
 - Use GPT-5.5 high for normal implementation review, PM closeout review, and ordinary multi-file branch review.
 - Use GPT-5.5 extra-high for heavy audits that can block branch cleanup, merge, owner-spec promotion, provider/db risk, or closeout.
+- Use `uprisewatchdog` for MiniMax-M3 heartbeat/wake-up checks with minimal tools only.
 - Use `uprisereviewer+`, `uprisereviewer-`, `upriseauditor+`, or `upriseauditor-` only when PM names Hermes-specific value: profile memory, second opinion, owner-spec/docs specialization, synthesis, feedback learning, or a final specialist gate.
 - Use an independent reviewer/auditor before deleting or merging branches from
   large refactors, complex issues, prototype work, or uncertain branch

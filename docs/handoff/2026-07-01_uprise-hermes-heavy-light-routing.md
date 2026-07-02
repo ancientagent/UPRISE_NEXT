@@ -14,6 +14,7 @@ UPRISE now preserves the Hermes basic/heavy lanes as manual specialist fallbacks
 
 The Hermes fallback lanes remain:
 
+- `uprisewatchdog`: MiniMax-M3 heartbeat/wake-up lane with `hermes-cli` only. It checks repo/git/branch state, PM artifacts, worker logs, PR state, and expected handoff paths, then wakes the right lane or reports stalls. It is not a review/audit gate.
 - `uprisereviewer+` / profile `uprisereviewerplus`: GLM 5.2 heavy final review gate.
 - `upriseauditor+` / profile `upriseauditorplus`: GLM 5.2 heavy final audit gate.
 - `uprisereviewer-` / profile `uprisereviewerminus`: MiniMax-M3 basic non-approving review pass for now; planned Qwen 3.7 Plus replacement when the Qwen key is installed.
@@ -26,7 +27,9 @@ Current cost override: ordinary UPRISE audits and reviews are Codex-first. Use H
 ## Repo Changes
 
 - Added `scripts/agent-bridge/ask-hermes.sh` for file-backed one-shot Hermes runs with response/stderr/metadata artifacts.
-- Added `justfile` shortcuts, now fail-closed as deprecated Hermes fallback pointers:
+- Added `justfile` shortcuts:
+  - `just hermes-watchdog path/to/prompt.md` as the normal MiniMax/minimal-tool heartbeat route.
+  - Deprecated review/audit shortcuts, now fail-closed as Hermes fallback pointers:
   - `just hermes-review-heavy <prompt>`
   - `just hermes-review-basic <prompt>`
   - `just hermes-audit-heavy <prompt>`
@@ -40,16 +43,18 @@ Current cost override: ordinary UPRISE audits and reviews are Codex-first. Use H
 ## Local Machine Changes
 
 - Created Hermes profiles:
+  - `uprisewatchdog`
   - `uprisereviewerplus`
   - `uprisereviewerminus`
   - `upriseauditorplus`
   - `upriseauditorminus`
 - Created shell wrappers:
+  - `uprisewatchdog`
   - `uprisereviewer+`
   - `uprisereviewer-`
   - `upriseauditor+`
   - `upriseauditor-`
-- Installed the current MiniMax key into the two minus profiles only.
+- Installed the current MiniMax key into the watchdog and two minus profiles only.
 - Copied existing UPRISE GLM/OpenRouter auth state into the plus profiles without printing secrets.
 - Added local Codex skill: `/home/baris/.codex/skills/uprise-hermes-session-routing/SKILL.md`.
 
@@ -75,6 +80,7 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/init_s
 Then replace the generated `SKILL.md` with the current local rules:
 
 - Start with Codex for ordinary audits/reviews: GPT-5.3 Codex Spark for light, GPT-5.5 high for normal, GPT-5.5 extra-high for heavy.
+- Use `uprisewatchdog` for heartbeat/wake-up checks only. It runs MiniMax-M3 with `hermes-cli` only and should not load broad tools, review code, approve safety, mutate Linear, edit repo files, or inspect secrets.
 - Use `uprisereviewer-` and `upriseauditor-` only for non-final Hermes fallback evidence gathering, packet sanity, stale/duplicate checks, and second opinions when PM names Hermes-specific value.
 - Use `uprisereviewer+` and `upriseauditor+` only for Hermes fallback heavy final safe/not-safe review, audit, merge, branch cleanup, owner-spec promotion, provider/db risk, and closeout gates when PM names Hermes-specific value.
 - Prefer a fresh one-shot before each new audit/review. Treat `/clear` as a persistent-session reset that discards conversation history, not as a mid-task compactor. Keep context only for an explicitly declared sequential continuation.

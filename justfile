@@ -10,6 +10,9 @@ default:
 # - normal: GPT-5.5 high
 # - heavy/final: GPT-5.5 extra-high
 # These Hermes recipes are kept only as manual fallback affordances.
+hermes-watchdog prompt_file:
+    scripts/agent-bridge/ask-hermes.sh --agent "uprisewatchdog" "{{prompt_file}}"
+
 hermes-review-heavy prompt:
     @echo "Deprecated: use Codex GPT-5.5 extra-high for heavy/final UPRISE review. Manual Hermes fallback: scripts/agent-bridge/ask-hermes.sh --agent uprisereviewer+ '{{prompt}}'" >&2
     @exit 2
