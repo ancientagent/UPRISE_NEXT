@@ -99,6 +99,16 @@ Use Hermes `upriseauditor` when:
 
 Ordinary audits and reviews are Codex-first. Use Codex for branch diffs, stale/fixed-work checks, changed-file review, test-output summaries, packet sanity, and first-pass implementation review. Escalate to Hermes only when the prompt names the added Hermes value: profile memory, owner-spec/docs specialization, QA planning state, second opinion, synthesis across worker outputs, feedback/profile-skill learning, or a heavy final safe/not-safe gate.
 
+PM should choose the lightest Codex model that protects the task:
+
+| Task class | Preferred Codex model | Examples |
+| --- | --- | --- |
+| Light review/audit | GPT-5.3 Codex Spark | Docs sanity, packet review, stale/fixed-work check, changed-file skim, test-output summary |
+| Normal review | GPT-5.5 high | Implementation review, multi-file UI/state review, PM closeout review, normal branch audit |
+| Heavy audit | GPT-5.5 extra-high | Cross-lane audit, provider/db/security risk, branch absorption, owner-spec promotion risk, layered/drift-prone cleanup |
+
+Escalate beyond GPT-5.5 extra-high only when PM names the reason. Claude Opus and Fugu/Fugu Ultra are backup or exceptional heavyweight lanes, not default routing.
+
 Do not spend heavy Hermes/GLM runs on routine scouting. Basic Hermes can gather evidence and recommend; it cannot approve safety, merge readiness, owner-spec promotion, provider/database changes, branch deletion, or closeout. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex unless a Hermes-specific final gate is required.
 
 ## Hermes Model Budget Rule
@@ -116,7 +126,7 @@ Heavy can approve or block. Basic can gather, classify, and recommend a heavy ga
 
 Before every new Hermes review/audit packet, prefer a fresh one-shot worker. In a persistent Hermes chat, `/clear` clears the screen and starts a new session by discarding conversation history; it is not a mid-task context compactor. Keep context only when the same Hermes profile is intentionally continuing one larger sequential investigation and the prompt says so. Then include repo path, branch, short HEAD, lane, owner spec, changed files/artifacts, expected profile, and a requirement to verify repo state before reviewing.
 
-Preferred local shortcuts:
+Deprecated Hermes just shortcuts:
 
 ```bash
 just hermes-review-heavy path/to/prompt.md
@@ -124,6 +134,8 @@ just hermes-review-basic path/to/prompt.md
 just hermes-audit-heavy path/to/prompt.md
 just hermes-audit-basic path/to/prompt.md
 ```
+
+These recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: GPT-5.3 Codex Spark for light review/audit, GPT-5.5 high for normal review, and GPT-5.5 extra-high for heavy audits.
 
 Prompts should direct Hermes to use bounded subagents or an agent swarm when independent read-only slices can lower context, wall time, or model cost. Each subagent must get one lane, named docs/files, no edits, no secrets, no provider mutation, no branch deletion, and a concise output cap. Preserve disagreements in the synthesis instead of averaging them away.
 
@@ -258,10 +270,10 @@ Use `docs/operations/ACTIVE_PM.md` as the repo-visible companion snapshot for lo
 
 ## Review Routing
 
-- Use `uprisereviewer+` for final review gates on a named PR, commit, issue, provider-sensitive slice, owner-spec change, or launch-readiness slice.
-- Use `uprisereviewer-` for basic non-approving packet sanity, changed-file scans, stale/duplicate evidence, and second opinions.
-- Use `upriseauditor+` for final broad repo/documentation drift audits that can block branch cleanup, merge, owner-spec promotion, or closeout.
-- Use `upriseauditor-` for basic preliminary broad scans, branch/source maps, and evidence gathering.
+- Use GPT-5.3 Codex Spark for basic packet sanity, changed-file scans, stale/duplicate evidence, and test-output summaries.
+- Use GPT-5.5 high for normal implementation review, PM closeout review, and ordinary multi-file branch review.
+- Use GPT-5.5 extra-high for heavy audits that can block branch cleanup, merge, owner-spec promotion, provider/db risk, or closeout.
+- Use `uprisereviewer+`, `uprisereviewer-`, `upriseauditor+`, or `upriseauditor-` only when PM names Hermes-specific value: profile memory, second opinion, owner-spec/docs specialization, synthesis, feedback learning, or a final specialist gate.
 - Use an independent reviewer/auditor before deleting or merging branches from
   large refactors, complex issues, prototype work, or uncertain branch
   absorption. Do not rely only on the implementation agent's summary when a
