@@ -20,8 +20,8 @@ If an issue happens **twice**, it gets a Solutions doc.
 Start from: `docs/solutions/TEMPLATE.md`
 
 ## Start Here For Agent Workflow
-- `docs/solutions/AGENT_WORKFLOW_PROTOCOL_R1.md` — current recommended multi-agent operating protocol
-- `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` — concise AI/tool stack and lane-agent routing map for Codex, Cloud Codex, Hermes, Abacus, NotebookLM, design tools, Linear, and generated wiki workflows
+- `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` — current AI/tool stack and lane-agent routing map for Codex, Cloud Codex, Hermes, Abacus, NotebookLM, design tools, Linear, generated wiki workflows, and review/audit model tiers
+- `docs/solutions/AGENT_WORKFLOW_PROTOCOL_R1.md` — reusable multi-agent operating protocol; defer model routing to `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 - `docs/solutions/ANTI_PLATFORM_TROPE_DRIFT.md` — prevents non-canon product-pattern assumptions
 - `docs/solutions/SOFTWARE_SYSTEMS_GUARDRAILS_R1.md` — strict systems-thinking rules for software composition, context inheritance, and control-surface discipline
 - `docs/solutions/UPRISE_AUTOHARNESS_R1.md` — founder-to-agent control harness for prompt shaping, drift review, and model-agnostic product-truth enforcement

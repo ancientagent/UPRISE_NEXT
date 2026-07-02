@@ -1,6 +1,6 @@
 # Agent Workflow Protocol R1
 
-Use this protocol for current multi-agent coding/QA work in UPRISE_NEXT.
+Use this protocol for current multi-agent coding/QA work in UPRISE_NEXT. For current AI/tool routing and review/audit model tiers, defer to `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`.
 
 ## Goals
 - Reduce stale-context drift.
@@ -17,10 +17,14 @@ Use this protocol for current multi-agent coding/QA work in UPRISE_NEXT.
 7. chat memory
 
 ## Model Routing
-- Planner / lead integrator: `gpt-5.4` with `high` reasoning
-- Coding / implementation lanes: `gpt-5.3-codex` with `high` reasoning
-- QA / audit lanes: `gpt-5.4-mini` with `medium` reasoning by default (`high` only for subtle repros)
-- Do not assign all agents to the same model by default; prefer the fastest model that still fits the role.
+
+Current review/audit routing is owned by `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`:
+
+- Basic/small review or audit: `gpt-5.3-codex-spark`.
+- Heavy/final review or audit: `gpt-5.5` with `reasoning_effort=xhigh`.
+- Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
+
+Implementation/planning model choices should still use the fastest available model that fits the role, but do not let this protocol override the current AI stack doc for review/audit gates.
 
 ## 2. Working Roles
 ### Main implementation owner

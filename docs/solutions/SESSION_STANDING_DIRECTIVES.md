@@ -54,20 +54,16 @@ Use this block at the start of each execution session.
 - Skip parallelization only for tightly-coupled or order-dependent edits.
 
 10) Model assignment / reasoning policy
-- Planner / lead integrator role:
-  - model: `gpt-5.4`
-  - reasoning: `high`
-  - use for cross-cutting triage, ambiguous spec boundaries, integration, and final decision-making
-- Coding / implementation role:
-  - model: `gpt-5.3-codex`
-  - reasoning: `high`
-  - use for code changes, targeted refactors, test updates, and implementation slices
-- QA / read-only audit role:
-  - model: `gpt-5.4-mini`
-  - reasoning: `medium` by default, `high` only when the repro is subtle or stale-state-sensitive
-  - use for live verification, route audits, and defect listing only
-- Do not assign all agents to the same model by default.
-- Prefer the fastest model that still fits the role.
+- Current AI/tool routing is owned by `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`.
+- Basic/small review or audit:
+  - model: `gpt-5.3-codex-spark`
+  - use for docs drift, stale branch checks, changed-file sanity, PM packet checks, low-risk UI/test/docs PRs, and test-output summaries
+- Heavy/final review or audit:
+  - model: `gpt-5.5`
+  - reasoning_effort: `xhigh`
+  - use for high-impact merges, branch deletion, schema/provider/database/security/canon/owner-spec changes, broad cleanup audits, closeout gates, and any pass that can approve/block action
+- Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
+- Implementation/planning model choices should use the fastest available model that still fits the role, but do not override the current AI stack doc for review/audit gates.
 
 11) Tooling baseline and context compaction guard
 - Assume `python3` as the canonical Python command. Do not assume `python` alias exists.

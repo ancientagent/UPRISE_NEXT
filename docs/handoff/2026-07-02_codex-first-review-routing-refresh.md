@@ -26,6 +26,7 @@ Formalize the current UPRISE review/audit model so it is repo-visible and skill-
 - Added a concise current model block to `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #186 merged.
 - Updated the local Codex skill `/home/baris/.codex/skills/uprise-hermes-session-routing/SKILL.md` with the same product-ambiguity and Linear execution-state rule.
+- Superseded stale active model-routing references in `docs/README.md`, `docs/solutions/README.md`, `docs/solutions/AGENT_WORKFLOW_PROTOCOL_R1.md`, `docs/solutions/SESSION_STANDING_DIRECTIVES.md`, and `docs/handoff/agent-control/AGENT_DIRECTIVES.md` so they defer review/audit routing to the AI stack doc.
 - Added this handoff and changelog entry.
 
 ## Not Changed

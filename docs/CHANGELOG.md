@@ -9,7 +9,7 @@
 
 ### Added
 
-- Formalized Codex-first UPRISE review/audit routing in the documentation framework and AI stack docs: `gpt-5.3-codex-spark` handles basic/small passes, `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates, and Hermes stays watchdog/manual fallback only; see `docs/handoff/2026-07-02_codex-first-review-routing-refresh.md`.
+- Formalized Codex-first UPRISE review/audit routing in the documentation framework, AI stack docs, and stale workflow-protocol pointers: `gpt-5.3-codex-spark` handles basic/small passes, `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates, and Hermes stays watchdog/manual fallback only; see `docs/handoff/2026-07-02_codex-first-review-routing-refresh.md`.
 - Added an Active PM / branch workspace registry refresh after PR #185 merged, closing the Plot profile/player state contract branch state.
 - Added focused Plot profile/player state contract tests that preserve route-owned profile/player state, `RADIYO`/`SPACE` behavior, MVP tier clamping, and the no-transport-inside-Plot boundary while keeping old UX prototype runtime out; see `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #183 merged so the next slice starts from current `main` with `test/plot-profile-player-state-contract` as the next execution signal; see `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md`.
