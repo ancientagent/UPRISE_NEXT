@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `48d56e0` (`docs: clarify first-pass implementation workflow`)
-- Active branch during this refresh: `docs/active-pm-post-first-pass-workflow-refresh`
-- Local worktree state at refresh: post-PR closeout refresh branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) plus draft PR #216 (`docs/active-pm-post-first-pass-workflow-refresh`); PR #214 and PR #215 merged
+- Current `main` HEAD at refresh start: `9910151` (`docs: refresh PM after first-pass workflow merge`)
+- Active branch during this refresh: `docs/final-pm-closeout-after-workflow-refresh`
+- Local worktree state at refresh: final operations closeout refresh branch
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #214, PR #215, and PR #216 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,8 +35,8 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Refresh Active PM and branch registry after PR #215 merged.
-- Keep the repo execution-state docs aligned with merged PR state.
+- Final closeout refresh after PR #216 merged.
+- Return Active PM to a clean next-task signal.
 - Leave draft PR #212 preserved and out of scope.
 
 Recently completed context:
@@ -45,6 +45,7 @@ Recently completed context:
 - PR #213 merged Task 11 source/listener profile boundary locks at `1bcbfa7`.
 - PR #214 merged Task 12 Print Shop source-facing event path locks at `236353e`.
 - PR #215 merged first-pass implementation workflow clarification at `48d56e0`.
+- PR #216 merged post-workflow PM/registry refresh at `9910151`.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
@@ -52,8 +53,8 @@ Recently completed context:
 | Field | Current Value |
 | --- | --- |
 | Lane | `EXTERNAL_TOOLS` / context-steward / execution-process docs |
-| Branch | `docs/active-pm-post-first-pass-workflow-refresh` |
-| Scope | Docs-only post-merge refresh for Active PM and branch registry after PR #215 merged. |
+| Branch | `docs/final-pm-closeout-after-workflow-refresh` |
+| Scope | Docs-only final operations-state closeout after PR #216 merged. |
 | Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, per-issue packet files, new PM harness, merging/closing PR #212. |
 | Owner Contracts | none; operations state only |
 | Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
@@ -72,7 +73,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-first-pass-workflow-refresh` | `48d56e0` at branch start | Post-merge PM/registry refresh branch |
+| `/home/baris/UPRISE_NEXT` | `docs/final-pm-closeout-after-workflow-refresh` | `9910151` at branch start | Final PM/registry closeout refresh branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -97,10 +98,11 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 - PR #213 / `1bcbfa7`: Task 11 source/listener profile boundary locks.
 - PR #214 / `236353e`: Task 12 Print Shop source-facing event path locks.
 - PR #215 / `48d56e0`: first-pass implementation workflow clarification.
+- PR #216 / `9910151`: post-workflow PM/registry refresh.
 
 ## Next Queue
 
-1. Review/merge PR #216 after checks; then continue to the next selected UPRISE Development Plan task.
+1. Finish this final operations closeout refresh branch.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 3. Continue to the next UPRISE Development Plan R1 task selected by the user.
 
