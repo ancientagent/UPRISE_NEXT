@@ -178,6 +178,14 @@ describe('EventsService.createFromPrintShop', () => {
       artistBandId: 'band-1',
     } as any);
 
+    expect(mockPrisma.artistBand.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: 'band-1',
+          OR: [{ createdById: 'user-1' }, { members: { some: { userId: 'user-1' } } }],
+        }),
+      }),
+    );
     expect(mockPrisma.event.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
