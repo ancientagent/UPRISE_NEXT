@@ -63,6 +63,9 @@ describe('cross-route UX consistency lock', () => {
     expect(usersSource).not.toContain('Release Deck');
     expect(usersSource).not.toContain('Print Shop');
     expect(usersSource).not.toContain('Open Registrar');
+    expect(usersSource).not.toContain('Message Artist');
+    expect(usersSource).not.toContain('DM Artist');
+    expect(usersSource).not.toContain('Contact Artist');
   });
 
   it('keeps Artist Profile separate from the listener profile pull-down seam', () => {
