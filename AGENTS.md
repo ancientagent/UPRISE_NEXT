@@ -49,6 +49,7 @@ Load only the minimum additional material required for the task.
 - **Contract owner rule:** cross-system product rules must live in one owner spec or owner section under `docs/specs/**`; lane briefs and handoffs should summarize/link instead of duplicating full rules. Use `docs/specs/system/documentation-framework.md`.
 - **Rollback checkpoint rule:** for multi-agent throughput runs, follow `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` and default to non-destructive rollback (`git switch`/`git revert`); use `git reset --hard` only with explicit in-thread approval.
 - **Branch/workspace registry rule:** before creating, assigning, pushing, preserving, closing, merging, or deleting a branch/worktree/external-agent workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` with branch name, path, status, owner, assigned agents, scope, base/head, PR/Linear link, and closeout plan. Run `pnpm run workspace:audit` before push/PR/closeout.
+- **Windows-visible artifact rule:** for user-visible generated artifacts from WSL agents, run `just artifacts <issue-or-task-slug>` first. Write screenshots, HTML previews, reports, logs, and bundles to the printed `ARTIFACT_DIR_WSL` path and report both `ARTIFACT_DIR_WSL` and `ARTIFACT_DIR_WINDOWS`. This makes files visible from Windows, but it does not force Codex's native artifact viewer to render them; use a native artifact/render tool separately when the task specifically requires in-app viewer rendering.
 
 ## Working Rules
 - Prefer current repo truth over stale handoff memory.
