@@ -610,6 +610,33 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).not.toContain('Collect from this listening context');
   });
 
+  it('keeps listener Blast cards as Feed rows whose blasted signal links to its source', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+    const plotSpec = readWorkspaceFile('docs/specs/communities/plot-and-scene-plot.md');
+    const discoverySpec = readWorkspaceFile('docs/specs/communities/discovery-scene-switching.md');
+
+    expect(plotSpec).toContain(
+      'a `Blast card` is a Feed card type for listener `Blast` activity'
+    );
+    expect(plotSpec).toContain(
+      'every Blast card must expose a link from the blasted signal to that signal'
+    );
+    expect(discoverySpec).toContain(
+      'Listener Blast activity cards are Feed cards, not discovery inserts.'
+    );
+    expect(seedFeedSource).toContain("case 'blast':");
+    expect(seedFeedSource).toContain("return 'Blast';");
+    expect(seedFeedSource).toContain(
+      'function sourceFromMetadata(item: CommunityFeedItem): { id: string; name: string } | null'
+    );
+    expect(seedFeedSource).toContain('const source = sourceFromMetadata(item);');
+    expect(seedFeedSource).toMatch(
+      /trackHref && source \? \(\s*source\.name\s*\) : source \? \(\s*<Link className="underline underline-offset-2" href=\{`\/artist-bands\/\$\{source\.id\}`\}>/
+    );
+    expect(seedFeedSource).not.toContain('data-slot="plot-blast-panel"');
+    expect(seedFeedSource).not.toContain('data-slot="blast-destination"');
+  });
+
   it('keeps the first feed insert as a read-only Popular Singles carousel with artist-page signal handoff', () => {
     const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
 
