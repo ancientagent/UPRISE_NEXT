@@ -212,6 +212,8 @@ For concise tool-to-lane routing across Codex local, Cloud Codex, Hermes, Abacus
 
 Linear tracks execution. It does not replace repo docs.
 
+Linear issues should function as clean-context execution packets for assigned agents. The assigning agent owns founder confirmation and issue completeness before assignment; the assigned agent starts with a clean context for that issue and follows the Linear issue plus repo-linked docs/files instead of prior chat history or hidden handoff assumptions.
+
 Use Linear for:
 
 - issue queue;
@@ -221,6 +223,7 @@ Use Linear for:
 - PR/commit links;
 - validation evidence;
 - status tracking.
+- clean-context execution packet fields for assigned agents.
 
 Do not use Linear for:
 
@@ -228,6 +231,30 @@ Do not use Linear for:
 - final founder decisions;
 - detailed durable specs;
 - replacing owner contracts.
+- hidden product context that is not linked to repo authority.
+
+Assigning agent responsibilities:
+
+- Prefer a dedicated Codex subagent for this role when issue setup requires meaningful repo/context gathering. Its job is to gather evidence, prepare the clean Linear packet, and route/assign the issue; it should not own the implementation branch unless explicitly reassigned.
+- confirm ambiguous or product-changing understanding with the founder before assignment;
+- classify the issue as `bug`, `stale`, `environment`, `fixture/data`, `product decision`, `docs-cleanup`, or `runtime-cleanup`;
+- provide or link the owner spec, lane brief, required runtime files/tests, skill/tool recommendation, expected solution direction, out-of-scope boundaries, and validation commands;
+- include the Execution Packet / Executor Readiness fields when the issue is significant/risky, behavior-changing, cross-lane, provider/db/schema/canon/doc-authority work, or an external-agent handoff;
+- state whether canon, owner specs, tests, handoff, changelog, PM state, or workspace registry updates are expected at closeout.
+
+Assigned agent responsibilities:
+
+- start from clean context for the issue;
+- read the Linear issue first, then only the repo-linked docs/files named by the issue and any direct owner-spec/lane requirements;
+- stop and report back if the Linear issue lacks owner spec, rules, context, solution direction, validation, or safety boundaries needed for execution;
+- do not rely on prior chat, external reports, or stale handoffs unless the Linear issue explicitly links them and states why they matter;
+- execute one branch-owned slice and record completion evidence back to Linear/PR/handoff as requested.
+
+Durable truth promotion:
+
+- If founder-confirmed understanding changes canon-level doctrine or terminology, patch canon deliberately and include the required canon/changelog validation.
+- If founder-confirmed understanding changes runtime/product behavior without canon-level doctrine changes, patch the appropriate owner spec under `docs/specs/**` and keep briefs/handoffs as pointers.
+- If the issue only fixes code/tests/docs without changing durable truth, do not update canon; update tests, handoff, changelog, PM/registry, and Linear as appropriate.
 
 Recommended project structure:
 

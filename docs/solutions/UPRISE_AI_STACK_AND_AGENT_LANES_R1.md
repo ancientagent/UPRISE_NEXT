@@ -284,6 +284,8 @@ unsafe to merge before cleanup.
 
 Linear tracks execution, not truth.
 
+For non-trivial issue setup, prefer a dedicated Codex subagent as the assigning agent. That subagent gathers the required repo context, confirms ambiguous/product-changing understanding with the founder through the PM/current session, writes or updates the Linear issue as a clean-context packet, recommends skills/tools/model tier, and assigns the executor. It should not also own the implementation branch unless explicitly reassigned.
+
 Use Linear issues to record:
 
 - lane label;

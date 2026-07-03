@@ -77,6 +77,13 @@ Load only the materials directly needed for the current task:
 - Record the feature review scope and plan-review artifact in the Execution Packet / Executor Readiness blocks from `docs/specs/system/documentation-framework.md`.
 - Tiny surgical docs-only or local cleanup PRs may skip this gate only when no product/runtime behavior is being implemented and the branch owner can prove low risk.
 
+### Linear clean-context assignment
+- The assigning agent owns founder confirmation and Linear issue completeness before assignment.
+- Prefer a dedicated Codex subagent as the assigning agent when issue setup needs repo/context gathering; it prepares the packet and assignment, not the implementation branch.
+- The assigned agent starts with clean context and reads the Linear issue first, then the repo-linked docs/files named by the issue.
+- If the issue lacks owner spec, rules, context, solution direction, validation, or safety boundaries, the assigned agent stops and reports the missing packet fields instead of reconstructing intent from chat.
+- Linear remains execution state; durable confirmed truth is promoted to canon or owner specs as appropriate.
+
 ### External-delegation pattern
 - Use external/swarm assistants primarily for design, communications, research, and synthesis unless a repo-controlled coding workflow is explicitly intended.
 - Keep one shared fact base for multi-deliverable work so outputs do not drift from each other.

@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a Linear clean-context assignment protocol that separates assigning-agent packet/founder-confirmation work from assigned-agent clean-context execution, with Codex subagent assignment recommended for non-trivial issue setup; see `docs/handoff/2026-07-03_linear-clean-context-agent-roles.md`.
 - Added a pre-implementation feature gate requiring repo-grounded feature review plus independent Codex development-plan review before behavior-changing feature work starts; see `docs/handoff/2026-07-03_feature-plan-review-gate.md`.
 - Added a Feed card family inventory for current `/plot` runtime cards and inserts, including launch/deferred/source/remove classifications and a regression lock against Feed insert calendar-mutation drift; see `docs/handoff/2026-07-03_feed-card-family-inventory.md`.
 - Added activation tuple normalized-matching hardening so manual activation reuses canonical candidate tuples and finds inactive natural scenes despite casing/edge-spacing drift; see `docs/handoff/2026-07-03_activation-tuple-normalized-matching.md`.
@@ -2005,6 +2006,7 @@
 
 ### Added
 
+- Added a Linear clean-context assignment protocol that separates assigning-agent packet/founder-confirmation work from assigned-agent clean-context execution, with Codex subagent assignment recommended for non-trivial issue setup; see `docs/handoff/2026-07-03_linear-clean-context-agent-roles.md`.
 - Added Reliant current-plan queue tooling so `pnpm run reliant:plan:next` surfaces `UPRISE_DEVELOPMENT_PLAN_R1` tasks instead of stale default backlog slices; see `docs/handoff/2026-07-03_reliant-development-plan-queue.md`.
 - Phase 1 foundation documented: `PHASE1_COMPLETION_REPORT.md`.
 - Critical infrastructure directive: `STRATEGY_CRITICAL_INFRA_NOTE.md`.
