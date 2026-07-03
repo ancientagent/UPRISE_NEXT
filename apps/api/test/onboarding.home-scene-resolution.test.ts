@@ -427,6 +427,49 @@ describe('OnboardingService home-scene resolution', () => {
     });
   });
 
+  it('stores GPS coordinates but keeps voting disabled before Home Scene selection exists', async () => {
+    const prisma = createPrismaMock();
+    const places = { reverseGeocode: jest.fn() };
+    const service = new OnboardingService(prisma as any, places as any);
+
+    prisma.user.findUnique.mockResolvedValue({
+      homeSceneCity: null,
+      homeSceneState: null,
+      homeSceneCommunity: null,
+      tunedSceneId: null,
+    });
+    prisma.user.update.mockResolvedValue({
+      id: 'user-1',
+      gpsVerified: false,
+      latitude: 30.2672,
+      longitude: -97.7431,
+    });
+
+    const result = await service.verifyGps('user-1', {
+      latitude: 30.2672,
+      longitude: -97.7431,
+    });
+
+    expect(places.reverseGeocode).not.toHaveBeenCalled();
+    expect(prisma.community.findFirst).not.toHaveBeenCalled();
+    expect(prisma.community.findUnique).not.toHaveBeenCalled();
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 'user-1' },
+      data: {
+        gpsVerified: false,
+        latitude: 30.2672,
+        longitude: -97.7431,
+      },
+      select: { id: true, gpsVerified: true, latitude: true, longitude: true },
+    });
+    expect(result).toMatchObject({
+      gpsVerified: false,
+      votingEligible: false,
+      reason: 'NO_HOME_SCENE',
+    });
+  });
+
   it('verifies GPS against submitted city/state while voting at fallback when Home Scene is unavailable', async () => {
     const prisma = createPrismaMock();
     const places = {

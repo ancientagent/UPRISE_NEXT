@@ -5,9 +5,9 @@
   "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
   "summary": {
     "total": 8,
-    "queued": 5,
+    "queued": 4,
     "in_progress": 0,
-    "done": 3,
+    "done": 4,
     "blocked": 0
   },
   "tasks": [
@@ -60,9 +60,12 @@
       "stage": "Stage 2: Launch-Critical Vertical Slice",
       "prompt": "Execute one UPRISE Development Plan R1 slice only: run or add focused tests for manual-first Home Scene selection, GPS voting authority, GPS denial, proxy assignment, and Home Scene selector read model. Do not touch provider/database state without explicit approval. Update docs/CHANGELOG.md and a dated docs/handoff note.",
       "verifyCommand": "pnpm --filter api test -- onboarding.home-scene-resolution.test.ts onboarding.music-community-request.test.ts --runInBand && pnpm --filter web test -- onboarding-regression-lock.test.ts onboarding-review-resolution.test.ts --runInBand && pnpm run docs:lint && pnpm run workspace:audit",
-      "status": "queued",
-      "updatedAt": "2026-07-03T05:44:18.302Z",
-      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md"
+      "status": "done",
+      "updatedAt": "2026-07-03T06:28:05.747Z",
+      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
+      "startedAt": "2026-07-03T06:24:27.842Z",
+      "finishedAt": "2026-07-03T06:28:05.747Z",
+      "reportPath": "docs/handoff/2026-07-03_onboarding-home-scene-smoke-hardening.md"
     },
     {
       "id": "UPRISE-PLAN-005",

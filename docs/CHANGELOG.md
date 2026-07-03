@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added onboarding/Home Scene smoke-hardening coverage for GPS-before-Home-Scene fail-closed behavior and manual-entry continuation after GPS denial/skipping; see `docs/handoff/2026-07-03_onboarding-home-scene-smoke-hardening.md`.
 - Added Plot no-transport boundary regression coverage across the top shell, Home Scene selector, profile pull-down, Archive, and Events; see `docs/handoff/2026-07-03_plot-no-transport-boundary-tests.md`.
 - Added Feed-card Travel launch-boundary regression coverage so future outside-Uprise Travel remains contract-ready without activating Travel in current Feed/Plot runtime; see `docs/handoff/2026-07-03_feed-travel-launch-boundary-tests.md`.
 - Added Feed Blast card source-link regression coverage so listener Blast activity stays a Feed card type and source-backed Blast rows keep linking to the blasted signal source; see `docs/handoff/2026-07-03_feed-blast-card-source-link-contract-tests.md`.

@@ -59,4 +59,20 @@ describe('/onboarding regression lock', () => {
     expect(onboardingSource).toContain('Enter The Plot');
     expect(onboardingSource).toContain('Edit Home Scene');
   });
+
+  it('keeps manual Home Scene entry available when GPS is denied or skipped', () => {
+    const onboardingSource = readRepoFile('src/app/onboarding/page.tsx');
+
+    expect(onboardingSource).toContain('handleGpsPromptDeny');
+    expect(onboardingSource).toContain('handleSkipGps');
+    expect(onboardingSource).toContain("setGpsStatus('denied')");
+    expect(onboardingSource).toContain("setVotingEligibility(false, 'Skipped GPS.')");
+    expect(onboardingSource).toContain('GPS permission was denied. You can continue without voting access.');
+    expect(onboardingSource).toContain('You can continue by entering your city/state manually.');
+    expect(onboardingSource).toContain('setManualLocationMode(true);');
+    expect(onboardingSource).toContain('placeholder="Start typing your city"');
+    expect(onboardingSource).toContain('placeholder="Select your state"');
+    expect(onboardingSource).toContain('disabled={!canContinue}');
+    expect(onboardingSource).toContain('handleSceneContinue');
+  });
 });
