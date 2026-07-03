@@ -14,13 +14,15 @@ Owner spec candidates: docs/specs/system/documentation-framework.md; docs/soluti
 
 > sorry im talking about two things,, theres the assigned agent and assigning agent.   the assigned agent only looks to the linear,  the assigning agent confirms with the founder
 
+> so the pm would assign the subagent
+
 ## Clarifications
 
 - Linear issues should function as clean-context execution packets for assigned agents.
 - Type: settled
 - Likely owner: `docs/specs/system/documentation-framework.md`; `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 
-- The assigning agent owns founder confirmation, context assembly, solution direction, required docs/files, skills/tools, and acceptance criteria before assigning the issue.
+- PM/current branch owner assigns the assigning-agent Codex subagent for non-trivial issue setup; that subagent owns founder-confirmation packet prep, context assembly, solution direction, required docs/files, skills/tools, and acceptance criteria before recommending executor assignment.
 - Type: settled
 - Likely owner: `docs/specs/system/documentation-framework.md`
 
@@ -37,6 +39,7 @@ Owner spec candidates: docs/specs/system/documentation-framework.md; docs/soluti
 - Linear clean-context assignment protocol
 - Raw basis: assigned agent only looks to Linear; assigning agent confirms with founder
 - Included behavior:
+  - PM/current branch owner assigns assigning-agent Codex subagent for non-trivial setup
   - assigning agent creates complete Linear packet
   - assigning agent confirms ambiguous/product-changing understanding with founder
   - assigned agent starts clean and executes from Linear plus repo-linked authority

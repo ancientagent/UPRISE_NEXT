@@ -14,7 +14,7 @@ The protocol separates two roles:
 - Assigning agent: prepares the issue packet, gathers repo context, confirms product-changing understanding with the founder, recommends skills/tools/model tier, and assigns the executor.
 - Assigned agent: starts clean from the Linear issue, follows only the issue plus repo-linked docs/files, and stops if the packet lacks enough context.
 
-For non-trivial issue setup, the assigning agent should preferably be a dedicated Codex subagent. It should not also own the implementation branch unless explicitly reassigned.
+For non-trivial issue setup, PM/current branch owner should assign a dedicated Codex subagent as the assigning agent. That subagent prepares the packet and recommends executor assignment; it should not also own the implementation branch unless PM explicitly reassigns it.
 
 ## Files Changed
 

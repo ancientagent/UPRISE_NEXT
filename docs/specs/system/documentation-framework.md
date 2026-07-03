@@ -235,7 +235,7 @@ Do not use Linear for:
 
 Assigning agent responsibilities:
 
-- Prefer a dedicated Codex subagent for this role when issue setup requires meaningful repo/context gathering. Its job is to gather evidence, prepare the clean Linear packet, and route/assign the issue; it should not own the implementation branch unless explicitly reassigned.
+- PM/current branch owner assigns a dedicated Codex subagent to this role when issue setup requires meaningful repo/context gathering. The subagent's job is to gather evidence, prepare the clean Linear packet, and recommend assignment; it should not own the implementation branch unless PM explicitly reassigns it.
 - confirm ambiguous or product-changing understanding with the founder before assignment;
 - classify the issue as `bug`, `stale`, `environment`, `fixture/data`, `product decision`, `docs-cleanup`, or `runtime-cleanup`;
 - provide or link the owner spec, lane brief, required runtime files/tests, skill/tool recommendation, expected solution direction, out-of-scope boundaries, and validation commands;

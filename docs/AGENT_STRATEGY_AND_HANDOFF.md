@@ -79,7 +79,7 @@ Load only the materials directly needed for the current task:
 
 ### Linear clean-context assignment
 - The assigning agent owns founder confirmation and Linear issue completeness before assignment.
-- Prefer a dedicated Codex subagent as the assigning agent when issue setup needs repo/context gathering; it prepares the packet and assignment, not the implementation branch.
+- PM/current branch owner assigns a dedicated Codex subagent as the assigning agent when issue setup needs repo/context gathering; it prepares the packet and recommends assignment, not the implementation branch.
 - The assigned agent starts with clean context and reads the Linear issue first, then the repo-linked docs/files named by the issue.
 - If the issue lacks owner spec, rules, context, solution direction, validation, or safety boundaries, the assigned agent stops and reports the missing packet fields instead of reconstructing intent from chat.
 - Linear remains execution state; durable confirmed truth is promoted to canon or owner specs as appropriate.
