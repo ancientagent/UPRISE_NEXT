@@ -59,6 +59,12 @@ Tests / verification files:
 - `Blast` belongs to held music-distribution signals in the personal player / user space.
 - `Blast` does not belong on Artist Profile.
 - `Blast` does not belong on feed insert cards.
+- A `Blast card` is a listener Blast activity card inside Feed, not a feed
+  insert and not a separate surface.
+- Every Blast card should link the blasted signal to that signal's source.
+- Eligible outside-Uprise Feed cards may expose `Travel` as a separate handoff
+  into Discover/back-door visitor context; this is distinct from the blasted
+  signal source link and does not grant civic authority.
 - Artist Profile uses local song-row controls, not the engagement wheel.
 - Feed inserts are read-only launch surfaces with no inline `Collect`, `Blast`, `Follow`, or wheel actions.
 - Events are objects, not sources; event action is `Add` to calendar.
@@ -76,6 +82,8 @@ Tests / verification files:
 ## Design / Implementation Boundaries
 - Do not put `Blast` back on the `RADIYO` wheel.
 - Do not treat `SPACE` as permission to add saved/custom Uprise transport or playback launchers to Plot.
+- Do not collapse a Feed card's signal-source link and `Travel` link into one
+  ambiguous action.
 - Do not place the engagement wheel on Artist Profile.
 - Do not add direct `Support` buttons.
 - Do not use `Add` for saving songs in user-facing UI.

@@ -337,3 +337,69 @@ Owner spec candidates:
 - Do not put saved outside Uprises in the Home Scene selector.
 - Do not make a Feed blast transport the user automatically into another community; clicking can load/listen, and deeper context must hand off to Discover rather than originate transport inside Plot.
 - Do not treat merch tables as current MVP unless explicitly scoped later.
+
+## Raw Founder Notes - Feed Card Travel Action Correction
+
+> the feed card should have a link to travel as well from the feed, they should be able to click on the card to load the uprise or click on the travel to take them to that community (and load the uprise)
+
+## Clarifications - Feed Card Travel Action Correction
+
+- Feed cards that surface another Uprise should support two distinct user actions: clicking the card loads/listens to that Uprise, while clicking `Travel` takes the user to that community's visitor/back-door context and loads the Uprise.
+- Type: settled correction to previous Feed/Plot transport wording, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, future Feed/player tests
+
+## Working Interpretation - Feed Card Travel Action Correction
+
+- The prior rule should not be read as banning every `Travel` link on Feed cards.
+- The safer boundary is: Feed may expose an explicit `Travel` link on eligible outside-Uprise cards, but that action hands off to Discover/back-door visitor context and loads the Uprise. It does not turn the full Plot shell, Home Scene selector, or profile pull-down into a general transport system.
+- Card click and `Travel` click are separate: card click is listening; `Travel` click is visitor/community context plus listening.
+
+## Do Not Drift - Feed Card Travel Action Correction
+
+- Do not make card click and `Travel` click the same action.
+- Do not remove Feed-card travel just because general Plot transport remains disallowed.
+- Do not make Feed-card travel grant membership, Home Scene authority, or voting rights in the visited community.
+- Do not add map/Seek/saved-custom-Uprise launchers to Plot under this correction.
+
+## Raw Founder Notes - Blast Card Signal Source Link
+
+> for all blast cards the signal being blasted has a link taking the user to the signals source
+
+## Clarifications - Blast Card Signal Source Link
+
+- Every Blast card should make the blasted signal itself link to that signal's source.
+- Type: settled clarification, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`, future Feed/Blast card tests
+
+## Working Interpretation - Blast Card Signal Source Link
+
+- Blast cards can expose multiple distinct destinations when the underlying signal supports them.
+- The blasted signal/source link takes the user to the source of the specific signal being blasted, such as an Artist Profile, event/tour-date surface, song/single surface, or visited Uprise source context depending on signal type.
+- This is separate from a `Travel` link. `Travel` is for visiting the community/back-door context and loading that Uprise; the signal link is for opening the source object behind the blast.
+
+## Do Not Drift - Blast Card Signal Source Link
+
+- Do not make all Blast-card clicks default to `Travel`.
+- Do not hide or remove the source link for the signal being blasted.
+- Do not collapse signal-source navigation and community travel into one ambiguous action.
+- Do not grant voting rights, membership, or Home Scene authority from either link.
+
+## Raw Founder Notes - Blast Card Feed Card Type
+
+> blast card is a card in the feed
+
+## Clarifications - Blast Card Feed Card Type
+
+- A `Blast card` is a Feed card type, not a separate non-Feed surface.
+- Type: settled terminology correction, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/plot-and-scene-plot.md`, `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`, future Feed/Blast card tests
+
+## Working Interpretation - Blast Card Feed Card Type
+
+- Blast-card source links and optional Travel links should be documented under the Feed card contract.
+- Future agents should not model Blast cards as a separate destination, tab, panel, or surface outside Feed.
+
+## Do Not Drift - Blast Card Feed Card Type
+
+- Do not treat Blast cards as separate from Feed cards.
+- Do not create a separate Blast-card surface just to support signal source links or Travel links.

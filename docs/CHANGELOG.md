@@ -9,6 +9,7 @@
 
 ### Added
 
+- Promoted the Feed Blast-card travel/source-link clarification into owner specs and lane briefs: Blast cards are Feed card types, the blasted signal links to its source, and eligible outside-Uprise Feed cards may expose a separate `Travel` handoff into Discover/back-door context; see `docs/handoff/2026-07-03_feed-blast-card-travel-source-contract.md`.
 - Promoted Discover/player founder-session clarifications into owner specs and lane briefs: Discover owns map/Seek/back-door transport and saved/custom Uprise playback, while Plot top shell/profile pull-down must not launch Away Scene transport; see `docs/handoff/2026-07-03_discover-player-owner-spec-promotion.md`.
 - Refreshed `docs/operations/ACTIVE_PM.md` and `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` after PR #191, PR #192, and PR #193 merged so current execution state points at `main` @ `97680e4`; see `docs/handoff/2026-07-03_active-pm-post-founder-captures-refresh.md`.
 - Added founder-session captures for the Discover front-door/back-door shared-screen clarification and the RADIYO/SPACE player terminology boundary, preserving raw founder wording before any owner-spec promotion.
