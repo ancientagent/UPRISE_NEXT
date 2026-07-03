@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added an Active PM / branch registry closeout refresh after UPRISE Development Plan tasks 1-7 merged, leaving `UPRISE-PLAN-008` queued; see `docs/handoff/2026-07-03_tasks-1-7-closeout-refresh.md`.
 - Added activation readiness transaction revalidation closeout coverage proving the manual cutover trigger recomputes diagnostics inside the transaction before scene/source/listener writes; see `docs/handoff/2026-07-03_activation-readiness-transaction-revalidation.md`.
 - Added Release Deck media eligibility hardening coverage for the 3-slot, 6-minute, 15-minute active-rotation, paid-ad-slot, and source Home Scene boundaries; see `docs/handoff/2026-07-03_release-deck-media-eligibility-hardening.md`.
 - Added Registrar/source GPS authority hardening coverage so GPS verification without an established Home Scene/source-origin tuple cannot create Artist/Band registrar rows; see `docs/handoff/2026-07-03_registrar-source-gps-authority-hardening.md`.

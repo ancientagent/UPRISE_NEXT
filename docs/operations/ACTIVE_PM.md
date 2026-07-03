@@ -24,28 +24,28 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `8812a0b` (`docs: add UPRISE development plan (#198)`)
-- Local worktree state at refresh: clean before this tooling branch
-- Active branch during this refresh: `chore/reliant-development-plan-queue`
+- Current `main` HEAD at refresh start: `88f97a1` (`test(api): close activation readiness revalidation (#206)`)
+- Local worktree state at refresh: clean before this docs closeout branch
+- Active branch during this refresh: `docs/tasks-1-7-closeout-refresh`
 - Open PR queue at refresh: none before branch creation
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
-Use `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current execution plan for UPRISE cleanup and launch-readiness work. This slice updates Reliant so it can surface that plan through `pnpm run reliant:plan:next` instead of stale default backlog queues.
+Use `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current execution plan for UPRISE cleanup and launch-readiness work. Tasks `UPRISE-PLAN-001` through `UPRISE-PLAN-007` are complete and merged. `UPRISE-PLAN-008` remains queued.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `DOCS_OPS` / `EXTERNAL_TOOLS` / cross-lane planning |
-| Branch | `chore/reliant-development-plan-queue` |
-| Scope | Add a Reliant queue/seeder for the current UPRISE Development Plan R1 without claiming or executing tasks. |
-| Out of Scope | Runtime product behavior changes, provider state, database/schema changes, art changes, product-doctrine changes, claiming Reliant tasks, and preserved UX reference cleanup. |
-| Owner Contract | `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
-| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/handoff/2026-07-03_reliant-development-plan-queue.md` |
-| Validation | `pnpm run reliant:plan:seed`, `pnpm run reliant:plan:next`, `pnpm run reliant:plan:validate`, `pnpm run reliant:plan:test`, `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
+| Lane | `DOCS_OPS` / execution-state closeout |
+| Branch | `docs/tasks-1-7-closeout-refresh` |
+| Scope | Refresh Active PM and branch registry after UPRISE Development Plan tasks 1-7 merged. |
+| Out of Scope | Runtime product behavior changes, provider state, database/schema changes, art changes, product-doctrine changes, and preserved UX reference cleanup. |
+| Owner Contract | `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md`, `.reliant/queue/uprise-development-plan-r1.json` |
+| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, task handoffs under `docs/handoff/2026-07-03_*` |
+| Validation | `pnpm run workspace:audit`, `pnpm run docs:lint`, `node scripts/reliant-slice-queue.mjs status --queue .reliant/queue/uprise-development-plan-r1.json --runtime .reliant/runtime/current-task-uprise-development-plan-r1.json`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
@@ -57,7 +57,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `chore/reliant-development-plan-queue` until this tooling branch merges; `main` after merge | `8812a0b` at refresh start | clean before Reliant queue tooling edits |
+| `/home/baris/UPRISE_NEXT` | `docs/tasks-1-7-closeout-refresh` until this closeout branch merges; `main` after merge | `88f97a1` at refresh start | clean before closeout edits |
 
 ### Preserved UX Reference Worktrees
 
@@ -79,21 +79,24 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #195 / `a83b667`: promoted Discover/player founder-session clarifications into owner specs and lane briefs.
-- PR #196 / `052016f`: clarified the Feed Blast-card travel/source-link contract: Blast cards are Feed card types, blasted signals link to source objects, and eligible outside-Uprise Feed cards may expose a separate `Travel` handoff into Discover/back-door context.
-- PR #197 / `5a07d93`: clarified that Feed-card `Travel` remains in the future outside-Uprise card contract while Travel/cross-Uprise Blast cards are not launch-scope.
 - PR #198 / `8812a0b`: added `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` and recorded the lightweight PM operating model.
+- PR #199 / `2ce8684`: added Reliant queue tooling for the current UPRISE Development Plan R1.
+- PR #200 / `6aad9f2`: completed `UPRISE-PLAN-001`, Feed Blast card source-link contract tests.
+- PR #201 / `c6e1e2c`: completed `UPRISE-PLAN-002`, Feed Travel launch-boundary tests.
+- PR #202 / `cc57dc5`: completed `UPRISE-PLAN-003`, Plot no-transport boundary tests.
+- PR #203 / `c4fa768`: completed `UPRISE-PLAN-004`, onboarding/Home Scene smoke hardening.
+- PR #204 / `3f746db`: completed `UPRISE-PLAN-005`, Registrar/source GPS authority hardening.
+- PR #205 / `1708f19`: completed `UPRISE-PLAN-006`, Release Deck media eligibility hardening.
+- PR #206 / `88f97a1`: completed `UPRISE-PLAN-007`, activation readiness transaction revalidation closeout.
 
 Recent full cleanup history remains in prior handoffs and git history. Do not use old PM entries as product doctrine.
 
 ## Next Queue
 
-1. Close `chore/reliant-development-plan-queue` and return to clean `main`.
-2. Use `pnpm run reliant:plan:next` to hand out `UPRISE-PLAN-001`: Feed Blast card source-link contract tests.
-3. Start Stage 1 Task 2: Feed Travel launch-boundary tests.
-4. Start Stage 1 Task 3: Plot no-transport boundary tests.
-5. Start Stage 2 Task 4: onboarding/Home Scene smoke hardening after Stage 1 locks merge.
-6. Start Stage 3 Task 7 and Task 8: activation cutover transaction revalidation and normalized tuple matching before provider/staging activation work.
+1. Merge this docs-only closeout branch after checks.
+2. Return to clean `main`.
+3. Decide whether to continue into `UPRISE-PLAN-008`: activation tuple normalized matching closeout.
+4. Do not touch provider/staging activation work until the task 8 normalized matching item is complete or explicitly deferred.
 
 ## PM Usage Rules For Agents
 
