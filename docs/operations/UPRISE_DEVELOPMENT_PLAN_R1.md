@@ -296,6 +296,18 @@ Do not implement these as launch-critical work unless a new owner-spec update ex
 5. Run Stage 2 Task 4 onboarding/Home Scene smoke hardening after Stage 1 locks are merged.
 6. Run Stage 3 Task 7 and Task 8 activation cutover hardening before any provider/staging activation work.
 
+## Reliant Queue Commands
+
+Reliant can hand out this plan as a current execution queue. Use these commands instead of the older default `mvp-slices.json` queue when working from this plan:
+
+```bash
+pnpm run reliant:plan:seed
+pnpm run reliant:plan:next
+pnpm run reliant:plan:validate
+```
+
+`reliant:plan:next` reads `.reliant/queue/uprise-development-plan-r1.json` and uses `.reliant/runtime/current-task-uprise-development-plan-r1.json` for claim/resume state. Do not claim a Reliant task unless the branch is registered and one executor owns the write path.
+
 ## PM Agent Escalation Triggers
 
 Use a separate PM agent only when one of these is true:

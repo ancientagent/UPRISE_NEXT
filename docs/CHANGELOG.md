@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Reliant current-plan queue tooling so `pnpm run reliant:plan:next` surfaces `UPRISE_DEVELOPMENT_PLAN_R1` tasks instead of stale default backlog slices; see `docs/handoff/2026-07-03_reliant-development-plan-queue.md`.
 - Added `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current explicit UPRISE development plan and lightweight PM operating model, with Stage 1 contract-test work as the next queue; see `docs/handoff/2026-07-03_uprise-development-plan-r1.md`.
 - Clarified that Feed-card `Travel` remains in the future outside-Uprise card contract while Travel/cross-Uprise Blast cards are not launch-scope, and refreshed Active PM / branch registry after PR #194-#196 merged; see `docs/handoff/2026-07-03_feed-travel-launch-boundary-pm-refresh.md`.
 - Promoted the Feed Blast-card travel/source-link clarification into owner specs and lane briefs: Blast cards are Feed card types, the blasted signal links to its source, and eligible outside-Uprise Feed cards may expose a separate `Travel` handoff into Discover/back-door context; see `docs/handoff/2026-07-03_feed-blast-card-travel-source-contract.md`.
@@ -1993,6 +1994,7 @@
 
 ### Added
 
+- Added Reliant current-plan queue tooling so `pnpm run reliant:plan:next` surfaces `UPRISE_DEVELOPMENT_PLAN_R1` tasks instead of stale default backlog slices; see `docs/handoff/2026-07-03_reliant-development-plan-queue.md`.
 - Phase 1 foundation documented: `PHASE1_COMPLETION_REPORT.md`.
 - Critical infrastructure directive: `STRATEGY_CRITICAL_INFRA_NOTE.md`.
 - Operational playbooks: `RUNBOOK.md`, `ENVIRONMENTS.md`, `PROJECT_STRUCTURE.md`.

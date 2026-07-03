@@ -24,40 +24,40 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `5a07d93` (`docs: clarify Feed Travel launch boundary (#197)`)
-- Local worktree state at refresh: clean before this docs-only planning branch
-- Active branch during this refresh: `docs/uprise-development-plan-r1`
-- Open PR queue at refresh: PR #198 (`docs: add UPRISE development plan`) after branch creation
+- Current `main` HEAD at refresh start: `8812a0b` (`docs: add UPRISE development plan (#198)`)
+- Local worktree state at refresh: clean before this tooling branch
+- Active branch during this refresh: `chore/reliant-development-plan-queue`
+- Open PR queue at refresh: none before branch creation
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
-Use `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current execution plan for UPRISE cleanup and launch-readiness work. Keep one branch-owning executor per implementation slice, use Codex local as the sequential PM/executor, and introduce a separate PM agent only when parallel branches/agents or broad cleanup require coordination.
+Use `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current execution plan for UPRISE cleanup and launch-readiness work. This slice updates Reliant so it can surface that plan through `pnpm run reliant:plan:next` instead of stale default backlog queues.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
 | Lane | `DOCS_OPS` / `EXTERNAL_TOOLS` / cross-lane planning |
-| Branch | `docs/uprise-development-plan-r1` |
-| Scope | Create a repo-visible UPRISE development plan and lightweight PM operating model from current `main` after PR #197. |
-| Out of Scope | Runtime behavior changes, provider state, database/schema changes, art changes, product-doctrine changes, external-agent execution, and preserved UX reference cleanup. |
-| Owner Contract | `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` |
-| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/handoff/2026-07-03_uprise-development-plan-r1.md` |
-| Validation | `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
+| Branch | `chore/reliant-development-plan-queue` |
+| Scope | Add a Reliant queue/seeder for the current UPRISE Development Plan R1 without claiming or executing tasks. |
+| Out of Scope | Runtime product behavior changes, provider state, database/schema changes, art changes, product-doctrine changes, claiming Reliant tasks, and preserved UX reference cleanup. |
+| Owner Contract | `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
+| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/handoff/2026-07-03_reliant-development-plan-queue.md` |
+| Validation | `pnpm run reliant:plan:seed`, `pnpm run reliant:plan:next`, `pnpm run reliant:plan:validate`, `pnpm run reliant:plan:test`, `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
 ### Open PR Queue
 
-PR #198: `docs: add UPRISE development plan` (`docs/uprise-development-plan-r1`).
+None at refresh time.
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/uprise-development-plan-r1` until this planning branch merges; `main` after merge | `5a07d93` at refresh start | clean before docs-only planning edits |
+| `/home/baris/UPRISE_NEXT` | `chore/reliant-development-plan-queue` until this tooling branch merges; `main` after merge | `8812a0b` at refresh start | clean before Reliant queue tooling edits |
 
 ### Preserved UX Reference Worktrees
 
@@ -82,13 +82,14 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 - PR #195 / `a83b667`: promoted Discover/player founder-session clarifications into owner specs and lane briefs.
 - PR #196 / `052016f`: clarified the Feed Blast-card travel/source-link contract: Blast cards are Feed card types, blasted signals link to source objects, and eligible outside-Uprise Feed cards may expose a separate `Travel` handoff into Discover/back-door context.
 - PR #197 / `5a07d93`: clarified that Feed-card `Travel` remains in the future outside-Uprise card contract while Travel/cross-Uprise Blast cards are not launch-scope.
+- PR #198 / `8812a0b`: added `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` and recorded the lightweight PM operating model.
 
 Recent full cleanup history remains in prior handoffs and git history. Do not use old PM entries as product doctrine.
 
 ## Next Queue
 
-1. Close `docs/uprise-development-plan-r1` and return to clean `main`.
-2. Start `UPRISE_DEVELOPMENT_PLAN_R1` Stage 1 Task 1: Feed Blast card source-link contract tests.
+1. Close `chore/reliant-development-plan-queue` and return to clean `main`.
+2. Use `pnpm run reliant:plan:next` to hand out `UPRISE-PLAN-001`: Feed Blast card source-link contract tests.
 3. Start Stage 1 Task 2: Feed Travel launch-boundary tests.
 4. Start Stage 1 Task 3: Plot no-transport boundary tests.
 5. Start Stage 2 Task 4: onboarding/Home Scene smoke hardening after Stage 1 locks merge.
