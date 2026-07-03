@@ -24,42 +24,45 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `d4dc636` (`fix(api): normalize activation tuple matching (#208)`)
-- Local worktree state at refresh: active Task 9 docs/test edits on `docs/feed-card-family-inventory`
-- Active branch during this refresh: `docs/feed-card-family-inventory`
-- Open PR queue at refresh: none before Task 9 PR creation
+- Current `main` HEAD at refresh start: `68f978a` (`docs: inventory feed card families (#209)`)
+- Local worktree state at refresh: final docs-only closeout branch after Task 8 and Task 9 merged
+- Active branch during this refresh: `docs/task8-task9-goal-closeout`
+- Open PR queue at refresh: none before final closeout branch creation
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
-Complete UPRISE Development Plan R1 Task 9 and close the current goal after Task 8 and Task 9 are merged, validation passes, branch/PM state is refreshed, and the final repository audit is clean.
+Goal completed by this closeout:
 
-Reliant queue `.reliant/queue/uprise-development-plan-r1.json` currently shows all 8 queued UPRISE Development Plan R1 tasks complete. Task 9 is tracked outside that queue as the Feed card family inventory follow-up from Stage 4.
+- `UPRISE-PLAN-008` merged in PR #208 at `d4dc636`.
+- Task 9 Feed card family inventory merged in PR #209 at `68f978a`.
+- Reliant queue `.reliant/queue/uprise-development-plan-r1.json` shows all 8 queued UPRISE Development Plan R1 tasks complete.
+- Task 9 is outside the Reliant queue and is complete via `docs/solutions/FEED_CARD_FAMILY_INVENTORY_R1.md` plus `docs/handoff/2026-07-03_feed-card-family-inventory.md`.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `UX_UI` with `ACTIONS_SIGNALS` and `EVENTS_ARCHIVE` companion checks |
-| Branch | `docs/feed-card-family-inventory` |
-| Scope | Task 9: inventory current Feed runtime cards and classify launch-scope, beta/deferred, source-facing, or remove/quarantine; add narrow regression locks only where they directly prevent drift. |
-| Out of Scope | Runtime card actions, Travel activation, Discover transport implementation, provider/db/schema/art changes, product-doctrine changes, Promotions/Statistics reactivation, and source-management UI in Plot. |
-| Owner Contracts | `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/core/signals-and-universal-actions.md`, `docs/specs/events/events-and-flyers.md` |
-| Companion Docs | `docs/agent-briefs/UI_CURRENT.md`, `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`, `docs/agent-briefs/EVENTS_ARCHIVE.md`, `docs/solutions/FEED_CARD_FAMILY_INVENTORY_R1.md` |
-| Validation | `pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.test.ts --runInBand`, `pnpm --filter web typecheck`, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Lane | `DOCS_OPS` / execution-state closeout |
+| Branch | `docs/task8-task9-goal-closeout` |
+| Scope | Final docs-only PM/registry refresh after `UPRISE-PLAN-008` and Task 9 merged. |
+| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, Task 10 implementation. |
+| Owner Contracts | `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
+| Companion Docs | `docs/handoff/2026-07-03_activation-tuple-normalized-matching.md`, `docs/handoff/2026-07-03_feed-card-family-inventory.md`, `docs/solutions/FEED_CARD_FAMILY_INVENTORY_R1.md` |
+| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
 ### Open PR Queue
 
-PR #209 (`docs/feed-card-family-inventory`) is open for Task 9 validation and merge.
+None at refresh time before final closeout PR creation.
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/feed-card-family-inventory` | `9c56cb5` at PR open | Task 9 PR #209 open |
+| `/home/baris/UPRISE_NEXT` | `docs/task8-task9-goal-closeout` until this docs closeout merges; `main` after merge | `68f978a` at refresh start | final docs-only closeout edits |
 
 ### Preserved UX Reference Worktrees
 
@@ -83,15 +86,15 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 - PR #207 / `0f7f100`: refreshed Active PM and branch registry after UPRISE Development Plan tasks 1-7 merged.
 - PR #208 / `d4dc636`: completed `UPRISE-PLAN-008`, activation tuple normalized matching.
+- PR #209 / `68f978a`: completed Task 9, Feed card family inventory.
 
 Recent full cleanup history remains in prior handoffs and git history. Do not use old PM entries as product doctrine.
 
 ## Next Queue
 
-1. Wait for PR #209 checks and merge if green.
-2. Merge Task 9 after checks and reviewer gate if needed.
-3. Refresh `main`, confirm local worktree clean, and run final completion audit for the active goal.
-4. If continuing development after this goal, start Task 10: launch-scope Blast card runtime/source-link hardening. Keep Travel hidden/deferred and do not add general Plot transport.
+1. Merge this final docs-only closeout branch after checks.
+2. Return to clean `main`.
+3. If continuing development, start Task 10: launch-scope Blast card runtime/source-link hardening. Keep Travel hidden/deferred and do not add general Plot transport.
 
 ## PM Usage Rules For Agents
 
