@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Feed-card Travel launch-boundary regression coverage so future outside-Uprise Travel remains contract-ready without activating Travel in current Feed/Plot runtime; see `docs/handoff/2026-07-03_feed-travel-launch-boundary-tests.md`.
 - Added Feed Blast card source-link regression coverage so listener Blast activity stays a Feed card type and source-backed Blast rows keep linking to the blasted signal source; see `docs/handoff/2026-07-03_feed-blast-card-source-link-contract-tests.md`.
 - Added Reliant current-plan queue tooling so `pnpm run reliant:plan:next` surfaces `UPRISE_DEVELOPMENT_PLAN_R1` tasks instead of stale default backlog slices; see `docs/handoff/2026-07-03_reliant-development-plan-queue.md`.
 - Added `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current explicit UPRISE development plan and lightweight PM operating model, with Stage 1 contract-test work as the next queue; see `docs/handoff/2026-07-03_uprise-development-plan-r1.md`.

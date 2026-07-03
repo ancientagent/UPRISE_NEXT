@@ -5,9 +5,9 @@
   "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
   "summary": {
     "total": 8,
-    "queued": 7,
+    "queued": 6,
     "in_progress": 0,
-    "done": 1,
+    "done": 2,
     "blocked": 0
   },
   "tasks": [
@@ -32,9 +32,12 @@
       "stage": "Stage 1: Contract-Test Hardening",
       "prompt": "Execute one UPRISE Development Plan R1 slice only: lock that Travel is allowed in the future outside-Uprise Feed card contract but is not launch-scope and must not appear as general Plot transport. Distinguish card/listen loading from Travel to Discover/back-door context. No runtime Travel activation, no provider/db/schema/art changes. Update docs/CHANGELOG.md and a dated docs/handoff note.",
       "verifyCommand": "pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.test.ts --runInBand && pnpm run docs:lint && pnpm run workspace:audit",
-      "status": "queued",
-      "updatedAt": "2026-07-03T05:44:18.302Z",
-      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md"
+      "status": "done",
+      "updatedAt": "2026-07-03T06:11:33.917Z",
+      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
+      "startedAt": "2026-07-03T06:10:25.884Z",
+      "finishedAt": "2026-07-03T06:11:33.917Z",
+      "reportPath": "docs/handoff/2026-07-03_feed-travel-launch-boundary-tests.md"
     },
     {
       "id": "UPRISE-PLAN-003",
