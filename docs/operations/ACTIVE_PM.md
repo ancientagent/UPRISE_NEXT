@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `25e06a2` (`docs: require feature plan review gate`)
-- Active branch during this refresh: `test/source-listener-profile-boundary`
-- Local worktree state at refresh: Task 11 tests/docs hardening branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) plus draft PR #213 (`test/source-listener-profile-boundary`) for this Task 11 branch
+- Current `main` HEAD at refresh start: `1bcbfa7` (`test(web): harden source listener profile boundary`)
+- Active branch during this refresh: `test/print-shop-source-event-path`
+- Local worktree state at refresh: Task 12 tests/docs hardening branch
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`), intentionally preserved and not in this slice
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,27 +35,29 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Complete UPRISE Development Plan R1 Task 11: Source Dashboard / listener profile separation pass.
-- Keep source selector and managed-source links in allowed profile/source seams.
-- Do not place Release Deck, Print Shop, Registrar controls, or listener-to-artist DM affordances inside the listener collection/profile body.
+- Complete UPRISE Development Plan R1 Task 12: Print Shop source-facing event path.
+- Keep Print Shop source-facing.
+- Keep Plot Events read-only with no event creation or Print Shop handoff.
+- Keep Archive Registrar placement on top with records/status below.
 
 Recently completed context:
 
 - PR #210 merged the final Task 8 / Task 9 closeout at `50c6e8b`.
 - PR #211 merged the pre-implementation feature-plan review gate at `25e06a2`.
+- PR #213 merged Task 11 source/listener profile boundary locks at `1bcbfa7`.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `ARTIST_SOURCE` / `REGISTRAR_GOVERNANCE` / listener profile boundary |
-| Branch | `test/source-listener-profile-boundary` |
-| Scope | Task 11 contract-test hardening for Source Dashboard / listener profile separation. |
-| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, Task 12 event path work. |
-| Owner Contracts | `docs/specs/users/identity-roles-capabilities.md`, `docs/specs/system/registrar.md` |
-| Companion Docs | `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`, `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/founder-sessions/2026-07-03_source-listener-messaging-boundary.md` |
-| Validation | `pnpm --filter web test -- source-dashboard-shell-lock.test.ts source-account-switcher-lock.test.ts plot-ux-regression-lock.test.ts route-ux-consistency-lock.test.ts --runInBand`, `pnpm --filter web typecheck`, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Lane | `ARTIST_SOURCE` / `EVENTS_ARCHIVE` / source-facing event path |
+| Branch | `test/print-shop-source-event-path` |
+| Scope | Task 12 contract-test hardening for Print Shop source-facing event path, Plot Events read-only behavior, and Archive Registrar/records ordering. |
+| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, Travel/Discover work. |
+| Owner Contracts | `docs/specs/events/events-and-flyers.md`, `docs/specs/system/registrar.md` |
+| Companion Docs | `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`, `docs/agent-briefs/EVENTS_ARCHIVE.md`, `docs/agent-briefs/REGISTRAR_GOVERNANCE.md` |
+| Validation | `pnpm --filter api test -- events.print-shop.service.test.ts --runInBand`, `pnpm --filter web test -- plot-tab-contracts.test.ts --runInBand`, `pnpm --filter web typecheck`, `pnpm --filter api typecheck`, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
@@ -63,14 +65,13 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #212 | `docs/linear-clean-context-agent-roles` | draft, green, mergeable | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
-| #213 | `test/source-listener-profile-boundary` | draft opened from this branch | Review/merge after checks, then return to clean `main` and start Task 12. |
+| #212 | `docs/linear-clean-context-agent-roles` | draft, mergeability unknown after latest main advance | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `test/source-listener-profile-boundary` | `25e06a2` at branch start | Task 11 focused tests/docs branch |
+| `/home/baris/UPRISE_NEXT` | `test/print-shop-source-event-path` | `1bcbfa7` at branch start | Task 12 focused tests/docs branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -97,9 +98,9 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Next Queue
 
-1. Review/merge Task 11 PR #213 from `test/source-listener-profile-boundary`.
-2. Return to clean `main` after Task 11 merges or is handed off.
-3. Start Task 12: Print Shop source-facing event path.
+1. Complete and PR Task 12 from `test/print-shop-source-event-path`.
+2. Return to clean `main` after Task 12 merges or is handed off.
+3. Continue to the next UPRISE Development Plan R1 task selected by the user.
 4. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 
 ## PM Usage Rules For Agents

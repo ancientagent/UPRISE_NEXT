@@ -99,6 +99,10 @@ describe('plot tab contract locks', () => {
     expect(eventsSource).not.toContain('onAddToCalendar');
     expect(eventsSource).not.toContain('calendarMutation');
     expect(eventsSource).not.toContain('CalendarButton');
+    expect(eventsSource).not.toContain('/print-shop');
+    expect(eventsSource).not.toContain('Open Print Shop');
+    expect(eventsSource).not.toContain('Create Event');
+    expect(eventsSource).not.toContain("router.push('/print-shop')");
   });
 
   it('keeps Feed inserts read-only without inline engagement controls', () => {

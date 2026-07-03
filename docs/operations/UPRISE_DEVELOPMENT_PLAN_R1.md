@@ -271,7 +271,7 @@ Verify Print Shop remains source-facing, Plot Events remains read-only, and Arch
 Validation seed:
 
 ```bash
-pnpm --filter api test -- events.service.test.ts --runInBand
+pnpm --filter api test -- events.print-shop.service.test.ts --runInBand
 pnpm --filter web test -- plot-tab-contracts.test.ts --runInBand
 ```
 
