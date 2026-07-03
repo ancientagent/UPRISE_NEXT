@@ -24,153 +24,75 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `052016f` (`docs: clarify Feed Blast card travel links (#196)`)
-- Local worktree state at refresh: clean after PR #196 merge
-- Active implementation branch during this refresh: `docs/feed-travel-launch-boundary-pm-refresh`
-- Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
+- Current `main` HEAD at refresh start: `5a07d93` (`docs: clarify Feed Travel launch boundary (#197)`)
+- Local worktree state at refresh: clean before this docs-only planning branch
+- Active branch during this refresh: `docs/uprise-development-plan-r1`
+- Open PR queue at refresh: PR #198 (`docs: add UPRISE development plan`) after branch creation
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
-Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex subagent / Abacus tasks start from current `main`, load the right lane context, and do not disturb preserved UX reference work without explicit approval. Hermes remains watchdog/manual fallback only per the active AI stack doc.
+Use `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current execution plan for UPRISE cleanup and launch-readiness work. Keep one branch-owning executor per implementation slice, use Codex local as the sequential PM/executor, and introduce a separate PM agent only when parallel branches/agents or broad cleanup require coordination.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `UX_UI` / `ACTIONS_SIGNALS` / `DOCS_OPS` |
-| Branch | `docs/feed-travel-launch-boundary-pm-refresh` |
-| Scope | Capture the Feed-card `Travel` launch-scope nuance and refresh Active PM / branch registry after PR #194, PR #195, and PR #196 merged. |
-| Out of Scope | Runtime behavior changes, enabling Travel at launch, cross-Uprise Blast-card implementation, provider state, database/schema changes, art changes, and preserved reference branch/worktree cleanup. |
-| Owner Contract | `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, `docs/operations/ACTIVE_PM.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
-| Companion Docs | `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`, `docs/handoff/2026-07-03_feed-blast-card-travel-source-contract.md`, this branch handoff |
+| Lane | `DOCS_OPS` / `EXTERNAL_TOOLS` / cross-lane planning |
+| Branch | `docs/uprise-development-plan-r1` |
+| Scope | Create a repo-visible UPRISE development plan and lightweight PM operating model from current `main` after PR #197. |
+| Out of Scope | Runtime behavior changes, provider state, database/schema changes, art changes, product-doctrine changes, external-agent execution, and preserved UX reference cleanup. |
+| Owner Contract | `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` |
+| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/handoff/2026-07-03_uprise-development-plan-r1.md` |
 | Validation | `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
-
-## Recently Completed Since Prior PM Snapshot
-
-The previous PM snapshot pointed at PR #176. Current `main` has since advanced through these relevant slices:
-
-- PR #159 / `04df9ef`: captured Plot/Home Scene visual-skin founder-session direction.
-- PR #161 / `ef6ed5d`: replaced old Home Scene switching terminology with Home Scene selector/swiper language.
-- PR #162 / `981d083`: extracted `/plot` Home Scene selector presentation into `HomeSceneSelector`.
-- PR #163 / `7a16d6b`: captured Discover/transport front-door, back-door, map-view, seek-mode, saved-Uprises, and no-transport-inside-Plot founder-session direction.
-- PR #164 / `3725a6f`: extracted expanded `/plot` listener profile body into `PlotListenerProfile`.
-- PR #165 / `aac8ccd`: removed direct `/plot` Print Shop shortcut and kept Print Shop source-facing.
-- PR #168 / `a19e863`: removed the forced non-expanded `/plot` context panel, removed deprecated community-information terminology, and locked Registrar future placement as Archive/community information with Registrar on top and records below.
-- PR #170 / `1ce5607`: added source identity/account switching inside the expanded `/plot` listener profile for users who manage Artist/Band sources while keeping source tools out of non-expanded Plot and listener collection body.
-- PR #172 / `58752c4`: placed Registrar inside `/plot` Archive/community information with Registrar entry/control above records/status history.
-- PR #173 / `3e07c0e`: refreshed `ACTIVE_PM` after PR #172.
-- PR #174 / `e548633`: tightened `/plot` top shell composition so listener identity, Home Scene selector, and top RADIYO player read as one visual cockpit without adding transport behavior.
-- PR #175 / `a7918c2`: refreshed `ACTIVE_PM` after PR #174 and corrected the main worktree snapshot away from the transient PM refresh branch.
-- PR #176 / `38513d6`: extracted the non-expanded `/plot` top shell into `PlotTopShell` while preserving route-owned selector, player, profile, and notification behavior.
-- PR #177 / `45cf5a1`: refreshed `ACTIVE_PM` after PR #176.
-- Branch cleanup / no PR: deleted the audited absorbed local and remote branches `docs/active-pm-post-context-panel-removal`, `docs/active-pm-refresh-after-plot-cleanup`, `docs/discover-transport-owner-spec-promotion`, and `refactor/plot-community-context-panel` after Hermes `upriseauditor` classified their durable content as absorbed or superseded.
-- PR #178 / `4e6aab8`: captured and promoted the reviewer/auditor cleanup protocol so large refactors, complex issues, prototype branches, and uncertain branch-absorption cleanup require independent reviewer/auditor classification before merge/delete decisions.
-- PR #179 / `58b0216`: refreshed `ACTIVE_PM` after PR #178.
-- PR #180 / `7e130ce`: routed UPRISE review/audit gates through Codex agents by default, kept `uprisewatchdog` heartbeat-only, and marked Hermes reviewer/auditor briefs as manual fallback scaffolding.
-- PR #181 / `fe048ce`: added the Branch / Workspace Registry so future branches, worktrees, PR heads, preserved refs, and external-agent workspaces must be recorded with owner, assigned agents, scope, status, and closeout plan.
-- PR #182 / `79467df`: refreshed `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #181 merged.
-- PR #183 / `4ecbb37`: inventoried preserved UX reference branches/worktrees and recorded selective extraction guidance without merging prototype code.
-- PR #184 / `9285b25`: refreshed `ACTIVE_PM` and `BRANCH_WORKSPACE_REGISTRY` after PR #183 merged.
-- PR #185 / `861f05b`: added current-compatible Plot profile/player state contract tests and closed PR #184 registry state.
-- PR #186 / `ce6c841`: refreshed Active PM and branch registry after PR #185 merged.
-- PR #187 / `eea674c`: formalized Codex-first review/audit routing, superseded stale model-routing pointers, and kept Hermes watchdog/manual fallback only.
-- PR #188 / `0ab9ce2`: refreshed Active PM and branch registry after PR #187 merged.
-- PR #189 / `0cd181e`: extracted `/plot` bottom navigation and UPRISE wheel overlay into a focused component without changing Plot behavior.
-- PR #190 / `66556d7`: extracted `/plot` non-expanded tab bar and active surface frame into a focused component without changing Plot behavior.
-- PR #191 / `01a6109`: refreshed Active PM and branch registry after PR #190 merged.
-- PR #192 / `7327453`: added Windows-visible artifact bridge helpers, including hardened root derivation, unsafe-slug rejection, ignored pointer files, and no symlink creation.
-- PR #193 / `97680e4`: captured Discover/front-door/back-door and RADIYO/SPACE player founder-session clarifications without owner-spec promotion or runtime behavior changes.
-- PR #194 / `37c61fe`: refreshed Active PM and branch registry after PR #191, PR #192, and PR #193 merged.
-- PR #195 / `a83b667`: promoted Discover/player founder-session clarifications into owner specs and lane briefs.
-- PR #196 / `052016f`: clarified the Feed Blast-card travel/source-link contract: Blast cards are Feed card types, blasted signals link to source objects, and eligible outside-Uprise Feed cards may expose a separate `Travel` handoff into Discover/back-door context.
-- Current branch follow-up: captures the launch-boundary nuance that Feed-card `Travel` remains contract-ready but Travel/cross-Uprise Blast cards are not launch-scope, and refreshes Active PM / branch registry after PR #194-#196 merged.
-
-Use these handoffs / founder-session notes for the current cleanup trail:
-
-- `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
-- `docs/handoff/2026-07-03_active-pm-post-founder-captures-refresh.md`
-- `docs/founder-sessions/2026-07-02_radiyo-track-mode-player-terminology.md`
-- `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`
-- `docs/handoff/2026-07-02_active-pm-post-plot-tab-surface-refresh.md`
-- `docs/handoff/2026-07-02_plot-tab-surface-component-extraction.md`
-- `docs/handoff/2026-07-02_plot-bottom-nav-component-extraction.md`
-- `docs/handoff/2026-07-02_active-pm-post-codex-routing-v2-refresh.md`
-- `docs/handoff/2026-07-02_codex-first-review-routing-refresh.md`
-- `docs/handoff/2026-07-02_active-pm-post-plot-profile-player-state-refresh.md`
-- `docs/handoff/2026-07-02_plot-profile-player-state-contract.md`
-- `docs/handoff/2026-07-02_active-pm-post-ux-inventory-refresh.md`
-- `docs/handoff/2026-07-02_ux-reference-extraction-inventory.md`
-- `docs/handoff/2026-07-02_active-pm-post-branch-registry-refresh.md`
-- `docs/handoff/2026-07-01_uprise-hermes-heavy-light-routing.md`
-- `docs/handoff/2026-07-02_active-pm-post-codex-routing-refresh.md`
-- `docs/handoff/2026-07-01_active-pm-post-reviewer-protocol-refresh.md`
-- `docs/handoff/2026-07-01_active-pm-post-plot-top-shell-component-refresh.md`
-- `docs/handoff/2026-07-01_plot-top-shell-component-extraction.md`
-- `docs/handoff/2026-07-01_active-pm-post-plot-top-shell-refresh.md`
-- `docs/handoff/2026-07-01_plot-top-shell-visual-composition.md`
-- `docs/handoff/2026-07-01_active-pm-post-archive-registrar-refresh.md`
-- `docs/handoff/2026-07-01_archive-registrar-community-info.md`
-- `docs/handoff/2026-07-01_active-pm-post-profile-source-refresh.md`
-- `docs/handoff/2026-07-01_profile-source-identity-access.md`
-- `docs/handoff/2026-07-01_plot-context-panel-removal.md`
-- `docs/handoff/2026-07-01_discover-transport-owner-spec-promotion.md`
-- `docs/handoff/2026-07-01_active-pm-post-plot-cleanup-refresh.md`
-- `docs/handoff/2026-07-01_print-shop-source-facing-boundary.md`
-- `docs/handoff/2026-07-01_plot-listener-profile-component-extraction.md`
-- `docs/handoff/2026-07-01_home-scene-selector-component-extraction.md`
-- `docs/handoff/2026-07-01_home-scene-selector-terminology.md`
-- `docs/founder-sessions/2026-07-01_plot-home-scene-visual-skin.md`
-- `docs/founder-sessions/2026-07-01_plot-archive-registrar-placement.md`
 
 ## Current Branch / Worktree State
 
 ### Open PR Queue
 
-None at refresh time.
+PR #198: `docs: add UPRISE development plan` (`docs/uprise-development-plan-r1`).
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/feed-travel-launch-boundary-pm-refresh` until this PM refresh merges; `main` after merge | `052016f` at refresh start | clean after PR #196 merge; this docs-only branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `docs/uprise-development-plan-r1` until this planning branch merges; `main` after merge | `5a07d93` at refresh start | clean before docs-only planning edits |
 
 ### Preserved UX Reference Worktrees
 
 These worktrees/branches contain unmerged, separately staged, or intentionally preserved UX reference work. Do not remove, reset, rebase, force-push, or delete them without explicit approval.
 
-| Path | Branch | Snapshot HEAD | Main divergence at refresh | Note |
-| --- | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `549` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
-| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `381` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| Path | Branch | Snapshot HEAD | Note |
+| --- | --- | --- | --- |
+| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
 
 ### Preserved UX Batch Branches
 
 These are old UX/Reliant batch-output references. Do not merge wholesale. Preserve or archive only after explicit approval and an independent reviewer/auditor classification pass.
 
-| Branch | Main divergence at refresh | Recommended Action |
-| --- | --- | --- |
-| `feat/ux-batch17` | `365` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
-| `feat/ux-batch18-run` | `365` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| Branch | Recommended Action |
+| --- | --- |
+| `feat/ux-batch17` | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch18-run` | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
 
-### Cleanup Completed
+## Recently Completed Since Prior PM Snapshot
 
-The following audited, absorbed/superseded branches were deleted locally and remotely after founder approval:
+- PR #195 / `a83b667`: promoted Discover/player founder-session clarifications into owner specs and lane briefs.
+- PR #196 / `052016f`: clarified the Feed Blast-card travel/source-link contract: Blast cards are Feed card types, blasted signals link to source objects, and eligible outside-Uprise Feed cards may expose a separate `Travel` handoff into Discover/back-door context.
+- PR #197 / `5a07d93`: clarified that Feed-card `Travel` remains in the future outside-Uprise card contract while Travel/cross-Uprise Blast cards are not launch-scope.
 
-- `docs/active-pm-post-context-panel-removal`
-- `docs/active-pm-refresh-after-plot-cleanup`
-- `docs/discover-transport-owner-spec-promotion`
-- `refactor/plot-community-context-panel`
+Recent full cleanup history remains in prior handoffs and git history. Do not use old PM entries as product doctrine.
 
 ## Next Queue
 
-1. After this PM refresh merges, continue from clean `main`.
-2. Add focused Feed/Blast card contract tests when runtime work begins: Blast cards are Feed card types, blasted signals link to source objects, card/listen and `Travel` remain distinct, and Feed-card `Travel` hands off to Discover/back-door without creating general Plot transport.
-3. Keep Travel/cross-Uprise Blast cards out of launch scope while cross-community Travel/Discover remains deferred.
-4. If touching Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md` and the founder-session notes; do not add map/Seek/saved-custom-Uprise launchers to Plot.
-5. If touching RADIYO/SPACE player behavior, keep Plot top-shell playback tied to Home Scene/RADIYO and keep saved/custom Uprise playback Discover/collection-owned unless an owner spec changes it.
-6. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
+1. Close `docs/uprise-development-plan-r1` and return to clean `main`.
+2. Start `UPRISE_DEVELOPMENT_PLAN_R1` Stage 1 Task 1: Feed Blast card source-link contract tests.
+3. Start Stage 1 Task 2: Feed Travel launch-boundary tests.
+4. Start Stage 1 Task 3: Plot no-transport boundary tests.
+5. Start Stage 2 Task 4: onboarding/Home Scene smoke hardening after Stage 1 locks merge.
+6. Start Stage 3 Task 7 and Task 8: activation cutover transaction revalidation and normalized tuple matching before provider/staging activation work.
 
 ## PM Usage Rules For Agents
 
