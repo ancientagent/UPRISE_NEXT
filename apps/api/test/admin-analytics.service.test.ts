@@ -505,6 +505,7 @@ describe('AdminAnalyticsService', () => {
 
     expect(mockPrisma.$transaction).toHaveBeenCalledTimes(1);
     expect(mockPrisma.track.findMany).toHaveBeenCalledTimes(2);
+    expect(mockPrisma.community.findMany).toHaveBeenCalledTimes(2);
     expect(mockPrisma.community.create).not.toHaveBeenCalled();
     expect(mockPrisma.community.update).not.toHaveBeenCalled();
     expect(mockPrisma.artistBand.updateMany).not.toHaveBeenCalled();
