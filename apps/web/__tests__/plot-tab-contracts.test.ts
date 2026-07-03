@@ -110,6 +110,11 @@ describe('plot tab contract locks', () => {
     expect(feedSource).not.toContain('Collect</Button>');
     expect(feedSource).not.toContain('Blast</Button>');
     expect(feedSource).not.toContain('Follow</Button>');
+    expect(feedSource).not.toContain('Add to calendar');
+    expect(feedSource).not.toContain('addToCalendar');
+    expect(feedSource).not.toContain('onAddToCalendar');
+    expect(feedSource).not.toContain('calendarMutation');
+    expect(feedSource).not.toContain('CalendarButton');
     expect(feedSource).not.toContain('handleCollect');
     expect(feedSource).not.toContain('handleBlast');
     expect(feedSource).not.toContain('handleFollow');
