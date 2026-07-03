@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Release Deck media eligibility hardening coverage for the 3-slot, 6-minute, 15-minute active-rotation, paid-ad-slot, and source Home Scene boundaries; see `docs/handoff/2026-07-03_release-deck-media-eligibility-hardening.md`.
 - Added Registrar/source GPS authority hardening coverage so GPS verification without an established Home Scene/source-origin tuple cannot create Artist/Band registrar rows; see `docs/handoff/2026-07-03_registrar-source-gps-authority-hardening.md`.
 - Added onboarding/Home Scene smoke-hardening coverage for GPS-before-Home-Scene fail-closed behavior and manual-entry continuation after GPS denial/skipping; see `docs/handoff/2026-07-03_onboarding-home-scene-smoke-hardening.md`.
 - Added Plot no-transport boundary regression coverage across the top shell, Home Scene selector, profile pull-down, Archive, and Events; see `docs/handoff/2026-07-03_plot-no-transport-boundary-tests.md`.

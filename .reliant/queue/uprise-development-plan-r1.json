@@ -5,9 +5,9 @@
   "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
   "summary": {
     "total": 8,
-    "queued": 3,
+    "queued": 2,
     "in_progress": 0,
-    "done": 5,
+    "done": 6,
     "blocked": 0
   },
   "tasks": [
@@ -88,9 +88,12 @@
       "stage": "Stage 2: Launch-Critical Vertical Slice",
       "prompt": "Execute one UPRISE Development Plan R1 slice only: verify 3 active music slots per managed Artist/Band source per city-tier community, 6 minute cap per song, and 15 minute active-rotation cap per source. The paid ad attachment is not a fourth music slot. Real upload/transcode remains deferred unless explicitly activated. Update docs/CHANGELOG.md and a dated docs/handoff note.",
       "verifyCommand": "pnpm --filter api test -- tracks.service.test.ts artist-bands.service.test.ts --runInBand && pnpm --filter web test -- source-dashboard-shell-lock.test.ts community-artist-page-lock.test.ts --runInBand && pnpm run docs:lint && pnpm run workspace:audit",
-      "status": "queued",
-      "updatedAt": "2026-07-03T05:44:18.302Z",
-      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md"
+      "status": "done",
+      "updatedAt": "2026-07-03T06:44:00.576Z",
+      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
+      "startedAt": "2026-07-03T06:41:50.702Z",
+      "finishedAt": "2026-07-03T06:44:00.576Z",
+      "reportPath": "docs/handoff/2026-07-03_release-deck-media-eligibility-hardening.md"
     },
     {
       "id": "UPRISE-PLAN-007",
