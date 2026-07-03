@@ -27,7 +27,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Current `main` HEAD at refresh start: `236353e` (`test(api,web): harden print shop event boundary`)
 - Active branch during this refresh: `docs/uprise-first-pass-implementation-workflow`
 - Local worktree state at refresh: docs/process clarification branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #214 merged
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) plus draft PR #215 (`docs/uprise-first-pass-implementation-workflow`); PR #214 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -65,12 +65,13 @@ Recently completed context:
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
+| #215 | `docs/uprise-first-pass-implementation-workflow` | draft opened from this branch | Merge after checks if still docs-only and clean. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/uprise-first-pass-implementation-workflow` | `4d7fa63` | Focused docs/process clarification branch |
+| `/home/baris/UPRISE_NEXT` | `docs/uprise-first-pass-implementation-workflow` | `9ac44eb` at PR open | Focused docs/process clarification branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -97,7 +98,7 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Next Queue
 
-1. Finish this docs/process clarification branch and open/merge its PR if checks pass.
+1. Review/merge PR #215 after checks if it remains docs-only and clean.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 3. Continue to the next UPRISE Development Plan R1 task selected by the user.
 
