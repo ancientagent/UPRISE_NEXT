@@ -291,9 +291,9 @@ export class AdminAnalyticsService {
       if (track.status && track.status !== 'ready') continue;
 
       const source = track.artistBand;
-      const city = source?.sourceOriginCity?.trim();
-      const state = source?.sourceOriginState?.trim();
-      const musicCommunity = source?.sourceOriginMusicCommunity?.trim();
+      const city = this.normalizeActivationTuplePart(source?.sourceOriginCity);
+      const state = this.normalizeActivationTuplePart(source?.sourceOriginState);
+      const musicCommunity = this.normalizeActivationTuplePart(source?.sourceOriginMusicCommunity);
 
       if (!source || !city || !state || !musicCommunity) continue;
 
@@ -544,16 +544,23 @@ export class AdminAnalyticsService {
   }
 
   private activationTupleKey(city: string | null | undefined, state: string | null | undefined, musicCommunity: string | null | undefined) {
-    return [city, state, musicCommunity].map((part) => (part ?? '').trim().toLowerCase()).join('::');
+    return [city, state, musicCommunity].map((part) => this.normalizeActivationTuplePart(part).toLowerCase()).join('::');
+  }
+
+  private normalizeActivationTuplePart(value: string | null | undefined) {
+    return (value ?? '').trim().replace(/\s+/g, ' ');
   }
 
   private async findCityTierCommunityByTuple(client: any, city: string, state: string, musicCommunity: string) {
-    return client.community.findFirst({
+    const targetKey = this.activationTupleKey(city, state, musicCommunity);
+    const candidates = await client.community.findMany({
       where: {
-        city: { equals: city, mode: 'insensitive' },
-        state: { equals: state, mode: 'insensitive' },
-        musicCommunity: { equals: musicCommunity, mode: 'insensitive' },
         tier: 'city',
+        AND: [
+          ...this.activationContainsFilters('city', city),
+          ...this.activationContainsFilters('state', state),
+          ...this.activationContainsFilters('musicCommunity', musicCommunity),
+        ],
       },
       select: {
         id: true,
@@ -564,6 +571,16 @@ export class AdminAnalyticsService {
         isActive: true,
       },
     });
+
+    return candidates
+      .filter(
+        (candidate: { city: string | null; state: string | null; musicCommunity: string | null }) =>
+          this.activationTupleKey(candidate.city, candidate.state, candidate.musicCommunity) === targetKey,
+      )
+      .sort(
+        (a: { id: string; isActive: boolean }, b: { id: string; isActive: boolean }) =>
+          Number(b.isActive) - Number(a.isActive) || a.id.localeCompare(b.id),
+      )[0] ?? null;
   }
 
   private async findActivationListeners(client: any, city: string, state: string, musicCommunity: string) {
@@ -571,8 +588,12 @@ export class AdminAnalyticsService {
     const targetTupleKey = this.activationTupleKey(city, state, musicCommunity);
     const candidates = await client.user.findMany({
       where: {
-        homeSceneCity: { contains: city.trim(), mode: 'insensitive' },
-        homeSceneState: { contains: state.trim(), mode: 'insensitive' },
+        homeSceneCity: { not: null },
+        homeSceneState: { not: null },
+        AND: [
+          ...this.activationContainsFilters('homeSceneCity', city),
+          ...this.activationContainsFilters('homeSceneState', state),
+        ],
         OR: [
           { homeSceneCommunity: { not: null } },
           {
@@ -618,6 +639,15 @@ export class AdminAnalyticsService {
       .map((listener: { id: string; tunedSceneId: string | null }) => ({
         id: listener.id,
         tunedSceneId: listener.tunedSceneId,
+      }));
+  }
+
+  private activationContainsFilters(field: string, value: string) {
+    return this.normalizeActivationTuplePart(value)
+      .split(' ')
+      .filter(Boolean)
+      .map((token) => ({
+        [field]: { contains: token, mode: 'insensitive' },
       }));
   }
 }
