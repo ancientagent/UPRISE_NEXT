@@ -85,6 +85,9 @@ Recent handoffs to use only after the locks above:
 - Listener `Blast` cards are Feed card types, not separate surfaces. The blasted
   signal links to its source. Eligible outside-Uprise Feed cards may also expose
   `Travel` as a separate handoff into Discover/back-door visitor context.
+- Feed-card `Travel` is part of the future-safe card contract, not launch
+  activation. Cross-Uprise Blast cards are not expected in the launch Feed while
+  Travel/cross-community Discover remains deferred.
 - Artist Profile is direct-listen, discovery, information, and sharing outside `RADIYO`.
 - User profile means the listener profile / collection workspace for everyone who has onboarded into the app.
 - Source management is separate from the listener profile and should be treated as source/admin web tooling that the app reads from.
@@ -202,6 +205,7 @@ Card taxonomy rule:
 - card/listening click and `Travel` are separate when an eligible outside-Uprise
   Feed card supports both: the card/listening affordance loads the Uprise, while
   `Travel` opens the Discover/back-door visitor context and loads the Uprise there
+- launch Feed should not assume cross-Uprise Blast cards while Travel is deferred
 
 Current inserts:
 

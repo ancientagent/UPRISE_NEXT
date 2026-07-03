@@ -122,6 +122,9 @@ Saved Uprises/custom Uprises are Discover-owned collection playback contexts.
   card must link the blasted signal to that signal's source, and eligible
   outside-Uprise Feed cards may expose a separate `Travel` link that hands off
   to Discover/back-door visitor context and loads the Uprise.
+- Feed-card `Travel` is contract-ready for future outside-Uprise cards, but
+  Travel as a whole is not launch-scope. Cross-Uprise Blast cards are not
+  expected in the launch Feed until cross-community Travel/Discover opens.
 - Discovery route calls and typed client wrappers remain in the repo for the deferred later-phase surface:
   - `apps/web/src/lib/discovery/client.ts`
   - `apps/web/src/lib/discovery/context.ts`
@@ -156,6 +159,8 @@ Saved Uprises/custom Uprises are Discover-owned collection playback contexts.
 - General transport controls must not originate inside Plot. Plot may contain links to Artist Profiles, event/calendar actions, signal source objects, or other related surfaces, and eligible outside-Uprise Feed cards may include a `Travel` handoff into Discover/back-door visitor context. Those links do not make the Plot top shell, Home Scene selector, or profile pull-down a transport system.
 - Transport arrival must not drop visitors into the member Plot/community dashboard. Use the Discover back-door visitor surface for visited communities.
 - Feed/Plot cards may load a listening context, link to the signal source, hand off to Artist Profile/demo listening, or, for eligible outside-Uprise Feed cards, expose `Travel` into Discover/back-door context while loading that Uprise. Do not add map, seek, saved/custom Uprise launchers, or equivalent general Away Scene controls to Plot.
+- The presence of this Feed-card `Travel` contract must not be read as making
+  Travel a launch feature.
 - Upvotes and governance actions remain Home Scene-gated by GPS rules.
 - Web tier discovery surfaces must consume API endpoints only.
 

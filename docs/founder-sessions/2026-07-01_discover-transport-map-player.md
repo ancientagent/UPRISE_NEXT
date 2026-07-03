@@ -403,3 +403,29 @@ Owner spec candidates:
 
 - Do not treat Blast cards as separate from Feed cards.
 - Do not create a separate Blast-card surface just to support signal source links or Travel links.
+
+## Raw Founder Notes - Feed Card Travel Launch Boundary
+
+> ok, yes it should be on there though travel as a whole wont be a thing at launch, so there wont really be blast cards for other uprises until launch
+
+## Clarifications - Feed Card Travel Launch Boundary
+
+- Feed-card `Travel` belongs in the card contract so future outside-Uprise Feed cards know where to route.
+- Type: settled launch-scope clarification, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, `docs/agent-briefs/UI_CURRENT.md`
+
+- Cross-Uprise Blast cards are not expected at launch because Travel as a whole is not a launch feature.
+- Type: settled launch-scope clarification, pending owner-spec promotion
+- Likely owner: `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, `docs/agent-briefs/UI_CURRENT.md`
+
+## Working Interpretation - Feed Card Travel Launch Boundary
+
+- Document the `Travel` affordance now as the future-safe contract for eligible outside-Uprise Feed cards.
+- Do not treat this as activation of Travel for launch.
+- At launch, Feed Blast cards will mostly/only represent in-community launch-scope signal activity; outside-Uprise Blast card behavior becomes relevant when Travel/cross-community discovery opens.
+
+## Do Not Drift - Feed Card Travel Launch Boundary
+
+- Do not remove `Travel` from the Feed-card contract just because launch does not expose it yet.
+- Do not implement cross-Uprise Blast cards or Travel as launch requirements.
+- Do not treat launch Feed Blast cards as evidence that cross-community Travel is live.
