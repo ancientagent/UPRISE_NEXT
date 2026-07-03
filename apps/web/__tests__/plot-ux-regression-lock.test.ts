@@ -637,6 +637,42 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).not.toContain('data-slot="blast-destination"');
   });
 
+  it('keeps Feed-card Travel as future contract language without launch-runtime activation', () => {
+    const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
+    const bottomNavSource = readRepoFile('src/components/plot/PlotBottomNav.tsx');
+    const discoverPageSource = readRepoFile('src/app/discover/page.tsx');
+    const plotSpec = readWorkspaceFile('docs/specs/communities/plot-and-scene-plot.md');
+    const discoverySpec = readWorkspaceFile('docs/specs/communities/discovery-scene-switching.md');
+
+    expect(plotSpec).toContain(
+      'Feed-card `Travel` is a future-safe card contract, not launch activation'
+    );
+    expect(plotSpec).toContain(
+      'the source link opens the source object, while `Travel` opens the'
+    );
+    expect(discoverySpec).toContain(
+      'Feed-card `Travel` is contract-ready for future outside-Uprise cards'
+    );
+    expect(discoverySpec).toContain(
+      'The presence of this Feed-card `Travel` contract must not be read as making'
+    );
+    expect(seedFeedSource).not.toContain('>Travel<');
+    expect(seedFeedSource).not.toContain('Travel</');
+    expect(seedFeedSource).not.toContain('travelHref');
+    expect(seedFeedSource).not.toContain('href="/discover"');
+    expect(plotPageSource).not.toContain('data-slot="plot-transport"');
+    expect(plotPageSource).not.toContain('travelHref');
+    expect(topShellSource).not.toContain('Travel');
+    expect(topShellSource).not.toContain('Seek mode');
+    expect(bottomNavSource).toContain(
+      'Discover is coming soon while MVP stays local-community-only.'
+    );
+    expect(discoverPageSource).toContain('Coming Soon');
+    expect(discoverPageSource).toContain('MVP is local-community-only.');
+  });
+
   it('keeps the first feed insert as a read-only Popular Singles carousel with artist-page signal handoff', () => {
     const seedFeedSource = readRepoFile('src/components/plot/SeedFeedPanel.tsx');
 
