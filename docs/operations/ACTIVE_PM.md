@@ -27,7 +27,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Current `main` HEAD at refresh start: `5a07d93` (`docs: clarify Feed Travel launch boundary (#197)`)
 - Local worktree state at refresh: clean before this docs-only planning branch
 - Active branch during this refresh: `docs/uprise-development-plan-r1`
-- Open PR queue at refresh: none (`gh pr list --state open --limit 20 --json number,title,headRefName,url` returned `[]`)
+- Open PR queue at refresh: PR #198 (`docs: add UPRISE development plan`) after branch creation
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -51,7 +51,7 @@ Use `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` as the current execution pla
 
 ### Open PR Queue
 
-None at refresh time.
+PR #198: `docs: add UPRISE development plan` (`docs/uprise-development-plan-r1`).
 
 ### Main Worktree
 
