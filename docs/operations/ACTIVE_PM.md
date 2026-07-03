@@ -71,7 +71,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/uprise-first-pass-implementation-workflow` | `9ac44eb` at PR open | Focused docs/process clarification branch |
+| `/home/baris/UPRISE_NEXT` | `docs/uprise-first-pass-implementation-workflow` | `pending` | Focused docs/process clarification branch |
 
 ### Preserved UX Reference Worktrees
 
