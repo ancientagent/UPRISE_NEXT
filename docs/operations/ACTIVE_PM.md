@@ -53,13 +53,13 @@ Reliant queue `.reliant/queue/uprise-development-plan-r1.json` currently shows a
 
 ### Open PR Queue
 
-None at refresh time. Task 9 PR should be opened from `docs/feed-card-family-inventory` after local validation.
+PR #209 (`docs/feed-card-family-inventory`) is open for Task 9 validation and merge.
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/feed-card-family-inventory` | branch registered as `pending` while this slice is being updated | active Task 9 docs/test inventory edits |
+| `/home/baris/UPRISE_NEXT` | `docs/feed-card-family-inventory` | `9c56cb5` at PR open | Task 9 PR #209 open |
 
 ### Preserved UX Reference Worktrees
 
@@ -88,7 +88,7 @@ Recent full cleanup history remains in prior handoffs and git history. Do not us
 
 ## Next Queue
 
-1. Validate, push, and open PR for `docs/feed-card-family-inventory`.
+1. Wait for PR #209 checks and merge if green.
 2. Merge Task 9 after checks and reviewer gate if needed.
 3. Refresh `main`, confirm local worktree clean, and run final completion audit for the active goal.
 4. If continuing development after this goal, start Task 10: launch-scope Blast card runtime/source-link hardening. Keep Travel hidden/deferred and do not add general Plot transport.
