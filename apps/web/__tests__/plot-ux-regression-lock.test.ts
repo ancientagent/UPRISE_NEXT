@@ -421,6 +421,56 @@ describe('/plot UX regression lock', () => {
     expect(selectorSource).not.toContain('profile-saved-away-scenes');
   });
 
+  it('keeps Plot selector, profile, Archive, and Events out of general transport', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const selectorSource = readRepoFile('src/components/plot/HomeSceneSelector.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
+    const tabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
+    const eventsSource = readRepoFile('src/components/plot/PlotEventsPanel.tsx');
+    const plotSpec = readWorkspaceFile('docs/specs/communities/plot-and-scene-plot.md');
+    const discoverySpec = readWorkspaceFile('docs/specs/communities/discovery-scene-switching.md');
+
+    expect(plotSpec).toContain('Plot is not a transport surface.');
+    expect(plotSpec).toContain(
+      'Use the Home Scene selector to switch/select/tune among the listener'
+    );
+    expect(plotSpec).toContain(
+      'Plot profile/collection UI must not present saved/custom Uprises as a Plot-launched playback mode.'
+    );
+    expect(discoverySpec).toContain(
+      'General transport controls must not originate inside Plot.'
+    );
+    expect(discoverySpec).toContain(
+      'Saved Uprises do not appear in the Home Scene selector'
+    );
+    expect(selectorSource).toContain(
+      'Switch between registered music communities that resolve in your current city context.'
+    );
+    expect(selectorSource).toContain('Away Scenes stay in your profile collection.');
+    expect(selectorSource).not.toContain('Saved Uprise');
+    expect(selectorSource).not.toContain('Map view');
+    expect(selectorSource).not.toContain('Seek mode');
+    expect(topShellSource).not.toContain('Travel');
+    expect(topShellSource).not.toContain('Map view');
+    expect(topShellSource).not.toContain('Seek mode');
+    expect(listenerProfileSource).toContain('Saved Uprises');
+    expect(listenerProfileSource).toContain('data-slot="profile-saved-away-scenes"');
+    expect(listenerProfileSource).not.toContain('onSavedUprisePlay');
+    expect(listenerProfileSource).not.toContain('travelHref');
+    expect(listenerProfileSource).not.toContain('Map view');
+    expect(listenerProfileSource).not.toContain('Seek mode');
+    expect(tabBodySource).not.toContain('travelHref');
+    expect(tabBodySource).not.toContain('Map view');
+    expect(tabBodySource).not.toContain('Seek mode');
+    expect(eventsSource).not.toContain('travelHref');
+    expect(eventsSource).not.toContain('Map view');
+    expect(eventsSource).not.toContain('Seek mode');
+    expect(plotPageSource).toContain('tuneDiscoverScene(item.sceneId, token)');
+    expect(plotPageSource).not.toContain('data-slot="plot-transport"');
+    expect(plotPageSource).not.toContain('onSavedUprisePlay');
+  });
+
   it('locks Top Songs + Scene Activity to archive-only placement', () => {
     const plotPrimaryTabBodySource = readRepoFile('src/components/plot/PlotPrimaryTabBody.tsx');
 
