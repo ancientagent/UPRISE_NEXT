@@ -2,7 +2,7 @@
 
 Status: active operations registry
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-02
+Last Updated: 2026-07-03
 
 ## Purpose
 
@@ -82,11 +82,12 @@ node scripts/workspace-registry.mjs audit --include-remote
 | codex-first-review-routing-refresh | branch | docs/codex-first-review-routing-refresh | - | PR #187 | main | eea674c | merged | Codex local | Codex local | Formalized Codex-first review/audit routing in documentation-framework, AI stack docs, Active PM, and local routing skill; Hermes fallback/watchdog only. | 2026-07-02 | merged in PR #187; remote and local branches deleted |
 | active-pm-post-codex-routing-v2-refresh | branch | docs/active-pm-post-codex-routing-v2-refresh | - | PR #188 | main | 0ab9ce2 | merged | Codex local | Codex local | Refreshed ACTIVE_PM and branch workspace registry after PR #187 Codex-first review routing merged. | 2026-07-02 | merged in PR #188; remote branch deleted |
 | plot-bottom-nav-component | branch | refactor/plot-bottom-nav-component | - | PR #189 | main | 0cd181e | merged | Codex local | Codex local | Extracted /plot bottom navigation and UPRISE wheel overlay into a focused component while preserving route-owned state and behavior. | 2026-07-02 | merged in PR #189; remote branch deleted |
-| main-workspace | primary | main | /home/baris/UPRISE_NEXT | - | origin/main | 66556d7 | primary | Codex local | current branch owner | Primary UPRISE workspace on current main after PR #190. | 2026-07-02 | keep current and clean |
+| main-workspace | primary | main | /home/baris/UPRISE_NEXT | - | origin/main | 97680e4 | primary | Codex local | current branch owner | Primary UPRISE workspace on current main after PR #193. | 2026-07-03 | keep current and clean |
 | plot-tab-surface-component | branch | refactor/plot-tab-surface-component | - | PR #190 | main | 66556d7 | merged | Codex local | Codex local | Extracted /plot non-expanded tab bar and active surface frame into a focused component while preserving route-owned tab state and tab body rendering. | 2026-07-02 | merged in PR #190; remote branch deleted |
-| active-pm-post-plot-tab-surface-refresh | branch | docs/active-pm-post-plot-tab-surface-refresh | /home/baris/UPRISE_NEXT | PR #191 | main | pending | open-pr | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #190 Plot tab surface extraction merged. | 2026-07-02 | merge docs-only PM refresh via PR if green |
-| founder-session-discover-player-captures | branch | docs/founder-session-discover-player-captures | /home/baris/UPRISE_NEXT | PR #193 https://github.com/ancientagent/UPRISE_NEXT/pull/193 | origin/main | pending | open-pr | Codex local | Codex local | Capture Discover front-door/back-door shared-screen clarification and RADIYO/SPACE player terminology notes; no owner-spec promotion or runtime behavior changes. | 2026-07-03 | merge PR #193 if approved/green, then delete branch and refresh registry/PM |
+| active-pm-post-plot-tab-surface-refresh | branch | docs/active-pm-post-plot-tab-surface-refresh | - | PR #191 | main | 01a6109 | merged | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #190 Plot tab surface extraction merged. | 2026-07-03 | merged in PR #191; remote branch deleted |
+| founder-session-discover-player-captures | branch | docs/founder-session-discover-player-captures | - | PR #193 https://github.com/ancientagent/UPRISE_NEXT/pull/193 | origin/main | 97680e4 | merged | Codex local | Codex local | Capture Discover front-door/back-door shared-screen clarification and RADIYO/SPACE player terminology notes; no owner-spec promotion or runtime behavior changes. | 2026-07-03 | merged in PR #193; remote branch deleted |
 | windows-visible-artifact-bridge | branch | chore/windows-visible-artifact-bridge | - | PR #192 https://github.com/ancientagent/UPRISE_NEXT/pull/192 | origin/main | 7327453 | merged | Codex local | Codex local | Windows-visible artifact bridge helpers; patched to avoid symlinks, derive the Windows artifact root, and reject unsafe slugs. | 2026-07-03 | merged in PR #192; remote branch deleted |
+| active-pm-post-founder-captures-refresh | branch | docs/active-pm-post-founder-captures-refresh | /home/baris/UPRISE_NEXT | PR #194 https://github.com/ancientagent/UPRISE_NEXT/pull/194 | main | pending | open-pr | Codex local | Codex local | Refresh ACTIVE_PM and branch workspace registry after PR #191, PR #192, and PR #193 merged. | 2026-07-03 | merge docs-only PM refresh via PR if green |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches
