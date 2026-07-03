@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-02
+Last Updated: 2026-07-03
 
 ## Purpose
 
@@ -22,11 +22,11 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-02
+- Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `66556d7` (`Refactor: extract Plot tab surface (#190)`)
-- Local worktree state at refresh: clean after PR #190 merge
-- Active implementation branch during this refresh: `docs/active-pm-post-plot-tab-surface-refresh`
+- Current `main` HEAD at refresh start: `97680e4` (`docs: capture Discover and player founder clarifications (#193)`)
+- Local worktree state at refresh: clean after PR #193 merge
+- Active implementation branch during this refresh: `docs/active-pm-post-founder-captures-refresh`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -40,11 +40,11 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex su
 | Field | Current Value |
 | --- | --- |
 | Lane | `EXTERNAL_TOOLS` / `DOCS_OPS` |
-| Branch | `docs/active-pm-post-plot-tab-surface-refresh` |
-| Scope | Refresh Active PM and branch workspace registry after PR #190 Plot tab surface extraction merged. |
+| Branch | `docs/active-pm-post-founder-captures-refresh` |
+| Scope | Refresh Active PM and branch workspace registry after PR #191, PR #192, and PR #193 merged. |
 | Out of Scope | Runtime behavior changes, Discover transport, provider state, database/schema changes, art changes, UX prototype merging, product doctrine changes, and preserved reference branch/worktree cleanup. |
 | Owner Contract | `docs/operations/ACTIVE_PM.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
-| Companion Docs | `docs/handoff/2026-07-02_plot-tab-surface-component-extraction.md`, `docs/handoff/2026-07-02_plot-bottom-nav-component-extraction.md` |
+| Companion Docs | `docs/handoff/2026-07-03_active-pm-post-founder-captures-refresh.md`, `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`, `docs/founder-sessions/2026-07-02_radiyo-track-mode-player-terminology.md`, `docs/handoff/2026-07-02_active-pm-post-plot-tab-surface-refresh.md` |
 | Validation | `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
@@ -79,11 +79,17 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #188 / `0ab9ce2`: refreshed Active PM and branch registry after PR #187 merged.
 - PR #189 / `0cd181e`: extracted `/plot` bottom navigation and UPRISE wheel overlay into a focused component without changing Plot behavior.
 - PR #190 / `66556d7`: extracted `/plot` non-expanded tab bar and active surface frame into a focused component without changing Plot behavior.
-- Current branch follow-up: refreshes Active PM and branch registry after PR #190 merged.
+- PR #191 / `01a6109`: refreshed Active PM and branch registry after PR #190 merged.
+- PR #192 / `7327453`: added Windows-visible artifact bridge helpers, including hardened root derivation, unsafe-slug rejection, ignored pointer files, and no symlink creation.
+- PR #193 / `97680e4`: captured Discover/front-door/back-door and RADIYO/SPACE player founder-session clarifications without owner-spec promotion or runtime behavior changes.
+- Current branch follow-up: refreshes Active PM and branch registry after PR #191, PR #192, and PR #193 merged.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
 - `docs/founder-sessions/2026-07-01_reviewer-auditor-cleanup-protocol.md`
+- `docs/handoff/2026-07-03_active-pm-post-founder-captures-refresh.md`
+- `docs/founder-sessions/2026-07-02_radiyo-track-mode-player-terminology.md`
+- `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`
 - `docs/handoff/2026-07-02_active-pm-post-plot-tab-surface-refresh.md`
 - `docs/handoff/2026-07-02_plot-tab-surface-component-extraction.md`
 - `docs/handoff/2026-07-02_plot-bottom-nav-component-extraction.md`
@@ -113,7 +119,6 @@ Use these handoffs / founder-session notes for the current cleanup trail:
 - `docs/handoff/2026-07-01_home-scene-selector-component-extraction.md`
 - `docs/handoff/2026-07-01_home-scene-selector-terminology.md`
 - `docs/founder-sessions/2026-07-01_plot-home-scene-visual-skin.md`
-- `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`
 - `docs/founder-sessions/2026-07-01_plot-archive-registrar-placement.md`
 
 ## Current Branch / Worktree State
@@ -126,7 +131,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-plot-tab-surface-refresh` until this PM refresh merges; `main` after merge | `66556d7` at refresh start | clean after PR #190 merge; this docs-only branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-founder-captures-refresh` until this PM refresh merges; `main` after merge | `97680e4` at refresh start | clean after PR #193 merge; this docs-only branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -134,8 +139,8 @@ These worktrees/branches contain unmerged, separately staged, or intentionally p
 
 | Path | Branch | Snapshot HEAD | Main divergence at refresh | Note |
 | --- | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `538` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
-| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `370` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| `/home/baris/UPRISE_NEXT_uximpl` | `ux-implementation` | `be4ddde` | `549` behind / `14` ahead | Broad Plot/profile/player/source-dashboard prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
+| `/home/baris/UPRISE_NEXT_uxmobile` | `ux-mobile-r1-build` | `b59a63c` | `381` behind / `26` ahead | Broad mobile-first UX prototype. Preserve as design/runtime reference until extraction or archive decision. Do not merge wholesale. |
 
 ### Preserved UX Batch Branches
 
@@ -143,8 +148,8 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 | Branch | Main divergence at refresh | Recommended Action |
 | --- | --- | --- |
-| `feat/ux-batch17` | `354` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
-| `feat/ux-batch18-run` | `354` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch17` | `365` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
+| `feat/ux-batch18-run` | `365` behind / `3` ahead | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
 
 ### Cleanup Completed
 
@@ -157,10 +162,10 @@ The following audited, absorbed/superseded branches were deleted locally and rem
 
 ## Next Queue
 
-1. After this PM refresh merges, continue small Plot structural cleanup from clean `main` only if another region is clearly named and behavior is already locked by tests.
-2. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
-3. If implementing Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md`; do not add transport UI inside Plot.
-4. If using UX prototype branches, create fresh small branches from current `main`; do not merge prototype branches wholesale.
+1. After this PM refresh merges, continue from clean `main` and promote founder-session Discover/player clarifications into owner specs only in a separate scoped slice.
+2. If touching Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md` and the founder-session notes; do not add transport UI inside Plot.
+3. If touching the RADIYO/SPACE player boundary, keep Plot top-shell playback tied to Home Scene/RADIYO and keep saved/custom Uprise playback Discover/collection-owned unless an owner spec changes it.
+4. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
 5. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
 
 ## PM Usage Rules For Agents
