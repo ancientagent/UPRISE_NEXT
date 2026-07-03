@@ -65,7 +65,11 @@
     "browser:mcp:launch:wsl:avatars": "bash scripts/launch-chrome-mcp-wsl-avatar-picker.sh",
     "verify:music-community-preferences": "pnpm --filter api run verify:music-community-preferences",
     "workspace:register": "node scripts/workspace-registry.mjs add",
-    "workspace:audit": "node scripts/workspace-registry.mjs audit"
+    "workspace:audit": "node scripts/workspace-registry.mjs audit",
+    "reliant:plan:seed": "node scripts/reliant-development-plan-seed.mjs",
+    "reliant:plan:next": "node scripts/reliant-next-action.mjs --queue .reliant/queue/uprise-development-plan-r1.json --runtime .reliant/runtime/current-task-uprise-development-plan-r1.json",
+    "reliant:plan:validate": "node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/uprise-development-plan-r1.json",
+    "reliant:plan:test": "node scripts/reliant-development-plan-seed.test.mjs && node scripts/reliant-next-action.test.mjs && node scripts/reliant-slice-queue.test.mjs"
   },
   "devDependencies": {
     "@turbo/gen": "^2.0.0",
