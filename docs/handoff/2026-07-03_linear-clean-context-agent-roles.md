@@ -14,7 +14,7 @@ The protocol separates two roles:
 - Assigning agent: prepares the issue packet, gathers repo context, confirms product-changing understanding with the founder, recommends skills/tools/model tier, and assigns the executor.
 - Assigned agent: starts clean from the Linear issue, follows only the issue plus repo-linked docs/files, and stops if the packet lacks enough context.
 
-For non-trivial issue setup, PM/current branch owner should assign a dedicated Codex subagent as the assigning agent. That subagent prepares the packet and recommends executor assignment; it should not also own the implementation branch unless PM explicitly reassigns it.
+For non-trivial issue setup, PM/current branch owner should assign a dedicated Codex subagent as the assigning agent. That subagent prepares the packet and recommends executor assignment; it should not also own the implementation branch unless PM explicitly reassigns it. For complex code paths, PM may assign a read-only excavator Codex subagent to trace current behavior, dependency paths, stale/duplicate branches, tests, and instability risks before executor assignment.
 
 ## Files Changed
 
@@ -28,7 +28,7 @@ For non-trivial issue setup, PM/current branch owner should assign a dedicated C
 
 ## Durable Rule
 
-Linear is the clean-context packet for assigned agents, but Linear does not become product truth. Durable founder-confirmed rules are promoted to canon only when canon-level doctrine/terminology changes; otherwise they go to the appropriate owner spec under `docs/specs/**`, tests, handoff, changelog, PM state, and Linear as appropriate.
+Linear is the clean-context packet for assigned agents, but Linear does not become product truth. Assigned agents must trace existing code before replacing it, and should only remove/replace old code when the plan shows it prevents instability, duplicate behavior, stale compatibility paths, or product drift. Durable founder-confirmed rules are promoted to canon only when canon-level doctrine/terminology changes; otherwise they go to the appropriate owner spec under `docs/specs/**`, tests, handoff, changelog, PM state, and Linear as appropriate.
 
 ## Validation
 

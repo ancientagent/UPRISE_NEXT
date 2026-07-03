@@ -286,6 +286,8 @@ Linear tracks execution, not truth.
 
 For non-trivial issue setup, PM/current branch owner should assign a dedicated Codex subagent as the assigning agent. That subagent gathers the required repo context, confirms ambiguous/product-changing understanding with the founder through the PM/current session, writes or updates the Linear issue as a clean-context packet, recommends skills/tools/model tier, and recommends the executor assignment. It should not also own the implementation branch unless PM explicitly reassigns it.
 
+For complex code paths, PM/current branch owner may assign a read-only excavator Codex subagent before executor assignment. Use this when the executor might otherwise overwrite old code, layer workarounds over stale paths, or miss hidden dependencies. The excavator traces current behavior, dependency paths, tests, stale/duplicate branches, and instability risks, then writes the trace summary and implementation plan into Linear or the handoff. It does not edit files or own the implementation branch.
+
 Use Linear issues to record:
 
 - lane label;

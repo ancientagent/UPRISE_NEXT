@@ -236,6 +236,7 @@ Do not use Linear for:
 Assigning agent responsibilities:
 
 - PM/current branch owner assigns a dedicated Codex subagent to this role when issue setup requires meaningful repo/context gathering. The subagent's job is to gather evidence, prepare the clean Linear packet, and recommend assignment; it should not own the implementation branch unless PM explicitly reassigns it.
+- For complex code paths, PM/current branch owner may assign an excavator/read-only Codex subagent before executor assignment. This subagent traces current behavior, dependencies, tests, stale/duplicate branches, and instability risks, then writes the trace summary and implementation plan for the assigned executor. It must not edit files or become a competing branch owner.
 - confirm ambiguous or product-changing understanding with the founder before assignment;
 - classify the issue as `bug`, `stale`, `environment`, `fixture/data`, `product decision`, `docs-cleanup`, or `runtime-cleanup`;
 - provide or link the owner spec, lane brief, required runtime files/tests, skill/tool recommendation, expected solution direction, out-of-scope boundaries, and validation commands;
@@ -248,6 +249,7 @@ Assigned agent responsibilities:
 - read the Linear issue first, then only the repo-linked docs/files named by the issue and any direct owner-spec/lane requirements;
 - stop and report back if the Linear issue lacks owner spec, rules, context, solution direction, validation, or safety boundaries needed for execution;
 - do not rely on prior chat, external reports, or stale handoffs unless the Linear issue explicitly links them and states why they matter;
+- trace and understand existing code paths before replacing old code; do not overwrite or bypass old code unless the packet/plan shows removal or replacement is necessary to avoid instability, duplicate behavior, stale compatibility paths, or product drift;
 - execute one branch-owned slice and record completion evidence back to Linear/PR/handoff as requested.
 
 Durable truth promotion:

@@ -16,6 +16,8 @@ Owner spec candidates: docs/specs/system/documentation-framework.md; docs/soluti
 
 > so the pm would assign the subagent
 
+> the assigned agent must not write over old code unless it will make it unstable.  it must trace/see what it touches... or should pm assign an ecscavator ageent (or i dont know what that roll would be ) to dig up whats there and right a plane for the assigned executor
+
 ## Clarifications
 
 - Linear issues should function as clean-context execution packets for assigned agents.
@@ -30,6 +32,14 @@ Owner spec candidates: docs/specs/system/documentation-framework.md; docs/soluti
 - Type: settled
 - Likely owner: `docs/specs/system/documentation-framework.md`; `docs/AGENT_STRATEGY_AND_HANDOFF.md`
 
+- Assigned agents must trace and understand existing code paths before replacing old code. They should remove/replace old code only when the plan shows it is necessary to prevent instability, duplication, or drift.
+- Type: settled
+- Likely owner: `docs/specs/system/documentation-framework.md`; `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+
+- For complex code paths, PM/current branch owner may assign an excavator/read-only Codex subagent to dig up existing behavior, dependency paths, stale branches, tests, and risks, then write the trace/plan for the executor.
+- Type: settled
+- Likely owner: `docs/specs/system/documentation-framework.md`; `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
+
 - Canon should update only after founder-confirmed understanding changes canon-level doctrine/terminology. Otherwise durable behavior belongs in the appropriate owner spec, with tests/handoff/changelog/PM updates as needed.
 - Type: settled
 - Likely owner: `docs/specs/system/documentation-framework.md`
@@ -41,6 +51,7 @@ Owner spec candidates: docs/specs/system/documentation-framework.md; docs/soluti
 - Included behavior:
   - PM/current branch owner assigns assigning-agent Codex subagent for non-trivial setup
   - assigning agent creates complete Linear packet
+  - excavator/read-only Codex subagent can trace existing code and write executor plan when code paths are complex
   - assigning agent confirms ambiguous/product-changing understanding with founder
   - assigned agent starts clean and executes from Linear plus repo-linked authority
   - durable confirmed truth is promoted to canon or owner specs as appropriate
@@ -54,6 +65,7 @@ Owner spec candidates: docs/specs/system/documentation-framework.md; docs/soluti
 
 - There are two roles: assigning agent and assigned agent.
 - The assigning agent is responsible for making the issue executor-ready.
+- For complex code paths, an excavator/read-only subagent may prepare the trace and plan, but it does not own writes.
 - The assigned agent should not have to reconstruct intent from chat or old handoffs.
 - Linear carries context pointers and execution state; repo docs/specs/canon remain durable authority.
 
@@ -69,3 +81,6 @@ Owner spec candidates: docs/specs/system/documentation-framework.md; docs/soluti
 - Do not expect assigned agents to read prior chat for hidden product truth.
 - Do not let Linear override owner specs or canon.
 - Do not update canon for every issue; update canon only for founder-confirmed doctrine/terminology changes.
+
+- Do not let assigned agents overwrite existing code without tracing what they touch first.
+- Do not use excavator/read-only work as a second implementation branch owner.
