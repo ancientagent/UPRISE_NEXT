@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `1bcbfa7` (`test(web): harden source listener profile boundary`)
-- Active branch during this refresh: `test/print-shop-source-event-path`
-- Local worktree state at refresh: Task 12 tests/docs hardening branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) plus draft PR #214 (`test/print-shop-source-event-path`) for this Task 12 branch
+- Current `main` HEAD at refresh start: `236353e` (`test(api,web): harden print shop event boundary`)
+- Active branch during this refresh: `docs/uprise-first-pass-implementation-workflow`
+- Local worktree state at refresh: docs/process clarification branch
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #214 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,29 +35,28 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Complete UPRISE Development Plan R1 Task 12: Print Shop source-facing event path.
-- Keep Print Shop source-facing.
-- Keep Plot Events read-only with no event creation or Print Shop handoff.
-- Keep Archive Registrar placement on top with records/status below.
+- Clarify that UPRISE execution packets support first-pass implementation as well as cleanup/refactor work.
+- Keep GISTer-style source-behavior-removal / excavator framing conditional, not default.
+- Keep Linear as execution context with links back to repo truth, not durable product doctrine.
 
 Recently completed context:
 
-- PR #210 merged the final Task 8 / Task 9 closeout at `50c6e8b`.
 - PR #211 merged the pre-implementation feature-plan review gate at `25e06a2`.
 - PR #213 merged Task 11 source/listener profile boundary locks at `1bcbfa7`.
+- PR #214 merged Task 12 Print Shop source-facing event path locks at `236353e`.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `ARTIST_SOURCE` / `EVENTS_ARCHIVE` / source-facing event path |
-| Branch | `test/print-shop-source-event-path` |
-| Scope | Task 12 contract-test hardening for Print Shop source-facing event path, Plot Events read-only behavior, and Archive Registrar/records ordering. |
-| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, Travel/Discover work. |
-| Owner Contracts | `docs/specs/events/events-and-flyers.md`, `docs/specs/system/registrar.md` |
-| Companion Docs | `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`, `docs/agent-briefs/EVENTS_ARCHIVE.md`, `docs/agent-briefs/REGISTRAR_GOVERNANCE.md` |
-| Validation | `pnpm --filter api test -- events.print-shop.service.test.ts --runInBand`, `pnpm --filter web test -- plot-tab-contracts.test.ts --runInBand`, `pnpm --filter web typecheck`, `pnpm --filter api typecheck`, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Lane | `EXTERNAL_TOOLS` / context-steward / execution-process docs |
+| Branch | `docs/uprise-first-pass-implementation-workflow` |
+| Scope | Docs-only clarification that first-pass implementation packets define what to build from repo owner specs; source-drift cleanup fields can be `not_applicable` when no broken behavior exists. |
+| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, per-issue packet files, new PM harness, merging/closing PR #212. |
+| Owner Contracts | `docs/specs/system/documentation-framework.md` |
+| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/AGENT_STRATEGY_AND_HANDOFF.md` |
+| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
@@ -65,14 +64,13 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #212 | `docs/linear-clean-context-agent-roles` | draft, mergeability unknown after latest main advance | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
-| #214 | `test/print-shop-source-event-path` | draft opened from this branch | Review/merge after checks, then return to clean `main`. |
+| #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `test/print-shop-source-event-path` | `1bcbfa7` at branch start | Task 12 focused tests/docs branch |
+| `/home/baris/UPRISE_NEXT` | `docs/uprise-first-pass-implementation-workflow` | `236353e` at branch start | Focused docs/process clarification branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -94,15 +92,14 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #210 / `50c6e8b`: closed the Task 8 + Task 9 goal state after activation tuple matching and Feed card family inventory merged.
-- PR #211 / `25e06a2`: added the pre-implementation feature gate for behavior-changing feature work.
+- PR #213 / `1bcbfa7`: Task 11 source/listener profile boundary locks.
+- PR #214 / `236353e`: Task 12 Print Shop source-facing event path locks.
 
 ## Next Queue
 
-1. Review/merge Task 12 PR #214 from `test/print-shop-source-event-path`.
-2. Return to clean `main` after Task 12 merges or is handed off.
+1. Finish this docs/process clarification branch and open/merge its PR if checks pass.
+2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 3. Continue to the next UPRISE Development Plan R1 task selected by the user.
-4. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 
 ## PM Usage Rules For Agents
 
@@ -112,6 +109,7 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 - If this file conflicts with an owner spec or runtime evidence, report the conflict and refresh this file.
 - If a task is tiny and low-risk, do not create a process packet unless it helps.
 - If a task is significant/risky, cross-lane, provider/db/schema/canon/doc-authority work, complex refactor, broad branch/worktree cleanup, prototype branch absorption, or an external-agent handoff, require the execution packet blocks named in the active documentation framework and use an independent reviewer/auditor pass when branch absorption or cleanup risk is non-trivial.
+- For UPRISE first-pass implementation, the packet should define what to build from owner specs/current repo evidence. Do not force source-drift cleanup or excavator framing unless stale/wrong existing behavior is actually in scope.
 - For review/audit model routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`: Codex subagents are default; `gpt-5.3-codex-spark` handles basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
 - Before creating, assigning, pushing, preserving, merging, closing, or deleting a branch/worktree/workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` and run `pnpm run workspace:audit`.
 

@@ -297,6 +297,8 @@ Use the following blocks for significant/risky issues, cross-lane cleanup, provi
 
 Linear may track these fields as execution state, but it does not become product truth. Durable product/canon/API/runtime rules still belong in owner specs under `docs/specs/**`.
 
+UPRISE is still implementing many first-pass platform features. Do not assume every issue is a cleanup of already-built behavior. For first-pass implementation, use `Feature / Behavior Scope`, `Repo-Aspects To Verify`, and `Development Plan` to define what should be built from owner-spec truth. Set `Source Drift / Behavior To Correct` and `source_drift_or_bug_identified` to `not_applicable` when there is no broken source behavior to remove. Use the heavier cleanup/excavation framing only when the issue is explicitly about stale code, wrong existing behavior, refactor cleanup, branch absorption, or legacy/workaround removal.
+
 #### Execution Packet
 
 ```md

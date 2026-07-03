@@ -268,6 +268,8 @@ next_signal:
 
 These blocks are optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove the scope is low-risk. Do not create per-issue context-packet files by default and do not introduce a separate PM harness from these blocks.
 
+UPRISE is not in the same operating posture as projects where most work is cleanup of already-implemented flows. Many UPRISE issues are first-pass feature slices. For those, the packet should point to the repo owner spec, active lane brief, exact code surfaces to inspect, validation seed, and out-of-scope boundaries. Do not force a source-behavior-removal or excavator model unless the issue is actually stale-code cleanup, wrong existing behavior, refactor/absorption work, or a risky cross-lane correction. Linear should carry the packet and repo links for clean execution context; it should not become the durable product/canon source.
+
 For feature implementation or behavior-changing UI/API/runtime work, the executor must not begin implementation edits until the feature has been reviewed against current repo authority and the development plan has been reviewed by another Codex agent. The feature review must include the owner spec, lane brief, relevant runtime/code paths, tests, directly relevant founder-session notes or handoffs, deferred/out-of-scope boundaries, and validation seed. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans. Record the reviewer/model/artifact in `Plan Review` or the dated handoff.
 
 For large refactors, complex issues, broad branch/worktree cleanup, or any
