@@ -3,7 +3,7 @@
 **ID:** `COMM-DISCOVERY`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-07-01`
+**Last Updated:** `2026-07-03`
 
 ## Overview & Purpose
 Defines explicit, non-algorithmic discovery flows for changing listening context across Scenes and tiers once borders open. Discovery is user-initiated only and does not alter civic authority unless the user explicitly changes Home Scene.
@@ -23,7 +23,7 @@ Current live MVP note:
 - Listener tunes into another Scene broadcast as a visitor once cross-community travel is live.
 - Listener can set a new Home Scene explicitly (outside passive discovery).
 - Artist/listener travels Discover across city/state/national scopes while keeping the current community context inherited from the active Home Scene or tuned community.
-- Listener transport means leaving the user's Home Scene context for an Away Scene/listening context. The current intended entry points are Discover and saved Uprises in the user's collection.
+- Listener transport means leaving the user's Home Scene context for an Away Scene/listening context. The current intended entry points are Discover and saved/custom Uprises when surfaced inside Discover/collection-owned playback. Transport must not originate from the Plot top shell or Plot profile pull-down.
 
 ## Discover Transport Model
 
@@ -70,11 +70,12 @@ Arriving at another community through Discover lands the listener at that commun
 
 ### Saved Uprises
 
-Saved Uprises may become a collection/personal-player transport entry point.
+Saved Uprises/custom Uprises are Discover-owned collection playback contexts.
 
-- Loading a saved Uprise belongs to personal-player/Away Scene listening context.
+- Loading a saved/custom Uprise belongs to Discover/collection-owned personal-player or Away Scene listening context.
 - Saved Uprises do not appear in the Home Scene selector.
 - Saved Uprise listening does not grant voting authority.
+- Saved/custom Uprise playback must not launch from the Plot top shell, the Plot Home Scene selector, or the Plot profile pull-down. Plot may show collection/profile inventory, but Discover owns the visitor/playback context that lets a user listen to a saved/custom Uprise and decide whether to learn more about that community.
 
 ## Functional Requirements
 - Discovery is explicit user action only:
@@ -82,7 +83,7 @@ Saved Uprises may become a collection/personal-player transport entry point.
   - Manual Scene selection in Discover map/list.
   - Seek-mode traversal when implemented.
   - Tier toggling (city/state/national).
-  - Selecting saved Uprises from the user's collection once that collection transport surface is enabled.
+  - Selecting saved/custom Uprises from the user's collection only when that collection playback is surfaced inside Discover, not from Plot.
 - No recommendation feed, ranking, or personalization in discovery flows.
 - Current MVP does not expose active cross-community discovery on the live `/discover` route.
 - Discover transport/travel remains deferred until the platform has enough community activity for cross-community travel to matter.
@@ -150,6 +151,7 @@ Saved Uprises may become a collection/personal-player transport entry point.
 - Transport is Away Scene/listening-context movement. It must not be used for Home Scene selector switching, which stays in the user's Home Scene context.
 - Transport must not originate inside Plot. Plot may contain links to Artist Profiles, event/calendar actions, or other related surfaces, but those outbound links are not Discover transport.
 - Transport arrival must not drop visitors into the member Plot/community dashboard. Use the Discover back-door visitor surface for visited communities.
+- Feed/Plot cards may load a listening context or hand off to Artist Profile/demo listening, but any deeper community visit must hand off into Discover/back-door context. Do not add a `Transport`, `Visit Community`, map, seek, saved/custom Uprise launcher, or equivalent Away Scene control to Plot.
 - Upvotes and governance actions remain Home Scene-gated by GPS rules.
 - Web tier discovery surfaces must consume API endpoints only.
 
@@ -201,6 +203,7 @@ Saved Uprises may become a collection/personal-player transport entry point.
   - read-only context chip with `Home Scene`, `Tuned Scene`, and `Visitor/Local` status
 - Later-phase Discover front door should show outward-looking, deterministic modules about music outside the listener's own community.
 - Later-phase Discover back door should show the visited community's own highlights and popular material according to that community.
+- Saved/custom Uprise playback belongs to the Discover/collection playback context and may lead to a back-door community preview. It does not run through the Plot top shell.
 - Later-phase map view should show community markers with size/activity meaning; marker design is not locked here.
 - Seek controls are explicit Discover controls and must not be implemented as hidden personalization.
 - Snippet content must remain subordinate to the player/title card and inherit the same current scope.
@@ -224,12 +227,13 @@ Saved Uprises may become a collection/personal-player transport entry point.
 - Discover front-door and back-door content are distinct: front door is outward-looking from the user's Home context; back door is inward-looking for the visited community.
 - Seek does not mutate Home Scene or voting authority.
 - Saved Uprises do not appear in the Home Scene selector and do not grant voting authority.
+- Saved/custom Uprise playback is not launched from Plot top shell/profile pull-down.
 
 ## Future Work & Open Questions
 - Finalize the Discover transport control design. Swipe gestures are not currently approved as the final transport control because Home Scene selector/swiper behavior already uses nearby interaction semantics.
 - Finalize discover pagination windows and caching strategy.
 - Define map marker visual/data contract for community size and activity.
-- Define collection/personal-player saved-Uprise transport contract.
+- Define Discover-owned collection/personal-player saved/custom Uprise transport contract.
 
 ## References
 - `docs/canon/Master Narrative Canon.md` (2.3, 6.x)
