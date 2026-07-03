@@ -64,6 +64,9 @@ Current MVP shell note:
   - when a Feed card surfaces an outside Uprise/community, the card/listening
     affordance may load that Uprise while an explicit `Travel` link hands off to
     Discover/back-door visitor context and loads that Uprise there
+  - Feed-card `Travel` is a future-safe card contract, not launch activation:
+    Travel as a whole is not a launch feature, so cross-Uprise Blast cards are
+    not expected in the launch Feed until cross-community Travel/Discover opens
   - stats-driven discovery material may surface intermittently as inserted feed carousels while `Discover` remains deferred
   - these insertions are not fixed feed furniture and should appear as occasional scoped informational moments
   - inserted discovery carousels are read-only launch surfaces, not inline action strips
@@ -192,6 +195,9 @@ Current MVP shell note:
   community, `Travel` is a separate explicit action from the signal-source link:
   the source link opens the source object, while `Travel` opens the
   Discover/back-door visitor context and loads the Uprise.
+- Launch note: `Travel` remains in the Feed-card contract for future outside-Uprise
+  cards, but Travel/cross-Uprise Blast cards are not launch requirements while
+  cross-community travel remains deferred.
 - Plot profile/collection UI must not present saved/custom Uprises as a Plot-launched playback mode. Saved Uprise inventory may exist as collection data, but playback/visitor exploration belongs to Discover.
 - Events uses scene-scoped API listings from selected community anchor.
 - Archive uses scene-scoped descriptive stats/history reads from the selected community anchor; current MVP runtime renders read-only Top Songs and Scene Activity Snapshot modules.

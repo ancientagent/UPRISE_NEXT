@@ -24,9 +24,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `97680e4` (`docs: capture Discover and player founder clarifications (#193)`)
-- Local worktree state at refresh: clean after PR #193 merge
-- Active implementation branch during this refresh: `docs/active-pm-post-founder-captures-refresh`
+- Current `main` HEAD at refresh start: `052016f` (`docs: clarify Feed Blast card travel links (#196)`)
+- Local worktree state at refresh: clean after PR #196 merge
+- Active implementation branch during this refresh: `docs/feed-travel-launch-boundary-pm-refresh`
 - Open PR queue at refresh: none (`gh pr list --state open --limit 20` returned `[]`)
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -39,12 +39,12 @@ Keep the UPRISE working set clean enough that new Codex / Cloud Codex / Codex su
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `EXTERNAL_TOOLS` / `DOCS_OPS` |
-| Branch | `docs/active-pm-post-founder-captures-refresh` |
-| Scope | Refresh Active PM and branch workspace registry after PR #191, PR #192, and PR #193 merged. |
-| Out of Scope | Runtime behavior changes, Discover transport, provider state, database/schema changes, art changes, UX prototype merging, product doctrine changes, and preserved reference branch/worktree cleanup. |
-| Owner Contract | `docs/operations/ACTIVE_PM.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
-| Companion Docs | `docs/handoff/2026-07-03_active-pm-post-founder-captures-refresh.md`, `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`, `docs/founder-sessions/2026-07-02_radiyo-track-mode-player-terminology.md`, `docs/handoff/2026-07-02_active-pm-post-plot-tab-surface-refresh.md` |
+| Lane | `UX_UI` / `ACTIONS_SIGNALS` / `DOCS_OPS` |
+| Branch | `docs/feed-travel-launch-boundary-pm-refresh` |
+| Scope | Capture the Feed-card `Travel` launch-scope nuance and refresh Active PM / branch registry after PR #194, PR #195, and PR #196 merged. |
+| Out of Scope | Runtime behavior changes, enabling Travel at launch, cross-Uprise Blast-card implementation, provider state, database/schema changes, art changes, and preserved reference branch/worktree cleanup. |
+| Owner Contract | `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, `docs/operations/ACTIVE_PM.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
+| Companion Docs | `docs/founder-sessions/2026-07-01_discover-transport-map-player.md`, `docs/handoff/2026-07-03_feed-blast-card-travel-source-contract.md`, this branch handoff |
 | Validation | `pnpm run workspace:audit`, `pnpm run docs:lint`, `git diff --check` |
 
 ## Recently Completed Since Prior PM Snapshot
@@ -82,7 +82,10 @@ The previous PM snapshot pointed at PR #176. Current `main` has since advanced t
 - PR #191 / `01a6109`: refreshed Active PM and branch registry after PR #190 merged.
 - PR #192 / `7327453`: added Windows-visible artifact bridge helpers, including hardened root derivation, unsafe-slug rejection, ignored pointer files, and no symlink creation.
 - PR #193 / `97680e4`: captured Discover/front-door/back-door and RADIYO/SPACE player founder-session clarifications without owner-spec promotion or runtime behavior changes.
-- Current branch follow-up: refreshes Active PM and branch registry after PR #191, PR #192, and PR #193 merged.
+- PR #194 / `37c61fe`: refreshed Active PM and branch registry after PR #191, PR #192, and PR #193 merged.
+- PR #195 / `a83b667`: promoted Discover/player founder-session clarifications into owner specs and lane briefs.
+- PR #196 / `052016f`: clarified the Feed Blast-card travel/source-link contract: Blast cards are Feed card types, blasted signals link to source objects, and eligible outside-Uprise Feed cards may expose a separate `Travel` handoff into Discover/back-door context.
+- Current branch follow-up: captures the launch-boundary nuance that Feed-card `Travel` remains contract-ready but Travel/cross-Uprise Blast cards are not launch-scope, and refreshes Active PM / branch registry after PR #194-#196 merged.
 
 Use these handoffs / founder-session notes for the current cleanup trail:
 
@@ -131,7 +134,7 @@ None at refresh time.
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-founder-captures-refresh` until this PM refresh merges; `main` after merge | `97680e4` at refresh start | clean after PR #193 merge; this docs-only branch must return to `main` after merge |
+| `/home/baris/UPRISE_NEXT` | `docs/feed-travel-launch-boundary-pm-refresh` until this PM refresh merges; `main` after merge | `052016f` at refresh start | clean after PR #196 merge; this docs-only branch must return to `main` after merge |
 
 ### Preserved UX Reference Worktrees
 
@@ -162,11 +165,12 @@ The following audited, absorbed/superseded branches were deleted locally and rem
 
 ## Next Queue
 
-1. After this PM refresh merges, continue from clean `main` and promote founder-session Discover/player clarifications into owner specs only in a separate scoped slice.
-2. If touching Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md` and the founder-session notes; do not add transport UI inside Plot.
-3. If touching the RADIYO/SPACE player boundary, keep Plot top-shell playback tied to Home Scene/RADIYO and keep saved/custom Uprise playback Discover/collection-owned unless an owner spec changes it.
-4. If touching Print Shop, Source Dashboard, Artist Profile, or Registrar, route through `ARTIST_PROFILE_SOURCE_DASHBOARD.md` and keep source/listener surfaces separate.
-5. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
+1. After this PM refresh merges, continue from clean `main`.
+2. Add focused Feed/Blast card contract tests when runtime work begins: Blast cards are Feed card types, blasted signals link to source objects, card/listen and `Travel` remain distinct, and Feed-card `Travel` hands off to Discover/back-door without creating general Plot transport.
+3. Keep Travel/cross-Uprise Blast cards out of launch scope while cross-community Travel/Discover remains deferred.
+4. If touching Discover/transport later, start from `docs/specs/communities/discovery-scene-switching.md` and the founder-session notes; do not add map/Seek/saved-custom-Uprise launchers to Plot.
+5. If touching RADIYO/SPACE player behavior, keep Plot top-shell playback tied to Home Scene/RADIYO and keep saved/custom Uprise playback Discover/collection-owned unless an owner spec changes it.
+6. Preserve `feat/ux-batch17`, `feat/ux-batch18-run`, `ux-mobile-r1-build`, and `ux-implementation` until a design/runtime extraction or archive decision is made.
 
 ## PM Usage Rules For Agents
 
