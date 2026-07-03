@@ -371,8 +371,13 @@ describe('AdminAnalyticsService', () => {
     });
     expect(mockPrisma.user.findMany).toHaveBeenCalledWith({
       where: {
-        homeSceneCity: { contains: 'El Paso', mode: 'insensitive' },
-        homeSceneState: { contains: 'Texas', mode: 'insensitive' },
+        homeSceneCity: { not: null },
+        homeSceneState: { not: null },
+        AND: [
+          { homeSceneCity: { contains: 'El', mode: 'insensitive' } },
+          { homeSceneCity: { contains: 'Paso', mode: 'insensitive' } },
+          { homeSceneState: { contains: 'Texas', mode: 'insensitive' } },
+        ],
         OR: [
           { homeSceneCommunity: { not: null } },
           {
@@ -505,7 +510,7 @@ describe('AdminAnalyticsService', () => {
 
     expect(mockPrisma.$transaction).toHaveBeenCalledTimes(1);
     expect(mockPrisma.track.findMany).toHaveBeenCalledTimes(2);
-    expect(mockPrisma.community.findMany).toHaveBeenCalledTimes(2);
+    expect(mockPrisma.community.findMany).toHaveBeenCalledTimes(4);
     expect(mockPrisma.community.create).not.toHaveBeenCalled();
     expect(mockPrisma.community.update).not.toHaveBeenCalled();
     expect(mockPrisma.artistBand.updateMany).not.toHaveBeenCalled();
@@ -520,7 +525,7 @@ describe('AdminAnalyticsService', () => {
         artistBand: {
           id: `source-${index}`,
           name: `El Paso Source ${index}`,
-          sourceOriginCity: ' El Paso ',
+          sourceOriginCity: ' El   Paso ',
           sourceOriginState: ' Texas ',
           sourceOriginMusicCommunity: ' Punk ',
         },
@@ -543,7 +548,7 @@ describe('AdminAnalyticsService', () => {
       {
         id: 'listener-case',
         tunedSceneId: 'scene-austin-punk',
-        homeSceneCity: ' el paso ',
+        homeSceneCity: ' el   paso ',
         homeSceneState: 'TEXAS ',
         homeSceneCommunity: ' punk ',
         musicCommunityPreferences: [],
@@ -659,8 +664,13 @@ describe('AdminAnalyticsService', () => {
 
     expect(mockPrisma.user.findMany).toHaveBeenCalledWith({
       where: {
-        homeSceneCity: { contains: 'El Paso', mode: 'insensitive' },
-        homeSceneState: { contains: 'Texas', mode: 'insensitive' },
+        homeSceneCity: { not: null },
+        homeSceneState: { not: null },
+        AND: [
+          { homeSceneCity: { contains: 'El', mode: 'insensitive' } },
+          { homeSceneCity: { contains: 'Paso', mode: 'insensitive' } },
+          { homeSceneState: { contains: 'Texas', mode: 'insensitive' } },
+        ],
         OR: [
           { homeSceneCommunity: { not: null } },
           {
@@ -694,7 +704,7 @@ describe('AdminAnalyticsService', () => {
     });
   });
 
-  it('activates an existing inactive natural scene without creating a duplicate', async () => {
+  it('activates an existing inactive natural scene with normalized tuple matching instead of creating a duplicate', async () => {
     mockPrisma.track.findMany.mockResolvedValue([
       ...[1, 2, 3, 4, 5].map((index) => ({
         id: `el-paso-track-${index}`,
@@ -702,21 +712,35 @@ describe('AdminAnalyticsService', () => {
         artistBand: {
           id: `source-${index}`,
           name: `El Paso Source ${index}`,
-          sourceOriginCity: 'El Paso',
+          sourceOriginCity: 'El   Paso',
           sourceOriginState: 'Texas',
           sourceOriginMusicCommunity: 'Punk',
         },
       })),
     ]);
-    mockPrisma.community.findMany.mockResolvedValue([]);
-    mockPrisma.community.findFirst.mockResolvedValue({
-      id: 'inactive-el-paso-punk',
-      city: 'El Paso',
-      state: 'Texas',
-      musicCommunity: 'Punk',
-      tier: 'city',
-      isActive: false,
-    });
+    mockPrisma.community.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          id: 'inactive-el-paso-punk',
+          city: ' EL   PASO ',
+          state: ' texas ',
+          musicCommunity: ' punk ',
+          tier: 'city',
+          isActive: false,
+        },
+      ])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          id: 'inactive-el-paso-punk',
+          city: ' EL PASO ',
+          state: ' texas ',
+          musicCommunity: ' punk ',
+          tier: 'city',
+          isActive: false,
+        },
+      ]);
     mockPrisma.community.update.mockResolvedValue({
       id: 'inactive-el-paso-punk',
       city: 'El Paso',

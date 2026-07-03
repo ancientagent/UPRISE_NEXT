@@ -5,9 +5,9 @@
   "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
   "summary": {
     "total": 8,
-    "queued": 1,
+    "queued": 0,
     "in_progress": 0,
-    "done": 7,
+    "done": 8,
     "blocked": 0
   },
   "tasks": [
@@ -116,9 +116,12 @@
       "stage": "Stage 3: Community Activation / Proxy Lifecycle",
       "prompt": "Execute one UPRISE Development Plan R1 slice only: use normalized/canonical tuple matching or derive exact mutation keys from the selected diagnostic candidate so casing/spacing drift cannot make diagnostics find rows while source/listener mutations miss them. No provider/db/schema/art changes. Update docs/CHANGELOG.md and a dated docs/handoff note.",
       "verifyCommand": "pnpm --filter api test -- admin-analytics.service.test.ts users.profile.collection.test.ts --runInBand && pnpm --filter api typecheck && pnpm run docs:lint && pnpm run workspace:audit",
-      "status": "queued",
-      "updatedAt": "2026-07-03T05:44:18.302Z",
-      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md"
+      "status": "done",
+      "updatedAt": "2026-07-03T10:24:56.571Z",
+      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
+      "startedAt": "2026-07-03T10:19:33.942Z",
+      "finishedAt": "2026-07-03T10:24:56.571Z",
+      "reportPath": "docs/handoff/2026-07-03_activation-tuple-normalized-matching.md"
     }
   ]
 }
