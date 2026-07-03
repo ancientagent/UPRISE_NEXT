@@ -27,7 +27,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Current `main` HEAD at refresh start: `1bcbfa7` (`test(web): harden source listener profile boundary`)
 - Active branch during this refresh: `test/print-shop-source-event-path`
 - Local worktree state at refresh: Task 12 tests/docs hardening branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`), intentionally preserved and not in this slice
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) plus draft PR #214 (`test/print-shop-source-event-path`) for this Task 12 branch
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -66,6 +66,7 @@ Recently completed context:
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, mergeability unknown after latest main advance | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
+| #214 | `test/print-shop-source-event-path` | draft opened from this branch | Review/merge after checks, then return to clean `main`. |
 
 ### Main Worktree
 
@@ -98,7 +99,7 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Next Queue
 
-1. Complete and PR Task 12 from `test/print-shop-source-event-path`.
+1. Review/merge Task 12 PR #214 from `test/print-shop-source-event-path`.
 2. Return to clean `main` after Task 12 merges or is handed off.
 3. Continue to the next UPRISE Development Plan R1 task selected by the user.
 4. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
