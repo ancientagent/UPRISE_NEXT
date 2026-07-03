@@ -5,9 +5,9 @@
   "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
   "summary": {
     "total": 8,
-    "queued": 6,
+    "queued": 5,
     "in_progress": 0,
-    "done": 2,
+    "done": 3,
     "blocked": 0
   },
   "tasks": [
@@ -46,9 +46,12 @@
       "stage": "Stage 1: Contract-Test Hardening",
       "prompt": "Execute one UPRISE Development Plan R1 slice only: lock that Plot top shell, Home Scene selector, profile pull-down, Archive, and Events do not expose map view, Seek mode, saved-Away-scene launchers, or cross-community transport. Plot may switch among registered Home Scene preferences; Discover owns transport. No provider/db/schema/art changes. Update docs/CHANGELOG.md and a dated docs/handoff note.",
       "verifyCommand": "pnpm --filter web test -- plot-ux-regression-lock.test.ts --runInBand && pnpm --filter web typecheck && pnpm run docs:lint && pnpm run workspace:audit",
-      "status": "queued",
-      "updatedAt": "2026-07-03T05:44:18.302Z",
-      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md"
+      "status": "done",
+      "updatedAt": "2026-07-03T06:17:58.755Z",
+      "sourcePlan": "docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md",
+      "startedAt": "2026-07-03T06:16:45.628Z",
+      "finishedAt": "2026-07-03T06:17:58.755Z",
+      "reportPath": "docs/handoff/2026-07-03_plot-no-transport-boundary-tests.md"
     },
     {
       "id": "UPRISE-PLAN-004",
