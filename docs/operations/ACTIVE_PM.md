@@ -27,7 +27,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Current `main` HEAD at refresh start: `48d56e0` (`docs: clarify first-pass implementation workflow`)
 - Active branch during this refresh: `docs/active-pm-post-first-pass-workflow-refresh`
 - Local worktree state at refresh: post-PR closeout refresh branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #214 and PR #215 merged
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) plus draft PR #216 (`docs/active-pm-post-first-pass-workflow-refresh`); PR #214 and PR #215 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -66,6 +66,7 @@ Recently completed context:
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
+| #216 | `docs/active-pm-post-first-pass-workflow-refresh` | draft opened from this branch | Merge after checks if still operations-doc-only and clean. |
 
 ### Main Worktree
 
@@ -99,7 +100,7 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Next Queue
 
-1. Finish this post-merge PM/registry refresh branch.
+1. Review/merge PR #216 after checks; then continue to the next selected UPRISE Development Plan task.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 3. Continue to the next UPRISE Development Plan R1 task selected by the user.
 
