@@ -28,4 +28,21 @@ describe('source dashboard shell lock', () => {
     expect(dashboardSource).toContain('Open Release Deck');
     expect(dashboardSource).toContain("Link href=\"/print-shop\"");
   });
+
+  it('keeps Release Deck caps explicit and keeps the paid ad slot out of music-slot runtime', () => {
+    const releaseDeckSource = readRepoFile('src/app/source-dashboard/release-deck/page.tsx');
+    const releaseDeckValidationSource = readRepoFile('src/lib/source/release-deck-validation.ts');
+
+    expect(releaseDeckSource).toContain('Music upload capacity remains capped at three songs, six minutes per song, and 15 minutes total');
+    expect(releaseDeckSource).toContain('paid ad slot stays outside the current runtime');
+    expect(releaseDeckSource).toContain('Music slots: 3');
+    expect(releaseDeckSource).toContain('Single cap: 6 min');
+    expect(releaseDeckSource).toContain('Source cap: 15 min');
+    expect(releaseDeckSource).toContain('Paid ad slot: defined, not active here');
+    expect(releaseDeckSource).not.toContain('Music slots: 4');
+    expect(releaseDeckSource).not.toContain('fourth music slot');
+    expect(releaseDeckValidationSource).toContain('releaseDeckMaxTrackSeconds = 6 * 60');
+    expect(releaseDeckValidationSource).toContain('Release Deck tracks cannot exceed 6 minutes.');
+    expect(releaseDeckValidationSource).toContain("status: 'ready'");
+  });
 });
