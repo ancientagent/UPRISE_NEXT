@@ -76,6 +76,7 @@ Load only the materials directly needed for the current task:
 - A separate Codex reviewer must review that development plan before implementation edits begin.
 - Record the feature review scope and plan-review artifact in the Execution Packet / Executor Readiness blocks from `docs/specs/system/documentation-framework.md`.
 - Tiny surgical docs-only or local cleanup PRs may skip this gate only when no product/runtime behavior is being implemented and the branch owner can prove low risk.
+- UPRISE still has many first-pass implementation slices. For those, packets should define what to build from owner specs, lane briefs, current code surfaces, validation seeds, and explicit out-of-scope boundaries. Do not force a cleanup/excavator model unless the issue is actually stale-code cleanup, wrong existing behavior, refactor/absorption work, or risky cross-lane correction.
 
 ### External-delegation pattern
 - Use external/swarm assistants primarily for design, communications, research, and synthesis unless a repo-controlled coding workflow is explicitly intended.

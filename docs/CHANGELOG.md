@@ -9,6 +9,7 @@
 
 ### Added
 
+- Clarified that UPRISE execution packets support first-pass feature implementation as well as cleanup/refactor work, so source-behavior-removal and excavator-style context gathering stay conditional rather than default.
 - Added Task 12 Print Shop source-facing event path regression locks so Plot Events stay read-only, Artist/Band event writes require an explicitly selected managed source, and the active plan points at the real Print Shop event service test file; see `docs/handoff/2026-07-03_print-shop-source-event-path.md`.
 - Added Task 11 source/listener profile boundary regression locks so source account access can route to Source Dashboard without embedding Release Deck, Print Shop, Registrar, or listener-to-artist DM controls in listener profile surfaces; see `docs/handoff/2026-07-03_source-listener-profile-boundary.md`.
 - Added a pre-implementation feature gate requiring repo-grounded feature review plus independent Codex development-plan review before behavior-changing feature work starts; see `docs/handoff/2026-07-03_feature-plan-review-gate.md`.
