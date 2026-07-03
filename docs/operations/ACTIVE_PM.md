@@ -59,7 +59,7 @@ None at refresh time. Task 9 PR should be opened from `docs/feed-card-family-inv
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/feed-card-family-inventory` | `d4dc636` at branch start | active Task 9 docs/test inventory edits |
+| `/home/baris/UPRISE_NEXT` | `docs/feed-card-family-inventory` | branch registered as `pending` while this slice is being updated | active Task 9 docs/test inventory edits |
 
 ### Preserved UX Reference Worktrees
 
