@@ -1,7 +1,7 @@
 # UI Current Agent Brief
 
 Status: active
-Last Updated: 2026-07-01
+Last Updated: 2026-07-03
 
 ## Use When
 
@@ -90,8 +90,8 @@ Recent handoffs to use only after the locks above:
 - The Home Scene selector is a shortcut to resolvable primary music-community preferences in the current verified/default city; saved Away Scenes stay in the profile/collection workspace.
 - Current Plot presentation for the selector is a centered active Home Scene with left/right arrow controls and horizontal swipe between adjacent resolvable preferences, not a full visible preference-management list.
 - `/plot` renders the Home Scene selector from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
-- Use `switch`, `select`, or `tune` for Home Scene selector movement. Reserve `transport` for Away Scene movement because the user is leaving their Home Scene context; intended transport entry points are Discover and saved Uprises in the user's collection.
-- Discover transport is not part of Plot. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, and saved Uprises belong to personal-player/Away Scene listening rather than the Home Scene selector.
+- Use `switch`, `select`, or `tune` for Home Scene selector movement. Reserve `transport` for Away Scene movement because the user is leaving their Home Scene context; intended transport entry points are Discover and saved/custom Uprises only when surfaced inside Discover/collection-owned playback.
+- Discover transport is not part of Plot. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, and saved/custom Uprise playback belongs to Discover/collection-owned listening rather than the Plot top shell, Plot profile pull-down, or Home Scene selector.
 - Non-expanded Plot should not force a companion context panel beside Feed, Events, or Archive. Source identity access may appear inside the expanded listener profile for users who manage Artist/Band sources, but source tools still live in source/admin surfaces. Registrar placement is inside Archive/community information with Registrar on top and records/status history below.
 - The non-expanded `/plot` top shell groups listener identity, the Home Scene selector, and the top RADIYO player as one visual cockpit. This is presentation-only; it does not authorize Discover transport, map/seek controls, source tools, or side panels inside Plot.
 - Artist Profile does not use the engagement wheel.
@@ -153,11 +153,11 @@ Top-to-bottom when expanded:
    - `Saved Uprises`
    - `Saved Promos/Coupons`
 3. active collection section body
-   - `Singles/Playlists`: saved singles, playlist grouping placeholder, selecting a single enters `SPACE`
+   - `Singles/Playlists`: saved singles and playlist grouping placeholder. Selecting individual tracks may enter `SPACE`/selected-track listening where current runtime supports it; saved/custom Uprise playback is not launched from Plot and belongs to Discover.
    - `Events`: saved event artifacts / flyers
    - `Photos`: scene/event photography workspace
    - `Merch`: posters, shirts, patches, buttons, special items
-   - `Saved Uprises`: saved Uprise items
+   - `Saved Uprises`: saved Uprise inventory only; playback/visitor exploration is Discover-owned.
    - `Saved Promos/Coupons`: placeholder until collection support exists
 4. bottom player strip
    - full player controls/status if there is enough screen real estate
@@ -173,6 +173,7 @@ Boundaries:
 - do not make it a separate route for current Home-side interaction
 - do not confuse this collection workspace with Artist Profile
 - do not place Release Deck, Print Shop, source-posting, or source-management tools here; the only approved source-side affordance in this workspace is source identity/account switching for users who manage Artist/Band sources
+- do not make this workspace a Plot launcher for saved/custom Uprise playback or Away Scene transport
 
 ## Feed Tab
 

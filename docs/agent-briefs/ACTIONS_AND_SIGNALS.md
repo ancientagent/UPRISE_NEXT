@@ -1,7 +1,7 @@
 # Actions And Signals Agent Brief
 
 Status: active
-Last Updated: 2026-06-25
+Last Updated: 2026-07-03
 
 ## Use When
 Use this brief when the task is about:
@@ -65,6 +65,7 @@ Tests / verification files:
 - Flyers are event-bound artifacts, not default music-distribution signals.
 - Proxy-to-natural cutover does not move vote authority or vote history into the new natural Home Scene; Fair Play owns this in `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points`.
 - `POST /tracks/:id/vote` is city-tier only in current runtime; `tunedSceneId` may carry listening context, but it must not authorize direct state/national-tier vote creation.
+- `SPACE` may remain internal/player-mode language for selected-track or profile-space listening, but saved/custom Uprise playback is Discover/collection-owned and must not be launched from the Plot top shell or Plot profile pull-down.
 
 ## Current Runtime Pointers
 - `/signals/:id/collect` is the public collect alias; legacy add compatibility may still exist in runtime.
@@ -74,6 +75,7 @@ Tests / verification files:
 
 ## Design / Implementation Boundaries
 - Do not put `Blast` back on the `RADIYO` wheel.
+- Do not treat `SPACE` as permission to add saved/custom Uprise transport or playback launchers to Plot.
 - Do not place the engagement wheel on Artist Profile.
 - Do not add direct `Support` buttons.
 - Do not use `Add` for saving songs in user-facing UI.
