@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Task 11 source/listener profile boundary regression locks so source account access can route to Source Dashboard without embedding Release Deck, Print Shop, Registrar, or listener-to-artist DM controls in listener profile surfaces; see `docs/handoff/2026-07-03_source-listener-profile-boundary.md`.
 - Added a pre-implementation feature gate requiring repo-grounded feature review plus independent Codex development-plan review before behavior-changing feature work starts; see `docs/handoff/2026-07-03_feature-plan-review-gate.md`.
 - Added a Feed card family inventory for current `/plot` runtime cards and inserts, including launch/deferred/source/remove classifications and a regression lock against Feed insert calendar-mutation drift; see `docs/handoff/2026-07-03_feed-card-family-inventory.md`.
 - Added activation tuple normalized-matching hardening so manual activation reuses canonical candidate tuples and finds inactive natural scenes despite casing/edge-spacing drift; see `docs/handoff/2026-07-03_activation-tuple-normalized-matching.md`.

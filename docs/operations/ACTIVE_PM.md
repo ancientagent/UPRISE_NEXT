@@ -24,45 +24,52 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `68f978a` (`docs: inventory feed card families (#209)`)
-- Local worktree state at refresh: final docs-only closeout branch after Task 8 and Task 9 merged
-- Active branch during this refresh: `docs/task8-task9-goal-closeout`
-- Open PR queue at refresh: none before final closeout branch creation
+- Current `main` HEAD at refresh start: `25e06a2` (`docs: require feature plan review gate`)
+- Active branch during this refresh: `test/source-listener-profile-boundary`
+- Local worktree state at refresh: Task 11 tests/docs hardening branch
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`), intentionally preserved and not in this slice
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
-Goal completed by this closeout:
+Current goal:
 
-- `UPRISE-PLAN-008` merged in PR #208 at `d4dc636`.
-- Task 9 Feed card family inventory merged in PR #209 at `68f978a`.
-- Reliant queue `.reliant/queue/uprise-development-plan-r1.json` shows all 8 queued UPRISE Development Plan R1 tasks complete.
-- Task 9 is outside the Reliant queue and is complete via `docs/solutions/FEED_CARD_FAMILY_INVENTORY_R1.md` plus `docs/handoff/2026-07-03_feed-card-family-inventory.md`.
+- Complete UPRISE Development Plan R1 Task 11: Source Dashboard / listener profile separation pass.
+- Keep source selector and managed-source links in allowed profile/source seams.
+- Do not place Release Deck, Print Shop, Registrar controls, or listener-to-artist DM affordances inside the listener collection/profile body.
+
+Recently completed context:
+
+- PR #210 merged the final Task 8 / Task 9 closeout at `50c6e8b`.
+- PR #211 merged the pre-implementation feature-plan review gate at `25e06a2`.
+- Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `DOCS_OPS` / execution-state closeout |
-| Branch | `docs/task8-task9-goal-closeout` |
-| Scope | Final docs-only PM/registry refresh after `UPRISE-PLAN-008` and Task 9 merged. |
-| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, Task 10 implementation. |
-| Owner Contracts | `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
-| Companion Docs | `docs/handoff/2026-07-03_activation-tuple-normalized-matching.md`, `docs/handoff/2026-07-03_feed-card-family-inventory.md`, `docs/solutions/FEED_CARD_FAMILY_INVENTORY_R1.md` |
-| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Lane | `ARTIST_SOURCE` / `REGISTRAR_GOVERNANCE` / listener profile boundary |
+| Branch | `test/source-listener-profile-boundary` |
+| Scope | Task 11 contract-test hardening for Source Dashboard / listener profile separation. |
+| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, Task 12 event path work. |
+| Owner Contracts | `docs/specs/users/identity-roles-capabilities.md`, `docs/specs/system/registrar.md` |
+| Companion Docs | `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`, `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/founder-sessions/2026-07-03_source-listener-messaging-boundary.md` |
+| Validation | `pnpm --filter web test -- source-dashboard-shell-lock.test.ts source-account-switcher-lock.test.ts plot-ux-regression-lock.test.ts route-ux-consistency-lock.test.ts --runInBand`, `pnpm --filter web typecheck`, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
 ### Open PR Queue
 
-None at refresh time before final closeout PR creation.
+| PR | Branch | State | Recommended Action |
+| --- | --- | --- | --- |
+| #212 | `docs/linear-clean-context-agent-roles` | draft, green, mergeable | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/task8-task9-goal-closeout` until this docs closeout merges; `main` after merge | `68f978a` at refresh start | final docs-only closeout edits |
+| `/home/baris/UPRISE_NEXT` | `test/source-listener-profile-boundary` | `25e06a2` at branch start | Task 11 focused tests/docs branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -84,17 +91,15 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #207 / `0f7f100`: refreshed Active PM and branch registry after UPRISE Development Plan tasks 1-7 merged.
-- PR #208 / `d4dc636`: completed `UPRISE-PLAN-008`, activation tuple normalized matching.
-- PR #209 / `68f978a`: completed Task 9, Feed card family inventory.
-
-Recent full cleanup history remains in prior handoffs and git history. Do not use old PM entries as product doctrine.
+- PR #210 / `50c6e8b`: closed the Task 8 + Task 9 goal state after activation tuple matching and Feed card family inventory merged.
+- PR #211 / `25e06a2`: added the pre-implementation feature gate for behavior-changing feature work.
 
 ## Next Queue
 
-1. Merge this final docs-only closeout branch after checks.
-2. Return to clean `main`.
-3. If continuing development, start Task 10: launch-scope Blast card runtime/source-link hardening. Keep Travel hidden/deferred and do not add general Plot transport.
+1. Complete and PR Task 11 from `test/source-listener-profile-boundary`.
+2. Return to clean `main` after Task 11 merges or is handed off.
+3. Start Task 12: Print Shop source-facing event path.
+4. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 
 ## PM Usage Rules For Agents
 
