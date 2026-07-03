@@ -57,6 +57,13 @@ Current MVP shell note:
   - active feed message families are listener `Blast` activity,
     artist/source updates, track releases, event/show updates, and
     community/system updates
+  - a `Blast card` is a Feed card type for listener `Blast` activity, not a
+    separate tab, panel, destination, or non-Feed surface
+  - every Blast card must expose a link from the blasted signal to that signal's
+    source
+  - when a Feed card surfaces an outside Uprise/community, the card/listening
+    affordance may load that Uprise while an explicit `Travel` link hands off to
+    Discover/back-door visitor context and loads that Uprise there
   - stats-driven discovery material may surface intermittently as inserted feed carousels while `Discover` remains deferred
   - these insertions are not fixed feed furniture and should appear as occasional scoped informational moments
   - inserted discovery carousels are read-only launch surfaces, not inline action strips
@@ -132,7 +139,7 @@ Current MVP shell note:
 - Plot is not a transport surface. Use the Home Scene selector to switch/select/tune among the listener's resolvable Home Scene music-community preferences in the current city. Reserve transport for Away Scene movement through Discover or saved Uprises/collection paths.
 - Plot may link to Artist Profiles, event/calendar actions, songs, and tour-date surfaces while the user is listening to an Uprise. Those links do not make Plot a Discover transport system.
 - Plot may expose listener profile/collection inventory, but saved/custom Uprise playback must not launch from the Plot top shell or Plot profile pull-down. If a user wants to listen to or visit a saved/custom Uprise, hand off to Discover/collection-owned playback and the visitor back-door model.
-- Feed cards that point at music from outside the active Home Scene may load/listen or hand into Artist Profile/demo listening, but any deeper community visit must hand off to Discover; it must not add a transport action inside Feed/Plot.
+- Feed cards that point at music from outside the active Home Scene may load/listen, link to the blasted signal's source, or hand into Artist Profile/demo listening. Eligible outside-Uprise Feed cards may also expose an explicit `Travel` link that hands off to Discover/back-door visitor context and loads that Uprise; this is a Feed-card handoff, not a general Plot transport system.
 - Transported visitors must not land inside the member Plot/community dashboard for a visited community; Discover owns the visitor-facing front-door/back-door model.
 - Promotions are non-governing signals and must not affect Fair Play.
 - Web tier may not import DB/server modules directly; data flows through API endpoints.
@@ -180,6 +187,11 @@ Current MVP shell note:
 - Pioneer onboarding message is discoverable from the notification icon (not as an always-visible blocking modal).
 - Feed uses explicit scene actions and followed-source updates from API; it does not rank or personalize.
 - When intermittent discovery inserts appear in feed, they should present read-only song/artist squares with arrow-based horizontal browsing and artist-profile click handoff rather than direct card actions.
+- Listener Blast activity cards are Feed cards. Their blasted signal should link
+  to the signal source. If a Blast/Feed card points at an outside Uprise or
+  community, `Travel` is a separate explicit action from the signal-source link:
+  the source link opens the source object, while `Travel` opens the
+  Discover/back-door visitor context and loads the Uprise.
 - Plot profile/collection UI must not present saved/custom Uprises as a Plot-launched playback mode. Saved Uprise inventory may exist as collection data, but playback/visitor exploration belongs to Discover.
 - Events uses scene-scoped API listings from selected community anchor.
 - Archive uses scene-scoped descriptive stats/history reads from the selected community anchor; current MVP runtime renders read-only Top Songs and Scene Activity Snapshot modules.
@@ -193,7 +205,7 @@ Current MVP shell note:
 - Activity Feed copy does not imply recommendation or ranking.
 - Feed, Events, and Archive remain represented as the current MVP Plot tab surfaces.
 - Followed-source updates are visible in the feed without introducing a separate ranked notification feed.
-- Plot contains no Discover transport UI.
+- Plot contains no general Discover transport UI outside eligible Feed-card `Travel` handoffs.
 - Plot top shell/profile pull-down contains no saved/custom Uprise playback launcher.
 
 ## Future Work & Open Questions

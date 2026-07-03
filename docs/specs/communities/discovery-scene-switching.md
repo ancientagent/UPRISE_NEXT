@@ -118,6 +118,10 @@ Saved Uprises/custom Uprises are Discover-owned collection playback contexts.
 - Current web `/discover` route is reduced to a `Coming Soon` placeholder.
 - Current MVP feed may carry intermittent inserted discovery/statistics moments instead of a live Discover destination.
 - Those interim feed inserts are read-only discovery launchers; they do not expose inline `Collect`, `Blast`, or `Follow` actions on the cards themselves.
+- Listener Blast activity cards are Feed cards, not discovery inserts. A Blast
+  card must link the blasted signal to that signal's source, and eligible
+  outside-Uprise Feed cards may expose a separate `Travel` link that hands off
+  to Discover/back-door visitor context and loads the Uprise.
 - Discovery route calls and typed client wrappers remain in the repo for the deferred later-phase surface:
   - `apps/web/src/lib/discovery/client.ts`
   - `apps/web/src/lib/discovery/context.ts`
@@ -149,9 +153,9 @@ Saved Uprises/custom Uprises are Discover-owned collection playback contexts.
 ## Architectural Boundaries
 - Discovery is transport/navigation behavior, not authority behavior.
 - Transport is Away Scene/listening-context movement. It must not be used for Home Scene selector switching, which stays in the user's Home Scene context.
-- Transport must not originate inside Plot. Plot may contain links to Artist Profiles, event/calendar actions, or other related surfaces, but those outbound links are not Discover transport.
+- General transport controls must not originate inside Plot. Plot may contain links to Artist Profiles, event/calendar actions, signal source objects, or other related surfaces, and eligible outside-Uprise Feed cards may include a `Travel` handoff into Discover/back-door visitor context. Those links do not make the Plot top shell, Home Scene selector, or profile pull-down a transport system.
 - Transport arrival must not drop visitors into the member Plot/community dashboard. Use the Discover back-door visitor surface for visited communities.
-- Feed/Plot cards may load a listening context or hand off to Artist Profile/demo listening, but any deeper community visit must hand off into Discover/back-door context. Do not add a `Transport`, `Visit Community`, map, seek, saved/custom Uprise launcher, or equivalent Away Scene control to Plot.
+- Feed/Plot cards may load a listening context, link to the signal source, hand off to Artist Profile/demo listening, or, for eligible outside-Uprise Feed cards, expose `Travel` into Discover/back-door context while loading that Uprise. Do not add map, seek, saved/custom Uprise launchers, or equivalent general Away Scene controls to Plot.
 - Upvotes and governance actions remain Home Scene-gated by GPS rules.
 - Web tier discovery surfaces must consume API endpoints only.
 
@@ -223,7 +227,7 @@ Saved Uprises/custom Uprises are Discover-owned collection playback contexts.
 - Discovery results are deterministic for identical queries.
 - No UI copy uses “Join Community” for discovery/tuning.
 - Tier scope changes only aggregation/result scope, not parent music-community filter.
-- Plot contains no Discover transport UI.
+- Plot contains no general Discover transport UI outside eligible Feed-card `Travel` handoffs.
 - Discover front-door and back-door content are distinct: front door is outward-looking from the user's Home context; back door is inward-looking for the visited community.
 - Seek does not mutate Home Scene or voting authority.
 - Saved Uprises do not appear in the Home Scene selector and do not grant voting authority.

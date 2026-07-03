@@ -82,6 +82,9 @@ Recent handoffs to use only after the locks above:
 - Feed is the Home Scene mainpage/default state inside Plot.
 - Feed inserts are `Popular Singles`, `Buzz`, and `Upcoming Events`.
 - Feed inserts are read-only launch points, not inline action cards.
+- Listener `Blast` cards are Feed card types, not separate surfaces. The blasted
+  signal links to its source. Eligible outside-Uprise Feed cards may also expose
+  `Travel` as a separate handoff into Discover/back-door visitor context.
 - Artist Profile is direct-listen, discovery, information, and sharing outside `RADIYO`.
 - User profile means the listener profile / collection workspace for everyone who has onboarded into the app.
 - Source management is separate from the listener profile and should be treated as source/admin web tooling that the app reads from.
@@ -91,7 +94,7 @@ Recent handoffs to use only after the locks above:
 - Current Plot presentation for the selector is a centered active Home Scene with left/right arrow controls and horizontal swipe between adjacent resolvable preferences, not a full visible preference-management list.
 - `/plot` renders the Home Scene selector from the authenticated read model and tunes the selected scene through the existing Discover scene-context path.
 - Use `switch`, `select`, or `tune` for Home Scene selector movement. Reserve `transport` for Away Scene movement because the user is leaving their Home Scene context; intended transport entry points are Discover and saved/custom Uprises only when surfaced inside Discover/collection-owned playback.
-- Discover transport is not part of Plot. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, and saved/custom Uprise playback belongs to Discover/collection-owned listening rather than the Plot top shell, Plot profile pull-down, or Home Scene selector.
+- Discover transport is not part of the Plot top shell, Home Scene selector, or Plot profile pull-down. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, saved/custom Uprise playback belongs to Discover/collection-owned listening, and eligible outside-Uprise Feed cards may expose a `Travel` handoff into Discover/back-door context.
 - Non-expanded Plot should not force a companion context panel beside Feed, Events, or Archive. Source identity access may appear inside the expanded listener profile for users who manage Artist/Band sources, but source tools still live in source/admin surfaces. Registrar placement is inside Archive/community information with Registrar on top and records/status history below.
 - The non-expanded `/plot` top shell groups listener identity, the Home Scene selector, and the top RADIYO player as one visual cockpit. This is presentation-only; it does not authorize Discover transport, map/seek controls, source tools, or side panels inside Plot.
 - Artist Profile does not use the engagement wheel.
@@ -194,6 +197,11 @@ Card taxonomy rule:
 - preserve deterministic Home Scene Feed semantics: no personalized ranking, no
   inline engagement actions on insert cards, and no separate notification feed
   replacing the main Feed
+- `Blast card` means a listener Blast activity card inside Feed
+- the blasted signal on a Blast card links to that signal's source
+- card/listening click and `Travel` are separate when an eligible outside-Uprise
+  Feed card supports both: the card/listening affordance loads the Uprise, while
+  `Travel` opens the Discover/back-door visitor context and loads the Uprise there
 
 Current inserts:
 
@@ -207,6 +215,7 @@ Boundaries:
 - no inline `Collect`, `Blast`, `Follow`, or wheel actions on insert cards
 - music insert cards hand into Artist Profile listening
 - event inserts preview only; full event handling belongs in Events
+- do not model Blast cards as a separate tab, panel, or non-Feed destination
 
 ## Avatar / Merch Visual Boundary
 
