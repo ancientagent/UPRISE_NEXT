@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `236353e` (`test(api,web): harden print shop event boundary`)
-- Active branch during this refresh: `docs/uprise-first-pass-implementation-workflow`
-- Local worktree state at refresh: docs/process clarification branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) plus draft PR #215 (`docs/uprise-first-pass-implementation-workflow`); PR #214 merged
+- Current `main` HEAD at refresh start: `48d56e0` (`docs: clarify first-pass implementation workflow`)
+- Active branch during this refresh: `docs/active-pm-post-first-pass-workflow-refresh`
+- Local worktree state at refresh: post-PR closeout refresh branch
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #214 and PR #215 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,15 +35,16 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Clarify that UPRISE execution packets support first-pass implementation as well as cleanup/refactor work.
-- Keep GISTer-style source-behavior-removal / excavator framing conditional, not default.
-- Keep Linear as execution context with links back to repo truth, not durable product doctrine.
+- Refresh Active PM and branch registry after PR #215 merged.
+- Keep the repo execution-state docs aligned with merged PR state.
+- Leave draft PR #212 preserved and out of scope.
 
 Recently completed context:
 
 - PR #211 merged the pre-implementation feature-plan review gate at `25e06a2`.
 - PR #213 merged Task 11 source/listener profile boundary locks at `1bcbfa7`.
 - PR #214 merged Task 12 Print Shop source-facing event path locks at `236353e`.
+- PR #215 merged first-pass implementation workflow clarification at `48d56e0`.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
@@ -51,11 +52,11 @@ Recently completed context:
 | Field | Current Value |
 | --- | --- |
 | Lane | `EXTERNAL_TOOLS` / context-steward / execution-process docs |
-| Branch | `docs/uprise-first-pass-implementation-workflow` |
-| Scope | Docs-only clarification that first-pass implementation packets define what to build from repo owner specs; source-drift cleanup fields can be `not_applicable` when no broken behavior exists. |
+| Branch | `docs/active-pm-post-first-pass-workflow-refresh` |
+| Scope | Docs-only post-merge refresh for Active PM and branch registry after PR #215 merged. |
 | Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, per-issue packet files, new PM harness, merging/closing PR #212. |
-| Owner Contracts | `docs/specs/system/documentation-framework.md` |
-| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/AGENT_STRATEGY_AND_HANDOFF.md` |
+| Owner Contracts | none; operations state only |
+| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
 | Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
@@ -65,13 +66,12 @@ Recently completed context:
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
-| #215 | `docs/uprise-first-pass-implementation-workflow` | draft opened from this branch | Merge after checks if still docs-only and clean. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/uprise-first-pass-implementation-workflow` | `pending` | Focused docs/process clarification branch |
+| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-first-pass-workflow-refresh` | `48d56e0` at branch start | Post-merge PM/registry refresh branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -95,10 +95,11 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 - PR #213 / `1bcbfa7`: Task 11 source/listener profile boundary locks.
 - PR #214 / `236353e`: Task 12 Print Shop source-facing event path locks.
+- PR #215 / `48d56e0`: first-pass implementation workflow clarification.
 
 ## Next Queue
 
-1. Review/merge PR #215 after checks if it remains docs-only and clean.
+1. Finish this post-merge PM/registry refresh branch.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 3. Continue to the next UPRISE Development Plan R1 task selected by the user.
 
