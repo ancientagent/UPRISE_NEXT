@@ -71,6 +71,12 @@ Load only the materials directly needed for the current task:
 - Default to one coding agent owning the write path for a branch slice.
 - Other agents should stay read-only unless file ownership is explicitly split.
 
+### Pre-implementation feature gate
+- Before implementing a feature or behavior-changing UI/API/runtime slice, the executor must review the feature against current repo authority and write a development plan.
+- A separate Codex reviewer must review that development plan before implementation edits begin.
+- Record the feature review scope and plan-review artifact in the Execution Packet / Executor Readiness blocks from `docs/specs/system/documentation-framework.md`.
+- Tiny surgical docs-only or local cleanup PRs may skip this gate only when no product/runtime behavior is being implemented and the branch owner can prove low risk.
+
 ### External-delegation pattern
 - Use external/swarm assistants primarily for design, communications, research, and synthesis unless a repo-controlled coding workflow is explicitly intended.
 - Keep one shared fact base for multi-deliverable work so outputs do not drift from each other.

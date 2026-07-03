@@ -307,6 +307,10 @@ Starting Branch / HEAD:
 Must Read:
 Do Not Read By Default:
 Source Drift / Behavior To Correct:
+Feature / Behavior Scope:
+Repo-Aspects To Verify:
+Development Plan:
+Plan Review:
 Files Likely Touched:
 Tests / Validation Seed:
 Expansion Conditions:
@@ -323,6 +327,9 @@ issue_active: yes/no
 branch_verified: yes/no
 owner_contract_identified: yes/no
 source_drift_or_bug_identified: yes/no/not_applicable
+feature_reviewed_against_repo: yes/no/not_applicable
+development_plan_written: yes/no/not_applicable
+development_plan_reviewed_by_codex: yes/no/not_required
 files_and_tests_clear: yes/no
 risk_impacts_named: yes/no
 provider_or_db_risk: yes/no
@@ -357,6 +364,10 @@ next_signal:
 ```
 
 Do not require `reviewer_passed` or `qa_passed` for every PR. Use `reviewer_required` and `qa_required` to make those gates explicit only when the work needs them.
+
+For feature implementation or behavior-changing UI/API/runtime work, `ready_for_executor` must stay `no` until the executor has reviewed the feature against current repo authority and an independent Codex reviewer has reviewed the development plan. The feature review should cover the owner spec, lane brief, relevant runtime/code paths, tests, current founder-session notes or handoffs when directly cited, and known out-of-scope/deferred boundaries. The plan review should happen before implementation edits, should be recorded in the packet or handoff, and should identify missing context, stale assumptions, risky impacts, and validation gaps. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans.
+
+This pre-implementation plan review is not required for tiny surgical docs-only or local cleanup PRs when no product/runtime behavior is being implemented and the branch owner can prove the scope is low-risk. If a docs-only change promotes product truth, changes owner-spec authority, or enables later implementation work, treat it as doc-authority work and use the review gate.
 
 Set `reviewer_required: yes` for large refactors, complex issues, broad
 branch/worktree cleanup, or branch-absorption decisions where stale-looking work

@@ -201,6 +201,8 @@ Every substantive external-agent prompt should include:
 For implementation prompts, also require:
 
 - branch name;
+- repo-grounded feature review scope before edits;
+- development plan reviewed by an independent Codex reviewer before execution;
 - tests to run;
 - `docs/CHANGELOG.md` update when product/docs behavior changes;
 - dated handoff for multi-step work;
@@ -216,6 +218,10 @@ Starting Branch / HEAD:
 Must Read:
 Do Not Read By Default:
 Source Drift / Behavior To Correct:
+Feature / Behavior Scope:
+Repo-Aspects To Verify:
+Development Plan:
+Plan Review:
 Files Likely Touched:
 Tests / Validation Seed:
 Expansion Conditions:
@@ -228,6 +234,9 @@ issue_active: yes/no
 branch_verified: yes/no
 owner_contract_identified: yes/no
 source_drift_or_bug_identified: yes/no/not_applicable
+feature_reviewed_against_repo: yes/no/not_applicable
+development_plan_written: yes/no/not_applicable
+development_plan_reviewed_by_codex: yes/no/not_required
 files_and_tests_clear: yes/no
 risk_impacts_named: yes/no
 provider_or_db_risk: yes/no
@@ -258,6 +267,8 @@ next_signal:
 ```
 
 These blocks are optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove the scope is low-risk. Do not create per-issue context-packet files by default and do not introduce a separate PM harness from these blocks.
+
+For feature implementation or behavior-changing UI/API/runtime work, the executor must not begin implementation edits until the feature has been reviewed against current repo authority and the development plan has been reviewed by another Codex agent. The feature review must include the owner spec, lane brief, relevant runtime/code paths, tests, directly relevant founder-session notes or handoffs, deferred/out-of-scope boundaries, and validation seed. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans. Record the reviewer/model/artifact in `Plan Review` or the dated handoff.
 
 For large refactors, complex issues, broad branch/worktree cleanup, or any
 branch-absorption decision where valuable product/spec/runtime content may be

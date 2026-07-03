@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added a pre-implementation feature gate requiring repo-grounded feature review plus independent Codex development-plan review before behavior-changing feature work starts; see `docs/handoff/2026-07-03_feature-plan-review-gate.md`.
 - Added a Feed card family inventory for current `/plot` runtime cards and inserts, including launch/deferred/source/remove classifications and a regression lock against Feed insert calendar-mutation drift; see `docs/handoff/2026-07-03_feed-card-family-inventory.md`.
 - Added activation tuple normalized-matching hardening so manual activation reuses canonical candidate tuples and finds inactive natural scenes despite casing/edge-spacing drift; see `docs/handoff/2026-07-03_activation-tuple-normalized-matching.md`.
 - Added an Active PM / branch registry closeout refresh after UPRISE Development Plan tasks 1-7 merged, leaving `UPRISE-PLAN-008` queued; see `docs/handoff/2026-07-03_tasks-1-7-closeout-refresh.md`.
