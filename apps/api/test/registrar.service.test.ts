@@ -2887,6 +2887,30 @@ describe('RegistrarService', () => {
     expect(mockPrisma.registrarArtistMember.createMany).not.toHaveBeenCalled();
   });
 
+  it('requires established Home Scene source-origin fields even when the user is GPS verified', async () => {
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'scene-1',
+      city: 'Austin',
+      state: 'TX',
+      musicCommunity: 'punk',
+      tier: 'city',
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      gpsVerified: true,
+      homeSceneCity: null,
+      homeSceneState: null,
+      homeSceneCommunity: null,
+      tunedSceneId: 'scene-1',
+    });
+
+    await expect(service.submitArtistBandRegistration('u-1', validDto)).rejects.toThrow(
+      'Registrar access requires an established Home Scene',
+    );
+    expect(mockPrisma.registrarEntry.create).not.toHaveBeenCalled();
+    expect(mockPrisma.registrarArtistMember.createMany).not.toHaveBeenCalled();
+  });
+
   it('enforces city-tier Home Scene registrar boundary', async () => {
     mockPrisma.community.findUnique.mockResolvedValue({
       id: 'scene-1',
