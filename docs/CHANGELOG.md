@@ -9,6 +9,10 @@
 
 ### Added
 
+- Added `screen-package:flow` automation to inspect, scaffold, and advance major-screen package gates without turning package artifacts into product truth.
+- Added the major-screen package workflow and seeded the Artist Profile / Source Dashboard screen package so Dev Spec, Design Spec, review, implementation, art, and hardening lanes share one packet while durable truth stays in owner specs.
+- Added a Screen Narrative Packet for the Artist Profile / Source Dashboard post-registration flow; see `docs/solutions/SCREEN_NARRATIVE_ARTIST_PROFILE_SOURCE_DASHBOARD_R1.md`.
+- Added a focused owner spec for the Registrar materialization, Source Dashboard operation, and public Artist Profile lifecycle; see `docs/handoff/2026-07-04_artist-profile-source-dashboard-owner-spec.md`.
 - Added lean PR standing orders so small/medium UPRISE slices default to focused implementation, focused validation, bounded review only when risk justifies it, and no bookkeeping/CI-watch spirals; see `docs/handoff/2026-07-04_lean-pr-standing-orders.md`.
 - Added launch-scope Blast card runtime hardening so in-community Blast Feed rows project source metadata and can hand listeners into Artist Profile `signalId` playback without activating Travel/Discover transport; see `docs/handoff/2026-07-04_launch-scope-blast-card-runtime-plan.md`.
 - Refreshed Active PM and Development Plan R1 after PR #221 merged, marking completed tasks accurately and setting Stage 4 Task 10 as the next development signal; see `docs/handoff/2026-07-04_development-plan-closeout-refresh.md`.

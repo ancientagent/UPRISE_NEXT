@@ -44,6 +44,7 @@ Runtime files:
 
 Specs / locks:
 
+- `docs/specs/users/artist-profile-and-source-dashboard.md`
 - `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
 - `docs/solutions/MVP_SOURCE_DASHBOARD_SURFACE_CONTRACT_R1.md`
 - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`

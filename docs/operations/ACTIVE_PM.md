@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-04
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `05266e6` (`feat(web,api): harden launch Blast feed handoff (#223)`)
-- Active branch during this refresh: `docs/lean-pr-standing-orders`
-- Local worktree state at refresh: lean PR standing-orders docs/process update
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #223 merged
+- Current `main` HEAD at refresh start: `b81c5f3`
+- Active branch during this refresh: `chore/screen-package-agent-flow`
+- Local worktree state at refresh: screen-package agent automation flow docs/scripts update
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,27 +35,27 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Add lean PR standing orders so small/medium slices do not expand into process-heavy loops.
-- Keep independent review and packet gates risk-scaled instead of automatic for every PR.
-- Leave draft PR #212 preserved and out of scope.
+- Implement the new agent automation flow for major UPRISE screen packages.
+- Keep durable product truth in owner specs while screen packages store execution artifacts.
+- Add a deterministic repo runner that inspects/scaffolds/advances screen-package gates and can later be wrapped by LangGraph if persistent human-in-the-loop orchestration is needed.
+- Preserve draft PR #212 unless the user explicitly reprioritizes Linear clean-context agent roles.
 
 Recently completed context:
 
-- PR #223 merged Task 10 launch-scope Blast Feed runtime at `05266e6`.
-- The Task 10 run showed the workflow could become too process-heavy for small/medium slices.
-- Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
+- Major-screen workflow was evaluated by the team-manager lane and rated `patch`, not reject.
+- The Artist Profile / Source Dashboard package is the first seeded package for the new workflow.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | context-steward / execution-process docs |
-| Branch | `docs/lean-pr-standing-orders` |
-| Scope | Docs/process patch to make the lean PR path the default and keep review/packet gates risk-scaled. |
-| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, merging/closing PR #212. |
-| Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
-| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md` |
-| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Lane | context-steward / agent automation / artist-source package seed |
+| Branch | `chore/screen-package-agent-flow` |
+| Scope | Add screen-package workflow docs, repo/local skill routing, Artist Profile / Source Dashboard package seed, and `screen-package:flow` runner/test. |
+| Out of Scope | Provider/db/schema/art mutation, runtime app behavior changes, completing all Artist Profile implementation gates, merging/closing draft PR #212. |
+| Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/specs/users/artist-profile-and-source-dashboard.md` |
+| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/screen-packages/**`, `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` |
+| Validation | `pnpm run screen-package:flow:test`, `pnpm run screen-package:flow -- status --package artist-profile-source-dashboard`, `pnpm run docs:lint`, `git diff --check`, `pnpm run workspace:audit` before push/PR |
 
 ## Current Branch / Worktree State
 
@@ -69,7 +69,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/lean-pr-standing-orders` | `05266e6` at branch start | Lean PR standing-orders docs/process update |
+| `/home/baris/UPRISE_NEXT` | `chore/screen-package-agent-flow` | `b81c5f3` at branch start | Screen-package agent automation flow update. |
 
 ### Preserved UX Reference Worktrees
 
@@ -91,14 +91,14 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #223 / `05266e6`: Task 10 launch-scope Blast Feed runtime merged.
-- Tasks 1-12 from `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` are merged according to branch registry, handoffs, and current runtime/test evidence.
+- PR #224 / lean PR standing orders was absorbed into current `main` before this slice.
+- Current slice registered as `screen-package-agent-flow` in `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`.
 
 ## Next Queue
 
-1. Finish this lean PR standing-orders branch.
+1. Finish and PR `chore/screen-package-agent-flow`.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. After this docs/process branch, run a focused launch vertical-slice smoke pass before expanding deferred Discover/Travel/map/Seek work.
+3. After this automation slice, use the screen-package runner to dispatch the Artist Profile / Source Dashboard Dev Spec and Design Spec gates.
 
 ## PM Usage Rules For Agents
 
