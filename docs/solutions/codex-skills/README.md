@@ -14,6 +14,10 @@ for d in docs/solutions/codex-skills/uprise-*; do
   name="$(basename "$d")"
   mkdir -p "/home/baris/.codex/skills/$name"
   cp "$d/SKILL.md" "/home/baris/.codex/skills/$name/SKILL.md"
+  if [ -d "$d/agents" ]; then
+    mkdir -p "/home/baris/.codex/skills/$name/agents"
+    cp "$d/agents/openai.yaml" "/home/baris/.codex/skills/$name/agents/openai.yaml"
+  fi
 done
 ```
 
@@ -32,5 +36,10 @@ done
 - `uprise-founder-clarification-capture/SKILL.md`
 - `uprise-founder-session-capture/SKILL.md`
 - `uprise-branch-pr-hygiene/SKILL.md`
+- `uprise-hermes-session-routing/SKILL.md`
+
+The broad/noisy routing snapshots also include `agents/openai.yaml` with
+`policy.allow_implicit_invocation: false`, so they stay explicitly available
+without auto-triggering by default.
 
 Update this folder whenever a local UPRISE skill change is meant to become durable team behavior.

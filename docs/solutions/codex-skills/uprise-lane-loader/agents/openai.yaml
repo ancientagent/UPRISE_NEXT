@@ -1,0 +1,6 @@
+interface:
+  display_name: "UPRISE Lane Loader"
+  short_description: "Pick the right UPRISE lane and docs"
+  default_prompt: "Use $uprise-lane-loader to route this non-trivial UPRISE task to the right lane, owner spec, files, tests, and validation path."
+policy:
+  allow_implicit_invocation: false

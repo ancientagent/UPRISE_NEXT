@@ -53,6 +53,10 @@ team behavior, update that snapshot folder in the same branch so another agent
 or machine can refresh `/home/baris/.codex/skills/` without relying on chat
 memory.
 
+For broad/noisy routing skills, prefer `agents/openai.yaml` with
+`policy.allow_implicit_invocation: false` so the skill remains explicitly
+available without auto-triggering during routine work.
+
 ## Tool Stack
 
 | Tool / Agent | Best Use | Avoid Using For | Required Output |

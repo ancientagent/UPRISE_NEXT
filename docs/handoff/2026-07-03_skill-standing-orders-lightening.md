@@ -46,6 +46,14 @@ behavior can be reproduced by future agents:
 - `docs/solutions/codex-skills/uprise-founder-clarification-capture/SKILL.md`
 - `docs/solutions/codex-skills/uprise-founder-session-capture/SKILL.md`
 - `docs/solutions/codex-skills/uprise-branch-pr-hygiene/SKILL.md`
+- `docs/solutions/codex-skills/uprise-hermes-session-routing/SKILL.md`
+
+For broad/noisy routing skills, the snapshots include `agents/openai.yaml` with
+`policy.allow_implicit_invocation: false`:
+
+- `uprise-skill-router`
+- `uprise-lane-loader`
+- `uprise-hermes-session-routing`
 
 The matching runtime local skill files were also refreshed under
 `/home/baris/.codex/skills/`:
@@ -67,6 +75,12 @@ The matching runtime local skill files were also refreshed under
 
 - `uprise-branch-pr-hygiene/SKILL.md`
   - Added relaxed self-closing PR bookkeeping rule.
+
+- `uprise-skill-router/agents/openai.yaml`
+- `uprise-lane-loader/agents/openai.yaml`
+- `uprise-hermes-session-routing/agents/openai.yaml`
+  - Set `policy.allow_implicit_invocation: false` so these broad/fallback skills
+    remain explicitly available without auto-triggering by default.
 
 ## Drift Prevention
 
