@@ -9,7 +9,8 @@
 
 ### Added
 
-- Added the Artist Profile / Source Dashboard screen-package Dev Spec, Design Spec, passing spec-package review gate, and separate xhigh Dev/Design review artifacts; implementation planning is the next package step.
+- Added the Artist Profile / Source Dashboard screen-package Dev Spec, Design Spec, passing spec-package review, and separate xhigh Dev/Design review artifacts; the next step is a small vertical implementation slice rather than a mandatory implementation-plan gate.
+- Lightened the screen-package workflow so package seeds and `screen-package:flow` support optional slice contracts and risk-triggered artifacts instead of mandatory Dev Spec / Design Spec / review / art / hardening ceremony for every screen slice.
 - Added `screen-package:flow` automation to inspect, scaffold, and advance major-screen package gates without turning package artifacts into product truth.
 - Added the major-screen package workflow and seeded the Artist Profile / Source Dashboard screen package so Dev Spec, Design Spec, review, implementation, art, and hardening lanes share one packet while durable truth stays in owner specs.
 - Added a Screen Narrative Packet for the Artist Profile / Source Dashboard post-registration flow; see `docs/solutions/SCREEN_NARRATIVE_ARTIST_PROFILE_SOURCE_DASHBOARD_R1.md`.

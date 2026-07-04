@@ -156,25 +156,30 @@ PM should choose the lightest Codex model that protects the task:
 
 Escalate beyond `gpt-5.5` with `reasoning_effort=xhigh` only when PM names the reason. Claude Opus and Fugu/Fugu Ultra are backup or exceptional heavyweight lanes, not default routing.
 
-## Major Screen Package Workflow
+## Screen Package Workflow
 
-Use `docs/screen-packages/**` when a screen or flow needs coordinated Dev Spec, Design Spec, implementation, art, review, and hardening work. Do not use it for tiny docs-only, copy-only, test-only, or isolated low-risk cleanup slices.
+Use `docs/screen-packages/**` only when a screen or flow needs a shared execution workspace to prevent drift. Do not treat a package as permission to create mandatory Dev Spec, Design Spec, review, art, hardening, or closeout artifacts for every slice.
 
-Required shape:
+Default shape:
 
-1. A Dev Team Manager/package owner verifies branch/HEAD, dirty state, owner spec, lane briefs, runtime files, tests, branch/workspace registry requirements, and package folder.
-2. The manager creates one shared instruction packet for both spec agents.
-3. Dev Spec Agent traces owner specs, runtime, tests, contracts, stale paths, file ownership, and validation requirements.
-4. Design Spec Agent produces UX/design direction for design-owned parts only and cannot invent product actions, data contracts, auth rules, or navigation.
-5. A reviewer checks Dev Spec plus Design Spec together as one spec package before implementation begins.
-6. Failed findings return to the responsible spec agent; cross-spec conflicts route to the manager and then to founder clarification only when owner specs do not settle the rule.
-7. After spec-package approval, implementation lanes get explicit file/surface ownership. Dev implementation owns contracts/runtime/tests; design implementation owns approved UI/design work.
-8. Art / Creative Studio starts from the approved Design Spec and `art-handoff/` brief, not from raw brainstorming.
-9. Integrated review checks dev and design work together. Final hardening covers tests, accessibility, edge states, copy consistency, integration cleanup, regression locks, and closeout.
+1. Pick one small vertical screen section or behavior.
+2. Verify branch/HEAD, owner spec, lane brief, likely runtime files, likely tests, out-of-scope boundaries, and branch/workspace registry state.
+3. Use the package seed (`README.md`, `instruction-packet.md`, `source-map.md`) as the shared context. If the slice is still ambiguous, create one short `implementation/slice-contract.md`.
+4. Implement with one branch-owning executor. Subagents are sidecars only: bounded research, product design, or review. They do not own competing branches or edit the same files.
+5. Add focused validation and only the docs/changelog/handoff updates the slice actually requires.
+6. Run one bounded review when behavior or risk justifies it. Use `gpt-5.5` with `reasoning_effort=xhigh` only for final/high-risk gates.
 
-Durable truth stays in `docs/specs/**`. Screen-package artifacts are execution workspaces that link to owner specs, lane briefs, runtime files, tests, handoffs, and art references. Accepted product decisions must be promoted back to owner specs before package closeout.
+Optional artifacts are risk-triggered, not automatic:
 
-Use `pnpm run screen-package:flow -- status --package <slug>` to inspect the current gate state, and `pnpm run screen-package:flow -- next --package <slug> --write` to create the next missing artifact template when the package owner is ready to assign that lane. The runner is deterministic and file-based; it is the first automation layer and can be wrapped by LangGraph later if persistent/human-in-the-loop execution is needed.
+- `spec/dev-spec.md` when a technical trace beyond the slice contract is needed.
+- `design-spec/ux-plan.md` when visual/product-design direction is needed.
+- `review/spec-package-review.md` when Dev/Design artifacts both exist and need a package gate.
+- `art-handoff/creative-brief.md` only after the user approves visual/art direction.
+- `review/implementation-integration-review.md` and `hardening/closeout.md` only for large or risky integrated work.
+
+Durable truth stays in `docs/specs/**`. Screen-package artifacts are execution history that link to owner specs, lane briefs, runtime files, tests, handoffs, and art references. Accepted product decisions must be promoted back to owner specs before package closeout.
+
+Use `pnpm run screen-package:flow -- status --package <slug>` to inspect package seed state and optional artifacts. Use `pnpm run screen-package:flow -- next --package <slug> --write` only when a slice contract would help. The runner is deterministic and file-based; it inventories the workspace, not a mandatory gate ladder.
 
 Do not spend Hermes fallback runs on routine scouting or final gates. Basic Hermes can gather evidence and recommend; heavy Hermes can provide a manual fallback opinion only when PM explicitly asks for it. Codex remains the approving/blocking gate. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex.
 

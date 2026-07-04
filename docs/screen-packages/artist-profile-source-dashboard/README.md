@@ -1,6 +1,6 @@
 # Artist Profile / Source Dashboard Screen Package
 
-Status: spec package passed; implementation-plan gate next
+Status: spec package passed; ready for small vertical implementation slice
 Package owner: current UPRISE implementation owner / Dev Team Manager
 Owner spec: `docs/specs/users/artist-profile-and-source-dashboard.md`
 Workflow evaluation: `docs/screen-packages/artist-profile-source-dashboard/workflow-evaluation.md`
@@ -18,12 +18,15 @@ This package is an execution workspace. Product truth remains in owner specs und
 - `workflow-evaluation.md` — team-manager evaluation of the proposed workflow.
 - `spec/dev-spec.md` — passed Dev Spec gate for runtime/API/test/file-ownership trace.
 - `design-spec/ux-plan.md` — passed Design Spec gate for UX hierarchy, states, accessibility, responsive behavior, and art needs.
-- `review/spec-package-review.md` — `Decision: pass`; approves moving to implementation planning.
+- `review/spec-package-review.md` — `Decision: pass`; approves moving to implementation.
 
-## Next Package Outputs
+## Next Signal
 
-- `implementation/implementation-plan.md`
-- `implementation/file-ownership.md`
-- `art-handoff/creative-brief.md` after the approved Design Spec is ready for art direction.
-- `review/implementation-integration-review.md`
-- `hardening/closeout.md`
+Pick one small vertical section from the passed Dev Spec / Design Spec package and implement it with focused validation. If scope is not obvious, create `implementation/slice-contract.md` first.
+
+Optional artifacts remain available when risk requires them:
+
+- `implementation/slice-contract.md`
+- `art-handoff/creative-brief.md` after the user approves visual/art direction.
+- `review/implementation-integration-review.md` for risky integrated dev/design work.
+- `hardening/closeout.md` for large/risky closeout.

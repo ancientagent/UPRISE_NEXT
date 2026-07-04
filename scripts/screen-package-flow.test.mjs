@@ -28,8 +28,9 @@ function write(root, slug, rel, text) {
   });
   assert.deepEqual(result.created.sort(), ['README.md', 'instruction-packet.md', 'source-map.md'].sort());
   const status = inspectPackage(root, 'artist-profile-source-dashboard');
-  assert.equal(status.nextNodeId, 'dev_spec');
-  assert.match(status.nextSignal, /dev_spec/);
+  assert.equal(status.complete, true);
+  assert.equal(status.nextNodeId, 'slice_contract');
+  assert.match(status.nextSignal, /ready_for_slice/);
 }
 
 {
@@ -40,12 +41,8 @@ function write(root, slug, rel, text) {
     lane: 'uprise-design-ui',
   });
   const first = writeNextTemplate(root, 'demo-screen');
-  assert.deepEqual(first.wrote, ['spec/dev-spec.md']);
-  write(root, 'demo-screen', 'design-spec/ux-plan.md', '# Design Spec\n');
-  write(root, 'demo-screen', 'review/spec-package-review.md', 'Decision: pending\n');
-  const status = inspectPackage(root, 'demo-screen');
-  assert.equal(status.nextNodeId, 'spec_package_review');
-  assert.equal(status.nodes.find((node) => node.id === 'spec_package_review').status, 'blocked_pending_pass');
+  assert.deepEqual(first.wrote, ['implementation/slice-contract.md']);
+  assert.equal(inspectPackage(root, 'demo-screen').nextNodeId, null);
 }
 
 {
@@ -58,9 +55,10 @@ function write(root, slug, rel, text) {
   write(root, 'passed-screen', 'spec/dev-spec.md', '# Dev Spec\n');
   write(root, 'passed-screen', 'design-spec/ux-plan.md', '# Design Spec\n');
   write(root, 'passed-screen', 'review/spec-package-review.md', 'Decision: pass\n');
-  const next = writeNextTemplate(root, 'passed-screen');
-  assert.deepEqual(next.wrote.sort(), ['implementation/implementation-plan.md', 'implementation/file-ownership.md'].sort());
-  assert.equal(inspectPackage(root, 'passed-screen').nextNodeId, 'art_handoff');
+  const status = inspectPackage(root, 'passed-screen');
+  assert.equal(status.complete, true);
+  assert.equal(status.optionalNodes.find((node) => node.id === 'spec_package_review').status, 'complete');
+  assert.match(status.nextSignal, /ready_for_slice/);
 }
 
 console.log('[screen-package-flow:test] passed');

@@ -3,7 +3,7 @@
 Date: 2026-07-04
 Branch: `docs/artist-profile-source-dashboard-specs`
 Base: `main` at `414f1a0`
-Status: docs-only spec-package gate complete
+Status: docs-only spec-package complete; ready for small vertical implementation slice
 
 ## Summary
 
@@ -13,7 +13,7 @@ Advanced the Artist Profile / Source Dashboard screen package through three pack
 - Design Spec gate: `docs/screen-packages/artist-profile-source-dashboard/design-spec/ux-plan.md`
 - Spec Package Review gate: `docs/screen-packages/artist-profile-source-dashboard/review/spec-package-review.md`
 
-The spec-package reviewer returned `Decision: pass`, so the package is approved to move to implementation planning. No runtime code, provider state, DB/schema/migrations, or art assets were changed.
+The spec-package reviewer returned `Decision: pass`, so the package is approved to move to implementation. No runtime code, provider state, DB/schema/migrations, or art assets were changed.
 
 After the initial package review, two separate `gpt-5.5` / `reasoning_effort=xhigh` reviewers were run:
 
@@ -83,12 +83,12 @@ pnpm run workspace:audit
 
 Results:
 
-- Screen-package runner passed and reports the next signal as `implementation_plan`.
+- Screen-package runner passed and reports the next signal as `ready_for_slice`.
 - Docs lint passed.
 - Whitespace check passed.
 - Workspace registry audit passed.
 
-## Next Gate
+## Next Signal
 
 After this branch merges, run:
 
@@ -97,9 +97,4 @@ pnpm run screen-package:flow -- status --package artist-profile-source-dashboard
 pnpm run screen-package:flow -- next --package artist-profile-source-dashboard
 ```
 
-Next required artifacts:
-
-- `docs/screen-packages/artist-profile-source-dashboard/implementation/implementation-plan.md`
-- `docs/screen-packages/artist-profile-source-dashboard/implementation/file-ownership.md`
-
-Implementation should not start until those files exist and reflect the passed Dev Spec, Design Spec, and spec-package review.
+Pick one small vertical Artist Profile / Source Dashboard implementation slice from the passed Dev Spec, Design Spec, and review package. If scope is not obvious, create `docs/screen-packages/artist-profile-source-dashboard/implementation/slice-contract.md`; do not require a full implementation plan or file-ownership packet by default.

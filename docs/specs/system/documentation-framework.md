@@ -149,13 +149,13 @@ Files:
 
 Rules:
 
-- Use screen packages for complex screens/flows that need shared context across Dev Spec, Design Spec, implementation, art, review, and hardening lanes.
+- Use screen packages for complex screens/flows only when a shared execution workspace prevents drift. Do not force Dev Spec, Design Spec, review, art, or hardening artifacts when one small vertical slice can move safely.
 - Screen packages are execution workspaces. Durable product/API/runtime truth still belongs in owner specs under `docs/specs/**`.
 - Each package should link to owner specs, lane briefs, runtime files, tests, handoffs, and art references instead of copying raw authority documents.
 - Accepted product decisions discovered during package work must be promoted back to the owner spec, then summarized from the package.
-- Do not use the major-screen workflow for tiny docs-only, copy-only, test-only, or isolated low-risk cleanup slices; use the Lean PR Default instead.
-- A package owner or Dev Team Manager owns sequencing, gate status, file/surface ownership, branch/workspace registration, and conflict routing. This role does not own product truth.
-- Use `pnpm run screen-package:flow -- status --package <slug>` to inspect package gates and `pnpm run screen-package:flow -- next --package <slug> --write` to create the next missing artifact template when ready.
+- Do not use the screen-package workflow for tiny docs-only, copy-only, test-only, or isolated low-risk cleanup slices; use the Lean PR Default instead.
+- A package owner owns sequencing, risk classification, branch/workspace registration, and conflict routing. This role does not own product truth.
+- Use `pnpm run screen-package:flow -- status --package <slug>` to inspect package seed state and optional artifacts. Use `pnpm run screen-package:flow -- next --package <slug> --write` only when a short slice contract would help execution.
 
 ### Layer 5: Legacy / External Imports
 
@@ -417,24 +417,18 @@ For each feature or behavior-changing implementation issue, use a fresh executor
 
 This loop prevents an executor from implementing from a thin Linear/chat summary when the current written contract would change the work. It is required for risky behavior-changing work and optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove low risk.
 
-#### Major Screen Package Workflow
+#### Screen Package Workflow
 
-Use this workflow for major screens or flows such as Plot, Artist Profile, Source Dashboard, Discover, Registrar, Release Deck, Print Shop, Archive, Events, and player surfaces when the slice needs product narrative, design direction, implementation, assets, and review.
+Use this workflow for major screens or flows such as Plot, Artist Profile, Source Dashboard, Discover, Registrar, Release Deck, Print Shop, Archive, Events, and player surfaces when a shared package prevents drift. The default is still one small vertical screen section at a time.
 
-1. The Dev Team Manager/package owner verifies branch/HEAD, dirty state, owner spec, lane briefs, runtime files, tests, registry requirements, and the package folder.
-2. The manager creates one shared instruction packet with scope, out-of-scope rules, authority order, branch/HEAD, file/surface ownership expectations, validation seed, stop conditions, and pass/fail gates.
-3. Dev Spec Agent and Design Spec Agent read the same packet.
-4. Dev Spec Agent writes the implementation-facing spec from current owner specs, runtime, tests, contracts, stale path checks, and validation requirements.
-5. Design Spec Agent writes the UX/design plan for design-owned work only: hierarchy, states, accessibility expectations, responsive behavior, visual direction, and art needs.
-6. A reviewer reviews Dev Spec plus Design Spec together as one spec package and classifies findings as `dev`, `design`, `cross-spec`, `product decision`, `stale`, or `environment`.
-7. Failed findings return to the responsible spec agent. Cross-spec conflicts go to the manager, who resolves by owner specs or stops for founder clarification.
-8. If the spec package passes, the manager assigns implementation lanes with explicit file/surface ownership and confirms whether one branch owner or separate branches/worktrees are required.
-9. Dev Implementation Agent builds dev-owned work from the approved Dev Spec and does not implement design-only assets or invent UI actions.
-10. Design Implementation Agent builds design-owned work from the approved Design Spec and does not alter data contracts, auth rules, API behavior, or action grammar.
-11. Art / Creative Studio receives the approved Design Spec and `art-handoff/` brief only after the design direction is stable enough to avoid asset rework.
-12. Dev and design work are reviewed together after integration, with findings returned to the responsible implementation agent.
-13. Final Hardening Agent handles tests, accessibility, edge states, copy consistency, integration cleanup, regression locks, and polish.
-14. Final closeout happens only after validation, docs/changelog/handoff requirements, branch/worktree state, and PR metadata are complete.
+1. Pick one vertical screen section or behavior.
+2. Verify branch/HEAD, dirty state, owner spec, lane brief, likely runtime files, likely tests, out-of-scope boundaries, and registry requirements.
+3. Use the package seed as shared context. If scope is still ambiguous, write one short `implementation/slice-contract.md`.
+4. Add a Product Design or Design Spec pass only when visible hierarchy, states, responsive behavior, accessibility, or art direction must be settled before implementation.
+5. Keep one branch-owning executor. Subagents may do bounded research, product design, or review sidecars only; they must not create competing branch ownership or edit the same files.
+6. Implement the accepted slice, then run focused validation.
+7. Run one bounded review only when behavior/risk justifies it. Use `gpt-5.5` with `reasoning_effort=xhigh` for final/high-risk gates, not routine planning artifacts.
+8. Promote accepted durable product decisions back to owner specs. Routine package artifacts remain execution history, not product doctrine.
 
 Anti-drift constraints for every major screen package: no design-agent contract invention, no source/listener/admin boundary leaks, no one-off city/community/source behavior, no unapproved placeholder CTAs, no platform-trope imports, no deferred feature revival, and no product truth stored only in the package.
 

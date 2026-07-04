@@ -101,14 +101,14 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 1. Open and merge this docs-only spec-package PR after validation.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. Next screen-package gate after this branch merges:
+3. Next screen-package signal after this branch merges:
 
 ```bash
 pnpm run screen-package:flow -- status --package artist-profile-source-dashboard
 pnpm run screen-package:flow -- next --package artist-profile-source-dashboard
 ```
 
-Current next signal after this branch: write `docs/screen-packages/artist-profile-source-dashboard/implementation/implementation-plan.md` and `docs/screen-packages/artist-profile-source-dashboard/implementation/file-ownership.md` from the passed Dev Spec + Design Spec + spec-package review.
+Current next signal after this branch: pick one small vertical Artist Profile / Source Dashboard implementation slice from the passed Dev Spec + Design Spec + review package. If scope is not obvious, create `docs/screen-packages/artist-profile-source-dashboard/implementation/slice-contract.md`; do not require a full implementation plan or file-ownership packet by default.
 
 ## PM Usage Rules For Agents
 
