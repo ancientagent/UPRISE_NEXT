@@ -116,6 +116,7 @@ Before closing a batch or slice:
 - changelog + dated handoff updated
 - `docs/operations/ACTIVE_PM.md` refreshed when the active branch, PR queue, blockers, preserved worktrees, or next execution signal changed
 - `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` updated when branch/worktree/PR status, assigned agents, scope, or closeout plan changed
+- do not create a follow-up PR solely to mark the just-merged operations/registry refresh PR as merged; use GitHub/`gh` as live PR truth and let the next real work branch clean harmless self-closing stale rows
 - `pnpm run workspace:audit` passed before push, PR creation, branch cleanup, and closeout
 
 ## Handoff Rules

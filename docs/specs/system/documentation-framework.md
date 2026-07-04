@@ -137,6 +137,7 @@ Rules:
 - Run `pnpm run workspace:audit` before push, PR creation, branch cleanup, and closeout. The audit fails on unregistered local branches, worktree branches, and open PR heads.
 - Remote-only historical branches may require a dedicated cleanup pass; use `node scripts/workspace-registry.mjs audit --include-remote` to inventory them without making them product truth.
 - This registry is execution state, not product doctrine. It should point to owner specs, PRs, handoffs, and Linear instead of duplicating product rules.
+- Do not create a follow-up PR solely to mark a just-merged operations/registry refresh PR as merged. GitHub/`gh pr view` is live PR truth; `ACTIVE_PM` and the registry are routing snapshots. Update stale self-closing refresh rows in the next real work branch, or immediately only when stale state would misroute, hide an unsafe branch/worktree, or affect branch cleanup.
 
 ### Layer 5: Legacy / External Imports
 
