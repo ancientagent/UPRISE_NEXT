@@ -59,6 +59,29 @@ Stop conditions: <branch mismatch, founder decision, provider/db mutation, dirty
 - external tools, NotebookLM, Abacus, Hermes, Cloud Codex prompts -> `EXTERNAL_TOOLS`
 - business, monetization, promos, pricing -> `BUSINESS_MONETIZATION`
 
+## Subagent Skill Sharing
+
+Do not pass the full skill catalog to subagents. Give each subagent one lane,
+named files/docs, and at most 1-3 relevant skills.
+
+Use this palette:
+
+- Planning/implementation: `superpowers:writing-plans`, `superpowers:test-driven-development`, `superpowers:systematic-debugging`
+- Independent work splits: `superpowers:subagent-driven-development`, `superpowers:dispatching-parallel-agents`
+- PR/review/CI: `uprise-pr-reviewer`, `gh-address-comments`, `gh-fix-ci`
+- Docs/authority drift: `uprise-doc-drift-audit`, `uprise-founder-clarification-capture`
+- Branch/worktree cleanup: `uprise-branch-pr-hygiene`, `superpowers:using-git-worktrees`
+- Frontend/UI: `vercel:nextjs`, `vercel:react-best-practices`, `playwright`
+- Visual/design: `product-design:get-context`, `product-design:ideate`, `imagegen`, `figma`
+- Provider/deploy: `vercel:vercel-cli`, `vercel:vercel-api`, `vercel:env-vars`, `vercel:turborepo`
+- Database/storage: `neon-postgres:neon-postgres`, `neon-postgres:neon-postgres-egress-optimizer`, `vercel:vercel-storage`
+- Security: `security-diff-scan`, `security-scan`, `security-threat-model`
+- External prompts/PM: `uprise-external-agent-prompt`, `linear`, `github`
+
+Do not share GISTer, Gmail/Calendar, Canva, broad creative-production,
+analytics-dashboard, or niche Vercel skills unless the subagent task explicitly
+needs that surface.
+
 ## Common Mistakes
 
 - Loading old handoffs before active specs.

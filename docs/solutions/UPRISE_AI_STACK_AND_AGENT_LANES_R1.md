@@ -57,6 +57,8 @@ For broad/noisy routing skills, prefer `agents/openai.yaml` with
 `policy.allow_implicit_invocation: false` so the skill remains explicitly
 available without auto-triggering during routine work.
 
+When dispatching subagents, use `uprise-lane-loader` as the compact skill-sharing map. Give each subagent one lane, named files/docs, and at most 1-3 skills relevant to that lane; do not forward the full skill catalog.
+
 ## Tool Stack
 
 | Tool / Agent | Best Use | Avoid Using For | Required Output |

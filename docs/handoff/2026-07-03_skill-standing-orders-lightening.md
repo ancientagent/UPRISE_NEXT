@@ -82,6 +82,17 @@ The matching runtime local skill files were also refreshed under
   - Set `policy.allow_implicit_invocation: false` so these broad/fallback skills
     remain explicitly available without auto-triggering by default.
 
+## Skill Inventory / Subagent Sharing Update
+
+After the larger skill enablement pass, the filesystem contained 238 `SKILL.md`
+paths and 176 unique skill names after deduplication by skill name/source
+priority. `uprise-lane-loader` now includes a compact Subagent Skill Sharing
+section so branch owners can hand subagents a small skill packet instead of the
+full catalog.
+
+Rule: give each subagent one lane, named docs/files, and at most 1-3 relevant
+skills. Do not forward the whole skill catalog.
+
 ## Drift Prevention
 
 This reduces context bloat without weakening process controls:
