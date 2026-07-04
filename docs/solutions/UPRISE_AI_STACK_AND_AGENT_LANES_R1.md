@@ -272,6 +272,17 @@ UPRISE is not in the same operating posture as projects where most work is clean
 
 For feature implementation or behavior-changing UI/API/runtime work, the executor must not begin implementation edits until the feature has been reviewed against current repo authority and the development plan has been reviewed by another Codex agent. The feature review must include the owner spec, lane brief, relevant runtime/code paths, tests, directly relevant founder-session notes or handoffs, deferred/out-of-scope boundaries, and validation seed. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans. Record the reviewer/model/artifact in `Plan Review` or the dated handoff.
 
+Use the feature implementation loop from `docs/specs/system/documentation-framework.md#feature-implementation-loop` for behavior-changing work:
+
+1. PM/current owner selects the next issue and gives the assigned executor a context packet with lane, owner contract, required docs, likely files, known runtime/tests to inspect, validation seed, out-of-scope boundaries, and stop conditions.
+2. A fresh executor agent/session starts from that packet, verifies it against current repo evidence, and writes the execution plan from docs/code/tests, not from chat or Linear alone.
+3. The plan is confirmed/corrected before edits; founder ambiguity stops for clarification and repo-visible capture.
+4. An independent Codex reviewer checks the plan before implementation.
+5. The same branch-owning executor implements the accepted plan.
+6. An independent reviewer checks the completed execution and either passes it or returns concrete findings to the executor.
+
+This is not a new PM harness and does not require per-issue packet files. It is the default behavior-changing feature workflow; tiny docs-only/local cleanup PRs can skip it when low risk is proven.
+
 For large refactors, complex issues, broad branch/worktree cleanup, or any
 branch-absorption decision where valuable product/spec/runtime content may be
 hidden in stale-looking work, require an independent reviewer/auditor pass

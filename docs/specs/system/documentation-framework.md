@@ -369,6 +369,20 @@ Do not require `reviewer_passed` or `qa_passed` for every PR. Use `reviewer_requ
 
 For feature implementation or behavior-changing UI/API/runtime work, `ready_for_executor` must stay `no` until the executor has reviewed the feature against current repo authority and an independent Codex reviewer has reviewed the development plan. The feature review should cover the owner spec, lane brief, relevant runtime/code paths, tests, current founder-session notes or handoffs when directly cited, and known out-of-scope/deferred boundaries. The plan review should happen before implementation edits, should be recorded in the packet or handoff, and should identify missing context, stale assumptions, risky impacts, and validation gaps. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans.
 
+#### Feature Implementation Loop
+
+For each feature or behavior-changing implementation issue, use a fresh executor context for the planning pass:
+
+1. The PM/current owner selects the next implementation issue and prepares the executor context packet: lane, owner contract, required docs, likely files, known runtime/tests to inspect, validation seed, out-of-scope boundaries, and stop conditions.
+2. The assigned executor starts from that context packet, then gathers the necessary current repo evidence from the owner spec, lane brief, relevant runtime/code paths, tests, and directly cited founder-session notes or handoffs.
+3. The executor writes an execution plan that states the current written contract, what will change, what must not change, files/tests expected, risk points, unresolved questions, and any correction needed to the packet.
+4. The plan is confirmed or corrected before implementation edits begin. If founder clarification is needed, stop and record the confirmed answer in the owner spec or appropriate founder-session/handoff path.
+5. An independent Codex reviewer checks the plan against repo authority. If it fails, return the issue to the executor for correction before any implementation edits.
+6. The same branch-owning executor implements the accepted plan.
+7. An independent reviewer checks the completed execution against the plan, owner specs, runtime evidence, and validation output. If it fails, return it to the executor with concrete findings; do not merge or close the issue.
+
+This loop prevents an executor from implementing from a thin Linear/chat summary when the current written contract would change the work. It is required for behavior-changing work and optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove low risk.
+
 This pre-implementation plan review is not required for tiny surgical docs-only or local cleanup PRs when no product/runtime behavior is being implemented and the branch owner can prove the scope is low-risk. If a docs-only change promotes product truth, changes owner-spec authority, or enables later implementation work, treat it as doc-authority work and use the review gate.
 
 Set `reviewer_required: yes` for large refactors, complex issues, broad
