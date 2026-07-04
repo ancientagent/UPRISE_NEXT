@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-04
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `64e65fe` (`docs: lighten UPRISE skill standing orders (#221)`)
-- Active branch during this refresh: `docs/development-plan-closeout-refresh`
-- Local worktree state at refresh: development-plan / Active PM closeout refresh
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #221 merged
+- Current `main` HEAD at refresh start: `7db890b` (`docs: refresh development plan closeout (#222)`)
+- Active branch during this refresh: `feat/launch-scope-blast-card-runtime`
+- Local worktree state at refresh: Task 10 launch-scope Blast card runtime implementation
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #222 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,28 +35,28 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Reconcile UPRISE Development Plan R1 and Active PM after PR #221 merged.
-- Mark already-merged Tasks 1-9 and 11-12 accurately so agents do not repeat completed work.
-- Set Stage 4 Task 10 as the next real development signal.
+- Implement Stage 4 Task 10: Launch-scope Blast card runtime.
+- Harden in-community Feed Blast source links and Artist Profile `signalId` listen/load handoff.
+- Keep Travel, Discover transport, cross-Uprise Blast cards, map view, and Seek mode deferred.
 - Leave draft PR #212 preserved and out of scope.
 
 Recently completed context:
 
-- PR #221 merged the skill standing-orders lightening rule at `64e65fe`.
-- Development Plan R1 Tasks 1-9 and 11-12 have merged; Task 10 remains the next implementation slice.
+- PR #222 merged the development-plan closeout refresh at `7db890b`.
+- Development Plan R1 Tasks 1-9 and 11-12 have merged; Task 10 is the active implementation slice.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | context-steward / execution-process docs |
-| Branch | `docs/development-plan-closeout-refresh` |
-| Scope | Docs/operations refresh so the active plan points at remaining development instead of completed Tasks 1-9 and 11-12. |
-| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, merging/closing PR #212. |
-| Owner Contracts | `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
-| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
-| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Lane | `ACTIONS_SIGNALS` with `UX_UI` Feed companion context |
+| Branch | `feat/launch-scope-blast-card-runtime` |
+| Scope | Runtime/test hardening for launch-scope Blast Feed rows: source projection and Artist Profile `signalId` handoff. |
+| Out of Scope | Travel/Discover transport activation, cross-Uprise Blast cards, provider/db/schema/art changes, product-doctrine changes, merging/closing PR #212. |
+| Owner Contracts | `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, `docs/specs/core/signals-and-universal-actions.md` |
+| Companion Docs | `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`, `docs/agent-briefs/UI_CURRENT.md`, `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` |
+| Validation | `pnpm --filter api test -- communities.feed.service.test.ts --runInBand`, `pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.test.ts --runInBand`, `pnpm --filter api typecheck`, `pnpm --filter web typecheck`, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
@@ -70,7 +70,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/development-plan-closeout-refresh` | `64e65fe` at branch start | Development-plan / Active PM closeout refresh |
+| `/home/baris/UPRISE_NEXT` | `feat/launch-scope-blast-card-runtime` | `7db890b` at branch start | Task 10 launch-scope Blast card runtime |
 
 ### Preserved UX Reference Worktrees
 
@@ -92,16 +92,16 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #221 / `64e65fe`: skill standing-orders lightening and repo-controlled skill snapshots.
+- PR #222 / `7db890b`: development-plan closeout refresh.
 - Tasks 1-9 and 11-12 from `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` are merged according to branch registry, handoffs, and current runtime/test evidence.
+- Independent Codex plan review passed for Task 10 before implementation.
 
 ## Next Queue
 
-1. Finish this development-plan closeout refresh branch.
+1. Finish Task 10 launch-scope Blast card runtime branch.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. Start Stage 4 Task 10: Launch-scope Blast card runtime.
-4. Use the feature implementation loop for Task 10: executor repo review + plan, independent Codex plan review, implementation, targeted tests, and post-implementation review if the slice changes runtime behavior.
-5. After Task 10, run a focused launch vertical-slice smoke pass before expanding deferred Discover/Travel/map/Seek work.
+3. Run full targeted validation and independent execution review.
+4. After Task 10 merges, run a focused launch vertical-slice smoke pass before expanding deferred Discover/Travel/map/Seek work.
 
 ## PM Usage Rules For Agents
 

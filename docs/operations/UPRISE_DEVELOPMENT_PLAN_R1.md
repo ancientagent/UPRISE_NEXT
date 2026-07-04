@@ -13,9 +13,9 @@
 ## Status Snapshot
 
 - Snapshot date: 2026-07-04
-- Current base: `origin/main` at `64e65fe` (`docs: lighten UPRISE skill standing orders (#221)`)
+- Current base: `origin/main` at `7db890b` (`docs: refresh development plan closeout (#222)`)
 - Open PR queue at refresh: draft PR #212 only (`docs/linear-clean-context-agent-roles`)
-- Current branch for this refresh: `docs/development-plan-closeout-refresh`
+- Current branch for current Task 10 work: `feat/launch-scope-blast-card-runtime`
 - Provider/database/schema/art state: not touched by this plan
 - Preserved UX references: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`, `feat/ux-batch17`, `feat/ux-batch18-run`
 

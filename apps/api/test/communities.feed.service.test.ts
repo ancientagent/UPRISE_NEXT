@@ -37,7 +37,11 @@ describe('CommunitiesService.getFeed', () => {
         signalId: 'signal-1',
         createdAt: now,
         user: { id: 'u1', username: 'a', displayName: 'A', avatar: null },
-        signal: { id: 'signal-1', type: 'SONG', metadata: { source: 'blast' } },
+        signal: {
+          id: 'signal-1',
+          type: 'single',
+          metadata: { title: 'Signal Fire', artist: 'Signal Rise', artistBandId: 'band-1' },
+        },
       },
     ]);
     mockPrisma.track.findMany.mockResolvedValue([
@@ -76,6 +80,15 @@ describe('CommunitiesService.getFeed', () => {
 
     expect(result.items).toHaveLength(3);
     expect(result.items[0].type).toBe('blast');
+    expect(result.items[0].metadata?.signalMetadata).toEqual({
+      title: 'Signal Fire',
+      artist: 'Signal Rise',
+      artistBandId: 'band-1',
+    });
+    expect(result.items[0].metadata?.artistBand).toEqual({
+      id: 'band-1',
+      name: 'Signal Rise',
+    });
     expect(result.items[1].type).toBe('track_release');
     expect(result.items[1].metadata?.artistBand).toEqual({
       id: 'band-2',
@@ -91,5 +104,31 @@ describe('CommunitiesService.getFeed', () => {
       entityType: 'artist',
     });
     expect(result.nextCursor).toBe(twoMinutesAgo.toISOString());
+  });
+
+  it('omits Blast source projection when signal metadata lacks source identity', async () => {
+    const now = new Date('2026-02-16T12:00:00.000Z');
+
+    mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
+    mockPrisma.signalAction.findMany.mockResolvedValue([
+      {
+        id: 'blast-1',
+        type: 'BLAST',
+        signalId: 'signal-1',
+        createdAt: now,
+        user: { id: 'u1', username: 'a', displayName: 'A', avatar: null },
+        signal: { id: 'signal-1', type: 'single', metadata: { title: 'Signal Fire' } },
+      },
+    ]);
+    mockPrisma.track.findMany.mockResolvedValue([]);
+    mockPrisma.event.findMany.mockResolvedValue([]);
+    mockPrisma.signal.findMany.mockResolvedValue([]);
+
+    const result = await service.getFeed('community-1', { limit: 10 });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].type).toBe('blast');
+    expect(result.items[0].metadata?.signalMetadata).toEqual({ title: 'Signal Fire' });
+    expect(result.items[0].metadata).not.toHaveProperty('artistBand');
   });
 });
