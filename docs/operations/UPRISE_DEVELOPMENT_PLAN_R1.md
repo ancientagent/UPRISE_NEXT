@@ -236,7 +236,7 @@ pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.tes
 pnpm run docs:lint
 ```
 
-- [ ] **Task 10: Launch-scope Blast card runtime**
+- [x] **Task 10: Launch-scope Blast card runtime**
 
 If the inventory finds a launch-scope Blast card runtime path, implement or harden source links and listen/load behavior for in-community signals only. Keep `Travel` hidden/deferred unless the current owner spec explicitly activates it.
 
@@ -289,11 +289,9 @@ Do not implement these as launch-critical work unless a new owner-spec update ex
 
 ## Immediate Next Queue
 
-1. Finish this execution-state refresh branch and return to clean `main`.
-2. Start Stage 4 Task 10: Launch-scope Blast card runtime.
-3. Before Task 10 implementation, use the feature implementation loop: repo-grounded executor plan, independent Codex plan review, then implementation.
-4. Keep `Travel`, Discover transport, cross-Uprise Blast cards, map view, and Seek mode hidden/deferred unless an owner-spec update explicitly activates them.
-5. After Task 10, run a focused launch vertical-slice browser/API smoke pass covering onboarding, Plot Feed, player/profile, source registration, Release Deck limits, Print Shop source path, and activation-readiness diagnostics.
+1. Finish and merge PR #223 for Stage 4 Task 10: Launch-scope Blast card runtime.
+2. Keep `Travel`, Discover transport, cross-Uprise Blast cards, map view, and Seek mode hidden/deferred unless an owner-spec update explicitly activates them.
+3. After Task 10 merges, run a focused launch vertical-slice browser/API smoke pass covering onboarding, Plot Feed, player/profile, source registration, Release Deck limits, Print Shop source path, and activation-readiness diagnostics.
 
 ## Reliant Queue Commands
 

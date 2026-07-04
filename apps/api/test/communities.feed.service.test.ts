@@ -131,4 +131,39 @@ describe('CommunitiesService.getFeed', () => {
     expect(result.items[0].metadata?.signalMetadata).toEqual({ title: 'Signal Fire' });
     expect(result.items[0].metadata).not.toHaveProperty('artistBand');
   });
+
+  it.each([
+    [
+      'blank artistBandId',
+      { title: 'Signal Fire', artist: 'Signal Rise', artistBandId: '   ' },
+    ],
+    [
+      'blank source name candidates',
+      { title: 'Signal Fire', artist: '   ', artistName: '', artistBandName: '  ', artistBandId: 'band-1' },
+    ],
+  ])('omits Blast source projection for invalid source metadata: %s', async (_caseName, metadata) => {
+    const now = new Date('2026-02-16T12:00:00.000Z');
+
+    mockPrisma.community.findUnique.mockResolvedValue({ id: 'community-1' });
+    mockPrisma.signalAction.findMany.mockResolvedValue([
+      {
+        id: 'blast-1',
+        type: 'BLAST',
+        signalId: 'signal-1',
+        createdAt: now,
+        user: { id: 'u1', username: 'a', displayName: 'A', avatar: null },
+        signal: { id: 'signal-1', type: 'single', metadata },
+      },
+    ]);
+    mockPrisma.track.findMany.mockResolvedValue([]);
+    mockPrisma.event.findMany.mockResolvedValue([]);
+    mockPrisma.signal.findMany.mockResolvedValue([]);
+
+    const result = await service.getFeed('community-1', { limit: 10 });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].type).toBe('blast');
+    expect(result.items[0].metadata?.signalMetadata).toEqual(metadata);
+    expect(result.items[0].metadata).not.toHaveProperty('artistBand');
+  });
 });
