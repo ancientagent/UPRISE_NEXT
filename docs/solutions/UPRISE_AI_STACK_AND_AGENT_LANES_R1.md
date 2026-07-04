@@ -131,6 +131,20 @@ Current default model:
 - Linear tracks execution state only; durable truth stays in owner specs/current repo docs/code/tests.
 - Product ambiguity stops for founder clarification, then the answer is recorded in the appropriate owner doc or handoff/backlog.
 
+## Lean PR Path
+
+Default UPRISE development should optimize for shipping correct scoped work, not process ceremony:
+
+1. implement the scoped change from current repo authority;
+2. run focused validation for the touched code/docs;
+3. update required docs/changelog/handoff only;
+4. open/update the PR with required metadata;
+5. enable auto-merge or merge once checks pass.
+
+Use one bounded Codex review pass for behavior-changing work when it materially reduces risk. Do not stack multiple reviewers, repeated plan loops, branch-registry head-chasing commits, or follow-up operations PRs for small/medium slices unless a real blocker or safety risk appears. Poll CI once or enable auto-merge; do not babysit pending checks unless they fail or the user is explicitly waiting on the deploy result.
+
+Escalate to heavier review only for high-impact runtime changes, complex cross-lane work, provider/db/schema/security/canon/doc-authority changes, branch absorption, broad cleanup, or failed checks. Tiny docs-only/local cleanup PRs can skip independent review when low risk is proven.
+
 Ordinary audits and reviews are Codex-first. Use Codex for branch diffs, stale/fixed-work checks, changed-file review, test-output summaries, packet sanity, first-pass implementation review, PM closeout review, and final safe/not-safe gates. Use Hermes only as an explicit manual fallback when the prompt names the added Hermes value: profile memory, owner-spec/docs specialization, QA planning state, second opinion, synthesis across worker outputs, or feedback/profile-skill learning.
 
 PM should choose the lightest Codex model that protects the task:
@@ -224,7 +238,7 @@ For implementation prompts, also require:
 
 - branch name;
 - repo-grounded feature review scope before edits;
-- development plan reviewed by an independent Codex reviewer before execution;
+- development plan reviewed by an independent Codex reviewer before execution when behavior/risk justifies it;
 - tests to run;
 - `docs/CHANGELOG.md` update when product/docs behavior changes;
 - dated handoff for multi-step work;
@@ -292,16 +306,16 @@ These blocks are optional for tiny surgical docs-only or local cleanup PRs where
 
 UPRISE is not in the same operating posture as projects where most work is cleanup of already-implemented flows. Many UPRISE issues are first-pass feature slices. For those, the packet should point to the repo owner spec, active lane brief, exact code surfaces to inspect, validation seed, and out-of-scope boundaries. Do not force a source-behavior-removal or excavator model unless the issue is actually stale-code cleanup, wrong existing behavior, refactor/absorption work, or a risky cross-lane correction. Linear should carry the packet and repo links for clean execution context; it should not become the durable product/canon source.
 
-For feature implementation or behavior-changing UI/API/runtime work, the executor must not begin implementation edits until the feature has been reviewed against current repo authority and the development plan has been reviewed by another Codex agent. The feature review must include the owner spec, lane brief, relevant runtime/code paths, tests, directly relevant founder-session notes or handoffs, deferred/out-of-scope boundaries, and validation seed. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans. Record the reviewer/model/artifact in `Plan Review` or the dated handoff.
+For feature implementation or behavior-changing UI/API/runtime work, the executor must review the feature against current repo authority before implementation edits. Use one independent Codex plan review when the slice changes behavior or carries meaningful risk; skip it for tiny docs-only/local cleanup when low risk is proven. The feature review must include the owner spec, lane brief, relevant runtime/code paths, tests, directly relevant founder-session notes or handoffs, deferred/out-of-scope boundaries, and validation seed. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans. Record the reviewer/model/artifact in `Plan Review` or the dated handoff when a reviewer is used.
 
 Use the feature implementation loop from `docs/specs/system/documentation-framework.md#feature-implementation-loop` for behavior-changing work:
 
 1. PM/current owner selects the next issue and gives the assigned executor a context packet with lane, owner contract, required docs, likely files, known runtime/tests to inspect, validation seed, out-of-scope boundaries, and stop conditions.
 2. A fresh executor agent/session starts from that packet, verifies it against current repo evidence, and writes the execution plan from docs/code/tests, not from chat or Linear alone.
 3. The plan is confirmed/corrected before edits; founder ambiguity stops for clarification and repo-visible capture.
-4. An independent Codex reviewer checks the plan before implementation.
+4. When risk justifies it, an independent Codex reviewer checks the plan before implementation.
 5. The same branch-owning executor implements the accepted plan.
-6. An independent reviewer checks the completed execution and either passes it or returns concrete findings to the executor.
+6. When reviewer gates are required, an independent reviewer checks the completed execution and either passes it or returns concrete findings to the executor.
 
 This is not a new PM harness and does not require per-issue packet files. It is the default behavior-changing feature workflow; tiny docs-only/local cleanup PRs can skip it when low risk is proven.
 

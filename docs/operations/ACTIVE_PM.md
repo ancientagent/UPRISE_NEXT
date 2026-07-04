@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-03
+Last Updated: 2026-07-04
 
 ## Purpose
 
@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-04
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `7db890b` (`docs: refresh development plan closeout (#222)`)
-- Active branch during this refresh: `feat/launch-scope-blast-card-runtime`
-- Local worktree state at refresh: Task 10 launch-scope Blast card runtime implementation
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #222 merged
+- Current `main` HEAD at refresh start: `05266e6` (`feat(web,api): harden launch Blast feed handoff (#223)`)
+- Active branch during this refresh: `docs/lean-pr-standing-orders`
+- Local worktree state at refresh: lean PR standing-orders docs/process update
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #223 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,28 +35,27 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Implement Stage 4 Task 10: Launch-scope Blast card runtime.
-- Harden in-community Feed Blast source links and Artist Profile `signalId` listen/load handoff.
-- Keep Travel, Discover transport, cross-Uprise Blast cards, map view, and Seek mode deferred.
+- Add lean PR standing orders so small/medium slices do not expand into process-heavy loops.
+- Keep independent review and packet gates risk-scaled instead of automatic for every PR.
 - Leave draft PR #212 preserved and out of scope.
 
 Recently completed context:
 
-- PR #222 merged the development-plan closeout refresh at `7db890b`.
-- Development Plan R1 Tasks 1-9 and 11-12 have merged; Task 10 is the active implementation slice.
+- PR #223 merged Task 10 launch-scope Blast Feed runtime at `05266e6`.
+- The Task 10 run showed the workflow could become too process-heavy for small/medium slices.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `ACTIONS_SIGNALS` with `UX_UI` Feed companion context |
-| Branch | `feat/launch-scope-blast-card-runtime` |
-| Scope | Runtime/test hardening for launch-scope Blast Feed rows: source projection and Artist Profile `signalId` handoff. |
-| Out of Scope | Travel/Discover transport activation, cross-Uprise Blast cards, provider/db/schema/art changes, product-doctrine changes, merging/closing PR #212. |
-| Owner Contracts | `docs/specs/communities/plot-and-scene-plot.md`, `docs/specs/communities/discovery-scene-switching.md`, `docs/specs/core/signals-and-universal-actions.md` |
-| Companion Docs | `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`, `docs/agent-briefs/UI_CURRENT.md`, `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` |
-| Validation | `pnpm --filter api test -- communities.feed.service.test.ts --runInBand`, `pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.test.ts --runInBand`, `pnpm --filter api typecheck`, `pnpm --filter web typecheck`, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Lane | context-steward / execution-process docs |
+| Branch | `docs/lean-pr-standing-orders` |
+| Scope | Docs/process patch to make the lean PR path the default and keep review/packet gates risk-scaled. |
+| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, merging/closing PR #212. |
+| Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
+| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md` |
+| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
 
@@ -70,7 +69,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `feat/launch-scope-blast-card-runtime` | `7db890b` at branch start | Task 10 launch-scope Blast card runtime |
+| `/home/baris/UPRISE_NEXT` | `docs/lean-pr-standing-orders` | `05266e6` at branch start | Lean PR standing-orders docs/process update |
 
 ### Preserved UX Reference Worktrees
 
@@ -92,16 +91,14 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #222 / `7db890b`: development-plan closeout refresh.
-- Tasks 1-9 and 11-12 from `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` are merged according to branch registry, handoffs, and current runtime/test evidence.
-- Independent Codex plan review passed for Task 10 before implementation.
+- PR #223 / `05266e6`: Task 10 launch-scope Blast Feed runtime merged.
+- Tasks 1-12 from `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` are merged according to branch registry, handoffs, and current runtime/test evidence.
 
 ## Next Queue
 
-1. Finish Task 10 launch-scope Blast card runtime branch.
+1. Finish this lean PR standing-orders branch.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. Run full targeted validation and independent execution review.
-4. After Task 10 merges, run a focused launch vertical-slice smoke pass before expanding deferred Discover/Travel/map/Seek work.
+3. After this docs/process branch, run a focused launch vertical-slice smoke pass before expanding deferred Discover/Travel/map/Seek work.
 
 ## PM Usage Rules For Agents
 
@@ -110,9 +107,10 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 - If this file conflicts with `AGENTS.md`, `AGENTS.md` wins.
 - If this file conflicts with an owner spec or runtime evidence, report the conflict and refresh this file.
 - If a task is tiny and low-risk, do not create a process packet unless it helps.
+- Default to the lean PR path for small/medium slices: scoped implementation, focused validation, required docs only, one bounded review only when behavior/risk justifies it, then merge/auto-merge without CI babysitting.
 - If a task is significant/risky, cross-lane, provider/db/schema/canon/doc-authority work, complex refactor, broad branch/worktree cleanup, prototype branch absorption, or an external-agent handoff, require the execution packet blocks named in the active documentation framework and use an independent reviewer/auditor pass when branch absorption or cleanup risk is non-trivial.
 - For UPRISE first-pass implementation, the packet should define what to build from owner specs/current repo evidence. Do not force source-drift cleanup or excavator framing unless stale/wrong existing behavior is actually in scope.
-- For feature or behavior-changing implementation work, the assigning owner must give the assigned executor a context packet with lane, owner contract, required docs, likely files, known runtime/tests to inspect, validation seed, out-of-scope boundaries, and stop conditions. The assigned executor verifies the packet against current repo evidence before writing the plan.
+- For feature or behavior-changing implementation work, the assigning owner must give the assigned executor enough context to avoid drift: lane, owner contract, required docs, likely files, known runtime/tests to inspect, validation seed, out-of-scope boundaries, and stop conditions. The assigned executor verifies that packet against current repo evidence before writing the plan. Use the full packet/review loop when risk justifies it, not as ceremony for every small change.
 - For review/audit model routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`: Codex subagents are default; `gpt-5.3-codex-spark` handles basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
 - Before creating, assigning, pushing, preserving, merging, closing, or deleting a branch/worktree/workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` and run `pnpm run workspace:audit`.
 
