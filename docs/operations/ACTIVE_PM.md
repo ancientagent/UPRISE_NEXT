@@ -69,7 +69,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `chore/screen-package-agent-flow` | `e808244` | Screen-package agent automation flow update. |
+| `/home/baris/UPRISE_NEXT` | `chore/screen-package-agent-flow` | `HEAD` | Screen-package agent automation flow update. |
 
 ### Preserved UX Reference Worktrees
 
