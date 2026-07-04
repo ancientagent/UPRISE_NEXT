@@ -27,7 +27,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Current `main` HEAD at refresh start: `b81c5f3`
 - Active branch during this refresh: `chore/screen-package-agent-flow`
 - Local worktree state at refresh: screen-package agent automation flow docs/scripts update
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized; draft PR #225 (`chore/screen-package-agent-flow`) is this active slice
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -50,7 +50,7 @@ Recently completed context:
 | Field | Current Value |
 | --- | --- |
 | Lane | context-steward / agent automation / artist-source package seed |
-| Branch | `chore/screen-package-agent-flow` |
+| Branch | `chore/screen-package-agent-flow` / PR #225 |
 | Scope | Add screen-package workflow docs, repo/local skill routing, Artist Profile / Source Dashboard package seed, and `screen-package:flow` runner/test. |
 | Out of Scope | Provider/db/schema/art mutation, runtime app behavior changes, completing all Artist Profile implementation gates, merging/closing draft PR #212. |
 | Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/specs/users/artist-profile-and-source-dashboard.md` |
@@ -64,6 +64,7 @@ Recently completed context:
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
+| #225 | `chore/screen-package-agent-flow` | draft, active | Review/merge after checks; this is the current agent automation flow slice. |
 
 ### Main Worktree
 
@@ -96,7 +97,7 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Next Queue
 
-1. Finish and PR `chore/screen-package-agent-flow`.
+1. Review and merge draft PR #225 for `chore/screen-package-agent-flow`.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 3. After this automation slice, use the screen-package runner to dispatch the Artist Profile / Source Dashboard Dev Spec and Design Spec gates.
 
