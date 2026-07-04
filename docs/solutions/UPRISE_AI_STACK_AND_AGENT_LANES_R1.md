@@ -37,6 +37,16 @@ Route by lane first, tool second.
 5. Require branch/commit evidence, exact scope, stop conditions, and validation evidence.
 6. Promote accepted decisions into owner specs, not only handoffs or chat memory.
 
+## Local Codex Skill Loading Rule
+
+Use local Codex skills as conditional aids, not as a mandatory loading chain.
+
+- Do not load `uprise-skill-router` merely because the workspace is UPRISE. Use it when tool, lane, external-agent, provider/browser, review, or branch-routing choices are unclear.
+- Do not chain `uprise-skill-router` -> `uprise-lane-loader` -> multiple lane briefs for exact-file edits, simple Q&A, or already-scoped docs work.
+- For exact-file or exact-spec tasks, start with `AGENTS.md`, the named file, direct references from that file, and current repo evidence.
+- For non-trivial behavior-changing work, use the execution packet and independent Codex plan-review loop instead of trying to solve context uncertainty by loading more skills.
+- Founder-session and clarification-capture skills are required when material founder wording or product truth could be lost, but they should not create new notes for routine confirmations or rules already settled in owner specs.
+
 ## Tool Stack
 
 | Tool / Agent | Best Use | Avoid Using For | Required Output |

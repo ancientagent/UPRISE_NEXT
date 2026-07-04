@@ -48,6 +48,12 @@ Load only the materials directly needed for the current task:
 - If a task edits runtime behavior, load the matching route/component files and the specific lock that authorizes the change.
 - If a task edits canon/specs, load the exact canon/spec file being changed and any directly referenced authority.
 
+### Skill loading rule
+- Use local Codex skills only when the user request or task risk triggers them; do not load UPRISE routing skills merely because the workspace is UPRISE.
+- For exact-file edits, self-contained Q&A, and already-scoped docs work, prefer `AGENTS.md`, the named file, direct references, and current repo evidence.
+- For broad or ambiguous work, use one UPRISE routing/lane skill to choose the smallest defensible packet, then stop expanding unless evidence is missing, stale, conflicting, or high-risk.
+- For behavior-changing work, use the feature implementation loop and independent Codex plan review instead of loading more skills to compensate for unclear scope.
+
 ### Contract owner rule
 - Cross-system behavior belongs in one owner spec or owner section under `docs/specs/**`.
 - Lane briefs should summarize the current truth and point to the owner contract.

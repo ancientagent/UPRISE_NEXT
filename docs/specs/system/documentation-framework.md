@@ -446,6 +446,25 @@ Use reviewers as second-pass checks, not source of truth. Codex subagents are th
 
 Linear tracks execution state only. Durable product/canon/API/runtime truth remains in owner specs and current repo docs/code/tests. Product ambiguity stops for founder clarification, then the answer must be recorded in the owner spec, founder-session note, handoff, or backlog item named by the task.
 
+## Local Skill Loading Policy
+
+Local Codex skills are routing and discipline aids. They are not a reason to
+bulk-load the platform.
+
+- Trigger skills from the user request, task risk, or a specific workflow need.
+- Do not load broad UPRISE routing skills for every UPRISE turn.
+- For exact-file or exact-spec work, read the named file, direct references,
+  and current repo evidence before expanding to broad routers.
+- For broad, ambiguous, cross-lane, provider/db/schema/canon, branch/worktree,
+  or external-agent work, use the matching UPRISE skill to identify the
+  smallest lane packet and stop there unless evidence requires expansion.
+- For behavior-changing feature work, use the execution packet and independent
+  Codex plan-review loop. More skill loading is not a substitute for a clear
+  owner spec, scoped plan, and reviewer check.
+- Use founder-session or clarification-capture skills when material founder
+  wording/product truth could be lost, but do not create new durable notes for
+  routine acknowledgements or rules already covered by current owner specs.
+
 For large refactors, complex issues, prototype/reference branches, and branch
 cleanup where absorption is uncertain, run an independent reviewer/auditor pass
 before merge/delete decisions. Route that gate to Codex by default: use
