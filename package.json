@@ -69,7 +69,9 @@
     "reliant:plan:seed": "node scripts/reliant-development-plan-seed.mjs",
     "reliant:plan:next": "node scripts/reliant-next-action.mjs --queue .reliant/queue/uprise-development-plan-r1.json --runtime .reliant/runtime/current-task-uprise-development-plan-r1.json",
     "reliant:plan:validate": "node scripts/reliant-slice-queue.mjs validate --queue .reliant/queue/uprise-development-plan-r1.json",
-    "reliant:plan:test": "node scripts/reliant-development-plan-seed.test.mjs && node scripts/reliant-next-action.test.mjs && node scripts/reliant-slice-queue.test.mjs"
+    "reliant:plan:test": "node scripts/reliant-development-plan-seed.test.mjs && node scripts/reliant-next-action.test.mjs && node scripts/reliant-slice-queue.test.mjs",
+    "screen-package:flow": "node scripts/screen-package-flow.mjs",
+    "screen-package:flow:test": "node scripts/screen-package-flow.test.mjs"
   },
   "devDependencies": {
     "@turbo/gen": "^2.0.0",

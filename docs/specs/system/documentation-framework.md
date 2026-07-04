@@ -139,6 +139,24 @@ Rules:
 - This registry is execution state, not product doctrine. It should point to owner specs, PRs, handoffs, and Linear instead of duplicating product rules.
 - Do not create a follow-up PR solely to mark a just-merged operations/registry refresh PR as merged. GitHub/`gh pr view` is live PR truth; `ACTIVE_PM` and the registry are routing snapshots. Update stale self-closing refresh rows in the next real work branch, or immediately only when stale state would misroute, hide an unsafe branch/worktree, or affect branch cleanup.
 
+### Layer 4d: Screen Packages
+
+Purpose: coordinate major screen or flow work without turning temporary planning artifacts into product doctrine.
+
+Files:
+
+- `docs/screen-packages/**`
+
+Rules:
+
+- Use screen packages for complex screens/flows that need shared context across Dev Spec, Design Spec, implementation, art, review, and hardening lanes.
+- Screen packages are execution workspaces. Durable product/API/runtime truth still belongs in owner specs under `docs/specs/**`.
+- Each package should link to owner specs, lane briefs, runtime files, tests, handoffs, and art references instead of copying raw authority documents.
+- Accepted product decisions discovered during package work must be promoted back to the owner spec, then summarized from the package.
+- Do not use the major-screen workflow for tiny docs-only, copy-only, test-only, or isolated low-risk cleanup slices; use the Lean PR Default instead.
+- A package owner or Dev Team Manager owns sequencing, gate status, file/surface ownership, branch/workspace registration, and conflict routing. This role does not own product truth.
+- Use `pnpm run screen-package:flow -- status --package <slug>` to inspect package gates and `pnpm run screen-package:flow -- next --package <slug> --write` to create the next missing artifact template when ready.
+
 ### Layer 5: Legacy / External Imports
 
 Purpose: retain reference material without letting it become accidental current truth.
@@ -164,6 +182,7 @@ Current owner contracts:
 | --- | --- |
 | Music-community preferences, default Home Scene, selector, city move, GPS voting scope | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` |
 | Identity, roles, capabilities, listener/source separation | `docs/specs/users/identity-roles-capabilities.md` |
+| Registrar to Source Dashboard to public Artist Profile lifecycle | `docs/specs/users/artist-profile-and-source-dashboard.md` |
 | Registrar source/capability workflows | `docs/specs/system/registrar.md` |
 | Source registration and source origin | `docs/specs/system/registrar.md#source-origin-contract` |
 | Community activation threshold workflow | `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow` plus `docs/specs/system/registrar.md#city-tier-activation-authority` |
@@ -397,6 +416,27 @@ For each feature or behavior-changing implementation issue, use a fresh executor
 7. When reviewer gates are required, an independent reviewer checks the completed execution against the plan, owner specs, runtime evidence, and validation output. If it fails, return it to the executor with concrete findings; do not merge or close the issue.
 
 This loop prevents an executor from implementing from a thin Linear/chat summary when the current written contract would change the work. It is required for risky behavior-changing work and optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove low risk.
+
+#### Major Screen Package Workflow
+
+Use this workflow for major screens or flows such as Plot, Artist Profile, Source Dashboard, Discover, Registrar, Release Deck, Print Shop, Archive, Events, and player surfaces when the slice needs product narrative, design direction, implementation, assets, and review.
+
+1. The Dev Team Manager/package owner verifies branch/HEAD, dirty state, owner spec, lane briefs, runtime files, tests, registry requirements, and the package folder.
+2. The manager creates one shared instruction packet with scope, out-of-scope rules, authority order, branch/HEAD, file/surface ownership expectations, validation seed, stop conditions, and pass/fail gates.
+3. Dev Spec Agent and Design Spec Agent read the same packet.
+4. Dev Spec Agent writes the implementation-facing spec from current owner specs, runtime, tests, contracts, stale path checks, and validation requirements.
+5. Design Spec Agent writes the UX/design plan for design-owned work only: hierarchy, states, accessibility expectations, responsive behavior, visual direction, and art needs.
+6. A reviewer reviews Dev Spec plus Design Spec together as one spec package and classifies findings as `dev`, `design`, `cross-spec`, `product decision`, `stale`, or `environment`.
+7. Failed findings return to the responsible spec agent. Cross-spec conflicts go to the manager, who resolves by owner specs or stops for founder clarification.
+8. If the spec package passes, the manager assigns implementation lanes with explicit file/surface ownership and confirms whether one branch owner or separate branches/worktrees are required.
+9. Dev Implementation Agent builds dev-owned work from the approved Dev Spec and does not implement design-only assets or invent UI actions.
+10. Design Implementation Agent builds design-owned work from the approved Design Spec and does not alter data contracts, auth rules, API behavior, or action grammar.
+11. Art / Creative Studio receives the approved Design Spec and `art-handoff/` brief only after the design direction is stable enough to avoid asset rework.
+12. Dev and design work are reviewed together after integration, with findings returned to the responsible implementation agent.
+13. Final Hardening Agent handles tests, accessibility, edge states, copy consistency, integration cleanup, regression locks, and polish.
+14. Final closeout happens only after validation, docs/changelog/handoff requirements, branch/worktree state, and PR metadata are complete.
+
+Anti-drift constraints for every major screen package: no design-agent contract invention, no source/listener/admin boundary leaks, no one-off city/community/source behavior, no unapproved placeholder CTAs, no platform-trope imports, no deferred feature revival, and no product truth stored only in the package.
 
 This pre-implementation plan review is not required for tiny surgical docs-only or local cleanup PRs when no product/runtime behavior is being implemented and the branch owner can prove the scope is low-risk. If a docs-only change promotes product truth, changes owner-spec authority, or enables later implementation work, treat it as doc-authority work and use the review gate.
 

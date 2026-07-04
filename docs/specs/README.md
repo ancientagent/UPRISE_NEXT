@@ -5,6 +5,7 @@ Feature and system specifications, organized by module. Specs are the source of 
 ## Structure
 - [`communities/`](./communities/README.md) — Community + geo features (PostGIS, verification, discovery).
 - [`users/`](./users/README.md) — Auth, onboarding, roles, profiles.
+- [`users/artist-profile-and-source-dashboard.md`](./users/artist-profile-and-source-dashboard.md) — `USER-SOURCE-LIFECYCLE` Registrar-to-source-dashboard-to-public-profile lifecycle owner.
 - [`system/`](./system/README.md) — Cross-cutting concerns (logging, analytics, CI/CD, observability).
 - [`media/`](./media/README.md) — Release Deck media eligibility and deferred media pipeline contracts.
 

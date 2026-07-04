@@ -86,6 +86,118 @@ Common pairings:
 Do not use a specialist skill just because it exists. Use it when it materially
 improves correctness, verification, or workflow discipline.
 
+## Slice Profiles
+
+Use one slice profile before lane-specific loading when the task is more than a
+self-contained question or exact-file edit. Profiles decide the workflow shape;
+lanes decide the content packet.
+
+### Feature Slice
+
+Use for behavior-changing UI, API, runtime, player, feed, source, registrar,
+onboarding, or action work.
+
+Start packet:
+
+- Identify the lane from `docs/agent-briefs/CONTEXT_ROUTER.md`.
+- Read the lane brief, owner spec if named by the brief, exact runtime files,
+  and focused tests.
+- Build a small `QA Trace` before planning edits:
+  - current source of the behavior;
+  - upstream producers/API/client/store/state;
+  - downstream screens/components/actions/tests;
+  - docs/spec sections that own the behavior;
+  - stale or parallel paths that might duplicate the feature.
+  Use repo-native tracing (`rg`, `git grep`, imports, route/client/test
+  inspection) rather than legacy app-map/context tools by default.
+- Classify whether the change is new behavior, correction of wrong behavior,
+  visual polish, or docs-only parity.
+- If founder wording changes durable product truth, use
+  `uprise-founder-session-capture` before summarizing and
+  `uprise-founder-clarification-capture` before owner-spec edits.
+
+Default skills:
+
+- Use `superpowers:brainstorming` before creative or behavior work.
+- Use `product-design:get-context` when visible UI/design is part of the slice.
+- Use `superpowers:writing-plans` after the design/requirements are confirmed.
+- Use `superpowers:test-driven-development` for implementation unless the user
+  explicitly scopes the work as a throwaway prototype or docs-only slice.
+- Use `uprise-pr-reviewer` or a Codex reviewer after implementation when the
+  slice changes product/runtime behavior.
+
+Stop conditions:
+
+- Public surface vs source/admin surface is ambiguous.
+- The owner spec does not authorize the behavior.
+- The change touches provider, DB, schema, security, canon, or cross-lane
+  product truth without explicit approval.
+- Existing code appears layered over stale behavior and needs cleanup planning
+  before implementation.
+
+Output before implementation:
+
+```md
+Slice profile: Feature Slice
+Lane:
+Owner contract:
+Runtime files:
+Tests:
+QA Trace:
+Founder clarification needed: yes/no
+Design brief needed: yes/no
+Plan review needed: yes/no
+Out of scope:
+```
+
+### Major Screen Slice
+
+Use for Plot screens, Artist Profile, Source Dashboard, Registrar, Discover,
+Release Deck, Print Shop, Archive, Events, player surfaces, or any screen that
+needs product narrative, visual direction, assets, implementation, and hardening.
+
+Workflow:
+
+1. Manager: verify branch/HEAD, dirty state, owner spec, lane briefs, runtime
+   files, tests, branch/workspace registry requirements, and package folder.
+2. Shared Instruction Packet: create one packet for Dev Spec and Design Spec.
+   Include authority order, scope, out-of-scope rules, file/surface ownership
+   expectations, validation seed, stop conditions, and pass/fail gates.
+3. Dev Spec Agent: trace owner specs, runtime, tests, contracts, stale paths,
+   file ownership, implementation risks, and validation requirements.
+4. Design Spec Agent: create UX/design plan for design-owned work only. It may
+   define hierarchy, states, accessibility expectations, responsive behavior,
+   visual direction, and art needs; it must not invent actions, data contracts,
+   auth rules, navigation, or product doctrine.
+5. Spec Package Review: review Dev Spec plus Design Spec together before
+   implementation. Classify findings as dev, design, cross-spec, product
+   decision, stale, or environment. Failed findings go back to the responsible
+   spec agent; cross-spec conflicts route to the manager and then founder
+   clarification only when owner specs do not settle the rule.
+6. Implementation: after spec-package approval, assign explicit file/surface
+   ownership. Dev implementation owns contracts/runtime/tests; design
+   implementation owns approved UI/design work.
+7. Art/Creative Studio: start only from the approved Design Spec and
+   `art-handoff/` brief, not raw brainstorming.
+8. Integration Review: check dev and design work together against repo authority,
+   approved specs, runtime, tests, and design constraints.
+9. Hardening: tie off tests, accessibility, edge states, copy consistency,
+   integration cleanup, regression locks, validation, and closeout.
+
+Rules:
+
+- Major-screen package artifacts live in `docs/screen-packages/`; durable
+  product truth remains in owner specs under `docs/specs/`.
+- Do not skip straight from idea to UI code for major screens.
+- Do not let Product Design, Creative Studio, or design implementation redefine
+  actions, data contracts, auth rules, navigation, or product doctrine.
+- Do not use this profile for tiny docs-only, copy-only, test-only, or isolated
+  low-risk fixes; use the lean path.
+- Use optional QA/trace checker agents only when manager/reviewer risk calls
+  for them, not as mandatory overhead.
+- Save reusable visual assets in an explicit art/assets folder only when the user
+  asks for asset work or approves the selected design direction.
+
 ## Lane Routing
 
 ### Architecture / Hosted Stack
