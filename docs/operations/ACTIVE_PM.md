@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `9910151` (`docs: refresh PM after first-pass workflow merge`)
-- Active branch during this refresh: `docs/final-pm-closeout-after-workflow-refresh`
-- Local worktree state at refresh: final operations closeout refresh branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #214, PR #215, and PR #216 merged
+- Current `main` HEAD at refresh start: `3ff136a` (`docs: clarify executor review loop protocol (#218)`)
+- Active branch during this refresh: `docs/active-pm-post-executor-loop-refresh`
+- Local worktree state at refresh: post-PR #218 operations refresh branch
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #217 and PR #218 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,17 +35,14 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Final closeout refresh after PR #216 merged.
+- Refresh Active PM and branch registry after PR #218 merged.
 - Return Active PM to a clean next-task signal.
 - Leave draft PR #212 preserved and out of scope.
 
 Recently completed context:
 
-- PR #211 merged the pre-implementation feature-plan review gate at `25e06a2`.
-- PR #213 merged Task 11 source/listener profile boundary locks at `1bcbfa7`.
-- PR #214 merged Task 12 Print Shop source-facing event path locks at `236353e`.
-- PR #215 merged first-pass implementation workflow clarification at `48d56e0`.
-- PR #216 merged post-workflow PM/registry refresh at `9910151`.
+- PR #217 merged the final workflow-refresh operations closeout at `32c763e`.
+- PR #218 merged the executor review loop protocol at `3ff136a`.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
@@ -53,8 +50,8 @@ Recently completed context:
 | Field | Current Value |
 | --- | --- |
 | Lane | `EXTERNAL_TOOLS` / context-steward / execution-process docs |
-| Branch | `docs/final-pm-closeout-after-workflow-refresh` |
-| Scope | Docs-only final operations-state closeout after PR #216 merged. |
+| Branch | `docs/active-pm-post-executor-loop-refresh` |
+| Scope | Docs-only operations-state refresh after PR #218 merged. |
 | Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, per-issue packet files, new PM harness, merging/closing PR #212. |
 | Owner Contracts | none; operations state only |
 | Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
@@ -67,13 +64,12 @@ Recently completed context:
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
-| #216 | `docs/active-pm-post-first-pass-workflow-refresh` | draft opened from this branch | Merge after checks if still operations-doc-only and clean. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/final-pm-closeout-after-workflow-refresh` | `9910151` at branch start | Final PM/registry closeout refresh branch |
+| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-executor-loop-refresh` | `3ff136a` at branch start | Post-PR #218 PM/registry refresh branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -95,16 +91,15 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #213 / `1bcbfa7`: Task 11 source/listener profile boundary locks.
-- PR #214 / `236353e`: Task 12 Print Shop source-facing event path locks.
-- PR #215 / `48d56e0`: first-pass implementation workflow clarification.
-- PR #216 / `9910151`: post-workflow PM/registry refresh.
+- PR #217 / `32c763e`: final workflow-refresh operations closeout.
+- PR #218 / `3ff136a`: executor review loop protocol.
 
 ## Next Queue
 
-1. Finish this final operations closeout refresh branch.
+1. Finish this post-PR #218 operations refresh branch.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. Continue to the next UPRISE Development Plan R1 task selected by the user.
+3. Start the standing-orders / agent-doc lightening audit requested by the user.
+4. After process-doc cleanup, use the executor context-packet/review loop for the next behavior-changing feature slice.
 
 ## PM Usage Rules For Agents
 
@@ -115,6 +110,7 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 - If a task is tiny and low-risk, do not create a process packet unless it helps.
 - If a task is significant/risky, cross-lane, provider/db/schema/canon/doc-authority work, complex refactor, broad branch/worktree cleanup, prototype branch absorption, or an external-agent handoff, require the execution packet blocks named in the active documentation framework and use an independent reviewer/auditor pass when branch absorption or cleanup risk is non-trivial.
 - For UPRISE first-pass implementation, the packet should define what to build from owner specs/current repo evidence. Do not force source-drift cleanup or excavator framing unless stale/wrong existing behavior is actually in scope.
+- For feature or behavior-changing implementation work, the assigning owner must give the assigned executor a context packet with lane, owner contract, required docs, likely files, known runtime/tests to inspect, validation seed, out-of-scope boundaries, and stop conditions. The assigned executor verifies the packet against current repo evidence before writing the plan.
 - For review/audit model routing, use `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`: Codex subagents are default; `gpt-5.3-codex-spark` handles basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
 - Before creating, assigning, pushing, preserving, merging, closing, or deleting a branch/worktree/workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` and run `pnpm run workspace:audit`.
 
