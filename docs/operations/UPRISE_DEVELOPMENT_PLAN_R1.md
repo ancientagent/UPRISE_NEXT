@@ -12,10 +12,10 @@
 
 ## Status Snapshot
 
-- Snapshot date: 2026-07-03
-- Current base: `origin/main` at `5a07d93` (`docs: clarify Feed Travel launch boundary (#197)`)
-- Open PR queue at planning start: none
-- Current branch for this plan: `docs/uprise-development-plan-r1`
+- Snapshot date: 2026-07-04
+- Current base: `origin/main` at `64e65fe` (`docs: lighten UPRISE skill standing orders (#221)`)
+- Open PR queue at refresh: draft PR #212 only (`docs/linear-clean-context-agent-roles`)
+- Current branch for this refresh: `docs/development-plan-closeout-refresh`
 - Provider/database/schema/art state: not touched by this plan
 - Preserved UX references: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`, `feat/ux-batch17`, `feat/ux-batch18-run`
 
@@ -98,7 +98,7 @@ Expected: docs lint passes and no whitespace errors.
 - `docs/agent-briefs/UI_CURRENT.md`
 - `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`
 
-- [ ] **Task 1: Feed Blast card source-link contract tests**
+- [x] **Task 1: Feed Blast card source-link contract tests**
 
 Lock that Blast cards are Feed card types and that the blasted signal links to the signal source. If runtime card code already exists, test the runtime component. If the current repo only has static locks for this surface, add a static regression lock against the owner spec and relevant Plot/feed component.
 
@@ -109,7 +109,7 @@ pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.tes
 pnpm --filter web typecheck
 ```
 
-- [ ] **Task 2: Feed Travel launch-boundary tests**
+- [x] **Task 2: Feed Travel launch-boundary tests**
 
 Lock that `Travel` is allowed in the future outside-Uprise Feed card contract but is not launch-scope and must not appear as general Plot transport. The test must distinguish card/listen loading from `Travel` to Discover/back-door context.
 
@@ -120,7 +120,7 @@ pnpm --filter web test -- plot-ux-regression-lock.test.ts plot-tab-contracts.tes
 pnpm run docs:lint
 ```
 
-- [ ] **Task 3: Plot no-transport boundary tests**
+- [x] **Task 3: Plot no-transport boundary tests**
 
 Lock that Plot top shell, Home Scene selector, profile pull-down, Archive, and Events do not expose map view, Seek mode, saved-Away-scene launchers, or cross-community transport. Plot may switch among registered Home Scene preferences; Discover owns transport.
 
@@ -149,7 +149,7 @@ pnpm --filter web typecheck
 - `docs/specs/media/release-deck-and-eligibility.md`
 - `docs/specs/broadcast/radiyo-and-fair-play.md`
 
-- [ ] **Task 4: Onboarding/Home Scene smoke hardening**
+- [x] **Task 4: Onboarding/Home Scene smoke hardening**
 
 Run or add focused tests for manual-first Home Scene selection, GPS voting authority, GPS denial, proxy assignment, and Home Scene selector read model. Do not touch provider/database state without explicit approval.
 
@@ -160,7 +160,7 @@ pnpm --filter api test -- onboarding.home-scene-resolution.test.ts onboarding.mu
 pnpm --filter web test -- onboarding-regression-lock.test.ts onboarding-review-resolution.test.ts --runInBand
 ```
 
-- [ ] **Task 5: Registrar/source GPS authority hardening**
+- [x] **Task 5: Registrar/source GPS authority hardening**
 
 Verify that Artist/Band source registration requires a GPS-authorized user and that source origin remains separate from listener/proxy assignment. Do not add a listener-side pioneer workflow.
 
@@ -171,7 +171,7 @@ pnpm --filter api test -- registrar.dto.test.ts registrar.controller.test.ts reg
 pnpm --filter api typecheck
 ```
 
-- [ ] **Task 6: Release Deck media eligibility hardening**
+- [x] **Task 6: Release Deck media eligibility hardening**
 
 Verify `3` active music slots per managed Artist/Band source per city-tier community, `6` minute cap per song, and `15` minute active-rotation cap per source. The paid ad attachment is not a fourth music slot. Real upload/transcode remains deferred unless explicitly activated.
 
@@ -197,7 +197,7 @@ pnpm --filter web test -- source-dashboard-shell-lock.test.ts community-artist-p
 - `docs/specs/users/onboarding-home-scene-resolution.md`
 - `docs/specs/broadcast/radiyo-and-fair-play.md`
 
-- [ ] **Task 7: Revalidate activation readiness inside the cutover transaction**
+- [x] **Task 7: Revalidate activation readiness inside the cutover transaction**
 
 Fix the low-risk race noted in code review: diagnostics may remain outside the transaction for admin UX, but the transaction must recompute or validate readiness immediately before scene creation/activation and abort if the tuple is no longer ready.
 
@@ -208,7 +208,7 @@ pnpm --filter api test -- admin-analytics.service.test.ts --runInBand
 pnpm --filter api typecheck
 ```
 
-- [ ] **Task 8: Normalize activation tuple matching**
+- [x] **Task 8: Normalize activation tuple matching**
 
 Use normalized/canonical tuple matching or derive exact mutation keys from the selected diagnostic candidate so casing/spacing drift cannot make diagnostics find rows while source/listener mutations miss them.
 
@@ -225,7 +225,7 @@ pnpm --filter api typecheck
 
 **Owner lanes:** `UX_UI`, `ACTIONS_SIGNALS`, `EVENTS_ARCHIVE`
 
-- [ ] **Task 9: Feed card family inventory**
+- [x] **Task 9: Feed card family inventory**
 
 Inventory current Feed runtime cards against the owner specs. Classify every candidate as launch-scope, beta/deferred, source-facing, or remove/quarantine. Do not implement new card actions during inventory.
 
@@ -253,7 +253,7 @@ pnpm --filter web typecheck
 
 **Owner lanes:** `ARTIST_SOURCE`, `REGISTRAR_GOVERNANCE`, `EVENTS_ARCHIVE`
 
-- [ ] **Task 11: Source Dashboard / listener profile separation pass**
+- [x] **Task 11: Source Dashboard / listener profile separation pass**
 
 Verify source selector and managed-source links live in allowed profile/source seams without placing Release Deck, Print Shop, or Registrar controls in the listener collection body.
 
@@ -264,7 +264,7 @@ pnpm --filter web test -- source-dashboard-shell-lock.test.ts source-account-swi
 pnpm --filter web typecheck
 ```
 
-- [ ] **Task 12: Print Shop source-facing event path**
+- [x] **Task 12: Print Shop source-facing event path**
 
 Verify Print Shop remains source-facing, Plot Events remains read-only, and Archive/Registrar placement remains top Registrar then records/status below.
 
@@ -289,12 +289,11 @@ Do not implement these as launch-critical work unless a new owner-spec update ex
 
 ## Immediate Next Queue
 
-1. Close this plan branch and return to clean `main`.
-2. Start Stage 1 Task 1: Feed Blast card source-link contract tests.
-3. Start Stage 1 Task 2: Feed Travel launch-boundary tests.
-4. Start Stage 1 Task 3: Plot no-transport boundary tests.
-5. Run Stage 2 Task 4 onboarding/Home Scene smoke hardening after Stage 1 locks are merged.
-6. Run Stage 3 Task 7 and Task 8 activation cutover hardening before any provider/staging activation work.
+1. Finish this execution-state refresh branch and return to clean `main`.
+2. Start Stage 4 Task 10: Launch-scope Blast card runtime.
+3. Before Task 10 implementation, use the feature implementation loop: repo-grounded executor plan, independent Codex plan review, then implementation.
+4. Keep `Travel`, Discover transport, cross-Uprise Blast cards, map view, and Seek mode hidden/deferred unless an owner-spec update explicitly activates them.
+5. After Task 10, run a focused launch vertical-slice browser/API smoke pass covering onboarding, Plot Feed, player/profile, source registration, Release Deck limits, Print Shop source path, and activation-readiness diagnostics.
 
 ## Reliant Queue Commands
 
