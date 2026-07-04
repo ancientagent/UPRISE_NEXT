@@ -54,6 +54,14 @@ Each registry entry must answer:
 5. When a PR merges or branch closes, update status to `merged` or `closed` before deleting local/remote refs.
 6. Do not delete unregistered branches/worktrees. First register and classify them, then get explicit approval for deletion if needed.
 
+## Self-Closing Refresh PR Rule
+
+Do not open a follow-up PR solely to mark the operations/registry refresh PR that just merged as `merged`.
+
+This registry is a routing and safety snapshot, not a live database. GitHub/`gh pr view` is the live source for PR state. A self-closing refresh row may remain `open-pr`/`pending` after merge until the next real work branch naturally updates it.
+
+Update stale self-closing rows immediately only when they would misroute the next agent, hide an unsafe branch/worktree, confuse branch deletion, or affect a cleanup decision.
+
 ## Commands
 
 ```bash
@@ -113,6 +121,7 @@ node scripts/workspace-registry.mjs audit --include-remote
 | final-pm-closeout-after-workflow-refresh | branch | docs/final-pm-closeout-after-workflow-refresh | /home/baris/UPRISE_NEXT | PR #217 https://github.com/ancientagent/UPRISE_NEXT/pull/217 | main | 32c763e | merged | Codex local | Codex local | Final operations refresh after PR #216 merged; marks workflow refresh branches closed so Active PM is clean. | 2026-07-03 | merged via PR #217; remote branch deleted |
 | executor-review-loop-protocol | branch | docs/executor-review-loop-protocol | /home/baris/UPRISE_NEXT | PR #218 https://github.com/ancientagent/UPRISE_NEXT/pull/218 | main | 3ff136a | merged | Codex local | Codex local | Clarify UPRISE feature implementation loop: fresh executor gathers repo context and writes plan, independent reviewer checks plan/execution, failed review returns to executor. | 2026-07-03 | merged via PR #218; remote branch deleted |
 | active-pm-post-executor-loop-refresh | branch | docs/active-pm-post-executor-loop-refresh | /home/baris/UPRISE_NEXT | PR #219 https://github.com/ancientagent/UPRISE_NEXT/pull/219 | main | pending | open-pr | Codex local | Codex local | Refresh Active PM and branch workspace registry after PR #218 executor review loop protocol merged. | 2026-07-03 | merge after docs/operations checks pass; stop refresh chain |
+| relaxed-pr-bookkeeping-rule | branch | docs/relaxed-pr-bookkeeping-rule | /home/baris/UPRISE_NEXT | - | main | pending | active | Codex local | Codex local | Document relaxed self-closing PR bookkeeping rule: no follow-up PR solely to close the just-merged refresh row; use GitHub as live PR truth. | 2026-07-03 | update on PR/merge/close/delete |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches

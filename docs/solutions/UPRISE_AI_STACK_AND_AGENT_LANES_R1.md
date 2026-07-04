@@ -344,6 +344,8 @@ Do not create, assign, push, delete, rebase, reset, close, or clean branches/wor
 
 After branch/PR/worktree cleanup or when the active branch changes, refresh `docs/operations/ACTIVE_PM.md` if the next agent would make a different routing decision from the old snapshot, and update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` whenever branch status, assigned agents, scope, or closeout plan changes.
 
+Do not create follow-up PRs solely to close the self-referential row for a just-merged operations/registry refresh. GitHub/`gh` is the live PR-state source; `ACTIVE_PM` and the registry should be accurate enough for routing and safety, not perfect bookkeeping. Clean harmless stale self-closing rows during the next real work branch.
+
 ## Safety Rules
 
 - No provider/env/database mutation without explicit approval.
