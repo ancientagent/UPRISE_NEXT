@@ -2,6 +2,7 @@
 
 Status: docs/process update
 Branch: `docs/lean-pr-standing-orders`
+PR: https://github.com/ancientagent/UPRISE_NEXT/pull/224
 Base: `main` at `05266e6`
 
 ## Summary
