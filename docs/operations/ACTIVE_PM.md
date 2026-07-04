@@ -22,12 +22,12 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-03
+- Snapshot date: 2026-07-04
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `9cc5ee9` (`docs: relax self-closing PR bookkeeping (#220)`)
-- Active branch during this refresh: `docs/lighten-uprise-skill-standing-orders`
-- Local worktree state at refresh: skill standing-orders lightening branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #220 merged
+- Current `main` HEAD at refresh start: `64e65fe` (`docs: lighten UPRISE skill standing orders (#221)`)
+- Active branch during this refresh: `docs/development-plan-closeout-refresh`
+- Local worktree state at refresh: development-plan / Active PM closeout refresh
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #221 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,25 +35,27 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Lighten local UPRISE skill standing orders and repo routing docs.
-- Keep skill loading conditional, lane-scoped, and risk-scaled.
+- Reconcile UPRISE Development Plan R1 and Active PM after PR #221 merged.
+- Mark already-merged Tasks 1-9 and 11-12 accurately so agents do not repeat completed work.
+- Set Stage 4 Task 10 as the next real development signal.
 - Leave draft PR #212 preserved and out of scope.
 
 Recently completed context:
 
-- PR #220 merged the relaxed self-closing PR bookkeeping rule at `9cc5ee9`.
+- PR #221 merged the skill standing-orders lightening rule at `64e65fe`.
+- Development Plan R1 Tasks 1-9 and 11-12 have merged; Task 10 remains the next implementation slice.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | `EXTERNAL_TOOLS` / context-steward / execution-process docs |
-| Branch | `docs/lighten-uprise-skill-standing-orders` |
-| Scope | Docs/process update plus local skill trigger cleanup so UPRISE skills are conditional aids instead of mandatory cascades. |
-| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, per-issue packet files, new PM harness, merging/closing PR #212. |
-| Owner Contracts | `docs/specs/system/documentation-framework.md` |
-| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
+| Lane | context-steward / execution-process docs |
+| Branch | `docs/development-plan-closeout-refresh` |
+| Scope | Docs/operations refresh so the active plan points at remaining development instead of completed Tasks 1-9 and 11-12. |
+| Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, merging/closing PR #212. |
+| Owner Contracts | `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
+| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` |
 | Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
@@ -68,7 +70,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/lighten-uprise-skill-standing-orders` | `9cc5ee9` at branch start | Skill standing-orders lightening branch |
+| `/home/baris/UPRISE_NEXT` | `docs/development-plan-closeout-refresh` | `64e65fe` at branch start | Development-plan / Active PM closeout refresh |
 
 ### Preserved UX Reference Worktrees
 
@@ -90,14 +92,16 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #220 / `9cc5ee9`: relaxed self-closing PR bookkeeping rule.
+- PR #221 / `64e65fe`: skill standing-orders lightening and repo-controlled skill snapshots.
+- Tasks 1-9 and 11-12 from `docs/operations/UPRISE_DEVELOPMENT_PLAN_R1.md` are merged according to branch registry, handoffs, and current runtime/test evidence.
 
 ## Next Queue
 
-1. Finish this skill standing-orders lightening branch.
+1. Finish this development-plan closeout refresh branch.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. Start the standing-orders / agent-doc lightening audit requested by the user.
-4. After process-doc cleanup, use the executor context-packet/review loop for the next behavior-changing feature slice.
+3. Start Stage 4 Task 10: Launch-scope Blast card runtime.
+4. Use the feature implementation loop for Task 10: executor repo review + plan, independent Codex plan review, implementation, targeted tests, and post-implementation review if the slice changes runtime behavior.
+5. After Task 10, run a focused launch vertical-slice smoke pass before expanding deferred Discover/Travel/map/Seek work.
 
 ## PM Usage Rules For Agents
 

@@ -9,6 +9,7 @@
 
 ### Added
 
+- Refreshed Active PM and Development Plan R1 after PR #221 merged, marking completed tasks accurately and setting Stage 4 Task 10 as the next development signal; see `docs/handoff/2026-07-04_development-plan-closeout-refresh.md`.
 - Lightened UPRISE skill standing orders so local Codex skills are conditional, lane-scoped aids instead of mandatory loading cascades; see `docs/handoff/2026-07-03_skill-standing-orders-lightening.md`.
 - Clarified relaxed PR bookkeeping for operations refreshes: use GitHub/`gh` as live PR truth and do not create follow-up PRs solely to close the just-merged refresh row; see `docs/handoff/2026-07-03_relaxed-pr-bookkeeping-rule.md`.
 - Refreshed Active PM and branch workspace registry after PR #218 merged, leaving draft PR #212 preserved and pointing next at the standing-orders / agent-doc lightening audit; see `docs/handoff/2026-07-03_active-pm-post-executor-loop-refresh.md`.
