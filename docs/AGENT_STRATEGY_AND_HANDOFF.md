@@ -77,9 +77,16 @@ Load only the materials directly needed for the current task:
 - Default to one coding agent owning the write path for a branch slice.
 - Other agents should stay read-only unless file ownership is explicitly split.
 
+### Lean PR operating default
+- Default to the smallest safe path: implement the scoped change, run focused validation, open/update the PR, and merge or enable auto-merge when required checks pass.
+- Do not create process loops, extra branch-registry churn, follow-up operations PRs, or repeated CI polling for small/medium slices unless stale state would misroute agents, hide unsafe work, or block cleanup.
+- For behavior-changing work, keep exactly one bounded independent review pass unless the reviewer finds blockers or the slice touches schema/provider/security/canon/high-impact cross-lane behavior.
+- For tiny docs-only or local cleanup work, skip independent review when the branch owner can prove the scope is low-risk and validation is clear.
+- For high-risk work, escalate deliberately: use the execution packet blocks, independent review/QA gates, and heavier Codex model only because the risk requires it.
+
 ### Pre-implementation feature gate
 - Before implementing a feature or behavior-changing UI/API/runtime slice, the executor must review the feature against current repo authority and write a development plan.
-- A separate Codex reviewer must review that development plan before implementation edits begin.
+- A separate Codex reviewer must review that development plan before implementation edits begin when the slice changes product/runtime behavior or carries cross-lane risk; keep this as one bounded pass unless blockers are found.
 - Record the feature review scope and plan-review artifact in the Execution Packet / Executor Readiness blocks from `docs/specs/system/documentation-framework.md`.
 - For each behavior-changing implementation issue, use the loop in `docs/specs/system/documentation-framework.md#feature-implementation-loop`: the PM/current owner gives the assigned executor a context packet with where to look, what to inspect, what to do, what not to do, and validation seed; a fresh executor verifies that packet against repo evidence and writes the plan; the plan is confirmed/corrected; an independent Codex reviewer checks it; the same branch-owning executor implements it; and an independent reviewer either passes the execution or sends concrete findings back to the executor.
 - Tiny surgical docs-only or local cleanup PRs may skip this gate only when no product/runtime behavior is being implemented and the branch owner can prove low risk.
@@ -123,6 +130,8 @@ Before closing a batch or slice:
 - `docs/operations/ACTIVE_PM.md` refreshed when the active branch, PR queue, blockers, preserved worktrees, or next execution signal changed
 - `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` updated when branch/worktree/PR status, assigned agents, scope, or closeout plan changed
 - do not create a follow-up PR solely to mark the just-merged operations/registry refresh PR as merged; use GitHub/`gh` as live PR truth and let the next real work branch clean harmless self-closing stale rows
+- do not chase self-referential branch-head bookkeeping commits; use symbolic branch refs or update the row naturally in the next real work branch
+- do not babysit CI unless a check fails or the user is waiting for a deploy decision; poll once, enable auto-merge when safe, and continue with useful work
 - `pnpm run workspace:audit` passed before push, PR creation, branch cleanup, and closeout
 
 ## Handoff Rules

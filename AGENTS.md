@@ -55,6 +55,7 @@ Load only the minimum additional material required for the task.
 - Prefer current repo truth over stale handoff memory.
 - Do not audit or implement against a mixed uncommitted worktree unless you are the explicit implementation owner.
 - Do not create off-book branches or worktrees. If a branch/worktree exists, it must be registered or explicitly classified for cleanup.
+- Use the lean PR path by default: implement the scoped change, run focused validation, make one bounded review pass only when behavior changes or risk justifies it, open/merge the PR, and avoid extra bookkeeping-only commits or follow-up PRs unless stale state would misroute agents or hide unsafe work.
 - QA findings must be tied to a commit/branch state and fixture/setup context.
 - Classify issues before acting: `bug`, `stale`, `environment`, `fixture/data`, or `product decision`.
 - Use dated handoffs as context, not as higher authority than current code/specs.

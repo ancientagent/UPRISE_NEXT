@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added lean PR standing orders so small/medium UPRISE slices default to focused implementation, focused validation, bounded review only when risk justifies it, and no bookkeeping/CI-watch spirals; see `docs/handoff/2026-07-04_lean-pr-standing-orders.md`.
 - Added launch-scope Blast card runtime hardening so in-community Blast Feed rows project source metadata and can hand listeners into Artist Profile `signalId` playback without activating Travel/Discover transport; see `docs/handoff/2026-07-04_launch-scope-blast-card-runtime-plan.md`.
 - Refreshed Active PM and Development Plan R1 after PR #221 merged, marking completed tasks accurately and setting Stage 4 Task 10 as the next development signal; see `docs/handoff/2026-07-04_development-plan-closeout-refresh.md`.
 - Lightened UPRISE skill standing orders so local Codex skills are conditional, lane-scoped aids instead of mandatory loading cascades; see `docs/handoff/2026-07-03_skill-standing-orders-lightening.md`.
