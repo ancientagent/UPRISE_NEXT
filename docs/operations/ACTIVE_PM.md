@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-04
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `b81c5f3`
-- Active branch during this refresh: `chore/screen-package-agent-flow`
-- Local worktree state at refresh: screen-package agent automation flow docs/scripts update
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized; draft PR #225 (`chore/screen-package-agent-flow`) is this active slice
+- Current `main` HEAD at refresh start: `02bb5b6`
+- Active branch during this refresh: `docs/screen-package-flow-closeout-refresh`
+- Local worktree state at refresh: docs-only PM/registry closeout after PR #225 merged
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -44,18 +44,19 @@ Recently completed context:
 
 - Major-screen workflow was evaluated by the team-manager lane and rated `patch`, not reject.
 - The Artist Profile / Source Dashboard package is the first seeded package for the new workflow.
+- PR #225 merged the screen-package workflow runner and Artist Profile / Source Dashboard seed package into `main`.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | context-steward / agent automation / artist-source package seed |
-| Branch | `chore/screen-package-agent-flow` / PR #225 |
-| Scope | Add screen-package workflow docs, repo/local skill routing, Artist Profile / Source Dashboard package seed, and `screen-package:flow` runner/test. |
-| Out of Scope | Provider/db/schema/art mutation, runtime app behavior changes, completing all Artist Profile implementation gates, merging/closing draft PR #212. |
+| Lane | context-steward / PM closeout |
+| Branch | `docs/screen-package-flow-closeout-refresh` |
+| Scope | Refresh Active PM and branch registry after PR #225 merged; point next agents at the screen-package Dev Spec and Design Spec gates. |
+| Out of Scope | Provider/db/schema/art mutation, runtime app behavior changes, completing Artist Profile implementation gates, merging/closing draft PR #212. |
 | Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/specs/users/artist-profile-and-source-dashboard.md` |
 | Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/screen-packages/**`, `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` |
-| Validation | `pnpm run screen-package:flow:test`, `pnpm run screen-package:flow -- status --package artist-profile-source-dashboard`, `pnpm run docs:lint`, `git diff --check`, `pnpm run workspace:audit` before push/PR |
+| Validation | `pnpm run screen-package:flow -- status --package artist-profile-source-dashboard`, `pnpm run docs:lint`, `git diff --check`, `pnpm run workspace:audit` before push/PR |
 
 ## Current Branch / Worktree State
 
@@ -64,13 +65,12 @@ Recently completed context:
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
-| #225 | `chore/screen-package-agent-flow` | draft, active | Review/merge after checks; this is the current agent automation flow slice. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `chore/screen-package-agent-flow` | `HEAD` | Screen-package agent automation flow update. |
+| `/home/baris/UPRISE_NEXT` | `docs/screen-package-flow-closeout-refresh` | `HEAD` | Docs-only PM/registry closeout after screen-package flow merge. |
 
 ### Preserved UX Reference Worktrees
 
@@ -92,14 +92,22 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #224 / lean PR standing orders was absorbed into current `main` before this slice.
-- Current slice registered as `screen-package-agent-flow` in `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`.
+- PR #224 / lean PR standing orders was absorbed into `main`.
+- PR #225 / screen-package agent flow merged into `main` at `02bb5b6`.
+- Current closeout slice registered as `screen-package-flow-closeout-refresh` in `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`.
 
 ## Next Queue
 
-1. Review and merge draft PR #225 for `chore/screen-package-agent-flow`.
+1. Merge this PM/registry closeout refresh.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. After this automation slice, use the screen-package runner to dispatch the Artist Profile / Source Dashboard Dev Spec and Design Spec gates.
+3. Use the screen-package runner to dispatch the Artist Profile / Source Dashboard Dev Spec and Design Spec gates:
+
+```bash
+pnpm run screen-package:flow -- status --package artist-profile-source-dashboard
+pnpm run screen-package:flow -- next --package artist-profile-source-dashboard
+```
+
+Current next signal: write `docs/screen-packages/artist-profile-source-dashboard/spec/dev-spec.md`, then write `docs/screen-packages/artist-profile-source-dashboard/design-spec/ux-plan.md`, then run the spec-package review gate.
 
 ## PM Usage Rules For Agents
 
