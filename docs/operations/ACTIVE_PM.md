@@ -24,10 +24,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-03
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `3ff136a` (`docs: clarify executor review loop protocol (#218)`)
-- Active branch during this refresh: `docs/active-pm-post-executor-loop-refresh`
-- Local worktree state at refresh: post-PR #218 operations refresh branch
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #217 and PR #218 merged
+- Current `main` HEAD at refresh start: `9cc5ee9` (`docs: relax self-closing PR bookkeeping (#220)`)
+- Active branch during this refresh: `docs/lighten-uprise-skill-standing-orders`
+- Local worktree state at refresh: skill standing-orders lightening branch
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) only; PR #220 merged
 - Provider/db/schema/art state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,14 +35,13 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Refresh Active PM and branch registry after PR #218 merged.
-- Return Active PM to a clean next-task signal.
+- Lighten local UPRISE skill standing orders and repo routing docs.
+- Keep skill loading conditional, lane-scoped, and risk-scaled.
 - Leave draft PR #212 preserved and out of scope.
 
 Recently completed context:
 
-- PR #217 merged the final workflow-refresh operations closeout at `32c763e`.
-- PR #218 merged the executor review loop protocol at `3ff136a`.
+- PR #220 merged the relaxed self-closing PR bookkeeping rule at `9cc5ee9`.
 - Draft PR #212 remains open for Linear clean-context agent roles and is not priority unless explicitly resumed.
 
 ## Active Slice
@@ -50,11 +49,11 @@ Recently completed context:
 | Field | Current Value |
 | --- | --- |
 | Lane | `EXTERNAL_TOOLS` / context-steward / execution-process docs |
-| Branch | `docs/active-pm-post-executor-loop-refresh` |
-| Scope | Docs-only operations-state refresh after PR #218 merged. |
+| Branch | `docs/lighten-uprise-skill-standing-orders` |
+| Scope | Docs/process update plus local skill trigger cleanup so UPRISE skills are conditional aids instead of mandatory cascades. |
 | Out of Scope | Runtime behavior changes, provider/db/schema/art changes, product-doctrine changes, per-issue packet files, new PM harness, merging/closing PR #212. |
-| Owner Contracts | none; operations state only |
-| Companion Docs | `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
+| Owner Contracts | `docs/specs/system/documentation-framework.md` |
+| Companion Docs | `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` |
 | Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
 
 ## Current Branch / Worktree State
@@ -69,7 +68,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/active-pm-post-executor-loop-refresh` | `3ff136a` at branch start | Post-PR #218 PM/registry refresh branch |
+| `/home/baris/UPRISE_NEXT` | `docs/lighten-uprise-skill-standing-orders` | `9cc5ee9` at branch start | Skill standing-orders lightening branch |
 
 ### Preserved UX Reference Worktrees
 
@@ -91,12 +90,11 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #217 / `32c763e`: final workflow-refresh operations closeout.
-- PR #218 / `3ff136a`: executor review loop protocol.
+- PR #220 / `9cc5ee9`: relaxed self-closing PR bookkeeping rule.
 
 ## Next Queue
 
-1. Finish this post-PR #218 operations refresh branch.
+1. Finish this skill standing-orders lightening branch.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
 3. Start the standing-orders / agent-doc lightening audit requested by the user.
 4. After process-doc cleanup, use the executor context-packet/review loop for the next behavior-changing feature slice.

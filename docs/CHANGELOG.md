@@ -9,6 +9,7 @@
 
 ### Added
 
+- Lightened UPRISE skill standing orders so local Codex skills are conditional, lane-scoped aids instead of mandatory loading cascades; see `docs/handoff/2026-07-03_skill-standing-orders-lightening.md`.
 - Clarified relaxed PR bookkeeping for operations refreshes: use GitHub/`gh` as live PR truth and do not create follow-up PRs solely to close the just-merged refresh row; see `docs/handoff/2026-07-03_relaxed-pr-bookkeeping-rule.md`.
 - Refreshed Active PM and branch workspace registry after PR #218 merged, leaving draft PR #212 preserved and pointing next at the standing-orders / agent-doc lightening audit; see `docs/handoff/2026-07-03_active-pm-post-executor-loop-refresh.md`.
 - Clarified the behavior-changing feature implementation loop: a fresh executor gathers repo context and writes the plan, an independent Codex reviewer checks the plan, the same branch-owning executor implements, and failed execution review returns to the executor; see `docs/handoff/2026-07-03_executor-review-loop-protocol.md`.

@@ -1,0 +1,6 @@
+interface:
+  display_name: "UPRISE Skill Router"
+  short_description: "Route broad UPRISE tool and lane choices"
+  default_prompt: "Use $uprise-skill-router to choose the smallest UPRISE lane/tool packet for broad or ambiguous work."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,6 @@
+interface:
+  display_name: "UPRISE Review Routing"
+  short_description: "Route Codex-first reviews and Hermes fallback"
+  default_prompt: "Use $uprise-hermes-session-routing to choose Codex-first review/audit routing or explicit Hermes fallback/watchdog handling."
+policy:
+  allow_implicit_invocation: false
