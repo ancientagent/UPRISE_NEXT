@@ -41,7 +41,8 @@ Status: active package source map
 - `apps/web/__tests__/source-account-switcher-lock.test.ts`
 - `apps/web/__tests__/release-deck-shell-lock.test.ts`
 - `apps/web/__tests__/release-deck-validation.test.ts`
-- `apps/api/test/registrar.artist.service.test.ts`
+- `apps/api/test/registrar.controller.test.ts`
+- `apps/api/test/registrar.service.test.ts`
 - `apps/api/test/artist-bands.service.test.ts`
 - `apps/api/test/tracks.service.test.ts`
 

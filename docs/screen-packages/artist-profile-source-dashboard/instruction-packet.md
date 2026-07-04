@@ -43,7 +43,8 @@ Build the Artist Profile / Source Dashboard post-registration screen package wit
 - `apps/web/__tests__/source-account-switcher-lock.test.ts`
 - `apps/web/__tests__/release-deck-shell-lock.test.ts`
 - `apps/web/__tests__/release-deck-validation.test.ts`
-- `apps/api/test/registrar.artist.service.test.ts`
+- `apps/api/test/registrar.controller.test.ts`
+- `apps/api/test/registrar.service.test.ts`
 - `apps/api/test/artist-bands.service.test.ts`
 - `apps/api/test/tracks.service.test.ts`
 
@@ -71,7 +72,7 @@ Art / Creative Studio receives `art-handoff/creative-brief.md` only after Design
 ## Validation Seed
 
 - `pnpm --filter web test -- community-artist-page-lock.test.ts source-dashboard-shell-lock.test.ts source-account-switcher-lock.test.ts release-deck-shell-lock.test.ts release-deck-validation.test.ts`
-- `pnpm --filter api test -- registrar.artist.service.test.ts artist-bands.service.test.ts tracks.service.test.ts --runInBand`
+- `pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts artist-bands.service.test.ts tracks.service.test.ts --runInBand`
 - `pnpm --filter web typecheck`
 - `pnpm run docs:lint`
 - `git diff --check`
