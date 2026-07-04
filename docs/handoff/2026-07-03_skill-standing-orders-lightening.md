@@ -35,9 +35,20 @@ Lightened UPRISE agent/skill routing so local Codex skills are conditional aids 
 - `docs/CHANGELOG.md`
   - Added Unreleased entry for this process/tooling update.
 
-## Local Skill Files Updated
+## Repo-Controlled Skill Snapshots Added
 
-These files live outside the repo under `/home/baris/.codex/skills/` and are not committed in this branch:
+Added repo-visible snapshots under `docs/solutions/codex-skills/` so local skill
+behavior can be reproduced by future agents:
+
+- `docs/solutions/codex-skills/README.md`
+- `docs/solutions/codex-skills/uprise-skill-router/SKILL.md`
+- `docs/solutions/codex-skills/uprise-lane-loader/SKILL.md`
+- `docs/solutions/codex-skills/uprise-founder-clarification-capture/SKILL.md`
+- `docs/solutions/codex-skills/uprise-founder-session-capture/SKILL.md`
+- `docs/solutions/codex-skills/uprise-branch-pr-hygiene/SKILL.md`
+
+The matching runtime local skill files were also refreshed under
+`/home/baris/.codex/skills/`:
 
 - `uprise-skill-router/SKILL.md`
   - Description no longer triggers for every `/home/baris/UPRISE_NEXT` task.
@@ -83,5 +94,7 @@ Results:
 - `workspace:audit` passed.
 - `git diff --check` passed.
 - Local skill validation passed for all five edited UPRISE skill directories.
+- Repo-controlled skill snapshots were copied from the validated local skill
+  files and committed under `docs/solutions/codex-skills/`.
 
 No provider, DB, schema, runtime, or art state was touched.

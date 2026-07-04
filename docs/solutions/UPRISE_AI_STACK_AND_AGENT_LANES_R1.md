@@ -47,6 +47,12 @@ Use local Codex skills as conditional aids, not as a mandatory loading chain.
 - For non-trivial behavior-changing work, use the execution packet and independent Codex plan-review loop instead of trying to solve context uncertainty by loading more skills.
 - Founder-session and clarification-capture skills are required when material founder wording or product truth could be lost, but they should not create new notes for routine confirmations or rules already settled in owner specs.
 
+Repo-controlled snapshots of durable UPRISE local skill changes live under
+`docs/solutions/codex-skills/`. When a local UPRISE skill change should become
+team behavior, update that snapshot folder in the same branch so another agent
+or machine can refresh `/home/baris/.codex/skills/` without relying on chat
+memory.
+
 ## Tool Stack
 
 | Tool / Agent | Best Use | Avoid Using For | Required Output |
