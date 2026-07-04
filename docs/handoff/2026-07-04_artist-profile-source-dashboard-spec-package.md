@@ -15,6 +15,13 @@ Advanced the Artist Profile / Source Dashboard screen package through three pack
 
 The spec-package reviewer returned `Decision: pass`, so the package is approved to move to implementation planning. No runtime code, provider state, DB/schema/migrations, or art assets were changed.
 
+After the initial package review, two separate `gpt-5.5` / `reasoning_effort=xhigh` reviewers were run:
+
+- Dev Spec xhigh review: `docs/screen-packages/artist-profile-source-dashboard/review/dev-spec-xhigh-review.md`
+- Design Spec xhigh review: `docs/screen-packages/artist-profile-source-dashboard/review/design-spec-xhigh-review.md`
+
+Both xhigh reviews returned `Decision: pass`.
+
 ## Files Changed
 
 - `docs/screen-packages/artist-profile-source-dashboard/README.md`
@@ -23,6 +30,8 @@ The spec-package reviewer returned `Decision: pass`, so the package is approved 
 - `docs/screen-packages/artist-profile-source-dashboard/spec/dev-spec.md`
 - `docs/screen-packages/artist-profile-source-dashboard/design-spec/ux-plan.md`
 - `docs/screen-packages/artist-profile-source-dashboard/review/spec-package-review.md`
+- `docs/screen-packages/artist-profile-source-dashboard/review/dev-spec-xhigh-review.md`
+- `docs/screen-packages/artist-profile-source-dashboard/review/design-spec-xhigh-review.md`
 - `docs/operations/ACTIVE_PM.md`
 - `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`
 - `docs/CHANGELOG.md`
@@ -45,6 +54,12 @@ The spec-package reviewer returned `Decision: pass`, so the package is approved 
 - No blocking required fixes before implementation planning.
 - Follow-up: implementation planning should include behavior-level rendered/integration tests because current web locks are mostly file-content/route-contract guards.
 - Follow-up: if Print Shop runtime is touched, expand evidence to `apps/web/src/app/print-shop/page.tsx`, `apps/api/src/events/print-shop.controller.ts`, and `docs/specs/economy/print-shop-and-promotions.md` before edits.
+
+The separate xhigh reviews record:
+
+- Dev Spec: no blocker/high/medium findings; safe to merge as a planning artifact.
+- Design Spec: no blocker/high/medium/low findings; safe to merge as a planning artifact.
+- Shared implementation follow-up: future implementation must add behavior-level rendered/integration tests and avoid implying shared `RADIYO` mutation from Artist Profile direct-listen rows unless a future spec/test explicitly authorizes it.
 
 ## Cleanup Included
 
