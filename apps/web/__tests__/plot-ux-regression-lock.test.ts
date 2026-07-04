@@ -656,7 +656,8 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).toContain(
       'return `/artist-bands/${source.id}?trackId=${item.entity.id}`;'
     );
-    expect(seedFeedSource).toContain('{trackHref ? (');
+    expect(seedFeedSource).toContain('const itemHref = trackHref ?? blastHref;');
+    expect(seedFeedSource).toContain('{itemHref ? (');
     expect(seedFeedSource).not.toContain('Collect from this listening context');
   });
 
@@ -679,12 +680,19 @@ describe('/plot UX regression lock', () => {
     expect(seedFeedSource).toContain(
       'function sourceFromMetadata(item: CommunityFeedItem): { id: string; name: string } | null'
     );
+    expect(seedFeedSource).toContain('function blastSignalHref(item: CommunityFeedItem): string | null');
     expect(seedFeedSource).toContain('const source = sourceFromMetadata(item);');
+    expect(seedFeedSource).toContain("if (item.type !== 'blast' || item.entity.type !== 'signal') return null;");
+    expect(seedFeedSource).toContain('return `/artist-bands/${source.id}?signalId=${item.entity.id}`;');
+    expect(seedFeedSource).toContain('const blastHref = blastSignalHref(item);');
+    expect(seedFeedSource).toContain('const itemHref = trackHref ?? blastHref;');
     expect(seedFeedSource).toMatch(
-      /trackHref && source \? \(\s*source\.name\s*\) : source \? \(\s*<Link className="underline underline-offset-2" href=\{`\/artist-bands\/\$\{source\.id\}`\}>/
+      /itemHref && source \? \(\s*source\.name\s*\) : source \? \(\s*<Link className="underline underline-offset-2" href=\{`\/artist-bands\/\$\{source\.id\}`\}>/
     );
+    expect(seedFeedSource).toContain('itemHref ? (');
     expect(seedFeedSource).not.toContain('data-slot="plot-blast-panel"');
     expect(seedFeedSource).not.toContain('data-slot="blast-destination"');
+    expect(seedFeedSource).not.toContain('blastTravelHref');
   });
 
   it('keeps Feed-card Travel as future contract language without launch-runtime activation', () => {

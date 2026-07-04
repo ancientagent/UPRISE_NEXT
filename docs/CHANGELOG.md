@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added launch-scope Blast card runtime hardening so in-community Blast Feed rows project source metadata and can hand listeners into Artist Profile `signalId` playback without activating Travel/Discover transport; see `docs/handoff/2026-07-04_launch-scope-blast-card-runtime-plan.md`.
 - Refreshed Active PM and Development Plan R1 after PR #221 merged, marking completed tasks accurately and setting Stage 4 Task 10 as the next development signal; see `docs/handoff/2026-07-04_development-plan-closeout-refresh.md`.
 - Lightened UPRISE skill standing orders so local Codex skills are conditional, lane-scoped aids instead of mandatory loading cascades; see `docs/handoff/2026-07-03_skill-standing-orders-lightening.md`.
 - Clarified relaxed PR bookkeeping for operations refreshes: use GitHub/`gh` as live PR truth and do not create follow-up PRs solely to close the just-merged refresh row; see `docs/handoff/2026-07-03_relaxed-pr-bookkeeping-rule.md`.

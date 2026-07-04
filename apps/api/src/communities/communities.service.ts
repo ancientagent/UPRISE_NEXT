@@ -390,6 +390,31 @@ export class CommunitiesService {
     return null;
   }
 
+  private extractSignalArtistBandProjection(signalMetadata: Record<string, unknown> | null) {
+    if (!signalMetadata) return null;
+
+    const artistBandId = signalMetadata.artistBandId;
+    if (typeof artistBandId !== 'string' || !artistBandId.trim()) {
+      return null;
+    }
+
+    const nameCandidates = [
+      signalMetadata.artistBandName,
+      signalMetadata.artist,
+      signalMetadata.artistName,
+    ];
+    const name = nameCandidates.find(
+      (candidate): candidate is string => typeof candidate === 'string' && candidate.trim().length > 0,
+    );
+
+    if (!name) return null;
+
+    return {
+      id: artistBandId.trim(),
+      name: name.trim(),
+    };
+  }
+
   private async resolveTrackArtistBand(
     artistBandId: string | null,
     communityId: string | null,
@@ -1790,17 +1815,23 @@ export class CommunitiesService {
     ]);
 
     const feedItems: CommunityFeedItem[] = [
-      ...blastActions.map((action: any) => ({
-        id: `blast:${action.id}`,
-        type: 'blast' as const,
-        occurredAt: action.createdAt,
-        actor: action.user,
-        entity: { type: 'signal' as const, id: action.signalId },
-        metadata: {
-          signalType: action.signal.type,
-          signalMetadata: action.signal.metadata as Record<string, unknown> | null,
-        },
-      })),
+      ...blastActions.map((action: any) => {
+        const signalMetadata = action.signal.metadata as Record<string, unknown> | null;
+        const artistBand = this.extractSignalArtistBandProjection(signalMetadata);
+
+        return {
+          id: `blast:${action.id}`,
+          type: 'blast' as const,
+          occurredAt: action.createdAt,
+          actor: action.user,
+          entity: { type: 'signal' as const, id: action.signalId },
+          metadata: {
+            signalType: action.signal.type,
+            signalMetadata,
+            ...(artistBand ? { artistBand } : {}),
+          },
+        };
+      }),
       ...trackReleases.map((track: any) => ({
         id: `track_release:${track.id}`,
         type: 'track_release' as const,

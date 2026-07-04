@@ -68,6 +68,15 @@ function artistTrackHref(item: CommunityFeedItem): string | null {
   return `/artist-bands/${source.id}?trackId=${item.entity.id}`;
 }
 
+function blastSignalHref(item: CommunityFeedItem): string | null {
+  if (item.type !== 'blast' || item.entity.type !== 'signal') return null;
+
+  const source = sourceFromMetadata(item);
+  if (!source) return null;
+
+  return `/artist-bands/${source.id}?signalId=${item.entity.id}`;
+}
+
 function discoverSignalArtistBandId(signal: DiscoverSignalResult): string | null {
   if (signal.artistBandId) return signal.artistBandId;
   const metadata = signal.metadata;
@@ -628,6 +637,8 @@ export default function SeedFeedPanel({
           {items.map((item, index) => {
             const source = sourceFromMetadata(item);
             const trackHref = artistTrackHref(item);
+            const blastHref = blastSignalHref(item);
+            const itemHref = trackHref ?? blastHref;
             const content = (
               <>
                 <div className="min-w-0 flex-1">
@@ -636,13 +647,13 @@ export default function SeedFeedPanel({
                     <span className="text-black/60">
                       {' '}
                       by{' '}
-                      {trackHref && source ? (
+                      {itemHref && source ? (
                         source.name
                       ) : source ? (
                         <Link className="underline underline-offset-2" href={`/artist-bands/${source.id}`}>
                           {source.name}
                         </Link>
-                      ) : item.actor && !trackHref ? (
+                      ) : item.actor && !itemHref ? (
                         <Link className="underline underline-offset-2" href={`/users/${item.actor.id}`}>
                           {formatActor(item.actor)}
                         </Link>
@@ -662,8 +673,8 @@ export default function SeedFeedPanel({
             return (
               <Fragment key={item.id}>
                 <li key={item.id} className="plot-wire-list-item">
-                  {trackHref ? (
-                    <Link href={trackHref} className="flex items-start justify-between gap-3">
+                  {itemHref ? (
+                    <Link href={itemHref} className="flex items-start justify-between gap-3">
                       {content}
                     </Link>
                   ) : (
