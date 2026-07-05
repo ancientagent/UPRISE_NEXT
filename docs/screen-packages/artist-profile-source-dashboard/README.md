@@ -17,12 +17,18 @@ This package is an execution workspace. Product truth remains in owner specs und
 - `source-map.md` — repo authority, runtime, tests, and handoff links.
 - `workflow-evaluation.md` — team-manager evaluation of the proposed workflow.
 - `spec/dev-spec.md` — passed Dev Spec gate for runtime/API/test/file-ownership trace.
+- `spec/source-dashboard-release-deck-readiness-dev-spec.md` — executor-ready Dev Spec for the `Source Dashboard Release Deck Readiness Slice`.
 - `design-spec/ux-plan.md` — passed Design Spec gate for UX hierarchy, states, accessibility, responsive behavior, and art needs.
+- `design-spec/artist-dashboard-design-inventory.md` — Product Design inventory and handoff for the next Source Dashboard / Release Deck readiness Dev Spec.
+- `design-spec/public-artist-profile-design-inventory.md` — Product Design inventory for the listener-facing public Artist Profile content, states, later lanes, and visual handoff.
+- `design-spec/source-dashboard-management-shell-layout-brief.md` — focused Product Design layout brief for the source-management shell mockup, including Profile, Releases, Calendar, release metrics, and the fourth paid ad spot.
 - `review/spec-package-review.md` — `Decision: pass`; approves moving to implementation.
 
 ## Next Signal
 
 Pick one small vertical section from the passed Dev Spec / Design Spec package and implement it with focused validation. If scope is not obvious, create `implementation/slice-contract.md` first.
+
+Current recommended next slice: implement the `Source Dashboard Release Deck Readiness Slice` from `spec/source-dashboard-release-deck-readiness-dev-spec.md`.
 
 Optional artifacts remain available when risk requires them:
 
