@@ -8,7 +8,12 @@ import { getArtistBandProfile } from '@/lib/artist-bands/client';
 import { api } from '@/lib/api';
 import { createTrack } from '@/lib/tracks/client';
 import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
-import { buildReleaseDeckTrackPayload } from '@/lib/source/release-deck-validation';
+import {
+  buildReleaseDeckTrackPayload,
+  getReleaseDeckReadiness,
+  getReleaseDeckSubmitBlockReason,
+  releaseDeckMissingHomeSceneMessage,
+} from '@/lib/source/release-deck-validation';
 import type { CurrentUserSourceProfile } from '@/lib/source/types';
 import { useAuthStore } from '@/store/auth';
 import { useSourceAccountStore } from '@/store/source-account';
@@ -41,6 +46,7 @@ export default function ReleaseDeckPage() {
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<ReleaseDeckFormState>(emptyForm);
+  const [loadedTrackId, setLoadedTrackId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -115,19 +121,36 @@ export default function ReleaseDeckPage() {
     };
   }, [activeSourceId, activeSourceUserId, clearActiveSourceId, token, user?.id]);
 
+  const sourceContextBelongsToCurrentUser = Boolean(activeSourceId && user?.id && activeSourceUserId === user.id);
   const activeSource = useMemo(
-    () => currentUserProfile?.managedArtistBands.find((source) => source.id === activeSourceId) ?? null,
-    [activeSourceId, currentUserProfile?.managedArtistBands],
+    () =>
+      sourceContextBelongsToCurrentUser
+        ? currentUserProfile?.managedArtistBands.find((source) => source.id === activeSourceId) ?? null
+        : null,
+    [activeSourceId, currentUserProfile?.managedArtistBands, sourceContextBelongsToCurrentUser],
   );
 
   const currentDeckTracks = useMemo(() => sourceProfile?.tracks.slice(0, 3) ?? [], [sourceProfile?.tracks]);
   const communityId = sourceProfile?.homeScene?.id ?? null;
+  const readiness = useMemo(
+    () =>
+      getReleaseDeckReadiness({
+        activeSourceId: activeSourceId ?? '',
+        communityId,
+        tracks: sourceProfile?.tracks ?? [],
+      }),
+    [activeSourceId, communityId, sourceProfile?.tracks],
+  );
+  const loadedTrack = useMemo(
+    () => sourceProfile?.tracks.find((track) => track.id === loadedTrackId) ?? null,
+    [loadedTrackId, sourceProfile?.tracks],
+  );
   const homeSceneLabel = sourceProfile?.homeScene
     ? `${sourceProfile.homeScene.city}, ${sourceProfile.homeScene.state} • ${sourceProfile.homeScene.musicCommunity}`
     : 'Home Scene unavailable';
 
   async function reloadSourceProfile() {
-    if (!token || !activeSourceId) return;
+    if (!token || !activeSourceId || !sourceContextBelongsToCurrentUser) return;
     const refreshed = await getArtistBandProfile(activeSourceId, token);
     setSourceProfile(refreshed);
   }
@@ -135,14 +158,29 @@ export default function ReleaseDeckPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!token || !activeSource || !communityId) {
-      setSubmitError('An active source with a resolved Home Scene is required before releasing a single.');
+    const currentSourceContext = useSourceAccountStore.getState();
+    const sourceStillBelongsToCurrentUser = Boolean(
+      activeSource &&
+        user?.id &&
+        currentSourceContext.activeSourceId === activeSource.id &&
+        currentSourceContext.activeSourceUserId === user.id,
+    );
+
+    if (!token || !activeSource || !sourceStillBelongsToCurrentUser) {
+      setSubmitError('Select a source account before opening Release Deck.');
       return;
     }
 
     let payload: CreateTrackInput;
     try {
+      if (!communityId) {
+        throw new Error(releaseDeckMissingHomeSceneMessage);
+      }
       payload = buildReleaseDeckTrackPayload(form, activeSource, communityId);
+      const submitBlockReason = getReleaseDeckSubmitBlockReason(readiness, payload.duration);
+      if (submitBlockReason) {
+        throw new Error(submitBlockReason);
+      }
     } catch (validationError: unknown) {
       setSubmitError(validationError instanceof Error ? validationError.message : 'Release Deck validation failed.');
       return;
@@ -216,6 +254,10 @@ export default function ReleaseDeckPage() {
                 <span className="plot-wire-chip">Music slots: 3</span>
                 <span className="plot-wire-chip">Single cap: 6 min</span>
                 <span className="plot-wire-chip">Source cap: 15 min</span>
+                <span className="plot-wire-chip">
+                  Active source time: {Math.floor(readiness.activeDurationSeconds / 60)}:
+                  {String(Math.floor(readiness.activeDurationSeconds % 60)).padStart(2, '0')} / 15:00
+                </span>
                 <span className="plot-wire-chip">Paid ad slot: defined, not active here</span>
                 <span className="plot-wire-chip">Home Scene: {homeSceneLabel}</span>
               </div>
@@ -238,6 +280,57 @@ export default function ReleaseDeckPage() {
               </Button>
             </div>
           </div>
+        </section>
+
+        <section className="plot-wire-card p-6">
+          <p className="plot-wire-label">Release Deck Readiness</p>
+          <div className="mt-3 grid gap-3 md:grid-cols-3">
+            <div className="rounded-[1rem] border border-black bg-[#f7f1df] px-4 py-4 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.18)]">
+              <p className="plot-wire-label">Music Slots</p>
+              <p className="mt-2 text-lg font-semibold text-black">
+                {readiness.sourceOwnedReadyTrackCount} / 3 source-owned ready
+              </p>
+              <p className="mt-1 text-xs text-black/60">
+                {readiness.openMusicSlots > 0
+                  ? `${readiness.openMusicSlots} music slot${readiness.openMusicSlots === 1 ? '' : 's'} still open.`
+                  : 'Cap reached: 3 active music slots are already filled.'}
+              </p>
+            </div>
+            <div className="rounded-[1rem] border border-black bg-[#f7f1df] px-4 py-4 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.18)]">
+              <p className="plot-wire-label">Active Source Cap</p>
+              <p className="mt-2 text-lg font-semibold text-black">
+                {Math.floor(readiness.activeDurationSeconds / 60)}:
+                {String(Math.floor(readiness.activeDurationSeconds % 60)).padStart(2, '0')} / 15:00
+              </p>
+              <p className="mt-1 text-xs text-black/60">
+                {readiness.isAtActiveSourceCap
+                  ? 'Cap reached: this source is at the fifteen-minute active limit.'
+                  : 'Submit still checks the fifteen-minute active-source cap before the API call.'}
+              </p>
+            </div>
+            <div className="rounded-[1rem] border border-black bg-[#f7f1df] px-4 py-4 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.18)]">
+              <p className="plot-wire-label">Testing Visibility</p>
+              <p className="mt-2 text-lg font-semibold text-black">
+                {readiness.readyForTesting ? 'Ready for Fair Play/player testing' : 'Not ready for testing yet'}
+              </p>
+              <p className="mt-1 text-xs text-black/60">
+                {readiness.missingHomeScene
+                  ? 'Testing visibility needs a resolved source Home Scene.'
+                  : readiness.readyForTesting
+                    ? 'At least one source-owned ready track can be used by downstream Fair Play/player tests; Release Deck does not control rotation ordering.'
+                    : 'Testing visibility needs a source-owned ready track.'}
+              </p>
+            </div>
+          </div>
+          {readiness.capReached ? (
+            <p className="mt-4 text-sm text-red-700">
+              Cap reached: this screen will not silently replace existing tracks or create an extra active music slot.
+              Choose a different active song combination when replacement tooling is specified.
+            </p>
+          ) : null}
+          {readiness.missingHomeScene ? (
+            <p className="mt-4 text-sm text-red-700">{releaseDeckMissingHomeSceneMessage}</p>
+          ) : null}
         </section>
 
         <section className="plot-wire-card p-6">
@@ -289,6 +382,16 @@ export default function ReleaseDeckPage() {
                         <p className="mt-3 text-xs text-black/65">
                           {Math.floor(track.duration / 60)}:{String(Math.floor(track.duration % 60)).padStart(2, '0')} • {track.status}
                         </p>
+                        <p className="mt-1 text-xs text-black/65">Release date: runtime scheduling not active</p>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="mt-3 plot-wire-chip h-auto rounded-full bg-white px-4 py-2 text-[11px] text-black"
+                          onClick={() => setLoadedTrackId(track.id)}
+                        >
+                          Load
+                        </Button>
                       </>
                     ) : (
                       <p className="mt-2 text-sm text-black/60">Open music slot.</p>
@@ -306,6 +409,16 @@ export default function ReleaseDeckPage() {
             <p className="mt-3 text-xs text-black/55">
               Explicit source-owned rows stay marked here. Older compatible tracks without stored source linkage remain visible but labeled as legacy carry-forward.
             </p>
+            {loadedTrack ? (
+              <div className="mt-4 rounded-[1rem] border border-black bg-white px-4 py-4 text-sm text-black shadow-[3px_3px_0_rgba(0,0,0,0.18)]">
+                <p className="plot-wire-label">Loaded Row</p>
+                <p className="mt-2 font-medium text-black">{loadedTrack.title}</p>
+                <p className="mt-1 text-xs text-black/60">
+                  Row detail is limited to Release Deck context in this slice. Release date scheduling, metadata editing,
+                  and replacement controls need separate media contracts before runtime implementation.
+                </p>
+              </div>
+            ) : null}
           </div>
 
           <div className="plot-wire-card p-6">

@@ -1,8 +1,13 @@
 import {
   buildReleaseDeckTrackPayload,
+  getReleaseDeckReadiness,
+  getReleaseDeckSubmitBlockReason,
   hostedAudioUrlMessage,
   hostedCoverUrlMessage,
+  releaseDeckMaxSourceDurationMessage,
+  releaseDeckMaxSourceSeconds,
   releaseDeckMaxTrackDurationMessage,
+  releaseDeckMusicSlotCapMessage,
 } from '../src/lib/source/release-deck-validation';
 
 const activeSource = {
@@ -68,5 +73,71 @@ describe('Release Deck validation', () => {
     expect(buildReleaseDeckTrackPayload({ ...baseForm, coverArt: '   ' }, activeSource, 'community-1')).toEqual(
       expect.objectContaining({ coverArt: undefined }),
     );
+  });
+
+  it('summarizes only source-owned ready tracks for readiness and active-source caps', () => {
+    const readiness = getReleaseDeckReadiness({
+      activeSourceId: activeSource.id,
+      communityId: 'community-1',
+      tracks: [
+        { artistBandId: activeSource.id, duration: 180, status: 'ready' },
+        { artistBandId: activeSource.id, duration: 210, status: 'processing' },
+        { artistBandId: 'legacy-source', duration: 240, status: 'ready' },
+      ],
+    });
+
+    expect(readiness).toEqual({
+      activeDurationSeconds: 180,
+      capReached: false,
+      hasSourceOwnedReadyTrack: true,
+      isAtActiveSourceCap: false,
+      isAtMusicSlotCap: false,
+      missingHomeScene: false,
+      openMusicSlots: 2,
+      readyForTesting: true,
+      sourceOwnedReadyTrackCount: 1,
+    });
+  });
+
+  it('blocks submit when Home Scene is missing, three music slots are full, or fifteen active minutes would be exceeded', () => {
+    expect(
+      getReleaseDeckSubmitBlockReason(
+        getReleaseDeckReadiness({
+          activeSourceId: activeSource.id,
+          communityId: null,
+          tracks: [{ artistBandId: activeSource.id, duration: 180, status: 'ready' }],
+        }),
+        180,
+      ),
+    ).toBe('An active source with a resolved Home Scene is required before releasing a single.');
+
+    expect(
+      getReleaseDeckSubmitBlockReason(
+        getReleaseDeckReadiness({
+          activeSourceId: activeSource.id,
+          communityId: 'community-1',
+          tracks: [
+            { artistBandId: activeSource.id, duration: 180, status: 'ready' },
+            { artistBandId: activeSource.id, duration: 180, status: 'ready' },
+            { artistBandId: activeSource.id, duration: 180, status: 'ready' },
+          ],
+        }),
+        120,
+      ),
+    ).toBe(releaseDeckMusicSlotCapMessage);
+
+    expect(
+      getReleaseDeckSubmitBlockReason(
+        getReleaseDeckReadiness({
+          activeSourceId: activeSource.id,
+          communityId: 'community-1',
+          tracks: [
+            { artistBandId: activeSource.id, duration: 300, status: 'ready' },
+            { artistBandId: activeSource.id, duration: 300, status: 'ready' },
+          ],
+        }),
+        releaseDeckMaxSourceSeconds - 599,
+      ),
+    ).toBe(releaseDeckMaxSourceDurationMessage);
   });
 });

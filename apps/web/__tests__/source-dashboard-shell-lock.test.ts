@@ -17,7 +17,6 @@ describe('source dashboard shell lock', () => {
     expect(dashboardSource).toContain('Source Profile');
     expect(dashboardSource).toContain('Print Shop');
     expect(dashboardSource).toContain('Home Scene: {homeSceneLabel}');
-    expect(dashboardSource).toContain("GPS: {gpsVerified ? 'verified' : 'pending'}");
     expect(dashboardSource).toContain("Promoter capability: {promoterCapabilityGranted ? 'active' : 'inactive'}");
     expect(dashboardSource).toContain('Promoter capability is active');
     expect(dashboardSource).toContain('GPS verification is still required before promoter capability can progress in Registrar.');
@@ -27,6 +26,13 @@ describe('source dashboard shell lock', () => {
     expect(dashboardSource).toContain('Return to Listener Account');
     expect(dashboardSource).toContain('Open Release Deck');
     expect(dashboardSource).toContain("Link href=\"/print-shop\"");
+    expect(dashboardSource).toContain('Operating Source');
+    expect(dashboardSource).toContain('Position: {activeSource.membershipRole ??');
+    expect(dashboardSource).toContain('Listener Account is active. Select one managed source account above before source tools operate.');
+    expect(dashboardSource).toContain('No managed source accounts are attached to this signed-in user.');
+    expect(dashboardSource).toContain('Stale source context was cleared because it no longer belongs to this signed-in user.');
+    expect(dashboardSource).toContain('Stale source context was cleared because the selected source is no longer attached to this user.');
+    expect(dashboardSource).not.toContain("GPS: {gpsVerified ? 'verified' : 'pending'}");
   });
 
   it('keeps Release Deck caps explicit and keeps the paid ad slot out of music-slot runtime', () => {

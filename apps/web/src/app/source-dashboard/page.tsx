@@ -23,6 +23,7 @@ export default function SourceDashboardPage() {
   const [promoterEntries, setPromoterEntries] = useState<RegistrarPromoterEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [staleContextNotice, setStaleContextNotice] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,9 +62,13 @@ export default function SourceDashboardPage() {
   }, [token, user?.id]);
 
   const managedSources = profile?.managedArtistBands ?? [];
+  const sourceContextBelongsToCurrentUser = Boolean(activeSourceId && user?.id && activeSourceUserId === user.id);
   const activeSource = useMemo(
-    () => managedSources.find((source) => source.id === activeSourceId) ?? null,
-    [activeSourceId, managedSources],
+    () =>
+      sourceContextBelongsToCurrentUser
+        ? managedSources.find((source) => source.id === activeSourceId) ?? null
+        : null,
+    [activeSourceId, managedSources, sourceContextBelongsToCurrentUser],
   );
   const latestPromoterEntry = promoterEntries[0] ?? null;
   const promoterCapabilityGranted = Boolean(latestPromoterEntry?.promoterCapability.granted);
@@ -97,13 +102,18 @@ export default function SourceDashboardPage() {
   useEffect(() => {
     if (activeSourceId && (!user?.id || activeSourceUserId !== user.id)) {
       clearActiveSourceId();
+      setStaleContextNotice('Stale source context was cleared because it no longer belongs to this signed-in user.');
       return;
     }
     if (!activeSourceId) return;
-    if (managedSources.length === 0) return;
-    if (activeSource) return;
+    if (!profile) return;
+    if (activeSource) {
+      setStaleContextNotice(null);
+      return;
+    }
     clearActiveSourceId();
-  }, [activeSource, activeSourceId, activeSourceUserId, clearActiveSourceId, managedSources.length, user?.id]);
+    setStaleContextNotice('Stale source context was cleared because the selected source is no longer attached to this user.');
+  }, [activeSource, activeSourceId, activeSourceUserId, clearActiveSourceId, profile, user?.id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -181,6 +191,12 @@ export default function SourceDashboardPage() {
               <p className="text-sm text-black/70">
                 Source-facing tools live here. Use this dashboard to manage the source account you are currently operating.
               </p>
+              {activeSource ? (
+                <div className="flex flex-wrap gap-2 text-xs text-black/60">
+                  <span className="plot-wire-chip">Operating Source</span>
+                  <span className="plot-wire-chip">Position: {activeSource.membershipRole ?? 'source member'}</span>
+                </div>
+              ) : null}
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -205,13 +221,20 @@ export default function SourceDashboardPage() {
           onSelectListener={() => router.push('/plot')}
         />
 
+        {staleContextNotice ? (
+          <section className="plot-wire-card p-6">
+            <p className="plot-wire-label">Source Context Reset</p>
+            <p className="mt-2 text-sm text-black/70">{staleContextNotice}</p>
+          </section>
+        ) : null}
+
         {!activeSource ? (
           <section className="plot-wire-card p-6">
             <p className="plot-wire-label">Current Context</p>
             <p className="mt-2 text-sm text-black/70">
               {managedSources.length > 0
-                ? 'Choose one of your managed source accounts above to load its tools. Source Dashboard stays separate from the listener/community shell even though it uses the same signed-in account.'
-                : 'No managed source accounts are attached to this user yet. Promoter capability can still open creator lanes like Print Shop, but Source Dashboard itself remains source-account driven.'}
+                ? 'Listener Account is active. Select one managed source account above before source tools operate. Source Dashboard stays separate from the listener/community shell even though it uses the same signed-in account.'
+                : 'No managed source accounts are attached to this signed-in user. Registrar is the path for a listener to become a managed source; Source Dashboard does not show fake source tools without an attached source account.'}
             </p>
           </section>
         ) : (
@@ -226,7 +249,6 @@ export default function SourceDashboardPage() {
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-black/60">
                   <span className="plot-wire-chip">Home Scene: {homeSceneLabel}</span>
-                  <span className="plot-wire-chip">GPS: {gpsVerified ? 'verified' : 'pending'}</span>
                   <span className="plot-wire-chip">
                     Promoter capability: {promoterCapabilityGranted ? 'active' : 'inactive'}
                   </span>
