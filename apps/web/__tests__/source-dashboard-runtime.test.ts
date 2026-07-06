@@ -64,6 +64,14 @@ const managedSource = {
   membershipRole: 'owner',
 };
 
+const memberManagedSource = {
+  id: '22222222-2222-4222-8222-222222222222',
+  name: 'East Line',
+  slug: 'east-line',
+  entityType: 'band',
+  membershipRole: 'member',
+};
+
 const userSourceProfile = {
   user: { id: user.id },
   managedArtistBands: [managedSource],
@@ -149,6 +157,17 @@ function changeInput(container: Element, name: string, value: string) {
   });
 }
 
+function changeSourceSelect(container: Element, value: string) {
+  const select = container.querySelector('select[aria-label="Current source account"]') as HTMLSelectElement | null;
+  expect(select).not.toBeNull();
+
+  act(() => {
+    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set;
+    setter?.call(select, value);
+    select?.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+}
+
 describe('source dashboard runtime behavior', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -167,8 +186,40 @@ describe('source dashboard runtime behavior', () => {
     await flushEffects();
 
     expect(container.textContent).toContain('Select a source account');
-    expect(container.textContent).toContain('Listener Account is active. Select one managed source account above before source tools operate.');
+    expect(container.textContent).toContain('Listener Account is active. Select one managed source account in the top command line before source tools operate.');
     expect(container.textContent).not.toContain('Open Release Deck');
+
+    cleanupRender(root, container);
+  });
+
+  it('updates the command-line role from the newly selected source membership data', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    mockedApiGet.mockResolvedValue({
+      data: {
+        user: { id: user.id },
+        managedArtistBands: [managedSource, memberManagedSource],
+      },
+    });
+    mockedGetArtistBandProfile.mockImplementation((sourceId: string) =>
+      Promise.resolve(
+        makeSourceProfile({
+          id: sourceId,
+          name: sourceId === memberManagedSource.id ? memberManagedSource.name : managedSource.name,
+          slug: sourceId === memberManagedSource.id ? memberManagedSource.slug : managedSource.slug,
+        }),
+      ),
+    );
+
+    const { root, container } = render(React.createElement(SourceDashboardPage));
+    await flushEffects();
+
+    expect(container.querySelector('[data-testid="source-command-role"]')?.textContent).toBe('User One · Manager');
+
+    changeSourceSelect(container, memberManagedSource.id);
+    await flushEffects();
+
+    expect(useSourceAccountStore.getState().activeSourceId).toBe(memberManagedSource.id);
+    expect(container.querySelector('[data-testid="source-command-role"]')?.textContent).toBe('User One · Member');
 
     cleanupRender(root, container);
   });
@@ -273,7 +324,7 @@ describe('source dashboard runtime behavior', () => {
     const { root, container } = render(React.createElement(ReleaseDeckPage));
     await flushEffects();
 
-    expect(container.textContent).toContain('1 / 3 source-owned ready');
+    expect(container.textContent).toContain('1 / 3');
     expect(container.textContent).toContain('3:00 / 15:00');
     expect(container.textContent).toContain('Ready for Fair Play/player testing');
     expect(container.textContent).toContain('Source-owned release');
@@ -334,7 +385,7 @@ describe('source dashboard runtime behavior', () => {
       form?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     });
 
-    expect(container.textContent).toContain('Cap reached: 3 active music slots are already filled.');
+    expect(container.textContent).toContain('Cap reached: this screen will not silently replace existing tracks or create an extra active music slot.');
     expect(container.textContent).toContain('Release Deck already has 3 active music slots.');
     expect(mockedCreateTrack).not.toHaveBeenCalled();
 

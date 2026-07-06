@@ -17,13 +17,32 @@ type SourceAccountSwitcherProps = {
   currentUserId: string | null;
   onSelectSource?: (source: SourceAccountSummary) => void;
   onSelectListener?: () => void;
+  variant?: 'panel' | 'command';
+  className?: string;
 };
+
+export function formatSourceMembershipRole(role: string | null | undefined) {
+  if (!role) return 'Source member';
+
+  const normalized = role.trim().toLowerCase();
+  if (normalized === 'owner' || normalized === 'manager' || normalized === 'source_manager') return 'Manager';
+  if (normalized === 'member' || normalized === 'source_member') return 'Member';
+  if (normalized === 'promoter') return 'Promoter';
+
+  return normalized
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join(' ');
+}
 
 export function SourceAccountSwitcher({
   sources,
   currentUserId,
   onSelectSource,
   onSelectListener,
+  variant = 'panel',
+  className,
 }: SourceAccountSwitcherProps) {
   const { activeSourceId, activeSourceUserId, setActiveSourceId, clearActiveSourceId } = useSourceAccountStore();
   const activeSource =
@@ -33,6 +52,39 @@ export function SourceAccountSwitcher({
 
   if (sources.length === 0) {
     return null;
+  }
+
+  if (variant === 'command') {
+    return (
+      <label className={className ?? 'block'}>
+        <span className="sr-only">Current source account</span>
+        <select
+          aria-label="Current source account"
+          value={activeSource?.id ?? 'listener'}
+          className="h-10 min-w-[12rem] rounded-[0.3rem] border-2 border-black bg-[#fbfbf4] px-3 text-sm font-semibold text-black outline-none focus:ring-2 focus:ring-black/25"
+          onChange={(event) => {
+            const nextSourceId = event.target.value;
+            if (nextSourceId === 'listener') {
+              clearActiveSourceId();
+              onSelectListener?.();
+              return;
+            }
+
+            const nextSource = sources.find((source) => source.id === nextSourceId);
+            if (!nextSource) return;
+            setActiveSourceId(nextSource.id, currentUserId);
+            onSelectSource?.(nextSource);
+          }}
+        >
+          <option value="listener">Listener Account</option>
+          {sources.map((source) => (
+            <option key={source.id} value={source.id}>
+              {source.name} - {formatSourceMembershipRole(source.membershipRole)}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
   }
 
   return (
@@ -50,7 +102,7 @@ export function SourceAccountSwitcher({
         </p>
         <p className="mt-1 text-xs text-black/65">
           {activeSource
-            ? `${formatArtistBandEntityType(activeSource.entityType)} • ${activeSource.slug}${activeSource.membershipRole ? ` • ${activeSource.membershipRole}` : ''}`
+            ? `${formatArtistBandEntityType(activeSource.entityType)} • ${activeSource.slug} • ${formatSourceMembershipRole(activeSource.membershipRole)}`
             : 'Listener/community participation mode'}
         </p>
       </div>

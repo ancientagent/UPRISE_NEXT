@@ -8,18 +8,19 @@ function readRepoFile(relativePath: string): string {
 }
 
 describe('release deck shell lock', () => {
-  it('keeps release deck inside the source dashboard system', () => {
+  it('keeps release deck inside the source dashboard source-file system', () => {
     const releaseDeckSource = readRepoFile('src/app/source-dashboard/release-deck/page.tsx');
     const releaseDeckValidationSource = readRepoFile('src/lib/source/release-deck-validation.ts');
 
+    expect(releaseDeckSource).toContain('SOURCE DASHBOARD');
+    expect(releaseDeckSource).toContain('Exit to Listener Account');
     expect(releaseDeckSource).toContain('Back to Source Dashboard');
-    expect(releaseDeckSource).toContain('Return to Listener Account');
     expect(releaseDeckSource).toContain('View Source Profile');
     expect(releaseDeckSource).toContain('Open Registrar');
-    expect(releaseDeckSource).toContain('Current Context');
-    expect(releaseDeckSource).toContain('Music slots: 3');
-    expect(releaseDeckSource).toContain('Paid ad slot: defined, not active here');
-    expect(releaseDeckSource).toContain('attach directly to the active source account');
+    expect(releaseDeckSource).toContain('Source Record');
+    expect(releaseDeckSource).toContain('Source File');
+    expect(releaseDeckSource).toContain('UPRISE Source Record');
+    expect(releaseDeckSource).toContain('Release Deck stays inside the selected source file and does not mutate listener player state.');
     expect(releaseDeckSource).toContain('Release Single');
     expect(releaseDeckSource).toContain('Audio File URL');
     expect(releaseDeckSource).toContain('buildReleaseDeckTrackPayload(form, activeSource, communityId)');
@@ -35,10 +36,13 @@ describe('release deck shell lock', () => {
     expect(releaseDeckSource).toContain('this screen will not silently replace existing tracks or create an extra active music slot');
     expect(releaseDeckSource).toContain('Release date');
     expect(releaseDeckSource).toContain('Load');
+    expect(releaseDeckSource).toContain('URL-only MVP');
     expect(releaseDeckSource).not.toContain('Date added');
     expect(releaseDeckSource).not.toContain('Open Metrics');
     expect(releaseDeckSource).not.toContain('Upgrade');
-    expect(releaseDeckSource).not.toContain('fourth music slot');
+    expect(releaseDeckSource).not.toContain('Subscribe');
+    expect(releaseDeckSource).not.toContain('Buy');
+    expect(releaseDeckSource).not.toContain('Music slots: 4');
     expect(releaseDeckValidationSource).toContain('artistBandId: activeSource.id');
     expect(releaseDeckValidationSource).toContain('Audio File URL must be an http(s) URL for the current hosted-file MVP.');
     expect(releaseDeckValidationSource).toContain('Cover Art URL must be an http(s) URL for the current hosted-file MVP.');
