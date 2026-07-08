@@ -196,6 +196,7 @@
 
 ### Changed
 
+- Fixed onboarding proxy Home Scene resolution so same-state active major-node scenes remain the eligible set before distance ranking, preventing a nearer cross-state proxy from overriding the submitted state; see `docs/handoff/2026-07-08_onboarding-homescene-same-state-proxy.md`.
 - Extracted the active `/plot` `Feed` / `Events` / `Archive` tab body renderer into `PlotPrimaryTabBody` so the oversized route shell loses one presentation responsibility without changing runtime behavior; see `docs/handoff/2026-07-01_plot-primary-tab-body-extraction.md`.
 - Hardened manual Home Scene activation cutover so readiness is revalidated inside the transaction and source/listener cutover uses normalized tuple matching instead of exact request casing; see `docs/handoff/2026-06-29_activation-cutover-transaction-revalidation.md`.
 - Fixed cloud workflow hygiene so push-event TruffleHog scans compare against `github.event.before` instead of resolving `main` and `HEAD` to the same commit, and Telegram bridge `409` polling conflicts now exit cleanly as an already-active poller condition; see `docs/handoff/2026-06-29_cloud-workflow-ci-hygiene.md`.

@@ -153,6 +153,19 @@ export class OnboardingService {
       { id: 'asc' as const },
     ];
 
+    // Same-state active major-nodes are the only eligible candidates when any exist.
+    // Cross-state proxies become eligible only when the same-state candidate set is empty,
+    // so distance ranking must never promote a nearer cross-state scene over a farther
+    // same-state one. This row is also the deterministic same-state fallback when the
+    // submitted location cannot be geocoded or no candidate carries a geofence.
+    const sameStateMatches = await this.prisma.community.findMany({
+      where: { tier: 'city', musicCommunity, state, isActive: true },
+      select,
+      orderBy,
+      take: 1,
+    });
+    const sameStateOnly = sameStateMatches.length > 0;
+
     const submittedLocation = await this.placesService
       ?.geocodeCity(city, state)
       .catch(() => null);
@@ -169,9 +182,9 @@ export class OnboardingService {
           AND "musicCommunity" = ${musicCommunity}
           AND "isActive" = true
           AND geofence IS NOT NULL
+          AND (${sameStateOnly}::boolean = false OR lower(state) = lower(${state}))
         ORDER BY
           ST_Distance(geofence, ST_GeogFromText(${submittedPoint})) ASC,
-          CASE WHEN lower(state) = lower(${state}) THEN 0 ELSE 1 END ASC,
           "memberCount" DESC,
           name ASC,
           id ASC
@@ -188,13 +201,6 @@ export class OnboardingService {
         if (nearestScene) return nearestScene;
       }
     }
-
-    const sameStateMatches = await this.prisma.community.findMany({
-      where: { tier: 'city', musicCommunity, state, isActive: true },
-      select,
-      orderBy,
-      take: 1,
-    });
 
     if (sameStateMatches[0]) return sameStateMatches[0];
 
