@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added scheduled Release Deck to Fair Play ingestion so due schedules can dry-run or create fixed 10-day `NEW_RELEASES` rotation entries without reading deprecated density-band config; see `docs/handoff/2026-07-08_release-deck-fair-play-ingestion.md`.
 - Added the Release Deck schedule write path so source operators can create `ReleaseDeckSchedule` rows through `soonest` or valid `chosen` date assignment without creating Fair Play rotation entries; see `docs/handoff/2026-07-08_release-deck-schedule-write-path.md`.
 - Added Release Deck schedule availability preview: `ReleaseDeckSchedule` schema/migration plus read-only `/release-deck/schedule/availability` diagnostics for requested date capacity, alternatives, and playable-second scheduling pressure; see `docs/handoff/2026-07-08_release-deck-schedule-availability-preview.md`.
 - Added the Release Deck / RADIYO / Sect implementation architecture plan, mapping scheduling, Fair Play ingestion, graduation, song-level Sect backing, readiness diagnostics, and the recommended first read-only measurement slice; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-implementation-architecture.md`.

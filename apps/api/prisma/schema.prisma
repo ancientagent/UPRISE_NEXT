@@ -518,6 +518,7 @@ model RotationEntry {
   sceneId         String
   pool            RotationPool
   enteredPoolAt   DateTime
+  newWindowDays   Int          @default(10)
   lastPlayedAt    DateTime?
   recurrenceScore Float        @default(0)
   graduatedAt     DateTime?
