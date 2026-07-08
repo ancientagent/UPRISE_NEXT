@@ -9,6 +9,7 @@
 
 ### Added
 
+- Added Release Deck schedule availability preview: `ReleaseDeckSchedule` schema/migration plus read-only `/release-deck/schedule/availability` diagnostics for requested date capacity, alternatives, and playable-second scheduling pressure; see `docs/handoff/2026-07-08_release-deck-schedule-availability-preview.md`.
 - Added the Release Deck / RADIYO / Sect implementation architecture plan, mapping scheduling, Fair Play ingestion, graduation, song-level Sect backing, readiness diagnostics, and the recommended first read-only measurement slice; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-implementation-architecture.md`.
 - Promoted Release Deck / RADIYO / Sect readiness owner contracts: Release Deck now owns Uprise-wide deck measurement and release-date scheduling before RADIYO entry, Fair Play uses a fixed 10-day New Releases run, and sect readiness counts song-level Release Deck backing rather than source-wide affiliation; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-readiness-spec-promotion.md`.
 - Refreshed Active PM and branch workspace registry after PR #227 merged, recording the clean main/worktree state plus remote-only branch cleanup candidates; see `docs/handoff/2026-07-07_branch-workspace-hygiene-refresh.md`.
