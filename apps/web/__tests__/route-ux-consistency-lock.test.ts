@@ -78,9 +78,9 @@ describe('cross-route UX consistency lock', () => {
     expect(artistSource).not.toContain('plot-profile-seam-toggle');
     expect(artistSource).not.toContain('Return to Plot Tabs');
     expect(artistSource).not.toContain('data-slot="expanded-profile-player-strip"');
-    expect(dashboardSource).toContain('Source-facing tools live here.');
-    expect(dashboardSource).toContain('Return to Listener Account');
-    expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
+    expect(dashboardSource).toContain('SOURCE DASHBOARD');
+    expect(dashboardSource).toContain('Exit to Listener Account');
+    expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Load</Link>');
   });
 
   it('keeps print-shop event creation source-facing and auth-gated', () => {
@@ -135,18 +135,18 @@ describe('cross-route UX consistency lock', () => {
     const dashboardSource = readRepoFile('src/app/source-dashboard/page.tsx');
 
     expect(dashboardSource).toContain('Select a source account');
-    expect(dashboardSource).toContain('Source-facing tools live here.');
+    expect(dashboardSource).toContain('SOURCE DASHBOARD');
     expect(dashboardSource).toContain('listPromoterRegistrations(token)');
     expect(dashboardSource).toContain('useOnboardingStore');
     expect(dashboardSource).toContain("if (homeScene?.city && homeScene?.state && homeScene?.musicCommunity)");
-    expect(dashboardSource).toContain('Home Scene: {homeSceneLabel}');
-    expect(dashboardSource).toContain("GPS: {gpsVerified ? 'verified' : 'pending'}");
-    expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
-    expect(dashboardSource).toContain('Return to Listener Account');
-    expect(dashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
-    expect(dashboardSource).toContain('source-side releases and events can now attach directly');
-    expect(dashboardSource).toContain('member sync work, and capability-code progress');
-    expect(dashboardSource).toContain('Open the source-facing Print Shop lane through your linked artist/band membership.');
+    expect(dashboardSource).toContain('Home Scene');
+    expect(dashboardSource).toContain('Selected source position: {roleLabel}');
+    expect(dashboardSource).toContain('<Link href="/source-dashboard/release-deck">Load</Link>');
+    expect(dashboardSource).toContain('Exit to Listener Account');
+    expect(dashboardSource).toContain('UPRISE Registrar');
+    expect(dashboardSource).toContain('Calendar work stays source-facing.');
+    expect(dashboardSource).toContain('Source management snapshot for {activeSource.name}.');
+    expect(dashboardSource).toContain('Design and print flyers through the existing source-facing Print Shop route.');
   });
 
   it('clears stale persisted source context when the signed-in user changes', () => {
@@ -170,12 +170,12 @@ describe('cross-route UX consistency lock', () => {
     expect(releaseDeckSource).toContain('Sign in is required before opening Release Deck.');
     expect(releaseDeckSource).toContain('Select a source account before opening Release Deck.');
     expect(releaseDeckSource).toContain('Release Deck');
-    expect(releaseDeckSource).toContain('Current Music Slots');
-    expect(releaseDeckSource).toContain('Current Context');
+    expect(releaseDeckSource).toContain('3 music slots');
+    expect(releaseDeckSource).toContain('Loaded Row');
     expect(releaseDeckSource).toContain('Release Single');
-    expect(releaseDeckSource).toContain('Release Deck is the source-side lane for singles entering the citywide Uprise.');
-    expect(releaseDeckSource).toContain('paid ad slot stays outside the current runtime');
-    expect(releaseDeckSource).toContain('attach directly to the active source account');
-    expect(releaseDeckSource).toContain('<Link href="/registrar">Open Registrar</Link>');
+    expect(releaseDeckSource).toContain('Release Deck stays inside the selected source file and does not mutate listener player state.');
+    expect(releaseDeckSource).toContain('inactive attachment concept');
+    expect(releaseDeckSource).toContain('buildReleaseDeckTrackPayload(form, activeSource, communityId)');
+    expect(releaseDeckSource).toContain('<Link href="/registrar" className="underline underline-offset-2">Open Registrar</Link>');
   });
 });
