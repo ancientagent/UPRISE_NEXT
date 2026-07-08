@@ -206,6 +206,14 @@ export class ReleaseDeckSchedulingService {
     };
   }
 
+  private throwScheduleFailure(failure: any): never {
+    const code = failure?.error?.code;
+    if (code === 'ALREADY_SCHEDULED_OR_ACTIVE') {
+      throw new ConflictException(failure);
+    }
+    throw new BadRequestException(failure);
+  }
+
   async getAvailability(query: ReleaseDeckScheduleAvailabilityQueryDto): Promise<any> {
     const communityId = query.communityId?.trim();
     const trackId = query.trackId?.trim();
@@ -578,11 +586,11 @@ export class ReleaseDeckSchedulingService {
       scheduledDate = availability.error.soonestValidDate;
       capacitySnapshot = availability.error;
     } else {
-      return availability;
+      this.throwScheduleFailure(availability);
     }
 
     if (!scheduledDate) {
-      return availability;
+      this.throwScheduleFailure(availability);
     }
 
     const scheduledFor = parseDateOnly(scheduledDate);

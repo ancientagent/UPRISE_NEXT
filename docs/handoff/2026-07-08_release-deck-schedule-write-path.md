@@ -39,14 +39,27 @@ Behavior:
 - Existing availability eligibility still applies: source-owned, ready, city-tier community, `http(s)` playable URL, <= `360` seconds, source cap, no existing schedule/active rotation.
 - Schedule rows store the capacity snapshot used to make the decision.
 - Unique `trackId` remains the duplicate guard; P2002 maps to an explicit conflict.
+- Write-path failures throw API errors instead of returning failure bodies under
+  `201 Created`: duplicate/existing active schedule maps to conflict, while
+  invalid chosen dates, no valid date, and eligibility failures map to bad
+  request.
 
 ## Guardrails Preserved
 
 - No `RotationEntry.create` / Fair Play ingestion.
 - No schedule creation when `chosen` date is over capacity.
 - No schedule creation before source-operator authority is verified.
+- No `201 Created` response for normal write-path failures.
 - No deprecated `FairPlayConfig.newWindowBand*` reads.
 - No source, track, community, or sect mutation.
+
+## Review Finding Resolved
+
+The first local reviewer pass blocked the checkpoint because `POST
+/release-deck/schedule` could return `success: false` under HTTP `201 Created`
+for capacity or duplicate-schedule failures. The service now converts those
+write-path failures into `BadRequestException` or `ConflictException`, with test
+coverage for over-capacity `chosen` dates and existing schedules.
 
 ## Validation
 

@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ReleaseDeckSchedulingService } from '../src/release-deck/release-deck-scheduling.service';
 
 const CITY_COMMUNITY = {
@@ -499,29 +499,40 @@ describe('ReleaseDeckSchedulingService', () => {
     expect(prisma.rotationEntry.update).not.toHaveBeenCalled();
   });
 
-  it('does not create a chosen schedule when the requested date is over capacity', async () => {
+  it('rejects a chosen schedule when the requested date is over capacity', async () => {
     mockOperatorTrack();
     prisma.releaseDeckSchedule.findMany.mockResolvedValue([
       scheduled('full-1', REQUESTED_FROM, 360),
       scheduled('full-2', REQUESTED_FROM, 360),
     ]);
 
-    const result = await service.scheduleTrack('user-1', {
-      communityId: CITY_COMMUNITY.id,
-      trackId: TRACK.id,
-      mode: 'chosen',
-      requestedDate: REQUESTED_FROM,
+    await expect(
+      service.scheduleTrack('user-1', {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        mode: 'chosen',
+        requestedDate: REQUESTED_FROM,
+      })
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
+  });
+
+  it('returns an explicit conflict when the track already has a schedule', async () => {
+    mockOperatorTrack();
+    prisma.releaseDeckSchedule.findFirst.mockResolvedValue({
+      id: 'schedule-existing',
+      status: 'scheduled',
+      scheduledFor: new Date(`${REQUESTED_FROM}T00:00:00.000Z`),
     });
 
-    expect(result).toMatchObject({
-      success: false,
-      error: {
-        code: 'DATE_CAPACITY_FULL',
+    await expect(
+      service.scheduleTrack('user-1', {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        mode: 'chosen',
         requestedDate: REQUESTED_FROM,
-        soonestValidDate: '2026-07-09',
-        alternatives: expect.arrayContaining(['2026-07-09']),
-      },
-    });
+      })
+    ).rejects.toBeInstanceOf(ConflictException);
     expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
   });
 
