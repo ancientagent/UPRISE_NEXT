@@ -346,6 +346,17 @@ describe('OnboardingService home-scene resolution', () => {
         isActive: true,
         memberCount: 1,
       });
+    prisma.community.findMany.mockResolvedValueOnce([
+      {
+        id: 'scene-houston-punk',
+        name: 'Houston Punk',
+        city: 'Houston',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+        isActive: true,
+        memberCount: 90,
+      },
+    ]);
     prisma.$queryRaw.mockResolvedValueOnce([{ id: 'scene-austin-punk', distance: 849000 }]);
     prisma.__tx.user.update.mockResolvedValue({
       id: 'user-1',
@@ -364,9 +375,16 @@ describe('OnboardingService home-scene resolution', () => {
     });
 
     expect(places.geocodeCity).toHaveBeenCalledWith('El Paso', 'Texas');
-    expect(prisma.community.findMany).not.toHaveBeenCalled();
     const distanceSql = prisma.$queryRaw.mock.calls[0][0].join('');
     expect(distanceSql.indexOf('ST_Distance')).toBeLessThan(distanceSql.indexOf('"memberCount"'));
+    // Distance ranking still beats the member-count tiebreaker inside the eligible set,
+    // even though Houston carries far more members than Austin.
+    expect(prisma.community.findFirst).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: { id: 'scene-austin-punk', tier: 'city', musicCommunity: 'Punk', isActive: true },
+      })
+    );
     expect(prisma.__tx.user.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -381,6 +399,147 @@ describe('OnboardingService home-scene resolution', () => {
       sceneId: 'scene-austin-punk',
       resolvedCitySceneLabel: 'Austin, Texas • Punk',
       pioneerHomeScene: { city: 'El Paso', state: 'Texas', musicCommunity: 'Punk' },
+      pioneer: true,
+    });
+  });
+
+  it('restricts proxy ranking to same-state candidates so a nearer cross-state scene cannot win', async () => {
+    // El Paso, Texas is ~1011km from San Diego, California but ~1086km from Houston, Texas.
+    // Distance alone would pick the cross-state scene; the same-state proxy must win.
+    const prisma = createPrismaMock();
+    const places = {
+      geocodeCity: jest.fn().mockResolvedValue({
+        city: 'El Paso',
+        state: 'Texas',
+        latitude: 31.7619,
+        longitude: -106.485,
+        formattedAddress: 'El Paso, Texas, USA',
+      }),
+    };
+    const service = new OnboardingService(prisma as any, places as any);
+
+    prisma.community.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({
+      id: 'scene-houston-punk',
+      name: 'Houston Punk',
+      city: 'Houston',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+      isActive: true,
+    });
+    prisma.community.findMany.mockResolvedValueOnce([
+      {
+        id: 'scene-houston-punk',
+        name: 'Houston Punk',
+        city: 'Houston',
+        state: 'Texas',
+        musicCommunity: 'Punk',
+        isActive: true,
+        memberCount: 12,
+      },
+    ]);
+    prisma.$queryRaw.mockResolvedValueOnce([{ id: 'scene-houston-punk', distance: 1086000 }]);
+    prisma.__tx.user.update.mockResolvedValue({
+      id: 'user-1',
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      homeSceneTag: null,
+      tunedSceneId: 'scene-houston-punk',
+      gpsVerified: false,
+    });
+
+    const result = await service.setHomeScene('user-1', {
+      city: 'El Paso',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+    });
+
+    // Same-state eligibility must be established before the geospatial query runs,
+    // not applied afterwards as a distance tiebreaker.
+    const sameStateCallOrder = prisma.community.findMany.mock.invocationCallOrder[0];
+    const distanceCallOrder = prisma.$queryRaw.mock.invocationCallOrder[0];
+    expect(sameStateCallOrder).toBeLessThan(distanceCallOrder);
+    expect(prisma.community.findMany).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        where: { tier: 'city', musicCommunity: 'Punk', state: 'Texas', isActive: true },
+      })
+    );
+
+    const [sqlParts, ...boundValues] = prisma.$queryRaw.mock.calls[0];
+    const distanceSql = sqlParts.join('');
+    expect(distanceSql).toContain('lower(state) = lower(');
+    expect(distanceSql).not.toContain('CASE WHEN');
+    expect(boundValues).toContain(true); // sameStateOnly gate is on
+    expect(boundValues).toContain('Texas');
+
+    expect(prisma.community.create).not.toHaveBeenCalled();
+    expect(prisma.__tx.communityMember.create).toHaveBeenCalledWith({
+      data: { userId: 'user-1', communityId: 'scene-houston-punk', role: 'member' },
+    });
+    expect(result).toMatchObject({
+      sceneId: 'scene-houston-punk',
+      resolvedCitySceneLabel: 'Houston, Texas • Punk',
+      pioneerHomeScene: { city: 'El Paso', state: 'Texas', musicCommunity: 'Punk' },
+      pioneer: true,
+    });
+  });
+
+  it('allows a cross-state proxy only when no same-state active scene exists', async () => {
+    const prisma = createPrismaMock();
+    const places = {
+      geocodeCity: jest.fn().mockResolvedValue({
+        city: 'Tulsa',
+        state: 'Oklahoma',
+        latitude: 36.154,
+        longitude: -95.9928,
+        formattedAddress: 'Tulsa, Oklahoma, USA',
+      }),
+    };
+    const service = new OnboardingService(prisma as any, places as any);
+
+    prisma.community.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({
+      id: 'scene-dallas-punk',
+      name: 'Dallas Punk',
+      city: 'Dallas',
+      state: 'Texas',
+      musicCommunity: 'Punk',
+      isActive: true,
+    });
+    prisma.community.findMany.mockResolvedValueOnce([]);
+    prisma.$queryRaw.mockResolvedValueOnce([{ id: 'scene-dallas-punk', distance: 405000 }]);
+    prisma.__tx.user.update.mockResolvedValue({
+      id: 'user-1',
+      homeSceneCity: 'Tulsa',
+      homeSceneState: 'Oklahoma',
+      homeSceneCommunity: 'Punk',
+      homeSceneTag: null,
+      tunedSceneId: 'scene-dallas-punk',
+      gpsVerified: false,
+    });
+
+    const result = await service.setHomeScene('user-1', {
+      city: 'Tulsa',
+      state: 'Oklahoma',
+      musicCommunity: 'Punk',
+    });
+
+    const [, ...boundValues] = prisma.$queryRaw.mock.calls[0];
+    expect(boundValues).toContain(false); // sameStateOnly gate is off, cross-state eligible
+
+    expect(prisma.community.create).not.toHaveBeenCalled();
+    expect(prisma.__tx.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          homeSceneCity: 'Tulsa',
+          homeSceneState: 'Oklahoma',
+          tunedSceneId: 'scene-dallas-punk',
+        }),
+      })
+    );
+    expect(result).toMatchObject({
+      sceneId: 'scene-dallas-punk',
+      resolvedCitySceneLabel: 'Dallas, Texas • Punk',
       pioneer: true,
     });
   });
