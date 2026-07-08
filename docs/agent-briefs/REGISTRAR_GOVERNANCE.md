@@ -65,7 +65,10 @@ Tests / verification files:
 - `Back` is Registrar-only procedural behavior; do not expose it as a public social action.
 - Support/backing state is not a direct public button in the intended action model.
 - Sect readiness tracking can be built before it is user-visible.
-- Sect readiness counts approved playable minutes only from registered source accounts that explicitly back/tag/affiliate with that sect.
+- Sect readiness counts approved playable minutes only from Release Deck songs
+  that explicitly encode/back/affiliate that song with the sect through
+  Registrar-owned authority; a sect-affiliated source's whole catalog does not
+  count automatically.
 - Passive genre/style metadata does not count toward sect readiness or sect realization by itself.
 - Sect readiness and Sect Uprise broadcast authority are owned by `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`; Registrar-side affiliation and motion authority are owned by `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority`.
 - Sect maturity milestones, backing limits, paid/free backing capacity, and user-facing visibility are beta/community-calibrated and must not be hard-coded pre-launch.

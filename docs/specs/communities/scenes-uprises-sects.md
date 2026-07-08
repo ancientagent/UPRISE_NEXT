@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-25`
+**Last Updated:** `2026-07-08`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -24,8 +24,8 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - A Sect can become an official subcommunity before it becomes a Sect Uprise. Official Sect status makes the sect visible in Registrar for discovery/affiliation and may provide an updates channel, but it does not grant independent broadcast authority.
 - A Sect Uprise should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
 - Sects exist to solve broad-community density: they let niche/sub/microgenre groups create a purer broadcast experience without forcing every niche into its own isolated city/music-community.
-- A Sect becomes an Uprise only after meeting the support threshold and having enough committed artist catalog to sustain rotation (45 minutes of total playtime from artists who back/sign the motion).
-- Sect readiness tracking counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate with that sect. Passive genre/style metadata does not count by itself.
+- A Sect becomes an Uprise only after meeting the support threshold and having enough committed artist catalog to sustain rotation (45 minutes of total playtime from eligible Release Deck songs explicitly encoded/backed for that sect).
+- Sect readiness tracking counts approved playable minutes only from Release Deck songs that carry explicit song-level sect backing/affiliation from eligible registered sources. A source generally affiliating with a sect does not make its whole catalog count automatically. Passive genre/style metadata does not count by itself.
 - When a Sect meets the threshold, a motion is entered in the Registrar to establish the Sect Uprise.
 - Artists must back/commit to the Sect Uprise for it to activate. If support is insufficient, the sect motion does not realize into an Uprise.
 - Sect members have voting rights inside their Sect Uprise. Non-members may listen when parent-scene/discovery access permits, but listening access does not grant sect voting authority.
@@ -48,6 +48,9 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
   - `POST /registrar/sect-motion` creates a Home Scene-scoped registrar entry (`type = sect_motion`, `status = submitted`).
   - Current primitive enforces scene locality guardrails; threshold validation/approval remains deferred.
 - Sect readiness tracking may be built before public visibility is enabled; visibility may remain hidden, admin-only, or read-only until beta/community calibration locks the maturity milestone and backing limits.
+- Sect readiness should read from the Release Deck/deck-system measurement
+  path: eligible songs, playable duration, source ownership, Home Scene context,
+  and explicit song-level sect encoding.
 - Official Sect discovery should live in Registrar: members can see official sects in their Home Scene, inspect affiliation/update context, and choose to affiliate through the Registrar flow once the surface is enabled.
 - Registrar should eventually show official sect context such as active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
 - Sect Uprises remain part of their parent Home Scene/community context; they do not become standalone city/music-community replacements.
@@ -109,9 +112,19 @@ justify subcommunity broadcast authority.
 
 ### Readiness Inputs
 
-- Sect readiness counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate with that sect through the Registrar-owned path.
-- Passive genre/style metadata can inform discovery or candidate analysis, but it does not count toward readiness without explicit registered-source backing.
+- Sect readiness counts approved playable minutes only from Release Deck songs
+  that explicitly encode/back/affiliate that song with the sect through the
+  Registrar-owned authority path.
+- A registered source may affiliate with or back a sect, but that source-level
+  relationship does not automatically make every song in the source's catalog
+  count toward the sect.
+- Passive genre/style metadata can inform discovery or candidate analysis, but
+  it does not count toward readiness without explicit song-level sect encoding
+  from an eligible registered source.
 - The current readiness target mirrors community activation at `45` minutes of committed playable artist catalog.
+- One song should be readiness-bearing for at most one sect at a time unless a
+  later owner spec changes this rule, so the same playable minutes are not
+  double-counted toward multiple Sect Uprises.
 - Source/song backing limits and paid/free backing capacity remain beta/community-calibrated and must not be hard-coded until an implementation slice locks them.
 - Readiness tracking may be built before any public sect creation or progress surface is enabled.
 
@@ -129,6 +142,8 @@ justify subcommunity broadcast authority.
 - `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` exist for submitter-owned readback.
 - Current runtime does not validate sect readiness thresholds, approve motions, create Official Sect affiliation records, create update channels, or activate Sect Uprises.
 - Existing `SectTag` / `UserTag` rows remain non-authoritative for Official Sect affiliation and Sect Uprise realization unless a future migration explicitly promotes them through Registrar-owned records.
+- No current runtime validates song-level sect encoding or computes sect
+  readiness from Release Deck songs.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
@@ -136,7 +151,9 @@ justify subcommunity broadcast authority.
 - Official Sect affiliation records and updates-channel surfaces remain deferred until Registrar information architecture is locked.
 - Registrar motion threshold validation, approval workflow, and automatic Sect-to-Uprise activation.
 - Automated/scheduled city-tier activation and external notification delivery beyond the current profile notice context.
-- User-facing sect creation/unlock visibility, source-level backing limits, song-level backing limits, and paid/free backing capacity remain beta/community-calibrated until tested with real Home Scene density.
+- User-facing sect creation/unlock visibility, source-level affiliation limits,
+  song-level encoding/backing limits, and paid/free backing capacity remain
+  beta/community-calibrated until tested with real Home Scene density.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
 ## Non-Functional Requirements
@@ -161,7 +178,13 @@ justify subcommunity broadcast authority.
 - `SectTag` / `UserTag`
   - still participate in Home Scene/tag ordering and existing runtime identity structures
   - must not be treated as sufficient by themselves to make an official sect affiliation or realize a sect into an Uprise
-  - passive genre/style tag metadata may inform discovery or candidate analysis, but explicit registered-source backing is required before minutes count toward sect readiness
+  - passive genre/style tag metadata may inform discovery or candidate analysis,
+    but explicit song-level Release Deck encoding from an eligible registered
+    source is required before minutes count toward sect readiness
+- Future song-level sect backing references
+  - should connect eligible Release Deck songs to one readiness-bearing sect
+    without making loose profile tags or whole-source affiliation sufficient
+  - must preserve the parent Home Scene/music-community context
 - `User`
   - Home-scene affinity fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`, `gpsVerified`)
   - `homeSceneTag` remains relevant to system-order identity where that context is required
@@ -221,19 +244,25 @@ justify subcommunity broadcast authority.
 - Tag behavior:
   - if `tasteTag` exists in onboarding/runtime, it remains valid Home Scene/tag context
   - but tag assignment alone does not create official sect affiliation or realize a sect into an Uprise
-  - passive genre/style tags do not count toward sect readiness without explicit registered-source backing
+  - passive genre/style tags do not count toward sect readiness without explicit
+    song-level Release Deck encoding from an eligible registered source
 - Sect behavior:
   - Sect Uprises remain inside the parent Home Scene/music community
   - Sect members can vote in their Sect Uprise
   - non-members can listen only according to parent scene/discovery access and cannot vote in the Sect Uprise
-  - current runtime has sect-motion filing/readback only; readiness validation, approval, official affiliation records, update channels, and Uprise activation remain deferred
+  - current runtime has sect-motion filing/readback only; song-level sect
+    encoding, readiness validation, approval, official affiliation records,
+    update channels, and Uprise activation remain deferred
 
 ## Future Work & Open Questions
 - Lock implementation details for the metric storage/read path that evaluates the already-defined artist/source concentration threshold for splitting a new active city-tier community from an existing major-node/music-capital community.
 - Define implementation details for activation metrics read paths, trigger authority, notification delivery, source assignment/cutover, future upload routing, and listener helper messaging.
 - Retire or rename legacy `pioneer` runtime/test terminology once major-node assignment language is implemented end-to-end.
 - Beta-calibrate the community maturity milestone required before user-facing sect creation unlocks.
-- Define implementation artifacts for the now-owned Official Sect and Sect Uprise boundary: Registrar affiliation schema, updates channel, motion schema, approvals, visibility, backing limits, and paid/free capacity.
+- Define implementation artifacts for the now-owned Official Sect and Sect
+  Uprise boundary: Registrar affiliation schema, song-level Release Deck
+  encoding schema, updates channel, motion schema, approvals, visibility,
+  backing limits, and paid/free capacity.
 - Add explicit Uprise model and Scene<->Uprise lifecycle constraints.
 - Lock propagation thresholds and policy in `docs/specs/DECISIONS_REQUIRED.md`.
 

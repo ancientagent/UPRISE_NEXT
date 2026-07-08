@@ -93,6 +93,12 @@ Tests / verification files:
 - No single Release Deck song may exceed `6` minutes.
 - No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
 - The ad slot is not an extra song slot and not its own rotation entry.
+- Release Deck is also the Uprise-wide catalog, release scheduling, and
+  readiness measurement system formed from all source decks inside an Uprise;
+  see `docs/specs/media/release-deck-and-eligibility.md`.
+- Release-date scheduling belongs to the Release Deck/media spec before RADIYO
+  entry; once a scheduled song enters New Releases, the broadcast spec owns its
+  fixed protected run.
 - Future ad category/link-target design may include `release date`, `general`,
   `event`, and `sponsor`, but this remains deferred until media, economy,
   action/signal, and business-account contracts activate it.
