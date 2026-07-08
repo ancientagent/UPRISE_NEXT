@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-08
+Last Updated: 2026-07-07
 
 ## Purpose
 
@@ -22,12 +22,13 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-08
+- Snapshot date: 2026-07-07
 - Base branch: `main`
-- Current `origin/main` HEAD at refresh start: `414f1a0`
-- Active branch during this refresh: `docs/artist-profile-source-dashboard-specs`
-- Local worktree state at refresh: PR #227 branch with Artist Profile / Source Dashboard specs, source-dashboard runtime commits already on the local branch, design/founder-session captures, art-handoff docs/assets, and Home/Plot visual-language clarifications
-- Open PR queue at refresh: PR #227 is the active package PR; draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized
+- Current `origin/main` HEAD at refresh: `354e6f4`
+- Active branch during this refresh: `docs/post-227-branch-hygiene-refresh`
+- Local worktree state at refresh: clean branch from current `main` with operations-doc refresh only
+- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting; no active implementation PR is open
+- Recently closed PR: PR #227 (`docs/artist-profile-source-dashboard-specs`) merged at `2026-07-08T03:23:30Z`; remote branch deleted/pruned
 - Provider/db/schema state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -35,31 +36,28 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Advance the Artist Profile / Source Dashboard screen package through its Dev Spec, Design Spec, and spec-package review gates.
-- Preserve the approved source-dashboard visual target, public Artist Profile design context, and associated founder clarifications so downstream dev/design agents can work from repo docs rather than chat memory.
-- Preserve the split between public Artist Profile, Source Dashboard/source-admin tooling, Registrar civic/source lifecycle, Release Deck media eligibility, and listener profile surfaces.
-- Keep durable product truth in owner specs while package docs store execution artifacts.
-- Preserve draft PR #212 unless the user explicitly reprioritizes Linear clean-context agent roles.
+- Keep the repo branch/worktree/PR control plane accurate after PR #227 merged.
+- Preserve existing UX reference branches/worktrees until explicit extraction/archive approval.
+- Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
+- Identify remote-only cleanup candidates without deleting branches until explicit approval.
 
 Recently completed context:
 
 - PR #225 merged the `screen-package:flow` runner and Artist Profile / Source Dashboard seed package into `main`.
 - PR #226 refreshed PM/registry state after PR #225 and pointed the next signal at Dev Spec / Design Spec gates.
-- Parallel Dev Spec and Design Spec agents produced `spec/dev-spec.md` and `design-spec/ux-plan.md`.
-- Spec-package reviewer returned `Decision: pass` in `review/spec-package-review.md`.
-- Subsequent design/founder clarification work expanded the branch with source-dashboard art handoff, public Artist Profile design inventory, Release Deck/source-dashboard updates, Home/Plot player/inventory visual-language captures, and owner-spec/lane-brief promotions.
+- PR #227 merged Artist Profile / Source Dashboard screen-package specs, source-dashboard design/art handoff, public Artist Profile context, Home/Plot visual-language notes, and related owner-spec/lane-brief promotions.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | artist-source package / context-steward |
-| Branch | `docs/artist-profile-source-dashboard-specs` |
-| Scope | Add and close out the Artist Profile / Source Dashboard package docs, source-dashboard/public-profile design handoffs, founder-session captures, owner-spec/lane-brief promotions, and branch registry refresh for PR #227. |
-| Out of Scope | Provider/db/schema mutation, new implementation beyond commits already present on this branch, new production runtime behavior, merging/closing draft PR #212. |
-| Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/specs/users/artist-profile-and-source-dashboard.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md`, `docs/specs/core/signals-and-universal-actions.md`, `docs/specs/social/message-boards-groups-blast.md` |
-| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/screen-packages/artist-profile-source-dashboard/**`, `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`, `docs/solutions/SCREEN_NARRATIVE_ARTIST_PROFILE_SOURCE_DASHBOARD_R1.md` |
-| Validation | `pnpm run screen-package:flow -- status --package artist-profile-source-dashboard`, `pnpm run docs:lint`, `git diff --check`, `pnpm run workspace:audit` before push/PR |
+| Lane | operations / branch hygiene |
+| Branch | `docs/post-227-branch-hygiene-refresh` |
+| Scope | Refresh Active PM and branch workspace registry after PR #227 merged; record branch/worktree hygiene findings and remote cleanup candidates without deleting refs. |
+| Out of Scope | Provider/db/schema mutation, product doctrine changes, deleting remote branches without explicit approval, merging/closing draft PR #212, deleting preserved UX worktrees/branches. |
+| Owner Contracts | `AGENTS.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/specs/system/documentation-framework.md` |
+| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/handoff/2026-07-07_branch-workspace-hygiene-refresh.md` |
+| Validation | `pnpm run docs:lint`, `git diff --check`, `pnpm run workspace:audit`, `node scripts/workspace-registry.mjs audit --include-remote` |
 
 ## Current Branch / Worktree State
 
@@ -67,14 +65,13 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #227 | `docs/artist-profile-source-dashboard-specs` | open, active | Review/merge after pushed branch passes docs lint, workspace audit, and required PR checks. |
-| #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
+| #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/artist-profile-source-dashboard-specs` | `pending push` | PR #227 package/design/founder-session branch. |
+| `/home/baris/UPRISE_NEXT` | `docs/post-227-branch-hygiene-refresh` | `354e6f4` base plus ops-doc changes | Branch hygiene refresh after PR #227 merged. |
 
 ### Preserved UX Reference Worktrees
 
@@ -94,26 +91,57 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 | `feat/ux-batch17` | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
 | `feat/ux-batch18-run` | Preserve as historical batch-output/reference until a UX owner explicitly extracts or archives it. |
 
-## Recently Completed Since Prior PM Snapshot
+### Remote Cleanup Candidates
 
-- PR #225 / screen-package agent flow merged into `main` at `02bb5b6`.
-- PR #226 / screen-package flow closeout refresh merged into `main` at `414f1a0`.
-- Current branch registered as `artist-profile-source-dashboard-specs` in `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`.
-- PR #227 is open for the current branch and will receive the local branch stack after push.
+Remote-only refs may predate the branch registry. The following were observed during the 2026-07-07 hygiene pass.
+
+Clearly merged into `origin/main` by ancestry, but not registered because they are historical remote-only refs:
+
+- `origin/abacus/community-activation-proxy-lifecycle`
+- `origin/audit/music-community-preference-runtime-parity`
+- `origin/chore/staging-readiness-and-seed-safety`
+- `origin/docs/abacus-fusion-swarm-strategy`
+- `origin/docs/plot-tab-stale-term-annotations`
+- `origin/docs/submitted-location-gps-staging-smoke`
+- `origin/docs/systems-scale-no-one-off-community`
+- `origin/docs/voice-plot-dashboard-definition`
+- `origin/feat/onboarding-home-scene-resolution`
+- `origin/feat/player-profile-contract-hardening`
+- `origin/feat/plot-shell-archive-contract-hardening`
+- `origin/feat/submitted-location-gps-authority`
+- `origin/feat/ux-foundation-screen-shell`
+- `origin/feat/ux-founder-locks-and-harness`
+- `origin/fix/api-typecheck-tx`
+- `origin/fix/artist-profile-public-read`
+- `origin/fix/onboarding-music-community-option-labels`
+- `origin/fix/print-shop-location-defaults`
+- `origin/fix/release-deck-mvp-validation`
+- `origin/fix/source-account-context-hardening`
+- `origin/next-from-origin-main`
+- `origin/next-slice58-registrar-artist-dispatch-controller-tests`
+- `origin/next-slice64-phase2-roadmap-kickoff`
+- `origin/phase3-batchc-098-099`
+- `origin/phase3-next`
+- `origin/test/onboarding-home-scene-smoke`
+
+Needs explicit review/approval before deletion:
+
+- `origin/codex/propose-prisma-schema-migration` - old closed draft PR #1, one unique commit, likely obsolete schema draft.
+- `origin/docs/hermes-launch-reviewer` - PR #87 merged, but branch head is not ancestry-merged, likely squash/merge artifact.
+- `origin/docs/upr-11-staging-seed` - PR #88 merged, but branch head is not ancestry-merged, likely squash/merge artifact.
+- `origin/docs/linear-clean-context-agent-roles` - open draft PR #212; keep unless reprioritized or explicitly closed.
+- `origin/feat/ux-batch17` - preserved.
+- `origin/feat/ux-batch18-run` - preserved.
+- `origin/ux-implementation` - preserved worktree.
+- `origin/ux-mobile-r1-build` - preserved worktree.
 
 ## Next Queue
 
-1. Push the current `docs/artist-profile-source-dashboard-specs` branch to PR #227 after validation.
-2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. Review and merge PR #227 when checks pass.
-4. Next screen-package signal after this branch merges:
-
-```bash
-pnpm run screen-package:flow -- status --package artist-profile-source-dashboard
-pnpm run screen-package:flow -- next --package artist-profile-source-dashboard
-```
-
-Current next signal after this branch: pick one small vertical Artist Profile / Source Dashboard implementation slice from the passed Dev Spec + Design Spec + review package. If scope is not obvious, create `docs/screen-packages/artist-profile-source-dashboard/implementation/slice-contract.md`; do not require a full implementation plan or file-ownership packet by default.
+1. Finish this branch hygiene refresh PR and merge when docs lint, workspace audit, and required checks pass.
+2. If approved, run a separate remote cleanup pass for the clearly merged remote-only refs listed above.
+3. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
+4. Keep UX reference worktrees/branches until an explicit extraction/archive decision.
+5. Resume product development from current `main`; the likely next implementation signal remains a small vertical Artist Profile / Source Dashboard slice from the merged screen package.
 
 ## PM Usage Rules For Agents
 
