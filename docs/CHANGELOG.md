@@ -9,6 +9,7 @@
 
 ### Added
 
+- Refreshed Active PM and branch workspace registry after PR #227 merged, recording the clean main/worktree state plus remote-only branch cleanup candidates; see `docs/handoff/2026-07-07_branch-workspace-hygiene-refresh.md`.
 - Captured Home Scene photo-rotation and community-list founder clarification,
   promoted the atmosphere-photo presentation boundary into Plot/UI docs, and
   tracked `Instrumental` as an open selector/seed decision while confirming
