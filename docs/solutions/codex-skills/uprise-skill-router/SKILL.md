@@ -150,51 +150,40 @@ Plan review needed: yes/no
 Out of scope:
 ```
 
-### Major Screen Slice
+### Screen Slice
 
 Use for Plot screens, Artist Profile, Source Dashboard, Registrar, Discover,
 Release Deck, Print Shop, Archive, Events, player surfaces, or any screen that
-needs product narrative, visual direction, assets, implementation, and hardening.
+needs shared context to avoid drift.
 
-Workflow:
+Default workflow:
 
-1. Manager: verify branch/HEAD, dirty state, owner spec, lane briefs, runtime
-   files, tests, branch/workspace registry requirements, and package folder.
-2. Shared Instruction Packet: create one packet for Dev Spec and Design Spec.
-   Include authority order, scope, out-of-scope rules, file/surface ownership
-   expectations, validation seed, stop conditions, and pass/fail gates.
-3. Dev Spec Agent: trace owner specs, runtime, tests, contracts, stale paths,
-   file ownership, implementation risks, and validation requirements.
-4. Design Spec Agent: create UX/design plan for design-owned work only. It may
-   define hierarchy, states, accessibility expectations, responsive behavior,
-   visual direction, and art needs; it must not invent actions, data contracts,
-   auth rules, navigation, or product doctrine.
-5. Spec Package Review: review Dev Spec plus Design Spec together before
-   implementation. Classify findings as dev, design, cross-spec, product
-   decision, stale, or environment. Failed findings go back to the responsible
-   spec agent; cross-spec conflicts route to the manager and then founder
-   clarification only when owner specs do not settle the rule.
-6. Implementation: after spec-package approval, assign explicit file/surface
-   ownership. Dev implementation owns contracts/runtime/tests; design
-   implementation owns approved UI/design work.
-7. Art/Creative Studio: start only from the approved Design Spec and
-   `art-handoff/` brief, not raw brainstorming.
-8. Integration Review: check dev and design work together against repo authority,
-   approved specs, runtime, tests, and design constraints.
-9. Hardening: tie off tests, accessibility, edge states, copy consistency,
-   integration cleanup, regression locks, validation, and closeout.
+1. Pick one small vertical screen section or behavior.
+2. Verify branch/HEAD, dirty state, owner spec, lane brief, likely runtime files,
+   likely tests, out-of-scope boundaries, and branch/workspace registry state.
+3. Use `docs/screen-packages/<slug>/` only when a shared package helps. Its
+   required seed is `README.md`, `instruction-packet.md`, and `source-map.md`.
+4. If the next implementation step is still ambiguous, create one short
+   `implementation/slice-contract.md`.
+5. Implement with one branch-owning executor. Subagents are sidecars only:
+   bounded research, product design, or review.
+6. Use Product Design / Design Spec only when visible hierarchy, states,
+   accessibility, responsive behavior, or art direction must be settled before
+   implementation.
+7. Use one bounded review when behavior/risk justifies it; use xhigh only for
+   final/high-risk gates.
 
 Rules:
 
-- Major-screen package artifacts live in `docs/screen-packages/`; durable
+- Screen-package artifacts live in `docs/screen-packages/`; durable
   product truth remains in owner specs under `docs/specs/`.
-- Do not skip straight from idea to UI code for major screens.
+- Do not turn every screen slice into a multi-agent package ceremony.
 - Do not let Product Design, Creative Studio, or design implementation redefine
   actions, data contracts, auth rules, navigation, or product doctrine.
 - Do not use this profile for tiny docs-only, copy-only, test-only, or isolated
   low-risk fixes; use the lean path.
-- Use optional QA/trace checker agents only when manager/reviewer risk calls
-  for them, not as mandatory overhead.
+- Use optional QA/trace checker agents only when risk calls for them, not as
+  mandatory overhead.
 - Save reusable visual assets in an explicit art/assets folder only when the user
   asks for asset work or approves the selected design direction.
 

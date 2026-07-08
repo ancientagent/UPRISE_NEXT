@@ -3,7 +3,7 @@
 **ID:** `ECON-PRINTSHOP`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-20`
+**Last Updated:** `2026-07-06`
 
 ## Overview & Purpose
 Defines the Promotions surface and the Print Shop issuance model. The Print Shop is infrastructure for limited‑run digital artifacts and Proof‑of‑Support, not a marketplace.
@@ -38,6 +38,8 @@ commercial Print Shop or Promotions behavior into runtime.
 - Business promotion submissions, when later activated, must remain
   account-attached even when the business does not maintain a broader in-app
   source/profile surface.
+- Future Release Deck `sponsor` ad attachments must link to an activated
+  business account; anonymous sponsor linking is not approved.
 
 ### Implemented Now
 - Minimal source-facing event-write lane:
@@ -62,6 +64,8 @@ commercial Print Shop or Promotions behavior into runtime.
   and accessories so band artwork stays readable and clothing swaps do not
   require regenerating the full avatar.
 - Business promotion submission and auto-publish runtime.
+- Local business layer visibility inside Home Scene beta infrastructure.
+- Release Deck sponsor ad link-target runtime and business-account selection.
 
 ## Non-Functional Requirements
 - No marketplace behavior, resale, or bidding.
@@ -118,6 +122,9 @@ commercial Print Shop or Promotions behavior into runtime.
 - promoter-capability users may create promoter-lane events without an `artistBandId`, but the event still attaches to the resolved active city-tier Home Scene community.
 - Promotional Pack setup is deferred; when later activated it requires explicit target scope selection (city/state/community).
 - Business promotion submission is deferred; when later activated it should come from a Print Shop-attached account even when the business does not have a broader in-app profile/presence.
+- Release Deck sponsor ad attachment is deferred; when later activated it should
+  use the same business-account-attached principle rather than a free-text or
+  anonymous sponsor field.
 - Business submission should be treated as part of a business-facing source dashboard, not as anonymous one-off intake.
 - Business promotion auto-publish and post-publish moderation policy are deferred until business promotion submission is activated.
 - Artifact collections are visible on profiles.

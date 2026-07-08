@@ -3,7 +3,7 @@
 **ID:** `USER-SOURCE-LIFECYCLE`
 **Status:** `active`
 **Owner:** `uprise-registrar-source`
-**Last Updated:** `2026-07-04`
+**Last Updated:** `2026-07-06`
 
 ## Overview And Purpose
 
@@ -77,8 +77,16 @@ there as a path-only rehome.
 - Artist Profile public viewer actions are source-level `Follow`, share/copy,
   official outbound links including official donation links when supplied by the
   source, and row-level listening actions only where allowed.
+- Artist Profile is additive to the source's existing artist infrastructure. It
+  may expose official links to Bandcamp, SoundCloud, merch, donation, social,
+  website, contact, and similar source-provided destinations without making
+  those external services the authority for UPRISE source identity.
 - Artist Profile song rows may expose `Collect` and `Recommend`; `Recommend`
   is available only after the listener genuinely holds/collects the song.
+- Artist Profile song rows may play source-owned external audio inside the
+  UPRISE profile/player only when the Release Deck row provides a direct
+  playable `http(s)` audio URL or a later approved playback/embed contract
+  exists. Non-playable external pages remain official outbound listen/buy links.
 - Artist Profile must not expose listener-to-artist DM/message controls.
 - Artist Profile must not expose `Blast`.
 - Artist Profile must not use an engagement wheel.
@@ -88,15 +96,41 @@ there as a path-only rehome.
 - Source Dashboard current live cards are `Release Deck`, `Source Profile`,
   `Print Shop`, and `Registrar`; placeholder analytics, billing, growth,
   upgrade, source-post, message, or follower-update cards remain out of scope.
+- Source Dashboard source selection should expose the signed-in account/user
+  context and the user's current position for the selected source, such as
+  manager, member, or promoter. Switching selected source context must update
+  that role/position label and must not carry permissions from a different
+  source.
+- Source-facing Profile/member management may use manager-led email/search
+  entry for adding or finding band/source members. If a member resolves to an
+  already registered UPRISE user, their avatar can appear in the source-facing
+  member strip and may later link to their listener account/profile after
+  identity routing and privacy contracts are defined.
+- Public Artist Profile member display should prefer source-provided
+  artist/member headshots when available. Listener-account avatars are a
+  separate identity surface and must not be substituted as the default public
+  band/member image unless profile-link privacy and routing contracts explicitly
+  allow it.
+- Source Calendar/event management must support private/draft planning. Public
+  feed/follower-calendar delivery should follow explicit event published state,
+  not the mere existence of a calendar item. When the creator publishes a
+  band/promoter/source event, followers of that source should automatically
+  receive the published event in their calendars and the event can appear on the
+  community calendar once the event publication, community-calendar visibility,
+  and follower-calendar delivery contracts are active.
 - Release Deck limits remain:
   - `3` active music slots per managed Artist/Band source per city-tier
     community.
   - No single song may exceed `6` minutes (`360` seconds).
   - No single source may occupy more than `15` minutes (`900` seconds) of any
     one active rotation.
-  - Current MVP ingest is explicit hosted `http(s)` audio URL only.
+  - Current MVP ingest is explicit hosted `http(s)` audio URL only and remains
+    provider-agnostic when the URL is directly playable and allowed.
   - A paid ad attachment is not a fourth music slot and is not a standalone
     rotation entry.
+  - Future paid ad categories/link targets (`release date`, `general`, `event`,
+    `sponsor`) remain deferred until media, economy, action/signal, and business
+    account contracts activate them.
 - Source-origin and source Home Scene routing remain Registrar-owned; Source
   Dashboard must not rewrite source origin because the source is operating from
   a proxy or bridge context.
@@ -114,6 +148,7 @@ there as a path-only rehome.
   - `docs/solutions/MVP_SOURCE_DASHBOARD_SURFACE_CONTRACT_R1.md`
   - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
   - `docs/founder-sessions/2026-07-03_source-listener-messaging-boundary.md`
+  - `docs/founder-sessions/2026-07-06_source-dashboard-members-feed-publishing.md`
 - Runtime/code:
   - `apps/web/src/app/artist-bands/[id]/page.tsx`
   - `apps/web/src/app/source-dashboard/page.tsx`
@@ -262,7 +297,8 @@ Current endpoints in the lifecycle:
 - Public Artist Profile actions:
   - source-level `Follow`;
   - share/copy;
-  - official outbound links, including source-provided donation links;
+  - official outbound links, including source-provided donation, Bandcamp,
+    SoundCloud, merch, website, social, contact, and similar links;
   - row-level `Play/Pause`, timeline, `Collect`, gated `Recommend`.
 - Owner/member-only source tool links:
   - Source Dashboard;
@@ -321,6 +357,9 @@ Current endpoints in the lifecycle:
   analytics, posting, or messaging controls in the listener profile body.
 - Future source posts/messages and follower-update composers remain deferred
   until a dedicated implementation spec activates them.
+- Source-facing member email/search lookup, public avatar linking, and event
+  publication/follower-calendar delivery need dedicated identity/event/feed
+  contracts before implementation.
 
 ## Verification Caveat
 
@@ -360,3 +399,5 @@ Current web locks are mostly source-content/file-content regression locks and ro
 - Source posts/messages and one-way entity follower timelines remain deferred
   until activated by a dedicated owner spec.
 - Real upload/storage/transcoding/waveform infrastructure remains deferred.
+- Source member lookup privacy/routing and explicit event publication/follower
+  calendar delivery remain open product/runtime questions.

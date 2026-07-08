@@ -66,6 +66,10 @@ Tests / verification files:
   into Discover/back-door visitor context; this is distinct from the blasted
   signal source link and does not grant civic authority.
 - Artist Profile uses local song-row controls, not the engagement wheel.
+- Future Release Deck paid ad linked targets may expose a visit affordance
+  through an action-wheel-style UI only after the action/signal, media ad,
+  economy, and business-account contracts are updated. This does not authorize
+  the prohibited Artist Profile engagement wheel.
 - Feed inserts are read-only launch surfaces with no inline `Collect`, `Blast`, `Follow`, or wheel actions.
 - Events are objects, not sources; event action is `Add` to calendar.
 - Flyers are event-bound artifacts, not default music-distribution signals.

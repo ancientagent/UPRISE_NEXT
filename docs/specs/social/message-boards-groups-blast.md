@@ -37,7 +37,8 @@ Defines scene communication surfaces and BLAST behavior. Public discourse is Sce
 - No message board/group/chat models or endpoints currently exist.
 
 ### Deferred (Not Implemented Yet)
-- Scene message boards, posts, and threads.
+- Scene message boards, posts, and threads. Message boards are a beta expansion
+  layer for Home Scene discussion, not current MVP/launch runtime.
 - Group membership + group messaging.
 - Sect thread/room surfaces.
 - Official Sect update channels linked from Registrar.

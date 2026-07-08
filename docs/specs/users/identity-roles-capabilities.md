@@ -310,6 +310,10 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Do not treat business promotion intake as anonymous/public-link submission going forward.
 - Business accounts should be understood as source-facing dashboards, not one-off intake forms.
 - That business account/dashboard model is retained for later implementation, but is not current-MVP runtime scope while promos remain deferred.
+- Future Release Deck `sponsor` ad attachments should link to an activated
+  business account under this business-account model. They must not use
+  anonymous sponsor text or activate business dashboard/runtime from source
+  dashboard design alone.
 
 ## References
 - `docs/canon/Master Identity and Philosohpy Canon.md`

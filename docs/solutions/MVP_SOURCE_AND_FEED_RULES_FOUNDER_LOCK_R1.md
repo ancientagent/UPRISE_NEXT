@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: Founder + product engineering
-Last updated: 2026-04-25
+Last updated: 2026-07-06
 
 ## 1) Purpose
 Capture founder-confirmed source, profile, feed, and registrar-entity rules so future sessions stop re-deriving them from chat fragments.
@@ -142,7 +142,7 @@ Use a community-wide update when shared scene reality changes, including:
 - a source/entity appears in the community for the first time
 - a new sect is formed
 - a new Uprise takes root in a city
-- a new event enters the calendar
+- a new source event is explicitly published
 - a signal rises into the state community
 - major community acknowledgments or milestones
 - registrar-backed structural changes that materially affect the community
@@ -161,6 +161,22 @@ Later-version note:
 - business follower-update runtime remains deferred until the business surface is reactivated
 
 Follower updates may contain freeform source messaging.
+
+Published source-event delivery:
+- Source calendar planning can remain private/draft and must not emit public
+  Feed or follower-calendar updates merely because an event exists in the
+  source calendar.
+- Most public source/Registrar lifecycle actions can show up in Feed when the
+  public action happens. Source events have a separate calendar-publication
+  distinction: they require creator publication before community-calendar or
+  follower-calendar delivery.
+- When a creator explicitly publishes an artist/band/promoter/source event, that
+  event should appear on the community calendar and followers of that source
+  should automatically receive the published event in their calendars once the
+  event publication, community-calendar visibility, and follower-calendar
+  delivery contracts are active.
+- Draft, private, unpublished, or merely planned source calendar items must not
+  be delivered to followers.
 
 ### 5.3 Source entry rule
 When a source joins or enters the community for the first time:

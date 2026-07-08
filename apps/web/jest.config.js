@@ -4,6 +4,16 @@ module.exports = {
   testEnvironment: 'jsdom',
   roots: ['<rootDir>'],
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
+  transform: {
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          jsx: 'react-jsx',
+        },
+      },
+    ],
+  },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@uprise/types$': '<rootDir>/../../packages/types/src',

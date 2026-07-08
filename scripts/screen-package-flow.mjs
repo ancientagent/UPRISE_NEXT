@@ -5,25 +5,35 @@ import process from 'node:process';
 
 const REQUIRED_SEED_FILES = ['README.md', 'instruction-packet.md', 'source-map.md'];
 
-const WORKFLOW_NODES = [
+const REQUIRED_NODES = [
   {
     id: 'package_seed',
     label: 'Package seed',
     files: REQUIRED_SEED_FILES,
     next: 'Create README.md, instruction-packet.md, and source-map.md.',
   },
+];
+
+const OPTIONAL_ARTIFACTS = [
+  {
+    id: 'slice_contract',
+    label: 'Slice Contract',
+    files: ['implementation/slice-contract.md'],
+    next: 'Create one short contract for the next vertical screen section only if it helps execution.',
+    template: 'implementation/slice-contract.md',
+  },
   {
     id: 'dev_spec',
     label: 'Dev Spec',
     files: ['spec/dev-spec.md'],
-    next: 'Write the Dev Spec from owner specs, runtime files, tests, stale paths, and validation requirements.',
+    next: 'Optional: write only when implementation risk needs a technical trace beyond the slice contract.',
     template: 'spec/dev-spec.md',
   },
   {
     id: 'design_spec',
     label: 'Design Spec',
     files: ['design-spec/ux-plan.md'],
-    next: 'Write the Design Spec for UX/design-owned work without redefining product contracts.',
+    next: 'Optional: write only when visual/product-design direction is needed before implementation.',
     template: 'design-spec/ux-plan.md',
   },
   {
@@ -31,21 +41,14 @@ const WORKFLOW_NODES = [
     label: 'Spec Package Review',
     files: ['review/spec-package-review.md'],
     passRequired: true,
-    next: 'Review Dev Spec plus Design Spec together and record decision: pass before implementation.',
+    next: 'Optional: review only when Dev/Design artifacts exist and risk justifies a package gate.',
     template: 'review/spec-package-review.md',
-  },
-  {
-    id: 'implementation_plan',
-    label: 'Implementation Plan',
-    files: ['implementation/implementation-plan.md', 'implementation/file-ownership.md'],
-    next: 'Write implementation plan and file/surface ownership after spec package review passes.',
-    template: 'implementation/implementation-plan.md',
   },
   {
     id: 'art_handoff',
     label: 'Art / Creative Handoff',
     files: ['art-handoff/creative-brief.md'],
-    next: 'Create the art handoff only from the approved Design Spec.',
+    next: 'Optional: create only after the user approves visual/art direction.',
     template: 'art-handoff/creative-brief.md',
   },
   {
@@ -53,7 +56,7 @@ const WORKFLOW_NODES = [
     label: 'Integration Review',
     files: ['review/implementation-integration-review.md'],
     passRequired: true,
-    next: 'Review integrated dev/design work and record decision: pass before hardening closeout.',
+    next: 'Optional: review integrated dev/design work when runtime or UX risk justifies it.',
     template: 'review/implementation-integration-review.md',
   },
   {
@@ -61,7 +64,7 @@ const WORKFLOW_NODES = [
     label: 'Hardening Closeout',
     files: ['hardening/closeout.md'],
     passRequired: true,
-    next: 'Complete hardening, validation, docs/changelog/handoff checks, branch state, and PR metadata.',
+    next: 'Optional: use for large/risky implementation closeout, not routine small slices.',
     template: 'hardening/closeout.md',
   },
 ];
@@ -74,8 +77,8 @@ function usage(exitCode = 0) {
   node scripts/screen-package-flow.mjs scaffold --package <slug> --title <title> --owner-spec <path> --lane <lane> [--root <path>]
 
 Commands:
-  status    Print current gate state for a screen package.
-  next      Print the next required gate; with --write, create its template if missing.
+  status    Print required seed state plus optional artifact inventory.
+  next      Print the next lightweight action; with --write, create a slice-contract template if missing.
   scaffold  Create a new package seed and standard folders.
 `);
   process.exit(exitCode);
@@ -118,28 +121,37 @@ function fileHasPass(pkgDir, file) {
   return /^decision:\s*pass\s*$/im.test(text) || /^\*\*decision:\*\*\s*pass\s*$/im.test(text);
 }
 
+function inspectNode(pkgDir, packageExists, node) {
+  const missing = packageExists ? node.files.filter((file) => !exists(pkgDir, file)) : node.files;
+  const filesPresent = missing.length === 0;
+  const passSatisfied = !node.passRequired || node.files.some((file) => fileHasPass(pkgDir, file));
+  const status = filesPresent && passSatisfied ? 'complete' : filesPresent ? 'blocked_pending_pass' : 'missing';
+  return { ...node, missing, status };
+}
+
 export function inspectPackage(root, slug) {
   const dir = packageDir(root, slug);
   const packageExists = fs.existsSync(dir);
-  const nodes = WORKFLOW_NODES.map((node) => {
-    const missing = packageExists ? node.files.filter((file) => !exists(dir, file)) : node.files;
-    const filesPresent = missing.length === 0;
-    const passSatisfied = !node.passRequired || node.files.some((file) => fileHasPass(dir, file));
-    const status = filesPresent && passSatisfied ? 'complete' : filesPresent ? 'blocked_pending_pass' : 'missing';
-    return { ...node, missing, status };
-  });
-  const nextNode = nodes.find((node) => node.status !== 'complete') ?? null;
+  const requiredNodes = REQUIRED_NODES.map((node) => inspectNode(dir, packageExists, node));
+  const optionalNodes = OPTIONAL_ARTIFACTS.map((node) => inspectNode(dir, packageExists, node));
+  const blockingNode = requiredNodes.find((node) => node.status !== 'complete') ?? null;
+  const optionalSliceContract = optionalNodes.find((node) => node.id === 'slice_contract');
+  const nextNode = blockingNode ?? (!optionalSliceContract || optionalSliceContract.status === 'complete' ? null : optionalSliceContract);
   return {
     package: slug,
     packageDir: dir,
     packageExists,
-    nodes,
-    complete: packageExists && !nextNode,
+    nodes: [...requiredNodes, ...optionalNodes],
+    requiredNodes,
+    optionalNodes,
+    complete: packageExists && !blockingNode,
     nextSignal: !packageExists
       ? 'Create package seed.'
-      : nextNode
-        ? `${nextNode.id}: ${nextNode.next}`
-        : 'complete: package workflow gates are satisfied.',
+      : blockingNode
+        ? `${blockingNode.id}: ${blockingNode.next}`
+        : optionalSliceContract?.status !== 'complete'
+          ? 'ready_for_slice: choose one small vertical screen section; optionally create implementation/slice-contract.md.'
+          : 'ready_for_slice: choose one small vertical screen section and implement with focused validation.',
     nextNodeId: nextNode?.id ?? null,
   };
 }
@@ -155,20 +167,23 @@ function writeIfMissing(file, content) {
   return true;
 }
 
+function titleFromSlug(slug) {
+  return slug.split('-').map((part) => part[0].toUpperCase() + part.slice(1)).join(' ');
+}
+
 function templateFor(relativePath, slug, title, ownerSpec = '<owner-spec>', lane = '<lane>') {
-  const heading = title || slug.split('-').map((part) => part[0].toUpperCase() + part.slice(1)).join(' ');
+  const heading = title || titleFromSlug(slug);
   const templates = {
-    'README.md': `# ${heading} Screen Package\n\nStatus: active package seed\nPackage owner: current UPRISE implementation owner / Dev Team Manager\nOwner spec: \`${ownerSpec}\`\n\n## Purpose\n\nCoordinate Dev Spec, Design Spec, implementation, art, review, and hardening work for this major screen or flow.\n\nThis package is an execution workspace. Product truth remains in owner specs under \`docs/specs/**\`.\n`,
-    'instruction-packet.md': `# Instruction Packet: ${heading}\n\nStatus: draft packet\nLane: \`${lane}\`\nOwner contract: \`${ownerSpec}\`\n\n## Goal\n\nDescribe the screen or flow outcome.\n\n## Must Read\n\n- \`AGENTS.md\`\n- \`docs/PLATFORM_START_HERE.md\`\n- \`docs/AGENT_STRATEGY_AND_HANDOFF.md\`\n- \`docs/agent-briefs/CONTEXT_ROUTER.md\`\n- \`${ownerSpec}\`\n\n## Runtime / Tests To Inspect\n\n- Add exact files before assigning agents.\n\n## Agent Outputs\n\n- Dev Spec Agent: \`spec/dev-spec.md\`\n- Design Spec Agent: \`design-spec/ux-plan.md\`\n- Reviewer: \`review/spec-package-review.md\`\n\n## Out Of Scope\n\n- No unapproved product actions, data contracts, auth rules, navigation, provider/db/schema changes, or one-off city/community/source behavior.\n\n## Validation Seed\n\n- \`pnpm run docs:lint\`\n- \`git diff --check\`\n\n## Stop Conditions\n\n- Owner spec does not authorize the proposed behavior.\n- Branch/HEAD or dirty worktree state cannot be verified.\n`,
-    'source-map.md': `# Source Map: ${heading}\n\nStatus: draft package source map\n\n## Owner Specs\n\n- \`${ownerSpec}\`\n\n## Lane Briefs / Narrative\n\n- Add lane brief links.\n\n## Runtime Files\n\n- Add exact runtime files.\n\n## Tests / Locks\n\n- Add exact tests.\n\n## Handoffs / Founder Context\n\n- Add directly relevant handoffs only.\n`,
-    'spec/dev-spec.md': `# Dev Spec: ${heading}\n\nStatus: draft\nOwner spec: \`${ownerSpec}\`\n\n## Runtime Trace\n\n- Current source of behavior:\n- Upstream producers/API/client/store/state:\n- Downstream screens/components/actions/tests:\n- Stale or parallel paths:\n\n## Implementation Scope\n\n- Build:\n- Do not build:\n\n## File / Surface Ownership\n\n- Dev-owned files:\n- Design-owned files:\n- Shared files requiring coordination:\n\n## Validation Seed\n\n- Focused tests:\n- Typecheck/lint:\n\n## Open Questions\n\n- None, or list product decisions that must stop implementation.\n`,
-    'design-spec/ux-plan.md': `# Design Spec: ${heading}\n\nStatus: draft\nOwner spec: \`${ownerSpec}\`\n\n## UX Goals\n\n-\n\n## Screen Hierarchy\n\n-\n\n## States\n\n- Default:\n- Empty:\n- Error:\n- Loading:\n- Owner/member/public variations:\n\n## Accessibility / Responsive Behavior\n\n-\n\n## Art / Asset Needs\n\n-\n\n## Forbidden Design Moves\n\n- No invented actions, data contracts, auth rules, navigation, product doctrine, platform-trope imports, or unapproved placeholder CTAs.\n`,
-    'review/spec-package-review.md': `# Spec Package Review: ${heading}\n\nStatus: draft\n\nDecision: pending\n\nSet \`Decision: pass\` only when Dev Spec plus Design Spec are ready for implementation.\n\n## Findings\n\n| Classification | Finding | Owner | Required Fix |\n| --- | --- | --- | --- |\n\n## Reviewed Inputs\n\n- \`instruction-packet.md\`\n- \`spec/dev-spec.md\`\n- \`design-spec/ux-plan.md\`\n`,
-    'implementation/implementation-plan.md': `# Implementation Plan: ${heading}\n\nStatus: draft\n\n## Preconditions\n\n- Spec package review decision is pass.\n- File/surface ownership is documented.\n\n## Tasks\n\n1.\n\n## Validation\n\n-\n`,
-    'implementation/file-ownership.md': `# File Ownership: ${heading}\n\nStatus: draft\n\n## Dev-Owned\n\n-\n\n## Design-Owned\n\n-\n\n## Shared / Coordination Required\n\n-\n`,
-    'art-handoff/creative-brief.md': `# Creative Brief: ${heading}\n\nStatus: draft\nSource: approved Design Spec\n\n## Visual Direction\n\n-\n\n## Required Assets\n\n-\n\n## Constraints\n\n- Art is visual input, not product authority.\n`,
-    'review/implementation-integration-review.md': `# Implementation Integration Review: ${heading}\n\nStatus: draft\n\nDecision: pending\n\nSet \`Decision: pass\` only when integrated dev/design work satisfies the approved specs, owner contracts, runtime behavior, and validation evidence.\n\n## Findings\n\n| Classification | Finding | Owner | Required Fix |\n| --- | --- | --- | --- |\n`,
-    'hardening/closeout.md': `# Hardening Closeout: ${heading}\n\nStatus: draft\n\nDecision: pending\n\nSet \`Decision: pass\` only after validation, docs/changelog/handoff requirements, branch/worktree state, and PR metadata are complete.\n\n## Validation\n\n- Tests:\n- Typecheck:\n- Docs lint:\n- Diff check:\n\n## Remaining Risks\n\n-\n`,
+    'README.md': `# ${heading} Screen Package\n\nStatus: active execution workspace\nPackage owner: current UPRISE implementation owner\nOwner spec: \`${ownerSpec}\`\n\n## Purpose\n\nCoordinate small vertical screen-section slices without turning temporary planning artifacts into product doctrine.\n\nThis package is an execution workspace. Product truth remains in owner specs under \`docs/specs/**\`.\n`,
+    'instruction-packet.md': `# Instruction Packet: ${heading}\n\nStatus: active packet\nLane: \`${lane}\`\nOwner contract: \`${ownerSpec}\`\n\n## Goal\n\nDescribe the screen or flow outcome. Keep this packet short enough for an executor to use directly.\n\n## Must Read\n\n- \`AGENTS.md\`\n- \`docs/PLATFORM_START_HERE.md\`\n- \`docs/AGENT_STRATEGY_AND_HANDOFF.md\`\n- \`docs/agent-briefs/CONTEXT_ROUTER.md\`\n- \`${ownerSpec}\`\n\n## Runtime / Tests To Inspect\n\n- Add exact files before assigning work.\n\n## Default Execution Shape\n\n- One small vertical screen-section slice at a time.\n- One branch-owning executor.\n- Optional subagents only for bounded research, product design, or review sidecars.\n- One bounded review only when behavior/risk justifies it.\n\n## Out Of Scope\n\n- No unapproved product actions, data contracts, auth rules, navigation, provider/db/schema changes, or one-off city/community/source behavior.\n\n## Validation Seed\n\n- \`pnpm run docs:lint\`\n- \`git diff --check\`\n\n## Stop Conditions\n\n- Owner spec does not authorize the proposed behavior.\n- Branch/HEAD or dirty worktree state cannot be verified.\n`,
+    'source-map.md': `# Source Map: ${heading}\n\nStatus: active package source map\n\n## Owner Specs\n\n- \`${ownerSpec}\`\n\n## Lane Briefs / Narrative\n\n- Add lane brief links.\n\n## Runtime Files\n\n- Add exact runtime files.\n\n## Tests / Locks\n\n- Add exact tests.\n\n## Handoffs / Founder Context\n\n- Add directly relevant handoffs only.\n`,
+    'implementation/slice-contract.md': `# Slice Contract: ${heading}\n\nStatus: draft\nOwner spec: \`${ownerSpec}\`\n\n## Slice\n\nOne small vertical screen section or behavior.\n\n## Build\n\n-\n\n## Do Not Build\n\n-\n\n## Files Likely Touched\n\n-\n\n## Validation\n\n-\n\n## Review Needed\n\nreviewer_required: yes/no\nreason:\n`,
+    'spec/dev-spec.md': `# Dev Spec: ${heading}\n\nStatus: optional draft\nOwner spec: \`${ownerSpec}\`\n\nUse this only when the slice needs a technical trace beyond \`implementation/slice-contract.md\`.\n`,
+    'design-spec/ux-plan.md': `# Design Spec: ${heading}\n\nStatus: optional draft\nOwner spec: \`${ownerSpec}\`\n\nUse this only when the slice needs product-design direction before implementation.\n`,
+    'review/spec-package-review.md': `# Spec Package Review: ${heading}\n\nStatus: optional draft\n\nDecision: pending\n\nUse this only when Dev Spec plus Design Spec both exist and risk justifies a package gate.\n`,
+    'art-handoff/creative-brief.md': `# Creative Brief: ${heading}\n\nStatus: optional draft\n\nUse this only after the user approves visual/art direction. Art is visual input, not product authority.\n`,
+    'review/implementation-integration-review.md': `# Implementation Integration Review: ${heading}\n\nStatus: optional draft\n\nDecision: pending\n\nUse this only for risky integrated dev/design work.\n`,
+    'hardening/closeout.md': `# Hardening Closeout: ${heading}\n\nStatus: optional draft\n\nDecision: pending\n\nUse this only for large/risky implementation closeout. Routine small slices close out in the PR body.\n`,
   };
   return templates[relativePath] ?? `# ${heading}\n\nStatus: draft\n`;
 }
@@ -193,7 +208,9 @@ export function writeNextTemplate(root, slug, options = {}) {
   if (!status.packageExists) {
     throw new Error(`Package does not exist: ${status.packageDir}. Run scaffold first.`);
   }
-  const node = status.nodes.find((candidate) => candidate.status !== 'complete');
+  const node = status.nextNodeId
+    ? status.nodes.find((candidate) => candidate.id === status.nextNodeId)
+    : OPTIONAL_ARTIFACTS.find((candidate) => candidate.id === 'slice_contract');
   if (!node) return { wrote: [], status };
   if (node.status === 'blocked_pending_pass') return { wrote: [], status };
   const wrote = [];
@@ -211,9 +228,9 @@ function printStatus(status, asJson) {
   }
   console.log(`# Screen Package Flow: ${status.package}`);
   console.log(`Package dir: ${status.packageDir}`);
-  console.log(`Complete: ${status.complete ? 'yes' : 'no'}`);
+  console.log(`Seed complete: ${status.complete ? 'yes' : 'no'}`);
   console.log(`Next signal: ${status.nextSignal}`);
-  console.log('\n| Gate | Status | Missing |');
+  console.log('\n| Artifact | Status | Missing |');
   console.log('| --- | --- | --- |');
   for (const node of status.nodes) {
     console.log(`| ${node.label} | ${node.status} | ${node.missing.length ? node.missing.map((file) => `\`${file}\``).join(', ') : '-'} |`);

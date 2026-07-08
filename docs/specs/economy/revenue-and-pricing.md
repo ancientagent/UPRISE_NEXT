@@ -3,7 +3,7 @@
 **ID:** `ECON-REVENUE`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-02-16`
+**Last Updated:** `2026-07-06`
 
 ## Overview & Purpose
 Defines the canonical revenue streams and subscription tiers. Revenue is infrastructure‑aligned and cannot create visibility or governance advantages.
@@ -31,6 +31,11 @@ boundary before implementing anything from this spec.
 - Promotional Packs provide paid boost-style reach (similar to Facebook Boost) across selected
   Scenes/communities in Promotions surfaces only.
 - On‑air promotional ads use the 4th Release Deck slot.
+- Future on-air promotional ads may carry category metadata such as `release
+  date`, `general`, `event`, or `sponsor`, but this spec does not activate paid
+  ad runtime or category persistence by itself.
+- Future `sponsor` ad categories must be business-account attached when business
+  accounts/local business communities are activated.
 - Promotions surface supports paid business offers.
 - Listener tiers:
   - Free Listener: Home Scene only.
@@ -54,6 +59,9 @@ boundary before implementing anything from this spec.
 - Discovery Pass purchase, renewal, and entitlement enforcement.
 - Play Pass purchase and slot entitlement enforcement.
 - On-air ad slot purchase and campaign lifecycle.
+- On-air ad category/link-target lifecycle, including release-date, event, and
+  sponsor/business-account linking.
+- Local business layer runtime for beta Home Scene support infrastructure.
 - Promotions billing and run purchase flows.
 - Optional label-catalog service (future phase).
 
@@ -92,6 +100,9 @@ boundary before implementing anything from this spec.
 - Subscription, promotion, ad, offer/coupon, and premium analytics surfaces are
   not current MVP UI unless explicitly reactivated by a newer spec/founder lock.
 - When later activated, Promotions and ads must be labeled as paid surfaces.
+- Future Release Deck ad category/link-target controls must not use purchase,
+  sponsor, or business-account CTAs until billing, entitlement, business-account,
+  and action/link-target contracts are activated.
 
 ## Acceptance Tests / Test Plan
 - Premium capability increases active slots only.
@@ -103,5 +114,7 @@ boundary before implementing anything from this spec.
 
 ## Future Work & Open Questions
 - Finalize pricing and entitlement edge cases in `docs/specs/DECISIONS_REQUIRED.md`.
+- Finalize Release Deck paid ad category and link-target contracts in
+  `docs/specs/DECISIONS_REQUIRED.md`.
 - Artist opt-in catalog service remains explicitly post-V1.
 - Mix Market revenue-share policy remains V2-only.

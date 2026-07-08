@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-07-03`
+**Last Updated:** `2026-07-06`
 
 ## Overview & Purpose
 
@@ -34,6 +34,11 @@ Current MVP shell note:
   separate homepage/feed route.
 - Plot is the community dashboard/neighborhood for the listener's active Home Scene context. It does not originate Discover transport or Away Scene travel.
 - The Plot top shell is Home Scene/RADIYO infrastructure. It must not become the launcher for saved/custom Uprises from the user's collection; that playback/visitor context belongs to Discover.
+- Home Scene atmosphere imagery is a presentation/content layer only. When used,
+  the shell may rotate among approved city-context and music-community-context
+  images for the active `city + state + music community` tuple, but the image
+  set must not change Home Scene authority, routing, tabs, player behavior,
+  action grammar, seed activation, or community permissions.
 - Plot tab surfaces:
   - Activity Feed (S.E.E.D Feed) (default)
   - Events
@@ -74,7 +79,13 @@ Current MVP shell note:
 - Calendar rule:
   - calendar is a real MVP organizational layer
   - users add events directly to calendar
-  - following a source is awareness subscription, not automatic event-calendar population under the intended action model
+  - following a source is awareness subscription and must not add draft,
+    private, unpublished, or merely planned source calendar items
+  - when the creator explicitly publishes an artist/band/promoter/source event,
+    that published event should appear on the community calendar and should
+    automatically appear in follower calendars once the event publication,
+    community-calendar visibility, and follower-calendar delivery contracts are
+    active
   - calendar behavior may sync/export to Google / Apple calendars
 - Promotions/business surfaces are distinct from Activity Feed, but are deferred from the current MVP Plot tab set.
 - Registrar entry is part of Plot civic workflow and should be accessed from within Archive/community information.
@@ -100,6 +111,10 @@ Current MVP shell note:
 - The non-expanded Plot top shell groups listener identity, the Home Scene
   selector, and the top RADIYO player into one visual composition while keeping
   the same selector/tune, player, and profile-pull-down behavior.
+- Atmosphere photos in the top shell must remain grounded in approved assets or
+  clearly generative scene-context art. They may suggest city or
+  music-community atmosphere, but must not imply unverified venues, events,
+  sponsors, artist affiliations, or source membership.
 - Copy and framing align with canon (“anchor this dashboard”).
 - Archive surface renders read-only descriptive modules in the current MVP body:
   - `Registrar` community-information entry/control and records/status history, with the Registrar entry on top and records below.
@@ -127,7 +142,13 @@ Current MVP shell note:
 ### Deferred Behavior (Not Implemented Yet)
 
 - Advanced registrar lifecycle dashboard in Plot (beyond status summary + explicit registrar navigation).
-- Social tab message boards/listening rooms (V2). Social tab UI remains hidden in MVP.
+- Social tab message boards (V2). Social tab UI remains hidden in MVP.
+- Shared Listen / Jam Space is deferred listener collection/profile-space
+  behavior, not a public Plot Social-tab room by default.
+- Local business layer and message board/social surfaces are beta expansion
+  layers for the Home Scene infrastructure model. They are not current launch
+  Plot tabs or active MVP runtime until explicit UI/API, moderation, business,
+  and monetization contracts activate them.
 - Search Party and sect private channels remain explicit private-group/social constructs when enabled; they are not auto-created feed channels.
 
 ## Non-Functional Requirements

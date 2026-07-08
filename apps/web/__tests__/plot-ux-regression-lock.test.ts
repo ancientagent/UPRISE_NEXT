@@ -613,7 +613,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).not.toContain('Open Community');
     expect(plotPageSource).not.toContain("router.push('/print-shop')");
     expect(plotPageSource).not.toContain('Open Print Shop');
-    expect(sourceDashboardSource).toContain('<Link href="/print-shop">Open Print Shop</Link>');
+    expect(sourceDashboardSource).toContain('<Link href="/print-shop">Open Print Shop');
     expect(artistSource).toContain(
       '<Link href="/print-shop" onClick={() => setActiveSourceId(profile.id, user?.id ?? null)}>'
     );

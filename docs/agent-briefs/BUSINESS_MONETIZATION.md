@@ -50,12 +50,20 @@ Tests / verification files:
 - Revenue must support infrastructure without creating visibility, ranking, rotation, or governance advantages.
 - Paid behavior must not affect Fair Play, tier progression, or civic authority.
 - Business runtime is deferred with the broader promo/business surface.
+- The local business layer is a beta expansion layer for Home Scene support
+  infrastructure, not current MVP/launch Plot runtime.
 - Business accounts remain legitimate later/current-model source concepts, but not active MVP runtime by default.
 - Business promotion submissions should be account-attached, not anonymous public-link intake.
+- Future Release Deck `sponsor` ad attachments should link to an activated
+  business account. They must not use anonymous sponsor text or activate business
+  dashboard/runtime from source-dashboard design alone.
 - Print Shop is source-facing infrastructure, not a listener-facing creation surface.
 - Current MVP runtime has a minimal source-facing event-write lane through Print Shop.
 - Release Deck has `3` music slots plus a separate `4th` paid `10` second ad-attachment slot.
 - The paid ad slot is not a fourth song and not its own rotation entry.
+- Future paid ad categories may include `release date`, `general`, `event`, and
+  `sponsor`; category/link-target persistence and action-wheel visit behavior
+  remain deferred until owner specs activate them.
 - Premium analytics must remain descriptive, not prescriptive or comparative ranking.
 - Discovery Pass / subscription / billing / entitlement infrastructure is not implemented yet.
 - `docs/solutions/BUSINESS_MONETIZATION_BOUNDARY_R1.md` is the active boundary packet for avoiding accidental billing, promotions, business-dashboard, coupon/offer, or premium-analytics implementation.

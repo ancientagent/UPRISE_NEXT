@@ -91,6 +91,13 @@ Recent handoffs to use only after the locks above:
 - Artist Profile is direct-listen, discovery, information, and sharing outside `RADIYO`.
 - User profile means the listener profile / collection workspace for everyone who has onboarded into the app.
 - Source management is separate from the listener profile and should be treated as source/admin web tooling that the app reads from.
+- Source Dashboard chrome should show the signed-in account/user with the user's
+  current role/title for the selected source next to the source selector; the
+  label changes when the selected source changes.
+- Release Deck paid ad category/link-target UI is design-only until activated:
+  `release date`, `general`, `event`, and `sponsor` may be represented as future
+  structure, but paid ad runtime, business linking, and action-wheel visits are
+  not active.
 - Music-community preferences live in the user profile and persist across cities; the detailed membership/default/selector contract lives in `docs/specs/users/onboarding-home-scene-resolution.md`.
 - The expanded `/plot` listener profile includes music-community preference management: list registered affiliations, label whether each preference is in the Home Scene selector or profile-only until active, add approved parent music communities, and explicitly mark the default/starred preference.
 - The Home Scene selector is a shortcut to resolvable primary music-community preferences in the current verified/default city; saved Away Scenes stay in the profile/collection workspace.
@@ -100,6 +107,10 @@ Recent handoffs to use only after the locks above:
 - Discover transport is not part of the Plot top shell, Home Scene selector, or Plot profile pull-down. The owner contract is `docs/specs/communities/discovery-scene-switching.md`: Discover front door starts from the user's Home context, back door previews the visited community, map/seek transport is deferred, saved/custom Uprise playback belongs to Discover/collection-owned listening, and eligible outside-Uprise Feed cards may expose a `Travel` handoff into Discover/back-door context.
 - Non-expanded Plot should not force a companion context panel beside Feed, Events, or Archive. Source identity access may appear inside the expanded listener profile for users who manage Artist/Band sources, but source tools still live in source/admin surfaces. Registrar placement is inside Archive/community information with Registrar on top and records/status history below.
 - The non-expanded `/plot` top shell groups listener identity, the Home Scene selector, and the top RADIYO player as one visual cockpit. This is presentation-only; it does not authorize Discover transport, map/seek controls, source tools, or side panels inside Plot.
+- Home Scene atmosphere imagery can rotate between approved city-context and
+  music-community-context images for the active tuple. This is visual identity
+  only: do not use the photo set to create community-specific architecture,
+  actions, permissions, routes, player behavior, or unverified real-world claims.
 - Artist Profile does not use the engagement wheel.
 - `Blast` belongs to the personal-player / user-space context, not Artist Profile and not the `RADIYO` wheel.
 - `RADIYO` uses `Play It Loud` and `Upvote`.
@@ -115,6 +126,14 @@ Recent handoffs to use only after the locks above:
 6. Player sits directly below the identity/avatar layer.
 7. Plot tab bar sits below the player.
 8. Plot body shows the active tab: Feed, Events, or Archive.
+
+Atmosphere-photo direction:
+
+- use a small approved rotation set per Home Scene where available
+- include a few city-context images and a few music-community-context images
+- keep photos behind/inside the top shell so player, inventory access, Feed,
+  Events, and Archive stay immediately legible
+- do not let generated atmosphere art imply real venue/event/source facts
 
 ## Player / Profile Interaction
 
@@ -180,6 +199,9 @@ Boundaries:
 - do not confuse this collection workspace with Artist Profile
 - do not place Release Deck, Print Shop, source-posting, or source-management tools here; the only approved source-side affordance in this workspace is source identity/account switching for users who manage Artist/Band sources
 - do not make this workspace a Plot launcher for saved/custom Uprise playback or Away Scene transport
+- future Shared Listen / Jam Space belongs in the listener collection/profile
+  space as invite-only/avatar-presence behavior, not as a Feed card, Artist
+  Profile action, RADIYO wheel action, or public Social-tab room by default
 
 ## Feed Tab
 

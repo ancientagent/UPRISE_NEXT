@@ -15,6 +15,11 @@ This folder contains **implementation seed data** used for onboarding and routin
 - These lists are implementation support and must not override canon.
 - `music-communities.json` is the current MVP onboarding selector list.
 - `music-community-taxonomy.md` is a broader internal reference and must not be treated as the current onboarding selector.
+- The current MVP selector already includes `Spoken Word / Poetry`.
+- `Instrumental` is a founder-requested candidate for community-list review,
+  but is not active in seed JSON or the launch matrix until a founder decision
+  locks whether it is a selectable music community, a routing/taste tag, or a
+  future generated sect/channel category.
 - Home Scene architecture is invariant. City and music-community identity change the scene data, membership, content, activity, and later generated Prime-model structures; they must not change runtime behavior, tabs, menus, actions, player rules, or routing.
 - The launch seed defines active major-node Home Scenes / music capitals. New city-tier communities split off later through artist/source registration and Registrar/source activation when local artist/music concentration justifies it; listener onboarding counts do not activate communities.
 - Sects, generated channels, and sub-communities happen later through the Prime model; they are not launch-time architecture variants.

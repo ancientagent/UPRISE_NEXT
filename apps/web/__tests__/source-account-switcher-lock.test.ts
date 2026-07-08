@@ -24,6 +24,7 @@ describe('source account switcher lock', () => {
     expect(sourceDashboardSource).toContain('SourceAccountSwitcher');
     expect(sourceDashboardSource).toContain("onSelectSource={() => router.push('/source-dashboard')}");
     expect(sourceDashboardSource).toContain('currentUserId={user?.id ?? null}');
+    expect(sourceDashboardSource).toContain('variant="command"');
     expect(plotSource).not.toContain('SourceAccountSwitcher');
     expect(listenerProfileSource).toContain('SourceAccountSwitcher');
     expect(listenerProfileSource).toContain('data-slot="profile-source-identity-access"');
@@ -52,8 +53,8 @@ describe('source account switcher lock', () => {
     expect(listenerProfileSource).not.toContain('DM Artist');
     expect(listenerProfileSource).not.toContain('Contact Artist');
 
-    expect(sourceDashboardSource).toContain('<Link href="/source-dashboard/release-deck">Open Release Deck</Link>');
-    expect(sourceDashboardSource).toContain('<Link href="/print-shop">Open Print Shop</Link>');
-    expect(sourceDashboardSource).toContain('<Link href="/registrar">Open Registrar</Link>');
+    expect(sourceDashboardSource).toContain('<Link href="/source-dashboard/release-deck">Load</Link>');
+    expect(sourceDashboardSource).toContain('<Link href="/print-shop">Open Print Shop');
+    expect(sourceDashboardSource).toContain('<Link href="/registrar"');
   });
 });

@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-04
+Last Updated: 2026-07-08
 
 ## Purpose
 
@@ -22,40 +22,43 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-04
+- Snapshot date: 2026-07-08
 - Base branch: `main`
-- Current `main` HEAD at refresh start: `02bb5b6`
-- Active branch during this refresh: `docs/screen-package-flow-closeout-refresh`
-- Local worktree state at refresh: docs-only PM/registry closeout after PR #225 merged
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized
-- Provider/db/schema/art state: not touched by this refresh
+- Current `origin/main` HEAD at refresh start: `414f1a0`
+- Active branch during this refresh: `docs/artist-profile-source-dashboard-specs`
+- Local worktree state at refresh: PR #227 branch with Artist Profile / Source Dashboard specs, source-dashboard runtime commits already on the local branch, design/founder-session captures, art-handoff docs/assets, and Home/Plot visual-language clarifications
+- Open PR queue at refresh: PR #227 is the active package PR; draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized
+- Provider/db/schema state: not touched by this refresh
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
 Current goal:
 
-- Implement the new agent automation flow for major UPRISE screen packages.
-- Keep durable product truth in owner specs while screen packages store execution artifacts.
-- Add a deterministic repo runner that inspects/scaffolds/advances screen-package gates and can later be wrapped by LangGraph if persistent human-in-the-loop orchestration is needed.
+- Advance the Artist Profile / Source Dashboard screen package through its Dev Spec, Design Spec, and spec-package review gates.
+- Preserve the approved source-dashboard visual target, public Artist Profile design context, and associated founder clarifications so downstream dev/design agents can work from repo docs rather than chat memory.
+- Preserve the split between public Artist Profile, Source Dashboard/source-admin tooling, Registrar civic/source lifecycle, Release Deck media eligibility, and listener profile surfaces.
+- Keep durable product truth in owner specs while package docs store execution artifacts.
 - Preserve draft PR #212 unless the user explicitly reprioritizes Linear clean-context agent roles.
 
 Recently completed context:
 
-- Major-screen workflow was evaluated by the team-manager lane and rated `patch`, not reject.
-- The Artist Profile / Source Dashboard package is the first seeded package for the new workflow.
-- PR #225 merged the screen-package workflow runner and Artist Profile / Source Dashboard seed package into `main`.
+- PR #225 merged the `screen-package:flow` runner and Artist Profile / Source Dashboard seed package into `main`.
+- PR #226 refreshed PM/registry state after PR #225 and pointed the next signal at Dev Spec / Design Spec gates.
+- Parallel Dev Spec and Design Spec agents produced `spec/dev-spec.md` and `design-spec/ux-plan.md`.
+- Spec-package reviewer returned `Decision: pass` in `review/spec-package-review.md`.
+- Subsequent design/founder clarification work expanded the branch with source-dashboard art handoff, public Artist Profile design inventory, Release Deck/source-dashboard updates, Home/Plot player/inventory visual-language captures, and owner-spec/lane-brief promotions.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | context-steward / PM closeout |
-| Branch | `docs/screen-package-flow-closeout-refresh` |
-| Scope | Refresh Active PM and branch registry after PR #225 merged; point next agents at the screen-package Dev Spec and Design Spec gates. |
-| Out of Scope | Provider/db/schema/art mutation, runtime app behavior changes, completing Artist Profile implementation gates, merging/closing draft PR #212. |
-| Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/specs/users/artist-profile-and-source-dashboard.md` |
-| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/screen-packages/**`, `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md` |
+| Lane | artist-source package / context-steward |
+| Branch | `docs/artist-profile-source-dashboard-specs` |
+| Scope | Add and close out the Artist Profile / Source Dashboard package docs, source-dashboard/public-profile design handoffs, founder-session captures, owner-spec/lane-brief promotions, and branch registry refresh for PR #227. |
+| Out of Scope | Provider/db/schema mutation, new implementation beyond commits already present on this branch, new production runtime behavior, merging/closing draft PR #212. |
+| Owner Contracts | `AGENTS.md`, `docs/specs/system/documentation-framework.md`, `docs/specs/users/artist-profile-and-source-dashboard.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md`, `docs/specs/core/signals-and-universal-actions.md`, `docs/specs/social/message-boards-groups-blast.md` |
+| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/screen-packages/artist-profile-source-dashboard/**`, `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`, `docs/solutions/SCREEN_NARRATIVE_ARTIST_PROFILE_SOURCE_DASHBOARD_R1.md` |
 | Validation | `pnpm run screen-package:flow -- status --package artist-profile-source-dashboard`, `pnpm run docs:lint`, `git diff --check`, `pnpm run workspace:audit` before push/PR |
 
 ## Current Branch / Worktree State
@@ -64,13 +67,14 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
+| #227 | `docs/artist-profile-source-dashboard-specs` | open, active | Review/merge after pushed branch passes docs lint, workspace audit, and required PR checks. |
 | #212 | `docs/linear-clean-context-agent-roles` | draft, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/screen-package-flow-closeout-refresh` | `HEAD` | Docs-only PM/registry closeout after screen-package flow merge. |
+| `/home/baris/UPRISE_NEXT` | `docs/artist-profile-source-dashboard-specs` | `pending push` | PR #227 package/design/founder-session branch. |
 
 ### Preserved UX Reference Worktrees
 
@@ -92,22 +96,24 @@ These are old UX/Reliant batch-output references. Do not merge wholesale. Preser
 
 ## Recently Completed Since Prior PM Snapshot
 
-- PR #224 / lean PR standing orders was absorbed into `main`.
 - PR #225 / screen-package agent flow merged into `main` at `02bb5b6`.
-- Current closeout slice registered as `screen-package-flow-closeout-refresh` in `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`.
+- PR #226 / screen-package flow closeout refresh merged into `main` at `414f1a0`.
+- Current branch registered as `artist-profile-source-dashboard-specs` in `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`.
+- PR #227 is open for the current branch and will receive the local branch stack after push.
 
 ## Next Queue
 
-1. Merge this PM/registry closeout refresh.
+1. Push the current `docs/artist-profile-source-dashboard-specs` branch to PR #227 after validation.
 2. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-3. Use the screen-package runner to dispatch the Artist Profile / Source Dashboard Dev Spec and Design Spec gates:
+3. Review and merge PR #227 when checks pass.
+4. Next screen-package signal after this branch merges:
 
 ```bash
 pnpm run screen-package:flow -- status --package artist-profile-source-dashboard
 pnpm run screen-package:flow -- next --package artist-profile-source-dashboard
 ```
 
-Current next signal: write `docs/screen-packages/artist-profile-source-dashboard/spec/dev-spec.md`, then write `docs/screen-packages/artist-profile-source-dashboard/design-spec/ux-plan.md`, then run the spec-package review gate.
+Current next signal after this branch: pick one small vertical Artist Profile / Source Dashboard implementation slice from the passed Dev Spec + Design Spec + review package. If scope is not obvious, create `docs/screen-packages/artist-profile-source-dashboard/implementation/slice-contract.md`; do not require a full implementation plan or file-ownership packet by default.
 
 ## PM Usage Rules For Agents
 
