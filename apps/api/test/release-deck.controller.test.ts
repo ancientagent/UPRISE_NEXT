@@ -1,7 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { ReleaseDeckController } from '../src/release-deck/release-deck.controller';
 import { ReleaseDeckMeasurementQuerySchema } from '../src/release-deck/dto/release-deck-measurement.dto';
-import { ReleaseDeckScheduleAvailabilityQuerySchema } from '../src/release-deck/dto/release-deck-schedule.dto';
+import {
+  ReleaseDeckScheduleAvailabilityQuerySchema,
+  ReleaseDeckScheduleCreateSchema,
+} from '../src/release-deck/dto/release-deck-schedule.dto';
 
 describe('ReleaseDeckController', () => {
   it('delegates measurement to the service and passes the response through', async () => {
@@ -12,7 +15,7 @@ describe('ReleaseDeckController', () => {
     const releaseDeckMeasurementService = {
       measureCommunityDeck: jest.fn().mockResolvedValue(measurement),
     } as any;
-    const releaseDeckSchedulingService = { getAvailability: jest.fn() } as any;
+    const releaseDeckSchedulingService = { getAvailability: jest.fn(), scheduleTrack: jest.fn() } as any;
 
     const controller = new ReleaseDeckController(
       releaseDeckMeasurementService,
@@ -28,7 +31,7 @@ describe('ReleaseDeckController', () => {
     const releaseDeckMeasurementService = {
       measureCommunityDeck: jest.fn().mockRejectedValue(new BadRequestException('nope')),
     } as any;
-    const releaseDeckSchedulingService = { getAvailability: jest.fn() } as any;
+    const releaseDeckSchedulingService = { getAvailability: jest.fn(), scheduleTrack: jest.fn() } as any;
 
     const controller = new ReleaseDeckController(
       releaseDeckMeasurementService,
@@ -66,12 +69,39 @@ describe('ReleaseDeckController', () => {
     expect(result).toBe(availability);
   });
 
-  it('exposes only read handlers on the Slice 2 controller', () => {
+  it('delegates schedule creation to the scheduling service with the authenticated user', async () => {
+    const scheduled = {
+      success: true as const,
+      data: { id: 'schedule-1', trackId: 'track-1', scheduledFor: new Date('2026-07-08') },
+    };
+    const releaseDeckMeasurementService = { measureCommunityDeck: jest.fn() } as any;
+    const releaseDeckSchedulingService = {
+      getAvailability: jest.fn(),
+      scheduleTrack: jest.fn().mockResolvedValue(scheduled),
+    } as any;
+    const controller = new ReleaseDeckController(
+      releaseDeckMeasurementService,
+      releaseDeckSchedulingService
+    );
+    const dto = {
+      communityId: 'community-1',
+      trackId: 'track-1',
+      mode: 'chosen' as const,
+      requestedDate: '2026-07-08',
+    };
+
+    const result = await controller.scheduleTrack(dto, { user: { userId: 'user-1' } });
+
+    expect(releaseDeckSchedulingService.scheduleTrack).toHaveBeenCalledWith('user-1', dto);
+    expect(result).toBe(scheduled);
+  });
+
+  it('exposes Slice 3 schedule write handler without adding Fair Play ingestion handlers', () => {
     const handlers = Object.getOwnPropertyNames(ReleaseDeckController.prototype).filter(
       (name) => name !== 'constructor'
     );
 
-    expect(handlers).toEqual(['getMeasurement', 'getScheduleAvailability']);
+    expect(handlers).toEqual(['getMeasurement', 'getScheduleAvailability', 'scheduleTrack']);
   });
 });
 
@@ -131,5 +161,31 @@ describe('ReleaseDeckScheduleAvailabilityQuerySchema', () => {
         days: 31,
       }).success
     ).toBe(false);
+  });
+});
+
+describe('ReleaseDeckScheduleCreateSchema', () => {
+  it('requires chosen mode to include a requestedDate', () => {
+    expect(
+      ReleaseDeckScheduleCreateSchema.safeParse({
+        communityId: 'community-1',
+        trackId: 'track-1',
+        mode: 'chosen',
+      }).success
+    ).toBe(false);
+  });
+
+  it('allows soonest mode without requestedDate and trims IDs', () => {
+    const parsed = ReleaseDeckScheduleCreateSchema.parse({
+      communityId: ' community-1 ',
+      trackId: ' track-1 ',
+      mode: 'soonest',
+    });
+
+    expect(parsed).toEqual({
+      communityId: 'community-1',
+      trackId: 'track-1',
+      mode: 'soonest',
+    });
   });
 });

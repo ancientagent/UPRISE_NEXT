@@ -1,5 +1,6 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodQuery } from '../common/decorators/zod-query.decorator';
 import { ReleaseDeckMeasurementService } from './release-deck-measurement.service';
 import {
@@ -9,6 +10,8 @@ import {
 import {
   ReleaseDeckScheduleAvailabilityQuerySchema,
   ReleaseDeckScheduleAvailabilityQueryDto,
+  ReleaseDeckScheduleCreateSchema,
+  ReleaseDeckScheduleCreateDto,
 } from './dto/release-deck-schedule.dto';
 import { ReleaseDeckSchedulingService } from './release-deck-scheduling.service';
 
@@ -40,5 +43,15 @@ export class ReleaseDeckController {
     query: ReleaseDeckScheduleAvailabilityQueryDto
   ) {
     return this.releaseDeckSchedulingService.getAvailability(query);
+  }
+
+  @Post('schedule')
+  @HttpCode(HttpStatus.CREATED)
+  @ZodBody(ReleaseDeckScheduleCreateSchema)
+  async scheduleTrack(
+    @Body() dto: ReleaseDeckScheduleCreateDto,
+    @Request() req: { user: { userId: string } }
+  ) {
+    return this.releaseDeckSchedulingService.scheduleTrack(req.user.userId, dto);
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ReleaseDeckSchedulingService } from '../src/release-deck/release-deck-scheduling.service';
 
 const CITY_COMMUNITY = {
@@ -51,7 +51,20 @@ function createPrismaMock() {
     releaseDeckSchedule: {
       findFirst: jest.fn().mockResolvedValue(null),
       findMany: jest.fn().mockResolvedValue([]),
-      create: jest.fn(),
+      create: jest.fn().mockImplementation(({ data }) =>
+        Promise.resolve({
+          id: 'schedule-created',
+          trackId: data.trackId,
+          communityId: data.communityId,
+          artistBandId: data.artistBandId,
+          scheduledFor: data.scheduledFor,
+          assignmentMode: data.assignmentMode,
+          requestedFor: data.requestedFor,
+          status: data.status,
+          capacitySnapshot: data.capacitySnapshot,
+          createdById: data.createdById,
+        })
+      ),
       update: jest.fn(),
       updateMany: jest.fn(),
       upsert: jest.fn(),
@@ -133,6 +146,22 @@ describe('ReleaseDeckSchedulingService', () => {
     prisma = createPrismaMock();
     service = new ReleaseDeckSchedulingService(prisma as any);
   });
+
+  function mockOperatorTrack(overrides: Partial<Record<string, any>> = {}) {
+    prisma.track.findUnique.mockResolvedValueOnce({
+      id: TRACK.id,
+      artistBandId: 'source-a',
+      communityId: CITY_COMMUNITY.id,
+      artistBand: {
+        id: 'source-a',
+        homeSceneId: CITY_COMMUNITY.id,
+        createdById: 'user-1',
+        members: [],
+      },
+      ...overrides,
+    });
+    prisma.track.findUnique.mockResolvedValueOnce(TRACK);
+  }
 
   it('returns soonest availability and proves capacity uses playable seconds, not raw song count', async () => {
     prisma.releaseDeckSchedule.findMany.mockResolvedValue([
@@ -439,5 +468,110 @@ describe('ReleaseDeckSchedulingService', () => {
         days: 3,
       })
     ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('creates a chosen schedule only when the requested date is valid', async () => {
+    mockOperatorTrack();
+
+    const result = await service.scheduleTrack('user-1', {
+      communityId: CITY_COMMUNITY.id,
+      trackId: TRACK.id,
+      mode: 'chosen',
+      requestedDate: REQUESTED_FROM,
+    });
+
+    expect(result.success).toBe(true);
+    expect(prisma.releaseDeckSchedule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          trackId: TRACK.id,
+          communityId: CITY_COMMUNITY.id,
+          artistBandId: 'source-a',
+          scheduledFor: new Date(`${REQUESTED_FROM}T00:00:00.000Z`),
+          requestedFor: new Date(`${REQUESTED_FROM}T00:00:00.000Z`),
+          assignmentMode: 'chosen',
+          status: 'scheduled',
+          createdById: 'user-1',
+        }),
+      })
+    );
+    expect(prisma.rotationEntry.create).not.toHaveBeenCalled();
+    expect(prisma.rotationEntry.update).not.toHaveBeenCalled();
+  });
+
+  it('does not create a chosen schedule when the requested date is over capacity', async () => {
+    mockOperatorTrack();
+    prisma.releaseDeckSchedule.findMany.mockResolvedValue([
+      scheduled('full-1', REQUESTED_FROM, 360),
+      scheduled('full-2', REQUESTED_FROM, 360),
+    ]);
+
+    const result = await service.scheduleTrack('user-1', {
+      communityId: CITY_COMMUNITY.id,
+      trackId: TRACK.id,
+      mode: 'chosen',
+      requestedDate: REQUESTED_FROM,
+    });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: {
+        code: 'DATE_CAPACITY_FULL',
+        requestedDate: REQUESTED_FROM,
+        soonestValidDate: '2026-07-09',
+        alternatives: expect.arrayContaining(['2026-07-09']),
+      },
+    });
+    expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
+  });
+
+  it('creates a soonest schedule on the earliest available alternative', async () => {
+    jest.useFakeTimers().setSystemTime(new Date(`${REQUESTED_FROM}T12:00:00.000Z`));
+    mockOperatorTrack();
+    prisma.releaseDeckSchedule.findMany.mockResolvedValue([
+      scheduled('full-1', REQUESTED_FROM, 360),
+      scheduled('full-2', REQUESTED_FROM, 360),
+    ]);
+
+    const result = await service.scheduleTrack('user-1', {
+      communityId: CITY_COMMUNITY.id,
+      trackId: TRACK.id,
+      mode: 'soonest',
+    });
+
+    expect(result.success).toBe(true);
+    expect(prisma.releaseDeckSchedule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          scheduledFor: new Date('2026-07-09T00:00:00.000Z'),
+          requestedFor: null,
+          assignmentMode: 'soonest',
+        }),
+      })
+    );
+    jest.useRealTimers();
+  });
+
+  it('requires the current user to manage the source before creating a schedule', async () => {
+    mockOperatorTrack({
+      artistBand: {
+        id: 'source-a',
+        homeSceneId: CITY_COMMUNITY.id,
+        createdById: 'user-2',
+        members: [],
+      },
+    });
+
+    await expect(
+      service.scheduleTrack('user-1', {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        mode: 'chosen',
+        requestedDate: REQUESTED_FROM,
+      })
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
+    expect(prisma.releaseDeckSchedule.findMany).not.toHaveBeenCalled();
   });
 });

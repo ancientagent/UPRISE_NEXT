@@ -1,6 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ReleaseDeckScheduleAvailabilityQueryDto } from './dto/release-deck-schedule.dto';
+import {
+  ReleaseDeckScheduleAvailabilityQueryDto,
+  ReleaseDeckScheduleCreateDto,
+} from './dto/release-deck-schedule.dto';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -86,6 +95,10 @@ function toDateOnly(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+function todayUtcDateOnly(): string {
+  return toDateOnly(startOfUtcDay(new Date()));
+}
+
 function playableSeconds(value: unknown): number {
   const seconds = Number(value);
   return Number.isFinite(seconds) && seconds > 0 ? seconds : 0;
@@ -113,6 +126,48 @@ function resolvePlayableUrlReason(fileUrl: string | null): TrackEligibilityReaso
 @Injectable()
 export class ReleaseDeckSchedulingService {
   constructor(private readonly prisma: PrismaService) {}
+
+  private async assertSourceOperator(userId: string, trackId: string, communityId: string) {
+    const track = await this.prisma.track.findUnique({
+      where: { id: trackId },
+      select: {
+        id: true,
+        artistBandId: true,
+        communityId: true,
+        artistBand: {
+          select: {
+            id: true,
+            homeSceneId: true,
+            createdById: true,
+            members: { where: { userId }, select: { userId: true }, take: 1 },
+          },
+        },
+      },
+    });
+
+    if (!track) {
+      throw new NotFoundException({ success: false, error: { message: 'Track not found' } });
+    }
+
+    if (!track.artistBandId || !track.artistBand) {
+      throw new ForbiddenException('Release Deck scheduling requires a managed Artist/Band source');
+    }
+
+    const managesSource = track.artistBand.createdById === userId || track.artistBand.members.length > 0;
+    if (!managesSource) {
+      throw new ForbiddenException('Release Deck scheduling requires a managed Artist/Band source');
+    }
+
+    if (track.communityId !== communityId || track.artistBand.homeSceneId !== communityId) {
+      throw new BadRequestException('Track community must match the managed source Home Scene');
+    }
+
+    return {
+      trackId: track.id,
+      artistBandId: track.artistBandId,
+      communityId,
+    };
+  }
 
   private resolveTrackEligibility(
     track: CandidateTrack,
@@ -482,5 +537,98 @@ export class ReleaseDeckSchedulingService {
         capacityInputs,
       },
     };
+  }
+
+  async scheduleTrack(userId: string, dto: ReleaseDeckScheduleCreateDto): Promise<any> {
+    const communityId = dto.communityId?.trim();
+    const trackId = dto.trackId?.trim();
+    const mode = dto.mode;
+
+    if (!communityId || !trackId) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'communityId and trackId are required' },
+      });
+    }
+
+    const managed = await this.assertSourceOperator(userId, trackId, communityId);
+    const requestedDate = mode === 'chosen' ? dto.requestedDate : undefined;
+    if (mode === 'chosen' && !requestedDate) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'requestedDate is required when mode is chosen' },
+      });
+    }
+
+    const from = requestedDate ?? todayUtcDateOnly();
+    const availability = await this.getAvailability({
+      communityId,
+      trackId,
+      from,
+      days: RELEASE_DECK_SCHEDULE_POLICY.lookaheadDays,
+    });
+
+    let scheduledDate: string | null = null;
+    let capacitySnapshot: Record<string, unknown>;
+
+    if (availability.success) {
+      scheduledDate = availability.data.soonestValidDate;
+      capacitySnapshot = availability.data;
+    } else if (mode === 'soonest' && availability.error?.soonestValidDate) {
+      scheduledDate = availability.error.soonestValidDate;
+      capacitySnapshot = availability.error;
+    } else {
+      return availability;
+    }
+
+    if (!scheduledDate) {
+      return availability;
+    }
+
+    const scheduledFor = parseDateOnly(scheduledDate);
+    if (!scheduledFor) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'Resolved schedule date is invalid' },
+      });
+    }
+
+    try {
+      const schedule = await this.prisma.releaseDeckSchedule.create({
+        data: {
+          trackId: managed.trackId,
+          communityId: managed.communityId,
+          artistBandId: managed.artistBandId,
+          scheduledFor,
+          assignmentMode: mode,
+          requestedFor: requestedDate ? parseDateOnly(requestedDate) : null,
+          status: 'scheduled',
+          capacitySnapshot: capacitySnapshot as any,
+          createdById: userId,
+        },
+        select: {
+          id: true,
+          trackId: true,
+          communityId: true,
+          artistBandId: true,
+          scheduledFor: true,
+          assignmentMode: true,
+          requestedFor: true,
+          status: true,
+          capacitySnapshot: true,
+          createdById: true,
+        },
+      });
+
+      return { success: true as const, data: schedule };
+    } catch (error: any) {
+      if (error?.code === 'P2002') {
+        throw new ConflictException({
+          success: false,
+          error: { code: 'ALREADY_SCHEDULED_OR_ACTIVE', message: 'Track is already scheduled' },
+        });
+      }
+      throw error;
+    }
   }
 }
