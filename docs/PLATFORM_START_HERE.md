@@ -22,7 +22,7 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 5. New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding or listener-side pioneer tracking. Listener demand can inform messaging, but without active local artists/music there is no music community to activate.
 6. A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
 7. No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
-8. Release Deck has `3` active music slots per managed Artist/Band source per city-tier community, a `6` minute cap per song, and a `15` minute total active-rotation cap per source; the paid ad attachment is not a fourth music slot.
+8. Release Deck has `3` active music slots per managed Artist/Band source per city-tier community, a `6` minute cap per song, and a `15` minute total active-rotation cap per source; the paid ad attachment is not a fourth music slot. The combined Release Decks inside one Uprise also form the Uprise-wide catalog, release scheduling, and readiness measurement system.
 9. If a listener's submitted/GPS city differs from the assigned active Home Scene, Home may show a lightweight tooltip encouraging them to tell local bands/artists to register with UPRISE; this is messaging, not a community-creation workflow.
 10. Home contains Plot; Plot is not a standalone destination.
 11. Current Plot tabs are exactly `Feed`, `Events`, and `Archive`.
@@ -38,7 +38,7 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 21. The starred default music-community preference determines the Home Scene loaded on login; the Home Scene selector is only a shortcut to resolvable primary communities in the current city.
 22. Saved Away Scenes live in the user profile/collection, not in the Home Scene selector.
 23. Missing music-community requests are intake/review only; they do not create live communities.
-24. Sect readiness tracking may be built before it is visible, but user-facing sect creation, sect backing limits, and unlock criteria remain beta/community-calibrated.
+24. Sect readiness tracking may be built before it is visible, but user-facing sect creation, sect backing limits, and unlock criteria remain beta/community-calibrated. Readiness minutes come from eligible Release Deck songs explicitly encoded/backed for that sect, not from loose tags or a source's whole catalog.
 25. Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags; Official Sects may become visible subcommunities with update channels, but they do not gain independent broadcast authority until they Uprise.
 26. Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community. They exist to give niche/sub/microgenre groups a purer broadcast without fragmenting the parent music community into isolated city/community silos.
 27. Business runtime, billing, paid promotion management, premium analytics, media upload/transcode, Prime model, and a dedicated Uprise model are deferred unless explicitly activated.

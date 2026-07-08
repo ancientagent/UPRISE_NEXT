@@ -186,13 +186,15 @@ Current owner contracts:
 | Registrar source/capability workflows | `docs/specs/system/registrar.md` |
 | Source registration and source origin | `docs/specs/system/registrar.md#source-origin-contract` |
 | Community activation threshold workflow | `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow` plus `docs/specs/system/registrar.md#city-tier-activation-authority` |
-| Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` |
+| Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority`; readiness minutes come from song-level Release Deck encoding, with media measurement owned by `docs/specs/media/release-deck-and-eligibility.md` |
 | Proxy scene music lifecycle and migration | `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points` plus `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` |
 | Activation notification and former-proxy Away Scene preservation | `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` |
 | Plot/Home Scene shell | `docs/specs/communities/plot-and-scene-plot.md` |
 | Events/flyers | `docs/specs/events/events-and-flyers.md` |
 | Broadcast/Fair Play | `docs/specs/broadcast/radiyo-and-fair-play.md` |
 | Release Deck media eligibility | `docs/specs/media/release-deck-and-eligibility.md` |
+| Uprise-wide Release Deck measurement | `docs/specs/media/release-deck-and-eligibility.md#uprise-wide-deck-system` |
+| Release-date scheduling before RADIYO entry | `docs/specs/media/release-deck-and-eligibility.md#release-date-scheduling-contract`; broadcast join point lives in `docs/specs/broadcast/radiyo-and-fair-play.md#scheduling` |
 | Print Shop / promotions boundary | `docs/specs/economy/print-shop-and-promotions.md` |
 | Revenue/pricing doctrine | `docs/specs/economy/revenue-and-pricing.md` |
 | Documentation/context system | `docs/specs/system/documentation-framework.md` |
@@ -202,7 +204,7 @@ Contracts still needing dedicated owner sections or cleanup:
 
 | Needed Contract | Current Best Home | Why It Matters |
 | --- | --- | --- |
-| Sect implementation artifacts and visibility calibration | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` | Boundary is owned; affiliation schema, update channels, approval state machine, visibility timing, and backing limits remain follow-up implementation decisions. |
+| Sect implementation artifacts and visibility calibration | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` | Boundary is owned; affiliation schema, song-level Release Deck encoding schema, update channels, approval state machine, visibility timing, and backing limits remain follow-up implementation decisions. |
 | Activation notification/Away Scene implementation artifacts | `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` | User-facing contract is owned; UI placement, notification persistence, and saved-scene storage remain implementation decisions. |
 | Music-community preference runtime implementation | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` | Persistence, backfill, API, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, Home Scene selector read model, Plot/Home selector consumption, and Fair Play voting across resolvable registered preferences exist; compatibility cleanup is planned and remains implementation work. |
 

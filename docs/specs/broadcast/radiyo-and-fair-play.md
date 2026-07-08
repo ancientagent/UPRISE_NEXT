@@ -3,7 +3,7 @@
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-25`
+**Last Updated:** `2026-07-08`
 
 ## Overview & Purpose
 Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
@@ -38,9 +38,11 @@ No automatic switching.
 
 ## Song Lifecycle
 1. Upload:
-- Song enters `New Releases Pool`.
+- Source places the song in Release Deck.
+- Release Deck assigns or accepts a valid release date before RADIYO entry.
+- On the scheduled release date, the song enters `New Releases Pool`.
 - Assign `entered_new_at`.
-- Assign `new_window_days` from current density target.
+- Assign `new_window_days = 10`.
 
 2. New Window:
 - Song remains visible for full assigned duration.
@@ -50,22 +52,25 @@ No automatic switching.
 - When `now >= entered_new_at + new_window_days`, song exits New Releases and enters Main Rotation.
 - Initial recurrence weight is derived from engagement within the configured rolling window.
 
-## Density-Based New Window
-Density driver:
-- `ActiveNewCount = number of songs currently in New Releases Pool`
-- Listener population is not used for this calculation.
+## Fixed Protected New Releases Window
 
-Default step bands:
-- `ActiveNewCount <= 10` -> `new_window_days = 10`
-- `11 <= ActiveNewCount <= 25` -> `new_window_days = 7`
-- `ActiveNewCount > 25` -> `new_window_days = 5`
+Every accepted song that enters `New Releases Pool` receives the same protected
+New Releases run:
 
-Hysteresis rule:
-- Band changes only commit after `3` consecutive days in the new band.
+- `new_window_days = 10`
+
+The protected window does not shrink based on how many songs are entering the
+system. Daily single volume and Uprise deck density are handled upstream by
+Release Deck release-date scheduling, not by shortening an individual song's
+protected RADIYO window.
 
 Per-song assignment:
 - `new_window_days` is locked at entry.
 - No retroactive per-song window edits.
+- Existing `FairPlayConfig` density-band fields such as `newWindowBand*` and
+  `bandPersistDays` are deprecated compatibility/configuration fields until a
+  cleanup migration intentionally removes or repurposes them. They must not be
+  used to reintroduce `10 / 7 / 5` protected-window behavior.
 
 ## Recurrence Engine (Main Rotation)
 Cadence:
@@ -85,6 +90,13 @@ Hard constraints:
 - No removal purely from low engagement; low-performing songs become increasingly infrequent before any lifecycle removal policy applies.
 
 ## Scheduling
+### Release Deck Join Point
+- Release Deck owns release-date scheduling before a song enters RADIYO.
+- Fair Play owns lifecycle after the scheduled song enters `New Releases Pool`.
+- Fair Play must not shorten a song's protected run because of pool density.
+- Release Deck scheduling must not manually reorder active Fair Play rotation
+  entries, create pay-for-placement, or grant per-artist exceptions.
+
 ### New Releases Pool
 - Continuous fair rotation of active new songs.
 - No on-the-hour requirement.
@@ -150,7 +162,8 @@ Owner references:
 
 ## Telemetry Requirements
 - `ActiveNewCount` (daily)
-- `current_new_window_days_target`
+- `new_window_days` per song (currently fixed at `10`)
+- scheduled-release diagnostics from Release Deck once scheduling is implemented
 - Per-song lifecycle:
   - `entered_new_at`
   - `scheduled_graduation_at`
@@ -185,7 +198,9 @@ Owner references:
 
 ## Acceptance Criteria
 - New songs remain in New Releases for their assigned window and cannot be buried.
-- New-window target changes only after 3-day hysteresis.
+- Every accepted song receives the same protected New Releases run (`10` days)
+  once it enters RADIYO/New Releases.
+- New-window duration must not shrink because of active new-song density.
 - Songs graduate automatically after window expiry.
 - Main Rotation recurrence changes only at 48-hour recompute cadence.
 - No Main Rotation repeat faster than once/hour.
@@ -194,13 +209,15 @@ Owner references:
 - Proxy-scene votes/history remain historical to the proxy scene/tier after natural Home Scene activation.
 - Vote creation rejects non-city-tier scenes; state/national tier listening or promotion context must not become a direct vote target.
 - Natural-scene activation does not create dual-active rotation placement for a song.
-- Stable behavior across density scenarios (`~6`, `15`, `25`, `35+` active new songs).
+- Stable behavior across daily single volume scenarios by relying on Release
+  Deck scheduling before New Releases entry.
 
 ## Open Decisions
 - Exact propagation threshold formula.
 - Practical floor/removal policy for persistently low-recurrence songs.
 - `GRADUATION_CAP_PER_RUN` numeric value.
 - Automated production policy for cross-state proxy advancement identity.
+- Exact Release Deck scheduling capacity algorithm and scheduler/job wiring.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

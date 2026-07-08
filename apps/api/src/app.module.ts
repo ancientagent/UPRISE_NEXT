@@ -17,6 +17,7 @@ import { AdminConfigModule } from './admin-config/admin-config.module';
 import { AdminAnalyticsModule } from './admin-analytics/admin-analytics.module';
 import { ArtistBandsModule } from './artist-bands/artist-bands.module';
 import { RegistrarModule } from './registrar/registrar.module';
+import { ReleaseDeckModule } from './release-deck/release-deck.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { RegistrarModule } from './registrar/registrar.module';
     AdminAnalyticsModule,
     ArtistBandsModule,
     RegistrarModule,
+    ReleaseDeckModule,
   ],
 })
 export class AppModule {}
