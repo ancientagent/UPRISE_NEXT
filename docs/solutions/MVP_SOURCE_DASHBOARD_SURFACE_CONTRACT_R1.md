@@ -2,7 +2,7 @@
 
 Status: Active  
 Owner: Founder + product engineering  
-Last updated: 2026-04-26
+Last updated: 2026-07-06
 
 ## 1) Purpose
 Define the first explicit Source Dashboard surface for source management so source-side tools are clearly separated from the listener profile/community experience.
@@ -69,12 +69,15 @@ Must show:
 - `Source Dashboard`
 - active source name when selected
 - source type / slug / membership role summary
+- signed-in account/user context with the user's current role/title for the
+  selected source, such as manager, member, or promoter
 - listener-account return path
 
 ### 4.2 Managed Source Selector
 Must support:
 - selecting between managed source entities
 - showing which source entity is currently being operated
+- updating the displayed role/title when the selected source changes
 - preserving a clear return path back to listener mode when entered from the listener app
 
 Current active runtime:
@@ -116,11 +119,16 @@ Current locked direction:
 - it should also expose a `4th` paid ad-attachment slot inside the same Release Deck interface
 - the paid slot is for a `10` second ad attached to the current new release
 - the paid slot does not increase music upload capacity
+- future paid ad-slot design may expose category/link-target fields such as
+  `release date`, `general`, `event`, and `sponsor`; this remains inactive until
+  media, economy, business-account, and action/signal owner specs activate it
 
 Implementation note:
 - current runtime uses the existing `/tracks` ingestion seam from active source context
 - current runtime now passes an explicit optional `artistBandId` for new releases created from `Release Deck`
 - current runtime accepts explicit hosted `http(s)` audio URLs for the MVP Release Deck seam; upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred
+- current runtime must not save paid ad categories/link targets, link business
+  accounts, or expose action-wheel linked-target visit behavior
 - media/storage activation is governed by `docs/solutions/MEDIA_STORAGE_DECISION_PACKET_R1.md`; current MVP does not require a deployed transcoder worker or storage credentials
 - current runtime shows the latest ready singles for the three visible music slots
 - current runtime may distinguish explicitly source-owned rows from older compatible carry-forward tracks inside those visible slots

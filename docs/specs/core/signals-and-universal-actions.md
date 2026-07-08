@@ -3,7 +3,7 @@
 **ID:** `CORE-SIGNALS`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-04-15`
+**Last Updated:** `2026-07-06`
 
 ## Overview & Purpose
 Defines Signals as carried content units and the actions applied to them. This spec covers implemented contracts, intended action grammar, and the canonical constraints that prohibit algorithmic interpretation.
@@ -115,6 +115,11 @@ Signals must remain distinct from sources:
 - Follow actions subscribe users to future entity updates without changing ranking/placement logic.
 - Active source-side tools remain separate from signal actions; source dashboard/Print Shop behavior must not be mistaken for signal interaction grammar.
 - Artist/source pages must not surface synthetic source-level signal actions.
+- Future Release Deck paid ad attachments may expose a linked-target visit
+  affordance through an action-wheel-style UI only after the action owner,
+  signal/link-target contract, media ad contract, and economy/business contracts
+  are updated. This future visit affordance is not active runtime and does not
+  authorize adding the prohibited engagement wheel to public Artist Profile.
 
 ## Acceptance Tests / Test Plan
 - `POST /signals` creates signal rows with optional metadata/community.
@@ -130,6 +135,9 @@ Signals must remain distinct from sources:
 - Reconcile `ADD` naming to intended `Collect` grammar.
 - Reconcile remaining stats/docs debt that still refers to historical `support` terminology.
 - Add feed projection endpoints for scene-scoped S.E.E.D rendering.
+- Define future Release Deck paid ad linked-target visit behavior for
+  release-date, event, sponsor/business, and general ad categories if the
+  action-wheel-style affordance is activated.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

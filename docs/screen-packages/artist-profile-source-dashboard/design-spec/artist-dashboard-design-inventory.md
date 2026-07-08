@@ -129,15 +129,24 @@ Design need:
 
 - Make the current operating context unmistakable.
 - Show one base signed-in account with switchable managed source contexts.
+- Show the signed-in account/user with the current selected-source position,
+  such as `Manager`, `Member`, or `Promoter`; update this role/title whenever
+  the selected source changes.
 - Support users with multiple source positions/pages created through Registrar
   materialization and member sync.
 - Use two source roles for this design model: `manager` and `member`.
 - The registering member is the default `manager` because their location/Home
   Scene ties the band/source to its Home Scene.
-- Treat Release Deck submission permission as scoped to the selected source. The
-  same signed-in user may be able to submit music for one band and not another.
+- Treat music edit permission as scoped to the selected source. The default
+  manager can edit music details; other members need a source-specific
+  `Can edit music` checkbox if they are allowed to edit music details for that
+  source.
+- Treat calendar edit permission as scoped to the selected source. The default
+  manager can edit the calendar; other members need a source-specific
+  `Can edit calendar` checkbox if they are allowed to add or edit events for
+  that source.
 - Baseline source-member access should still let a member see what is happening
-  for that source and add events/calendar entries for that source.
+  for that source even when they cannot edit music or calendar/events.
 - Keep `Listener Account` visible as the exit from source mode.
 - Support no-source, active-source, stale-source, and source-no-longer-managed states.
 
@@ -148,7 +157,8 @@ Visible hierarchy:
 3. Home Scene identity where available.
 4. Source account switcher showing available source positions/pages and the
    user's role for each source.
-5. Return to listener account path.
+5. Current signed-in account plus current source position beside the selector.
+6. Return to listener account path.
 
 Design constraints:
 
@@ -269,14 +279,26 @@ Future visible hierarchy, when activated by an owner spec:
    unavailable if the later monetization spec uses different language.
 5. Record or replace clip action, only after media capture/storage behavior is
    specified.
-6. Clear reminder that the fourth spot is an ad attachment, not a fourth music
+6. Ad category selector:
+   - `release date`
+   - `general`
+   - `event`
+   - `sponsor`
+7. Category link target:
+   - `release date` links a calendar date.
+   - `event` links a source event.
+   - `sponsor` links a business account after business accounts/local business
+     communities are active.
+   - `general` has no required linked target.
+8. Clear reminder that the fourth spot is an ad attachment, not a fourth music
    track.
 
 Design constraints:
 
 - Do not design recording controls, upload controls, storage, transcoding,
-  billing, paywall, purchase, entitlement, sponsorship, review, or on-air
-  scheduling behavior until an owner spec activates those contracts.
+  billing, paywall, purchase, entitlement, sponsorship, sponsor/business-account
+  linking, linked-target action-wheel visits, review, or on-air scheduling
+  behavior until an owner spec activates those contracts.
 - Do not let the ad attachment alter Fair Play ranking, rotation, voting,
   propagation, or governance.
 - Do not present the ad clip as a standalone playable song or listener-facing
@@ -317,8 +339,9 @@ Visible hierarchy:
 1. Tool/nav entry named `Source Profile`.
 2. Link to the actual profile-management page for band/source details.
 3. Member section for avatars, what each member plays, baseline source access
-   summary, and manager-only control
-   over whether that member can submit music for the selected source.
+   summary, manager-only control over whether that member can edit music for the
+   selected source, and manager-only control over whether that member can edit
+   calendar/events for the selected source.
 4. Preview/open-public-profile path for the listener-facing Artist Profile.
 5. Current public profile status summary if available.
 
@@ -326,17 +349,24 @@ Design constraints:
 
 - Source Profile management is a separate source-owner page, not the public
   Artist Profile itself.
-- Member Release Deck submission controls belong on the source manager Source Profile
-  management page, not on the public listener-facing Artist Profile.
-- Member music-submission controls must be scoped to the selected source. A
-  source manager may allow a band member to submit music for one source without
-  granting that ability for another source.
+- Profile bio, official links, contact, donation link, member details, and
+  source-specific music permission controls belong in Source Profile
+  management.
+- Member music-edit and calendar-edit controls belong on the source manager
+  Source Profile management page, not on the public listener-facing Artist
+  Profile.
+- Member music-edit controls must be scoped to the selected source. A source
+  manager may allow a band member to edit music for one source without granting
+  that ability for another source.
+- Member calendar-edit controls must be scoped to the selected source. A source
+  manager may allow a band member to edit one source calendar without granting
+  that ability for another source.
 - The member section should make clear that source members can still view source
-  activity and add events/calendar entries for the selected source even when
-  they cannot submit music.
-- Do not invent a broad permission system beyond the concrete beta question of
-  whether a member can submit music through Release Deck unless the
-  identity/roles owner spec defines it.
+  activity for the selected source even when they cannot edit music or
+  calendar/events.
+- Do not invent a broad permission system beyond the concrete beta questions of
+  whether a member can edit music and whether a member can edit calendar/events
+  unless the identity/roles owner spec defines it.
 - Do not blend public listener actions with dashboard controls.
 - Do not add Artist Profile `Blast`, engagement wheel, source-level `Collect`,
   or source-level `Support`.
@@ -347,8 +377,9 @@ Design need:
 
 - Present Events as the source-dashboard path for shows and event work, with
   Print Shop living inside or behind that event path.
-- Let source members add new events/calendar entries for the selected source
-  where current/future Events contracts allow it.
+- Let managers and members with `Can edit calendar` add or edit
+  events/calendar entries for the selected source where current/future Events
+  contracts allow it.
 - Make the active source context visible before event creation.
 - Distinguish artist/band event creation from promoter-capability event creation.
 - Preserve Print Shop as the source-side path for flyer/event printing work as
@@ -358,7 +389,8 @@ Visible hierarchy:
 
 1. Tool/nav entry named `Events`.
 2. Source shows/event management entry.
-3. Add event/calendar entry path for source members.
+3. Add/edit event/calendar entry path for managers and members with
+   `Can edit calendar`.
 4. Print Shop/flyer-printing path inside Events.
 5. Source or promoter capability status if the selected Events action needs it.
 6. Home Scene or capability limitations where relevant.
@@ -416,6 +448,11 @@ Design need:
 
 - Preserve founder direction that each source should have a Metrics page.
 - Start with basic descriptive metrics.
+- For the current report-paper Release Deck mockup, present release metrics as a
+  song lookup/selector that can eventually cover any eligible song uploaded for
+  the selected source, not only the current active Release Deck slot.
+- Use a dropdown selector for choosing the song in that lookup; do not use
+  left/right arrows as the primary song-selection control.
 - Let paid accounts track specific singles from Release Deck for
   higher-definition telemetry as a V2 / possible beta expansion after
   paid-account entitlement is specified.

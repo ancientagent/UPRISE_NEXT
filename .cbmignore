@@ -1,0 +1,14 @@
+# codebase-memory-mcp local indexing exclusions.
+# Keep local agent/browser/auth artifacts out of the code graph.
+.auth/
+.openclaw/
+.playwright-cli/
+.worktrees/
+tmp/
+backups/
+BOOTSTRAP.md
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+TOOLS.md
+USER.md

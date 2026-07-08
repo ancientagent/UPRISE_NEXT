@@ -4,9 +4,9 @@
 
 **8/10**
 
-This is a strong workflow with fixable gaps. It is much safer than jumping directly from a screen idea to UI/code because it starts from one shared instruction packet, separates dev-owned and design-owned work, reviews the spec package before implementation, and reserves final hardening for tests, accessibility, edge states, and regression locks.
+This is a strong workflow with fixable gaps for whole pages/modules or major screen boundaries. It is much safer than jumping directly from a screen idea to UI/code because it starts from one shared instruction packet, separates dev-owned and design-owned work, reviews the spec package before implementation, and reserves final hardening for tests, accessibility, edge states, and regression locks.
 
-It is not quite production-grade as written because role ownership, gate order, branch/worktree handling, authority promotion, and risk scaling need to be explicit. Without those patches, agents could still duplicate work, let design outputs imply new contracts, implement over stale runtime paths, or apply the full workflow to small fixes that should use the lean path.
+It is not quite production-grade as written because role ownership, gate order, branch/worktree handling, authority promotion, and risk scaling need to be explicit. Without those patches, agents could still duplicate work, let design outputs imply new contracts, implement over stale runtime paths, or apply the full workflow to small fixes that should use the lean path. The full chain should be reserved for entire pages/modules, major surfaces, or cross-boundary page work.
 
 ## What Works
 
@@ -34,7 +34,7 @@ It is not quite production-grade as written because role ownership, gate order, 
 - Design agent overreach: Product Design may invent actions, navigation, source-admin capabilities, or data states unless the packet clearly forbids contract invention.
 - Implementation agent overreach: Dev or design implementation agents may expand scope to adjacent surfaces, add placeholder CTAs, or revive deferred source tools unless the package names hard out-of-scope items.
 - Product truth stored in the wrong place: if the screen package becomes the only place a decision exists, future agents may miss it or treat temporary package notes as canon.
-- Too much process for small tasks: this full workflow is excessive for copy fixes, test-only locks, small docs patches, or isolated non-behavior refactors.
+- Too much process for small tasks: this full workflow is excessive for copy fixes, test-only locks, small docs patches, isolated non-behavior refactors, minor component tweaks, or small polish inside an already-understood page/module.
 - Not enough review for high-risk tasks: schema, provider, auth, source ownership, API contracts, or cross-lane runtime changes may need heavier review than one combined spec review and one integration review.
 - Asset/art timing issues: Art / Creative Studio should not start from raw packet alone if the Design Spec is still unstable; otherwise assets may encode the wrong hierarchy.
 - Test/QA gaps: the workflow names missing tests generally, but the packet needs a validation seed and expected regression locks before implementation starts.
@@ -72,7 +72,7 @@ Patch the proposed workflow rather than reject it:
 12. Dev and design work are reviewed together after integration, with findings returned to the responsible implementation agent.
 13. Final Hardening Agent runs the package hardening pass: tests, accessibility, edge states, copy consistency, integration cleanup, regression locks, and polish.
 14. Final closeout happens only after validation, docs/changelog/handoff requirements, branch/worktree state, and PR metadata are complete.
-15. Use the lean path instead of this workflow for tiny docs-only, copy-only, test-only, or isolated low-risk fixes.
+15. Use the lean path instead of this workflow for tiny docs-only, copy-only, test-only, isolated low-risk fixes, minor component tweaks, or polish inside an already-understood page/module.
 
 This patched workflow stays practical for Codex/subagents/Product Design/Creative Studio because it keeps one shared packet, two spec lanes, one package review, bounded implementation ownership, one integrated review, and one final hardening pass.
 
@@ -138,6 +138,6 @@ Exact changes required:
 - Classify review findings by owner: dev, design, cross-spec, product decision, stale, environment.
 - Route cross-spec conflicts through owner specs first and founder clarification only when product truth is unresolved.
 - Delay Art / Creative Studio until the Design Spec is stable enough to avoid asset rework.
-- Add risk scaling: use this major-screen workflow for complex screen packages, and use the lean path for small low-risk tasks.
+- Add risk scaling: use this major-screen workflow for entire pages/modules, complex screen packages, or cross-boundary surfaces, and use the lean path for small low-risk tasks.
 - Add validation seed and expected regression locks before implementation starts.
 - Add explicit anti-drift constraints for source/listener/admin boundaries, no one-off city/community/source behavior, no platform-trope imports, no unapproved CTAs, and no design-agent contract invention.

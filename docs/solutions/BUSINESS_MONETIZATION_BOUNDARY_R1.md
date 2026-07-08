@@ -24,7 +24,9 @@ The current launch surface may preserve:
 
 - source-facing Print Shop event creation;
 - source-owned Release Deck track creation;
-- the conceptual Release Deck paid ad slot as a documented future capacity;
+- the conceptual Release Deck paid ad slot as a documented future capacity,
+  including design-only category/link-target shape such as `release date`,
+  `general`, `event`, and `sponsor`;
 - read-only/deferred promotions infrastructure references.
 
 The current launch surface must not implement:
@@ -65,6 +67,8 @@ The following require a new spec or explicit founder lock before runtime work:
 - Discovery Pass purchase and access enforcement;
 - artist Standard/Premium capability purchase or slot enforcement;
 - paid ad-slot purchase and campaign lifecycle;
+- paid ad-slot category/link-target persistence, business-account sponsor
+  linking, and action-wheel linked-target visit behavior;
 - Promotional Pack targeting and purchase;
 - offer/coupon models and carry/redeem interactions;
 - Print Shop Run purchase and artifact minting;
@@ -96,6 +100,8 @@ If promotions are activated later:
 - paid behavior must be labeled as paid;
 - paid behavior must not alter Fair Play or governance;
 - business submissions must be account-attached, not anonymous public intake;
+- sponsor ad links must be business-account attached when activated, not
+  anonymous sponsor text;
 - offer/coupon actions need their own action grammar and tests;
 - `Promotions` must not return as a Plot tab unless a newer active UI lock
   explicitly promotes it.

@@ -3,7 +3,7 @@
 **ID:** `MEDIA-RELEASE-DECK`
 **Status:** `active`
 **Owner:** `uprise-media-release`
-**Last Updated:** `2026-06-29`
+**Last Updated:** `2026-07-06`
 
 ## Overview And Purpose
 
@@ -34,10 +34,24 @@ by a later media/storage implementation spec.
 
 - Release Deck has `3` active music slots per managed Artist/Band source per city-tier community.
 - The paid `4th` ad-attachment slot is not a music slot and is not a standalone rotation entry.
+- Future paid ad attachment metadata may classify the ad as `release date`,
+  `general`, `event`, or `sponsor` after paid ad runtime is explicitly
+  activated by media/economy/action owner specs.
+- Future paid ad attachment link targets are category-specific: `release date`
+  may link to a calendar date, `event` may link to an event, `sponsor` may link
+  to a business account, and `general` has no required linked target.
 - No single Release Deck song may exceed `6` minutes (`360` seconds).
 - No single source may occupy more than `15` minutes (`900` seconds) of any one Uprise rotation at a time.
 - Current API enforcement applies to `ready` tracks for the same `artistBandId + communityId`.
 - Current MVP media ingest accepts explicit hosted `http(s)` audio URLs only.
+- URL-only ingest is provider-agnostic. A source may supply a direct playable
+  audio URL from artist-controlled hosting or an external service when browser
+  playback and provider terms allow it. Ordinary external artist/profile pages
+  remain official outbound links unless an approved direct-play or embed
+  contract exists.
+- UPRISE must not represent externally hosted audio as UPRISE-hosted media.
+  First-party upload, storage, and transcoding remain deferred until a later
+  media-storage owner spec activates them.
 - A song cannot be actively listed in more than one Uprise rotation at the same time.
 - Source-owned tracks must attach to the managed source Home Scene; proxy-to-natural activation updates future upload routing through `ArtistBand.homeSceneId`.
 - MVP replacement behavior is reject-only: when a source is at the `3`-slot, `6`-minute song, or `15`-minute source cap, the current create path rejects the new track and tells the source to choose a different active song combination. It does not silently delete, mutate, or replace existing tracks.
@@ -57,7 +71,9 @@ Implemented in `apps/api/src/tracks/tracks.service.ts`:
 
 - Error handling: rejections must be explicit `BadRequestException` responses.
 - Data safety: enforcement must not mutate existing tracks, votes, rotation entries, or engagement history.
-- Scope safety: this spec does not activate storage, transcoding, paid ad-slot runtime, or bulk replacement tooling.
+- Scope safety: this spec does not activate storage, transcoding, paid ad-slot
+  runtime, ad category/link-target persistence, business account linking, action
+  wheel visit behavior, or bulk replacement tooling.
 - Replacement safety: the MVP create path is reject-only at cap boundaries because existing tracks may already carry rotation, vote, engagement, or tier lifecycle history.
 
 ## Architectural Boundaries
@@ -99,10 +115,17 @@ Current fields used:
 
 - `/source-dashboard/release-deck` remains the MVP Release Deck route.
 - The route may present hosted URL input for now.
+- The route may collect official external listen/buy/support links separately
+  from the direct playable URL. External profile/page links should not be
+  treated as direct playable media unless an approved integration explicitly
+  supports playback.
 - The route must block obvious over-length submissions before the API call and still treat the API as the source of truth.
 - At cap boundaries, the route should present reject-only guidance: choose a different active song combination. It must not imply existing track history will be silently replaced.
 - It must not imply real upload/storage/transcoding exists until a later spec activates it.
 - It must not present the paid ad slot as another music upload slot.
+- It may show the future paid ad category/link-target shape in design or docs,
+  but must not save, purchase, record, sponsor-link, or expose linked-target
+  actions until the owner contracts are updated.
 
 ## Acceptance Tests / Test Plan
 
@@ -117,4 +140,7 @@ Current fields used:
 
 - Define an explicit history-safe replacement/edit endpoint only if a future slice needs track replacement after rotation/vote/engagement lifecycle semantics are owned.
 - Define if and when paid ad-slot runtime becomes visible.
+- Define the paid ad category and link-target contract for `release date`,
+  `general`, `event`, and `sponsor`, including business-account linking and
+  action-wheel visit behavior.
 - Define storage/upload/transcode/waveform lifecycle if media infrastructure is activated.

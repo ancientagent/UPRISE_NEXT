@@ -106,6 +106,9 @@ Header zone:
 
 - Label the surface as Source Dashboard.
 - If a source is active, show source name, entity type, slug, and membership role.
+- Show the signed-in account/user beside the source selector with the role/title
+  for the currently selected source; switching sources changes that displayed
+  role/title.
 - If no source is active, lead with `Select a source account`.
 - Header copy should state that source-facing tools live here and operate on the active source account.
 - Provide `Back to Plot`; provide `Return to Listener Account` when source context is active.
@@ -140,6 +143,10 @@ Required zones:
 
 - Header with active source identity, Home Scene, caps, and return links.
 - Current Context card confirming active source, Home Scene, music slot count, and paid ad slot as defined but not active here.
+- Paid ad attachment may reserve future category/link-target structure
+  (`release date`, `general`, `event`, `sponsor`) but must remain inactive until
+  owner specs define paid ad runtime, business linking, and action/signal visit
+  behavior.
 - Current Music Slots, showing exactly three MVP music slots with open-slot state, source-owned release marker, or legacy carry-forward marker.
 - Release Single form for URL-only MVP ingest: source, title, optional album/release note, duration in seconds, audio file URL, optional cover art URL, submit state, and validation feedback.
 

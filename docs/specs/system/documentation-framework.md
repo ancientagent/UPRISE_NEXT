@@ -141,7 +141,7 @@ Rules:
 
 ### Layer 4d: Screen Packages
 
-Purpose: coordinate major screen or flow work without turning temporary planning artifacts into product doctrine.
+Purpose: coordinate whole page/module, major screen, or flow work without turning temporary planning artifacts into product doctrine.
 
 Files:
 
@@ -149,7 +149,7 @@ Files:
 
 Rules:
 
-- Use screen packages for complex screens/flows only when a shared execution workspace prevents drift. Do not force Dev Spec, Design Spec, review, art, or hardening artifacts when one small vertical slice can move safely.
+- Use screen packages for whole pages/modules, complex screens, or flows only when a shared execution workspace prevents drift. They are not the default process for minor UI edits, component tweaks, copy changes, or isolated cleanup. Do not force Dev Spec, Design Spec, review, art, or hardening artifacts when one small vertical slice can move safely.
 - Screen packages are execution workspaces. Durable product/API/runtime truth still belongs in owner specs under `docs/specs/**`.
 - Each package should link to owner specs, lane briefs, runtime files, tests, handoffs, and art references instead of copying raw authority documents.
 - Accepted product decisions discovered during package work must be promoted back to the owner spec, then summarized from the package.
@@ -419,7 +419,7 @@ This loop prevents an executor from implementing from a thin Linear/chat summary
 
 #### Screen Package Workflow
 
-Use this workflow for major screens or flows such as Plot, Artist Profile, Source Dashboard, Discover, Registrar, Release Deck, Print Shop, Archive, Events, and player surfaces when a shared package prevents drift. The default is still one small vertical screen section at a time.
+Use this workflow for whole pages/modules, major screens, or flows such as Plot, Artist Profile, Source Dashboard, Discover, Registrar, Release Deck, Print Shop, Archive, Events, and player surfaces when a shared package prevents drift. The default inside the package is still one small vertical screen section at a time.
 
 1. Pick one vertical screen section or behavior.
 2. Verify branch/HEAD, dirty state, owner spec, lane brief, likely runtime files, likely tests, out-of-scope boundaries, and registry requirements.

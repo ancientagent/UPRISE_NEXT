@@ -9,6 +9,31 @@
 
 ### Added
 
+- Captured Home Scene photo-rotation and community-list founder clarification,
+  promoted the atmosphere-photo presentation boundary into Plot/UI docs, and
+  tracked `Instrumental` as an open selector/seed decision while confirming
+  `Spoken Word / Poetry` is already active in the MVP launch list.
+- Captured deferred Shared Listen / Jam Space founder clarification and reframed
+  the V2 listening-rooms spec around invited avatars inside a listener's
+  decorated collection/profile space rather than public Social-tab rooms by
+  default.
+- Captured event-autofill founder clarification and added a deferred
+  social-source import boundary: future external event detection can prefill
+  creator-reviewed source event drafts, but it must not scrape restricted data
+  or auto-publish public events.
+- Captured provider-agnostic artist linking clarification and promoted the
+  Release Deck / Artist Profile boundary: UPRISE is the local discovery and
+  distribution shell around existing artist infrastructure, while current MVP
+  playback still requires directly playable hosted URLs or official outbound
+  links.
+- Captured Home Scene beta-layer clarification for local businesses and message
+  boards, keeping both in the regenerative music infrastructure model while
+  preserving the current MVP Plot tab boundary.
+- Captured Public Artist Profile member-headshot founder clarification, keeping
+  listener-side artist/member headshots separate from listener-account avatars
+  and preserving privacy/routing boundaries for future profile links.
+- Captured Source Dashboard member lookup and creator-published event distribution founder clarification, keeping draft source calendar planning private while limiting community calendar visibility and automatic delivery to followers' calendars to explicitly published source events.
+- Added founder-session capture and owner-doc boundaries for Source Dashboard source-role display plus Release Deck paid ad category/link-target/action-wheel future scope; see `docs/founder-sessions/2026-07-06_source-dashboard-ad-action-wheel-links.md`.
 - Added the Artist Profile / Source Dashboard screen-package Dev Spec, Design Spec, passing spec-package review, and separate xhigh Dev/Design review artifacts; the next step is a small vertical implementation slice rather than a mandatory implementation-plan gate.
 - Lightened the screen-package workflow so package seeds and `screen-package:flow` support optional slice contracts and risk-triggered artifacts instead of mandatory Dev Spec / Design Spec / review / art / hardening ceremony for every screen slice.
 - Added `screen-package:flow` automation to inspect, scaffold, and advance major-screen package gates without turning package artifacts into product truth.

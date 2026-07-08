@@ -4,7 +4,7 @@ Status: Product Design layout brief for founder review
 Package: `artist-profile-source-dashboard`
 Design lane: `uprise-design-ui`
 Primary owner spec: `docs/specs/users/artist-profile-and-source-dashboard.md`
-Last updated: 2026-07-05
+Last updated: 2026-07-06
 
 ## Purpose
 
@@ -59,6 +59,9 @@ Selected visual direction:
 
 - Use the white official report-paper direction from the latest preferred
   mockup.
+- Push the document treatment slightly more toward xeroxed official paperwork:
+  heavier ink rules, stronger section borders, and subtle print-paper texture
+  are preferred over delicate SaaS card styling.
 - Use a top command line/header with `UPRISE`, `SOURCE DASHBOARD`, source
   selector, and listener-account exit.
 - Keep the band/source image and title compact so the report content dominates.
@@ -90,15 +93,19 @@ Top command line:
 
 1. `UPRISE` wordmark.
 2. `SOURCE DASHBOARD` label.
-3. Compact current-source selector.
-4. `Exit to Listener Account`.
-5. Optional plain-text source-position context, not chip navigation.
+3. Signed-in account/user context with current selected-source position, such as
+   `Baris · Manager`.
+4. Compact current-source selector.
+5. `Exit to Listener Account`.
 
 Model:
 
 - The signed-in user holds access to source positions.
 - The selected source profile holds the visible context.
 - Switching the selected band/source/promoter changes the active file.
+- The account role/title beside the signed-in account changes when the selected
+  source changes, based on that user's position in the newly selected source
+  (`Manager`, `Member`, `Promoter`, or later approved role names).
 - Moving through report sections changes the area of that same selected source
   file.
 - The interaction should feel like quickly filling out and managing a file, not
@@ -125,6 +132,8 @@ Compact source report masthead:
 4. Compact source/profile snapshot next to the source image/title.
 5. Member avatar strip on the far right.
 6. Public profile preview/open path where relevant.
+7. Optional lower-right rubber-ink stamp if it strengthens the official
+   source-file metaphor.
 
 The source image and name should remain visible in the report header, but they
 should be smaller than a profile hero so the management report stays primary.
@@ -143,6 +152,25 @@ Masthead constraints:
 - Fit the source/profile snapshot into the same masthead section beside the
   artist photo/title instead of rendering it as a lower `Profile Check` block.
 - Reserve the far right of the masthead for band-member avatars.
+- If an official-looking stamp is used, make it feel like an old rubber-ink
+  official document mark near the lower-right of the report sheet, not a
+  masthead badge or active status chip. Prefer neutral file language such as
+  `SOURCE FILE` or `UPRISE SOURCE RECORD`. Do not use `Verified`, `Approved`,
+  `Policy Clear`, paid-status language, or GPS/source validation copy unless a
+  real owner-spec/runtime state exists.
+- Stamp rendering should be low-emphasis and imperfect enough to read as ink on
+  paper, while still remaining legible and not making the UI look dirty or
+  damaged.
+
+Report-paper visual treatment:
+
+- Use heavier outer sheet borders and section rules than a typical SaaS card.
+- Prefer crisp black/charcoal ink lines with slight photocopy/Xerox character
+  over soft shadows or airy card separation.
+- Keep row separators and table rules strong enough that the sheet reads like an
+  official working form.
+- Do not add grunge, torn-paper effects, fake stains, or distressed decoration
+  that makes the interface harder to read.
 
 Profile snapshot content in masthead:
 
@@ -163,6 +191,8 @@ Member avatar strip:
   that resizes avatar profiles as member count changes.
 - For the mockup, show four belly-up avatar profiles with names.
 - Avatars can serve as links and may expose hover info later.
+- Resolved member avatars may later link to the member's listener account or
+  profile after identity routing and privacy rules are defined.
 - Use the visual direction from `art/Avatar Boards/0_3 (1).jpeg` for the
   four displayed member avatars.
 - A Dev Spec should define how avatar sizing, truncation, wrapping, hover info,
@@ -237,16 +267,42 @@ Visible content to design:
 4. Band/source bio.
 5. Band/source members with avatars and what they play or contribute.
 6. Member role/access summary.
-7. Manager-only `Can submit music` control for each member, scoped to the
+7. Manager-only `Can edit music` control for each member, scoped to the
    selected source.
-8. Official links:
+8. Manager-only `Can edit calendar` control for each member, scoped to the
+   selected source.
+9. Official links:
    - website
    - merch
    - social media
    - music/albums
    - contact path
    - donation link
-9. Public-facing source identity fields where existing contracts support them.
+10. Public-facing source identity fields where existing contracts support them.
+11. Manager-facing add/find member by email/search entry, marked design-only
+    until the member lookup/invite contract is defined.
+
+Profile editing model:
+
+- The registering member is the default `manager` for the source because they
+  registered/materialized the band/source and their Home Scene anchors the
+  source.
+- `manager` can edit and save source profile details by default.
+- Additional members can be granted music edit access through a source-specific
+  `Can edit music` checkbox wherever the member is added or managed.
+- A manager may add or look up band/source members from this source-facing
+  Profile/bio screen. The likely model is email/search entry; if the person is
+  already registered on UPRISE, the member row/avatar can resolve to their
+  platform identity.
+- Resolved member avatars may later link to those members' listener accounts or
+  profiles, but only after identity routing and privacy rules are defined.
+- `Can edit music` controls whether the member can work in the selected source's
+  Release Deck/music detail area, including loading/submitting/editing songs if
+  the owner specs support those operations.
+- `Can edit calendar` controls whether the member can add or edit events for the
+  selected source.
+- Music permission controls belong in source-facing Profile/member management,
+  not on the public listener-facing Artist Profile.
 
 Design constraints:
 
@@ -256,8 +312,12 @@ Design constraints:
   from this section.
 - If a basic contact path appears, treat it as a source-provided official link
   unless a later spec adds in-app contact.
-- Do not invent a broad permission system beyond the concrete `Can submit music`
-  question unless an owner spec defines it.
+- Do not expose unresolved member email addresses publicly.
+- Do not link member avatars to listener accounts until privacy/routing behavior
+  is defined by the owner specs.
+- Do not invent a broad permission system beyond the concrete `Can edit music`
+  and `Can edit calendar` source-specific checkboxes unless an owner spec
+  defines it.
 - Sect affiliations need terminology and data ownership before implementation.
 
 ## Releases Section
@@ -297,6 +357,9 @@ Implementation-facing row copy/behavior:
 
 - Row action label should be `Load`, not `View`, when the action loads the
   release/song context.
+- Pressing `Load` should open a focused row detail/edit area for that selected
+  song/slot inside the Release Deck flow. It should not navigate to a generic
+  media manager or detached song-admin app.
 - Use `Release date`, not `Date added`, because rows may include songs waiting
   to be released.
 - The row status should be a real status area. For source-owned tracks that pass
@@ -331,13 +394,33 @@ pattern:
 5. Add album art.
 6. Add current MVP hosted audio URL, or future personal-storage selector after
    media storage is activated.
-7. Save/submit state.
+7. Add optional song detail fields:
+   - lyrics
+   - about this song / release note
+   - album or release name
+   - official buy link for that song or album
+8. Save/submit state.
+
+Song detail field boundaries:
+
+- Song details should appear from the selected row `Load` state, not as a
+  separate top-level page.
+- Song-level `buy` links are source-provided outbound links only. They do not
+  create UPRISE checkout, payment, cart, entitlement, or commerce behavior.
+- Do not add an external `listen` link field here. Listening should be native to
+  the public Artist Profile song row.
+- Lyrics and song notes need content ownership, moderation, visibility, and
+  public-display rules before implementation.
+- Album/release naming and song-level outbound links need media/profile data
+  contract ownership before implementation.
 
 Runtime blockers before implementation:
 
 - Release date scheduling needs a media owner-spec/API/runtime contract.
 - Remove needs a history-safe media owner-spec/API/runtime contract.
 - Personal storage/upload needs media-storage activation.
+- Song detail fields need media/profile owner-spec/API/runtime contracts before
+  they can be saved or shown publicly.
 
 ### Basic Release Metrics
 
@@ -348,13 +431,19 @@ presentation is a compact expandable/dropdown metrics section inside
 Default visual treatment:
 
 1. Summary row beneath the Release Deck, such as `Release Metrics`.
-2. The row should include the currently selected song/slot title so the operator
-   knows which release the metrics refer to.
-3. Include an arrow affordance so the operator can select/swipe to the next song.
-4. Dropdown/accordion affordance expands deeper metric detail.
-5. When collapsed, show only the most useful rollup.
-6. When expanded, show row-level metrics and later graph views for the selected
+2. The row should behave as a song metrics lookup/selector, not a `current
+   song` label.
+3. The operator should be able to choose any eligible uploaded song for the
+   selected source, including songs currently loaded in Release Deck and songs
+   uploaded previously.
+4. Use a dropdown selector for song choice because the eligible song list may
+   include more than the three active Release Deck rows.
+5. Use a separate dropdown/accordion or chevron affordance to expand deeper
+   metric detail and graph data for the selected lookup song.
+6. When collapsed, show only the most useful rollup for the selected lookup
    song.
+7. When expanded, show row-level metrics and later graph views for the selected
+   lookup song.
 
 Candidate visible metrics:
 
@@ -374,6 +463,8 @@ Terminology note:
 Design constraints:
 
 - Metrics are descriptive only.
+- The metrics lookup needs a data contract before implementation because it
+  spans current Release Deck songs and previously uploaded songs.
 - Do not let metrics affect Fair Play, rotation, ranking, voting, propagation,
   Registrar authority, Home Scene authority, or governance.
 - Do not add comparative leaderboards, predictive scoring, business advice,
@@ -397,20 +488,37 @@ Visible hierarchy:
    - `1`
    - `2`
    - `3`
-7. Preserve the need for a payment account before paid ad-slot purchase or paid
+7. Show a design-only ad category selector so the ad slot's function is
+   recognizable:
+   - `release date`
+   - `general`
+   - `event`
+   - `sponsor`
+8. Category link-target behavior, when activated:
+   - `release date` links to a calendar date.
+   - `event` links to a source event.
+   - `sponsor` links to a business account after business accounts/local
+     business communities are activated.
+   - `general` has no required linked target.
+9. Preserve the need for a payment account before paid ad-slot purchase or paid
    ad recording becomes active.
-8. Place the `Record clip` control on the far right of the ad-clip row in the
+10. Place the `Record clip` control on the far right of the ad-clip row in the
    report-paper layout.
 
 Current implementation boundary:
 
 - Paid ad-slot runtime, paywall, purchase, entitlement, recording, media
   capture, review, and storage are deferred until owner specs activate them.
+- Paid ad category/link-target persistence, business-account linking, and
+  action-wheel linked-target visit behavior are deferred until owner specs
+  activate them.
 - Payment account setup, saved payment methods, invoices, refunds,
   subscriptions, entitlements, and ad purchase flows are deferred until a
   monetization/payment spec activates them.
 - Do not make the fourth spot a fourth active music row.
 - Do not let the ad spot imply Fair Play boost, ranking, or rotation priority.
+- Do not treat the future linked-target action-wheel affordance as permission to
+  add an engagement wheel to public Artist Profile.
 
 ## Payment Account / Paid Ads
 
@@ -456,11 +564,29 @@ Visible content to design:
 4. Event date, title, venue/location, and source ownership.
 5. Print Shop / flyer-printing path inside Calendar.
 6. Event/flyer status where existing contracts support it.
+7. Draft/private event planning state, because source operators may need to plan
+   calendar items before revealing them to the community.
+8. Future explicit creator `Publish` status/action, marked design-only until
+   the event/feed/calendar publication contract exists.
+9. Future published-event delivery note: when activated, publishing an
+   artist/source event should place it on the community calendar and
+   automatically deliver it to follower calendars.
 
 Design constraints:
 
-- Source members should be able to add events/calendar entries for the selected
-  source unless a later owner spec narrows this permission.
+- Source members should be able to view source calendar/event context.
+- Adding or editing calendar/event entries is controlled by manager status or the
+  source-specific `Can edit calendar` checkbox unless a later owner spec narrows
+  or expands that permission.
+- Calendar planning should not imply public feed visibility by default.
+- Publishing to community calendar and follower calendars should be controlled
+  by explicit creator-published event state, not by the event merely existing in
+  or being connected to the source calendar.
+- Follower calendar delivery belongs to the future event-publication contract;
+  do not deliver draft/unpublished events.
+- Most public source/Registrar actions may show up in Feed when they happen,
+  but event calendar distribution is different and requires creator
+  publication.
 - Print Shop stays source-facing.
 - Do not expose Print Shop as a public listener action.
 - Do not add ticketing, RSVP, billing, offers, promotions management,
@@ -532,7 +658,7 @@ The mockup or later Dev Spec should account for:
 
 1. Should `Registrar` remain visible as a subdued lifecycle stamp/utility link,
    or should it be tucked into source/account context?
-2. Should the Release Metrics dropdown default collapsed or open in the first
+2. Should the Release Metrics lookup default collapsed or open in the first
    mockup?
 3. For release metrics, should the label be `Collects`, `Adds`, or another
    source-facing term?

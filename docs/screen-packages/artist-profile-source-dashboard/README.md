@@ -7,7 +7,12 @@ Workflow evaluation: `docs/screen-packages/artist-profile-source-dashboard/workf
 
 ## Purpose
 
-Coordinate the major-screen workflow for the path where a listener registers and materializes an Artist/Band source through Registrar, operates the source through Source Dashboard, and exposes the public Artist Profile to listeners.
+Coordinate the major page/module workflow for the path where a listener registers and materializes an Artist/Band source through Registrar, operates the source through Source Dashboard, and exposes the public Artist Profile to listeners.
+
+This package exists because Artist Profile, Source Dashboard, Registrar transition,
+Release Deck, Calendar/Print Shop, and public profile boundaries touch multiple
+page/module surfaces. It should not be copied as the default process for minor
+component changes or one-off screen polish.
 
 This package is an execution workspace. Product truth remains in owner specs under `docs/specs/**`.
 

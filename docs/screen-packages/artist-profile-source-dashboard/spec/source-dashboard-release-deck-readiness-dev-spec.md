@@ -105,11 +105,20 @@ Founder-updated visual target:
 - do not foreground GPS verification as a dashboard status ornament unless a
   specific existing owner-spec rule blocks the selected source action;
 - avoid duplicating the same tools in both a left nav and right card stack;
+- show signed-in account/user context next to the source selector with the
+  user's current position for the selected source, such as `Manager`, `Member`,
+  or `Promoter`; switching selected source changes this displayed role/title;
 - prefer one report-paper management structure with Release Deck first, source
   profile context/profile management, Calendar/Events, and Registrar kept
   secondary;
-- keep basic release metrics below Release Deck as a compact expandable row, not
-  as a primary navigation page in this slice;
+- keep basic release metrics below Release Deck as a compact expandable
+  song-lookup row, not as a primary navigation page in this slice;
+- do not limit the visual model for release metrics to the `current song` or
+  only the active Release Deck slots. The intended lookup can cover any eligible
+  song uploaded for the selected source, including current and previously
+  uploaded songs, after the source metrics contract exists;
+- use a dropdown selector for choosing the song in the release-metrics lookup;
+  do not use left/right arrows as the primary song-selection control;
 - `Events` is the desired source-side home for shows and the Print Shop/flyer
   printing path, but current runtime/spec evidence still names `Print Shop` as a
   live card, so implementation must stop for a scoped Events/Print Shop contract
@@ -137,12 +146,13 @@ First-slice ownership decision: do not change store behavior by default. The sto
 Founder-added access rule: source roles are `manager` and `member`, scoped to
 the selected source membership rather than the signed-in user globally. The
 registering member is the default `manager` because their location/Home Scene
-anchors the band/source to its Home Scene. The concrete beta capability to track
-is whether a member can submit music through Release Deck for that selected
-source. Source members should still be able to see source activity and add
-events/calendar entries for that selected source. Source switching must make the
-selected source role/access visible, and Release Deck submission must resolve
-authority from that selected source membership.
+anchors the band/source to its Home Scene. The concrete beta capability
+checkboxes to track are whether a member can edit music and whether a member can
+edit calendar/events for that selected source. Source members should still be
+able to see source activity even when they cannot edit music or calendar/events.
+Source switching must make the selected source role/access visible, and
+Release Deck / Calendar editing must resolve authority from that selected source
+membership.
 
 ### Release Deck
 
@@ -183,6 +193,8 @@ Founder-updated row presentation target:
 
 - row action copy should be `Load`, not `View`, when opening or loading a
   release/song row context;
+- `Load` should be treated as the row-level entry point for the selected
+  song/slot detail state, not as a generic media-manager navigation;
 - row date copy should be `Release date`, not `Date added`, even while runtime
   release-date scheduling remains blocked by missing media/API contracts;
 - row status should carry the policy/eligibility signal. A valid source-owned
@@ -259,11 +271,11 @@ Default first slice should touch dashboard/release-deck presentation and web tes
 - Dashboard must show source name, entity type, slug, membership role when
   available, and Home Scene label. Do not foreground GPS verification unless a
   selected source action is blocked by an existing owner-spec rule.
-- Source access is per selected source. Do not carry music-submission affordances
-  from one source to another source where the same user is not allowed to submit
-  music.
-- Do not use lack of music-submission access as a blanket block for source
-  visibility or event/calendar entry access.
+- Source access is per selected source. Do not carry music-edit or
+  calendar-edit affordances from one source to another source where the same
+  user does not have those permissions.
+- Do not use lack of music-edit or calendar-edit access as a blanket block for
+  source visibility.
 - Current live cards are `Release Deck`, `Source Profile`, `Print Shop`, and
   `Registrar`; founder-preferred report sections are Release Deck, source
   profile/profile management, Calendar/Events, and Registrar kept secondary,
@@ -298,6 +310,24 @@ Default first slice should touch dashboard/release-deck presentation and web tes
   whether immediate release is allowed, past-date validation, scheduled
   visibility, and when scheduled tracks count against active slot/duration caps.
 
+### Song Detail Metadata
+
+- Visual design may reserve song detail fields behind the selected row `Load`
+  state.
+- Candidate song detail fields are lyrics, about-this-song / release note,
+  album or release name, and an official source-provided buy link for that song
+  or album.
+- Runtime implementation must stop until the media/profile owner spec defines
+  where these fields are stored, who can edit them, how they are validated, and
+  where they appear publicly.
+- Song-level buy links must remain outbound official links. Do not create
+  UPRISE checkout, payment, entitlement, marketplace, or purchase behavior from
+  this Release Deck readiness slice.
+- Do not add an external listen link field to song detail metadata. Listening
+  belongs to the public Artist Profile song row/direct-listen behavior.
+- Lyrics need content ownership, moderation, policy, and public-display rules
+  before implementation.
+
 ### Remove From Active Deck
 
 - Visual design may replace generic `Manage` row language with a clear `Remove`
@@ -327,6 +357,14 @@ Default first slice should touch dashboard/release-deck presentation and web tes
   `Record clip` on the far right of the paid ad attachment row.
 - `Record clip` remains design-only/deferred until paywall, recording, payment,
   review, media capture, and storage contracts are authorized.
+- The future paid ad attachment may show a design-only category selector:
+  `release date`, `general`, `event`, or `sponsor`.
+- Future category link-target behavior is deferred: `release date` links a
+  calendar date, `event` links an event, `sponsor` links a business account
+  after business accounts/local business communities are active, and `general`
+  has no required linked target.
+- Action-wheel-style visit access for those linked targets is a future
+  action/signal contract, not current Release Deck readiness scope.
 
 ### Over 900 Active Seconds
 
@@ -355,6 +393,8 @@ Default first slice should touch dashboard/release-deck presentation and web tes
   Registrar link, row load/open affordances, and URL-only `Release Single`
   submit.
 - Row load/open action copy should be `Load`, not `View`.
+- Row `Load` may expose the selected row's detail/editor area once the required
+  metadata contracts exist.
 - Source Dashboard / Release Deck must not mutate listener player state.
 - Release Deck must not expose Fair Play controls; Fair Play owns rotation lifecycle after accepted track creation.
 
@@ -437,6 +477,8 @@ Broaden to `pnpm run verify` before PR closeout when feasible.
 - no upload button, drag-and-drop dropzone, file picker, storage provider setup, transcoding, waveform, worker, queue, or signed upload URL;
 - no active fourth music slot; the fourth Release Deck spot remains the inactive
   paid ad attachment concept;
+- no paid ad category/link-target persistence, business-account linking,
+  sponsor runtime, or action-wheel linked-target visit behavior;
 - no Fair Play scheduling, ordering, boost, rotation, recurrence, tier-propagation, or ranking controls;
 - no new route names, future source/admin domain decision, or source URL format;
 - no city-specific, music-community-specific, artist-specific, source-specific, or fixture-only runtime behavior unless explicitly marked test-only;
@@ -451,20 +493,29 @@ Broaden to `pnpm run verify` before PR closeout when feasible.
   before the media owner spec/API/runtime contract is updated.
 - Stop if implementation attempts to add Release Deck removal/deactivation
   behavior before the media owner spec/API/runtime contract is updated.
+- Stop if implementation attempts to save or publicly display song lyrics,
+  about-this-song copy, album/release metadata, or song-level buy links
+  before the media/profile owner specs define those contracts.
+- Stop if implementation attempts to save paid ad categories/link targets, link
+  business accounts, expose sponsor ads, or add action-wheel linked-target visit
+  behavior before media, economy, business-account, and action/signal owner specs
+  define those contracts.
 - Stop if implementation attempts to replace the current `Print Shop` card with
   an `Events` route/page before the Source Dashboard / Events / Print Shop
   surface contract is updated.
-- Stop if implementation attempts to add a Metrics page, basic metrics, V2 paid
-  tracked-single telemetry, or paid-account gating before source metrics and
-  monetization/entitlement specs are updated.
-- Stop if implementation needs a new `Can submit music` permission field or
-  access model beyond the current membership role data returned for managed
-  sources.
+- Stop if implementation attempts to add a Metrics page, a release-metrics
+  lookup across current/prior uploaded songs, V2 paid tracked-single telemetry,
+  or paid-account gating before source metrics and monetization/entitlement
+  specs are updated.
+- Stop if implementation needs a new `Can edit music` permission field or
+  broader member permission model before identity/media owner specs define it.
+- Stop if implementation needs a new `Can edit calendar` permission field or
+  broader member permission model before identity/events owner specs define it.
 - Stop if the current runtime role values do not support the founder model of
   `manager` and `member`, with the registering member defaulting to `manager`.
-- Stop if implementation needs more granular Events/calendar permissions than
-  the founder-stated baseline that source members can add events/calendar
-  entries for the selected source.
+- Stop if implementation needs Events/calendar permissions beyond the
+  founder-stated `manager` plus source-specific `Can edit calendar` checkbox
+  model.
 - Stop if a product stakeholder wants real upload/storage/transcoding, paid ad-slot / on-air ad clip runtime, paywall/purchase/entitlement behavior, source posts/messages, analytics, billing, source profile editing, or future source/admin domain behavior in this slice.
 - Stop if fixing stale source context requires changing store persistence semantics beyond current `activeSourceId` plus `activeSourceUserId`.
 - Stop if Release Deck readiness copy needs to claim Fair Play scheduling, player mutation, rotation entry, recurrence, or tier-propagation behavior not already owned by broadcast specs.

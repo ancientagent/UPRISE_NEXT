@@ -19,8 +19,8 @@ Source Dashboard, which is owner/member-facing tooling.
 
 This file also captures the source-owner profile-management input that feeds the
 public Artist Profile. Owner-only management controls, including whether a
-member can submit music for the selected source, must not appear on the public
-listener-facing profile.
+member can edit music or edit the calendar for the selected source, must not
+appear on the public listener-facing profile.
 
 For this design model, source roles are `manager` and `member`. The registering
 member is the default `manager` because their location/Home Scene anchors the
@@ -63,13 +63,20 @@ approved implementation paths can support them:
   count where already available, and public source status.
 - Band bio: a concise profile/bio area for the source, displayed as public
   identity copy when present.
-- Band members: member avatar, display name, and what they play or contribute.
+- Band members: source-provided artist/member headshot when available, display
+  name, and what they play or contribute. Listener-account avatars are a
+  separate identity surface and should not be used as the default public member
+  image unless future privacy/routing contracts explicitly allow it.
   In the source-owner profile-management page, this same member area is also
-  where the source manager decides whether a member can submit music for that
-  selected source. Source members should still be able to view source
-  activity and add events/calendar entries for that selected source.
+  where the source manager decides whether a member can edit music and whether a
+  member can edit the calendar for that selected source. Source members should
+  still be able to view source activity and calendar/event context for that
+  selected source.
 - Direct-listen rows: up to three playable song rows with local `Play/Pause`,
   timeline, row-level `Collect`, and gated row-level `Recommend`.
+- Optional song details: lyrics, about-this-song copy, album/release name, and
+  song/album buy link may be displayed later if the Release Deck/media profile
+  contract supports it.
 - Official links: website, merch, music/albums, social media, source-provided
   contact path, and donation page links when present.
 - Upcoming shows: source-owned events with date, venue/location, and event
@@ -132,12 +139,27 @@ Design need:
 - Let listeners hear the source immediately without implying RADIYO wheel
   mutation or streaming-platform library behavior.
 - Preserve the three-row cap.
+- Make room for source-provided song details later without turning the row into
+  an album-library or streaming-platform page.
 
 Visible hierarchy:
 
 1. `Listen Here` / `Songs / Releases` area.
 2. Up to three direct-listen rows.
 3. Row-level play state and timeline.
+4. Optional detail disclosure for lyrics, about-this-song copy, album/release
+   name, and official source-provided buy link, only after the owner specs
+   define storage and public display.
+
+Design constraints:
+
+- Song-level buy links are outbound official links only. Do not create UPRISE
+  checkout, payment, entitlement, or marketplace behavior from this public
+  profile inventory.
+- Do not add an external listen link field to song details. Listening should be
+  native to the public Artist Profile song row.
+- Lyrics require content ownership, moderation, and visibility rules before
+  public display.
 4. Row-level `Collect`.
 5. Gated row-level `Recommend` only after the listener holds/collects the song.
 
@@ -147,44 +169,51 @@ Design need:
 
 - Show the actual lineup and roles so the page feels like a real local source.
 - On the source-owner profile-management page, use this same member section to
-  set whether each member can submit music for the selected source.
+  set whether each member can edit music or edit calendar/events for the
+  selected source.
 - Keep source-member baseline access clear: members can still see what is going
-  on and add events/calendar entries for the selected source.
+  on for the selected source. Editing music and editing calendar/events are
+  source-specific manager-granted checkboxes.
 
 Visible hierarchy:
 
 Public Artist Profile display:
 
-1. Member avatar.
+1. Source-provided artist/member headshot when available.
 2. Member display name.
 3. Instrument, role, or contribution, such as guitar, vocals, drums, producer,
    manager, or other source-approved wording.
 
 Source-owner profile-management controls:
 
-1. Member avatar and display name.
+1. Member avatar/headshot and display name.
 2. What they play / contribution field.
-3. Baseline access summary: can view source activity and add source
-   events/calendar entries.
-4. Manager-only, source-specific `Can submit music` control for the selected
+3. Baseline access summary: can view source activity and calendar/event context.
+4. Manager-only, source-specific `Can edit music` control for the selected
    band/source.
-5. Invite/claim/sync state if available from Registrar/member lifecycle.
-6. Save state for member detail and music-submission access changes.
+5. Manager-only, source-specific `Can edit calendar` control for the selected
+   band/source.
+6. Invite/claim/sync state if available from Registrar/member lifecycle.
+7. Save state for member detail, music-edit access, and calendar-edit access
+   changes.
 
 Design constraints:
 
-- Do not turn member avatars into listener-to-artist DM entry points.
+- Do not turn public member headshots into listener-to-artist DM entry points.
+- Do not substitute listener-account avatars as the default public member image
+  unless future profile-link privacy/routing contracts explicitly allow it.
 - Do not imply social follow graphs for individual members unless a spec
   explicitly adds them.
 - Do not expose permission controls to public visitors.
-- Do not apply music-submission access globally across all bands/sources. A
-  member can be allowed to submit music for one band/source and not another, so
-  this control must resolve against the selected source.
-- Do not use `Can submit music` to block ordinary source-member visibility or
-  event/calendar entry access unless a later owner spec defines more granular
-  event permissions.
-- Do not invent a broad permission system beyond the concrete beta question of
-  whether a member can submit music through Release Deck until
+- Do not apply music-edit access globally across all bands/sources. A member can
+  be allowed to edit music for one source and not another.
+- Do not apply calendar-edit access globally across all bands/sources. A member
+  can be allowed to edit the calendar for one source and not another.
+- Do not use lack of `Can edit music` or `Can edit calendar` to block ordinary
+  source-member visibility.
+- Do not invent a broad permission system beyond the concrete beta questions of
+  whether a member can edit music and whether a member can edit calendar/events
+  until
   `docs/specs/users/identity-roles-capabilities.md` or another owner spec defines
   it.
 
@@ -278,10 +307,10 @@ infinite social feeds, creator analytics panels, and platform-profile tropes.
 Beta / near-term:
 
 - Source avatar/profile image treatment.
-- Member avatar treatment.
+- Public artist/member headshot treatment.
 - Instrument/role labels.
-- Owner-only member `Can submit music` controls for the source profile
-  management page.
+- Owner-only member `Can edit music` and `Can edit calendar` controls for the
+  source profile management page.
 - Official-link icon treatment for website, merch, music, social, contact, and
   donation.
 - Event/show row treatment.
@@ -313,7 +342,7 @@ Later:
   specified.
 - No source-admin tools for public visitors.
 - No Source Dashboard controls inside the public listener profile body.
-- No public member music-submission controls on the listener-facing Artist
+- No public member music-edit or calendar-edit controls on the listener-facing Artist
   Profile.
 - No platform-trope clone of Spotify, Instagram, TikTok, Facebook, Linktree, or
   generic creator SaaS.
@@ -324,10 +353,13 @@ Later:
    affiliations, collectives, crews, or another UPRISE concept?
 2. Should member `what they play` come from Registrar/member data, source profile
    editing, or a later public-profile content system?
-3. What is the exact `Can submit music` contract: who can set it, which member
-   states are eligible, and does it grant only Release Deck submission or also
-   removal/edit rights?
-4. Which official social/contact paths are allowed at beta, and are they generic
+3. What is the exact `Can edit music` contract: who can set it, which member
+   states are eligible, and which Release Deck/song-detail operations does it
+   grant?
+4. What is the exact `Can edit calendar` contract: who can set it, which member
+   states are eligible, and does it grant create, edit, remove, or submit-for
+   review behavior?
+5. Which official social/contact paths are allowed at beta, and are they generic
    outbound links or typed fields?
 5. Should contact remain outbound-only for beta?
 6. Should donation remain outbound-only for beta?

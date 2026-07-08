@@ -158,7 +158,7 @@ Escalate beyond `gpt-5.5` with `reasoning_effort=xhigh` only when PM names the r
 
 ## Screen Package Workflow
 
-Use `docs/screen-packages/**` only when a screen or flow needs a shared execution workspace to prevent drift. Do not treat a package as permission to create mandatory Dev Spec, Design Spec, review, art, hardening, or closeout artifacts for every slice.
+Use `docs/screen-packages/**` only when a whole page/module, major screen, or flow needs a shared execution workspace to prevent drift. Do not use the package workflow for minor UI edits, component tweaks, copy changes, or isolated cleanup. Do not treat a package as permission to create mandatory Dev Spec, Design Spec, review, art, hardening, or closeout artifacts for every slice.
 
 Default shape:
 

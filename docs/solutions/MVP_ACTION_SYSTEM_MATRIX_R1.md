@@ -2,7 +2,7 @@
 
  Status: Active
  Owner: Founder + product engineering
- Last updated: 2026-04-14
+ Last updated: 2026-07-06
 
  Classification status: locked, spec/runtime reconciliation pending
 
@@ -135,6 +135,9 @@
 - civic / cause registrar lanes beyond current MVP activation
 - wider non-music public creator source taxonomy
 - profile-wall / artifact-grid expansion details
+- Release Deck paid ad linked-target visit affordance for release-date, event,
+  sponsor/business-account, or general ad categories, pending owner-spec
+  activation
 
 ### 7.3 Current unresolved / beta-validated later
 - exact boundary of `artist` beyond music
@@ -153,8 +156,16 @@
 | `Blast` | held music-distribution signals in the personal player / user space | direct live action | yes | Hosted shared-moment action. Current blastable classes remain `single` and `Uprise`, but the action now belongs to personal-player listening, not the `RADIYO` wheel. |
 | `Recommend` | anything recommendable that the listener already genuinely holds in the system | direct live action | yes | For example: collected signals/artifacts, added events, followed sources where recommendation is allowed. No drive-by recommendation. |
  | `Rock` | collected displayable artifacts | direct live action | yes | Means public display on avatar/body or wall/grid, not mere possession. |
- | `Add` | events | direct live action | no | Event-specific only. Means add to calendar. |
- | `React` | posts, comments, replies | direct live action | no | Lightweight social response. Not a signal action. Not a source action. |
+| `Add` | events | direct live action | no | Event-specific only. Means add to calendar. |
+| `React` | posts, comments, replies | direct live action | no | Lightweight social response. Not a signal action. Not a source action. |
+
+Future ad-linked visit note:
+
+- A future Release Deck paid ad attachment may expose a linked-target visit
+  affordance through an action-wheel-style UI after the media, economy,
+  business-account, and action/signal owner specs define it.
+- This is not current MVP action runtime and must not reintroduce the prohibited
+  Artist Profile engagement wheel.
 
  ## 9) Registrar-Only Procedural Actions
 

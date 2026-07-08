@@ -3,7 +3,7 @@
 Status: active execution workspace
 Owner: context-steward
 
-`docs/screen-packages/**` stores temporary coordination artifacts for UPRISE screen or flow work when a shared packet prevents drift. Packages should support small vertical slices, not force every slice through Dev Spec, Design Spec, implementation plan, art, review, and hardening ceremony.
+`docs/screen-packages/**` stores temporary coordination artifacts for UPRISE page, module, screen, or flow work when a shared packet prevents drift. Use this structure for whole pages/modules or major surface boundaries; it is not the default process for every small UI change. Packages should support small vertical slices inside that page/module, not force every slice through Dev Spec, Design Spec, implementation plan, art, review, and hardening ceremony.
 
 ## Authority
 
@@ -11,9 +11,9 @@ Screen packages are not product doctrine. Durable product, API, runtime, and dat
 
 ## When To Use
 
-Use a package for screens/flows that need shared context across product, implementation, design, assets, or review. Examples: Plot, Artist Profile, Source Dashboard, Discover, Registrar, Release Deck, Print Shop, Archive, Events, and player surfaces.
+Use a package for whole pages/modules, screens, or flows that need shared context across product, implementation, design, assets, or review. Examples: Plot, Artist Profile, Source Dashboard, Discover, Registrar, Release Deck, Print Shop, Archive, Events, and player surfaces.
 
-Do not use this workflow for tiny docs-only, copy-only, test-only, or isolated low-risk cleanup slices; use the lean PR path. Even inside a package, default to one small vertical screen section at a time.
+Do not use this workflow for tiny docs-only, copy-only, test-only, isolated low-risk cleanup slices, or a minor component adjustment inside an already-understood surface; use the lean PR path. Even inside a package, default to one small vertical screen section at a time.
 
 ## Standard Shape
 
@@ -30,6 +30,32 @@ docs/screen-packages/<screen-or-flow>/
   review/
   hardening/
 ```
+
+## Design And Asset Folder Naming
+
+When a package needs visual assets, mockups, prompts, or approved image
+references, name the main folder for the screen or section covered. Use a clear
+slug such as `source-dashboard`, `release-deck`, `calendar-print-shop`, or
+`public-artist-profile`.
+
+Do not use generator IDs, agent names, dates alone, or vague labels as the main
+folder name when the screen/section is known.
+
+Recommended asset handoff shape:
+
+```text
+docs/screen-packages/<screen-or-flow>/art-handoff/<screen-or-section>/
+  prompts/
+  mockups/
+  approved/
+  spec/
+```
+
+Use `prompts/` for the initial generation prompt and material references,
+`mockups/` for working drafts, `approved/` for the selected visual target, and
+`spec/` for the short design handoff that links the visual to the relevant Dev
+Spec or Design Spec. Do not store generated mockups in the repo unless the user
+approves that specific image as a durable reference.
 
 
 ## Automation Commands

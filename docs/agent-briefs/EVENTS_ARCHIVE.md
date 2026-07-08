@@ -1,7 +1,7 @@
 # Events And Archive Agent Brief
 
 Status: active
-Last Updated: 2026-04-25
+Last Updated: 2026-07-06
 
 ## Use When
 
@@ -70,7 +70,21 @@ Tests / verification files:
 - Events are not sources.
 - Event pages are not blast targets.
 - Event creation is source-facing through Print Shop.
-- Listeners discover events in Plot; add/calendar, attendance, and verified event artifacts require their own approved surfaces where supported.
+- Listeners discover events in Plot; add/calendar, attendance, and verified
+  event artifacts require their own approved surfaces where supported.
+- Artist/band/promoter/source event planning can remain private/draft.
+- Future social-source event import/autofill may help artists/promoters avoid
+  duplicate event entry, but it must create source-facing drafts/suggestions
+  from connected official accounts or supplied links. It must not auto-publish
+  public events or bypass creator review.
+- A future connected event-account model may use source-owned Facebook Pages,
+  Eventbrite/Bandsintown profiles, official site calendars, or similar approved
+  providers as structured import sources. Treat this as deferred until provider
+  access, source ownership, and creator-review behavior are specified.
+- Creator-published source events should appear on the community calendar and
+  automatically appear in follower calendars once the event publication,
+  community-calendar visibility, and follower-calendar delivery contracts are
+  implemented.
 - Flyers are event-bound artifacts, not default current MVP signals.
 - Archive/stats are descriptive only.
 - Current `/plot` Archive renders read-only descriptive modules, not the interactive `StatisticsPanel` explorer.
@@ -93,7 +107,18 @@ Tests / verification files:
 - Do not add inline calendar mutation controls to current Plot Events rows.
 - Do not add ranking, trending hype, predictive success metrics, or comparative artist scores.
 - Do not make event pages blast targets.
-- Do not make following a source automatically add all its events to calendar.
+- Do not make following a source automatically add draft, private, or
+  unpublished events to calendar.
+- Do not deliver every source calendar item to followers; only explicitly
+  published source events are eligible for follower-calendar delivery.
+- Do not treat scanned/imported social events as public UPRISE events until a
+  permitted source operator reviews and publishes them.
+- Do not scrape private, restricted, or terms-prohibited social data.
+- Do not make a shared UPRISE-owned Facebook/social account the canonical owner
+  for band/source events unless a future source/venue/promoter ownership policy
+  explicitly approves it.
+- Do not apply generic Feed activity timing to event calendar distribution;
+  event calendar distribution requires creator publication.
 - Do not move event creation into listener-facing Plot Events.
 - Do not let flyer artifacts affect Fair Play rotation or tier progression.
 

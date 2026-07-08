@@ -63,6 +63,11 @@ Tests / verification files:
 - Artist Profile is not the listener user profile / collection workspace.
 - Artist Profile has source-level actions such as `Follow`, share, and official outbound links.
 - Artist Profile song rows can support `Collect` and gated `Recommend`.
+- Artist Profile and Release Deck should stay provider-agnostic: artists may
+  plug in existing Bandcamp, SoundCloud, merch, donation, website, social, or
+  contact infrastructure. Direct in-profile playback requires a directly
+  playable hosted `http(s)` audio URL or a later approved playback/embed
+  contract; ordinary external pages remain official outbound links.
 - Artist Profile current MVP direct-listen area is capped to `3` playable song rows.
 - If a feed/discovery handoff selects a track outside the first three, that selected track may be placed first while preserving the `3` row cap.
 - Artist Profile does not use the engagement wheel.
@@ -78,13 +83,23 @@ Tests / verification files:
 - Authorized users can operate managed source entities linked to their base user identity.
 - Current managed-source runtime is artist/band entities.
 - Active source context is user-scoped: the persisted source ID must belong to the current signed-in user, and stale or legacy source context must be cleared before source-side tools operate.
+- Source Dashboard should show signed-in account/user context with the user's
+  current position for the selected source, such as manager, member, or
+  promoter. Changing selected source context changes that displayed
+  role/position and must not carry permissions across sources.
 - Current Source Dashboard live tool cards are `Release Deck`, `Source Profile`, `Print Shop`, and `Registrar`.
 - Source posts/messages are product-valid later but not current MVP runtime; `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` keeps follower updates deferred until a dedicated implementation spec activates them.
 - Release Deck has `3` music slots plus a `4th` paid `10` second ad-attachment slot.
 - No single Release Deck song may exceed `6` minutes.
 - No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
 - The ad slot is not an extra song slot and not its own rotation entry.
-- Release Deck current MVP creates source-owned tracks from explicit hosted `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction, and paid ad-slot mechanics remain deferred.
+- Future ad category/link-target design may include `release date`, `general`,
+  `event`, and `sponsor`, but this remains deferred until media, economy,
+  action/signal, and business-account contracts activate it.
+- Release Deck current MVP creates source-owned tracks from explicit hosted
+  `http(s)` audio URLs; real upload, storage, transcoding, waveform extraction,
+  and paid ad-slot mechanics remain deferred. UPRISE must not represent
+  externally hosted audio as UPRISE-hosted media.
 - Release Deck active-slot, per-song, active-duration, and reject-only at-cap behavior is owned by `docs/specs/media/release-deck-and-eligibility.md`; future history-safe replacement/edit tooling remains deferred until explicitly specified there.
 - Source-origin authority is owned by `docs/specs/system/registrar.md#source-origin-contract`; source tools must not treat temporary proxy routing as the source's natural origin.
 - When artist/source concentration justifies splitting a new active city-tier Home Scene from a major-node community, existing songs finish their current rotation lifecycle in the prior active scene; new uploads attach according to the source's active Home Scene after Registrar/source activation.
@@ -95,6 +110,11 @@ Tests / verification files:
 - Print Shop event creation requires explicit venue location input; the runtime must not default coordinates or address examples to a particular launch city.
 - Print Shop Artist/Band event creation requires an explicitly selected active managed source context; a generic linked membership is not enough to create an unattached source event.
 - Print Shop promoter-capability event creation may create a promoter-lane event without `artistBandId`, but it must still attach to the user's resolved active city-tier Home Scene community.
+- Source Calendar/event planning may remain private/draft. Only creator-
+  published source events should become public/community-calendar-visible and
+  follower-calendar-visible; when activated, followers of the
+  band/promoter/source automatically receive the published event in their
+  calendars.
 - Registrar remains separate civic/formalization infrastructure but must stay reachable from source-side operating context.
 
 ## Current Runtime Pointers
