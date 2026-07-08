@@ -60,6 +60,7 @@ model User {
   capabilityAuditActorEvents  CapabilityGrantAuditLog[] @relation("CapabilityAuditActorUser")
   musicCommunityRequests      MusicCommunityRequest[]
   musicCommunityPreferences   UserMusicCommunityPreference[]
+  releaseDeckSchedulesCreated ReleaseDeckSchedule[]
 
   @@map("users")
 }
@@ -103,6 +104,7 @@ model ArtistBand {
   registrarEntries RegistrarEntry[]
   tracks           Track[]
   events           Event[]
+  releaseDeckSchedules ReleaseDeckSchedule[]
 
   @@index([homeSceneId])
   @@index([sourceOriginCity, sourceOriginState, sourceOriginMusicCommunity])
@@ -161,6 +163,7 @@ model Community {
   activationNoticesTo   UserActivationNotice[] @relation("ActivationNoticeToScene")
   activationNoticesFrom UserActivationNotice[] @relation("ActivationNoticeFromScene")
   activationAudits      CommunityActivationAudit[]
+  releaseDeckSchedules  ReleaseDeckSchedule[]
 
   @@map("communities")
 }
@@ -456,9 +459,34 @@ model Track {
   engagements     TrackEngagement[]
   rotationEntries RotationEntry[]
   trackVotes      TrackVote[]
+  releaseDeckSchedule ReleaseDeckSchedule?
 
   @@index([artistBandId])
   @@map("tracks")
+}
+
+model ReleaseDeckSchedule {
+  id               String   @id @default(uuid())
+  trackId          String   @unique
+  communityId      String
+  artistBandId     String
+  scheduledFor     DateTime
+  assignmentMode   String
+  requestedFor     DateTime?
+  status           String   @default("scheduled")
+  capacitySnapshot Json?
+  createdById      String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  track      Track      @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  community  Community  @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  artistBand ArtistBand @relation(fields: [artistBandId], references: [id], onDelete: Cascade)
+  createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([communityId, scheduledFor, status])
+  @@index([artistBandId, communityId, status])
+  @@map("release_deck_schedules")
 }
 
 // Engagement events for Fair Play scoring (Canon: 3/2/1/0 model)

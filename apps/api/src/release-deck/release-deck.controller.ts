@@ -6,6 +6,11 @@ import {
   ReleaseDeckMeasurementQuerySchema,
   ReleaseDeckMeasurementQueryDto,
 } from './dto/release-deck-measurement.dto';
+import {
+  ReleaseDeckScheduleAvailabilityQuerySchema,
+  ReleaseDeckScheduleAvailabilityQueryDto,
+} from './dto/release-deck-schedule.dto';
+import { ReleaseDeckSchedulingService } from './release-deck-scheduling.service';
 
 /**
  * Read-only Release Deck diagnostics.
@@ -17,10 +22,23 @@ import {
 @Controller('release-deck')
 @UseGuards(JwtAuthGuard)
 export class ReleaseDeckController {
-  constructor(private readonly releaseDeckMeasurementService: ReleaseDeckMeasurementService) {}
+  constructor(
+    private readonly releaseDeckMeasurementService: ReleaseDeckMeasurementService,
+    private readonly releaseDeckSchedulingService: ReleaseDeckSchedulingService
+  ) {}
 
   @Get('measurement')
-  async getMeasurement(@ZodQuery(ReleaseDeckMeasurementQuerySchema) query: ReleaseDeckMeasurementQueryDto) {
+  async getMeasurement(
+    @ZodQuery(ReleaseDeckMeasurementQuerySchema) query: ReleaseDeckMeasurementQueryDto
+  ) {
     return this.releaseDeckMeasurementService.measureCommunityDeck(query.communityId);
+  }
+
+  @Get('schedule/availability')
+  async getScheduleAvailability(
+    @ZodQuery(ReleaseDeckScheduleAvailabilityQuerySchema)
+    query: ReleaseDeckScheduleAvailabilityQueryDto
+  ) {
+    return this.releaseDeckSchedulingService.getAvailability(query);
   }
 }
