@@ -184,6 +184,14 @@ there as a path-only rehome.
 
 No migration is added by this owner spec.
 
+2026-07-11 schema addition: `ArtistBand.bio`, `ArtistBand.avatar`, and
+`ArtistBand.coverImage` were added as source-owned public identity fields, and
+`ArtistBandMember.headshotUrl` was added as the source-provided public member
+headshot carrier. Before this, the public profile projected the registering
+member's listener-account bio/avatar/cover, which violated the identity
+boundary above. Apply via the standard Prisma migration flow; no data
+backfill — source identity stays empty until the source supplies it.
+
 Current models involved:
 
 - `User`: base account, Home Scene fields, GPS verification.
@@ -193,8 +201,12 @@ Current models involved:
   state.
 - `RegistrarInviteDelivery`: queued/sent/failed invite delivery state.
 - `ArtistBand`: canonical managed source identity, registrar linkage,
-  `homeSceneId`, source-origin tuple.
-- `ArtistBandMember`: authorized source owner/member graph.
+  `homeSceneId`, source-origin tuple, and source-owned public identity fields
+  (`bio`, `avatar`, `coverImage`) that must not be projected from the
+  registering member's listener account.
+- `ArtistBandMember`: authorized source owner/member graph plus the
+  source-provided public `headshotUrl`; listener-account avatars are not a
+  public fallback for member display.
 - `Track`: source-owned music rows using `artistBandId` and `communityId`.
 - `Signal`, `SignalAction`, `CollectionItem`, `Follow`: public profile action
   and listener collection/read-state dependencies.
