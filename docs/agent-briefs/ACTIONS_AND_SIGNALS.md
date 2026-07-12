@@ -1,7 +1,7 @@
 # Actions And Signals Agent Brief
 
 Status: active
-Last Updated: 2026-07-03
+Last Updated: 2026-07-09
 
 ## Use When
 Use this brief when the task is about:
@@ -12,7 +12,7 @@ Use this brief when the task is about:
 - feed insert action rules
 - artist-profile action rules
 - event/action grammar
-- stale `Add` / `Support` wording
+- `Support` Feed-card action grammar
 
 ## Do Not Use For
 - pure visual layout work unless actions are visible
@@ -42,6 +42,7 @@ Specs / locks:
 - `docs/solutions/MVP_SOURCE_AND_FEED_RULES_FOUNDER_LOCK_R1.md`
 - `docs/specs/core/signals-and-universal-actions.md`
 - `docs/specs/events/events-and-flyers.md`
+- `docs/specs/engagement/support-and-participation.md` (draft `Support`/`Participation` owner contract)
 
 Tests / verification files:
 - `apps/web/__tests__/plot-ux-regression-lock.test.ts`
@@ -52,7 +53,13 @@ Tests / verification files:
 - `Collect` applies to signals/artifacts where allowed.
 - `Recommend` requires the listener to genuinely hold the thing first.
 - `Add` is reserved for event calendar behavior.
-- `Support` is derived backing/activity state, not a direct public button.
+- `Support` is the Feed-card interaction primitive: a one-tap, reaction-like,
+  source-bound action on eligible Feed cards, drawing on a finite pool that
+  restores through verified follow-through. It is never framed as RSVP,
+  commitment, or obligation. The draft owner contract is
+  `docs/specs/engagement/support-and-participation.md` (`ENG-SUPPORT`);
+  runtime stays blocked on `docs/specs/DECISIONS_REQUIRED.md` section 9, and
+  the old direct signal `SUPPORT` runtime/counter model must not be reused.
 - `Back` is Registrar-only procedural behavior.
 - `Play It Loud` belongs to the `RADIYO` wheel.
 - `Upvote` remains the `RADIYO` propagation action.
@@ -80,6 +87,8 @@ Tests / verification files:
 ## Current Runtime Pointers
 - `/signals/:id/collect` is the public collect alias; legacy add compatibility may still exist in runtime.
 - `/signals/:id/blast` may exist in API/runtime, but current UI placement must follow the personal-player / user-space boundary.
+- No Support endpoint or ledger exists yet. A future Support implementation is
+  source-bound through eligible Feed cards, not a generic signal action.
 - `/plot` currently carries the visible `RADIYO` and `SPACE` action split.
 - Artist Profile currently owns direct-listen `Collect` / gated `Recommend` behavior.
 
@@ -89,7 +98,10 @@ Tests / verification files:
 - Do not collapse a Feed card's signal-source link and `Travel` link into one
   ambiguous action.
 - Do not place the engagement wheel on Artist Profile.
-- Do not add direct `Support` buttons.
+- Do not add Support controls outside eligible source-backed Feed cards.
+- Do not treat Support as a source-profile action, signal action, generic
+  social reaction, Fair Play input, ranking input, civic authority, or a
+  finished payment/payout feature.
 - Do not use `Add` for saving songs in user-facing UI.
 - Do not put inline action buttons on feed insert cards.
 - Do not make event pages blast targets.

@@ -63,7 +63,13 @@ Tests / verification files:
 - Promoter capability unlocks source-facing event workflows rather than creating listener event-authoring.
 - Capability-code verify/redeem remains user-driven and authenticated.
 - `Back` is Registrar-only procedural behavior; do not expose it as a public social action.
-- Support/backing state is not a direct public button in the intended action model.
+- Support is a one-tap source-bound Feed-card action with a finite pool; it
+  remains outside Registrar and has no current API, ledger, or UI
+  implementation. The draft owner contract is
+  `docs/specs/engagement/support-and-participation.md`, including the
+  `Participation`/`Trusted Roles` qualification direction; its governance
+  gates stay open in `docs/specs/DECISIONS_REQUIRED.md` section 9 and grant no
+  authority until locked.
 - Sect readiness tracking can be built before it is user-visible.
 - Sect readiness counts approved playable minutes only from Release Deck songs
   that explicitly encode/back/affiliate that song with the sect through

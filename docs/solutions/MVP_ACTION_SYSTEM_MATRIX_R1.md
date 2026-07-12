@@ -2,7 +2,7 @@
 
  Status: Active
  Owner: Founder + product engineering
- Last updated: 2026-07-06
+ Last updated: 2026-07-09
 
  Classification status: locked, spec/runtime reconciliation pending
 
@@ -18,7 +18,7 @@
  - signal vs artifact vs event/object classification,
  - listener direct-action grammar,
  - Registrar-only prerequisite actions,
- - support/activity interpretation,
+ - activity-earned Support interpretation,
  - version-scoped known instances.
 
  ## 2) Authority And Reconciliation Rule
@@ -59,7 +59,7 @@
  ### 3.4 Procedural / non-public system layers
  - `registrar prerequisite action`
  - `listener capability profile`
- - `derived support/backing state`
+ - `activity-earned Support allocation`
 
  ## 4) Source Family Matrix
 
@@ -158,6 +158,7 @@
  | `Rock` | collected displayable artifacts | direct live action | yes | Means public display on avatar/body or wall/grid, not mere possession. |
 | `Add` | events | direct live action | no | Event-specific only. Means add to calendar. |
 | `React` | posts, comments, replies | direct live action | no | Lightweight social response. Not a signal action. Not a source action. |
+| `Support` | eligible source-backed Feed cards | founder-locked direct action; runtime pending | listener must have an available activity-earned amount | A listener chooses an amount to give in support through the card; it is applied to the source resolved by that card, not to the card body or its carried signal. |
 
 Future ad-linked visit note:
 
@@ -182,27 +183,27 @@ Future ad-linked visit note:
 Current version note:
 - civic/cause flows remain deferred from active MVP runtime even though the prerequisite/backing pattern is preserved here as part of the system map
 
- ## 10) Derived State
+## 10) Activity-Earned Support
 
- ### `Support`
- `Support` is not a direct button in the intended model.
+### `Support`
+`Support` is a direct, reaction-like action available on eligible source-backed
+Feed cards. It lets a listener give an amount they have built through activity
+in the community to the source resolved by that card.
 
- `Support` should be treated as:
- - a tracked backing/activity state,
- - derived from meaningful participation over time,
- - useful for descriptive scene insight and fun statistics,
- - more meaningful than lightweight reaction counts.
+The action is source-bound, not signal-bound:
 
- Inputs that can contribute to support later may include:
- - attendance
- - recommendation impact
- - blasts that lead to downstream listening/action
- - collected and rocked gear/artifacts
- - other verified participation and backing signals
+- a card may carry a signal link, but `Support` is applied to the card's
+  resolved source;
+- it is not a generic source-profile button;
+- it is not a lightweight `React` replacement for posts/comments/replies;
+- it must not affect Fair Play, ranking, civic authority, or tier progression.
 
 Current runtime note:
-- the repo previously contained direct `SUPPORT` actions and counters
-- the live signal contract has now removed direct signal `SUPPORT`, but historical/support-derived metric language still remains to reconcile in some docs and analytics notes
+
+- no active API endpoint, ledger, or UI control implements this direct action;
+- prior direct `SUPPORT` runtime/counter behavior must not be restored as-is;
+- implementation requires a dedicated activity-earned amount and allocation
+  contract before a UI control ships.
 
 ## 10.1) RADIYO vs personal-player action split
 - `RADIYO` keeps:
@@ -311,9 +312,10 @@ Current web MVP note:
 
  | Surface type | What action belongs there | What does not belong there |
  | --- | --- | --- |
- | source pages | `Follow`, `Donate` | source-level `Blast`, source-level generic signal buttons |
- | signal rows/cards | `Collect`, `Blast`, `Recommend` where allowed | source-follow grammar |
- | event surfaces | `Add` to calendar | blast semantics |
+| source pages | `Follow`, `Donate` | source-level `Blast`, source-level generic signal buttons |
+| signal rows/cards | `Collect`, `Blast`, `Recommend` where allowed | source-follow grammar |
+| eligible source-backed Feed cards | `Support` using an available activity-earned amount | generic reaction count, source-profile Support button, or signal-level Support action |
+| event surfaces | `Add` to calendar | blast semantics |
  | artifact surfaces | `Collect`, `Rock` where displayable, `Recommend` if genuinely held | default blast semantics |
  | posts/comments/replies | `React` | do not use `Support` to stand in for lightweight response behavior |
 
@@ -322,9 +324,10 @@ Current web MVP note:
  ### 16.1 Current MVP
  - `Blast` is music-only.
  - `Collect` is the general keep/save verb for signals and artifacts.
- - `Add` is reserved to calendar/event behavior.
- - `React` belongs to feed-style social expression.
- - `Support` is not a direct action in the intended model.
+- `Add` is reserved to calendar/event behavior.
+- `React` belongs to feed-style social expression.
+- `Support` is a direct source-bound action on eligible Feed cards, using an
+  activity-earned amount; its API, ledger, and UI are not implemented yet.
  - `flyer` is artifact-first and event-bound.
  - business promo/offer mechanics are not part of the current active version.
 
@@ -338,7 +341,7 @@ Current web MVP note:
  ## 17) Current Repo Drift Audit
  These are the biggest known mismatches between current intended truth and existing repo surfaces/contracts.
 
-1. historical `support` terminology still remains in some stats/docs even though direct live signal `SUPPORT` has been removed.
+1. the new direct Feed-card `Support` action has no active API, ledger, eligibility rules, or UI implementation yet; prior direct signal `SUPPORT` behavior must not be reused as the implementation shortcut.
  2. active signal docs still describe `flyer` as a confirmed signal class.
  3. older docs still describe events as sources in some places.
  4. older founder locks still carry the earlier `cause` lifecycle framing.
@@ -347,7 +350,7 @@ Current web MVP note:
 
  ## 18) Reconciliation Order
  Future implementation/doc reconciliation should proceed in this order:
- 1. direct action grammar (`Collect`, `React`, `Support` debt)
+1. activity-earned `Support` contract (unit, earning, eligibility, allocation, and reversal)
  2. source vs signal vs artifact vs event taxonomy in active specs
  3. Registrar actor-boundary cleanup
  4. flyer/event collection and artifact language

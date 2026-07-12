@@ -103,7 +103,8 @@ Important:
 - `Play It Loud` = positive `RADIYO` listening action for the current broadcast song
 - `Blast` = hosted social-moment action from the personal player / user space
 - `React` = posts/comments/replies
-- `Support` = derived backing state, not a direct public button
+- `Support` = direct activity-earned, source-bound action on eligible Feed
+  cards; API, ledger, eligibility, and UI runtime are still pending
 
 ### 5) Source vs signal vs artifact vs event
 - `single`, `Uprise` = signals

@@ -9,6 +9,54 @@
 
 ### Added
 
+- Fixed the listener-identity leak in the public Artist Profile contract:
+  `ArtistBand` gained source-owned `bio`/`avatar`/`coverImage` fields and
+  `ArtistBandMember` gained a source-provided `headshotUrl`, the profile API
+  stopped projecting the registering member's listener bio/avatar/cover, the
+  public lineup dropped listener `@username` display and renders
+  source-provided headshots only, and the Source Dashboard member strip now
+  prefers headshots with a belly-up (non-circular) crop; regression test locks
+  the no-leak boundary. Prisma migration still needs to be generated/applied.
+  Designer handoff for the unlocked member-identity visuals:
+  `docs/screen-packages/artist-profile-source-dashboard/design-spec/2026-07-11_member-identity-visuals-design-handoff.md`.
+- Drafted the Support/Participation civic-layer owner contract
+  (`docs/specs/engagement/support-and-participation.md`, `ENG-SUPPORT`,
+  status draft): consolidates the 2026-07-09/07-10 founder sessions into the
+  two-ledger model (revolving Support commitments, cumulative Participation),
+  the Request/Commit/Fulfill/Act lifecycle, the atomic show-attendance first
+  contract, analytics separation, and hard non-effect invariants; registers
+  the material open decisions as `docs/specs/DECISIONS_REQUIRED.md` section 9
+  and flags the Participation-vs-Activity-Points authority conflict with
+  `ENG-ACTIVITY`. No runtime is authorized by the draft.
+- Captured and promoted the 2026-07-11 Support reaction-model correction
+  (`docs/founder-sessions/2026-07-11_support-reaction-model-correction.md`):
+  Support is the Feed-card reaction primitive with weight, never RSVP/commit
+  framing; lifecycle rewritten to Announce/Support/Satisfy (labels open) with
+  the at-show QR support link, artist correction path, qualifying-act catalog,
+  and the corrected sponsor angle (paid business source accounts with
+  promos-page and sponsorship-discovery features informed by Support
+  analytics). `ENG-SUPPORT`, the Print Shop business items, DECISIONS section
+  9, and the actions/registrar/UI/events/artist-source/business lane briefs
+  were updated to route agents to the owner contracts.
+- Added the `Digital Artifact Lifecycle And Collection` draft owner section to
+  `docs/specs/economy/print-shop-and-promotions.md`: artifact identity/edition
+  records, mint triggers (Support fulfillment, Proof-of-Support, future
+  purchase), closed-economy ownership rules, Merch-shelf collection display,
+  and the future avatar wearable join for button/pin/patch/sticker classes;
+  open decisions registered as `docs/specs/DECISIONS_REQUIRED.md` section 10.
+- Captured and promoted the avatar MVP / modular merch clarification: the
+  visible listener avatar is MVP presentation, while avatar customization and
+  avatar-interactive merch runtime remain deferred; future avatar-wearable work
+  should use a modular contract with separate head, hair, clothing, face-detail,
+  and attachable digital-merch layers.
+- Promoted the founder correction that `Support` is a direct,
+  activity-earned, source-bound action on eligible Feed cards, replacing the
+  former derived-backing-only rule while keeping its API, ledger, eligibility,
+  and allocation mechanics explicitly pending.
+- Captured and routed the Home/Plot Feed-card visual grammar update: normalized
+  left identity rail, belly-up listener avatars with username/support score,
+  same-footprint listener/source cards, no ordinary message bubbles, and compact
+  Blast digital-screen tier treatment instead of full-player cards.
 - Added scheduled Release Deck to Fair Play ingestion so due schedules can dry-run or create fixed 10-day `NEW_RELEASES` rotation entries without reading deprecated density-band config; see `docs/handoff/2026-07-08_release-deck-fair-play-ingestion.md`.
 - Added the Release Deck schedule write path so source operators can create `ReleaseDeckSchedule` rows through `soonest` or valid `chosen` date assignment without creating Fair Play rotation entries; see `docs/handoff/2026-07-08_release-deck-schedule-write-path.md`.
 - Added Release Deck schedule availability preview: `ReleaseDeckSchedule` schema/migration plus read-only `/release-deck/schedule/availability` diagnostics for requested date capacity, alternatives, and playable-second scheduling pressure; see `docs/handoff/2026-07-08_release-deck-schedule-availability-preview.md`.

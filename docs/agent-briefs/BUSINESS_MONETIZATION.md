@@ -54,6 +54,13 @@ Tests / verification files:
   infrastructure, not current MVP/launch Plot runtime.
 - Business accounts remain legitimate later/current-model source concepts, but not active MVP runtime by default.
 - Business promotion submissions should be account-attached, not anonymous public-link intake.
+- Future paid business source accounts are intended to include the Plot
+  promos/Promotions surface (local deals/coupons) and sponsorship discovery —
+  lists of artists interested in sponsorship deals and events looking for
+  sponsors — informed by Support analytics
+  (`docs/specs/engagement/support-and-participation.md` and the business
+  items in `docs/specs/economy/print-shop-and-promotions.md`). All deferred;
+  never a Fair Play input.
 - Future Release Deck `sponsor` ad attachments should link to an activated
   business account. They must not use anonymous sponsor text or activate business
   dashboard/runtime from source-dashboard design alone.
