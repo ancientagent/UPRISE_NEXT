@@ -34,7 +34,9 @@ type DueSchedule = {
 
 type SkipReason =
   | 'SCHEDULE_NOT_FOUND'
+  | 'SCHEDULE_NOT_DUE'
   | 'SCHEDULE_NOT_PENDING'
+  | 'SCHEDULE_SOURCE_MISMATCH'
   | 'TRACK_MISSING'
   | 'MISSING_SOURCE_OWNERSHIP'
   | 'WRONG_COMMUNITY'
@@ -86,11 +88,19 @@ function toDateOnly(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function resolveSkipReason(schedule: DueSchedule, communityId: string): SkipReason | null {
+function resolveSkipReason(
+  schedule: DueSchedule,
+  communityId: string,
+  dueBefore?: Date
+): SkipReason | null {
   const track = schedule.track;
   if (schedule.status !== 'scheduled') return 'SCHEDULE_NOT_PENDING';
+  if (dueBefore && schedule.scheduledFor.getTime() >= dueBefore.getTime()) {
+    return 'SCHEDULE_NOT_DUE';
+  }
   if (!track) return 'TRACK_MISSING';
   if (!track.artistBandId || !track.artistBand) return 'MISSING_SOURCE_OWNERSHIP';
+  if (schedule.artistBandId !== track.artistBandId) return 'SCHEDULE_SOURCE_MISMATCH';
   if (track.communityId !== communityId || schedule.communityId !== communityId) return 'WRONG_COMMUNITY';
   if (!track.artistBand.homeSceneId) return 'MISSING_SOURCE_HOME_SCENE';
   if (track.artistBand.homeSceneId !== communityId) return 'SOURCE_HOME_SCENE_MISMATCH';
@@ -185,6 +195,17 @@ export class FairPlayIngestionService {
 
     const results = await this.prisma.$transaction(async (tx: any) => {
       const transactionResults: any[] = [];
+      const transactionCommunity = await tx.community.findUnique({
+        where: { id: communityId },
+        select: { id: true, tier: true, isActive: true },
+      });
+      if (!transactionCommunity || transactionCommunity.tier !== 'city' || !transactionCommunity.isActive) {
+        throw new BadRequestException({
+          success: false,
+          error: { message: 'Fair Play ingestion is limited to active city-tier communities' },
+        });
+      }
+
       for (const dueSchedule of dueSchedules) {
         const schedule = (await tx.releaseDeckSchedule.findUnique({
           where: { id: dueSchedule.id },
@@ -222,7 +243,7 @@ export class FairPlayIngestionService {
           continue;
         }
 
-        const reason = resolveSkipReason(schedule, communityId);
+        const reason = resolveSkipReason(schedule, communityId, asOfEnd);
         if (reason) {
           transactionResults.push(resultFor(schedule, 'skipped', { reason }));
           continue;

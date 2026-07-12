@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { RotationPool } from '@prisma/client';
 import { FairPlayIngestionService } from '../src/fair-play/fair-play-ingestion.service';
 
@@ -67,6 +67,10 @@ function createPrismaMock() {
 
 function createPrismaMockTransaction(overrides: Record<string, any> = {}) {
   return {
+    community: {
+      findUnique: jest.fn().mockResolvedValue(COMMUNITY),
+      ...(overrides.community ?? {}),
+    },
     releaseDeckSchedule: {
       findUnique: jest.fn().mockResolvedValue(createDueSchedule()),
       update: jest.fn().mockResolvedValue({ id: 'schedule-1', status: 'ingested' }),
@@ -250,6 +254,61 @@ describe('FairPlayIngestionService', () => {
       action: 'skipped',
       reason: 'TRACK_NOT_READY',
     });
+    expect(tx.rotationEntry.create).not.toHaveBeenCalled();
+    expect(tx.releaseDeckSchedule.update).not.toHaveBeenCalled();
+  });
+
+  it('skips schedules that are no longer due inside the transaction', async () => {
+    tx.releaseDeckSchedule.findUnique.mockResolvedValueOnce(
+      createDueSchedule({ scheduledFor: new Date('2026-07-09T00:00:00.000Z') })
+    );
+
+    const result = await service.ingestDueSchedules({
+      communityId: COMMUNITY.id,
+      asOf: '2026-07-08',
+      dryRun: false,
+    });
+
+    expect(result.data.ingestedCount).toBe(0);
+    expect(result.data.skippedCount).toBe(1);
+    expect(result.data.results[0]).toMatchObject({
+      action: 'skipped',
+      reason: 'SCHEDULE_NOT_DUE',
+    });
+    expect(tx.rotationEntry.create).not.toHaveBeenCalled();
+    expect(tx.releaseDeckSchedule.update).not.toHaveBeenCalled();
+  });
+
+  it('skips schedules whose stored source no longer matches the track source', async () => {
+    tx.releaseDeckSchedule.findUnique.mockResolvedValueOnce(
+      createDueSchedule({ artistBandId: 'stale-source' })
+    );
+
+    const result = await service.ingestDueSchedules({
+      communityId: COMMUNITY.id,
+      asOf: '2026-07-08',
+      dryRun: false,
+    });
+
+    expect(result.data.ingestedCount).toBe(0);
+    expect(result.data.skippedCount).toBe(1);
+    expect(result.data.results[0]).toMatchObject({
+      action: 'skipped',
+      reason: 'SCHEDULE_SOURCE_MISMATCH',
+    });
+    expect(tx.rotationEntry.create).not.toHaveBeenCalled();
+    expect(tx.releaseDeckSchedule.update).not.toHaveBeenCalled();
+  });
+
+  it('aborts write mode when community is no longer active city-tier inside the transaction', async () => {
+    tx.community = {
+      findUnique: jest.fn().mockResolvedValue({ id: COMMUNITY.id, tier: 'city', isActive: false }),
+    };
+
+    await expect(
+      service.ingestDueSchedules({ communityId: COMMUNITY.id, asOf: '2026-07-08', dryRun: false })
+    ).rejects.toThrow(BadRequestException);
+
     expect(tx.rotationEntry.create).not.toHaveBeenCalled();
     expect(tx.releaseDeckSchedule.update).not.toHaveBeenCalled();
   });
