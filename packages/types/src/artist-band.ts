@@ -10,6 +10,9 @@ export const ArtistBandMemberUserSchema = z.object({
 export const ArtistBandMemberSchema = z.object({
   userId: z.string().uuid().or(z.string().min(1)),
   role: z.string(),
+  // Source-provided public headshot. Listener-account avatars (user.avatar)
+  // must not be used as a public fallback for this field.
+  headshotUrl: z.string().nullable().optional(),
   createdAt: z.string(),
   user: ArtistBandMemberUserSchema,
 });

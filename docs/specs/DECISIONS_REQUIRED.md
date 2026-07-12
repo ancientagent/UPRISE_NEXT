@@ -59,3 +59,56 @@ Do not implement these items until they are locked.
   receive published source events in their calendars, including idempotency,
   duplicate prevention, event updates/cancellations, follower opt-out/mute, and
   external calendar sync/export behavior.
+
+## 9) Support And Participation (owner draft: `docs/specs/engagement/support-and-participation.md`)
+- **Unit scale and denomination**: confirm the `100 Support` starting allocation,
+  Participation value scale, and whether the Feed-rail "support score" displays
+  Support balance, Participation, or another value.
+- **Participation vs Activity Points**: resolve the `ENG-ACTIVITY` conflict —
+  one user-level ledger with a separately contracted Trusted-Role gate, or two
+  coexisting values.
+- **Support bandwidth lifecycle**: whether influence-earned bandwidth awards are
+  permanent, expiring, renewable, or capped.
+- **Support withdrawal/expiry**: whether and how a listener can withdraw
+  unsatisfied support, and what happens at event cancellation or lineup
+  change.
+- **Late-support cutoff**: how late a listener can support an event (at the
+  show via the QR support link vs after the event), and how late support is
+  classified across perceived/proven analytics.
+- **Artist correction rules**: evidence requirements, limits, and
+  anti-self-dealing controls for artist-acknowledged support/attendance
+  corrections that feed proven-support analytics and flyer minting.
+- **Image-recognition attendance proof**: whether it ever exists; if so,
+  opt-in consent, privacy, accuracy, retention, and data-handling contracts
+  come first.
+- **Qualifying-act catalog**: which verified acts besides attendance can
+  satisfy an event support contract (e.g., artist-acknowledged gear help), and
+  their values.
+- **Listening Participation evidence**: qualifying listen thresholds, values,
+  repeat-credit semantics, and anti-farming rules.
+- **Supporter visibility/privacy**: what sources see per listener (identity,
+  amounts, history) and what listeners disclose publicly.
+- **Proven-support boundary**: confirm the founder leaning that uncommitted
+  verified attendance earns Participation and reach but not proven Support.
+- **Multi-artist attribution**: confirm primary/secondary attribution for
+  multi-beneficiary events (no Participation multiplication).
+- **Influence attribution**: windows, edge strength, causal confidence, caps,
+  deduplication, and anti-collusion rules before any indirect credit.
+- **User-facing naming**: final labels for Support, Participation, and Trusted
+  Roles; no `coin`/`token`/`wallet`/`spend` language without explicit approval.
+- **Trusted Role gates**: role catalog, thresholds, and Registrar/governance
+  join point.
+
+## 10) Digital Artifact Lifecycle (owner section: `docs/specs/economy/print-shop-and-promotions.md`)
+- **Edition semantics**: numbering scheme, public visibility of edition
+  position, and whether editions carry display rank.
+- **Run exhaustion for contract-attached goodies**: reserve capacity at
+  commitment or mint first-fulfilled until the run is exhausted.
+- **Revocation/cancellation**: what happens to commitments and already-minted
+  artifacts when an event is cancelled or a lineup changes.
+- **Transfer/gifting stance**: confirm the default that no listener-to-listener
+  transfer exists in the closed economy.
+- **Artifact class catalog**: lock the class list and the mapping from artifact
+  classes to avatar digital-merch object classes.
+- **Provenance display privacy**: which mint-provenance details (contract,
+  event, date) appear on publicly visible collection shelves.

@@ -1,7 +1,7 @@
 # UI Current Agent Brief
 
 Status: active
-Last Updated: 2026-07-03
+Last Updated: 2026-07-11
 
 ## Use When
 
@@ -85,6 +85,24 @@ Recent handoffs to use only after the locks above:
 - Listener `Blast` cards are Feed card types, not separate surfaces. The blasted
   signal links to its source. Eligible outside-Uprise Feed cards may also expose
   `Travel` as a separate handoff into Discover/back-door visitor context.
+- Feed cards use a normalized left identity rail. Listener cards, artist/source
+  cards, promoter cards, Registrar cards, RADIYO cards, and system cards should
+  share the same overall footprint; the body should not repeat the source label.
+  Listener feed identities should use belly-up avatars and show username plus
+  support score once that score metric is defined.
+- The `Support` action, score definition, and event/flyer loop are owned by
+  `docs/specs/engagement/support-and-participation.md` plus the
+  `Digital Artifact Lifecycle And Collection` section of
+  `docs/specs/economy/print-shop-and-promotions.md`. Feed UI must present
+  Support as a lightweight reaction (never RSVP/commit framing), and no
+  Support control ships before that contract's decisions lock.
+- The visible listener avatar is MVP presentation. Legacy prompt packs that say
+  "no avatar" are stale for the visible identity avatar; the deferred parts are
+  avatar customization, avatar-editor runtime, and avatar-interactive merch
+  behavior unless a scoped implementation slice activates them.
+- Blast-card visuals should use a compact digital screen/faceplate, not a full
+  player. The screen carries two lines: scrolling song title and Uprise/community
+  line underneath, with a one-tower tier indicator.
 - Feed-card `Travel` is part of the future-safe card contract, not launch
   activation. Cross-Uprise Blast cards are not expected in the launch Feed while
   Travel/cross-community Discover remains deferred.
@@ -120,7 +138,10 @@ Recent handoffs to use only after the locks above:
 
 1. User avatar bust.
 2. Recommendation bubble attached to the avatar/current listener identity.
-3. `UPRISE <CITY>` identity text beside the listener identity layer.
+3. Compact Home Scene identity text beside the listener identity layer. In the
+   current mobile design direction, city/state is fixed text such as `Austin TX`
+   and the music community line such as `Punk Uprise` is the selectable Home
+   Scene/community control.
 4. Top-right notification icon and settings menu.
 5. Avatar visually rests on top of the player, as if standing behind it.
 6. Player sits directly below the identity/avatar layer.
@@ -222,8 +243,26 @@ Card taxonomy rule:
 - preserve deterministic Home Scene Feed semantics: no personalized ranking, no
   inline engagement actions on insert cards, and no separate notification feed
   replacing the main Feed
+- use one normalized source rail on the left for all Feed rows; the source rail
+  owns identity, while the card body carries the message and referenced signal
+  link when applicable
+- render listener identities from the belly up, not in circular crops, so shirts,
+  hats, patches, and other wearable expression remain visible
+- show the listener username and support score in the listener identity rail once
+  the support-score metric is defined; do not invent the score formula in UI work
+- keep listener Feed cards the same overall footprint as artist/source/system
+  cards by normalizing listener cards down to the common card grammar, not by
+  expanding every source card
+- do not use ordinary message bubbles for Feed cards
 - `Blast card` means a listener Blast activity card inside Feed
 - the blasted signal on a Blast card links to that signal's source
+- Blast cards may use a compact player-faceplate screen treatment, but should not
+  render the whole player. The Blast screen uses two text lines: scrolling song
+  title and Uprise/community line underneath. When this treatment is used, do not
+  add literal "`<user> is blasting`" body copy.
+- tier state in player/Blast visuals should use one tower with three signal bands
+  on each side at the top; the tower plus first lit signal bands indicates the
+  first/shorter-range tier, and additional lit bands indicate wider tier reach
 - card/listening click and `Travel` are separate when an eligible outside-Uprise
   Feed card supports both: the card/listening affordance loads the Uprise, while
   `Travel` opens the Discover/back-door visitor context and loads the Uprise there
@@ -246,9 +285,9 @@ Boundaries:
 ## Avatar / Merch Visual Boundary
 
 The Home identity avatar is part of the listener/player composition. Avatar
-customization and avatar-interactive merch behavior remain deferred, but design
-work should not over-render the avatar in a way that blocks future merch
-wearables.
+is MVP-visible. Avatar customization and avatar-interactive merch behavior
+remain deferred, but design work should not over-render the avatar in a way that
+blocks future merch wearables.
 
 Current design guidance:
 
@@ -259,6 +298,27 @@ Current design guidance:
   should remain readable
 - clothing/artwork swaps should not require regenerating the full avatar
 - do not turn this into a fashion/customization toy or listener marketplace
+
+Modular avatar contract guidance:
+
+- final art assets do not need to exist before the avatar system is designed;
+  define layers, anchors, safe zones, attachment targets, and small-size
+  legibility first
+- separate `head base` from `hair`; avatar options need different head/face
+  shapes, not one repeated face with different hair
+- keep a consistent neck anchor, shoulder width, crop height, hairline zone, hat
+  band zone, and chest print zone
+- layer order should support: head base, hair, headwear, top, outerwear/strap
+  layer, face details, neck details, and digital merch objects
+- starter top/outerwear vocabulary may include tees, tanks, long sleeves,
+  hoodies, denim/leather jackets, denim/leather vests, overshirts/flannels,
+  suspenders, straps/harness overlays, caps, beanies, and glasses
+- face details include ear/nose/lip/eyebrow piercings, face tattoos, scars/marks,
+  and glasses when those are anchored to the face/head layer
+- buttons, pins, patches, and stickers are digital merch objects, not just baked
+  clothing decoration; they need allowed attachment anchors such as suspenders,
+  hats/beanies, lapels, vest panels, jacket panels, straps, and shirt print
+  zones
 
 ## Events Tab
 

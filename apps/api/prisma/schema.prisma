@@ -95,6 +95,9 @@ model ArtistBand {
   merchUrl                   String?
   musicUrl                   String?
   donationUrl                String?
+  bio                        String? // source-owned public identity, not the registering member's listener bio
+  avatar                     String? // source-owned public image, not a listener-account avatar
+  coverImage                 String? // source-owned public image, not a listener-account cover
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
 
@@ -117,6 +120,7 @@ model ArtistBandMember {
   artistBandId String
   userId       String
   role         String   @default("manager") // owner, manager, collaborator
+  headshotUrl  String? // source-provided public member headshot; listener-account avatars are not a public fallback
   createdAt    DateTime @default(now())
 
   artistBand ArtistBand @relation(fields: [artistBandId], references: [id], onDelete: Cascade)
@@ -518,6 +522,7 @@ model RotationEntry {
   sceneId         String
   pool            RotationPool
   enteredPoolAt   DateTime
+  newWindowDays   Int          @default(10)
   lastPlayedAt    DateTime?
   recurrenceScore Float        @default(0)
   graduatedAt     DateTime?

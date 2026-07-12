@@ -128,7 +128,9 @@ function getDisplayMembers(profile: ArtistBandProfile | null) {
     id: member.userId,
     name: member.user.displayName || member.user.username,
     role: formatSourceMembershipRole(member.role),
-    avatar: member.user.avatar ?? null,
+    // Source-facing strip: prefer the source-provided headshot; the
+    // listener-account avatar is an internal-tooling fallback only.
+    avatar: member.headshotUrl ?? member.user.avatar ?? null,
   }));
 
   if (members.length > 0) return members;
@@ -267,10 +269,10 @@ function SourceMasthead({
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-4">
         {displayMembers.map((member) => (
           <div key={member.id} className="min-w-0 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-black bg-[#f0eee5] text-sm font-black text-black">
+            <div className="mx-auto flex h-16 w-14 items-center justify-center overflow-hidden rounded-t-full border-2 border-black bg-[#f0eee5] text-sm font-black text-black">
               {member.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={member.avatar} alt={`${member.name} avatar`} className="h-full w-full object-cover" />
+                <img src={member.avatar} alt={`${member.name} avatar`} className="h-full w-full object-cover object-top" />
               ) : (
                 <span>{getInitials(member.name)}</span>
               )}

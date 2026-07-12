@@ -724,8 +724,21 @@ export default function ArtistBandProfilePage() {
                 <ul className="mt-4 space-y-2">
                   {profile.members.map((member) => (
                     <li key={`${member.userId}-${member.role}`} className="plot-wire-list-item">
-                      <p className="text-sm font-medium text-black">{member.user.displayName}</p>
-                      <p className="text-xs text-black/60">@{member.user.username} • {member.role}</p>
+                      <div className="flex items-center gap-3">
+                        {/* Public member imagery is source-provided headshots only; listener-account avatars must not be used as a fallback here. */}
+                        {member.headshotUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={member.headshotUrl}
+                            alt={`${member.user.displayName} headshot`}
+                            className="h-12 w-12 shrink-0 border-2 border-black object-cover object-top"
+                          />
+                        ) : null}
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-black">{member.user.displayName}</p>
+                          <p className="text-xs text-black/60">{member.role}</p>
+                        </div>
+                      </div>
                     </li>
                   ))}
                 </ul>

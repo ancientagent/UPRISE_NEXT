@@ -14,9 +14,7 @@ export class ArtistBandsService {
             id: true,
             username: true,
             displayName: true,
-            bio: true,
             avatar: true,
-            coverImage: true,
           },
         },
         homeScene: {
@@ -261,9 +259,11 @@ export class ArtistBandsService {
       donationUrl: artistBand.donationUrl ?? null,
       createdAt: artistBand.createdAt.toISOString(),
       updatedAt: artistBand.updatedAt.toISOString(),
-      bio: artistBand.createdBy.bio ?? null,
-      avatar: artistBand.createdBy.avatar ?? null,
-      coverImage: artistBand.createdBy.coverImage ?? null,
+      // Source-owned public identity only; the registering member's listener
+      // bio/avatar/cover must not leak into the public source profile.
+      bio: artistBand.bio ?? null,
+      avatar: artistBand.avatar ?? null,
+      coverImage: artistBand.coverImage ?? null,
       createdBy: {
         id: artistBand.createdBy.id,
         username: artistBand.createdBy.username,
@@ -278,6 +278,7 @@ export class ArtistBandsService {
       members: artistBand.members.map((member) => ({
         userId: member.userId,
         role: member.role,
+        headshotUrl: member.headshotUrl ?? null,
         createdAt: member.createdAt.toISOString(),
         user: {
           id: member.user.id,

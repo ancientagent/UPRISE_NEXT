@@ -67,11 +67,16 @@ They are:
 - a separate relationship/projection layer when surfaced
 
 ### Support
-`Support` is not a current direct MVP stats button.
+`Support` is a direct source-bound action on eligible Feed cards, not a
+statistics-surface button. A listener uses an activity-earned amount to support
+the source resolved by that card.
 
-Treat support as:
-- a later derived backing/activity state
-- separate from the direct signal and feed metrics locked here
+Current statistics boundary:
+- the Support action has no active API, ledger, or UI implementation yet
+- future Support aggregates can be descriptive, but must not become Fair Play,
+  ranking, governance, or civic-authority inputs
+- Support remains separate from direct signal metrics until its allocation
+  contract defines how source-bound amounts are recorded and displayed
 
 ## Stats Domains
 ### 1. Structural / Community Stats

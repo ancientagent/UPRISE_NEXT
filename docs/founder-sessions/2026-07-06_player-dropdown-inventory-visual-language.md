@@ -58,6 +58,13 @@ Owner spec candidates: `docs/specs/communities/plot-and-scene-plot.md`; `docs/sp
 > channels would have to appear in the top shell as well which really is pretty
 > much the same thing as the sect select
 
+> It seems like we wouldnt need to add that space, maybe when this happens the
+> player displays a radiyo tuner window with 5 buttons (think car radio
+> receiver) (these could be top save slots) or they could rollover the tuner
+> window with a mouse to select from all of their saved ones. this could be a
+> finger drag as well and they can hold it to select the sects I think max at 3
+> so we can 3 links on the player as well. would this work?
+
 ## Clarifications
 
 - The RADIYO/player surface may be the visual and interaction language that ties together the current community/Home Scene, scene signal, and listener actions.
@@ -176,6 +183,19 @@ Owner spec candidates: `docs/specs/communities/plot-and-scene-plot.md`; `docs/sp
   `docs/specs/communities/discovery-scene-switching.md`; future listener
   inventory/profile spec if activated.
 
+- Expanded top-shell tuner direction: when the avatar is centered in the
+  expanded top shell, the player may show a compact RADIYO tuner window instead
+  of adding extra empty space between the shell and player. The tuner can borrow
+  from a car-radio receiver pattern with five preset-style buttons. Those
+  buttons may represent top saved/listening slots visually, with mouse rollover
+  or touch/finger drag exposing more saved choices. A hold/select gesture may be
+  explored for sect selection. Sect links should stay visually capped around
+  three primary links on the player.
+- Type: design-only interaction direction / open
+- Likely owner: Product design handoff; `docs/specs/communities/plot-and-scene-plot.md`;
+  `docs/specs/broadcast/radiyo-and-fair-play.md`; sect owner specs only if
+  behavior becomes runtime.
+
 - Community photo treatment may be the primary visual differentiator between
   Home Scenes/communities. Community-specific scene photography can separate
   communities visually while preserving the same architecture, actions, and
@@ -261,6 +281,15 @@ Owner spec candidates: `docs/specs/communities/plot-and-scene-plot.md`; `docs/sp
   - If RADIYO and personal/track listening are separate players, saved Uprise
     channels can appear in the top shell with the same broad selection grammar
     as sect broadcast selection.
+  - When the avatar is centered in the expanded top shell, the player can use a
+    compact RADIYO tuner window to avoid adding blank spacing between the shell
+    and player.
+  - The RADIYO tuner window can visually use five preset-style buttons, like a
+    car radio receiver, for top saved/listening slots.
+  - Additional saved choices can be explored through rollover on desktop or a
+    finger-drag interaction on touch devices.
+  - Sect selection can be exposed through a hold/select gesture or adjacent
+    player links, with the visible sect links capped around three.
 - Excluded / not activated:
   - This does not authorize a separate normal profile route replacing Home.
   - This does not authorize saved/custom Uprise playback from Plot unless the
@@ -364,6 +393,10 @@ Owner spec candidates: `docs/specs/communities/plot-and-scene-plot.md`; `docs/sp
   available on the player. The acceptable fallback is two separate players, but
   that pushes saved Uprise channel selection into the top shell so it can sit
   beside or mirror the sect-select interaction.
+- The expanded avatar-centered top shell can place a compact RADIYO tuner window
+  in the player area. This should read like a receiver/tuning control, not a new
+  page, and can visually support five preset-style buttons plus a small sect
+  selector capped around three visible sect links.
 - Community-specific photos can carry visual identity between communities. This
   should be treated as a visual skin/content layer, not as permission for
   different screen architecture, action rules, or route behavior per community.
@@ -412,6 +445,10 @@ Owner spec candidates: `docs/specs/communities/plot-and-scene-plot.md`; `docs/sp
 - Do not implement sect broadcast switching, sect broadcast visibility, or
   independent sect broadcast authority from this visual note alone.
 - Do not make staged sect selection stop, reset, or remount the player.
+- Do not treat the RADIYO tuner window as permission to launch saved/custom
+  Uprise playback from Plot while the Discover ownership boundary remains open.
+- Do not treat five preset buttons or three sect links as locked data limits;
+  they are current visual caps for design exploration.
 - Do not design the indoor/inventory transition as a music-off state.
 - Do not treat the personal-player fallback as permission to stop all music when
   entering the indoor space.

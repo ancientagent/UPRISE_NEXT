@@ -72,6 +72,13 @@ Tests / verification files:
 - Event creation is source-facing through Print Shop.
 - Listeners discover events in Plot; add/calendar, attendance, and verified
   event artifacts require their own approved surfaces where supported.
+- The future event Support loop (one-tap support on show announcements, QR
+  proof-of-attendance with an at-show support link, flyer minting on
+  satisfaction) is owned by
+  `docs/specs/engagement/support-and-participation.md` and the
+  `Digital Artifact Lifecycle And Collection` section of
+  `docs/specs/economy/print-shop-and-promotions.md`; none of it is active
+  runtime.
 - Artist/band/promoter/source event planning can remain private/draft.
 - Future social-source event import/autofill may help artists/promoters avoid
   duplicate event entry, but it must create source-facing drafts/suggestions

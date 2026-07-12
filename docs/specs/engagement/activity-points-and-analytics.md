@@ -81,3 +81,9 @@ Defines Activity Points and analytics as descriptive metrics for participation a
 ## Future Work & Open Questions
 - Define Activity Points scoring table and decay/seasonality policy in `docs/specs/DECISIONS_REQUIRED.md`.
 - Define proof-verification trust model for high-value point awards.
+- Reconcile with the draft Support/Participation civic layer
+  (`docs/specs/engagement/support-and-participation.md`): the new founder
+  direction has `Participation` qualifying listeners for Trusted Roles, which
+  conflicts with this spec's "no conversion of points into authority or rank"
+  invariant. Founder decision tracked in `docs/specs/DECISIONS_REQUIRED.md`
+  section 8.5; neither value may gate roles at runtime until resolved.

@@ -2,7 +2,7 @@
 
 Status: Active
 Owner: Founder + product engineering
-Last updated: 2026-07-06
+Last updated: 2026-07-09
 
 ## 1) Purpose
 Capture founder-confirmed source, profile, feed, and registrar-entity rules so future sessions stop re-deriving them from chat fragments.
@@ -192,7 +192,20 @@ React rules:
 - react is not a standalone feed post
 - react behaves like lightweight response behavior on the object itself
 - multiple icon types may exist later
-- this is distinct from `Support`, which should be treated as a derived backing state rather than a direct feed button
+- this is distinct from `Support`, which is a direct, activity-earned,
+  source-bound action on eligible Feed cards. Support is not a generic reaction
+  on posts/comments/replies and must not use the React grammar.
+
+### 6.1.1 Support
+Support is a direct action on an eligible source-backed Feed card. The listener
+gives an available activity-earned amount to the source resolved by that card.
+
+Support boundaries:
+- it is not a source-profile action;
+- it is not a carried-signal action, even where the card links to a signal;
+- it is not a generic social reaction, and it does not replace `React`;
+- it must not affect Fair Play, ranking, civic authority, or governance;
+- API, ledger, amount/eligibility rules, and UI runtime remain unimplemented.
 
 ### 6.2 Private / non-feed actions
 These do not become standalone public feed noise by default:

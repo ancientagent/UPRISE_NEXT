@@ -63,8 +63,21 @@ commercial Print Shop or Promotions behavior into runtime.
   and layer interchangeable pieces such as shirts, jackets, pants, shoes, hats,
   and accessories so band artwork stays readable and clothing swaps do not
   require regenerating the full avatar.
+- Avatar visibility in MVP does not activate avatar-editor or dress-up runtime.
+  It does require future wearable merch to preserve a modular contract: separate
+  head base, hair, headwear, top, outerwear/strap layer, face details, neck
+  details, and digital merch objects. Buttons, pins, patches, and similar
+  printable/digital merch objects are not just baked clothing decoration; they
+  should attach to explicit targets such as suspenders, hats/beanies, lapels,
+  vest panels, jacket panels, straps, and shirt print zones when the wearable
+  system is activated.
 - Business promotion submission and auto-publish runtime.
 - Local business layer visibility inside Home Scene beta infrastructure.
+- Business sponsorship discovery: paid business source accounts, when
+  activated, are intended to include lists of artists interested in
+  sponsorship deals and events looking for sponsors, informed by Support
+  analytics (`docs/specs/engagement/support-and-participation.md`). Account
+  pricing, listing eligibility, and artist sponsorship opt-in remain open.
 - Release Deck sponsor ad link-target runtime and business-account selection.
 
 ## Non-Functional Requirements
@@ -77,6 +90,82 @@ commercial Print Shop or Promotions behavior into runtime.
 - Artifacts are participation records/signals, not commodities.
 - Paid distribution is explicit-scope ad infrastructure, not algorithmic recommendation.
 - Print Shop creation/manage flows belong to source operators (artists/promoters), not to listeners acting in ordinary discovery mode.
+
+## Digital Artifact Lifecycle And Collection (Draft Owner Section)
+
+Status: draft contract for the closed digital-merch economy. Runtime remains
+deferred; open decisions are tracked in `docs/specs/DECISIONS_REQUIRED.md`
+section 10. Join points: `docs/specs/engagement/support-and-participation.md`
+(`ENG-SUPPORT`, mint triggers) and the future avatar/customization owner spec
+(wearable rendering).
+
+### Artifact identity
+
+Each minted artifact is an internal, non-blockchain issuance record carrying:
+
+- artifact id, artifact class (`flyer`, `button`, `pin`, `patch`, `sticker`,
+  `poster`, `special`), and artwork reference;
+- run reference plus edition position within the run's finite,
+  non-replenishable capacity;
+- source attribution (the issuing Artist/Band, promoter, or later business
+  account);
+- mint-event provenance: which fulfilled Support contract, Proof-of-Support
+  verification, or future purchase minted it, with timestamp;
+- optional context object (event, release, cause).
+
+### Funding precondition: paid Runs
+
+- Artists/promoters (and later activated business accounts) purchase Runs with
+  real money. A Run fee buys finite issuance capacity only — never placement,
+  reach, rotation, or any Fair Play effect.
+- Run purchases are part of UPRISE's initial revenue engine; community
+  live-music funds may later purchase Print Shop digital marketing per the
+  deferred community-fund direction.
+- Listeners never pay for artifacts. Artifacts reach listeners only through
+  verified fulfillment of the contracts defined below.
+
+### Mint triggers
+
+- Support-contract fulfillment (e.g., verified show attendance mints the
+  event's flyer) — never commitment alone.
+- Proof-of-Support verification.
+- Additional issuance paths only if a future owner contract defines them.
+
+All triggers consume the purchased run's capacity. Run-exhaustion behavior for
+contract-attached goodies (reservation at commitment vs first-fulfilled) is an
+open decision.
+
+### Ownership and the closed economy
+
+- Artifacts bind to the owning listener account. No resale, trade, bidding,
+  exchange market, cash-out, or external ledger; listener-to-listener transfer
+  or gifting does not exist unless a later decision explicitly adds it.
+- Holding artifacts grants no Fair Play, ranking, tier, propagation, or
+  governance effect.
+- Artifacts are evidence of a listener's relationship to an artist, event, or
+  community — participation records, not commodities.
+- No `coin`/`token`/`wallet`/`spend` user-facing language.
+
+### Collection display
+
+- Owned artifacts appear in the listener collection workspace `Merch` shelf.
+- Public visibility follows the existing profile collection opt-in
+  (`collectionDisplayEnabled`); no separate public artifact showcase without
+  owner-spec support.
+- Display preserves provenance (edition, source, context) as descriptive
+  metadata only.
+
+### Future wearable join
+
+- Artifact classes `button`, `pin`, `patch`, and `sticker` correspond to
+  avatar digital-merch objects. When the avatar wearable system activates, an
+  owned artifact of these classes may be equipped onto a compatible worn item
+  through that garment's designer-authored attachment manifest, from the
+  listener's Personal Space.
+- Equipping is presentation only: it never changes artifact ownership or
+  provenance and grants no economy or gameplay effect.
+- The rendering/attachment contract belongs to the future avatar/customization
+  owner spec; this section owns artifact identity, minting, and ownership.
 
 ## Data Models & Migrations
 ### Planned Models

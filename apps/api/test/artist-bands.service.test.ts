@@ -36,6 +36,9 @@ describe('ArtistBandsService', () => {
       merchUrl: 'https://signalstatic.example.com/merch',
       musicUrl: 'https://signalstatic.example.com/music',
       donationUrl: 'https://signalstatic.example.com/support',
+      bio: 'Local broadcast damage.',
+      avatar: 'https://cdn.example.com/band-avatar.png',
+      coverImage: null,
       homeSceneId: 'scene-1',
       createdById: 'user-1',
       createdAt: new Date('2026-03-20T00:00:00.000Z'),
@@ -44,9 +47,7 @@ describe('ArtistBandsService', () => {
         id: 'user-1',
         username: 'signalstatic',
         displayName: 'Signal Static',
-        bio: 'Local broadcast damage.',
-        avatar: null,
-        coverImage: null,
+        avatar: 'https://cdn.example.com/personal-avatar.png',
       },
       homeScene: {
         id: 'scene-1',
@@ -61,6 +62,7 @@ describe('ArtistBandsService', () => {
         {
           userId: 'user-1',
           role: 'owner',
+          headshotUrl: 'https://cdn.example.com/member-headshot.png',
           createdAt: new Date('2026-03-20T00:00:00.000Z'),
           user: {
             id: 'user-1',
@@ -119,6 +121,10 @@ describe('ArtistBandsService', () => {
 
     expect(result.name).toBe('Signal Static');
     expect(result.followCount).toBe(14);
+    expect(result.bio).toBe('Local broadcast damage.');
+    expect(result.avatar).toBe('https://cdn.example.com/band-avatar.png');
+    expect(result.coverImage).toBeNull();
+    expect(result.members[0]?.headshotUrl).toBe('https://cdn.example.com/member-headshot.png');
     expect(result.officialWebsiteUrl).toBe('https://signalstatic.example.com');
     expect(result.merchUrl).toBe('https://signalstatic.example.com/merch');
     expect(result.musicUrl).toBe('https://signalstatic.example.com/music');
@@ -231,6 +237,63 @@ describe('ArtistBandsService', () => {
         },
       }),
     );
+  });
+
+  it('does not leak the registering member listener identity into the public source profile', async () => {
+    mockPrisma.artistBand.findUnique.mockResolvedValue({
+      id: 'artist-1',
+      name: 'Signal Static',
+      slug: 'signal-static',
+      entityType: 'band',
+      registrarEntryRef: null,
+      officialWebsiteUrl: null,
+      merchUrl: null,
+      musicUrl: null,
+      donationUrl: null,
+      bio: null,
+      avatar: null,
+      coverImage: null,
+      homeSceneId: null,
+      createdById: 'user-1',
+      createdAt: new Date('2026-03-20T00:00:00.000Z'),
+      updatedAt: new Date('2026-03-21T00:00:00.000Z'),
+      createdBy: {
+        id: 'user-1',
+        username: 'signalstatic',
+        displayName: 'Signal Static',
+        avatar: 'https://cdn.example.com/personal-avatar.png',
+      },
+      homeScene: null,
+      members: [
+        {
+          userId: 'user-1',
+          role: 'owner',
+          headshotUrl: null,
+          createdAt: new Date('2026-03-20T00:00:00.000Z'),
+          user: {
+            id: 'user-1',
+            username: 'signalstatic',
+            displayName: 'Signal Static',
+            avatar: 'https://cdn.example.com/personal-avatar.png',
+          },
+        },
+      ],
+    });
+    mockPrisma.follow.count.mockResolvedValue(0);
+    mockPrisma.track.findMany.mockResolvedValue([]);
+    mockPrisma.event.findMany.mockResolvedValue([]);
+    mockPrisma.signal.findMany.mockResolvedValue([]);
+    mockPrisma.collectionItem.findMany.mockResolvedValue([]);
+    mockPrisma.signalAction.findMany.mockResolvedValue([]);
+
+    const result = await service.findProfile('artist-1');
+
+    // Source identity stays empty until the source supplies it; the
+    // registering member's listener bio/avatar/cover must not back-fill it.
+    expect(result.bio).toBeNull();
+    expect(result.avatar).toBeNull();
+    expect(result.coverImage).toBeNull();
+    expect(result.members[0]?.headshotUrl).toBeNull();
   });
 
 });

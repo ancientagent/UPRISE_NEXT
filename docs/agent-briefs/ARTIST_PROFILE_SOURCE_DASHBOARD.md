@@ -139,6 +139,10 @@ Tests / verification files:
 - Do not make source management feel like ordinary Home/Plot community participation.
 - Do not interpret “separate source-management website/domain” as permission to discard the existing Source Dashboard, Release Deck, or Print Shop work.
 - Do not add source-level `Collect`, source-level `Blast`, or source-level `Support`.
+- Future source-facing supporter analytics (pending vs proven Support, per-artist
+  event draw) are owned by `docs/specs/engagement/support-and-participation.md`;
+  they are descriptive only and not buildable until that contract's decisions
+  lock.
 - Do not widen the current listener-facing Artist Profile into a full catalogue/library surface unless the Artist Profile lock is explicitly updated.
 - Do not add fake source-dashboard cards such as analytics, billing, growth, or upgrade modules unless explicitly activated.
 - Do not add source posts/messages, follower-update composers, inboxes, or `Message Followers` placeholders unless `docs/solutions/SOURCE_POSTS_MESSAGES_DECISION_PACKET_R1.md` is superseded by an approved implementation spec.
