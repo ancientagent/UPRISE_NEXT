@@ -49,6 +49,11 @@
   avatar-interactive merch runtime remain deferred; future avatar-wearable work
   should use a modular contract with separate head, hair, clothing, face-detail,
   and attachable digital-merch layers.
+- Settled listener-avatar surface ownership: base avatar creation and core
+  editing are listener account/profile responsibilities, while Personal
+  Space/Inventory is the collection-facing context for equipping owned digital
+  merch and placing decoration such as flyers. The shared-composer direction is
+  documented without activating editor, inventory, or decoration runtime.
 - Promoted the founder correction that `Support` is a direct,
   activity-earned, source-bound action on eligible Feed cards, replacing the
   former derived-backing-only rule while keeping its API, ledger, eligibility,

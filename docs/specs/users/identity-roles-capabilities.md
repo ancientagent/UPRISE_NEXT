@@ -3,7 +3,7 @@
 **ID:** `USER-IDENTITY`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-02-24`
+**Last Updated:** `2026-07-12`
 
 ## Overview & Purpose
 Defines identity and permission boundaries for UPRISE. Canon model: one base `User` identity, linked Artist/Band entities registered via the Registrar, and additive role capabilities where explicitly defined (for example Promoter).
@@ -27,6 +27,26 @@ Defines identity and permission boundaries for UPRISE. Canon model: one base `Us
 - Capability expansion is additive permissions attached to existing user identity.
 - Visitor state may listen and use non-civic actions; Visitor state cannot vote.
 - Role/capability language in docs and API must remain aligned to Registrar + linked-entity canon.
+
+## Listener Avatar And Personal Space Boundary
+
+- The visible listener avatar is part of the listener's account identity. Base
+  avatar creation and core identity edits belong to the listener account/profile
+  surface and must be available without entering Personal Space/Inventory or
+  holding a collection item.
+- Personal Space/Inventory is the collection and display workspace. It owns the
+  context for equipping an owned wearable artifact or placing an owned display
+  artifact; it does not own or gate base-avatar creation.
+- A future avatar composer may use the same composition contract in two entry
+  contexts: account/profile for base identity layers, and Personal
+  Space/Inventory for eligible owned-item equipment or placement. The exact
+  onboarding prompt, route, modal, data model, and implementation sequence are
+  not locked by this contract.
+- Listener-avatar identity remains distinct from source-owned Artist/Band public
+  imagery and member headshots. A listener avatar must not become a public
+  source/member headshot through automatic fallback or reuse.
+- This is a product/design boundary only. It does not activate avatar-editor,
+  inventory, decoration, collectible, or attachment runtime.
 
 ### Implemented Now
 - Auth and identity:

@@ -3,7 +3,7 @@
 **ID:** `ECON-PRINTSHOP`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-07-06`
+**Last Updated:** `2026-07-12`
 
 ## Overview & Purpose
 Defines the Promotions surface and the Print Shop issuance model. The Print Shop is infrastructure for limited‑run digital artifacts and Proof‑of‑Support, not a marketplace.
@@ -161,7 +161,9 @@ open decision.
   avatar digital-merch objects. When the avatar wearable system activates, an
   owned artifact of these classes may be equipped onto a compatible worn item
   through that garment's designer-authored attachment manifest, from the
-  listener's Personal Space.
+  listener's Personal Space/Inventory equipment context. Base listener-avatar
+  creation and core edits remain account/profile-owned under
+  `docs/specs/users/identity-roles-capabilities.md#listener-avatar-and-personal-space-boundary`.
 - Equipping is presentation only: it never changes artifact ownership or
   provenance and grants no economy or gameplay effect.
 - The rendering/attachment contract belongs to the future avatar/customization

@@ -1,7 +1,7 @@
 # UI Current Agent Brief
 
 Status: active
-Last Updated: 2026-07-11
+Last Updated: 2026-07-12
 
 ## Use When
 
@@ -288,6 +288,13 @@ The Home identity avatar is part of the listener/player composition. Avatar
 is MVP-visible. Avatar customization and avatar-interactive merch behavior
 remain deferred, but design work should not over-render the avatar in a way that
 blocks future merch wearables.
+
+Avatar surface ownership is settled: listener account/profile owns base avatar
+creation and core editing; Personal Space/Inventory owns the collection-facing
+equip/placement context for owned wearable merch and flyer-wall decoration. The
+same future composition system may serve both contexts, but no route, modal,
+onboarding trigger, or editor runtime is activated by this brief. Owner
+contract: `docs/specs/users/identity-roles-capabilities.md#listener-avatar-and-personal-space-boundary`.
 
 Current design guidance:
 
