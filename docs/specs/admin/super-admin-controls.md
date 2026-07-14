@@ -3,7 +3,7 @@
 **ID:** `ADMIN-SUPER`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-04-08`
+**Last Updated:** `2026-07-14`
 
 ## Overview & Purpose
 Defines the Super Admin’s platform oversight capabilities.
@@ -49,6 +49,11 @@ Defines the Super Admin’s platform oversight capabilities.
   - `POST /admin/config/fair-play`
   - current guard: authenticated user (`JwtAuthGuard`)
   - RBAC/super-admin enforcement: deferred
+- Fair Play manual lifecycle primitives exist:
+  - `POST /admin/fair-play/new-releases/ingest`
+  - `POST /admin/fair-play/graduation/run`
+  - current guard: authenticated user (`JwtAuthGuard`)
+  - ingestion/graduation dry-run and transactional write paths are controlled MVP admin primitives; RBAC/super-admin enforcement and cron/queue automation remain deferred
 - Retained analytics read surface exists:
   - `GET /admin/analytics/query`
   - `GET /admin/analytics/activation-readiness`
@@ -104,6 +109,8 @@ Defines the Super Admin’s platform oversight capabilities.
 |--------|------|------|-------------|
 | GET | `/admin/config/fair-play` | authenticated (RBAC deferred) | View current Fair Play policy variables |
 | POST | `/admin/config/fair-play` | authenticated (RBAC deferred) | Update Fair Play policy variables (global) |
+| POST | `/admin/fair-play/new-releases/ingest` | authenticated (RBAC deferred) | Dry-run or transactionally ingest due scheduled releases into New Releases |
+| POST | `/admin/fair-play/graduation/run` | authenticated (RBAC deferred) | Dry-run or transactionally graduate due New Releases entries into Main Rotation |
 | GET | `/admin/analytics/query` | authenticated (RBAC deferred) | Query current retained analytics and platform totals |
 | GET | `/admin/analytics/activation-readiness` | authenticated (RBAC deferred) | Query descriptive source-origin activation readiness diagnostics |
 | POST | `/admin/analytics/activation-readiness/activate` | authenticated (RBAC/audit deferred) | Manually activate a readiness-proven city-tier source-origin tuple, re-anchor matching sources for future uploads, and re-root matching listeners |

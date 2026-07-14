@@ -3,7 +3,7 @@
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-08`
+**Last Updated:** `2026-07-14`
 
 ## Overview & Purpose
 Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
@@ -183,11 +183,14 @@ Owner references:
 | GET | `/broadcast/:sceneId/rotation` | required | Retrieve ordered New Releases + Main Rotation pools with metadata |
 | GET | `/broadcast/rotation` | required | Retrieve ordered pools for active scene context (tuned scene first, Home Scene fallback) |
 | GET | `/fair-play/metrics?sceneId=:sceneId` | required | Retrieve scene lifecycle/recurrence diagnostics |
+| POST | `/admin/fair-play/new-releases/ingest` | authenticated (RBAC deferred) | Dry-run or transactionally ingest due Release Deck schedules into fixed-window New Releases entries |
+| POST | `/admin/fair-play/graduation/run` | authenticated (RBAC deferred) | Dry-run or transactionally graduate due New Releases entries into Main Rotation with engagement-derived initial recurrence |
 
 ### Implemented support contract
 - `POST /tracks` currently creates a valid track row with uploader ownership, file URL, duration, and optional community attachment.
 - This is a runtime ingestion contract, not a full upload/transcoding pipeline definition.
 - Track creation support exists so artist/discover flows can be exercised through the API instead of direct DB fixture insertion.
+- Fair Play lifecycle mutation is manual/admin-triggered in R1; cron/queue automation and full admin RBAC are not activated by the ingestion or graduation endpoints.
 - Proxy-to-natural song, vote, and tier behavior follows `Proxy Cutover And Lifecycle Join Points`.
 
 ### Planned

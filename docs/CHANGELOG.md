@@ -23,6 +23,14 @@
   from overwriting current UI state. Availability completion is now announced
   for assistive technology in both available and unavailable states, with stale
   authentication responses and absent Fair Play controls covered explicitly.
+- Added the authenticated manual Fair Play graduation path:
+  `POST /admin/fair-play/graduation/run` now dry-runs or transactionally moves
+  due per-entry `NEW_RELEASES` rows into `MAIN_ROTATION`, sets `graduatedAt`,
+  initializes recurrence from the existing rolling engagement window, and
+  reports deterministic skip reasons without rewriting votes, engagement
+  history, schedules, tier evidence, or propagation state; full RBAC and cron
+  automation remain deferred. See
+  `docs/handoff/2026-07-14_new-releases-graduation.md`.
 - Fixed the listener-identity leak in the public Artist Profile contract:
   `ArtistBand` gained source-owned `bio`/`avatar`/`coverImage` fields and
   `ArtistBandMember` gained a source-provided `headshotUrl`, the profile API

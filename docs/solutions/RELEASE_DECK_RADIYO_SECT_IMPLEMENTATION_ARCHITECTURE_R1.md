@@ -1,10 +1,10 @@
 # Release Deck / RADIYO / Sect Implementation Architecture R1
 
-**Status:** `planning`
-**Date:** `2026-07-08`
+**Status:** `active implementation sequence`
+**Date:** `2026-07-14`
 **Owner lane:** media / broadcast / registrar / communities
-**Deployment Target:** none; architecture plan only
-**Base branch:** `docs/release-deck-radiyo-sect-readiness-spec-promotion`
+**Deployment Target:** local runtime slices; no deployment implied
+**Base branch:** `main`
 
 ## Purpose
 
@@ -31,21 +31,22 @@ Implemented:
 - source Home Scene guard when `ArtistBand.homeSceneId` is known;
 - URL-only track creation;
 - web-side validation in `apps/web/src/lib/source/release-deck-validation.ts`;
-- release deck rows in `apps/web/src/app/source-dashboard/release-deck/page.tsx`.
+- release deck rows in `apps/web/src/app/source-dashboard/release-deck/page.tsx`;
+- Uprise-wide server-side deck measurement;
+- persisted schedule records, read-only availability preview, and source-owned
+  `soonest` / valid `chosen` schedule writes;
+- manual scheduled-release ingestion into Fair Play New Releases.
 
 Missing:
 
-- scheduled release date persistence;
-- scheduling availability preview;
-- Uprise-wide Release Deck measurement endpoint;
-- server-side release-date capacity logic;
 - song-level Sect backing/encoding;
 - readiness diagnostics for Sect Uprise creation;
-- handoff from scheduled Release Deck song into Fair Play/New Releases.
+- production scheduler/queue automation.
 
 ### Fair Play
 
-Current runtime has useful pieces but no production ingestion path.
+Current runtime has the manual R1 lifecycle path; production automation remains
+deferred.
 
 Implemented:
 
@@ -53,18 +54,21 @@ Implemented:
 - rotation read/metrics methods;
 - recurrence aggregation method;
 - recurrence aggregation job wrapper;
-- unit coverage around `ingestNewRelease`.
+- manual scheduled-release ingestion endpoint with per-entry
+  `newWindowDays = 10`;
+- manual graduation endpoint with exact stored-window eligibility,
+  `graduatedAt`, and engagement-derived initial recurrence;
+- transaction-time community/entry revalidation and conditional idempotent
+  graduation writes;
+- focused ingestion, graduation, recurrence, controller, and module coverage.
 
 Missing or unsafe for new implementation:
 
-- `ingestNewRelease()` has no controller or production caller;
 - `aggregateRecurrenceScores()` has no production schedule/caller visible in the
   active runtime path;
-- `ingestNewRelease()` guards one active new release by `track.artist` display
-  string instead of durable `artistBandId`;
-- `RotationEntry` has no `newWindowDays` field, so the fixed `10` day protected
-  window is not auditable per entry;
-- no graduation job moves expired New Releases into Main Rotation;
+- legacy internal `ingestNewRelease()` still uses display-artist guarding and
+  must not replace the active scheduled-ingestion service;
+- no cron/queue job invokes ingestion or graduation;
 - deprecated `FairPlayConfig.newWindowBand*` fields still exist in schema/admin
   config as compatibility fields and must not drive runtime behavior.
 

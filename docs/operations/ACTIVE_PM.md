@@ -23,38 +23,40 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 ## Current Workspace Snapshot
 
 - Snapshot date: 2026-07-14
-- Base branch: `origin/main` at `5ae79b8`; local `main` has operations-only checkpoints through `375d06c`
-- Active branch: `codex/release-deck-scheduling-client`
-- Local worktree state: scheduling client complete and independently reviewed; founder authorized staged remote PR submission
-- Open PR queue at refresh: implementation PR #238 (`codex/release-deck-scheduling-client`) is open after independent review; draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting
-- Recently completed runtime stack: PR #236 merged Release Deck schedule writes and Fair Play ingestion; PR #237 was docs-only avatar boundary work
-- Provider/db/schema state: no new migration or provider change in the current client slice; existing `ReleaseDeckSchedule` persistence is being consumed
+- Base branch: `origin/main` at `a55a54f` after scheduling-client PR #238 merged
+- Current branch: `codex/new-releases-graduation`, active for the authorized sequential submission
+- Local worktree state at refresh: rebased onto the scheduling baseline, freshly reverified, independently re-reviewed, and submitted as PR #239
+- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PR #238 is merged
+- Recently completed remote slice: scheduling-client PR #238; graduation PR #239 is open after the rebased code/product review gates passed
+- Provider/db/schema state: no provider writes; the graduation slice does not require schema changes
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
 Current goal:
 
-- Keep Codex local as the sole writer and reviewers read-only.
-- Submit the reviewed scheduling client as the first focused PR.
-- After it establishes the remote baseline, rebase and separately submit the
-  reviewed New Releases graduation slice.
-- Begin Slice 6 official Sect/song-level backing and Slice 7 backing authority
-  only through independently reviewed plans and bounded implementation slices.
-- Keep the raw founder-session capture, draft PR #212, and preserved UX
-  worktrees/branches out of these submissions.
+- Submit the completed manual New Releases to Main Rotation graduation slice as a separate focused PR after rebasing it onto `origin/main`.
+- Keep Codex local as the sole writer and all review agents read-only.
+- Route the next architecture signal through a fresh reviewed plan before any Slice 6 Sect/song-level backing schema work begins.
+
+Recently completed context:
+
+- PR #236 merged the Release Deck scheduling stack and related source/listener identity and Support/avatar spec promotions.
+- PR #237 merged the avatar creation/account-profile versus Personal Space/Inventory boundary.
+- The Release Deck scheduling client content merged through PR #238 at `a55a54f`; its local branch remains preserved only until sequential closeout is complete.
+- The local-only graduation slice adds exact stored-window eligibility, dry-run/write execution, deterministic engagement-derived initial recurrence, and conditional idempotent rotation updates; independent plan, code, and product reviews passed.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | Source Dashboard / Release Deck |
-| Branch | `codex/release-deck-scheduling-client` |
-| Scope | Add server-owned schedule availability, durable existing-schedule restore, and `soonest` / returned-`chosen` scheduling to the loaded Release Deck row; align owner docs and focused tests. |
-| Out of Scope | Fair Play ordering/controls, automatic ingestion jobs, graduation, song-level sect backing, replacement/removal, upload/storage, paid-ad runtime, remote push/PR. |
-| Owner Contracts | `docs/specs/media/release-deck-and-eligibility.md`, `docs/specs/users/artist-profile-and-source-dashboard.md`, `docs/specs/broadcast/radiyo-and-fair-play.md` |
-| Companion Docs | `docs/handoff/2026-07-08_release-deck-schedule-write-path.md`, `docs/handoff/2026-07-08_release-deck-fair-play-ingestion.md`, `docs/screen-packages/artist-profile-source-dashboard/README.md` |
-| Validation | focused web/API scheduling tests, web/API typecheck, docs lint, diff check, workspace audit, read-only reviewer passes |
+| Lane | API / Fair Play lifecycle |
+| Branch | `codex/new-releases-graduation` (active sequential submission) |
+| Scope | Completed manual authenticated graduation dry-run/write path using each entry's locked New Releases window and the configured rolling engagement window for deterministic recurrence initialization. |
+| Out of Scope | Cron/queue activation, automatic propagation, vote/engagement mutation, cap policy, removal/floor policy, UI work, schema/migration work, RBAC invention, provider writes, push/PR activity. |
+| Owner Contracts | `AGENTS.md`, `docs/specs/broadcast/radiyo-and-fair-play.md`, `docs/specs/admin/super-admin-controls.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md` |
+| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/agent-briefs/CONTEXT_ROUTER.md`, current Fair Play ingestion/service/schema/tests |
+| Validation | focused API graduation/controller/service tests; Fair Play regression tests; `pnpm run verify`; `pnpm run workspace:audit`; `git diff --check`; independent read-only plan/code/product reviews |
 
 ## Current Branch / Worktree State
 
@@ -62,14 +64,15 @@ Current goal:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #238 | `codex/release-deck-scheduling-client` | open, independently reviewed | Await required checks/codeowner review, then merge through the protected PR path. |
+| #239 | `codex/new-releases-graduation` | open, independently reviewed | Await required checks, then merge through the protected PR path. |
+| #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | PR #238 submission checkpoint | Open implementation PR; reviewers remain read-only. |
+| `/home/baris/UPRISE_NEXT` | `codex/new-releases-graduation` | PR #239 submission checkpoint | Open implementation PR; reviewers remain read-only. |
 
 ### Preserved UX Reference Worktrees
 
@@ -135,11 +138,10 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Land independently reviewed scheduling-client PR #238 through the protected PR path.
-2. After PR #238 establishes the remote baseline, rebase, reverify, and independently review the graduation branch before its separate PR.
-3. Start Slice 6 official Sect/song-level backing with a heavy schema/owner-contract plan review before implementation.
-4. Follow with a separately reviewed Slice 7 source-authorized backing API checkpoint only after Slice 6 has a safe baseline.
-5. Keep the founder-session capture, draft PR #212, and preserved UX reference worktrees/branches untouched.
+1. Land independently reviewed graduation PR #239 through the protected PR path.
+2. Begin Slice 6 Official Sect/song-level backing with owner-contract/schema review and an independently reviewed implementation plan before writing it.
+3. Keep cron/queue automation, propagation/cap policy, unresolved RBAC, and UI expansion out of the next slice unless owner contracts explicitly authorize them.
+4. Keep draft PR #212 and preserved UX reference worktrees/branches untouched unless the user explicitly reprioritizes them.
 
 ## PM Usage Rules For Agents
 
