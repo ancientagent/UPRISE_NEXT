@@ -494,7 +494,7 @@ function ReleaseDeckSchedulePanel({
 
       <p className="mt-3 text-xs font-semibold text-black/55">
         Capacity is calculated by the API. Scheduling cannot buy priority, reorder Fair Play, or
-        shorten another song's protected New Releases run.
+        shorten another song’s protected New Releases run.
       </p>
     </div>
   );
