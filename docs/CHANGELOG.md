@@ -9,6 +9,12 @@
 
 ### Added
 
+- Added the authority-neutral Official Sect identity persistence foundation:
+  `Sect` is scoped to a parent `Community` with parent-scoped slug uniqueness,
+  an additive migration, and schema/migration parity tests. This slice creates
+  no rows and adds no lifecycle, Registrar provenance, track backing, readiness,
+  public visibility, update channel, or Sect Uprise behavior. See
+  `docs/handoff/2026-07-14_official-sect-song-backing-foundation.md`.
 - Connected the Source Dashboard Release Deck to the implemented scheduling
   stack: loading a source-owned ready row now checks server-calculated 30-day
   capacity, offers `soonest` or one of the returned available dates, persists a
