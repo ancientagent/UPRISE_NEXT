@@ -1,0 +1,163 @@
+# New Releases Graduation — Execution Plan And Handoff
+
+**Date:** 2026-07-14  
+**Branch:** `codex/new-releases-graduation`  
+**Starting HEAD:** `375d06c`  
+**Status:** plan awaiting independent review; no runtime edits yet
+
+## A. Evidence Used
+
+- `AGENTS.md`
+- `docs/PLATFORM_START_HERE.md`
+- `docs/AGENT_STRATEGY_AND_HANDOFF.md`
+- `docs/agent-briefs/CONTEXT_ROUTER.md`
+- `docs/agent-briefs/ARTIST_PROFILE_SOURCE_DASHBOARD.md`
+- `docs/specs/system/documentation-framework.md`
+- `docs/specs/broadcast/radiyo-and-fair-play.md`
+- `docs/specs/admin/super-admin-controls.md`
+- `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`
+- current Fair Play schema, ingestion/controller/module, recurrence aggregation, and focused tests
+
+## B. Current State Versus Deferred Or Unknown
+
+Current repo truth:
+
+- scheduled Release Deck tracks can be manually ingested into `NEW_RELEASES`;
+- each ingested `RotationEntry` stores its locked `newWindowDays` value, currently `10`;
+- recurrence aggregation already sums engagement scores over the configured rolling window, defaulting to `14` days;
+- no runtime service or endpoint graduates expired New Releases entries into Main Rotation;
+- the existing manual Fair Play ingestion endpoint is protected by `JwtAuthGuard` only.
+
+Deferred or unresolved and therefore excluded:
+
+- cron/queue automation;
+- tier propagation, vote behavior, propagation caps, and removal/floor policy;
+- any change to engagement history;
+- graduation caps or pool-density policy;
+- UI/operator tooling;
+- schema or migration changes;
+- new RBAC, super-admin enforcement, or audit-log infrastructure beyond the existing authenticated MVP admin primitive.
+
+No founder decision is required for this slice. The owner architecture explicitly defines manual R1 graduation and the transition acceptance contract. The admin owner spec explicitly defers full RBAC, so this implementation must not imply that super-admin authorization is already active.
+
+## Feature Review
+
+The feature is a bounded Fair Play lifecycle transition:
+
+- actor: an authenticated MVP operator using a manual endpoint;
+- source state: a `NEW_RELEASES` rotation entry in an active city-tier community;
+- eligibility invariant: `enteredPoolAt + newWindowDays <= asOf`;
+- destination state: `MAIN_ROTATION`, with `graduatedAt` set and recurrence initialized from attributable engagement in the existing configured rolling window;
+- preserved evidence: votes and engagement history remain untouched;
+- systems-scale invariant: all selection is by `communityId` and per-entry state, with no city-, source-, artist-, or fixture-specific behavior.
+
+The slice is a GO because the active owner architecture names it as Slice 5 and current runtime evidence shows the transition is still missing.
+
+## Execution Packet
+
+Lane: API / Fair Play lifecycle  
+Owner Contract: `docs/specs/broadcast/radiyo-and-fair-play.md`  
+Starting Branch / HEAD: `codex/new-releases-graduation` / `375d06c`  
+Must Read: the evidence list above, especially the Fair Play owner spec, admin auth boundary, Slice 5 architecture, and current Fair Play code/tests  
+Do Not Read By Default: legacy mobile code, unrelated UX batch plans, propagation/Sect implementation slices, remote PR state  
+Source Drift / Behavior To Correct: `not_applicable`; this is a first-pass implementation of a missing owner-defined transition  
+Feature / Behavior Scope: manual dry-run/write graduation for one active city-tier community, exact per-entry window eligibility, deterministic recurrence initialization, structured counts/reasons, and no evidence rewrites  
+Repo-Aspects To Verify: Prisma `RotationEntry` shape and indexes; recurrence window semantics; current admin guard; module wiring; transaction and race behavior; focused test conventions  
+Development Plan: see below  
+Plan Review: independent read-only Codex reviewer required before runtime edits  
+Files Likely Touched: `apps/api/src/fair-play/fair-play-graduation.service.ts`, a graduation DTO/controller, `fair-play.module.ts`, focused API tests, this handoff, `docs/CHANGELOG.md`, and implementation-state wording in the active architecture if needed  
+Tests / Validation Seed: focused graduation/controller/module tests; existing recurrence and Fair Play regressions; API typecheck; `pnpm run verify`; workspace audit; diff check  
+Expansion Conditions: expand only if focused tests prove a small shared recurrence helper is required to prevent divergent scoring semantics  
+Stop Conditions: owner-spec conflict; schema/provider change becomes necessary; authorization beyond the documented MVP guard becomes necessary; an unresolved product policy would change eligibility or scoring  
+Branch Owner: Codex local, sole writer  
+Subagent Use: independent read-only plan/code/product-contract reviewers only
+
+## Development Plan
+
+1. Add a Zod request contract for `{ communityId, asOf?, dryRun? }`, preserving the established `YYYY-MM-DD` format and `dryRun: true` default.
+2. Add a dedicated graduation service that:
+   - validates the target exists and is an active city-tier community;
+   - normalizes `asOf` to the UTC start of the supplied/default day;
+   - scans only that community's `NEW_RELEASES` entries in stable order;
+   - computes each `eligibleAt` from the entry's own `enteredPoolAt` and `newWindowDays`;
+   - treats non-positive/non-finite windows and inconsistent pre-graduated New Releases rows as explicit skips rather than silently applying policy;
+   - reads the global recurrence rolling-window setting, defaulting to the existing `14` days;
+   - sums existing `TrackEngagement.score` rows for eligible tracks over the inclusive `[asOf - rollingWindowDays, asOf]` interval;
+   - returns dry-run `would_graduate` results without opening a transaction or writing;
+   - in write mode, revalidates the community and entries inside one transaction, then conditionally updates each still-eligible row to `MAIN_ROTATION`, sets `graduatedAt = asOf`, and writes the computed recurrence score;
+   - reports a deterministic skip when a concurrent run has already changed the row;
+   - never writes Track, TrackEngagement, TrackVote, schedule, tier, or propagation state.
+3. Add `POST /admin/fair-play/graduation/run` behind the same `JwtAuthGuard` used by the current MVP Fair Play ingestion endpoint. Do not label this as completed RBAC or super-admin enforcement.
+4. Wire the controller/service into `FairPlayModule` without changing public rotation behavior.
+5. Add focused tests covering:
+   - exact eligibility boundary and use of each entry's stored window;
+   - not-due and invalid-state skip reasons;
+   - recurrence score sum, zero default, and configured rolling window;
+   - dry-run read-only behavior;
+   - write-mode transaction revalidation and conditional/idempotent update;
+   - concurrent/no-longer-eligible skip behavior;
+   - active city-tier validation;
+   - DTO default/validation, controller delegation, guard metadata, and module construction;
+   - no writes to votes, engagement history, schedules, tracks, tiers, or propagation state.
+6. Update only implementation-state documentation and the changelog/handoff required by the repo. Do not change owner doctrine or activate deferred operations.
+7. Commit a coherent implementation checkpoint, run focused validation, and send that committed HEAD to independent read-only code and product-contract reviewers. Address any blocking findings as the same sole writer, recommit, and re-review the correction before closeout.
+
+## Risk Review
+
+- Date boundary: use the owner contract's exact `<= asOf` rule. Because ingestion writes day-start timestamps, day-granularity runs preserve the full locked window. Do not reinterpret a supplied date as end-of-day.
+- Concurrency: candidate discovery alone is insufficient. Write mode must re-read inside the transaction and use a conditional update so repeated/concurrent runs do not report duplicate graduation.
+- Scoring drift: initial recurrence must use the same engagement source and rolling-window default as existing aggregation. If code sharing is introduced, it must not change existing aggregation outputs.
+- Authorization wording: authentication is implemented; role-based admin authorization remains deferred. Tests and docs must state that boundary accurately.
+- Evidence integrity: engagement and vote records are read-only. Graduation changes only the qualifying rotation row.
+
+## Acceptance Criteria
+
+- entries graduate exactly when `enteredPoolAt + newWindowDays <= asOf`;
+- dry run reports what would graduate and performs no writes;
+- write mode transactionally revalidates and conditionally changes qualifying rows;
+- `pool` becomes `MAIN_ROTATION` and `graduatedAt` is set;
+- recurrence score is initialized deterministically from the existing rolling engagement window, or `0` when no qualifying engagement exists;
+- response counts and per-entry skipped reasons are stable and test-covered;
+- votes, engagement history, schedules, propagation evidence, and tier state are not moved or rewritten;
+- endpoint is authenticated using the current MVP guard without claiming unresolved RBAC exists;
+- no schema, migration, cron, provider, UI, or remote-repo change occurs;
+- focused tests, API typecheck, repo verification, workspace audit, diff check, and independent reviews pass on committed HEAD.
+
+## Executor Readiness
+
+issue_active: yes  
+branch_verified: yes  
+owner_contract_identified: yes  
+source_drift_or_bug_identified: not_applicable  
+feature_reviewed_against_repo: yes  
+development_plan_written: yes  
+development_plan_reviewed_by_codex: no  
+files_and_tests_clear: yes  
+risk_impacts_named: yes  
+provider_or_db_risk: no  
+ready_for_executor: no  
+blockers: independent read-only plan review must pass before runtime edits
+
+## Closeout Contract
+
+reviewer_required: yes  
+reviewer_passed: no  
+qa_required: yes  
+qa_passed: no  
+focused_tests_passed: no  
+package_typecheck_passed: no  
+repo_verify_passed: no  
+workspace_audit_passed: no  
+worktree_clean: no  
+owner_spec_verified: no  
+docs_handoff_required: yes  
+docs_handoff_done: no  
+changelog_required: yes  
+changelog_done: no  
+provider_state_touched: no  
+provider_identity_verified: not_required  
+schema_or_migration_touched: no  
+schema_or_migration_verified: not_required  
+linear_ready_to_close: not_applicable  
+blockers: plan review, implementation, verification, and final reviews remain  
+next_signal: independent plan review
