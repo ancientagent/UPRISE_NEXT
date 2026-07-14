@@ -1,8 +1,11 @@
 # New Releases Graduation — Execution Plan And Handoff
 
-**Date:** 2026-07-14  
-**Branch:** `codex/new-releases-graduation`  
-**Starting HEAD:** `375d06c`  
+**Date:** 2026-07-14
+
+**Branch:** `codex/new-releases-graduation`
+
+**Starting HEAD:** `375d06c`
+
 **Status:** complete and independently reviewed; local-only branch preserved
 
 ## A. Evidence Used
@@ -66,22 +69,24 @@ The reviewer confirmed owner-contract alignment, recurrence parity, manual endpo
 
 ## Execution Packet
 
-Lane: API / Fair Play lifecycle  
-Owner Contract: `docs/specs/broadcast/radiyo-and-fair-play.md`  
-Starting Branch / HEAD: `codex/new-releases-graduation` / `375d06c`  
-Must Read: the evidence list above, especially the Fair Play owner spec, admin auth boundary, Slice 5 architecture, and current Fair Play code/tests  
-Do Not Read By Default: legacy mobile code, unrelated UX batch plans, propagation/Sect implementation slices, remote PR state  
-Source Drift / Behavior To Correct: `not_applicable`; this is a first-pass implementation of a missing owner-defined transition  
-Feature / Behavior Scope: manual dry-run/write graduation for one active city-tier community, exact per-entry window eligibility, deterministic recurrence initialization, structured counts/reasons, and no evidence rewrites  
-Repo-Aspects To Verify: Prisma `RotationEntry` shape and indexes; recurrence window semantics; current admin guard; module wiring; transaction and race behavior; focused test conventions  
-Development Plan: see below  
-Plan Review: independent read-only Codex reviewer required before runtime edits  
-Files Likely Touched: `apps/api/src/fair-play/fair-play-graduation.service.ts`, a graduation DTO/controller, `fair-play.module.ts`, focused API tests, this handoff, `docs/CHANGELOG.md`, and implementation-state wording in the active architecture if needed  
-Tests / Validation Seed: focused graduation/controller/module tests; existing recurrence and Fair Play regressions; API typecheck; `pnpm run verify`; workspace audit; diff check  
-Expansion Conditions: expand only if focused tests prove a small shared recurrence helper is required to prevent divergent scoring semantics  
-Stop Conditions: owner-spec conflict; schema/provider change becomes necessary; authorization beyond the documented MVP guard becomes necessary; an unresolved product policy would change eligibility or scoring  
-Branch Owner: Codex local, sole writer  
+```md
+Lane: API / Fair Play lifecycle
+Owner Contract: docs/specs/broadcast/radiyo-and-fair-play.md
+Starting Branch / HEAD: codex/new-releases-graduation / 375d06c
+Must Read: the evidence list above, especially the Fair Play owner spec, admin auth boundary, Slice 5 architecture, and current Fair Play code/tests
+Do Not Read By Default: legacy mobile code, unrelated UX batch plans, propagation/Sect implementation slices, remote PR state
+Source Drift / Behavior To Correct: not_applicable; this is a first-pass implementation of a missing owner-defined transition
+Feature / Behavior Scope: manual dry-run/write graduation for one active city-tier community, exact per-entry window eligibility, deterministic recurrence initialization, structured counts/reasons, and no evidence rewrites
+Repo-Aspects To Verify: Prisma RotationEntry shape and indexes; recurrence window semantics; current admin guard; module wiring; transaction and race behavior; focused test conventions
+Development Plan: see below
+Plan Review: independent read-only Codex reviewer required before runtime edits
+Files Likely Touched: apps/api/src/fair-play/fair-play-graduation.service.ts, a graduation DTO/controller, fair-play.module.ts, focused API tests, this handoff, docs/CHANGELOG.md, and implementation-state wording in the active architecture if needed
+Tests / Validation Seed: focused graduation/controller/module tests; existing recurrence and Fair Play regressions; API typecheck; pnpm run verify; workspace audit; diff check
+Expansion Conditions: expand only if focused tests prove a small shared recurrence helper is required to prevent divergent scoring semantics
+Stop Conditions: owner-spec conflict; schema/provider change becomes necessary; authorization beyond the documented MVP guard becomes necessary; an unresolved product policy would change eligibility or scoring
+Branch Owner: Codex local, sole writer
 Subagent Use: independent read-only plan/code/product-contract reviewers only
+```
 
 ## Development Plan
 
@@ -136,24 +141,27 @@ Subagent Use: independent read-only plan/code/product-contract reviewers only
 
 ## Executor Readiness
 
-issue_active: yes  
-branch_verified: yes  
-owner_contract_identified: yes  
-source_drift_or_bug_identified: not_applicable  
-feature_reviewed_against_repo: yes  
-development_plan_written: yes  
+```text
+issue_active: yes
+branch_verified: yes
+owner_contract_identified: yes
+source_drift_or_bug_identified: not_applicable
+feature_reviewed_against_repo: yes
+development_plan_written: yes
 development_plan_reviewed_by_codex: yes
-files_and_tests_clear: yes  
-risk_impacts_named: yes  
+files_and_tests_clear: yes
+risk_impacts_named: yes
 provider_or_db_risk: yes
 ready_for_executor: yes
 blockers: none
+```
 
 ## Closeout Contract
 
-reviewer_required: yes  
+```text
+reviewer_required: yes
 reviewer_passed: yes
-qa_required: yes  
+qa_required: yes
 qa_passed: yes
 focused_tests_passed: yes (10 suites, 52 tests)
 package_typecheck_passed: yes
@@ -161,17 +169,18 @@ repo_verify_passed: yes
 workspace_audit_passed: yes
 worktree_clean: yes
 owner_spec_verified: yes
-docs_handoff_required: yes  
+docs_handoff_required: yes
 docs_handoff_done: yes
-changelog_required: yes  
+changelog_required: yes
 changelog_done: yes
-provider_state_touched: no  
-provider_identity_verified: not_required  
-schema_or_migration_touched: no  
-schema_or_migration_verified: not_required  
-linear_ready_to_close: not_applicable  
+provider_state_touched: no
+provider_identity_verified: not_required
+schema_or_migration_touched: no
+schema_or_migration_verified: not_required
+linear_ready_to_close: not_applicable
 blockers: none
 next_signal: review Slice 6 official Sect and song-level backing against current owner contracts before any schema implementation
+```
 
 ## Implementation Checkpoint
 
