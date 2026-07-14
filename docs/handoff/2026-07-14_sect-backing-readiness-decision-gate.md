@@ -52,6 +52,8 @@ The following is already settled and is not reopened by this packet:
 - General source affiliation does not automatically make the source's full catalog count.
 - Passive genre/style metadata, listener tags, popularity, Support balance, Participation, votes, and money spent do not count as readiness evidence.
 - The current readiness catalog target is 45 minutes.
+- A song may be readiness-bearing for at most one Sect at a time.
+- The existing Release Deck rule caps one source at 15 active minutes in an Uprise rotation; readiness measurement must preserve that cap.
 - Readiness is diagnostic evidence for a later Registrar motion/approval path. It never automatically creates or activates a Sect Uprise.
 - Song backing and readiness do not affect Fair Play placement, recurrence, voting weight, propagation, or artist rank.
 
@@ -61,87 +63,79 @@ The following is already settled and is not reopened by this packet:
 
 Who makes an Official Sect and a source's affiliation authoritative enough for song backing?
 
-#### Option A — Registrar-gated recognition (recommended)
+#### Option A — Source-submitted, platform-admin approved (recommended)
 
-- A bounded Registrar steward/admin path recognizes the Official Sect inside a Home Scene.
-- Registrar approves or revokes a source's explicit affiliation with that Sect.
+- An authorized manager of a registered source submits a Sect recognition and affiliation request in Registrar.
+- An authenticated platform admin is the bounded MVP approver/revoker until a later owner spec activates a community-held role.
+- Approval creates the Official Sect identity when needed and creates the requesting source's explicit Registrar-held affiliation.
 - An authorized manager of the affiliated source may back only that source's eligible songs.
-- Registrar may invalidate a backing when the underlying affiliation or eligibility is revoked, with an auditable reason.
+- The platform admin may revoke affiliation or invalidate a backing when authority or eligibility is lost, with an auditable reason.
 
-Why this is recommended: it matches the current rule that official affiliation belongs in Registrar, prevents self-assigned tags from becoming authority, and keeps song selection with the artist/source that owns the music.
+Why this is recommended: it lets sources initiate real community formation while keeping Official recognition and affiliation in Registrar, prevents self-assigned tags from becoming authority, identifies a bounded existing MVP approver, and keeps song selection with the source that owns the music.
 
-#### Option B — Source-created with Registrar moderation
+#### Option B — Platform-admin created, source-requested affiliation
 
-- Any eligible registered source may create a Sect and self-affiliate.
-- Registrar intervenes only for moderation, conflicts, or revocation.
+- An authenticated platform admin creates the Official Sect identity in Registrar.
+- An authorized manager of a registered source may request affiliation only with an existing Official Sect.
+- The platform admin approves or revokes that affiliation.
+- An authorized manager of an approved affiliated source may back only that source's eligible songs.
 
-Tradeoff: faster formation, but Official status becomes close to self-asserted unless strong later review rules are added.
+Tradeoff: the authority chain is complete and controlled, but sources cannot initiate a new Sect without separate admin coordination.
 
-#### Option C — Motion-first recognition
-
-- Sources propose a Sect through Registrar.
-- A defined collective threshold or approval process must succeed before the Official Sect or affiliation exists.
-
-Tradeoff: stronger collective legitimacy, but it requires governance and threshold rules that are not ready for the bounded backing/readiness slice.
-
-Founder answer required: A, B, C, or a correction.
+Founder answer required: A, B, or a correction that names the requester, Official Sect creator, affiliation approver/revoker, and song-backing actor in the same answer. A motion-first or community-role model may remain a future direction, but selecting it now would not unblock implementation until its actor and threshold contract is separately settled.
 
 ### Decision 2 — Song-backing lifecycle and reassignment
 
-Can one song actively back more than one Sect, and what history remains after removal or reassignment?
+When a song's single active Sect backing is withdrawn, invalidated, or reassigned, what durable history remains?
 
-#### Option A — One active Sect with retained history (recommended)
+#### Option A — Retain full backing lifecycle history (recommended)
 
-- A song may have at most one active readiness-bearing Sect backing at a time.
 - The source operator may withdraw an active backing.
-- Registrar may invalidate it when authority or eligibility is lost, with a reason.
-- Removal/invalidation closes the active record; it does not erase the historical event.
+- The platform-admin Registrar authority may invalidate it when affiliation or eligibility is lost, with an actor, timestamp, and reason.
+- Withdrawal/invalidation closes the active record; it does not erase the backing relationship or its history.
 - The song may be backed for another Sect only after the prior active backing is closed.
 - Readiness counts only the current active, eligible backing.
 
 Why this is recommended: it prevents double-counting, supports correction and reassignment, and preserves an audit trail without treating the record as Support, Participation, money, or governance weight.
 
-#### Option B — One current assignment, overwritten
+#### Option B — Current backing plus minimal operational audit
 
-- A song has one mutable Sect field/record.
-- Reassignment replaces the prior value without durable lifecycle history.
+- Product state retains only the song's current active backing.
+- Withdrawal, invalidation, and reassignment remove/replace that current relationship.
+- A separate non-readiness operational audit retains actor, timestamp, prior Sect identifier, and reason for accountability.
+- The audit is not an active backing and never contributes minutes.
 
-Tradeoff: simplest storage, but weak accountability and poor dispute/correction evidence.
+Tradeoff: smaller product history surface, but reconstructing the full backing lifecycle requires joining audit events rather than reading retained backing records.
 
-#### Option C — Multiple active Sects
-
-- A song may actively contribute its full minutes to more than one Sect.
-
-Tradeoff: flexible affiliation, but the same catalog can satisfy multiple readiness thresholds unless minutes are split by a new allocation rule.
-
-Founder answer required: A, B, C, or a correction.
+Founder answer required: A, B, or a correction. Every answer preserves the settled one-active-Sect-per-song rule, source withdrawal, Registrar invalidation with reason, and reassignment only after the current backing closes.
 
 ### Decision 3 — Source diversity and contribution cap
 
-Does the 45-minute readiness target require multiple independent sources, and how much may one source contribute?
+Beyond the settled 15-minute per-source cap, does the 45-minute readiness target require an explicit minimum number of distinct sources?
 
 #### Option A — 45 minutes, at least 5 sources, maximum 15 counted minutes per source (recommended)
 
 - Sum only eligible active song backings.
-- Cap each source's counted contribution at 15 minutes.
+- Preserve the existing 15-minute per-source Release Deck cap.
 - Require at least five distinct eligible registered sources with counted music.
 - Readiness requires both 45 capped minutes and five sources.
 
 Why this is recommended: it mirrors the locked city-tier activation balance, prevents a single large catalog from creating the appearance of a functioning subcommunity, and measures both playable depth and community breadth.
 
-#### Option B — 45 minutes only
+#### Option B — No additional distinct-source minimum
 
-- Any number of eligible sources may supply the catalog, including one source.
-- No per-source cap applies.
+- Preserve the existing 15-minute per-source cap and 45-minute total.
+- Do not add a separate distinct-source threshold.
+- The cap means at least three fully contributing sources are mathematically necessary, but three is not encoded as an independent rule.
 
-Tradeoff: simplest and fastest, but a single artist/source could make a Sect readiness-qualified without an operating subcommunity.
+Tradeoff: simpler contract, but a small number of large catalogs could satisfy readiness without the broader participation represented by five sources.
 
-#### Option C — 45 minutes plus a different diversity rule
+#### Option C — A different explicit source minimum
 
-- Keep the 45-minute catalog target.
-- Founder supplies a different minimum-source count, per-source cap, or contribution formula.
+- Preserve the 45-minute target and existing 15-minute per-source cap.
+- Founder supplies a distinct-source minimum other than five.
 
-Founder answer required: A, B, C with values, or a correction.
+Founder answer required: A, B, or C with the minimum-source number. No option removes or weakens existing Release Deck eligibility or contribution caps.
 
 ## E. Decisions deliberately deferred
 
