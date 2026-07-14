@@ -192,6 +192,8 @@ describe('Official Sect identity schema contract', () => {
 
 ## D. Bite-sized implementation tasks
 
+Run every command below from `/home/baris/UPRISE_NEXT`. Do not `cd` into `apps/api`; `pnpm --filter api` supplies the API package context for filtered commands.
+
 ### Task 1 — Add the failing contract test
 
 Files:
