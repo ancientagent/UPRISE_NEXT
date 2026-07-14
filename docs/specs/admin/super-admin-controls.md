@@ -3,7 +3,7 @@
 **ID:** `ADMIN-SUPER`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-04-08`
+**Last Updated:** `2026-07-14`
 
 ## Overview & Purpose
 Defines the Super Admin’s platform oversight capabilities.

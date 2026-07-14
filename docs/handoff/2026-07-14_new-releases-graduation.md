@@ -3,7 +3,7 @@
 **Date:** 2026-07-14  
 **Branch:** `codex/new-releases-graduation`  
 **Starting HEAD:** `375d06c`  
-**Status:** implementation checkpoint built and locally validated; independent execution reviews pending
+**Status:** implementation committed at `41a584b`; code review passed, product runtime review passed, bounded documentation re-review pending
 
 ## A. Evidence Used
 
@@ -25,8 +25,10 @@ Current repo truth:
 - scheduled Release Deck tracks can be manually ingested into `NEW_RELEASES`;
 - each ingested `RotationEntry` stores its locked `newWindowDays` value, currently `10`;
 - recurrence aggregation already sums engagement scores over the configured rolling window, defaulting to `14` days;
-- no runtime service or endpoint graduates expired New Releases entries into Main Rotation;
-- the existing manual Fair Play ingestion endpoint is protected by `JwtAuthGuard` only.
+- committed checkpoint `41a584b` adds the manual graduation service and
+  `POST /admin/fair-play/graduation/run` dry-run/write endpoint;
+- both manual Fair Play lifecycle endpoints are protected by `JwtAuthGuard`;
+  full RBAC remains deferred.
 
 Deferred or unresolved and therefore excluded:
 
@@ -51,7 +53,7 @@ The feature is a bounded Fair Play lifecycle transition:
 - preserved evidence: votes and engagement history remain untouched;
 - systems-scale invariant: all selection is by `communityId` and per-entry state, with no city-, source-, artist-, or fixture-specific behavior.
 
-The slice is a GO because the active owner architecture names it as Slice 5 and current runtime evidence shows the transition is still missing.
+The slice was a GO because the active owner architecture names it as Slice 5 and the transition was missing at the starting checkpoint. It is now implemented at `41a584b` pending final review closeout.
 
 ### Independent Plan Review Result
 
@@ -153,23 +155,23 @@ reviewer_required: yes
 reviewer_passed: no  
 qa_required: yes  
 qa_passed: no  
-focused_tests_passed: yes (5 suites, 24 tests)
+focused_tests_passed: yes (10 suites, 52 tests)
 package_typecheck_passed: yes
-repo_verify_passed: no  
-workspace_audit_passed: no  
-worktree_clean: no  
-owner_spec_verified: no  
+repo_verify_passed: yes
+workspace_audit_passed: yes
+worktree_clean: yes
+owner_spec_verified: yes
 docs_handoff_required: yes  
-docs_handoff_done: no  
+docs_handoff_done: yes
 changelog_required: yes  
-changelog_done: no  
+changelog_done: yes
 provider_state_touched: no  
 provider_identity_verified: not_required  
 schema_or_migration_touched: no  
 schema_or_migration_verified: not_required  
 linear_ready_to_close: not_applicable  
-blockers: plan review, implementation, verification, and final reviews remain  
-next_signal: commit the implementation checkpoint, then independent read-only code and product-contract reviews
+blockers: bounded product documentation re-review remains
+next_signal: commit this documentation correction and request product re-review
 
 ## Implementation Checkpoint
 
@@ -181,10 +183,12 @@ Implemented by the sole branch writer:
 - focused service, controller, and module tests;
 - owner/admin implementation-status, architecture-state, changelog, and handoff updates without changing deferred policy.
 
-First validation on the uncommitted implementation checkpoint:
+Validation on committed implementation checkpoint `41a584b`:
 
-- focused API tests: 5 suites, 24 tests passed;
+- focused Fair Play API regressions: 10 suites, 52 tests passed;
 - API typecheck: passed;
+- `pnpm run verify`: passed;
+- `pnpm run workspace:audit`: passed with 66 registered entries;
 - `git diff --check`: passed.
 - full API suite attempted: 56 of 59 suites and 530 of 540 tests passed; the
   three database-backed integration suites (`communities.test.ts`,
@@ -194,3 +198,14 @@ First validation on the uncommitted implementation checkpoint:
   limitation rather than a graduation implementation failure.
 
 No schema, migration, provider, remote-repo, cron/queue, UI, vote, engagement-history, schedule, tier, or propagation mutation was added.
+
+First product-contract review found no runtime/product drift. It requested this
+bounded documentation correction because the earlier planning/current-state
+language still described graduation as missing after `41a584b` implemented it.
+
+Independent code review passed checkpoint `41a584b` with no critical or
+important findings. Non-blocking carry-forward notes are to add a non-default
+recurrence-window regression if this scoring path changes, replace permissive
+internal `any` types during a future contract-typing pass, and monitor the
+full-community New Releases scan if active pool volume grows enough to justify
+a separately specified pagination or index change.
