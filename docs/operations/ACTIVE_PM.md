@@ -25,9 +25,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Snapshot date: 2026-07-14
 - Base branch: `origin/main` at `a55a54f` after scheduling-client PR #238 merged
 - Current branch: `codex/new-releases-graduation`, active for the authorized sequential submission
-- Local worktree state at refresh: clean before the registered rebase onto the scheduling baseline
+- Local worktree state at refresh: rebased onto the scheduling baseline, freshly reverified, and applying the bounded reviewer-requested operations correction
 - Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PR #238 is merged
-- Recently completed remote slice: scheduling-client PR #238; graduation remains locally reviewed and is next for rebase/reverification/re-review
+- Recently completed remote slice: scheduling-client PR #238; graduation is rebased and reverified, with final bounded re-review in progress before push/PR
 - Provider/db/schema state: no provider writes; the graduation slice does not require schema changes
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -43,7 +43,7 @@ Recently completed context:
 
 - PR #236 merged the Release Deck scheduling stack and related source/listener identity and Support/avatar spec promotions.
 - PR #237 merged the avatar creation/account-profile versus Personal Space/Inventory boundary.
-- The local-only Release Deck scheduling client slice is preserved at `2c979c0` after focused tests, repo verification, workspace audit, and two independent read-only reviews.
+- The Release Deck scheduling client content merged through PR #238 at `a55a54f`; its local branch remains preserved only until sequential closeout is complete.
 - The local-only graduation slice adds exact stored-window eligibility, dry-run/write execution, deterministic engagement-derived initial recurrence, and conditional idempotent rotation updates; independent plan, code, and product reviews passed.
 
 ## Active Slice
@@ -64,14 +64,14 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #238 | `codex/release-deck-scheduling-client` | open, independently reviewed | Await required checks/codeowner review, then merge through the protected PR path. |
+| #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/new-releases-graduation` | reviewed local checkpoint before rebase | Active sole-writer submission; reviewers remain read-only. |
+| `/home/baris/UPRISE_NEXT` | `codex/new-releases-graduation` | rebased branch HEAD after fresh validation | Active sole-writer submission; bounded final re-review in progress. |
 
 ### Preserved UX Reference Worktrees
 
@@ -137,7 +137,7 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Rebase, reverify, independently re-review, push, and open the graduation PR against the merged scheduling baseline.
+1. Complete the bounded operations-doc re-review, then push and open the graduation PR against the merged scheduling baseline.
 2. Begin Slice 6 Official Sect/song-level backing with owner-contract/schema review and an independently reviewed implementation plan before writing it.
 3. Keep cron/queue automation, propagation/cap policy, unresolved RBAC, and UI expansion out of the next slice unless owner contracts explicitly authorize them.
 4. Keep draft PR #212 and preserved UX reference worktrees/branches untouched unless the user explicitly reprioritizes them.

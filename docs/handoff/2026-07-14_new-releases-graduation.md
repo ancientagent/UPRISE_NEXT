@@ -4,9 +4,11 @@
 
 **Branch:** `codex/new-releases-graduation`
 
-**Starting HEAD:** `375d06c`
+**Original Starting HEAD:** `375d06c`
 
-**Status:** complete and independently reviewed; local-only branch preserved
+**Rebased Onto:** `origin/main` at `a55a54f` after PR #238
+
+**Status:** rebased and reverified; reviewer-requested authority/operations correction applied for bounded final re-review
 
 ## A. Evidence Used
 
@@ -28,7 +30,7 @@ Current repo truth:
 - scheduled Release Deck tracks can be manually ingested into `NEW_RELEASES`;
 - each ingested `RotationEntry` stores its locked `newWindowDays` value, currently `10`;
 - recurrence aggregation already sums engagement scores over the configured rolling window, defaulting to `14` days;
-- committed checkpoint `41a584b` adds the manual graduation service and
+- rebased implementation checkpoint `2ee9a40` adds the manual graduation service and
   `POST /admin/fair-play/graduation/run` dry-run/write endpoint;
 - both manual Fair Play lifecycle endpoints are protected by `JwtAuthGuard`;
   full RBAC remains deferred.
@@ -56,11 +58,11 @@ The feature is a bounded Fair Play lifecycle transition:
 - preserved evidence: votes and engagement history remain untouched;
 - systems-scale invariant: all selection is by `communityId` and per-entry state, with no city-, source-, artist-, or fixture-specific behavior.
 
-The slice was a GO because the active owner architecture names it as Slice 5 and the transition was missing at the starting checkpoint. It is now implemented at `41a584b` pending final review closeout.
+The slice was a GO because the active owner architecture names it as Slice 5 and the transition was missing at the original starting checkpoint. It is implemented at rebased checkpoint `2ee9a40` and has passed fresh branch verification.
 
 ### Independent Plan Review Result
 
-PASS at committed plan checkpoint `157d990`; no blocking findings.
+PASS at original plan checkpoint `157d990`, rebased as `7808d53`; no blocking findings.
 
 The reviewer confirmed owner-contract alignment, recurrence parity, manual endpoint scope, current authentication wording, and the transaction/concurrency design. Two optional clarifications were accepted into this plan before implementation:
 
@@ -192,7 +194,8 @@ Implemented by the sole branch writer:
 - focused service, controller, and module tests;
 - owner/admin implementation-status, architecture-state, changelog, and handoff updates without changing deferred policy.
 
-Validation on committed implementation checkpoint `41a584b`:
+Validation on rebased branch checkpoint `4cc4fca` before the bounded
+authority/operations correction:
 
 - focused Fair Play API regressions: 10 suites, 52 tests passed;
 - API typecheck: passed;
@@ -208,18 +211,22 @@ Validation on committed implementation checkpoint `41a584b`:
 
 No schema, migration, provider, remote-repo, cron/queue, UI, vote, engagement-history, schedule, tier, or propagation mutation was added.
 
-First product-contract review found no runtime/product drift. It requested this
+First product-contract review found no runtime/product drift. It requested a
 bounded documentation correction because the earlier planning/current-state
-language still described graduation as missing after `41a584b` implemented it.
+language still described graduation as missing after the original `41a584b`
+implementation checkpoint, now rebased as `2ee9a40`.
 
-Independent code review passed checkpoint `41a584b` with no critical or
-important findings. Non-blocking carry-forward notes are to add a non-default
+Independent code review passed the original implementation checkpoint
+`41a584b`, now rebased as `2ee9a40`, with no critical or important runtime
+findings. Non-blocking carry-forward notes are to add a non-default
 recurrence-window regression if this scoring path changes, replace permissive
 internal `any` types during a future contract-typing pass, and monitor the
 full-community New Releases scan if active pool volume grows enough to justify
 a separately specified pagination or index change.
 
-The bounded product documentation re-review passed at `b333d79`; it confirmed
-the current-state, closeout routing, deferred RBAC wording, and lack of product
-overstatement. The implementation branch is preserved locally and has not been
-pushed or opened as a PR.
+The bounded pre-rebase product documentation re-review passed at original
+checkpoint `b333d79`; it confirmed deferred RBAC wording and lack of product
+overstatement. After rebase, fresh code and product reviews again passed the
+runtime/product boundary and requested only that current execution routing and
+pre-rebase hash labels be refreshed before remote submission. This correction
+records that current state for final bounded re-review.
