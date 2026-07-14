@@ -4,7 +4,7 @@
 **Branch:** `codex/release-deck-scheduling-client`
 **Base:** local `main` at `8c4ab4d`
 **Deployment Target:** none; local-only single-writer checkpoint
-**Status:** first review blockers corrected; final verification and read-only reviewer gate pending
+**Status:** runtime checkpoints committed; final accessibility re-review pending
 **Agent:** Codex local sole writer
 
 ## Summary
@@ -83,15 +83,16 @@ and assignment mode.
 - Baseline before implementation:
   - Source Dashboard runtime: `7/7` passed.
   - Release Deck API scheduling/controller: `26/26` passed.
-- Final focused web suite: `8` suites, `35/35` passed.
+- Final focused web suite: `8` suites, `37/37` passed.
 - Reviewer-fix API scheduling/controller suite: `2` suites, `34/34` passed.
 - `pnpm run verify` passed: docs lint, canon lint, infrastructure policy, and
   all workspace typechecks.
 - `pnpm run workspace:audit` passed with `65` registry entries.
 - The combined branch diff from `8c4ab4d` passes `git diff --check` after the
   handoff whitespace correction.
-- Local reviewer-fix checkpoint commit and final read-only reviewer passes
-  remain required before closeout.
+- Runtime reviewer-fix checkpoint: `ddf6ccb`.
+- Accessibility-result checkpoint: `f200df4`.
+- The final client accessibility re-review remains required before closeout.
 
 ## First Review Findings Corrected
 
@@ -104,6 +105,20 @@ and assignment mode.
 - Prevented stale write responses from updating another loaded row/source.
 - Refetched availability after write rejection and preserved nested API errors.
 - Added async status/error semantics and corrected spec/operations drift.
+
+## Final Review State
+
+- Database/code reviewer: pass at `ddf6ccb`; no critical or important findings.
+- Client/product reviewer: functional and product boundaries passed, but the
+  first final pass blocked on successful availability completion not being
+  announced after the checking status unmounted.
+- `f200df4` adds a live result status for available and unavailable completion,
+  tests both announcements, explicitly checks for absent Fair Play controls,
+  and verifies stale authentication responses are discarded.
+- Remaining non-blocking production risks: exercise a real PostgreSQL
+  serialization race before production rollout, add a direct `P2002` race-path
+  test, and revisit conservative protected-window tuning when real load data is
+  available.
 
 ## Review And Continuation
 

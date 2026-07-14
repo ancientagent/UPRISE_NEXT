@@ -1,6 +1,6 @@
 # Artist Profile / Source Dashboard Screen Package
 
-Status: initial Release Deck readiness slice implemented; additive scheduling client final review active locally
+Status: initial Release Deck readiness slice implemented; additive scheduling client accessibility re-review active locally
 Package owner: current UPRISE implementation owner / Dev Team Manager
 Owner spec: `docs/specs/users/artist-profile-and-source-dashboard.md`
 Workflow evaluation: `docs/screen-packages/artist-profile-source-dashboard/workflow-evaluation.md`
@@ -42,7 +42,9 @@ owner truth is `docs/specs/media/release-deck-and-eligibility.md`; the older
 readiness Dev Spec predates the schedule runtime and remains historical package
 evidence where it conflicts. The first read-only review found server capacity,
 authorization, atomicity, and client race issues; the sole writer corrected
-those findings and the final reviewer gate is pending.
+those findings. The database/code gate passed; the client gate requested an
+accessible availability-completion announcement, now implemented and awaiting
+one bounded re-review.
 
 After this scheduling client is locally verified and reviewed, do not infer a
 second implementation slice from this package. New Releases graduation,

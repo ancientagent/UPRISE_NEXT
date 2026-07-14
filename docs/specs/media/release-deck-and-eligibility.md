@@ -275,7 +275,8 @@ model.
 - Web scheduling tests prove the client requests server-owned availability,
   submits `soonest` and returned `chosen` alternatives, restores existing saved
   schedule state, refreshes after write conflicts, ignores stale row responses,
-  and does not expose Fair Play ordering controls.
+  announces available/unavailable completion, and does not expose Fair Play
+  ordering controls.
 - Fair Play ingestion tests prove every ingested schedule receives the
   broadcast-owned fixed `10` day protected New Releases run regardless of
   Uprise deck density.

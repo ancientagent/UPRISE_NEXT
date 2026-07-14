@@ -20,7 +20,9 @@
   inactive-city and past/out-of-window requests, counts scheduled and ingested
   rows in capacity, makes validation plus creation serializable, refreshes
   availability after write conflicts, and prevents stale row/source responses
-  from overwriting current UI state.
+  from overwriting current UI state. Availability completion is now announced
+  for assistive technology in both available and unavailable states, with stale
+  authentication responses and absent Fair Play controls covered explicitly.
 - Fixed the listener-identity leak in the public Artist Profile contract:
   `ArtistBand` gained source-owned `bio`/`avatar`/`coverImage` fields and
   `ArtistBandMember` gained a source-provided `headshotUrl`, the profile API
