@@ -3,7 +3,7 @@
 **Date:** 2026-07-14  
 **Branch:** `codex/new-releases-graduation`  
 **Starting HEAD:** `375d06c`  
-**Status:** plan awaiting independent review; no runtime edits yet
+**Status:** plan approved by independent read-only review; implementation authorized
 
 ## A. Evidence Used
 
@@ -52,6 +52,15 @@ The feature is a bounded Fair Play lifecycle transition:
 - systems-scale invariant: all selection is by `communityId` and per-entry state, with no city-, source-, artist-, or fixture-specific behavior.
 
 The slice is a GO because the active owner architecture names it as Slice 5 and current runtime evidence shows the transition is still missing.
+
+### Independent Plan Review Result
+
+PASS at committed plan checkpoint `157d990`; no blocking findings.
+
+The reviewer confirmed owner-contract alignment, recurrence parity, manual endpoint scope, current authentication wording, and the transaction/concurrency design. Two optional clarifications were accepted into this plan before implementation:
+
+- `provider_or_db_risk` is `yes` because write mode mutates rotation rows transactionally, even though no schema, migration, provider, or infrastructure change is involved;
+- eligibility always uses the stored `enteredPoolAt` timestamp without normalization. Canonical scheduled ingestion writes UTC day-start timestamps, while any legacy timestamped row retains its exact timestamp boundary.
 
 ## Execution Packet
 
@@ -104,7 +113,7 @@ Subagent Use: independent read-only plan/code/product-contract reviewers only
 
 ## Risk Review
 
-- Date boundary: use the owner contract's exact `<= asOf` rule. Because ingestion writes day-start timestamps, day-granularity runs preserve the full locked window. Do not reinterpret a supplied date as end-of-day.
+- Date boundary: use the owner contract's exact `<= asOf` rule against the unmodified stored `enteredPoolAt` timestamp. Canonical scheduled ingestion writes day-start timestamps, so day-granularity runs preserve the full locked window; a legacy timestamped row remains ineligible until its exact timestamp boundary. Do not reinterpret a supplied date as end-of-day.
 - Concurrency: candidate discovery alone is insufficient. Write mode must re-read inside the transaction and use a conditional update so repeated/concurrent runs do not report duplicate graduation.
 - Scoring drift: initial recurrence must use the same engagement source and rolling-window default as existing aggregation. If code sharing is introduced, it must not change existing aggregation outputs.
 - Authorization wording: authentication is implemented; role-based admin authorization remains deferred. Tests and docs must state that boundary accurately.
@@ -131,12 +140,12 @@ owner_contract_identified: yes
 source_drift_or_bug_identified: not_applicable  
 feature_reviewed_against_repo: yes  
 development_plan_written: yes  
-development_plan_reviewed_by_codex: no  
+development_plan_reviewed_by_codex: yes
 files_and_tests_clear: yes  
 risk_impacts_named: yes  
-provider_or_db_risk: no  
-ready_for_executor: no  
-blockers: independent read-only plan review must pass before runtime edits
+provider_or_db_risk: yes
+ready_for_executor: yes
+blockers: none
 
 ## Closeout Contract
 
@@ -160,4 +169,4 @@ schema_or_migration_touched: no
 schema_or_migration_verified: not_required  
 linear_ready_to_close: not_applicable  
 blockers: plan review, implementation, verification, and final reviews remain  
-next_signal: independent plan review
+next_signal: sole-writer implementation from the approved plan
