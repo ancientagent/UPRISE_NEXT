@@ -1,4 +1,3 @@
-
 import type { ApiResponse } from '@uprise/types';
 
 export function resolveApiUrl(): string {
@@ -17,10 +16,28 @@ interface RequestOptions extends RequestInit {
   token?: string;
 }
 
-async function fetcher<T>(
-  endpoint: string,
-  options: RequestOptions = {}
-): Promise<ApiResponse<T>> {
+export function resolveApiErrorMessage(payload: unknown): string {
+  if (!payload || typeof payload !== 'object') return 'Request failed';
+
+  const candidate = payload as {
+    error?: unknown;
+    message?: unknown;
+  };
+  if (candidate.error && typeof candidate.error === 'object') {
+    const errorMessage = (candidate.error as { message?: unknown }).message;
+    if (typeof errorMessage === 'string' && errorMessage.trim()) return errorMessage;
+  }
+  if (candidate.message && typeof candidate.message === 'object') {
+    const nestedMessage = resolveApiErrorMessage(candidate.message);
+    if (nestedMessage !== 'Request failed') return nestedMessage;
+  }
+  if (typeof candidate.message === 'string' && candidate.message.trim()) return candidate.message;
+  if (typeof candidate.error === 'string' && candidate.error.trim()) return candidate.error;
+
+  return 'Request failed';
+}
+
+async function fetcher<T>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
   const { token, ...fetchOptions } = options;
 
   const headers: Record<string, string> = {
@@ -42,7 +59,7 @@ async function fetcher<T>(
       success: false,
       error: { code: 'UNKNOWN_ERROR', message: 'An unknown error occurred' },
     }));
-    throw new Error(error.error?.message || 'Request failed');
+    throw new Error(resolveApiErrorMessage(error));
   }
 
   return response.json();

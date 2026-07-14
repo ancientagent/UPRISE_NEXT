@@ -176,6 +176,9 @@ describe('cross-route UX consistency lock', () => {
     expect(releaseDeckSource).toContain('Release Deck stays inside the selected source file and does not mutate listener player state.');
     expect(releaseDeckSource).toContain('inactive attachment concept');
     expect(releaseDeckSource).toContain('buildReleaseDeckTrackPayload(form, activeSource, communityId)');
-    expect(releaseDeckSource).toContain('<Link href="/registrar" className="underline underline-offset-2">Open Registrar</Link>');
+    expect(releaseDeckSource).toContain(
+      '<Link href="/registrar" className="underline underline-offset-2">'
+    );
+    expect(releaseDeckSource).toContain('Open Registrar');
   });
 });

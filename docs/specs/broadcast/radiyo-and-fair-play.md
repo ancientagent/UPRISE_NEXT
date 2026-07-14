@@ -217,7 +217,8 @@ Owner references:
 - Practical floor/removal policy for persistently low-recurrence songs.
 - `GRADUATION_CAP_PER_RUN` numeric value.
 - Automated production policy for cross-state proxy advancement identity.
-- Exact Release Deck scheduling capacity algorithm and scheduler/job wiring.
+- Production tuning for Release Deck scheduling capacity values and
+  scheduler/job wiring.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

@@ -9,6 +9,20 @@
 
 ### Added
 
+- Connected the Source Dashboard Release Deck to the implemented scheduling
+  stack: loading a source-owned ready row now checks server-calculated 30-day
+  capacity, offers `soonest` or one of the returned available dates, persists a
+  schedule through `POST /release-deck/schedule`, restores durable scheduled
+  date/assignment state after reload, and never exposes Fair Play ordering or
+  priority controls. Existing-schedule availability responses now include the
+  saved schedule summary required by the client; focused web/API tests cover
+  the contract. Reviewer hardening now source-authorizes availability, rejects
+  inactive-city and past/out-of-window requests, counts scheduled and ingested
+  rows in capacity, makes validation plus creation serializable, refreshes
+  availability after write conflicts, and prevents stale row/source responses
+  from overwriting current UI state. Availability completion is now announced
+  for assistive technology in both available and unavailable states, with stale
+  authentication responses and absent Fair Play controls covered explicitly.
 - Fixed the listener-identity leak in the public Artist Profile contract:
   `ArtistBand` gained source-owned `bio`/`avatar`/`coverImage` fields and
   `ArtistBandMember` gained a source-provided `headshotUrl`, the profile API

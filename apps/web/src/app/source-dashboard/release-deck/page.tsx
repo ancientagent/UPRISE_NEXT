@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import {
   CheckCircle2,
@@ -23,7 +23,16 @@ import {
   getReleaseDeckSubmitBlockReason,
   releaseDeckMissingHomeSceneMessage,
 } from '@/lib/source/release-deck-validation';
-import { SourceAccountSwitcher, formatSourceMembershipRole } from '@/components/source/SourceAccountSwitcher';
+import {
+  createReleaseDeckSchedule,
+  getReleaseDeckScheduleAvailability,
+  type ReleaseDeckScheduleAvailabilityResponse,
+  type ReleaseDeckScheduleMode,
+} from '@/lib/source/release-deck-scheduling';
+import {
+  SourceAccountSwitcher,
+  formatSourceMembershipRole,
+} from '@/components/source/SourceAccountSwitcher';
 import type { CurrentUserSourceProfile, ManagedSourceAccount } from '@/lib/source/types';
 import { useAuthStore } from '@/store/auth';
 import { useSourceAccountStore } from '@/store/source-account';
@@ -50,6 +59,7 @@ type ReleaseDeckRowsProps = {
   currentDeckTracks: ArtistBandTrackSummary[];
   loadedTrackId: string | null;
   onLoadTrack: (trackId: string) => void;
+  scheduleSummaries: Record<string, ReleaseDeckScheduleSummary>;
 };
 
 type ReleaseDeckFormProps = {
@@ -61,6 +71,27 @@ type ReleaseDeckFormProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   submitError: string | null;
   submitMessage: string | null;
+};
+
+type ReleaseDeckScheduleSummary = {
+  state: 'checking' | 'unscheduled' | 'scheduled' | 'unavailable';
+  scheduledFor?: string;
+};
+
+type ReleaseDeckSchedulePanelProps = {
+  activeSource: ManagedSourceAccount;
+  availability: ReleaseDeckScheduleAvailabilityResponse | null;
+  communityId: string | null;
+  isCheckingAvailability: boolean;
+  isScheduling: boolean;
+  loadedTrack: ArtistBandTrackSummary | null;
+  mode: ReleaseDeckScheduleMode;
+  onModeChange: (mode: ReleaseDeckScheduleMode) => void;
+  onRequestedDateChange: (date: string) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  requestedDate: string;
+  scheduleError: string | null;
+  scheduleMessage: string | null;
 };
 
 const emptyForm: ReleaseDeckFormState = {
@@ -75,7 +106,12 @@ const reportButtonClass =
   'h-auto rounded-[0.3rem] border-2 border-black bg-[#fbfbf4] px-4 py-2 text-[11px] font-black uppercase tracking-[0.08em] text-black shadow-[2px_2px_0_rgba(0,0,0,0.16)] hover:bg-white';
 const disabledReportButtonClass =
   'inline-flex h-auto items-center rounded-[0.3rem] border-2 border-black/20 bg-black/5 px-4 py-2 text-[11px] font-black uppercase tracking-[0.08em] text-black/30';
-const inputClass = 'mt-2 w-full rounded-[0.25rem] border-2 border-black bg-white px-3 py-2 text-sm font-semibold text-black';
+const inputClass =
+  'mt-2 w-full rounded-[0.25rem] border-2 border-black bg-white px-3 py-2 text-sm font-semibold text-black';
+const sourceRecordBoundaryCopy =
+  'Release Deck stays inside the selected source file and does not mutate listener player state.';
+const capReachedBoundaryCopy =
+  'Cap reached: this screen will not silently replace existing tracks or create an extra active music slot. Choose a different active song combination when replacement tooling is specified.';
 
 function formatDuration(seconds: number) {
   const minutes = Math.floor(seconds / 60);
@@ -85,9 +121,16 @@ function formatDuration(seconds: number) {
 
 function formatDateLabel(value: string | null | undefined) {
   if (!value) return 'Runtime date pending';
-  const parsed = new Date(value);
+  const parsed = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00.000Z`)
+    : new Date(value);
   if (Number.isNaN(parsed.getTime())) return 'Runtime date pending';
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(parsed);
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(parsed);
 }
 
 function getInitials(value: string) {
@@ -115,11 +158,15 @@ function ReleaseDeckCommandLine({
         </span>
       </div>
       <div className="flex min-h-[4rem] items-center border-b-2 border-black px-4 lg:border-b-0">
-        <h1 className="text-xl font-black uppercase tracking-[0.04em] sm:text-2xl">SOURCE DASHBOARD</h1>
+        <h1 className="text-xl font-black uppercase tracking-[0.04em] sm:text-2xl">
+          SOURCE DASHBOARD
+        </h1>
       </div>
       <div className="flex min-h-[4rem] items-center gap-2 border-b-2 border-black px-4 text-sm font-semibold lg:border-b-0 lg:border-l-2">
         <UserRound aria-hidden className="h-5 w-5" />
-        <span data-testid="source-command-role">{signedInLabel} · {roleLabel}</span>
+        <span data-testid="source-command-role">
+          {signedInLabel} · {roleLabel}
+        </span>
       </div>
       <div className="flex min-h-[4rem] items-center border-b-2 border-black px-4 lg:border-b-0 lg:border-l-2">
         <SourceAccountSwitcher
@@ -141,12 +188,18 @@ function ReleaseDeckCommandLine({
   );
 }
 
-function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoadTrack }: ReleaseDeckRowsProps) {
+function ReleaseDeckRows({
+  activeSource,
+  currentDeckTracks,
+  loadedTrackId,
+  onLoadTrack,
+  scheduleSummaries,
+}: ReleaseDeckRowsProps) {
   const rows = Array.from({ length: 3 }, (_, index) => currentDeckTracks[index] ?? null);
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-[58rem] w-full border-collapse text-left text-sm">
+      <table className="w-full min-w-[58rem] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b-2 border-black text-[11px] font-black uppercase tracking-[0.08em] text-black/75">
             <th className="w-16 border-r-2 border-black px-3 py-2 text-center">#</th>
@@ -164,14 +217,28 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
             const sourceOwned = track?.artistBandId === activeSource.id;
             const validSourceOwnedTrack = Boolean(sourceOwned && track?.status === 'ready');
             const selected = loadedTrackId === track?.id;
+            const scheduleSummary = track ? scheduleSummaries[track.id] : undefined;
 
             return (
-              <tr key={`release-row-${index + 1}`} className={selected ? 'border-b-2 border-black bg-[#eef6dc]' : 'border-b-2 border-black last:border-b-0'}>
-                <td className="border-r-2 border-black px-3 py-3 text-center text-xl font-black">{index + 1}</td>
+              <tr
+                key={`release-row-${index + 1}`}
+                className={
+                  selected
+                    ? 'border-b-2 border-black bg-[#eef6dc]'
+                    : 'border-b-2 border-black last:border-b-0'
+                }
+              >
+                <td className="border-r-2 border-black px-3 py-3 text-center text-xl font-black">
+                  {index + 1}
+                </td>
                 <td className="border-r-2 border-black px-3 py-3">
                   {track?.coverArt ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={track.coverArt} alt={`${track.title} cover art`} className="h-16 w-20 rounded-[0.2rem] border-2 border-black object-cover" />
+                    <img
+                      src={track.coverArt}
+                      alt={`${track.title} cover art`}
+                      className="h-16 w-20 rounded-[0.2rem] border-2 border-black object-cover"
+                    />
                   ) : (
                     <div className="flex h-16 w-20 items-center justify-center rounded-[0.2rem] border-2 border-black bg-[#111] px-2 text-center text-[10px] font-black uppercase leading-tight text-white">
                       {track ? track.title : '+'}
@@ -189,7 +256,9 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
                   ) : (
                     <>
                       <p className="text-lg font-black text-black">Open Slot</p>
-                      <p className="text-sm font-semibold text-black/65">Load a source-owned hosted URL track.</p>
+                      <p className="text-sm font-semibold text-black/65">
+                        Load a source-owned hosted URL track.
+                      </p>
                     </>
                   )}
                 </td>
@@ -197,12 +266,24 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
                   {track ? formatDuration(track.duration) : '—'}
                 </td>
                 <td className="border-r-2 border-black px-3 py-3 font-semibold">
-                  {track ? formatDateLabel(track.createdAt) : '—'}
+                  {track
+                    ? scheduleSummary?.state === 'scheduled'
+                      ? formatDateLabel(scheduleSummary.scheduledFor)
+                      : scheduleSummary?.state === 'checking'
+                        ? 'Checking...'
+                        : scheduleSummary?.state === 'unscheduled'
+                          ? 'Not scheduled'
+                          : scheduleSummary?.state === 'unavailable'
+                            ? 'Unavailable'
+                            : 'Load to check'
+                    : '—'}
                 </td>
                 <td className="border-r-2 border-black px-3 py-3">
                   {track ? (
                     <span className="inline-flex items-center gap-2 font-black text-black">
-                      {validSourceOwnedTrack ? <CheckCircle2 aria-hidden className="h-5 w-5 text-[#17672a]" /> : null}
+                      {validSourceOwnedTrack ? (
+                        <CheckCircle2 aria-hidden className="h-5 w-5 text-[#17672a]" />
+                      ) : null}
                       {validSourceOwnedTrack ? 'Valid' : track.status}
                     </span>
                   ) : (
@@ -211,7 +292,10 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
                 </td>
                 <td className="border-r-2 border-black px-3 py-3">
                   {track ? (
-                    <a href={track.fileUrl} className="break-all text-sm font-semibold underline underline-offset-2">
+                    <a
+                      href={track.fileUrl}
+                      className="break-all text-sm font-semibold underline underline-offset-2"
+                    >
                       {track.fileUrl}
                     </a>
                   ) : (
@@ -220,7 +304,13 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
                 </td>
                 <td className="px-3 py-3 text-center">
                   {track ? (
-                    <Button type="button" size="sm" variant="outline" className={reportButtonClass} onClick={() => onLoadTrack(track.id)}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className={reportButtonClass}
+                      onClick={() => onLoadTrack(track.id)}
+                    >
                       Load
                     </Button>
                   ) : (
@@ -238,6 +328,178 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
   );
 }
 
+function ReleaseDeckSchedulePanel({
+  activeSource,
+  availability,
+  communityId,
+  isCheckingAvailability,
+  isScheduling,
+  loadedTrack,
+  mode,
+  onModeChange,
+  onRequestedDateChange,
+  onSubmit,
+  requestedDate,
+  scheduleError,
+  scheduleMessage,
+}: ReleaseDeckSchedulePanelProps) {
+  if (!loadedTrack) {
+    return (
+      <div className="mt-4 border-2 border-dashed border-black/35 px-3 py-3 text-sm font-semibold text-black/60">
+        Load a source-owned ready row to check its Release Deck scheduling capacity.
+      </div>
+    );
+  }
+
+  const sourceOwnedReady =
+    loadedTrack.artistBandId === activeSource.id && loadedTrack.status === 'ready';
+  if (!sourceOwnedReady) {
+    return (
+      <div className="mt-4 border-2 border-black px-3 py-3 text-sm font-black text-[#7a1f1f]">
+        Scheduling is available only for valid source-owned ready tracks. Legacy carry-forward and
+        processing rows remain read-only here.
+      </div>
+    );
+  }
+
+  if (isCheckingAvailability) {
+    return (
+      <div
+        aria-live="polite"
+        className="mt-4 border-2 border-black px-3 py-3 text-sm font-semibold text-black/65"
+        role="status"
+      >
+        Checking server-calculated release-date capacity...
+      </div>
+    );
+  }
+
+  const existingSchedule =
+    availability && !availability.success ? availability.error.schedule : undefined;
+  if (existingSchedule) {
+    return (
+      <div
+        aria-live="polite"
+        className="mt-4 border-2 border-black bg-[#eef6dc] px-3 py-3"
+        role="status"
+      >
+        <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+          Release date scheduled
+        </p>
+        <p className="mt-2 text-lg font-black text-black">
+          {formatDateLabel(existingSchedule.scheduledFor)} · {existingSchedule.status}
+        </p>
+        <p className="mt-1 text-sm font-semibold text-black/65">
+          {existingSchedule.assignmentMode === 'soonest'
+            ? 'The system assigned the soonest valid date.'
+            : 'The source selected this available date.'}
+        </p>
+        {scheduleMessage ? (
+          <p className="mt-2 text-sm font-black text-[#195b2d]">{scheduleMessage}</p>
+        ) : null}
+      </div>
+    );
+  }
+
+  const alternatives = availability
+    ? availability.success
+      ? availability.data.alternatives
+      : (availability.error.alternatives ?? [])
+    : [];
+  const soonestValidDate = availability
+    ? availability.success
+      ? availability.data.soonestValidDate
+      : (availability.error.soonestValidDate ?? null)
+    : null;
+  const availabilityError = availability && !availability.success ? availability.error : null;
+  const canSchedule = Boolean(communityId && soonestValidDate && alternatives.length > 0);
+
+  return (
+    <div className="mt-4 border-2 border-black px-3 py-3">
+      <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+        Release-date scheduling
+      </p>
+      {availability ? (
+        <div aria-live="polite" role="status">
+          {soonestValidDate ? (
+            <p className="mt-2 text-lg font-black text-black">
+              Soonest available: {formatDateLabel(soonestValidDate)}
+            </p>
+          ) : (
+            <p className="mt-2 text-sm font-semibold text-black/65">
+              No schedulable date is currently available in the 30-day server lookahead.
+            </p>
+          )}
+        </div>
+      ) : null}
+      {availabilityError ? (
+        <p className="mt-2 text-sm font-black text-[#7a1f1f]" role="alert">
+          {availabilityError.message}
+        </p>
+      ) : null}
+      {scheduleError ? (
+        <p className="mt-2 text-sm font-black text-[#7a1f1f]" role="alert">
+          {scheduleError}
+        </p>
+      ) : null}
+      {canSchedule ? (
+        <form
+          data-testid="release-deck-schedule-form"
+          className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+          onSubmit={onSubmit}
+        >
+          <label className="block text-sm text-black">
+            <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+              Assignment
+            </span>
+            <select
+              name="scheduleMode"
+              value={mode}
+              onChange={(event) => onModeChange(event.target.value as ReleaseDeckScheduleMode)}
+              className={inputClass}
+            >
+              <option value="soonest">Soonest available</option>
+              <option value="chosen">Choose available date</option>
+            </select>
+          </label>
+
+          <label className="block text-sm text-black">
+            <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+              Available release date
+            </span>
+            <select
+              name="scheduleDate"
+              disabled={mode !== 'chosen'}
+              value={requestedDate}
+              onChange={(event) => onRequestedDateChange(event.target.value)}
+              className={`${inputClass} disabled:bg-black/5 disabled:text-black/50`}
+            >
+              {alternatives.map((date) => (
+                <option key={date} value={date}>
+                  {formatDateLabel(date)}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <Button
+            type="submit"
+            disabled={isScheduling || (mode === 'chosen' && !requestedDate)}
+            className="rounded-[0.3rem] border-2 border-black bg-[#b8d63b] px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-black shadow-[2px_2px_0_rgba(0,0,0,0.16)] hover:bg-[#d7f06a]"
+          >
+            {isScheduling ? 'Scheduling...' : 'Schedule song'}
+          </Button>
+        </form>
+      ) : null}
+
+      <p className="mt-3 text-xs font-semibold text-black/55">
+        Capacity is calculated by the API. Scheduling cannot buy priority, reorder Fair Play, or
+        shorten another song’s protected New Releases run.
+      </p>
+    </div>
+  );
+}
+
 function ReleaseSingleForm({
   activeSource,
   communityId,
@@ -251,21 +513,36 @@ function ReleaseSingleForm({
   return (
     <section className="border-2 border-black bg-[#fbfbf4]">
       <div className="border-b-2 border-black px-4 py-3">
-        <p className="text-xs font-black uppercase tracking-[0.16em] text-black/55">Release Single</p>
-        <h2 className="mt-2 text-xl font-black">Create a URL-only single from this source context</h2>
+        <p className="text-xs font-black uppercase tracking-[0.16em] text-black/55">
+          Release Single
+        </p>
+        <h2 className="mt-2 text-xl font-black">
+          Create a URL-only single from this source context
+        </h2>
         <p className="mt-2 text-sm font-semibold text-black/65">
-          This MVP path writes a source-owned ready track from an explicit hosted audio URL. Release date scheduling, upload storage, metadata editing, and replacement controls remain outside this slice.
+          This MVP path writes a source-owned ready track from an explicit hosted audio URL. After
+          creation, load the row to check release-date capacity. Upload storage, metadata editing,
+          and replacement controls remain outside this slice.
         </p>
       </div>
 
       <form className="space-y-3 px-4 py-4" onSubmit={onSubmit}>
         <label className="block text-sm text-black">
-          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Source</span>
-          <input name="source" disabled value={activeSource.name} className={`${inputClass} bg-black/5 text-black/75`} />
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+            Source
+          </span>
+          <input
+            name="source"
+            disabled
+            value={activeSource.name}
+            className={`${inputClass} bg-black/5 text-black/75`}
+          />
         </label>
 
         <label className="block text-sm text-black">
-          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Title</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+            Title
+          </span>
           <input
             name="title"
             required
@@ -277,7 +554,9 @@ function ReleaseSingleForm({
         </label>
 
         <label className="block text-sm text-black">
-          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Album</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+            Album
+          </span>
           <input
             name="album"
             value={form.album}
@@ -288,7 +567,9 @@ function ReleaseSingleForm({
         </label>
 
         <label className="block text-sm text-black">
-          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Duration (seconds)</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+            Duration (seconds)
+          </span>
           <input
             name="duration"
             required
@@ -298,11 +579,15 @@ function ReleaseSingleForm({
             className={inputClass}
             placeholder="210"
           />
-          <span className="mt-1 block text-xs font-semibold text-black/55">Maximum 360 seconds for one Release Deck song.</span>
+          <span className="mt-1 block text-xs font-semibold text-black/55">
+            Maximum 360 seconds for one Release Deck song.
+          </span>
         </label>
 
         <label className="block text-sm text-black">
-          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Audio File URL</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+            Audio File URL
+          </span>
           <input
             name="fileUrl"
             required
@@ -315,7 +600,9 @@ function ReleaseSingleForm({
         </label>
 
         <label className="block text-sm text-black">
-          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Cover Art URL</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+            Cover Art URL
+          </span>
           <input
             name="coverArt"
             type="url"
@@ -327,8 +614,12 @@ function ReleaseSingleForm({
         </label>
 
         {submitError ? <p className="text-sm font-black text-[#7a1f1f]">{submitError}</p> : null}
-        {submitMessage ? <p className="text-sm font-black text-[#195b2d]">{submitMessage}</p> : null}
-        {!communityId ? <p className="text-sm font-black text-[#7a1f1f]">{releaseDeckMissingHomeSceneMessage}</p> : null}
+        {submitMessage ? (
+          <p className="text-sm font-black text-[#195b2d]">{submitMessage}</p>
+        ) : null}
+        {!communityId ? (
+          <p className="text-sm font-black text-[#7a1f1f]">{releaseDeckMissingHomeSceneMessage}</p>
+        ) : null}
 
         <Button
           type="submit"
@@ -346,7 +637,9 @@ export default function ReleaseDeckPage() {
   const { token, user } = useAuthStore();
   const { activeSourceId, activeSourceUserId, clearActiveSourceId } = useSourceAccountStore();
 
-  const [currentUserProfile, setCurrentUserProfile] = useState<CurrentUserSourceProfile | null>(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState<CurrentUserSourceProfile | null>(
+    null
+  );
   const [sourceProfile, setSourceProfile] = useState<ArtistBandProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -355,6 +648,31 @@ export default function ReleaseDeckPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<ReleaseDeckFormState>(emptyForm);
   const [loadedTrackId, setLoadedTrackId] = useState<string | null>(null);
+  const [scheduleAvailability, setScheduleAvailability] =
+    useState<ReleaseDeckScheduleAvailabilityResponse | null>(null);
+  const [scheduleError, setScheduleError] = useState<string | null>(null);
+  const [scheduleMessage, setScheduleMessage] = useState<string | null>(null);
+  const [scheduleMode, setScheduleMode] = useState<ReleaseDeckScheduleMode>('soonest');
+  const [requestedScheduleDate, setRequestedScheduleDate] = useState('');
+  const [isCheckingSchedule, setIsCheckingSchedule] = useState(false);
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [scheduleSummaries, setScheduleSummaries] = useState<
+    Record<string, ReleaseDeckScheduleSummary>
+  >({});
+  const scheduleRequestId = useRef(0);
+
+  useEffect(() => {
+    scheduleRequestId.current += 1;
+    setLoadedTrackId(null);
+    setScheduleAvailability(null);
+    setScheduleError(null);
+    setScheduleMessage(null);
+    setScheduleMode('soonest');
+    setRequestedScheduleDate('');
+    setIsCheckingSchedule(false);
+    setIsScheduling(false);
+    setScheduleSummaries({});
+  }, [activeSourceId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -392,9 +710,17 @@ export default function ReleaseDeckPage() {
       setError(null);
 
       try {
-        const profileResponse = await api.get<CurrentUserSourceProfile>(`/users/${user.id}/profile`, { token });
-        const currentProfile = profileResponse.data ?? { user: { id: user.id }, managedArtistBands: [] };
-        const activeSource = currentProfile.managedArtistBands.find((source) => source.id === activeSourceId);
+        const profileResponse = await api.get<CurrentUserSourceProfile>(
+          `/users/${user.id}/profile`,
+          { token }
+        );
+        const currentProfile = profileResponse.data ?? {
+          user: { id: user.id },
+          managedArtistBands: [],
+        };
+        const activeSource = currentProfile.managedArtistBands.find(
+          (source) => source.id === activeSourceId
+        );
 
         if (!activeSource) {
           if (cancelled) return;
@@ -414,7 +740,9 @@ export default function ReleaseDeckPage() {
         if (cancelled) return;
         setCurrentUserProfile(null);
         setSourceProfile(null);
-        setError(loadError instanceof Error ? loadError.message : 'Unable to load Release Deck context.');
+        setError(
+          loadError instanceof Error ? loadError.message : 'Unable to load Release Deck context.'
+        );
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -429,16 +757,22 @@ export default function ReleaseDeckPage() {
     };
   }, [activeSourceId, activeSourceUserId, clearActiveSourceId, token, user?.id]);
 
-  const sourceContextBelongsToCurrentUser = Boolean(activeSourceId && user?.id && activeSourceUserId === user.id);
+  const sourceContextBelongsToCurrentUser = Boolean(
+    activeSourceId && user?.id && activeSourceUserId === user.id
+  );
   const activeSource = useMemo(
     () =>
       sourceContextBelongsToCurrentUser
-        ? currentUserProfile?.managedArtistBands.find((source) => source.id === activeSourceId) ?? null
+        ? (currentUserProfile?.managedArtistBands.find((source) => source.id === activeSourceId) ??
+          null)
         : null,
-    [activeSourceId, currentUserProfile?.managedArtistBands, sourceContextBelongsToCurrentUser],
+    [activeSourceId, currentUserProfile?.managedArtistBands, sourceContextBelongsToCurrentUser]
   );
 
-  const currentDeckTracks = useMemo(() => sourceProfile?.tracks.slice(0, 3) ?? [], [sourceProfile?.tracks]);
+  const currentDeckTracks = useMemo(
+    () => sourceProfile?.tracks.slice(0, 3) ?? [],
+    [sourceProfile?.tracks]
+  );
   const communityId = sourceProfile?.homeScene?.id ?? null;
   const readiness = useMemo(
     () =>
@@ -447,11 +781,11 @@ export default function ReleaseDeckPage() {
         communityId,
         tracks: sourceProfile?.tracks ?? [],
       }),
-    [activeSourceId, communityId, sourceProfile?.tracks],
+    [activeSourceId, communityId, sourceProfile?.tracks]
   );
   const loadedTrack = useMemo(
     () => sourceProfile?.tracks.find((track) => track.id === loadedTrackId) ?? null,
-    [loadedTrackId, sourceProfile?.tracks],
+    [loadedTrackId, sourceProfile?.tracks]
   );
   const homeSceneLabel = sourceProfile?.homeScene
     ? `${sourceProfile.homeScene.city}, ${sourceProfile.homeScene.state} • ${sourceProfile.homeScene.musicCommunity}`
@@ -464,6 +798,231 @@ export default function ReleaseDeckPage() {
     setSourceProfile(refreshed);
   }
 
+  function applyScheduleAvailability(
+    trackId: string,
+    availability: ReleaseDeckScheduleAvailabilityResponse
+  ) {
+    const existingSchedule = !availability.success ? availability.error.schedule : undefined;
+    const soonestValidDate = availability.success
+      ? availability.data.soonestValidDate
+      : (availability.error.soonestValidDate ?? null);
+
+    setScheduleAvailability(availability);
+    setRequestedScheduleDate(soonestValidDate ?? '');
+    setScheduleSummaries((current) => ({
+      ...current,
+      [trackId]: existingSchedule
+        ? { state: 'scheduled', scheduledFor: existingSchedule.scheduledFor }
+        : soonestValidDate
+          ? { state: 'unscheduled' }
+          : { state: 'unavailable' },
+    }));
+  }
+
+  async function handleLoadTrack(trackId: string) {
+    const track = sourceProfile?.tracks.find((candidate) => candidate.id === trackId) ?? null;
+    const requestId = scheduleRequestId.current + 1;
+    scheduleRequestId.current = requestId;
+
+    setLoadedTrackId(trackId);
+    setScheduleAvailability(null);
+    setScheduleError(null);
+    setScheduleMessage(null);
+    setScheduleMode('soonest');
+    setRequestedScheduleDate('');
+    setIsCheckingSchedule(false);
+    setIsScheduling(false);
+
+    if (!track || track.artistBandId !== activeSource?.id || track.status !== 'ready') {
+      setScheduleSummaries((current) => ({
+        ...current,
+        [trackId]: { state: 'unavailable' },
+      }));
+      return;
+    }
+
+    if (!token || !communityId || !sourceContextBelongsToCurrentUser) {
+      setScheduleError(
+        !communityId
+          ? releaseDeckMissingHomeSceneMessage
+          : 'Select a source account before scheduling a release date.'
+      );
+      setScheduleSummaries((current) => ({
+        ...current,
+        [trackId]: { state: 'unavailable' },
+      }));
+      return;
+    }
+
+    setIsCheckingSchedule(true);
+    setScheduleSummaries((current) => ({
+      ...current,
+      [trackId]: { state: 'checking' },
+    }));
+
+    try {
+      const availability = await getReleaseDeckScheduleAvailability(
+        { communityId, trackId },
+        token
+      );
+      if (scheduleRequestId.current !== requestId) return;
+      applyScheduleAvailability(trackId, availability);
+    } catch (availabilityError: unknown) {
+      if (scheduleRequestId.current !== requestId) return;
+      setScheduleError(
+        availabilityError instanceof Error
+          ? availabilityError.message
+          : 'Unable to check release-date capacity.'
+      );
+      setScheduleSummaries((current) => ({
+        ...current,
+        [trackId]: { state: 'unavailable' },
+      }));
+    } finally {
+      if (scheduleRequestId.current === requestId) {
+        setIsCheckingSchedule(false);
+      }
+    }
+  }
+
+  async function handleScheduleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const currentSourceContext = useSourceAccountStore.getState();
+    const sourceStillBelongsToCurrentUser = Boolean(
+      activeSource &&
+        user?.id &&
+        currentSourceContext.activeSourceId === activeSource.id &&
+        currentSourceContext.activeSourceUserId === user.id
+    );
+
+    if (
+      !token ||
+      !user?.id ||
+      !activeSource ||
+      !communityId ||
+      !loadedTrack ||
+      !sourceStillBelongsToCurrentUser
+    ) {
+      setScheduleError(
+        'Select a source account with a resolved Home Scene before scheduling a release date.'
+      );
+      return;
+    }
+
+    if (loadedTrack.artistBandId !== activeSource.id || loadedTrack.status !== 'ready') {
+      setScheduleError('Scheduling is available only for valid source-owned ready tracks.');
+      return;
+    }
+
+    const alternatives = scheduleAvailability
+      ? scheduleAvailability.success
+        ? scheduleAvailability.data.alternatives
+        : (scheduleAvailability.error.alternatives ?? [])
+      : [];
+    if (
+      scheduleMode === 'chosen' &&
+      (!requestedScheduleDate || !alternatives.includes(requestedScheduleDate))
+    ) {
+      setScheduleError('Choose one of the available release dates returned by the server.');
+      return;
+    }
+
+    setIsScheduling(true);
+    setScheduleError(null);
+    setScheduleMessage(null);
+
+    const submittedTrack = loadedTrack;
+    const submittedSourceId = activeSource.id;
+    const submittedUserId = user.id;
+    const requestId = scheduleRequestId.current + 1;
+    scheduleRequestId.current = requestId;
+
+    const requestIsCurrent = (candidateRequestId: number) => {
+      const sourceContext = useSourceAccountStore.getState();
+      const authContext = useAuthStore.getState();
+      return Boolean(
+        scheduleRequestId.current === candidateRequestId &&
+          authContext.user?.id === submittedUserId &&
+          sourceContext.activeSourceId === submittedSourceId &&
+          sourceContext.activeSourceUserId === submittedUserId
+      );
+    };
+
+    try {
+      const schedule = await createReleaseDeckSchedule(
+        {
+          communityId,
+          trackId: submittedTrack.id,
+          mode: scheduleMode,
+          ...(scheduleMode === 'chosen' ? { requestedDate: requestedScheduleDate } : {}),
+        },
+        token
+      );
+      if (!requestIsCurrent(requestId)) return;
+
+      const scheduledFor = schedule.scheduledFor.slice(0, 10);
+      const requestedFor = schedule.requestedFor ? schedule.requestedFor.slice(0, 10) : null;
+      const existingSchedule = {
+        id: schedule.id,
+        status: schedule.status,
+        scheduledFor,
+        assignmentMode: schedule.assignmentMode,
+        requestedFor,
+      };
+
+      setScheduleAvailability({
+        success: false,
+        error: {
+          code: 'ALREADY_SCHEDULED_OR_ACTIVE',
+          message: 'Track is already scheduled or active in RADIYO',
+          trackId: submittedTrack.id,
+          schedule: existingSchedule,
+        },
+      });
+      setScheduleSummaries((current) => ({
+        ...current,
+        [submittedTrack.id]: { state: 'scheduled', scheduledFor },
+      }));
+      setScheduleMessage(
+        `${submittedTrack.title} is scheduled for ${formatDateLabel(scheduledFor)} using ${schedule.assignmentMode === 'soonest' ? 'the soonest valid date' : 'the selected available date'}.`
+      );
+    } catch (createError: unknown) {
+      if (!requestIsCurrent(requestId)) return;
+
+      const createMessage =
+        createError instanceof Error
+          ? createError.message
+          : 'Unable to schedule this release date.';
+      const refreshRequestId = requestId + 1;
+      scheduleRequestId.current = refreshRequestId;
+      setIsCheckingSchedule(true);
+
+      try {
+        const refreshedAvailability = await getReleaseDeckScheduleAvailability(
+          { communityId, trackId: submittedTrack.id },
+          token
+        );
+        if (!requestIsCurrent(refreshRequestId)) return;
+
+        applyScheduleAvailability(submittedTrack.id, refreshedAvailability);
+        setScheduleError(`${createMessage} Availability was refreshed.`);
+      } catch {
+        if (!requestIsCurrent(refreshRequestId)) return;
+        setScheduleError(`${createMessage} Refresh availability before trying again.`);
+      } finally {
+        if (requestIsCurrent(refreshRequestId)) {
+          setIsCheckingSchedule(false);
+          setIsScheduling(false);
+        }
+      }
+    } finally {
+      if (requestIsCurrent(requestId)) {
+        setIsScheduling(false);
+      }
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -472,7 +1031,7 @@ export default function ReleaseDeckPage() {
       activeSource &&
         user?.id &&
         currentSourceContext.activeSourceId === activeSource.id &&
-        currentSourceContext.activeSourceUserId === user.id,
+        currentSourceContext.activeSourceUserId === user.id
     );
 
     if (!token || !activeSource || !sourceStillBelongsToCurrentUser) {
@@ -491,7 +1050,11 @@ export default function ReleaseDeckPage() {
         throw new Error(submitBlockReason);
       }
     } catch (validationError: unknown) {
-      setSubmitError(validationError instanceof Error ? validationError.message : 'Release Deck validation failed.');
+      setSubmitError(
+        validationError instanceof Error
+          ? validationError.message
+          : 'Release Deck validation failed.'
+      );
       return;
     }
 
@@ -505,7 +1068,9 @@ export default function ReleaseDeckPage() {
       setForm(emptyForm);
       await reloadSourceProfile();
     } catch (createError: unknown) {
-      setSubmitError(createError instanceof Error ? createError.message : 'Unable to create single.');
+      setSubmitError(
+        createError instanceof Error ? createError.message : 'Unable to create single.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -515,8 +1080,12 @@ export default function ReleaseDeckPage() {
     return (
       <main className="min-h-screen bg-[#e9e7dc] px-3 py-4 text-black sm:px-6 sm:py-6">
         <div className="mx-auto box-border w-full max-w-[92rem] overflow-hidden border-4 border-black bg-[#fbfbf4] p-5 shadow-[8px_8px_0_rgba(0,0,0,0.18)] sm:p-8">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-black/55">Release Deck</p>
-          <p className="mt-2 text-sm font-semibold text-black/60">Loading source release context...</p>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-black/55">
+            Release Deck
+          </p>
+          <p className="mt-2 text-sm font-semibold text-black/60">
+            Loading source release context...
+          </p>
         </div>
       </main>
     );
@@ -526,8 +1095,12 @@ export default function ReleaseDeckPage() {
     return (
       <main className="min-h-screen bg-[#e9e7dc] px-3 py-4 text-black sm:px-6 sm:py-6">
         <div className="mx-auto box-border w-full max-w-[92rem] overflow-hidden border-4 border-black bg-[#fbfbf4] p-5 shadow-[8px_8px_0_rgba(0,0,0,0.18)] sm:p-8">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-black/55">Release Deck</p>
-          <p className="mt-2 text-sm font-black text-[#7a1f1f]">{error ?? 'Release Deck is unavailable for this source.'}</p>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-black/55">
+            Release Deck
+          </p>
+          <p className="mt-2 text-sm font-black text-[#7a1f1f]">
+            {error ?? 'Release Deck is unavailable for this source.'}
+          </p>
           <Button asChild size="sm" variant="outline" className={`${reportButtonClass} mt-5`}>
             <Link href="/source-dashboard">Back to Source Dashboard</Link>
           </Button>
@@ -553,36 +1126,55 @@ export default function ReleaseDeckPage() {
             <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[0.3rem] border-4 border-black bg-black text-center text-lg font-black leading-none text-white shadow-[3px_3px_0_rgba(0,0,0,0.16)]">
               {sourceProfile.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={sourceProfile.avatar} alt={`${activeSource.name} source avatar`} className="h-full w-full object-cover" />
+                <img
+                  src={sourceProfile.avatar}
+                  alt={`${activeSource.name} source avatar`}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 getInitials(activeSource.name)
               )}
             </div>
             <div className="min-w-0 pt-1">
-              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-black/55">Release Deck</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-black/55">
+                Release Deck
+              </p>
               <h2 className="truncate text-3xl font-black text-black">{activeSource.name}</h2>
               <p className="mt-1 text-sm font-semibold text-black/70">
-                {formatArtistBandEntityType(activeSource.entityType)} · @{activeSource.slug} · {formatSourceMembershipRole(activeSource.membershipRole)}
+                {formatArtistBandEntityType(activeSource.entityType)} · @{activeSource.slug} ·{' '}
+                {formatSourceMembershipRole(activeSource.membershipRole)}
               </p>
               <p className="mt-2 text-sm font-black text-black">Home Scene: {homeSceneLabel}</p>
             </div>
           </div>
           <div className="grid grid-cols-2 border-2 border-black sm:grid-cols-4">
             <div className="border-b-2 border-r-2 border-black p-3 sm:border-b-0">
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Music slots</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+                Music slots
+              </p>
               <p className="mt-2 text-lg font-black">{readiness.sourceOwnedReadyTrackCount} / 3</p>
             </div>
             <div className="border-b-2 border-black p-3 sm:border-b-0 sm:border-r-2">
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Song cap</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+                Song cap
+              </p>
               <p className="mt-2 text-lg font-black">6 min</p>
             </div>
             <div className="border-r-2 border-black p-3">
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Source cap</p>
-              <p className="mt-2 text-lg font-black">{formatDuration(readiness.activeDurationSeconds)} / 15:00</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+                Source cap
+              </p>
+              <p className="mt-2 text-lg font-black">
+                {formatDuration(readiness.activeDurationSeconds)} / 15:00
+              </p>
             </div>
             <div className="p-3">
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Status</p>
-              <p className="mt-2 text-lg font-black">{readiness.readyForTesting ? 'Testing ready' : 'Needs track'}</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+                Status
+              </p>
+              <p className="mt-2 text-lg font-black">
+                {readiness.readyForTesting ? 'Testing ready' : 'Needs track'}
+              </p>
             </div>
           </div>
         </section>
@@ -595,28 +1187,44 @@ export default function ReleaseDeckPage() {
                 <h3 className="text-2xl font-black uppercase tracking-[0.02em]">Release Deck</h3>
               </div>
               <div className="flex flex-wrap gap-2 text-[11px] font-black uppercase tracking-[0.08em]">
-                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">3 music slots</span>
-                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">6 min / song</span>
-                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">15 min source cap</span>
-                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">URL-only MVP</span>
+                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">
+                  3 music slots
+                </span>
+                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">
+                  6 min / song
+                </span>
+                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">
+                  15 min source cap
+                </span>
+                <span className="rounded-[0.25rem] border-2 border-black px-3 py-1">
+                  URL-only MVP
+                </span>
               </div>
             </div>
             <ReleaseDeckRows
               activeSource={activeSource}
               currentDeckTracks={currentDeckTracks}
               loadedTrackId={loadedTrackId}
-              onLoadTrack={setLoadedTrackId}
+              onLoadTrack={(trackId) => void handleLoadTrack(trackId)}
+              scheduleSummaries={scheduleSummaries}
             />
             <div className="grid gap-3 border-t-2 border-black px-4 py-3 lg:grid-cols-[1fr_auto]">
               <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
                 <Mic2 aria-hidden className="h-7 w-7" />
                 <div>
                   <p className="text-lg font-black">Paid ad clip</p>
-                  <p className="text-black/65">10 sec max · inactive attachment concept · not a fourth music slot</p>
+                  <p className="text-black/65">
+                    10 sec max · inactive attachment concept · not a fourth music slot
+                  </p>
                 </div>
                 <label className="flex items-center gap-2">
-                  <span className="text-xs font-black uppercase tracking-[0.08em]">Attach to track</span>
-                  <select disabled className="rounded-[0.25rem] border-2 border-black bg-white px-3 py-1 font-black text-black disabled:opacity-70">
+                  <span className="text-xs font-black uppercase tracking-[0.08em]">
+                    Attach to track
+                  </span>
+                  <select
+                    disabled
+                    className="rounded-[0.25rem] border-2 border-black bg-white px-3 py-1 font-black text-black disabled:opacity-70"
+                  >
                     <option>1</option>
                     <option>2</option>
                     <option>3</option>
@@ -624,7 +1232,10 @@ export default function ReleaseDeckPage() {
                 </label>
                 <label className="flex items-center gap-2">
                   <span className="text-xs font-black uppercase tracking-[0.08em]">Ad type</span>
-                  <select disabled className="rounded-[0.25rem] border-2 border-black bg-white px-3 py-1 font-black text-black disabled:opacity-70">
+                  <select
+                    disabled
+                    className="rounded-[0.25rem] border-2 border-black bg-white px-3 py-1 font-black text-black disabled:opacity-70"
+                  >
                     <option>General</option>
                     <option>Release date</option>
                     <option>Event</option>
@@ -636,43 +1247,85 @@ export default function ReleaseDeckPage() {
                 <button type="button" disabled className={disabledReportButtonClass}>
                   <LockKeyhole aria-hidden className="mr-2 h-4 w-4" /> Record clip
                 </button>
-                <p className="mt-1 text-xs font-semibold text-black/65">Payment account required before recording.</p>
+                <p className="mt-1 text-xs font-semibold text-black/65">
+                  Payment account required before recording.
+                </p>
               </div>
             </div>
             {readiness.capReached ? (
               <p className="border-t-2 border-black px-4 py-3 text-sm font-black text-[#7a1f1f]">
-                Cap reached: this screen will not silently replace existing tracks or create an extra active music slot. Choose a different active song combination when replacement tooling is specified.
+                {capReachedBoundaryCopy}
               </p>
             ) : null}
             {readiness.missingHomeScene ? (
-              <p className="border-t-2 border-black px-4 py-3 text-sm font-black text-[#7a1f1f]">{releaseDeckMissingHomeSceneMessage}</p>
+              <p className="border-t-2 border-black px-4 py-3 text-sm font-black text-[#7a1f1f]">
+                {releaseDeckMissingHomeSceneMessage}
+              </p>
             ) : null}
           </section>
 
           <section className="grid gap-3 lg:grid-cols-[1fr_26rem]">
             <div className="border-2 border-black bg-[#fbfbf4] px-4 py-4">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-black/55">Loaded Row</p>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-black/55">
+                Loaded Row
+              </p>
               {loadedTrack ? (
                 <>
                   <p className="mt-2 text-xl font-black text-black">{loadedTrack.title}</p>
                   <p className="mt-1 text-sm font-semibold text-black/65">
-                    Row detail is limited to Release Deck context in this slice. Release date scheduling, metadata editing, and replacement controls need separate media contracts before runtime implementation.
+                    Check server-owned release-date capacity and schedule this source-owned ready
+                    song. Metadata editing and replacement controls still need separate media
+                    contracts.
                   </p>
                 </>
               ) : (
-                <p className="mt-2 text-sm font-semibold text-black/65">Use Load on a source-owned row to focus the row context. Empty slots use the URL-only Release Single form.</p>
+                <p className="mt-2 text-sm font-semibold text-black/65">
+                  Use Load on a source-owned row to focus the row context. Empty slots use the
+                  URL-only Release Single form.
+                </p>
               )}
+              <ReleaseDeckSchedulePanel
+                activeSource={activeSource}
+                availability={scheduleAvailability}
+                communityId={communityId}
+                isCheckingAvailability={isCheckingSchedule}
+                isScheduling={isScheduling}
+                loadedTrack={loadedTrack}
+                mode={scheduleMode}
+                onModeChange={(mode) => {
+                  setScheduleMode(mode);
+                  setScheduleError(null);
+                }}
+                onRequestedDateChange={(date) => {
+                  setRequestedScheduleDate(date);
+                  setScheduleError(null);
+                }}
+                onSubmit={handleScheduleSubmit}
+                requestedDate={requestedScheduleDate}
+                scheduleError={scheduleError}
+                scheduleMessage={scheduleMessage}
+              />
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div className="border-2 border-black px-3 py-3">
-                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Testing visibility</p>
-                  <p className="mt-2 font-black">{readiness.readyForTesting ? 'Ready for Fair Play/player testing' : 'Testing visibility needs a source-owned ready track.'}</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+                    Testing visibility
+                  </p>
+                  <p className="mt-2 font-black">
+                    {readiness.readyForTesting
+                      ? 'Ready for Fair Play/player testing'
+                      : 'Testing visibility needs a source-owned ready track.'}
+                  </p>
                 </div>
                 <div className="border-2 border-black px-3 py-3">
-                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Open slots</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+                    Open slots
+                  </p>
                   <p className="mt-2 font-black">{readiness.openMusicSlots}</p>
                 </div>
                 <div className="border-2 border-black px-3 py-3">
-                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Source record</p>
+                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
+                    Source record
+                  </p>
                   <p className="mt-2 font-black">URL-only source-owned rows</p>
                 </div>
               </div>
@@ -696,15 +1349,26 @@ export default function ReleaseDeckPage() {
                 <FileText aria-hidden className="h-8 w-8 shrink-0" />
                 <div>
                   <p className="text-xl font-black uppercase">Source Record</p>
-                  <p className="text-sm font-semibold text-black/65">Release Deck stays inside the selected source file and does not mutate listener player state.</p>
+                  <p className="text-sm font-semibold text-black/65">{sourceRecordBoundaryCopy}</p>
                 </div>
               </div>
               <div className="border-t-2 border-black pt-3 lg:border-l-2 lg:border-t-0 lg:pl-4 lg:pt-0">
-                <p className="text-xs font-black uppercase tracking-[0.12em] text-black/55">Return Paths</p>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-black/55">
+                  Return Paths
+                </p>
                 <div className="mt-1 flex flex-wrap gap-3 text-sm font-black">
-                  <Link href="/source-dashboard" className="underline underline-offset-2">Back to Source Dashboard</Link>
-                  <Link href={`/artist-bands/${activeSource.id}`} className="underline underline-offset-2">View Source Profile</Link>
-                  <Link href="/registrar" className="underline underline-offset-2">Open Registrar</Link>
+                  <Link href="/source-dashboard" className="underline underline-offset-2">
+                    Back to Source Dashboard
+                  </Link>
+                  <Link
+                    href={`/artist-bands/${activeSource.id}`}
+                    className="underline underline-offset-2"
+                  >
+                    View Source Profile
+                  </Link>
+                  <Link href="/registrar" className="underline underline-offset-2">
+                    Open Registrar
+                  </Link>
                 </div>
               </div>
               <div className="rotate-[-6deg] border-4 border-black px-5 py-2 text-center text-xl font-black uppercase tracking-[0.08em] opacity-70">

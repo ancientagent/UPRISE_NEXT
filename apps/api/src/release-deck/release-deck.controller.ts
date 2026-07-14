@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodQuery } from '../common/decorators/zod-query.decorator';
@@ -16,11 +25,10 @@ import {
 import { ReleaseDeckSchedulingService } from './release-deck-scheduling.service';
 
 /**
- * Read-only Release Deck diagnostics.
+ * Release Deck measurement, schedule availability, and source-operator writes.
  *
- * Auth is authenticated-only for now, matching the activation-readiness
- * diagnostics precedent in `AdminAnalyticsController`. Source-operator vs
- * admin scoping is deferred with the rest of RBAC.
+ * Scheduling diagnostics and writes are limited to the source operator. The
+ * scheduling service verifies authority for both operations.
  */
 @Controller('release-deck')
 @UseGuards(JwtAuthGuard)
@@ -40,9 +48,10 @@ export class ReleaseDeckController {
   @Get('schedule/availability')
   async getScheduleAvailability(
     @ZodQuery(ReleaseDeckScheduleAvailabilityQuerySchema)
-    query: ReleaseDeckScheduleAvailabilityQueryDto
+    query: ReleaseDeckScheduleAvailabilityQueryDto,
+    @Request() req: { user: { userId: string } }
   ) {
-    return this.releaseDeckSchedulingService.getAvailability(query);
+    return this.releaseDeckSchedulingService.getAvailability(query, req.user.userId);
   }
 
   @Post('schedule')

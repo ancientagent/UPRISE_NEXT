@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-07
+Last Updated: 2026-07-14
 
 ## Purpose
 
@@ -22,42 +22,39 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-07
-- Base branch: `main`
-- Current `origin/main` HEAD at refresh: `354e6f4`
-- Active branch during this refresh: `docs/post-227-branch-hygiene-refresh`
-- Local worktree state at refresh: clean branch from current `main` with operations-doc refresh only
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting; no active implementation PR is open
-- Recently closed PR: PR #227 (`docs/artist-profile-source-dashboard-specs`) merged at `2026-07-08T03:23:30Z`; remote branch deleted/pruned
-- Provider/db/schema state: not touched by this refresh
+- Snapshot date: 2026-07-14
+- Base branch: `origin/main` at `5ae79b8`; local `main` has operations-only checkpoints through `375d06c`
+- Active branch: `codex/release-deck-scheduling-client`
+- Local worktree state: scheduling client complete and independently reviewed; founder authorized staged remote PR submission
+- Open PR queue at refresh: implementation PR #238 (`codex/release-deck-scheduling-client`) is open after independent review; draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting
+- Recently completed runtime stack: PR #236 merged Release Deck schedule writes and Fair Play ingestion; PR #237 was docs-only avatar boundary work
+- Provider/db/schema state: no new migration or provider change in the current client slice; existing `ReleaseDeckSchedule` persistence is being consumed
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
 Current goal:
 
-- Keep the repo branch/worktree/PR control plane accurate after PR #227 merged.
-- Preserve existing UX reference branches/worktrees until explicit extraction/archive approval.
-- Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-- Identify remote-only cleanup candidates without deleting branches until explicit approval.
-
-Recently completed context:
-
-- PR #225 merged the `screen-package:flow` runner and Artist Profile / Source Dashboard seed package into `main`.
-- PR #226 refreshed PM/registry state after PR #225 and pointed the next signal at Dev Spec / Design Spec gates.
-- PR #227 merged Artist Profile / Source Dashboard screen-package specs, source-dashboard design/art handoff, public Artist Profile context, Home/Plot visual-language notes, and related owner-spec/lane-brief promotions.
+- Keep Codex local as the sole writer and reviewers read-only.
+- Submit the reviewed scheduling client as the first focused PR.
+- After it establishes the remote baseline, rebase and separately submit the
+  reviewed New Releases graduation slice.
+- Begin Slice 6 official Sect/song-level backing and Slice 7 backing authority
+  only through independently reviewed plans and bounded implementation slices.
+- Keep the raw founder-session capture, draft PR #212, and preserved UX
+  worktrees/branches out of these submissions.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | operations / branch hygiene |
-| Branch | `docs/post-227-branch-hygiene-refresh` |
-| Scope | Refresh Active PM and branch workspace registry after PR #227 merged; record branch/worktree hygiene findings and remote cleanup candidates without deleting refs. |
-| Out of Scope | Provider/db/schema mutation, product doctrine changes, deleting remote branches without explicit approval, merging/closing draft PR #212, deleting preserved UX worktrees/branches. |
-| Owner Contracts | `AGENTS.md`, `docs/operations/BRANCH_WORKSPACE_REGISTRY.md`, `docs/specs/system/documentation-framework.md` |
-| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`, `docs/handoff/2026-07-07_branch-workspace-hygiene-refresh.md` |
-| Validation | `pnpm run docs:lint`, `git diff --check`, `pnpm run workspace:audit`, `node scripts/workspace-registry.mjs audit --include-remote` |
+| Lane | Source Dashboard / Release Deck |
+| Branch | `codex/release-deck-scheduling-client` |
+| Scope | Add server-owned schedule availability, durable existing-schedule restore, and `soonest` / returned-`chosen` scheduling to the loaded Release Deck row; align owner docs and focused tests. |
+| Out of Scope | Fair Play ordering/controls, automatic ingestion jobs, graduation, song-level sect backing, replacement/removal, upload/storage, paid-ad runtime, remote push/PR. |
+| Owner Contracts | `docs/specs/media/release-deck-and-eligibility.md`, `docs/specs/users/artist-profile-and-source-dashboard.md`, `docs/specs/broadcast/radiyo-and-fair-play.md` |
+| Companion Docs | `docs/handoff/2026-07-08_release-deck-schedule-write-path.md`, `docs/handoff/2026-07-08_release-deck-fair-play-ingestion.md`, `docs/screen-packages/artist-profile-source-dashboard/README.md` |
+| Validation | focused web/API scheduling tests, web/API typecheck, docs lint, diff check, workspace audit, read-only reviewer passes |
 
 ## Current Branch / Worktree State
 
@@ -65,13 +62,14 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
+| #238 | `codex/release-deck-scheduling-client` | open, independently reviewed | Await required checks/codeowner review, then merge through the protected PR path. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `docs/post-227-branch-hygiene-refresh` | `354e6f4` base plus ops-doc changes | Branch hygiene refresh after PR #227 merged. |
+| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | PR #238 submission checkpoint | Open implementation PR; reviewers remain read-only. |
 
 ### Preserved UX Reference Worktrees
 
@@ -137,11 +135,11 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Finish this branch hygiene refresh PR and merge when docs lint, workspace audit, and required checks pass.
-2. If approved, run a separate remote cleanup pass for the clearly merged remote-only refs listed above.
-3. Keep draft PR #212 untouched unless the user explicitly reprioritizes Linear clean-context agent roles.
-4. Keep UX reference worktrees/branches until an explicit extraction/archive decision.
-5. Resume product development from current `main`; the likely next implementation signal remains a small vertical Artist Profile / Source Dashboard slice from the merged screen package.
+1. Land independently reviewed scheduling-client PR #238 through the protected PR path.
+2. After PR #238 establishes the remote baseline, rebase, reverify, and independently review the graduation branch before its separate PR.
+3. Start Slice 6 official Sect/song-level backing with a heavy schema/owner-contract plan review before implementation.
+4. Follow with a separately reviewed Slice 7 source-authorized backing API checkpoint only after Slice 6 has a safe baseline.
+5. Keep the founder-session capture, draft PR #212, and preserved UX reference worktrees/branches untouched.
 
 ## PM Usage Rules For Agents
 
