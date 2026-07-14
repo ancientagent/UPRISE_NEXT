@@ -25,7 +25,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Snapshot date: 2026-07-14
 - Base branch: local `main` at `8c4ab4d`; `origin/main` remains `5ae79b8`
 - Active branch: `codex/release-deck-scheduling-client`
-- Local worktree state: scheduling runtime checkpoints committed; final accessibility re-review pending; no push or PR authorized
+- Local worktree state: scheduling client complete and independently reviewed; local branch preservation/next-slice transition in progress; no push or PR authorized
 - Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting; no implementation PR is open
 - Recently completed runtime stack: PR #236 merged Release Deck schedule writes and Fair Play ingestion; PR #237 was docs-only avatar boundary work
 - Provider/db/schema state: no new migration or provider change in the current client slice; existing `ReleaseDeckSchedule` persistence is being consumed
@@ -68,7 +68,7 @@ Current goal:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | `f200df4` accessibility-result checkpoint | Sole-writer local implementation; final accessibility re-review pending; do not push or open a PR. |
+| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | `c4b8cd0` reviewed scheduling checkpoint | Complete and independently reviewed; preserve locally and transition the worktree to a separately registered next objective. |
 
 ### Preserved UX Reference Worktrees
 

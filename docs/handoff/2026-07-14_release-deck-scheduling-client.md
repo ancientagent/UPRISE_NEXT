@@ -4,7 +4,7 @@
 **Branch:** `codex/release-deck-scheduling-client`
 **Base:** local `main` at `8c4ab4d`
 **Deployment Target:** none; local-only single-writer checkpoint
-**Status:** runtime checkpoints committed; final accessibility re-review pending
+**Status:** complete and independently reviewed; preserved as a local-only checkpoint
 **Agent:** Codex local sole writer
 
 ## Summary
@@ -92,7 +92,7 @@ and assignment mode.
   handoff whitespace correction.
 - Runtime reviewer-fix checkpoint: `ddf6ccb`.
 - Accessibility-result checkpoint: `f200df4`.
-- The final client accessibility re-review remains required before closeout.
+- Final client accessibility re-review passed at `c4b8cd0`.
 
 ## First Review Findings Corrected
 
@@ -115,6 +115,7 @@ and assignment mode.
 - `f200df4` adds a live result status for available and unavailable completion,
   tests both announcements, explicitly checks for absent Fair Play controls,
   and verifies stale authentication responses are discarded.
+- Client/product re-review: pass at `c4b8cd0`; no critical or important findings.
 - Remaining non-blocking production risks: exercise a real PostgreSQL
   serialization race before production rollout, add a direct `P2002` race-path
   test, and revisit conservative protected-window tuning when real load data is
@@ -122,6 +123,7 @@ and assignment mode.
 
 ## Review And Continuation
 
-Codex local remains the only writer. Reviewer agents must inspect the committed
-diff read-only. The primary writer fixes all critical/important findings and
-reverifies before selecting the next owner-authorized development objective.
+Codex local remained the only writer and all reviewer work was read-only. Keep
+this branch local and preserved unless the founder later authorizes integration.
+The next owner-authorized objective should proceed on its own registered branch
+from local `main`, without stacking this scheduling client branch.
