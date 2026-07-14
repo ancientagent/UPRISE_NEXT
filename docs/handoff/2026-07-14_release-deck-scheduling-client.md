@@ -2,9 +2,9 @@
 
 **Date:** 2026-07-14
 **Branch:** `codex/release-deck-scheduling-client`
-**Base:** local `main` at `8c4ab4d`
+**Base:** `origin/main` at `5ae79b8`
 **Deployment Target:** Vercel web + Fly/App Runner API through the normal PR pipeline
-**Status:** complete and independently reviewed; remote PR submission authorized
+**Status:** complete and independently reviewed; PR #238 open
 **Agent:** Codex local sole writer
 
 ## Summary

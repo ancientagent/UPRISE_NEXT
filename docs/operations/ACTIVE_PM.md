@@ -26,7 +26,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Base branch: `origin/main` at `5ae79b8`; local `main` has operations-only checkpoints through `375d06c`
 - Active branch: `codex/release-deck-scheduling-client`
 - Local worktree state: scheduling client complete and independently reviewed; founder authorized staged remote PR submission
-- Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting; no implementation PR is open
+- Open PR queue at refresh: implementation PR #238 (`codex/release-deck-scheduling-client`) is open after independent review; draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting
 - Recently completed runtime stack: PR #236 merged Release Deck schedule writes and Fair Play ingestion; PR #237 was docs-only avatar boundary work
 - Provider/db/schema state: no new migration or provider change in the current client slice; existing `ReleaseDeckSchedule` persistence is being consumed
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -62,13 +62,14 @@ Current goal:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
+| #238 | `codex/release-deck-scheduling-client` | open, independently reviewed | Await required checks/codeowner review, then merge through the protected PR path. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
 ### Main Worktree
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | reviewed checkpoint `2c979c0` plus PR-preparation commit | Sole-writer remote submission preparation; reviewers remain read-only. |
+| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | PR #238 submission checkpoint | Open implementation PR; reviewers remain read-only. |
 
 ### Preserved UX Reference Worktrees
 
@@ -134,8 +135,8 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Reverify and independently review the scheduling submission checkpoint, then push and open its focused PR.
-2. After the scheduling PR establishes the remote baseline, rebase, reverify, and independently review the graduation branch before its separate PR.
+1. Land independently reviewed scheduling-client PR #238 through the protected PR path.
+2. After PR #238 establishes the remote baseline, rebase, reverify, and independently review the graduation branch before its separate PR.
 3. Start Slice 6 official Sect/song-level backing with a heavy schema/owner-contract plan review before implementation.
 4. Follow with a separately reviewed Slice 7 source-authorized backing API checkpoint only after Slice 6 has a safe baseline.
 5. Keep the founder-session capture, draft PR #212, and preserved UX reference worktrees/branches untouched.
