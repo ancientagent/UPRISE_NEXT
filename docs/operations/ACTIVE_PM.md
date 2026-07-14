@@ -23,9 +23,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 ## Current Workspace Snapshot
 
 - Snapshot date: 2026-07-14
-- Base branch: local `main` at `8c4ab4d`; `origin/main` remains `5ae79b8`
+- Base branch: `origin/main` at `5ae79b8`; local `main` has operations-only checkpoints through `375d06c`
 - Active branch: `codex/release-deck-scheduling-client`
-- Local worktree state: scheduling client complete and independently reviewed; local branch preservation/next-slice transition in progress; no push or PR authorized
+- Local worktree state: scheduling client complete and independently reviewed; founder authorized staged remote PR submission
 - Open PR queue at refresh: draft PR #212 (`docs/linear-clean-context-agent-roles`) remains intentionally deprioritized and conflicting; no implementation PR is open
 - Recently completed runtime stack: PR #236 merged Release Deck schedule writes and Fair Play ingestion; PR #237 was docs-only avatar boundary work
 - Provider/db/schema state: no new migration or provider change in the current client slice; existing `ReleaseDeckSchedule` persistence is being consumed
@@ -35,14 +35,14 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 Current goal:
 
-- Keep all development local with Codex local as the sole writer.
-- Complete the Source Dashboard Release Deck scheduling client against the
-  already-merged availability/write APIs.
-- Use read-only reviewer agents for each new implementation checkpoint; the
-  primary writer applies all fixes.
-- After the scheduling slice passes review, select the next primary objective
-  from current owner specs/runtime evidence rather than stale queue notes.
-- Keep draft PR #212 and preserved UX worktrees untouched.
+- Keep Codex local as the sole writer and reviewers read-only.
+- Submit the reviewed scheduling client as the first focused PR.
+- After it establishes the remote baseline, rebase and separately submit the
+  reviewed New Releases graduation slice.
+- Begin Slice 6 official Sect/song-level backing and Slice 7 backing authority
+  only through independently reviewed plans and bounded implementation slices.
+- Keep the raw founder-session capture, draft PR #212, and preserved UX
+  worktrees/branches out of these submissions.
 
 ## Active Slice
 
@@ -68,7 +68,7 @@ Current goal:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | `c4b8cd0` reviewed scheduling checkpoint | Complete and independently reviewed; preserve locally and transition the worktree to a separately registered next objective. |
+| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | reviewed checkpoint `2c979c0` plus PR-preparation commit | Sole-writer remote submission preparation; reviewers remain read-only. |
 
 ### Preserved UX Reference Worktrees
 
@@ -134,11 +134,11 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Finish and locally checkpoint the Release Deck scheduling client.
-2. Run read-only implementation reviewers; fix all critical/important findings as the sole writer and reverify.
-3. Select the next primary development objective from current owner specs and runtime gaps; do not reuse the already-implemented readiness-slice recommendation.
-4. Keep all work local unless the founder later authorizes a push/PR.
-5. Keep draft PR #212 and preserved UX reference worktrees/branches untouched.
+1. Reverify and independently review the scheduling submission checkpoint, then push and open its focused PR.
+2. After the scheduling PR establishes the remote baseline, rebase, reverify, and independently review the graduation branch before its separate PR.
+3. Start Slice 6 official Sect/song-level backing with a heavy schema/owner-contract plan review before implementation.
+4. Follow with a separately reviewed Slice 7 source-authorized backing API checkpoint only after Slice 6 has a safe baseline.
+5. Keep the founder-session capture, draft PR #212, and preserved UX reference worktrees/branches untouched.
 
 ## PM Usage Rules For Agents
 

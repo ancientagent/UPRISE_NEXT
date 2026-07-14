@@ -3,8 +3,8 @@
 **Date:** 2026-07-14
 **Branch:** `codex/release-deck-scheduling-client`
 **Base:** local `main` at `8c4ab4d`
-**Deployment Target:** none; local-only single-writer checkpoint
-**Status:** complete and independently reviewed; preserved as a local-only checkpoint
+**Deployment Target:** Vercel web + Fly/App Runner API through the normal PR pipeline
+**Status:** complete and independently reviewed; remote PR submission authorized
 **Agent:** Codex local sole writer
 
 ## Summary
@@ -61,7 +61,8 @@ and assignment mode.
 - No replacement/removal, upload/storage/transcoding, metrics, paid-ad runtime,
   or new route.
 - No database client or server-only import in `apps/web`.
-- No remote push, PR, deployment, provider write, or external workspace writer.
+- No direct deployment, provider write, or external workspace writer; remote
+  submission must use the protected-branch PR pipeline.
 
 ## Files
 
@@ -123,7 +124,8 @@ and assignment mode.
 
 ## Review And Continuation
 
-Codex local remained the only writer and all reviewer work was read-only. Keep
-this branch local and preserved unless the founder later authorizes integration.
-The next owner-authorized objective should proceed on its own registered branch
-from local `main`, without stacking this scheduling client branch.
+Codex local remained the only writer and all reviewer work was read-only. The
+founder authorized remote integration on 2026-07-14. Submit this branch as the
+first focused PR, allow required checks/review to establish the new baseline,
+then rebase the separately reviewed graduation branch onto that baseline. Do
+not bundle the raw founder-session capture or preserved prototype branches.
