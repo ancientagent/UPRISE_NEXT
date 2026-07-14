@@ -25,9 +25,9 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Snapshot date: 2026-07-14
 - Base branch: `origin/main` at `a55a54f` after scheduling-client PR #238 merged
 - Current branch: `codex/new-releases-graduation`, active for the authorized sequential submission
-- Local worktree state at refresh: rebased onto the scheduling baseline, freshly reverified, and applying the bounded reviewer-requested operations correction
+- Local worktree state at refresh: rebased onto the scheduling baseline, freshly reverified, independently re-reviewed, and submitted as PR #239
 - Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PR #238 is merged
-- Recently completed remote slice: scheduling-client PR #238; graduation is rebased and reverified, with final bounded re-review in progress before push/PR
+- Recently completed remote slice: scheduling-client PR #238; graduation PR #239 is open after the rebased code/product review gates passed
 - Provider/db/schema state: no provider writes; the graduation slice does not require schema changes
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -64,6 +64,7 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
+| #239 | `codex/new-releases-graduation` | open, independently reviewed | Await required checks, then merge through the protected PR path. |
 | #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
@@ -71,7 +72,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/new-releases-graduation` | rebased branch HEAD after fresh validation | Active sole-writer submission; bounded final re-review in progress. |
+| `/home/baris/UPRISE_NEXT` | `codex/new-releases-graduation` | PR #239 submission checkpoint | Open implementation PR; reviewers remain read-only. |
 
 ### Preserved UX Reference Worktrees
 
@@ -137,7 +138,7 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Complete the bounded operations-doc re-review, then push and open the graduation PR against the merged scheduling baseline.
+1. Land independently reviewed graduation PR #239 through the protected PR path.
 2. Begin Slice 6 Official Sect/song-level backing with owner-contract/schema review and an independently reviewed implementation plan before writing it.
 3. Keep cron/queue automation, propagation/cap policy, unresolved RBAC, and UI expansion out of the next slice unless owner contracts explicitly authorize them.
 4. Keep draft PR #212 and preserved UX reference worktrees/branches untouched unless the user explicitly reprioritizes them.

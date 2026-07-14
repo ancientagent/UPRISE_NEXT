@@ -8,7 +8,7 @@
 
 **Rebased Onto:** `origin/main` at `a55a54f` after PR #238
 
-**Status:** rebased and reverified; reviewer-requested authority/operations correction applied for bounded final re-review
+**Status:** rebased, reverified, and independently reviewed; PR #239 open
 
 ## A. Evidence Used
 
