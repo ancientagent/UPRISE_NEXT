@@ -23,11 +23,11 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 ## Current Workspace Snapshot
 
 - Snapshot date: 2026-07-14
-- Base branch: `origin/main` at `542c350` after Official Sect identity PR #240 merged
-- Current branch assignment: `codex/sect-readiness-decision-gate`, registered for the Slice 7 decision packet only
-- Local worktree state at refresh: Slice 7 founder-decision packet passed independent product-authority and implementation-planning review; Codex local remains the sole writer
-- Open PR queue at refresh: PR #241 carries the reviewed Slice 7 decision packet; draft PR #212 remains intentionally deprioritized; PRs #238, #239, and #240 are merged
-- Recently completed remote slices: scheduling-client PR #238, graduation PR #239, and Official Sect identity PR #240
+- Base branch: `origin/main` includes the merged Slice 7 decision gate at `563fd91`
+- Current branch assignment: `codex/sect-decision-gate-closeout`, routing-only closeout for the merged decision gate
+- Local worktree state at refresh: product development is stopped for the founder's three answers; Codex local remains the sole writer for this routing closeout
+- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238, #239, #240, and #241 are merged
+- Recently completed remote slices: scheduling-client PR #238, graduation PR #239, Official Sect identity PR #240, and Sect backing/readiness decision-gate PR #241
 - Provider/db/schema state: no provider writes; Slice 7 is documentation/decision work and authorizes no schema or database change
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
@@ -36,7 +36,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Submit the reviewed Slice 7 decision packet, then stop for the founder's three answers before owner-spec or runtime expansion.
+- Obtain the founder's three answers from the merged Slice 7 decision packet before any owner-spec or runtime expansion.
 - Keep all backing/readiness schema and runtime work blocked until founder-approved answers are promoted into the owner specs.
 
 Recently completed context:
@@ -51,8 +51,8 @@ Recently completed context:
 | Field | Current Value |
 | --- | --- |
 | Lane | Registrar / Release Deck / communities decision contract |
-| Branch | `codex/sect-readiness-decision-gate` |
-| Scope | Write a narrow founder-decision packet that separates and asks the minimum choices needed for backing lifecycle/authority and readiness threshold/counting semantics. |
+| Branch | `codex/sect-decision-gate-closeout` (routing only; no product implementation) |
+| Scope | Preserve the merged decision gate as current routing truth and stop for founder answers. |
 | Out of Scope | Prisma/migration changes, backing/readiness service or API work, UI, public progress, automatic activation, update channels, provider/database deployment, governance, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
@@ -64,7 +64,7 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #241 | `codex/sect-readiness-decision-gate` | open | Require green documentation/policy checks, then merge and stop for founder answers. |
+| #241 | `codex/sect-readiness-decision-gate` | merged at `563fd91` | Decision packet established; stop for founder answers. |
 | #240 | `codex/official-sect-backing-foundation` | merged at `542c350` | Official Sect identity baseline established; backing/readiness remains blocked on the next decision packet. |
 | #239 | `codex/new-releases-graduation` | merged at `c9992c3` | Graduation baseline established; preserve the local branch until sequential closeout is complete. |
 | #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
@@ -74,7 +74,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/sect-readiness-decision-gate` | planned from `origin/main@542c350` | Sole-writer Slice 7 decision-packet workspace; reviewers remain read-only. |
+| `/home/baris/UPRISE_NEXT` | `codex/sect-decision-gate-closeout` | planned from `origin/main@563fd91` | Routing-only closeout workspace; no product implementation is authorized. |
 
 ### Preserved UX Reference Worktrees
 
@@ -140,9 +140,9 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Write the Slice 7 founder-decision packet from current owner-spec truth.
-2. Independently review it for answerability, authority boundaries, and implementation consequences.
-3. Do not implement backing or readiness until the founder answers are promoted into the appropriate owner specs in a separately authorized slice.
+1. Receive the founder's three answers from `docs/handoff/2026-07-14_sect-backing-readiness-decision-gate.md`.
+2. Capture the raw wording and promote only the settled answers into the appropriate owner specs.
+3. Write and independently review a new executor plan before any backing or readiness implementation.
 4. Keep unresolved Registrar authorization, public visibility, backing limits, paid/free capacity, Sect Uprise activation, draft PR #212, and preserved UX references untouched.
 
 ## PM Usage Rules For Agents
