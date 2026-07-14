@@ -9,6 +9,14 @@
 
 ### Added
 
+- Added the Slice 7 Sect backing/readiness founder-decision gate. It preserves
+  the settled explicit song-level, eligible Release Deck evidence and 45-minute
+  target while isolating three unresolved locks: Registrar authority,
+  backing lifecycle/history, and a source-diversity minimum under the existing
+  per-source cap. Recommendations
+  are planning guidance only; no owner rule, schema, runtime, UI, or provider
+  action is activated. See
+  `docs/handoff/2026-07-14_sect-backing-readiness-decision-gate.md`.
 - Added the authority-neutral Official Sect identity persistence foundation:
   `Sect` is scoped to a parent `Community` with parent-scoped slug uniqueness,
   an additive migration, and schema/migration parity tests. This slice creates

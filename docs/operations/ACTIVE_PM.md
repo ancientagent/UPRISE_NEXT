@@ -23,12 +23,12 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 ## Current Workspace Snapshot
 
 - Snapshot date: 2026-07-14
-- Base branch: `origin/main` at `c9992c3` after scheduling-client PR #238 and graduation PR #239 merged
-- Current branch assignment: `codex/official-sect-backing-foundation`, registered for the reviewed Slice 6A Official Sect identity checkpoint
-- Local worktree state at refresh: identity-only schema checkpoint passed independent schema/code and product-authority review with zero findings; Codex local remains the sole writer
-- Open PR queue at refresh: PR #240 carries the reviewed Slice 6A identity foundation; draft PR #212 remains intentionally deprioritized; PRs #238 and #239 are merged
-- Recently completed remote slices: scheduling-client PR #238 and graduation PR #239
-- Provider/db/schema state: no provider writes; the additive empty Official Sect identity migration exists only as a local schema file and has not been deployed
+- Base branch: `origin/main` at `542c350` after Official Sect identity PR #240 merged
+- Current branch assignment: `codex/sect-readiness-decision-gate`, registered for the Slice 7 decision packet only
+- Local worktree state at refresh: Slice 7 founder-decision packet passed independent product-authority and implementation-planning review; Codex local remains the sole writer
+- Open PR queue at refresh: PR #241 carries the reviewed Slice 7 decision packet; draft PR #212 remains intentionally deprioritized; PRs #238, #239, and #240 are merged
+- Recently completed remote slices: scheduling-client PR #238, graduation PR #239, and Official Sect identity PR #240
+- Provider/db/schema state: no provider writes; Slice 7 is documentation/decision work and authorizes no schema or database change
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
@@ -36,8 +36,8 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Land the independently reviewed Slice 6A Official Sect identity foundation through PR #240 only after green remote migration/check gates.
-- Keep song-level backing blocked on the Slice 6B owner decisions before beginning a separately reviewed Slice 7 decision packet.
+- Submit the reviewed Slice 7 decision packet, then stop for the founder's three answers before owner-spec or runtime expansion.
+- Keep all backing/readiness schema and runtime work blocked until founder-approved answers are promoted into the owner specs.
 
 Recently completed context:
 
@@ -50,13 +50,13 @@ Recently completed context:
 
 | Field | Current Value |
 | --- | --- |
-| Lane | Registrar / Release Deck / communities schema |
-| Branch | `codex/official-sect-backing-foundation` |
-| Scope | Add only the durable parent-community-scoped Official Sect identity model, additive empty migration, and exact schema/DDL parity test. |
-| Out of Scope | Song-level backing persistence or writes, lifecycle state, public backing API/UI, inventing Registrar authorization, source/song paid or free limits, public progress, readiness activation, update channels, Sect Uprise creation, provider/database deployment, or legacy tag promotion. |
+| Lane | Registrar / Release Deck / communities decision contract |
+| Branch | `codex/sect-readiness-decision-gate` |
+| Scope | Write a narrow founder-decision packet that separates and asks the minimum choices needed for backing lifecycle/authority and readiness threshold/counting semantics. |
+| Out of Scope | Prisma/migration changes, backing/readiness service or API work, UI, public progress, automatic activation, update channels, provider/database deployment, governance, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
-| Validation | independently reviewed plan; Prisma format/validate/generate; focused schema/service tests selected by the plan; API typecheck; repo verify; workspace audit; diff check; read-only implementation review |
+| Validation | docs lint; workspace audit; diff check; independent product-authority and implementation-planning review |
 
 ## Current Branch / Worktree State
 
@@ -64,7 +64,8 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #240 | `codex/official-sect-backing-foundation` | open | Require all migration, verification, policy, and preview checks before merge; do not expand into backing/readiness runtime. |
+| #241 | `codex/sect-readiness-decision-gate` | open | Require green documentation/policy checks, then merge and stop for founder answers. |
+| #240 | `codex/official-sect-backing-foundation` | merged at `542c350` | Official Sect identity baseline established; backing/readiness remains blocked on the next decision packet. |
 | #239 | `codex/new-releases-graduation` | merged at `c9992c3` | Graduation baseline established; preserve the local branch until sequential closeout is complete. |
 | #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
@@ -73,7 +74,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/official-sect-backing-foundation` | planned from `origin/main@c9992c3` | Sole-writer Slice 6 plan/schema workspace; reviewers remain read-only. |
+| `/home/baris/UPRISE_NEXT` | `codex/sect-readiness-decision-gate` | planned from `origin/main@542c350` | Sole-writer Slice 7 decision-packet workspace; reviewers remain read-only. |
 
 ### Preserved UX Reference Worktrees
 
@@ -139,9 +140,9 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Complete independent review and remote submission of the Slice 6A Official Sect identity foundation.
-2. Keep song-level backing persistence blocked until the Slice 6B owner contract resolves lifecycle, authority, reassignment, and retention semantics.
-3. Begin Slice 7 as a decision-gated packet only after Slice 6A is safe; do not implement readiness until backing authority and threshold/counting semantics are locked.
+1. Write the Slice 7 founder-decision packet from current owner-spec truth.
+2. Independently review it for answerability, authority boundaries, and implementation consequences.
+3. Do not implement backing or readiness until the founder answers are promoted into the appropriate owner specs in a separately authorized slice.
 4. Keep unresolved Registrar authorization, public visibility, backing limits, paid/free capacity, Sect Uprise activation, draft PR #212, and preserved UX references untouched.
 
 ## PM Usage Rules For Agents
