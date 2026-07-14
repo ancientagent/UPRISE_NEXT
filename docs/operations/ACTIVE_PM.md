@@ -23,40 +23,40 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 ## Current Workspace Snapshot
 
 - Snapshot date: 2026-07-14
-- Base branch: `origin/main` at `a55a54f` after scheduling-client PR #238 merged
-- Current branch: `codex/new-releases-graduation`, active for the authorized sequential submission
-- Local worktree state at refresh: rebased onto the scheduling baseline, freshly reverified, independently re-reviewed, and submitted as PR #239
-- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PR #238 is merged
-- Recently completed remote slice: scheduling-client PR #238; graduation PR #239 is open after the rebased code/product review gates passed
-- Provider/db/schema state: no provider writes; the graduation slice does not require schema changes
+- Base branch: `origin/main` at `c9992c3` after scheduling-client PR #238 and graduation PR #239 merged
+- Current branch assignment: `codex/official-sect-backing-foundation`, registered for Slice 6 planning and the first bounded schema checkpoint
+- Local worktree state at refresh: preparing the registered branch from the clean merged baseline; Codex local remains the sole writer
+- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238 and #239 are merged
+- Recently completed remote slices: scheduling-client PR #238 and graduation PR #239
+- Provider/db/schema state: no provider writes; Slice 6 planning may authorize a local Prisma schema/migration checkpoint only after independent review
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
 
 Current goal:
 
-- Submit the completed manual New Releases to Main Rotation graduation slice as a separate focused PR after rebasing it onto `origin/main`.
 - Keep Codex local as the sole writer and all review agents read-only.
-- Route the next architecture signal through a fresh reviewed plan before any Slice 6 Sect/song-level backing schema work begins.
+- Write and independently review the Slice 6 Official Sect/song-level backing foundation plan.
+- Implement only the plan-approved bounded schema checkpoint before beginning a separately reviewed Slice 7 readiness-diagnostics plan.
 
 Recently completed context:
 
 - PR #236 merged the Release Deck scheduling stack and related source/listener identity and Support/avatar spec promotions.
 - PR #237 merged the avatar creation/account-profile versus Personal Space/Inventory boundary.
 - The Release Deck scheduling client content merged through PR #238 at `a55a54f`; its local branch remains preserved only until sequential closeout is complete.
-- The local-only graduation slice adds exact stored-window eligibility, dry-run/write execution, deterministic engagement-derived initial recurrence, and conditional idempotent rotation updates; independent plan, code, and product reviews passed.
+- Graduation PR #239 merged the exact stored-window dry-run/write transition and deterministic recurrence initialization at `c9992c3`.
 
 ## Active Slice
 
 | Field | Current Value |
 | --- | --- |
-| Lane | API / Fair Play lifecycle |
-| Branch | `codex/new-releases-graduation` (active sequential submission) |
-| Scope | Completed manual authenticated graduation dry-run/write path using each entry's locked New Releases window and the configured rolling engagement window for deterministic recurrence initialization. |
-| Out of Scope | Cron/queue activation, automatic propagation, vote/engagement mutation, cap policy, removal/floor policy, UI work, schema/migration work, RBAC invention, provider writes, push/PR activity. |
-| Owner Contracts | `AGENTS.md`, `docs/specs/broadcast/radiyo-and-fair-play.md`, `docs/specs/admin/super-admin-controls.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md` |
-| Companion Docs | `docs/AGENT_STRATEGY_AND_HANDOFF.md`, `docs/agent-briefs/CONTEXT_ROUTER.md`, current Fair Play ingestion/service/schema/tests |
-| Validation | focused API graduation/controller/service tests; Fair Play regression tests; `pnpm run verify`; `pnpm run workspace:audit`; `git diff --check`; independent read-only plan/code/product reviews |
+| Lane | Registrar / Release Deck / communities schema |
+| Branch | `codex/official-sect-backing-foundation` |
+| Scope | Plan Slice 6 and, only after plan review, add the durable Official Sect and song-level backing schema foundation without activating backing writes or Sect Uprise creation. |
+| Out of Scope | Public backing API/UI, inventing Registrar authorization, source/song paid or free limits, public progress, readiness activation, update channels, Sect Uprise creation, provider/database deployment, or legacy tag promotion. |
+| Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
+| Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
+| Validation | independently reviewed plan; Prisma format/validate/generate; focused schema/service tests selected by the plan; API typecheck; repo verify; workspace audit; diff check; read-only implementation review |
 
 ## Current Branch / Worktree State
 
@@ -64,7 +64,7 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
-| #239 | `codex/new-releases-graduation` | open, independently reviewed | Await required checks, then merge through the protected PR path. |
+| #239 | `codex/new-releases-graduation` | merged at `c9992c3` | Graduation baseline established; preserve the local branch until sequential closeout is complete. |
 | #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |
 
@@ -72,7 +72,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/new-releases-graduation` | PR #239 submission checkpoint | Open implementation PR; reviewers remain read-only. |
+| `/home/baris/UPRISE_NEXT` | `codex/official-sect-backing-foundation` | planned from `origin/main@c9992c3` | Sole-writer Slice 6 plan/schema workspace; reviewers remain read-only. |
 
 ### Preserved UX Reference Worktrees
 
@@ -138,10 +138,10 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Land independently reviewed graduation PR #239 through the protected PR path.
-2. Begin Slice 6 Official Sect/song-level backing with owner-contract/schema review and an independently reviewed implementation plan before writing it.
-3. Keep cron/queue automation, propagation/cap policy, unresolved RBAC, and UI expansion out of the next slice unless owner contracts explicitly authorize them.
-4. Keep draft PR #212 and preserved UX reference worktrees/branches untouched unless the user explicitly reprioritizes them.
+1. Write and independently review the Slice 6 Official Sect/song-level backing foundation plan.
+2. Implement and independently review the first plan-approved schema checkpoint without activating the unresolved backing authority/write path.
+3. Begin a separate Slice 7 readiness-diagnostics plan only after the Slice 6 schema checkpoint is safe.
+4. Keep unresolved Registrar authorization, public visibility, backing limits, paid/free capacity, Sect Uprise activation, draft PR #212, and preserved UX references untouched.
 
 ## PM Usage Rules For Agents
 
