@@ -398,7 +398,7 @@ tests_passed: yes
 
 reviewer_required: yes
 
-reviewer_passed: no
+reviewer_passed: yes
 
 qa_required: no
 
@@ -428,6 +428,6 @@ schema_or_migration_verified: yes
 
 linear_ready_to_close: no
 
-blockers: independent implementation review and remote PR checks remain
+blockers: remote PR checks remain
 
-next_signal: independent implementation review of the exact checkpoint
+next_signal: push the registered branch and open the remote PR

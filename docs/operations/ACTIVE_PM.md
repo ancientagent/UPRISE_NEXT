@@ -25,7 +25,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Snapshot date: 2026-07-14
 - Base branch: `origin/main` at `c9992c3` after scheduling-client PR #238 and graduation PR #239 merged
 - Current branch assignment: `codex/official-sect-backing-foundation`, registered for the reviewed Slice 6A Official Sect identity checkpoint
-- Local worktree state at refresh: identity-only schema checkpoint implemented and in read-only review; Codex local remains the sole writer
+- Local worktree state at refresh: identity-only schema checkpoint passed independent schema/code and product-authority review with zero findings; Codex local remains the sole writer
 - Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238 and #239 are merged
 - Recently completed remote slices: scheduling-client PR #238 and graduation PR #239
 - Provider/db/schema state: no provider writes; the additive empty Official Sect identity migration exists only as a local schema file and has not been deployed
@@ -36,7 +36,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Complete independent review and remote submission of the Slice 6A Official Sect identity foundation.
+- Submit the independently reviewed Slice 6A Official Sect identity foundation and require green remote migration/check gates.
 - Keep song-level backing blocked on the Slice 6B owner decisions before beginning a separately reviewed Slice 7 decision packet.
 
 Recently completed context:
