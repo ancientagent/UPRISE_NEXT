@@ -171,7 +171,7 @@ schema_or_migration_touched: no
 schema_or_migration_verified: not_required  
 linear_ready_to_close: not_applicable  
 blockers: bounded product documentation re-review remains
-next_signal: commit this documentation correction and request product re-review
+next_signal: final closeout verification and local branch preservation after bounded product documentation re-review passes
 
 ## Implementation Checkpoint
 
