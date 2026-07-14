@@ -1,4 +1,9 @@
-import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ReleaseDeckSchedulingService } from '../src/release-deck/release-deck-scheduling.service';
 
 const CITY_COMMUNITY = {
@@ -24,6 +29,8 @@ const TRACK = {
     id: 'source-a',
     name: 'Source A',
     homeSceneId: CITY_COMMUNITY.id,
+    createdById: 'user-1',
+    members: [],
   },
 };
 
@@ -143,8 +150,16 @@ describe('ReleaseDeckSchedulingService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers().setSystemTime(new Date(`${REQUESTED_FROM}T12:00:00.000Z`));
     prisma = createPrismaMock();
+    prisma.$transaction.mockImplementation(async (callback: (client: typeof prisma) => unknown) =>
+      callback(prisma)
+    );
     service = new ReleaseDeckSchedulingService(prisma as any);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   function mockOperatorTrack(overrides: Partial<Record<string, any>> = {}) {
@@ -171,12 +186,15 @@ describe('ReleaseDeckSchedulingService', () => {
       scheduled('short-4', REQUESTED_FROM, 60),
     ]);
 
-    const result = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: TRACK.id,
-      from: REQUESTED_FROM,
-      days: 3,
-    });
+    const result = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        from: REQUESTED_FROM,
+        days: 3,
+      },
+      'user-1'
+    );
 
     expect(result.success).toBe(true);
     expect(result.data.soonestValidDate).toBe('2026-07-08');
@@ -203,12 +221,15 @@ describe('ReleaseDeckSchedulingService', () => {
       scheduled('full-2', REQUESTED_FROM, 360),
     ]);
 
-    const result = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: TRACK.id,
-      from: REQUESTED_FROM,
-      days: 2,
-    });
+    const result = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        from: REQUESTED_FROM,
+        days: 2,
+      },
+      'user-1'
+    );
 
     expect(result.success).toBe(false);
     expect(result.error).toMatchObject({
@@ -239,6 +260,42 @@ describe('ReleaseDeckSchedulingService', () => {
     ]);
   });
 
+  it('counts ingested releases in daily capacity and the protected window', async () => {
+    prisma.releaseDeckSchedule.findMany.mockResolvedValue([
+      scheduled('ingested-1', REQUESTED_FROM, 360, { status: 'ingested' }),
+      scheduled('ingested-2', REQUESTED_FROM, 360, { status: 'ingested' }),
+    ]);
+
+    const result = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        from: REQUESTED_FROM,
+        days: 2,
+      },
+      'user-1'
+    );
+
+    expect(result).toMatchObject({
+      success: false,
+      error: {
+        code: 'DATE_CAPACITY_FULL',
+        requestedDate: REQUESTED_FROM,
+        soonestValidDate: '2026-07-09',
+      },
+    });
+    expect(result.error.diagnostics[0]).toMatchObject({
+      dailyScheduledPlayableSeconds: 720,
+      protectedWindowScheduledPlayableSeconds: 720,
+      reasons: ['DATE_DAILY_CAPACITY_FULL'],
+    });
+    expect(prisma.releaseDeckSchedule.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ status: { in: ['scheduled', 'ingested'] } }),
+      })
+    );
+  });
+
   it('fails closed when the protected 10-day New Releases window has no valid date in lookahead', async () => {
     prisma.releaseDeckSchedule.findMany.mockResolvedValue([
       scheduled('protected-1', '2026-07-01', 360),
@@ -250,12 +307,15 @@ describe('ReleaseDeckSchedulingService', () => {
       scheduled('protected-7', '2026-07-07', 360),
     ]);
 
-    const result = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: TRACK.id,
-      from: REQUESTED_FROM,
-      days: 2,
-    });
+    const result = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        from: REQUESTED_FROM,
+        days: 2,
+      },
+      'user-1'
+    );
 
     expect(result).toMatchObject({
       success: false,
@@ -289,12 +349,15 @@ describe('ReleaseDeckSchedulingService', () => {
       requestedFor: new Date('2026-07-09T00:00:00.000Z'),
     });
 
-    const result = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: TRACK.id,
-      from: REQUESTED_FROM,
-      days: 3,
-    });
+    const result = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        from: REQUESTED_FROM,
+        days: 3,
+      },
+      'user-1'
+    );
 
     expect(result).toEqual({
       success: false,
@@ -316,27 +379,34 @@ describe('ReleaseDeckSchedulingService', () => {
     expect(prisma.releaseDeckSchedule.findMany).not.toHaveBeenCalled();
   });
 
-  it('rejects ineligible tracks before capacity scanning', async () => {
-    prisma.track.findUnique.mockResolvedValue({
+  it('rejects a not-ready track before capacity scanning', async () => {
+    prisma.track.findUnique.mockResolvedValueOnce({
       ...TRACK,
-      id: 'wrong-community-track',
-      communityId: 'community-dallas-punk',
+      id: 'not-ready-track',
+    });
+    prisma.track.findUnique.mockResolvedValueOnce({
+      ...TRACK,
+      id: 'not-ready-track',
+      status: 'processing',
     });
 
-    const result = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: 'wrong-community-track',
-      from: REQUESTED_FROM,
-      days: 3,
-    });
+    const result = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: 'not-ready-track',
+        from: REQUESTED_FROM,
+        days: 3,
+      },
+      'user-1'
+    );
 
     expect(result).toEqual({
       success: false,
       error: {
         code: 'TRACK_NOT_ELIGIBLE',
-        reason: 'WRONG_COMMUNITY',
+        reason: 'NOT_READY',
         message: 'Track is not eligible for Release Deck scheduling',
-        trackId: 'wrong-community-track',
+        trackId: 'not-ready-track',
         diagnostics: [],
         capacityInputs: null,
       },
@@ -348,15 +418,22 @@ describe('ReleaseDeckSchedulingService', () => {
     prisma.track.findUnique.mockResolvedValueOnce({
       ...TRACK,
       id: 'missing-url-track',
+    });
+    prisma.track.findUnique.mockResolvedValueOnce({
+      ...TRACK,
+      id: 'missing-url-track',
       fileUrl: '',
     });
 
-    const missingUrl = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: 'missing-url-track',
-      from: REQUESTED_FROM,
-      days: 3,
-    });
+    const missingUrl = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: 'missing-url-track',
+        from: REQUESTED_FROM,
+        days: 3,
+      },
+      'user-1'
+    );
 
     expect(missingUrl).toEqual({
       success: false,
@@ -373,15 +450,22 @@ describe('ReleaseDeckSchedulingService', () => {
     prisma.track.findUnique.mockResolvedValueOnce({
       ...TRACK,
       id: 'invalid-url-track',
+    });
+    prisma.track.findUnique.mockResolvedValueOnce({
+      ...TRACK,
+      id: 'invalid-url-track',
       fileUrl: 'ftp://cdn.example.test/candidate.mp3',
     });
 
-    const invalidUrl = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: 'invalid-url-track',
-      from: REQUESTED_FROM,
-      days: 3,
-    });
+    const invalidUrl = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: 'invalid-url-track',
+        from: REQUESTED_FROM,
+        days: 3,
+      },
+      'user-1'
+    );
 
     expect(invalidUrl).toEqual({
       success: false,
@@ -405,12 +489,15 @@ describe('ReleaseDeckSchedulingService', () => {
       { id: 'slot-4', duration: 60, status: 'ready' },
     ]);
 
-    const result = await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: TRACK.id,
-      from: REQUESTED_FROM,
-      days: 3,
-    });
+    const result = await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        from: REQUESTED_FROM,
+        days: 3,
+      },
+      'user-1'
+    );
 
     expect(result).toMatchObject({
       success: false,
@@ -427,12 +514,15 @@ describe('ReleaseDeckSchedulingService', () => {
       scheduled('short-1', REQUESTED_FROM, 120),
     ]);
 
-    await service.getAvailability({
-      communityId: CITY_COMMUNITY.id,
-      trackId: TRACK.id,
-      from: REQUESTED_FROM,
-      days: 2,
-    });
+    await service.getAvailability(
+      {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        from: REQUESTED_FROM,
+        days: 2,
+      },
+      'user-1'
+    );
 
     expect(mutatingCalls(prisma)).toEqual([]);
     expect(prisma.rotationEntry.create).not.toHaveBeenCalled();
@@ -444,24 +534,93 @@ describe('ReleaseDeckSchedulingService', () => {
     expect(prisma.fairPlayConfig.findFirst).not.toHaveBeenCalled();
   });
 
+  it('requires source-operator authority before returning scheduling diagnostics', async () => {
+    prisma.track.findUnique.mockResolvedValueOnce({
+      ...TRACK,
+      artistBand: {
+        ...TRACK.artistBand,
+        createdById: 'user-2',
+        members: [],
+      },
+    });
+
+    await expect(
+      service.getAvailability(
+        {
+          communityId: CITY_COMMUNITY.id,
+          trackId: TRACK.id,
+          from: REQUESTED_FROM,
+          days: 3,
+        },
+        'user-1'
+      )
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(prisma.community.findUnique).not.toHaveBeenCalled();
+    expect(prisma.releaseDeckSchedule.findMany).not.toHaveBeenCalled();
+  });
+
+  it('rejects availability scans that begin before the current UTC date', async () => {
+    await expect(
+      service.getAvailability(
+        {
+          communityId: CITY_COMMUNITY.id,
+          trackId: TRACK.id,
+          from: '2026-07-07',
+          days: 3,
+        },
+        'user-1'
+      )
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(prisma.community.findUnique).not.toHaveBeenCalled();
+  });
+
+  it('rejects inactive city communities before returning capacity', async () => {
+    prisma.community.findUnique.mockResolvedValueOnce({
+      ...CITY_COMMUNITY,
+      isActive: false,
+    });
+
+    await expect(
+      service.getAvailability(
+        {
+          communityId: CITY_COMMUNITY.id,
+          trackId: TRACK.id,
+          from: REQUESTED_FROM,
+          days: 3,
+        },
+        'user-1'
+      )
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(prisma.releaseDeckSchedule.findMany).not.toHaveBeenCalled();
+  });
+
   it('rejects blank IDs, missing tracks, and non-city communities', async () => {
     await expect(
-      service.getAvailability({
-        communityId: ' ',
-        trackId: TRACK.id,
-        from: REQUESTED_FROM,
-        days: 3,
-      })
+      service.getAvailability(
+        {
+          communityId: ' ',
+          trackId: TRACK.id,
+          from: REQUESTED_FROM,
+          days: 3,
+        },
+        'user-1'
+      )
     ).rejects.toBeInstanceOf(BadRequestException);
 
     prisma.track.findUnique.mockResolvedValueOnce(null);
     await expect(
-      service.getAvailability({
-        communityId: CITY_COMMUNITY.id,
-        trackId: 'missing',
-        from: REQUESTED_FROM,
-        days: 3,
-      })
+      service.getAvailability(
+        {
+          communityId: CITY_COMMUNITY.id,
+          trackId: 'missing',
+          from: REQUESTED_FROM,
+          days: 3,
+        },
+        'user-1'
+      )
     ).rejects.toBeInstanceOf(NotFoundException);
 
     prisma.community.findUnique.mockResolvedValueOnce({
@@ -470,12 +629,15 @@ describe('ReleaseDeckSchedulingService', () => {
       tier: 'state',
     });
     await expect(
-      service.getAvailability({
-        communityId: 'state-scene',
-        trackId: TRACK.id,
-        from: REQUESTED_FROM,
-        days: 3,
-      })
+      service.getAvailability(
+        {
+          communityId: 'state-scene',
+          trackId: TRACK.id,
+          from: REQUESTED_FROM,
+          days: 3,
+        },
+        'user-1'
+      )
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
@@ -506,6 +668,49 @@ describe('ReleaseDeckSchedulingService', () => {
     );
     expect(prisma.rotationEntry.create).not.toHaveBeenCalled();
     expect(prisma.rotationEntry.update).not.toHaveBeenCalled();
+    expect(prisma.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: 'Serializable',
+    });
+  });
+
+  it('rejects chosen dates outside the fresh current lookahead window', async () => {
+    mockOperatorTrack();
+
+    let thrown: BadRequestException | undefined;
+    try {
+      await service.scheduleTrack('user-1', {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        mode: 'chosen',
+        requestedDate: '2026-08-20',
+      });
+    } catch (error) {
+      thrown = error as BadRequestException;
+    }
+
+    expect(thrown).toBeInstanceOf(BadRequestException);
+    expect(thrown?.getResponse()).toMatchObject({
+      error: {
+        code: 'REQUESTED_DATE_NOT_AVAILABLE',
+        requestedDate: '2026-08-20',
+        soonestValidDate: REQUESTED_FROM,
+      },
+    });
+    expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects a chosen date before the current UTC date', async () => {
+    mockOperatorTrack();
+
+    await expect(
+      service.scheduleTrack('user-1', {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        mode: 'chosen',
+        requestedDate: '2026-07-07',
+      })
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
   });
 
   it('rejects a chosen schedule when the requested date is over capacity', async () => {
@@ -524,6 +729,32 @@ describe('ReleaseDeckSchedulingService', () => {
       })
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
+  });
+
+  it('creates a chosen schedule for a returned later alternative when today is full', async () => {
+    mockOperatorTrack();
+    prisma.releaseDeckSchedule.findMany.mockResolvedValue([
+      scheduled('full-1', REQUESTED_FROM, 360),
+      scheduled('full-2', REQUESTED_FROM, 360),
+    ]);
+
+    const result = await service.scheduleTrack('user-1', {
+      communityId: CITY_COMMUNITY.id,
+      trackId: TRACK.id,
+      mode: 'chosen',
+      requestedDate: '2026-07-09',
+    });
+
+    expect(result.success).toBe(true);
+    expect(prisma.releaseDeckSchedule.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          scheduledFor: new Date('2026-07-09T00:00:00.000Z'),
+          requestedFor: new Date('2026-07-09T00:00:00.000Z'),
+          assignmentMode: 'chosen',
+        }),
+      })
+    );
   });
 
   it('returns an explicit conflict when the track already has a schedule', async () => {
@@ -546,7 +777,6 @@ describe('ReleaseDeckSchedulingService', () => {
   });
 
   it('creates a soonest schedule on the earliest available alternative', async () => {
-    jest.useFakeTimers().setSystemTime(new Date(`${REQUESTED_FROM}T12:00:00.000Z`));
     mockOperatorTrack();
     prisma.releaseDeckSchedule.findMany.mockResolvedValue([
       scheduled('full-1', REQUESTED_FROM, 360),
@@ -569,7 +799,31 @@ describe('ReleaseDeckSchedulingService', () => {
         }),
       })
     );
-    jest.useRealTimers();
+  });
+
+  it('maps a serializable transaction conflict to a refreshable capacity conflict', async () => {
+    prisma.$transaction.mockRejectedValueOnce({ code: 'P2034' });
+
+    let thrown: ConflictException | undefined;
+    try {
+      await service.scheduleTrack('user-1', {
+        communityId: CITY_COMMUNITY.id,
+        trackId: TRACK.id,
+        mode: 'soonest',
+      });
+    } catch (error) {
+      thrown = error as ConflictException;
+    }
+
+    expect(thrown).toBeInstanceOf(ConflictException);
+    expect(thrown?.getResponse()).toEqual({
+      success: false,
+      error: {
+        code: 'SCHEDULE_CAPACITY_CHANGED',
+        message: 'Scheduling capacity changed. Refresh availability and try again.',
+      },
+    });
+    expect(prisma.releaseDeckSchedule.create).not.toHaveBeenCalled();
   });
 
   it('requires the current user to manage the source before creating a schedule', async () => {

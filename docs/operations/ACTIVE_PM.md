@@ -68,7 +68,7 @@ Current goal:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | `8c4ab4d` base plus local uncommitted scheduling slice | Sole-writer local implementation; do not push or open a PR. |
+| `/home/baris/UPRISE_NEXT` | `codex/release-deck-scheduling-client` | `b5c336f` implementation checkpoint plus local reviewer fixes | Sole-writer local implementation; final verification/review pending; do not push or open a PR. |
 
 ### Preserved UX Reference Worktrees
 

@@ -1,10 +1,10 @@
 # Release Deck Scheduling Client
 
-**Date:** 2026-07-14  
-**Branch:** `codex/release-deck-scheduling-client`  
-**Base:** local `main` at `8c4ab4d`  
-**Deployment Target:** none; local-only single-writer checkpoint  
-**Status:** implementation complete; verification and read-only reviewer gates pending  
+**Date:** 2026-07-14
+**Branch:** `codex/release-deck-scheduling-client`
+**Base:** local `main` at `8c4ab4d`
+**Deployment Target:** none; local-only single-writer checkpoint
+**Status:** first review blockers corrected; final verification and read-only reviewer gate pending
 **Agent:** Codex local sole writer
 
 ## Summary
@@ -33,13 +33,22 @@ and assignment mode.
 - `GET /release-deck/schedule/availability`
   - called only after loading a source-owned ready row with a resolved Home
     Scene and valid current-source context;
-  - remains server-authoritative for capacity and alternatives;
+  - requires the signed-in user to manage the track's Artist/Band source;
+  - remains server-authoritative for capacity and alternatives, counts both
+    scheduled and ingested rows, and rejects inactive cities or past scans;
   - now returns the saved schedule summary when a track is already scheduled or
     ingested.
 - `POST /release-deck/schedule`
   - sends `soonest` without a requested date; or
   - sends `chosen` only with a date present in the server-returned alternatives;
-  - rechecks current source/user context immediately before the write.
+  - rechecks current source/user context immediately before the write;
+  - revalidates against a fresh current-day lookahead and creates the schedule
+    in one serializable transaction;
+  - maps a competing transaction conflict to a refreshable capacity response.
+- Client write handling
+  - discards responses when another row/source became current;
+  - refreshes current availability after a rejected write;
+  - exposes async status and errors to assistive technology.
 - The Release Deck row no longer labels track creation time as the release date.
   It shows `Load to check`, `Checking...`, `Not scheduled`, `Unavailable`, or
   the durable scheduled date.
@@ -60,8 +69,12 @@ and assignment mode.
 - `apps/web/src/lib/source/release-deck-scheduling.ts`
 - `apps/web/__tests__/source-dashboard-runtime.test.ts`
 - `apps/web/__tests__/release-deck-scheduling-client.test.ts`
+- `apps/web/__tests__/api-error-message.test.ts`
+- `apps/web/src/lib/api.ts`
+- `apps/api/src/release-deck/release-deck.controller.ts`
 - `apps/api/src/release-deck/release-deck-scheduling.service.ts`
 - `apps/api/test/release-deck.scheduling.service.test.ts`
+- `apps/api/test/release-deck.controller.test.ts`
 - `docs/specs/media/release-deck-and-eligibility.md`
 - `docs/specs/users/artist-profile-and-source-dashboard.md`
 
@@ -70,13 +83,27 @@ and assignment mode.
 - Baseline before implementation:
   - Source Dashboard runtime: `7/7` passed.
   - Release Deck API scheduling/controller: `26/26` passed.
-- Current focused web suite:
-  - `7` suites, `35/35` passed.
-- Current focused API scheduling/controller suite:
-  - `2` suites, `26/26` passed.
-- Web and API typecheck passed after the first runtime implementation pass.
-- Final docs lint, full focused rerun, workspace audit, local checkpoint commit,
-  and read-only reviewer passes remain required before closeout.
+- Final focused web suite: `8` suites, `35/35` passed.
+- Reviewer-fix API scheduling/controller suite: `2` suites, `34/34` passed.
+- `pnpm run verify` passed: docs lint, canon lint, infrastructure policy, and
+  all workspace typechecks.
+- `pnpm run workspace:audit` passed with `65` registry entries.
+- The combined branch diff from `8c4ab4d` passes `git diff --check` after the
+  handoff whitespace correction.
+- Local reviewer-fix checkpoint commit and final read-only reviewer passes
+  remain required before closeout.
+
+## First Review Findings Corrected
+
+- Prevented arbitrary past/far-future `chosen` dates by validating against a
+  fresh current-day lookahead.
+- Included `ingested` schedules in daily and protected-window capacity.
+- Made source authorization, capacity validation, and creation one serializable
+  transaction with retryable conflict mapping.
+- Source-authorized availability reads and rejected inactive city communities.
+- Prevented stale write responses from updating another loaded row/source.
+- Refetched availability after write rejection and preserved nested API errors.
+- Added async status/error semantics and corrected spec/operations drift.
 
 ## Review And Continuation
 

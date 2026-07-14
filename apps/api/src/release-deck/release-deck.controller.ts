@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import { ZodQuery } from '../common/decorators/zod-query.decorator';
@@ -18,8 +27,8 @@ import { ReleaseDeckSchedulingService } from './release-deck-scheduling.service'
 /**
  * Release Deck measurement, schedule availability, and source-operator writes.
  *
- * Read-side diagnostics remain authenticated-only for now. The scheduling
- * service verifies source-operator authority again before every write.
+ * Scheduling diagnostics and writes are limited to the source operator. The
+ * scheduling service verifies authority for both operations.
  */
 @Controller('release-deck')
 @UseGuards(JwtAuthGuard)
@@ -39,9 +48,10 @@ export class ReleaseDeckController {
   @Get('schedule/availability')
   async getScheduleAvailability(
     @ZodQuery(ReleaseDeckScheduleAvailabilityQuerySchema)
-    query: ReleaseDeckScheduleAvailabilityQueryDto
+    query: ReleaseDeckScheduleAvailabilityQueryDto,
+    @Request() req: { user: { userId: string } }
   ) {
-    return this.releaseDeckSchedulingService.getAvailability(query);
+    return this.releaseDeckSchedulingService.getAvailability(query, req.user.userId);
   }
 
   @Post('schedule')

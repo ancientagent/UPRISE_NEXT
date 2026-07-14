@@ -15,7 +15,10 @@ describe('ReleaseDeckController', () => {
     const releaseDeckMeasurementService = {
       measureCommunityDeck: jest.fn().mockResolvedValue(measurement),
     } as any;
-    const releaseDeckSchedulingService = { getAvailability: jest.fn(), scheduleTrack: jest.fn() } as any;
+    const releaseDeckSchedulingService = {
+      getAvailability: jest.fn(),
+      scheduleTrack: jest.fn(),
+    } as any;
 
     const controller = new ReleaseDeckController(
       releaseDeckMeasurementService,
@@ -31,7 +34,10 @@ describe('ReleaseDeckController', () => {
     const releaseDeckMeasurementService = {
       measureCommunityDeck: jest.fn().mockRejectedValue(new BadRequestException('nope')),
     } as any;
-    const releaseDeckSchedulingService = { getAvailability: jest.fn(), scheduleTrack: jest.fn() } as any;
+    const releaseDeckSchedulingService = {
+      getAvailability: jest.fn(),
+      scheduleTrack: jest.fn(),
+    } as any;
 
     const controller = new ReleaseDeckController(
       releaseDeckMeasurementService,
@@ -63,9 +69,9 @@ describe('ReleaseDeckController', () => {
       from: '2026-07-08',
       days: 30,
     };
-    const result = await controller.getScheduleAvailability(query);
+    const result = await controller.getScheduleAvailability(query, { user: { userId: 'user-1' } });
 
-    expect(releaseDeckSchedulingService.getAvailability).toHaveBeenCalledWith(query);
+    expect(releaseDeckSchedulingService.getAvailability).toHaveBeenCalledWith(query, 'user-1');
     expect(result).toBe(availability);
   });
 

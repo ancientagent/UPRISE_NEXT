@@ -37,17 +37,17 @@ describe('Release Deck scheduling client', () => {
           trackId: 'track-1',
           from: '2026-07-14',
         },
-        'token-1',
-      ),
+        'token-1'
+      )
     ).resolves.toBe(response);
 
     expect(mockedApiGet).toHaveBeenCalledWith(
       '/release-deck/schedule/availability?communityId=community-1&trackId=track-1&from=2026-07-14&days=30',
-      { token: 'token-1' },
+      { token: 'token-1' }
     );
   });
 
-  it('posts soonest and chosen schedule assignments without adding Fair Play controls', async () => {
+  it('posts a chosen schedule assignment', async () => {
     const scheduled = {
       id: 'schedule-1',
       trackId: 'track-1',
@@ -69,8 +69,8 @@ describe('Release Deck scheduling client', () => {
           mode: 'chosen',
           requestedDate: '2026-07-20',
         },
-        'token-1',
-      ),
+        'token-1'
+      )
     ).resolves.toEqual(scheduled);
 
     expect(mockedApiPost).toHaveBeenCalledWith(
@@ -81,7 +81,7 @@ describe('Release Deck scheduling client', () => {
         mode: 'chosen',
         requestedDate: '2026-07-20',
       },
-      { token: 'token-1' },
+      { token: 'token-1' }
     );
   });
 

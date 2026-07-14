@@ -112,7 +112,9 @@ song count. The current beta policy uses a `30` day lookahead, a `15` minute
 daily intake cap, a `45` minute protected-pool cap across overlapping fixed
 `10` day New Releases windows, the existing `6` minute per-song cap, and the
 existing `3` slot / `15` minute per-source caps. The API remains the source of
-truth for every capacity decision.
+truth for every capacity decision. Both `scheduled` and already-`ingested`
+schedule rows consume daily and protected-window capacity for the dates they
+occupy.
 
 Release-date scheduling must not:
 
@@ -135,14 +137,19 @@ Implemented in `apps/api/src/tracks/tracks.service.ts`:
 
 Implemented in `apps/api/src/release-deck/release-deck-scheduling.service.ts`:
 
-- schedule availability validates source ownership, city-tier Home Scene,
+- schedule availability is source-operator-authorized and validates source
+  ownership, an active city-tier Home Scene,
   ready status, hosted `http(s)` playback, song/source caps, existing schedule,
   and active rotation state before scanning capacity;
 - availability returns server-calculated daily/protected-window diagnostics,
   the soonest valid date, and available alternatives within `30` days;
 - `soonest` assignment selects the earliest valid server-calculated date;
 - `chosen` assignment accepts only the requested date when that exact date is
-  valid;
+  present in a fresh current-day `30` day availability scan; past and arbitrary
+  out-of-window dates fail closed;
+- source authorization, current availability validation, capacity checks, and
+  schedule creation run in one serializable transaction so competing writes
+  cannot silently oversubscribe capacity;
 - `ReleaseDeckSchedule` persists the assignment mode, requested date when
   chosen, scheduled date, capacity snapshot, source/community/track IDs,
   creator, and lifecycle status;
@@ -152,7 +159,9 @@ Implemented in `apps/api/src/release-deck/release-deck-scheduling.service.ts`:
 
 ## Non-Functional Requirements
 
-- Error handling: rejections must be explicit `BadRequestException` responses.
+- Error handling: invalid requests fail explicitly; duplicate schedules and
+  serializable capacity conflicts return explicit conflict responses that tell
+  the client to refresh availability.
 - Data safety: enforcement must not mutate existing tracks, votes, rotation entries, or engagement history.
 - Scope safety: this spec does not activate storage, transcoding, paid ad-slot
   runtime, ad category/link-target persistence, business account linking, action
@@ -200,7 +209,7 @@ model.
 | --- | --- | --- | --- |
 | `POST` | `/tracks` | required | Creates a source-owned or user-uploaded track; managed source tracks enforce Release Deck active-slot and active-duration caps. |
 | `GET` | `/release-deck/measurement` | required | Returns read-only Uprise-wide Release Deck readiness measurement. |
-| `GET` | `/release-deck/schedule/availability` | required | Returns server-calculated date capacity, alternatives, or durable existing-schedule state for one track. |
+| `GET` | `/release-deck/schedule/availability` | source operator | Returns server-calculated date capacity, alternatives, or durable existing-schedule state for one managed source track. |
 | `POST` | `/release-deck/schedule` | required | Creates one `soonest` or valid `chosen` schedule after source-operator authority and eligibility are revalidated. |
 
 ### Request / Response Notes
@@ -211,11 +220,13 @@ model.
 - `artistBandId` must resolve to a source managed by the signed-in user.
 - `communityId` must exist and must match the managed source Home Scene when that source has one.
 - schedule availability accepts `communityId`, `trackId`, date-only `from`, and
-  `days` from `1` to `30`;
+  `days` from `1` to `30`; `from` cannot precede the current UTC date;
 - schedule creation accepts `communityId`, `trackId`, `mode`, and a date-only
   `requestedDate` only when `mode` is `chosen`;
 - schedule writes revalidate source-operator authority and capacity; the web
   tier must not infer or override capacity from client-side state;
+- schedule writes calculate a fresh current-day lookahead and accept `chosen`
+  only when the requested date appears in that result;
 - scheduling returns a `ReleaseDeckSchedule`; it does not return or create a
   Fair Play rotation entry.
 
@@ -239,6 +250,9 @@ model.
   show whether the saved schedule used `soonest` or `chosen` assignment. It must
   not imply that scheduling can purchase priority, reorder Fair Play, or shorten
   another song's protected run.
+- If a schedule write loses a capacity race, the UI must refresh availability
+  before another attempt. A response from a previous row or source context must
+  not overwrite the currently loaded row.
 - Row date presentation must not relabel track creation time as a scheduled
   release date. Until checked, it should say that the source must load the row;
   after checking, it may show unscheduled, unavailable, or the durable scheduled
@@ -254,11 +268,14 @@ model.
 - API unit tests reject ready tracks that would push the same source above `900` active seconds in one community.
 - Web validation tests reject source-owned Release Deck payloads longer than `360` seconds before submit.
 - Scheduling service tests prove date-only validation, eligibility, daily and
-  protected-window capacity, alternatives, duplicate handling, source-operator
-  authorization, `soonest` and `chosen` writes, and no Fair Play rotation write.
+  protected-window capacity across scheduled and ingested rows, alternatives,
+  duplicate handling, source-operator authorization, active-city enforcement,
+  current-window `chosen` validation, serializable write conflicts, `soonest`
+  and `chosen` writes, and no Fair Play rotation write.
 - Web scheduling tests prove the client requests server-owned availability,
   submits `soonest` and returned `chosen` alternatives, restores existing saved
-  schedule state, and does not expose Fair Play ordering controls.
+  schedule state, refreshes after write conflicts, ignores stale row responses,
+  and does not expose Fair Play ordering controls.
 - Fair Play ingestion tests prove every ingested schedule receives the
   broadcast-owned fixed `10` day protected New Releases run regardless of
   Uprise deck density.

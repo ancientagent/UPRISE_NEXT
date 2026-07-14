@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   ReleaseDeckScheduleAvailabilityQueryDto,
@@ -62,6 +63,11 @@ type ScheduledRow = {
     duration: number;
   } | null;
 };
+
+type SchedulingDataClient = Pick<
+  PrismaService,
+  'community' | 'track' | 'releaseDeckSchedule' | 'rotationEntry'
+>;
 
 function startOfUtcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
@@ -127,8 +133,13 @@ function resolvePlayableUrlReason(fileUrl: string | null): TrackEligibilityReaso
 export class ReleaseDeckSchedulingService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async assertSourceOperator(userId: string, trackId: string, communityId: string) {
-    const track = await this.prisma.track.findUnique({
+  private async assertSourceOperator(
+    userId: string,
+    trackId: string,
+    communityId: string,
+    client: SchedulingDataClient = this.prisma
+  ) {
+    const track = await client.track.findUnique({
       where: { id: trackId },
       select: {
         id: true,
@@ -153,7 +164,8 @@ export class ReleaseDeckSchedulingService {
       throw new ForbiddenException('Release Deck scheduling requires a managed Artist/Band source');
     }
 
-    const managesSource = track.artistBand.createdById === userId || track.artistBand.members.length > 0;
+    const managesSource =
+      track.artistBand.createdById === userId || track.artistBand.members.length > 0;
     if (!managesSource) {
       throw new ForbiddenException('Release Deck scheduling requires a managed Artist/Band source');
     }
@@ -214,7 +226,27 @@ export class ReleaseDeckSchedulingService {
     throw new BadRequestException(failure);
   }
 
-  async getAvailability(query: ReleaseDeckScheduleAvailabilityQueryDto): Promise<any> {
+  async getAvailability(
+    query: ReleaseDeckScheduleAvailabilityQueryDto,
+    userId: string
+  ): Promise<any> {
+    const communityId = query.communityId?.trim();
+    const trackId = query.trackId?.trim();
+    if (!communityId || !trackId) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'communityId and trackId are required' },
+      });
+    }
+
+    await this.assertSourceOperator(userId, trackId, communityId);
+    return this.calculateAvailability(query, this.prisma);
+  }
+
+  private async calculateAvailability(
+    query: ReleaseDeckScheduleAvailabilityQueryDto,
+    client: SchedulingDataClient
+  ): Promise<any> {
     const communityId = query.communityId?.trim();
     const trackId = query.trackId?.trim();
     const from = query.from?.trim();
@@ -227,6 +259,7 @@ export class ReleaseDeckSchedulingService {
     }
 
     const fromDate = parseDateOnly(from);
+    const today = startOfUtcDay(new Date());
     const lookaheadDays = Number(query.days);
     if (
       !fromDate ||
@@ -240,7 +273,14 @@ export class ReleaseDeckSchedulingService {
       });
     }
 
-    const community = await this.prisma.community.findUnique({
+    if (fromDate < today) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'from cannot be before the current UTC date' },
+      });
+    }
+
+    const community = await client.community.findUnique({
       where: { id: communityId },
       select: {
         id: true,
@@ -260,14 +300,14 @@ export class ReleaseDeckSchedulingService {
       });
     }
 
-    if (community.tier !== 'city') {
+    if (community.tier !== 'city' || !community.isActive) {
       throw new BadRequestException({
         success: false,
-        error: { message: 'Release Deck scheduling is limited to city-tier communities' },
+        error: { message: 'Release Deck scheduling is limited to active city-tier communities' },
       });
     }
 
-    const track = (await this.prisma.track.findUnique({
+    const track = (await client.track.findUnique({
       where: { id: trackId },
       select: {
         id: true,
@@ -300,7 +340,7 @@ export class ReleaseDeckSchedulingService {
       );
     }
 
-    const existingSchedule = await this.prisma.releaseDeckSchedule.findFirst({
+    const existingSchedule = await client.releaseDeckSchedule.findFirst({
       where: { trackId: track.id, status: { in: ['scheduled', 'ingested'] } },
       select: {
         id: true,
@@ -333,7 +373,7 @@ export class ReleaseDeckSchedulingService {
       };
     }
 
-    const activeRotation = await this.prisma.rotationEntry.findFirst({
+    const activeRotation = await client.rotationEntry.findFirst({
       where: { trackId: track.id },
       select: { id: true },
     });
@@ -351,7 +391,7 @@ export class ReleaseDeckSchedulingService {
       };
     }
 
-    const sourceReadyTracks = (await this.prisma.track.findMany({
+    const sourceReadyTracks = (await client.track.findMany({
       where: {
         artistBandId: track.artistBandId,
         communityId,
@@ -418,10 +458,10 @@ export class ReleaseDeckSchedulingService {
       fromDate,
       lookaheadDays + RELEASE_DECK_SCHEDULE_POLICY.newReleaseWindowDays
     );
-    const scheduledRows = (await this.prisma.releaseDeckSchedule.findMany({
+    const scheduledRows = (await client.releaseDeckSchedule.findMany({
       where: {
         communityId,
-        status: 'scheduled',
+        status: { in: ['scheduled', 'ingested'] },
         scheduledFor: {
           gte: scheduleRangeStart,
           lt: scheduleRangeEnd,
@@ -574,7 +614,6 @@ export class ReleaseDeckSchedulingService {
       });
     }
 
-    const managed = await this.assertSourceOperator(userId, trackId, communityId);
     const requestedDate = mode === 'chosen' ? dto.requestedDate : undefined;
     if (mode === 'chosen' && !requestedDate) {
       throw new BadRequestException({
@@ -583,68 +622,112 @@ export class ReleaseDeckSchedulingService {
       });
     }
 
-    const from = requestedDate ?? todayUtcDateOnly();
-    const availability = await this.getAvailability({
-      communityId,
-      trackId,
-      from,
-      days: RELEASE_DECK_SCHEDULE_POLICY.lookaheadDays,
-    });
-
-    let scheduledDate: string | null = null;
-    let capacitySnapshot: Record<string, unknown>;
-
-    if (availability.success) {
-      scheduledDate = availability.data.soonestValidDate;
-      capacitySnapshot = availability.data;
-    } else if (mode === 'soonest' && availability.error?.soonestValidDate) {
-      scheduledDate = availability.error.soonestValidDate;
-      capacitySnapshot = availability.error;
-    } else {
-      this.throwScheduleFailure(availability);
-    }
-
-    if (!scheduledDate) {
-      this.throwScheduleFailure(availability);
-    }
-
-    const scheduledFor = parseDateOnly(scheduledDate);
-    if (!scheduledFor) {
-      throw new BadRequestException({
-        success: false,
-        error: { message: 'Resolved schedule date is invalid' },
-      });
-    }
-
     try {
-      const schedule = await this.prisma.releaseDeckSchedule.create({
-        data: {
-          trackId: managed.trackId,
-          communityId: managed.communityId,
-          artistBandId: managed.artistBandId,
-          scheduledFor,
-          assignmentMode: mode,
-          requestedFor: requestedDate ? parseDateOnly(requestedDate) : null,
-          status: 'scheduled',
-          capacitySnapshot: capacitySnapshot as any,
-          createdById: userId,
-        },
-        select: {
-          id: true,
-          trackId: true,
-          communityId: true,
-          artistBandId: true,
-          scheduledFor: true,
-          assignmentMode: true,
-          requestedFor: true,
-          status: true,
-          capacitySnapshot: true,
-          createdById: true,
-        },
-      });
+      return await this.prisma.$transaction(
+        async (transaction) => {
+          const client = transaction as SchedulingDataClient;
+          const managed = await this.assertSourceOperator(userId, trackId, communityId, client);
+          const availability = await this.calculateAvailability(
+            {
+              communityId,
+              trackId,
+              from: todayUtcDateOnly(),
+              days: RELEASE_DECK_SCHEDULE_POLICY.lookaheadDays,
+            },
+            client
+          );
 
-      return { success: true as const, data: schedule };
+          let scheduledDate: string | null = null;
+          let capacitySnapshot: Record<string, unknown>;
+
+          if (mode === 'chosen') {
+            if (!availability.success && !Array.isArray(availability.error?.alternatives)) {
+              this.throwScheduleFailure(availability);
+            }
+
+            const availabilitySnapshot = availability.success
+              ? availability.data
+              : availability.error;
+            const alternatives = availabilitySnapshot.alternatives as string[];
+            if (!requestedDate || !alternatives.includes(requestedDate)) {
+              this.throwScheduleFailure({
+                success: false,
+                error: {
+                  code: 'REQUESTED_DATE_NOT_AVAILABLE',
+                  message: 'Requested date is not available in the current scheduling window',
+                  trackId,
+                  requestedDate,
+                  soonestValidDate: availabilitySnapshot.soonestValidDate,
+                  alternatives,
+                  diagnostics: availabilitySnapshot.diagnostics,
+                  capacityInputs: availabilitySnapshot.capacityInputs,
+                },
+              });
+            }
+            scheduledDate = requestedDate;
+            capacitySnapshot = availabilitySnapshot;
+          } else if (availability.success) {
+            scheduledDate = availability.data.soonestValidDate;
+            capacitySnapshot = availability.data;
+          } else if (mode === 'soonest' && availability.error?.soonestValidDate) {
+            scheduledDate = availability.error.soonestValidDate;
+            capacitySnapshot = availability.error;
+          } else {
+            this.throwScheduleFailure(availability);
+          }
+
+          if (!scheduledDate) {
+            this.throwScheduleFailure(availability);
+          }
+
+          const scheduledFor = parseDateOnly(scheduledDate);
+          if (!scheduledFor) {
+            throw new BadRequestException({
+              success: false,
+              error: { message: 'Resolved schedule date is invalid' },
+            });
+          }
+
+          const schedule = await client.releaseDeckSchedule.create({
+            data: {
+              trackId: managed.trackId,
+              communityId: managed.communityId,
+              artistBandId: managed.artistBandId,
+              scheduledFor,
+              assignmentMode: mode,
+              requestedFor: requestedDate ? parseDateOnly(requestedDate) : null,
+              status: 'scheduled',
+              capacitySnapshot: capacitySnapshot as Prisma.InputJsonValue,
+              createdById: userId,
+            },
+            select: {
+              id: true,
+              trackId: true,
+              communityId: true,
+              artistBandId: true,
+              scheduledFor: true,
+              assignmentMode: true,
+              requestedFor: true,
+              status: true,
+              capacitySnapshot: true,
+              createdById: true,
+            },
+          });
+
+          return { success: true as const, data: schedule };
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+      );
     } catch (error: any) {
+      if (error?.code === 'P2034') {
+        throw new ConflictException({
+          success: false,
+          error: {
+            code: 'SCHEDULE_CAPACITY_CHANGED',
+            message: 'Scheduling capacity changed. Refresh availability and try again.',
+          },
+        });
+      }
       if (error?.code === 'P2002') {
         throw new ConflictException({
           success: false,

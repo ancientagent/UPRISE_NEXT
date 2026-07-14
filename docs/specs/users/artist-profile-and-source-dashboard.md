@@ -230,7 +230,7 @@ Current endpoints in the lifecycle:
 | `POST` | `/signals/:id/collect` | required | Collect a song signal from the profile listening context. |
 | `POST` | `/signals/:id/recommend` | required | Recommend only after the listener holds the signal. |
 | `POST` | `/tracks` | required | Create URL-only source-owned Release Deck track with active-slot limits. |
-| `GET` | `/release-deck/schedule/availability` | required | Read server-calculated scheduling capacity or an existing saved schedule for one source-owned track. |
+| `GET` | `/release-deck/schedule/availability` | source operator | Read server-calculated scheduling capacity or an existing saved schedule for one managed source track. |
 | `POST` | `/release-deck/schedule` | required | Create a `soonest` or valid `chosen` Release Deck schedule after source-operator revalidation. |
 
 ## Web UI And Client Behavior
@@ -300,7 +300,8 @@ Current endpoints in the lifecycle:
     track payloads with `artistBandId` and URL/duration validation.
   - `apps/web/src/lib/source/release-deck-scheduling.ts` calls the Release Deck
     schedule availability/write endpoints and keeps server-calculated capacity
-    authoritative.
+    authoritative. The loaded-row route discards responses from stale row/source
+    contexts and refreshes availability after a rejected schedule write.
 
 ### Downstream Screens, Components, Actions, Tests
 

@@ -13,9 +13,12 @@ import { useSourceAccountStore } from '../src/store/source-account';
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
-    React.createElement('a', { href, ...props }, children)
-  ),
+  default: ({
+    href,
+    children,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) =>
+    React.createElement('a', { href, ...props }, children),
 }));
 
 jest.mock('../src/lib/api', () => ({
@@ -159,7 +162,9 @@ function changeInput(container: Element, name: string, value: string) {
 }
 
 function changeSourceSelect(container: Element, value: string) {
-  const select = container.querySelector('select[aria-label="Current source account"]') as HTMLSelectElement | null;
+  const select = container.querySelector(
+    'select[aria-label="Current source account"]'
+  ) as HTMLSelectElement | null;
   expect(select).not.toBeNull();
 
   act(() => {
@@ -181,12 +186,42 @@ function changeNamedSelect(container: Element, name: string, value: string) {
 }
 
 function clickButton(container: Element, label: string) {
-  const button = Array.from(container.querySelectorAll('button')).find((candidate) => candidate.textContent?.trim() === label);
+  const button = Array.from(container.querySelectorAll('button')).find(
+    (candidate) => candidate.textContent?.trim() === label
+  );
   expect(button).not.toBeUndefined();
 
   act(() => {
     button?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
+}
+
+function clickButtonAt(container: Element, label: string, index: number) {
+  const buttons = Array.from(container.querySelectorAll('button')).filter(
+    (candidate) => candidate.textContent?.trim() === label
+  );
+  expect(buttons[index]).toBeDefined();
+
+  act(() => {
+    buttons[index]?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+}
+
+function makeReadyTrack(id: string, title: string) {
+  return {
+    id,
+    artistBandId: managedSource.id,
+    title,
+    artist: managedSource.name,
+    album: null,
+    duration: 180,
+    fileUrl: `https://cdn.example.com/${id}.mp3`,
+    coverArt: null,
+    playCount: 0,
+    likeCount: 0,
+    status: 'ready',
+    createdAt: '2026-07-01T00:00:00.000Z',
+  };
 }
 
 describe('source dashboard runtime behavior', () => {
@@ -195,7 +230,9 @@ describe('source dashboard runtime behavior', () => {
     document.body.innerHTML = '';
     window.localStorage.clear();
     useAuthStore.getState().setAuth(user, 'token-1');
-    useOnboardingStore.getState().setHomeScene({ city: 'Austin', state: 'TX', musicCommunity: 'Punk' });
+    useOnboardingStore
+      .getState()
+      .setHomeScene({ city: 'Austin', state: 'TX', musicCommunity: 'Punk' });
     useSourceAccountStore.getState().clearActiveSourceId();
     mockedListPromoterRegistrations.mockResolvedValue({ entries: [] });
   });
@@ -207,7 +244,9 @@ describe('source dashboard runtime behavior', () => {
     await flushEffects();
 
     expect(container.textContent).toContain('Select a source account');
-    expect(container.textContent).toContain('Listener Account is active. Select one managed source account in the top command line before source tools operate.');
+    expect(container.textContent).toContain(
+      'Listener Account is active. Select one managed source account in the top command line before source tools operate.'
+    );
     expect(container.textContent).not.toContain('Open Release Deck');
 
     cleanupRender(root, container);
@@ -227,20 +266,24 @@ describe('source dashboard runtime behavior', () => {
           id: sourceId,
           name: sourceId === memberManagedSource.id ? memberManagedSource.name : managedSource.name,
           slug: sourceId === memberManagedSource.id ? memberManagedSource.slug : managedSource.slug,
-        }),
-      ),
+        })
+      )
     );
 
     const { root, container } = render(React.createElement(SourceDashboardPage));
     await flushEffects();
 
-    expect(container.querySelector('[data-testid="source-command-role"]')?.textContent).toBe('User One · Manager');
+    expect(container.querySelector('[data-testid="source-command-role"]')?.textContent).toBe(
+      'User One · Manager'
+    );
 
     changeSourceSelect(container, memberManagedSource.id);
     await flushEffects();
 
     expect(useSourceAccountStore.getState().activeSourceId).toBe(memberManagedSource.id);
-    expect(container.querySelector('[data-testid="source-command-role"]')?.textContent).toBe('User One · Member');
+    expect(container.querySelector('[data-testid="source-command-role"]')?.textContent).toBe(
+      'User One · Member'
+    );
 
     cleanupRender(root, container);
   });
@@ -252,7 +295,9 @@ describe('source dashboard runtime behavior', () => {
     const { root, container } = render(React.createElement(SourceDashboardPage));
     await flushEffects();
 
-    expect(container.textContent).toContain('Stale source context was cleared because it no longer belongs to this signed-in user.');
+    expect(container.textContent).toContain(
+      'Stale source context was cleared because it no longer belongs to this signed-in user.'
+    );
     expect(container.textContent).not.toContain('Open Release Deck');
     expect(useSourceAccountStore.getState().activeSourceId).toBeNull();
 
@@ -339,7 +384,7 @@ describe('source dashboard runtime behavior', () => {
             createdAt: '2026-07-01T00:00:00.000Z',
           },
         ],
-      }),
+      })
     );
 
     const { root, container } = render(React.createElement(ReleaseDeckPage));
@@ -397,7 +442,7 @@ describe('source dashboard runtime behavior', () => {
             createdAt: '2026-07-01T00:00:00.000Z',
           },
         ],
-      }),
+      })
     );
     mockedApiPost.mockResolvedValue({
       success: true,
@@ -422,8 +467,10 @@ describe('source dashboard runtime behavior', () => {
 
     expect(container.textContent).toContain('Soonest available: Jul 20, 2026');
     expect(mockedApiGet).toHaveBeenCalledWith(
-      expect.stringContaining('/release-deck/schedule/availability?communityId=community-1&trackId=track-1'),
-      { token: 'token-1' },
+      expect.stringContaining(
+        '/release-deck/schedule/availability?communityId=community-1&trackId=track-1'
+      ),
+      { token: 'token-1' }
     );
 
     const scheduleForm = container.querySelector('[data-testid="release-deck-schedule-form"]');
@@ -439,9 +486,11 @@ describe('source dashboard runtime behavior', () => {
         trackId: 'track-1',
         mode: 'soonest',
       },
-      { token: 'token-1' },
+      { token: 'token-1' }
     );
-    expect(container.textContent).toContain('Source Ready is scheduled for Jul 20, 2026 using the soonest valid date.');
+    expect(container.textContent).toContain(
+      'Source Ready is scheduled for Jul 20, 2026 using the soonest valid date.'
+    );
     expect(container.textContent).toContain('Jul 20, 2026');
 
     cleanupRender(root, container);
@@ -455,7 +504,13 @@ describe('source dashboard runtime behavior', () => {
           success: true,
           data: {
             community: sourceProfile.homeScene,
-            track: { id: 'track-1', title: 'Source Ready', sourceId: managedSource.id, sourceName: managedSource.name, playableSeconds: 180 },
+            track: {
+              id: 'track-1',
+              title: 'Source Ready',
+              sourceId: managedSource.id,
+              sourceName: managedSource.name,
+              playableSeconds: 180,
+            },
             from: '2026-07-14',
             days: 30,
             soonestValidDate: '2026-07-20',
@@ -468,21 +523,23 @@ describe('source dashboard runtime behavior', () => {
     });
     mockedGetArtistBandProfile.mockResolvedValue(
       makeSourceProfile({
-        tracks: [{
-          id: 'track-1',
-          artistBandId: managedSource.id,
-          title: 'Source Ready',
-          artist: managedSource.name,
-          album: null,
-          duration: 180,
-          fileUrl: 'https://cdn.example.com/source-ready.mp3',
-          coverArt: null,
-          playCount: 0,
-          likeCount: 0,
-          status: 'ready',
-          createdAt: '2026-07-01T00:00:00.000Z',
-        }],
-      }),
+        tracks: [
+          {
+            id: 'track-1',
+            artistBandId: managedSource.id,
+            title: 'Source Ready',
+            artist: managedSource.name,
+            album: null,
+            duration: 180,
+            fileUrl: 'https://cdn.example.com/source-ready.mp3',
+            coverArt: null,
+            playCount: 0,
+            likeCount: 0,
+            status: 'ready',
+            createdAt: '2026-07-01T00:00:00.000Z',
+          },
+        ],
+      })
     );
     mockedApiPost.mockResolvedValue({
       success: true,
@@ -519,9 +576,148 @@ describe('source dashboard runtime behavior', () => {
         mode: 'chosen',
         requestedDate: '2026-07-21',
       },
-      { token: 'token-1' },
+      { token: 'token-1' }
     );
     expect(container.textContent).toContain('The source selected this available date.');
+
+    cleanupRender(root, container);
+  });
+
+  it('does not let an in-flight schedule response overwrite a newly loaded row', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    mockedApiGet.mockImplementation((endpoint: string) => {
+      if (endpoint.startsWith('/release-deck/schedule/availability')) {
+        const secondTrack = endpoint.includes('trackId=track-2');
+        const date = secondTrack ? '2026-07-21' : '2026-07-20';
+        return Promise.resolve({
+          success: true,
+          data: {
+            community: sourceProfile.homeScene,
+            track: {
+              id: secondTrack ? 'track-2' : 'track-1',
+              title: secondTrack ? 'Second Ready' : 'First Ready',
+              sourceId: managedSource.id,
+              sourceName: managedSource.name,
+              playableSeconds: 180,
+            },
+            from: '2026-07-14',
+            days: 30,
+            soonestValidDate: date,
+            alternatives: [date],
+            diagnostics: [],
+          },
+        });
+      }
+      return Promise.resolve({ data: userSourceProfile });
+    });
+    mockedGetArtistBandProfile.mockResolvedValue(
+      makeSourceProfile({
+        tracks: [
+          makeReadyTrack('track-1', 'First Ready'),
+          makeReadyTrack('track-2', 'Second Ready'),
+        ],
+      })
+    );
+
+    let resolveSchedule!: (value: unknown) => void;
+    mockedApiPost.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSchedule = resolve;
+      })
+    );
+
+    const { root, container } = render(React.createElement(ReleaseDeckPage));
+    await flushEffects();
+    clickButtonAt(container, 'Load', 0);
+    await flushEffects();
+
+    const firstScheduleForm = container.querySelector('[data-testid="release-deck-schedule-form"]');
+    await act(async () => {
+      firstScheduleForm?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await Promise.resolve();
+    });
+
+    clickButtonAt(container, 'Load', 1);
+    await flushEffects();
+    expect(container.textContent).toContain('Soonest available: Jul 21, 2026');
+
+    await act(async () => {
+      resolveSchedule({
+        success: true,
+        data: {
+          id: 'schedule-stale',
+          trackId: 'track-1',
+          communityId: 'community-1',
+          artistBandId: managedSource.id,
+          scheduledFor: '2026-07-20T00:00:00.000Z',
+          assignmentMode: 'soonest',
+          requestedFor: null,
+          status: 'scheduled',
+          createdById: user.id,
+        },
+      });
+      await Promise.resolve();
+    });
+
+    expect(container.textContent).toContain('Soonest available: Jul 21, 2026');
+    expect(container.textContent).not.toContain('First Ready is scheduled for Jul 20, 2026');
+
+    cleanupRender(root, container);
+  });
+
+  it('refreshes availability after a schedule write conflict', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    let availabilityReads = 0;
+    mockedApiGet.mockImplementation((endpoint: string) => {
+      if (endpoint.startsWith('/release-deck/schedule/availability')) {
+        availabilityReads += 1;
+        const date = availabilityReads === 1 ? '2026-07-20' : '2026-07-22';
+        return Promise.resolve({
+          success: true,
+          data: {
+            community: sourceProfile.homeScene,
+            track: {
+              id: 'track-1',
+              title: 'Source Ready',
+              sourceId: managedSource.id,
+              sourceName: managedSource.name,
+              playableSeconds: 180,
+            },
+            from: '2026-07-14',
+            days: 30,
+            soonestValidDate: date,
+            alternatives: [date],
+            diagnostics: [],
+          },
+        });
+      }
+      return Promise.resolve({ data: userSourceProfile });
+    });
+    mockedGetArtistBandProfile.mockResolvedValue(
+      makeSourceProfile({ tracks: [makeReadyTrack('track-1', 'Source Ready')] })
+    );
+    mockedApiPost.mockRejectedValue(
+      new Error('Scheduling capacity changed. Refresh availability and try again.')
+    );
+
+    const { root, container } = render(React.createElement(ReleaseDeckPage));
+    await flushEffects();
+    clickButton(container, 'Load');
+    await flushEffects();
+
+    const scheduleForm = container.querySelector('[data-testid="release-deck-schedule-form"]');
+    await act(async () => {
+      scheduleForm?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    await flushEffects();
+
+    expect(availabilityReads).toBe(2);
+    expect(container.textContent).toContain('Soonest available: Jul 22, 2026');
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain(
+      'Scheduling capacity changed. Refresh availability and try again. Availability was refreshed.'
+    );
 
     cleanupRender(root, container);
   });
@@ -550,21 +746,23 @@ describe('source dashboard runtime behavior', () => {
     });
     mockedGetArtistBandProfile.mockResolvedValue(
       makeSourceProfile({
-        tracks: [{
-          id: 'track-1',
-          artistBandId: managedSource.id,
-          title: 'Source Ready',
-          artist: managedSource.name,
-          album: null,
-          duration: 180,
-          fileUrl: 'https://cdn.example.com/source-ready.mp3',
-          coverArt: null,
-          playCount: 0,
-          likeCount: 0,
-          status: 'ready',
-          createdAt: '2026-07-01T00:00:00.000Z',
-        }],
-      }),
+        tracks: [
+          {
+            id: 'track-1',
+            artistBandId: managedSource.id,
+            title: 'Source Ready',
+            artist: managedSource.name,
+            album: null,
+            duration: 180,
+            fileUrl: 'https://cdn.example.com/source-ready.mp3',
+            coverArt: null,
+            playCount: 0,
+            likeCount: 0,
+            status: 'ready',
+            createdAt: '2026-07-01T00:00:00.000Z',
+          },
+        ],
+      })
     );
 
     const { root, container } = render(React.createElement(ReleaseDeckPage));
@@ -576,6 +774,9 @@ describe('source dashboard runtime behavior', () => {
     expect(container.textContent).toContain('Jul 22, 2026 · scheduled');
     expect(container.textContent).toContain('The source selected this available date.');
     expect(container.querySelector('[data-testid="release-deck-schedule-form"]')).toBeNull();
+    expect(container.querySelector('[role="status"]')?.textContent).toContain(
+      'Release date scheduled'
+    );
 
     cleanupRender(root, container);
   });
@@ -588,9 +789,13 @@ describe('source dashboard runtime behavior', () => {
     const { root, container } = render(React.createElement(ReleaseDeckPage));
     await flushEffects();
 
-    const submitButton = container.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+    const submitButton = container.querySelector(
+      'button[type="submit"]'
+    ) as HTMLButtonElement | null;
     expect(container.textContent).toContain('Home Scene unavailable');
-    expect(container.textContent).toContain('An active source with a resolved Home Scene is required before releasing a single.');
+    expect(container.textContent).toContain(
+      'An active source with a resolved Home Scene is required before releasing a single.'
+    );
     expect(submitButton?.disabled).toBe(true);
 
     cleanupRender(root, container);
@@ -615,7 +820,7 @@ describe('source dashboard runtime behavior', () => {
           status: 'ready',
           createdAt: '2026-07-01T00:00:00.000Z',
         })),
-      }),
+      })
     );
 
     const { root, container } = render(React.createElement(ReleaseDeckPage));
@@ -632,7 +837,9 @@ describe('source dashboard runtime behavior', () => {
       form?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     });
 
-    expect(container.textContent).toContain('Cap reached: this screen will not silently replace existing tracks or create an extra active music slot.');
+    expect(container.textContent).toContain(
+      'Cap reached: this screen will not silently replace existing tracks or create an extra active music slot.'
+    );
     expect(container.textContent).toContain('Release Deck already has 3 active music slots.');
     expect(mockedCreateTrack).not.toHaveBeenCalled();
 

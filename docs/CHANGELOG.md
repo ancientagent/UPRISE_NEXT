@@ -16,7 +16,11 @@
   date/assignment state after reload, and never exposes Fair Play ordering or
   priority controls. Existing-schedule availability responses now include the
   saved schedule summary required by the client; focused web/API tests cover
-  the contract.
+  the contract. Reviewer hardening now source-authorizes availability, rejects
+  inactive-city and past/out-of-window requests, counts scheduled and ingested
+  rows in capacity, makes validation plus creation serializable, refreshes
+  availability after write conflicts, and prevents stale row/source responses
+  from overwriting current UI state.
 - Fixed the listener-identity leak in the public Artist Profile contract:
   `ArtistBand` gained source-owned `bio`/`avatar`/`coverImage` fields and
   `ArtistBandMember` gained a source-provided `headshotUrl`, the profile API
