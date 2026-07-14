@@ -25,7 +25,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Snapshot date: 2026-07-14
 - Base branch: `origin/main` at `542c350` after Official Sect identity PR #240 merged
 - Current branch assignment: `codex/sect-readiness-decision-gate`, registered for the Slice 7 decision packet only
-- Local worktree state at refresh: preparing the registered decision-only branch from the clean merged baseline; Codex local remains the sole writer
+- Local worktree state at refresh: Slice 7 founder-decision packet drafted and awaiting independent review; Codex local remains the sole writer
 - Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238, #239, and #240 are merged
 - Recently completed remote slices: scheduling-client PR #238, graduation PR #239, and Official Sect identity PR #240
 - Provider/db/schema state: no provider writes; Slice 7 is documentation/decision work and authorizes no schema or database change
@@ -36,7 +36,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Produce and independently review the Slice 7 decision packet for song-level backing authority/lifecycle and readiness counting semantics.
+- Independently review the drafted Slice 7 decision packet for song-level backing authority/lifecycle and readiness counting semantics.
 - Keep all backing/readiness schema and runtime work blocked until founder-approved answers are promoted into the owner specs.
 
 Recently completed context:
