@@ -1,6 +1,6 @@
 # Artist Profile / Source Dashboard Screen Package
 
-Status: spec package passed; ready for small vertical implementation slice
+Status: initial Release Deck readiness slice implemented; additive scheduling client slice active locally
 Package owner: current UPRISE implementation owner / Dev Team Manager
 Owner spec: `docs/specs/users/artist-profile-and-source-dashboard.md`
 Workflow evaluation: `docs/screen-packages/artist-profile-source-dashboard/workflow-evaluation.md`
@@ -31,9 +31,21 @@ This package is an execution workspace. Product truth remains in owner specs und
 
 ## Next Signal
 
-Pick one small vertical section from the passed Dev Spec / Design Spec package and implement it with focused validation. If scope is not obvious, create `implementation/slice-contract.md` first.
+The original `Source Dashboard Release Deck Readiness Slice` is already present
+in `apps/web/src/app/source-dashboard/release-deck/page.tsx` with rendered
+behavior coverage in `apps/web/__tests__/source-dashboard-runtime.test.ts`.
+Do not route another executor to repeat that slice.
 
-Current recommended next slice: implement the `Source Dashboard Release Deck Readiness Slice` from `spec/source-dashboard-release-deck-readiness-dev-spec.md`.
+Current local additive slice: connect the loaded source-owned ready row to the
+implemented schedule availability and `soonest` / `chosen` write APIs. Current
+owner truth is `docs/specs/media/release-deck-and-eligibility.md`; the older
+readiness Dev Spec predates the schedule runtime and remains historical package
+evidence where it conflicts.
+
+After this scheduling client is locally verified and reviewed, do not infer a
+second implementation slice from this package. New Releases graduation,
+song-level sect backing, source metrics, replacement, uploads, and paid-ad
+runtime each require their own current owner-contract check before execution.
 
 Optional artifacts remain available when risk requires them:
 

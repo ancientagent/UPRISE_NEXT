@@ -285,6 +285,8 @@ describe('ReleaseDeckSchedulingService', () => {
       id: 'schedule-existing',
       status: 'scheduled',
       scheduledFor: new Date('2026-07-09T00:00:00.000Z'),
+      assignmentMode: 'chosen',
+      requestedFor: new Date('2026-07-09T00:00:00.000Z'),
     });
 
     const result = await service.getAvailability({
@@ -302,6 +304,13 @@ describe('ReleaseDeckSchedulingService', () => {
         trackId: TRACK.id,
         diagnostics: [],
         capacityInputs: null,
+        schedule: {
+          id: 'schedule-existing',
+          status: 'scheduled',
+          scheduledFor: '2026-07-09',
+          assignmentMode: 'chosen',
+          requestedFor: '2026-07-09',
+        },
       },
     });
     expect(prisma.releaseDeckSchedule.findMany).not.toHaveBeenCalled();

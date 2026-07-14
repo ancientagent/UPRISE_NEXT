@@ -38,6 +38,7 @@ jest.mock('../src/lib/registrar/client', () => ({
 }));
 
 const mockedApiGet = api.get as jest.Mock;
+const mockedApiPost = api.post as jest.Mock;
 const mockedGetArtistBandProfile = getArtistBandProfile as jest.Mock;
 const mockedCreateTrack = createTrack as jest.Mock;
 const mockedListPromoterRegistrations = listPromoterRegistrations as jest.Mock;
@@ -165,6 +166,26 @@ function changeSourceSelect(container: Element, value: string) {
     const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set;
     setter?.call(select, value);
     select?.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+}
+
+function changeNamedSelect(container: Element, name: string, value: string) {
+  const select = container.querySelector(`select[name="${name}"]`) as HTMLSelectElement | null;
+  expect(select).not.toBeNull();
+
+  act(() => {
+    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set;
+    setter?.call(select, value);
+    select?.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+}
+
+function clickButton(container: Element, label: string) {
+  const button = Array.from(container.querySelectorAll('button')).find((candidate) => candidate.textContent?.trim() === label);
+  expect(button).not.toBeUndefined();
+
+  act(() => {
+    button?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   });
 }
 
@@ -329,6 +350,232 @@ describe('source dashboard runtime behavior', () => {
     expect(container.textContent).toContain('Ready for Fair Play/player testing');
     expect(container.textContent).toContain('Source-owned release');
     expect(container.textContent).toContain('Legacy carry-forward');
+
+    cleanupRender(root, container);
+  });
+
+  it('checks schedule availability and assigns the soonest server-owned release date', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    mockedApiGet.mockImplementation((endpoint: string) => {
+      if (endpoint.startsWith('/release-deck/schedule/availability')) {
+        return Promise.resolve({
+          success: true,
+          data: {
+            community: sourceProfile.homeScene,
+            track: {
+              id: 'track-1',
+              title: 'Source Ready',
+              sourceId: managedSource.id,
+              sourceName: managedSource.name,
+              playableSeconds: 180,
+            },
+            from: '2026-07-14',
+            days: 30,
+            soonestValidDate: '2026-07-20',
+            alternatives: ['2026-07-20', '2026-07-21'],
+            diagnostics: [],
+          },
+        });
+      }
+      return Promise.resolve({ data: userSourceProfile });
+    });
+    mockedGetArtistBandProfile.mockResolvedValue(
+      makeSourceProfile({
+        tracks: [
+          {
+            id: 'track-1',
+            artistBandId: managedSource.id,
+            title: 'Source Ready',
+            artist: managedSource.name,
+            album: null,
+            duration: 180,
+            fileUrl: 'https://cdn.example.com/source-ready.mp3',
+            coverArt: null,
+            playCount: 0,
+            likeCount: 0,
+            status: 'ready',
+            createdAt: '2026-07-01T00:00:00.000Z',
+          },
+        ],
+      }),
+    );
+    mockedApiPost.mockResolvedValue({
+      success: true,
+      data: {
+        id: 'schedule-1',
+        trackId: 'track-1',
+        communityId: 'community-1',
+        artistBandId: managedSource.id,
+        scheduledFor: '2026-07-20T00:00:00.000Z',
+        assignmentMode: 'soonest',
+        requestedFor: null,
+        status: 'scheduled',
+        createdById: user.id,
+      },
+    });
+
+    const { root, container } = render(React.createElement(ReleaseDeckPage));
+    await flushEffects();
+
+    clickButton(container, 'Load');
+    await flushEffects();
+
+    expect(container.textContent).toContain('Soonest available: Jul 20, 2026');
+    expect(mockedApiGet).toHaveBeenCalledWith(
+      expect.stringContaining('/release-deck/schedule/availability?communityId=community-1&trackId=track-1'),
+      { token: 'token-1' },
+    );
+
+    const scheduleForm = container.querySelector('[data-testid="release-deck-schedule-form"]');
+    expect(scheduleForm).not.toBeNull();
+    await act(async () => {
+      scheduleForm?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    });
+
+    expect(mockedApiPost).toHaveBeenCalledWith(
+      '/release-deck/schedule',
+      {
+        communityId: 'community-1',
+        trackId: 'track-1',
+        mode: 'soonest',
+      },
+      { token: 'token-1' },
+    );
+    expect(container.textContent).toContain('Source Ready is scheduled for Jul 20, 2026 using the soonest valid date.');
+    expect(container.textContent).toContain('Jul 20, 2026');
+
+    cleanupRender(root, container);
+  });
+
+  it('submits a chosen date only from the server-provided alternatives', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    mockedApiGet.mockImplementation((endpoint: string) => {
+      if (endpoint.startsWith('/release-deck/schedule/availability')) {
+        return Promise.resolve({
+          success: true,
+          data: {
+            community: sourceProfile.homeScene,
+            track: { id: 'track-1', title: 'Source Ready', sourceId: managedSource.id, sourceName: managedSource.name, playableSeconds: 180 },
+            from: '2026-07-14',
+            days: 30,
+            soonestValidDate: '2026-07-20',
+            alternatives: ['2026-07-20', '2026-07-21'],
+            diagnostics: [],
+          },
+        });
+      }
+      return Promise.resolve({ data: userSourceProfile });
+    });
+    mockedGetArtistBandProfile.mockResolvedValue(
+      makeSourceProfile({
+        tracks: [{
+          id: 'track-1',
+          artistBandId: managedSource.id,
+          title: 'Source Ready',
+          artist: managedSource.name,
+          album: null,
+          duration: 180,
+          fileUrl: 'https://cdn.example.com/source-ready.mp3',
+          coverArt: null,
+          playCount: 0,
+          likeCount: 0,
+          status: 'ready',
+          createdAt: '2026-07-01T00:00:00.000Z',
+        }],
+      }),
+    );
+    mockedApiPost.mockResolvedValue({
+      success: true,
+      data: {
+        id: 'schedule-2',
+        trackId: 'track-1',
+        communityId: 'community-1',
+        artistBandId: managedSource.id,
+        scheduledFor: '2026-07-21T00:00:00.000Z',
+        assignmentMode: 'chosen',
+        requestedFor: '2026-07-21T00:00:00.000Z',
+        status: 'scheduled',
+        createdById: user.id,
+      },
+    });
+
+    const { root, container } = render(React.createElement(ReleaseDeckPage));
+    await flushEffects();
+    clickButton(container, 'Load');
+    await flushEffects();
+
+    changeNamedSelect(container, 'scheduleMode', 'chosen');
+    changeNamedSelect(container, 'scheduleDate', '2026-07-21');
+    const scheduleForm = container.querySelector('[data-testid="release-deck-schedule-form"]');
+    await act(async () => {
+      scheduleForm?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    });
+
+    expect(mockedApiPost).toHaveBeenCalledWith(
+      '/release-deck/schedule',
+      {
+        communityId: 'community-1',
+        trackId: 'track-1',
+        mode: 'chosen',
+        requestedDate: '2026-07-21',
+      },
+      { token: 'token-1' },
+    );
+    expect(container.textContent).toContain('The source selected this available date.');
+
+    cleanupRender(root, container);
+  });
+
+  it('restores an existing scheduled date and assignment mode after Load', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    mockedApiGet.mockImplementation((endpoint: string) => {
+      if (endpoint.startsWith('/release-deck/schedule/availability')) {
+        return Promise.resolve({
+          success: false,
+          error: {
+            code: 'ALREADY_SCHEDULED_OR_ACTIVE',
+            message: 'Track is already scheduled or active in RADIYO',
+            trackId: 'track-1',
+            schedule: {
+              id: 'schedule-existing',
+              status: 'scheduled',
+              scheduledFor: '2026-07-22',
+              assignmentMode: 'chosen',
+              requestedFor: '2026-07-22',
+            },
+          },
+        });
+      }
+      return Promise.resolve({ data: userSourceProfile });
+    });
+    mockedGetArtistBandProfile.mockResolvedValue(
+      makeSourceProfile({
+        tracks: [{
+          id: 'track-1',
+          artistBandId: managedSource.id,
+          title: 'Source Ready',
+          artist: managedSource.name,
+          album: null,
+          duration: 180,
+          fileUrl: 'https://cdn.example.com/source-ready.mp3',
+          coverArt: null,
+          playCount: 0,
+          likeCount: 0,
+          status: 'ready',
+          createdAt: '2026-07-01T00:00:00.000Z',
+        }],
+      }),
+    );
+
+    const { root, container } = render(React.createElement(ReleaseDeckPage));
+    await flushEffects();
+    clickButton(container, 'Load');
+    await flushEffects();
+
+    expect(container.textContent).toContain('Release date scheduled');
+    expect(container.textContent).toContain('Jul 22, 2026 · scheduled');
+    expect(container.textContent).toContain('The source selected this available date.');
+    expect(container.querySelector('[data-testid="release-deck-schedule-form"]')).toBeNull();
 
     cleanupRender(root, container);
   });

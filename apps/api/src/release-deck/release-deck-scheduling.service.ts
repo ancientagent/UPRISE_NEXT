@@ -302,7 +302,13 @@ export class ReleaseDeckSchedulingService {
 
     const existingSchedule = await this.prisma.releaseDeckSchedule.findFirst({
       where: { trackId: track.id, status: { in: ['scheduled', 'ingested'] } },
-      select: { id: true, status: true, scheduledFor: true },
+      select: {
+        id: true,
+        status: true,
+        scheduledFor: true,
+        assignmentMode: true,
+        requestedFor: true,
+      },
     });
 
     if (existingSchedule) {
@@ -314,6 +320,15 @@ export class ReleaseDeckSchedulingService {
           trackId: track.id,
           diagnostics: [],
           capacityInputs: null,
+          schedule: {
+            id: existingSchedule.id,
+            status: existingSchedule.status,
+            scheduledFor: toDateOnly(existingSchedule.scheduledFor),
+            assignmentMode: existingSchedule.assignmentMode,
+            requestedFor: existingSchedule.requestedFor
+              ? toDateOnly(existingSchedule.requestedFor)
+              : null,
+          },
         },
       };
     }

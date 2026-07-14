@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import {
   CheckCircle2,
@@ -23,6 +23,12 @@ import {
   getReleaseDeckSubmitBlockReason,
   releaseDeckMissingHomeSceneMessage,
 } from '@/lib/source/release-deck-validation';
+import {
+  createReleaseDeckSchedule,
+  getReleaseDeckScheduleAvailability,
+  type ReleaseDeckScheduleAvailabilityResponse,
+  type ReleaseDeckScheduleMode,
+} from '@/lib/source/release-deck-scheduling';
 import { SourceAccountSwitcher, formatSourceMembershipRole } from '@/components/source/SourceAccountSwitcher';
 import type { CurrentUserSourceProfile, ManagedSourceAccount } from '@/lib/source/types';
 import { useAuthStore } from '@/store/auth';
@@ -50,6 +56,7 @@ type ReleaseDeckRowsProps = {
   currentDeckTracks: ArtistBandTrackSummary[];
   loadedTrackId: string | null;
   onLoadTrack: (trackId: string) => void;
+  scheduleSummaries: Record<string, ReleaseDeckScheduleSummary>;
 };
 
 type ReleaseDeckFormProps = {
@@ -61,6 +68,27 @@ type ReleaseDeckFormProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   submitError: string | null;
   submitMessage: string | null;
+};
+
+type ReleaseDeckScheduleSummary = {
+  state: 'checking' | 'unscheduled' | 'scheduled' | 'unavailable';
+  scheduledFor?: string;
+};
+
+type ReleaseDeckSchedulePanelProps = {
+  activeSource: ManagedSourceAccount;
+  availability: ReleaseDeckScheduleAvailabilityResponse | null;
+  communityId: string | null;
+  isCheckingAvailability: boolean;
+  isScheduling: boolean;
+  loadedTrack: ArtistBandTrackSummary | null;
+  mode: ReleaseDeckScheduleMode;
+  onModeChange: (mode: ReleaseDeckScheduleMode) => void;
+  onRequestedDateChange: (date: string) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  requestedDate: string;
+  scheduleError: string | null;
+  scheduleMessage: string | null;
 };
 
 const emptyForm: ReleaseDeckFormState = {
@@ -85,9 +113,14 @@ function formatDuration(seconds: number) {
 
 function formatDateLabel(value: string | null | undefined) {
   if (!value) return 'Runtime date pending';
-  const parsed = new Date(value);
+  const parsed = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T00:00:00.000Z`) : new Date(value);
   if (Number.isNaN(parsed.getTime())) return 'Runtime date pending';
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(parsed);
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(parsed);
 }
 
 function getInitials(value: string) {
@@ -141,7 +174,13 @@ function ReleaseDeckCommandLine({
   );
 }
 
-function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoadTrack }: ReleaseDeckRowsProps) {
+function ReleaseDeckRows({
+  activeSource,
+  currentDeckTracks,
+  loadedTrackId,
+  onLoadTrack,
+  scheduleSummaries,
+}: ReleaseDeckRowsProps) {
   const rows = Array.from({ length: 3 }, (_, index) => currentDeckTracks[index] ?? null);
 
   return (
@@ -164,6 +203,7 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
             const sourceOwned = track?.artistBandId === activeSource.id;
             const validSourceOwnedTrack = Boolean(sourceOwned && track?.status === 'ready');
             const selected = loadedTrackId === track?.id;
+            const scheduleSummary = track ? scheduleSummaries[track.id] : undefined;
 
             return (
               <tr key={`release-row-${index + 1}`} className={selected ? 'border-b-2 border-black bg-[#eef6dc]' : 'border-b-2 border-black last:border-b-0'}>
@@ -197,7 +237,17 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
                   {track ? formatDuration(track.duration) : '—'}
                 </td>
                 <td className="border-r-2 border-black px-3 py-3 font-semibold">
-                  {track ? formatDateLabel(track.createdAt) : '—'}
+                  {track
+                    ? scheduleSummary?.state === 'scheduled'
+                      ? formatDateLabel(scheduleSummary.scheduledFor)
+                      : scheduleSummary?.state === 'checking'
+                        ? 'Checking...'
+                        : scheduleSummary?.state === 'unscheduled'
+                          ? 'Not scheduled'
+                          : scheduleSummary?.state === 'unavailable'
+                            ? 'Unavailable'
+                            : 'Load to check'
+                    : '—'}
                 </td>
                 <td className="border-r-2 border-black px-3 py-3">
                   {track ? (
@@ -238,6 +288,136 @@ function ReleaseDeckRows({ activeSource, currentDeckTracks, loadedTrackId, onLoa
   );
 }
 
+function ReleaseDeckSchedulePanel({
+  activeSource,
+  availability,
+  communityId,
+  isCheckingAvailability,
+  isScheduling,
+  loadedTrack,
+  mode,
+  onModeChange,
+  onRequestedDateChange,
+  onSubmit,
+  requestedDate,
+  scheduleError,
+  scheduleMessage,
+}: ReleaseDeckSchedulePanelProps) {
+  if (!loadedTrack) {
+    return (
+      <div className="mt-4 border-2 border-dashed border-black/35 px-3 py-3 text-sm font-semibold text-black/60">
+        Load a source-owned ready row to check its Release Deck scheduling capacity.
+      </div>
+    );
+  }
+
+  const sourceOwnedReady = loadedTrack.artistBandId === activeSource.id && loadedTrack.status === 'ready';
+  if (!sourceOwnedReady) {
+    return (
+      <div className="mt-4 border-2 border-black px-3 py-3 text-sm font-black text-[#7a1f1f]">
+        Scheduling is available only for valid source-owned ready tracks. Legacy carry-forward and processing rows remain read-only here.
+      </div>
+    );
+  }
+
+  if (isCheckingAvailability) {
+    return (
+      <div className="mt-4 border-2 border-black px-3 py-3 text-sm font-semibold text-black/65">
+        Checking server-calculated release-date capacity...
+      </div>
+    );
+  }
+
+  const existingSchedule = availability && !availability.success ? availability.error.schedule : undefined;
+  if (existingSchedule) {
+    return (
+      <div className="mt-4 border-2 border-black bg-[#eef6dc] px-3 py-3">
+        <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Release date scheduled</p>
+        <p className="mt-2 text-lg font-black text-black">
+          {formatDateLabel(existingSchedule.scheduledFor)} · {existingSchedule.status}
+        </p>
+        <p className="mt-1 text-sm font-semibold text-black/65">
+          {existingSchedule.assignmentMode === 'soonest'
+            ? 'The system assigned the soonest valid date.'
+            : 'The source selected this available date.'}
+        </p>
+        {scheduleMessage ? <p className="mt-2 text-sm font-black text-[#195b2d]">{scheduleMessage}</p> : null}
+      </div>
+    );
+  }
+
+  const alternatives = availability
+    ? availability.success
+      ? availability.data.alternatives
+      : availability.error.alternatives ?? []
+    : [];
+  const soonestValidDate = availability
+    ? availability.success
+      ? availability.data.soonestValidDate
+      : availability.error.soonestValidDate ?? null
+    : null;
+  const availabilityError = availability && !availability.success ? availability.error : null;
+  const canSchedule = Boolean(communityId && soonestValidDate && alternatives.length > 0);
+
+  return (
+    <div className="mt-4 border-2 border-black px-3 py-3">
+      <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Release-date scheduling</p>
+      {soonestValidDate ? (
+        <p className="mt-2 text-lg font-black text-black">Soonest available: {formatDateLabel(soonestValidDate)}</p>
+      ) : null}
+      {availabilityError ? <p className="mt-2 text-sm font-black text-[#7a1f1f]">{availabilityError.message}</p> : null}
+      {scheduleError ? <p className="mt-2 text-sm font-black text-[#7a1f1f]">{scheduleError}</p> : null}
+      {!canSchedule && !scheduleError ? (
+        <p className="mt-2 text-sm font-semibold text-black/65">No schedulable date is currently available in the 30-day server lookahead.</p>
+      ) : null}
+
+      {canSchedule ? (
+        <form data-testid="release-deck-schedule-form" className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end" onSubmit={onSubmit}>
+          <label className="block text-sm text-black">
+            <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Assignment</span>
+            <select
+              name="scheduleMode"
+              value={mode}
+              onChange={(event) => onModeChange(event.target.value as ReleaseDeckScheduleMode)}
+              className={inputClass}
+            >
+              <option value="soonest">Soonest available</option>
+              <option value="chosen">Choose available date</option>
+            </select>
+          </label>
+
+          <label className="block text-sm text-black">
+            <span className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Available release date</span>
+            <select
+              name="scheduleDate"
+              disabled={mode !== 'chosen'}
+              value={requestedDate}
+              onChange={(event) => onRequestedDateChange(event.target.value)}
+              className={`${inputClass} disabled:bg-black/5 disabled:text-black/50`}
+            >
+              {alternatives.map((date) => (
+                <option key={date} value={date}>{formatDateLabel(date)}</option>
+              ))}
+            </select>
+          </label>
+
+          <Button
+            type="submit"
+            disabled={isScheduling || (mode === 'chosen' && !requestedDate)}
+            className="rounded-[0.3rem] border-2 border-black bg-[#b8d63b] px-5 py-2 text-xs font-black uppercase tracking-[0.14em] text-black shadow-[2px_2px_0_rgba(0,0,0,0.16)] hover:bg-[#d7f06a]"
+          >
+            {isScheduling ? 'Scheduling...' : 'Schedule song'}
+          </Button>
+        </form>
+      ) : null}
+
+      <p className="mt-3 text-xs font-semibold text-black/55">
+        Capacity is calculated by the API. Scheduling cannot buy priority, reorder Fair Play, or shorten another song's protected New Releases run.
+      </p>
+    </div>
+  );
+}
+
 function ReleaseSingleForm({
   activeSource,
   communityId,
@@ -254,7 +434,7 @@ function ReleaseSingleForm({
         <p className="text-xs font-black uppercase tracking-[0.16em] text-black/55">Release Single</p>
         <h2 className="mt-2 text-xl font-black">Create a URL-only single from this source context</h2>
         <p className="mt-2 text-sm font-semibold text-black/65">
-          This MVP path writes a source-owned ready track from an explicit hosted audio URL. Release date scheduling, upload storage, metadata editing, and replacement controls remain outside this slice.
+          This MVP path writes a source-owned ready track from an explicit hosted audio URL. After creation, load the row to check release-date capacity. Upload storage, metadata editing, and replacement controls remain outside this slice.
         </p>
       </div>
 
@@ -355,6 +535,28 @@ export default function ReleaseDeckPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState<ReleaseDeckFormState>(emptyForm);
   const [loadedTrackId, setLoadedTrackId] = useState<string | null>(null);
+  const [scheduleAvailability, setScheduleAvailability] = useState<ReleaseDeckScheduleAvailabilityResponse | null>(null);
+  const [scheduleError, setScheduleError] = useState<string | null>(null);
+  const [scheduleMessage, setScheduleMessage] = useState<string | null>(null);
+  const [scheduleMode, setScheduleMode] = useState<ReleaseDeckScheduleMode>('soonest');
+  const [requestedScheduleDate, setRequestedScheduleDate] = useState('');
+  const [isCheckingSchedule, setIsCheckingSchedule] = useState(false);
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [scheduleSummaries, setScheduleSummaries] = useState<Record<string, ReleaseDeckScheduleSummary>>({});
+  const scheduleRequestId = useRef(0);
+
+  useEffect(() => {
+    scheduleRequestId.current += 1;
+    setLoadedTrackId(null);
+    setScheduleAvailability(null);
+    setScheduleError(null);
+    setScheduleMessage(null);
+    setScheduleMode('soonest');
+    setRequestedScheduleDate('');
+    setIsCheckingSchedule(false);
+    setIsScheduling(false);
+    setScheduleSummaries({});
+  }, [activeSourceId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -462,6 +664,157 @@ export default function ReleaseDeckPage() {
     if (!token || !activeSourceId || !sourceContextBelongsToCurrentUser) return;
     const refreshed = await getArtistBandProfile(activeSourceId, token);
     setSourceProfile(refreshed);
+  }
+
+  async function handleLoadTrack(trackId: string) {
+    const track = sourceProfile?.tracks.find((candidate) => candidate.id === trackId) ?? null;
+    const requestId = scheduleRequestId.current + 1;
+    scheduleRequestId.current = requestId;
+
+    setLoadedTrackId(trackId);
+    setScheduleAvailability(null);
+    setScheduleError(null);
+    setScheduleMessage(null);
+    setScheduleMode('soonest');
+    setRequestedScheduleDate('');
+    setIsCheckingSchedule(false);
+    setIsScheduling(false);
+
+    if (!track || track.artistBandId !== activeSource?.id || track.status !== 'ready') {
+      setScheduleSummaries((current) => ({
+        ...current,
+        [trackId]: { state: 'unavailable' },
+      }));
+      return;
+    }
+
+    if (!token || !communityId || !sourceContextBelongsToCurrentUser) {
+      setScheduleError(!communityId ? releaseDeckMissingHomeSceneMessage : 'Select a source account before scheduling a release date.');
+      setScheduleSummaries((current) => ({
+        ...current,
+        [trackId]: { state: 'unavailable' },
+      }));
+      return;
+    }
+
+    setIsCheckingSchedule(true);
+    setScheduleSummaries((current) => ({
+      ...current,
+      [trackId]: { state: 'checking' },
+    }));
+
+    try {
+      const availability = await getReleaseDeckScheduleAvailability(
+        { communityId, trackId },
+        token,
+      );
+      if (scheduleRequestId.current !== requestId) return;
+
+      const existingSchedule = !availability.success ? availability.error.schedule : undefined;
+      const soonestValidDate = availability.success
+        ? availability.data.soonestValidDate
+        : availability.error.soonestValidDate ?? null;
+
+      setScheduleAvailability(availability);
+      setRequestedScheduleDate(soonestValidDate ?? '');
+      setScheduleSummaries((current) => ({
+        ...current,
+        [trackId]: existingSchedule
+          ? { state: 'scheduled', scheduledFor: existingSchedule.scheduledFor }
+          : soonestValidDate
+            ? { state: 'unscheduled' }
+            : { state: 'unavailable' },
+      }));
+    } catch (availabilityError: unknown) {
+      if (scheduleRequestId.current !== requestId) return;
+      setScheduleError(availabilityError instanceof Error ? availabilityError.message : 'Unable to check release-date capacity.');
+      setScheduleSummaries((current) => ({
+        ...current,
+        [trackId]: { state: 'unavailable' },
+      }));
+    } finally {
+      if (scheduleRequestId.current === requestId) {
+        setIsCheckingSchedule(false);
+      }
+    }
+  }
+
+  async function handleScheduleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const currentSourceContext = useSourceAccountStore.getState();
+    const sourceStillBelongsToCurrentUser = Boolean(
+      activeSource &&
+        user?.id &&
+        currentSourceContext.activeSourceId === activeSource.id &&
+        currentSourceContext.activeSourceUserId === user.id,
+    );
+
+    if (!token || !activeSource || !communityId || !loadedTrack || !sourceStillBelongsToCurrentUser) {
+      setScheduleError('Select a source account with a resolved Home Scene before scheduling a release date.');
+      return;
+    }
+
+    if (loadedTrack.artistBandId !== activeSource.id || loadedTrack.status !== 'ready') {
+      setScheduleError('Scheduling is available only for valid source-owned ready tracks.');
+      return;
+    }
+
+    const alternatives = scheduleAvailability
+      ? scheduleAvailability.success
+        ? scheduleAvailability.data.alternatives
+        : scheduleAvailability.error.alternatives ?? []
+      : [];
+    if (scheduleMode === 'chosen' && (!requestedScheduleDate || !alternatives.includes(requestedScheduleDate))) {
+      setScheduleError('Choose one of the available release dates returned by the server.');
+      return;
+    }
+
+    setIsScheduling(true);
+    setScheduleError(null);
+    setScheduleMessage(null);
+
+    try {
+      const schedule = await createReleaseDeckSchedule(
+        {
+          communityId,
+          trackId: loadedTrack.id,
+          mode: scheduleMode,
+          ...(scheduleMode === 'chosen' ? { requestedDate: requestedScheduleDate } : {}),
+        },
+        token,
+      );
+      const scheduledFor = schedule.scheduledFor.slice(0, 10);
+      const requestedFor = schedule.requestedFor ? schedule.requestedFor.slice(0, 10) : null;
+      const existingSchedule = {
+        id: schedule.id,
+        status: schedule.status,
+        scheduledFor,
+        assignmentMode: schedule.assignmentMode,
+        requestedFor,
+      };
+
+      setScheduleAvailability({
+        success: false,
+        error: {
+          code: 'ALREADY_SCHEDULED_OR_ACTIVE',
+          message: 'Track is already scheduled or active in RADIYO',
+          trackId: loadedTrack.id,
+          schedule: existingSchedule,
+        },
+      });
+      setScheduleSummaries((current) => ({
+        ...current,
+        [loadedTrack.id]: { state: 'scheduled', scheduledFor },
+      }));
+      setScheduleMessage(
+        `${loadedTrack.title} is scheduled for ${formatDateLabel(scheduledFor)} using ${schedule.assignmentMode === 'soonest' ? 'the soonest valid date' : 'the selected available date'}.`,
+      );
+    } catch (createError: unknown) {
+      setScheduleError(createError instanceof Error ? createError.message : 'Unable to schedule this release date.');
+    } finally {
+      setIsScheduling(false);
+    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -605,7 +958,8 @@ export default function ReleaseDeckPage() {
               activeSource={activeSource}
               currentDeckTracks={currentDeckTracks}
               loadedTrackId={loadedTrackId}
-              onLoadTrack={setLoadedTrackId}
+              onLoadTrack={(trackId) => void handleLoadTrack(trackId)}
+              scheduleSummaries={scheduleSummaries}
             />
             <div className="grid gap-3 border-t-2 border-black px-4 py-3 lg:grid-cols-[1fr_auto]">
               <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
@@ -656,12 +1010,33 @@ export default function ReleaseDeckPage() {
                 <>
                   <p className="mt-2 text-xl font-black text-black">{loadedTrack.title}</p>
                   <p className="mt-1 text-sm font-semibold text-black/65">
-                    Row detail is limited to Release Deck context in this slice. Release date scheduling, metadata editing, and replacement controls need separate media contracts before runtime implementation.
+                    Check server-owned release-date capacity and schedule this source-owned ready song. Metadata editing and replacement controls still need separate media contracts.
                   </p>
                 </>
               ) : (
                 <p className="mt-2 text-sm font-semibold text-black/65">Use Load on a source-owned row to focus the row context. Empty slots use the URL-only Release Single form.</p>
               )}
+              <ReleaseDeckSchedulePanel
+                activeSource={activeSource}
+                availability={scheduleAvailability}
+                communityId={communityId}
+                isCheckingAvailability={isCheckingSchedule}
+                isScheduling={isScheduling}
+                loadedTrack={loadedTrack}
+                mode={scheduleMode}
+                onModeChange={(mode) => {
+                  setScheduleMode(mode);
+                  setScheduleError(null);
+                }}
+                onRequestedDateChange={(date) => {
+                  setRequestedScheduleDate(date);
+                  setScheduleError(null);
+                }}
+                onSubmit={handleScheduleSubmit}
+                requestedDate={requestedScheduleDate}
+                scheduleError={scheduleError}
+                scheduleMessage={scheduleMessage}
+              />
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div className="border-2 border-black px-3 py-3">
                   <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">Testing visibility</p>

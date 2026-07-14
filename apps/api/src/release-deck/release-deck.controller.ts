@@ -16,11 +16,10 @@ import {
 import { ReleaseDeckSchedulingService } from './release-deck-scheduling.service';
 
 /**
- * Read-only Release Deck diagnostics.
+ * Release Deck measurement, schedule availability, and source-operator writes.
  *
- * Auth is authenticated-only for now, matching the activation-readiness
- * diagnostics precedent in `AdminAnalyticsController`. Source-operator vs
- * admin scoping is deferred with the rest of RBAC.
+ * Read-side diagnostics remain authenticated-only for now. The scheduling
+ * service verifies source-operator authority again before every write.
  */
 @Controller('release-deck')
 @UseGuards(JwtAuthGuard)

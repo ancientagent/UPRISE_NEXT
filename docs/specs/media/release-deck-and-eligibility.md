@@ -3,7 +3,7 @@
 **ID:** `MEDIA-RELEASE-DECK`
 **Status:** `active`
 **Owner:** `uprise-media-release`
-**Last Updated:** `2026-07-08`
+**Last Updated:** `2026-07-14`
 
 ## Overview And Purpose
 
@@ -105,11 +105,14 @@ New Releases run defined by the broadcast spec. Congestion is handled by
 scheduling a later entry date before New Releases begins, not by shortening an
 individual song's protected RADIYO window.
 
-Future implementation must fail closed when a requested release date is not
-valid and should return valid alternate dates so the source UI can offer
-`soonest available` or another selected date. The recommended capacity unit is
-playable minutes per Uprise release day/window rather than raw song count, but
-the exact capacity algorithm remains a follow-up implementation contract.
+Current scheduling fails closed when a requested release date is not valid and
+returns valid alternate dates so the source UI can offer `soonest available` or
+another selected date. Capacity is calculated from playable seconds, not raw
+song count. The current beta policy uses a `30` day lookahead, a `15` minute
+daily intake cap, a `45` minute protected-pool cap across overlapping fixed
+`10` day New Releases windows, the existing `6` minute per-song cap, and the
+existing `3` slot / `15` minute per-source caps. The API remains the source of
+truth for every capacity decision.
 
 Release-date scheduling must not:
 
@@ -130,6 +133,23 @@ Implemented in `apps/api/src/tracks/tracks.service.ts`:
 - if existing ready duration plus the new track duration exceeds `900` seconds, the API rejects the upload;
 - `processing` and `failed` tracks are not counted as active rotation occupancy.
 
+Implemented in `apps/api/src/release-deck/release-deck-scheduling.service.ts`:
+
+- schedule availability validates source ownership, city-tier Home Scene,
+  ready status, hosted `http(s)` playback, song/source caps, existing schedule,
+  and active rotation state before scanning capacity;
+- availability returns server-calculated daily/protected-window diagnostics,
+  the soonest valid date, and available alternatives within `30` days;
+- `soonest` assignment selects the earliest valid server-calculated date;
+- `chosen` assignment accepts only the requested date when that exact date is
+  valid;
+- `ReleaseDeckSchedule` persists the assignment mode, requested date when
+  chosen, scheduled date, capacity snapshot, source/community/track IDs,
+  creator, and lifecycle status;
+- an existing schedule is returned with its saved scheduled date and assignment
+  mode so source UI can restore durable state after reload;
+- schedule creation does not create or reorder a Fair Play rotation entry.
+
 ## Non-Functional Requirements
 
 - Error handling: rejections must be explicit `BadRequestException` responses.
@@ -148,9 +168,7 @@ Implemented in `apps/api/src/tracks/tracks.service.ts`:
 
 ## Data Models And Migrations
 
-No schema migration is added by this contract.
-
-Current fields used:
+Current track/source fields used:
 
 - `Track.artistBandId`
 - `Track.communityId`
@@ -158,10 +176,21 @@ Current fields used:
 - `Track.status`
 - `ArtistBand.homeSceneId`
 
-Likely future fields/models for scheduled release implementation include a
-scheduled release date, assignment mode (`auto` or selected/requested), capacity
-diagnostics, and song-level sect backing references. This spec does not add a
-migration by itself.
+Current schedule persistence uses `ReleaseDeckSchedule`:
+
+- unique `trackId`;
+- `communityId` and `artistBandId`;
+- `scheduledFor`;
+- `assignmentMode` (`soonest` or `chosen`);
+- optional `requestedFor`;
+- `status` (`scheduled` before ingestion, then `ingested` after a successful
+  Fair Play rotation write);
+- `capacitySnapshot`, `createdById`, and timestamps.
+
+The model was introduced by
+`apps/api/prisma/migrations/20260708150000_add_release_deck_schedule/migration.sql`.
+Song-level sect backing remains future work and is not part of this schedule
+model.
 
 ## API Design
 
@@ -170,6 +199,9 @@ migration by itself.
 | Method | Path | Auth | Description |
 | --- | --- | --- | --- |
 | `POST` | `/tracks` | required | Creates a source-owned or user-uploaded track; managed source tracks enforce Release Deck active-slot and active-duration caps. |
+| `GET` | `/release-deck/measurement` | required | Returns read-only Uprise-wide Release Deck readiness measurement. |
+| `GET` | `/release-deck/schedule/availability` | required | Returns server-calculated date capacity, alternatives, or durable existing-schedule state for one track. |
+| `POST` | `/release-deck/schedule` | required | Creates one `soonest` or valid `chosen` schedule after source-operator authority and eligibility are revalidated. |
 
 ### Request / Response Notes
 
@@ -178,9 +210,14 @@ migration by itself.
 - omitted `status` defaults to `ready`.
 - `artistBandId` must resolve to a source managed by the signed-in user.
 - `communityId` must exist and must match the managed source Home Scene when that source has one.
-- future scheduling endpoints must treat Release Deck as the source of release
-  date assignment and must not let the web tier infer schedule capacity from
-  client-side state alone.
+- schedule availability accepts `communityId`, `trackId`, date-only `from`, and
+  `days` from `1` to `30`;
+- schedule creation accepts `communityId`, `trackId`, `mode`, and a date-only
+  `requestedDate` only when `mode` is `chosen`;
+- schedule writes revalidate source-operator authority and capacity; the web
+  tier must not infer or override capacity from client-side state;
+- scheduling returns a `ReleaseDeckSchedule`; it does not return or create a
+  Fair Play rotation entry.
 
 ## Web UI / Client Behavior
 
@@ -197,9 +234,15 @@ migration by itself.
 - It may show the future paid ad category/link-target shape in design or docs,
   but must not save, purchase, record, sponsor-link, or expose linked-target
   actions until the owner contracts are updated.
-- Future scheduling UI should show whether the source chose an available date or
-  accepted the system's soonest valid date. It must not imply that scheduling can
-  purchase priority or shorten another song's protected run.
+- Scheduling UI must load server-owned availability for a source-owned ready
+  row, offer the soonest valid date or one of the returned available dates, and
+  show whether the saved schedule used `soonest` or `chosen` assignment. It must
+  not imply that scheduling can purchase priority, reorder Fair Play, or shorten
+  another song's protected run.
+- Row date presentation must not relabel track creation time as a scheduled
+  release date. Until checked, it should say that the source must load the row;
+  after checking, it may show unscheduled, unavailable, or the durable scheduled
+  date returned by the API.
 - Future readiness UI may show Uprise-wide deck totals, source cap usage, and
   sect readiness progress, but it must make clear which measurements are
   read-only diagnostics versus currently actionable source controls.
@@ -210,9 +253,15 @@ migration by itself.
 - API unit tests reject source-owned ready Release Deck tracks longer than `360` seconds.
 - API unit tests reject ready tracks that would push the same source above `900` active seconds in one community.
 - Web validation tests reject source-owned Release Deck payloads longer than `360` seconds before submit.
-- Future release-date scheduling tests should prove every accepted song receives
-  the broadcast-owned fixed protected New Releases run regardless of Uprise deck
-  density.
+- Scheduling service tests prove date-only validation, eligibility, daily and
+  protected-window capacity, alternatives, duplicate handling, source-operator
+  authorization, `soonest` and `chosen` writes, and no Fair Play rotation write.
+- Web scheduling tests prove the client requests server-owned availability,
+  submits `soonest` and returned `chosen` alternatives, restores existing saved
+  schedule state, and does not expose Fair Play ordering controls.
+- Fair Play ingestion tests prove every ingested schedule receives the
+  broadcast-owned fixed `10` day protected New Releases run regardless of
+  Uprise deck density.
 - Future Uprise-wide deck measurement tests should prove source caps, distinct
   source counts, readiness inclusion/exclusion reasons, and sect-encoded minutes
   are computed from server-side data.
@@ -222,8 +271,10 @@ migration by itself.
 ## Future Work And Open Questions
 
 - Define an explicit history-safe replacement/edit endpoint only if a future slice needs track replacement after rotation/vote/engagement lifecycle semantics are owned.
-- Define the exact release-date capacity algorithm, scheduled-release API shape,
-  valid-date alternative response, and scheduler/job behavior.
+- Define and implement the production trigger/job for due-schedule ingestion;
+  the current admin endpoint supports explicit dry-run/write invocation.
+- Define a dedicated schedule listing/read model if future Source Dashboard
+  views need to load every schedule without checking rows individually.
 - Define the exact song-level sect backing schema and Release Deck UI for
   encoding a song's sect readiness contribution.
 - Define if and when paid ad-slot runtime becomes visible.
