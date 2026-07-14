@@ -24,11 +24,11 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-14
 - Base branch: `origin/main` at `c9992c3` after scheduling-client PR #238 and graduation PR #239 merged
-- Current branch assignment: `codex/official-sect-backing-foundation`, registered for Slice 6 planning and the first bounded schema checkpoint
-- Local worktree state at refresh: preparing the registered branch from the clean merged baseline; Codex local remains the sole writer
+- Current branch assignment: `codex/official-sect-backing-foundation`, registered for the reviewed Slice 6A Official Sect identity checkpoint
+- Local worktree state at refresh: identity-only schema checkpoint implemented and in read-only review; Codex local remains the sole writer
 - Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238 and #239 are merged
 - Recently completed remote slices: scheduling-client PR #238 and graduation PR #239
-- Provider/db/schema state: no provider writes; Slice 6 planning may authorize a local Prisma schema/migration checkpoint only after independent review
+- Provider/db/schema state: no provider writes; the additive empty Official Sect identity migration exists only as a local schema file and has not been deployed
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
@@ -36,8 +36,8 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Write and independently review the Slice 6 Official Sect/song-level backing foundation plan.
-- Implement only the plan-approved bounded schema checkpoint before beginning a separately reviewed Slice 7 readiness-diagnostics plan.
+- Complete independent review and remote submission of the Slice 6A Official Sect identity foundation.
+- Keep song-level backing blocked on the Slice 6B owner decisions before beginning a separately reviewed Slice 7 decision packet.
 
 Recently completed context:
 
@@ -52,8 +52,8 @@ Recently completed context:
 | --- | --- |
 | Lane | Registrar / Release Deck / communities schema |
 | Branch | `codex/official-sect-backing-foundation` |
-| Scope | Plan Slice 6 and, only after plan review, add the durable Official Sect and song-level backing schema foundation without activating backing writes or Sect Uprise creation. |
-| Out of Scope | Public backing API/UI, inventing Registrar authorization, source/song paid or free limits, public progress, readiness activation, update channels, Sect Uprise creation, provider/database deployment, or legacy tag promotion. |
+| Scope | Add only the durable parent-community-scoped Official Sect identity model, additive empty migration, and exact schema/DDL parity test. |
+| Out of Scope | Song-level backing persistence or writes, lifecycle state, public backing API/UI, inventing Registrar authorization, source/song paid or free limits, public progress, readiness activation, update channels, Sect Uprise creation, provider/database deployment, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
 | Validation | independently reviewed plan; Prisma format/validate/generate; focused schema/service tests selected by the plan; API typecheck; repo verify; workspace audit; diff check; read-only implementation review |
@@ -138,9 +138,9 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Write and independently review the Slice 6 Official Sect/song-level backing foundation plan.
-2. Implement and independently review the first plan-approved schema checkpoint without activating the unresolved backing authority/write path.
-3. Begin a separate Slice 7 readiness-diagnostics plan only after the Slice 6 schema checkpoint is safe.
+1. Complete independent review and remote submission of the Slice 6A Official Sect identity foundation.
+2. Keep song-level backing persistence blocked until the Slice 6B owner contract resolves lifecycle, authority, reassignment, and retention semantics.
+3. Begin Slice 7 as a decision-gated packet only after Slice 6A is safe; do not implement readiness until backing authority and threshold/counting semantics are locked.
 4. Keep unresolved Registrar authorization, public visibility, backing limits, paid/free capacity, Sect Uprise activation, draft PR #212, and preserved UX references untouched.
 
 ## PM Usage Rules For Agents

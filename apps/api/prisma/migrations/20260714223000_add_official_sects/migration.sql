@@ -13,8 +13,5 @@ CREATE TABLE "sects" (
 -- CreateIndex
 CREATE UNIQUE INDEX "sects_parentCommunityId_slug_key" ON "sects"("parentCommunityId", "slug");
 
--- CreateIndex
-CREATE INDEX "sects_parentCommunityId_idx" ON "sects"("parentCommunityId");
-
 -- AddForeignKey
 ALTER TABLE "sects" ADD CONSTRAINT "sects_parentCommunityId_fkey" FOREIGN KEY ("parentCommunityId") REFERENCES "communities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

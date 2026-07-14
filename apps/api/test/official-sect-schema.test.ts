@@ -19,57 +19,73 @@ function readPrismaModel(schema: string, modelName: string): string {
   return match[0];
 }
 
+function normalizePrismaContract(value: string): string {
+  return value
+    .trim()
+    .split(/\r?\n/)
+    .map((line) => line.trim().replace(/\s+/g, ' '))
+    .join('\n');
+}
+
+function normalizeExactText(value: string): string {
+  return value.replace(/\r\n/g, '\n').trim();
+}
+
+const expectedSectModel = `
+model Sect {
+  id                String   @id @default(uuid())
+  parentCommunityId String
+  name              String
+  slug              String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  parentCommunity Community @relation(fields: [parentCommunityId], references: [id], onDelete: Restrict)
+
+  @@unique([parentCommunityId, slug])
+  @@map("sects")
+}
+`;
+
+const expectedMigration = `
+-- CreateTable
+CREATE TABLE "sects" (
+    "id" TEXT NOT NULL,
+    "parentCommunityId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "sects_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "sects_parentCommunityId_slug_key" ON "sects"("parentCommunityId", "slug");
+
+-- AddForeignKey
+ALTER TABLE "sects" ADD CONSTRAINT "sects_parentCommunityId_fkey" FOREIGN KEY ("parentCommunityId") REFERENCES "communities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+`;
+
 describe('Official Sect identity schema contract', () => {
   const schema = readApiFile('prisma/schema.prisma');
 
-  it('defines an authority-neutral Sect identity scoped to its parent community', () => {
+  it('defines only the accepted authority-neutral Sect identity model', () => {
     const sect = readPrismaModel(schema, 'Sect');
     const community = readPrismaModel(schema, 'Community');
 
-    expect(sect).toMatch(/^\s+id\s+String\s+@id @default\(uuid\(\)\)$/m);
-    expect(sect).toMatch(/^\s+parentCommunityId\s+String$/m);
-    expect(sect).toMatch(/^\s+name\s+String$/m);
-    expect(sect).toMatch(/^\s+slug\s+String$/m);
-    expect(sect).toMatch(/^\s+createdAt\s+DateTime @default\(now\(\)\)$/m);
-    expect(sect).toMatch(/^\s+updatedAt\s+DateTime @updatedAt$/m);
-    expect(sect).toMatch(
-      /^\s+parentCommunity\s+Community\s+@relation\(fields: \[parentCommunityId\], references: \[id\], onDelete: Restrict\)$/m,
+    expect(normalizePrismaContract(sect)).toBe(
+      normalizePrismaContract(expectedSectModel),
     );
-    expect(sect).toContain('@@unique([parentCommunityId, slug])');
-    expect(sect).toContain('@@index([parentCommunityId])');
-    expect(sect).toContain('@@map("sects")');
     expect(community).toMatch(/^\s+sects\s+Sect\[\]$/m);
-    expect(sect).not.toMatch(/^\s+status\s+/m);
     expect(schema).not.toContain('model TrackSectBacking');
   });
 
-  it('keeps the hand-written migration equivalent to the Prisma contract', () => {
+  it('keeps the hand-written migration exactly equivalent to the accepted DDL', () => {
     const migration = fs.readFileSync(migrationPath, 'utf8');
 
-    expect(migration).toContain('CREATE TABLE "sects" (');
-    expect(migration).toContain('"id" TEXT NOT NULL');
-    expect(migration).toContain('"parentCommunityId" TEXT NOT NULL');
-    expect(migration).toContain('"name" TEXT NOT NULL');
-    expect(migration).toContain('"slug" TEXT NOT NULL');
-    expect(migration).toContain(
-      '"createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    expect(normalizeExactText(migration)).toBe(
+      normalizeExactText(expectedMigration),
     );
-    expect(migration).toContain('"updatedAt" TIMESTAMP(3) NOT NULL');
-    expect(migration).toContain(
-      'CONSTRAINT "sects_pkey" PRIMARY KEY ("id")',
-    );
-    expect(migration).toContain(
-      'CREATE UNIQUE INDEX "sects_parentCommunityId_slug_key" ON "sects"("parentCommunityId", "slug");',
-    );
-    expect(migration).toContain(
-      'CREATE INDEX "sects_parentCommunityId_idx" ON "sects"("parentCommunityId");',
-    );
-    expect(migration).toContain(
-      'ALTER TABLE "sects" ADD CONSTRAINT "sects_parentCommunityId_fkey" FOREIGN KEY ("parentCommunityId") REFERENCES "communities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;',
-    );
-    expect(migration).not.toContain('track_sect_backings');
-    expect(migration).not.toContain('CREATE TYPE');
-    expect(migration).not.toContain('"status"');
-    expect(migration).not.toMatch(/^\s*(?:INSERT INTO|UPDATE\s+|DELETE FROM)\b/im);
   });
 });
