@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-08`
+**Last Updated:** `2026-07-14`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -32,6 +32,7 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Citywide is the only tier with civic infrastructure. Statewide and National are aggregate broadcasts only.
 
 ### Implemented Behavior (Current)
+- Official Sect identity persistence now exists through the parent-community-scoped `Sect` model. This foundation does not implement creation authority, Registrar affiliation, lifecycle status, song backing, readiness, visibility, update channels, or Sect Uprise activation.
 - Home Scene selection currently resolves exact `{city, state, musicCommunity}` in `Community` (tier `city`).
 - If the selected city-tier community does not exist or is inactive, onboarding assigns the user to the nearest/relevant active major-node city-tier `Community` for the same parent music community.
 - Major-node/proxy assignment must stay in-state when any same-state active major-node exists for the selected music community. Cross-state assignment is allowed only when no same-state active major-node exists, and remains an edge case for statewide identity policy.
@@ -138,6 +139,7 @@ justify subcommunity broadcast authority.
 
 ### Current Runtime Boundary
 
+- The database can persist an authority-neutral Official Sect identity scoped to one parent `Community`; no runtime writer or read surface uses it yet.
 - `POST /registrar/sect-motion` exists only as a Home Scene-scoped skeleton filing primitive.
 - `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` exist for submitter-owned readback.
 - Current runtime does not validate sect readiness thresholds, approve motions, create Official Sect affiliation records, create update channels, or activate Sect Uprises.
@@ -181,6 +183,11 @@ justify subcommunity broadcast authority.
   - passive genre/style tag metadata may inform discovery or candidate analysis,
     but explicit song-level Release Deck encoding from an eligible registered
     source is required before minutes count toward sect readiness
+- `Sect`
+  - authoritative Official Sect identity scoped by `parentCommunityId`
+  - unique identity constraint on `(parentCommunityId, slug)`
+  - contains no lifecycle, Registrar provenance, backing, readiness, visibility, or Uprise-activation state
+  - has no runtime creation or read path in the current slice
 - Future song-level sect backing references
   - should connect eligible Release Deck songs to one readiness-bearing sect
     without making loose profile tags or whole-source affiliation sufficient
@@ -193,6 +200,7 @@ justify subcommunity broadcast authority.
 ### Migrations
 - `20260213154237_add_scene_and_sect_tags` (scene metadata + sect/user tag tables)
 - `20260216004000_add_user_home_scene_and_track_engagement` (user home-scene/gps fields)
+- `20260714223000_add_official_sects` (empty additive Official Sect identity table; no rows or backfill)
 - Backfill strategy: none required (nullable adds + new tables)
 - Rollback: drop added columns/tables only if no onboarding/tag data is needed
 

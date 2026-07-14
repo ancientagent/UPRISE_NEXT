@@ -380,9 +380,9 @@ blockers: none for Slice 6A identity-only implementation
 
 ## Closeout Contract
 
-executor_completed: no
+executor_completed: yes
 
-tests_passed: no
+tests_passed: yes
 
 reviewer_required: yes
 
@@ -394,28 +394,28 @@ qa_passed: not_required
 
 drift_source_corrected_or_quarantined: not_applicable
 
-owner_spec_changed: no
+owner_spec_changed: yes
 
-owner_spec_verified: no
+owner_spec_verified: yes
 
 docs_handoff_required: yes
 
-docs_handoff_done: no
+docs_handoff_done: yes
 
 changelog_required: yes
 
-changelog_done: no
+changelog_done: yes
 
 provider_state_touched: no
 
 provider_identity_verified: not_required
 
-schema_or_migration_touched: no
+schema_or_migration_touched: yes
 
-schema_or_migration_verified: no
+schema_or_migration_verified: yes
 
 linear_ready_to_close: no
 
-blockers: plan re-review, implementation, verification, and implementation review remain
+blockers: independent implementation review and remote PR checks remain
 
-next_signal: execute Task 1 red test
+next_signal: independent implementation review of the exact checkpoint
