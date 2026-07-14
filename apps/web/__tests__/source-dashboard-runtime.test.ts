@@ -466,6 +466,15 @@ describe('source dashboard runtime behavior', () => {
     await flushEffects();
 
     expect(container.textContent).toContain('Soonest available: Jul 20, 2026');
+    expect(container.querySelector('[role="status"]')?.textContent).toContain(
+      'Soonest available: Jul 20, 2026'
+    );
+    const schedulingControlText = Array.from(container.querySelectorAll('button, select'))
+      .map((control) => control.textContent ?? '')
+      .join(' ');
+    expect(schedulingControlText).not.toMatch(
+      /Main Rotation|New Releases ordering|recurrence|propagation/i
+    );
     expect(mockedApiGet).toHaveBeenCalledWith(
       expect.stringContaining(
         '/release-deck/schedule/availability?communityId=community-1&trackId=track-1'
@@ -492,6 +501,43 @@ describe('source dashboard runtime behavior', () => {
       'Source Ready is scheduled for Jul 20, 2026 using the soonest valid date.'
     );
     expect(container.textContent).toContain('Jul 20, 2026');
+
+    cleanupRender(root, container);
+  });
+
+  it('announces unavailable schedule completion and its server reason', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    mockedApiGet.mockImplementation((endpoint: string) => {
+      if (endpoint.startsWith('/release-deck/schedule/availability')) {
+        return Promise.resolve({
+          success: false,
+          error: {
+            code: 'NO_VALID_DATE_IN_LOOKAHEAD',
+            message: 'No valid Release Deck schedule date is available in the requested lookahead',
+            trackId: 'track-1',
+            soonestValidDate: null,
+            alternatives: [],
+            diagnostics: [],
+          },
+        });
+      }
+      return Promise.resolve({ data: userSourceProfile });
+    });
+    mockedGetArtistBandProfile.mockResolvedValue(
+      makeSourceProfile({ tracks: [makeReadyTrack('track-1', 'Source Ready')] })
+    );
+
+    const { root, container } = render(React.createElement(ReleaseDeckPage));
+    await flushEffects();
+    clickButton(container, 'Load');
+    await flushEffects();
+
+    expect(container.querySelector('[role="status"]')?.textContent).toContain(
+      'No schedulable date is currently available in the 30-day server lookahead.'
+    );
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain(
+      'No valid Release Deck schedule date is available in the requested lookahead'
+    );
 
     cleanupRender(root, container);
   });
@@ -661,6 +707,81 @@ describe('source dashboard runtime behavior', () => {
 
     expect(container.textContent).toContain('Soonest available: Jul 21, 2026');
     expect(container.textContent).not.toContain('First Ready is scheduled for Jul 20, 2026');
+
+    cleanupRender(root, container);
+  });
+
+  it('does not apply an in-flight schedule response after authentication changes', async () => {
+    useSourceAccountStore.getState().setActiveSourceId(managedSource.id, user.id);
+    mockedApiGet.mockImplementation((endpoint: string) => {
+      if (endpoint.startsWith('/release-deck/schedule/availability')) {
+        return Promise.resolve({
+          success: true,
+          data: {
+            community: sourceProfile.homeScene,
+            track: {
+              id: 'track-1',
+              title: 'Source Ready',
+              sourceId: managedSource.id,
+              sourceName: managedSource.name,
+              playableSeconds: 180,
+            },
+            from: '2026-07-14',
+            days: 30,
+            soonestValidDate: '2026-07-20',
+            alternatives: ['2026-07-20'],
+            diagnostics: [],
+          },
+        });
+      }
+      return Promise.resolve({ data: userSourceProfile });
+    });
+    mockedGetArtistBandProfile.mockResolvedValue(
+      makeSourceProfile({ tracks: [makeReadyTrack('track-1', 'Source Ready')] })
+    );
+
+    let resolveSchedule!: (value: unknown) => void;
+    mockedApiPost.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSchedule = resolve;
+      })
+    );
+
+    const { root, container } = render(React.createElement(ReleaseDeckPage));
+    await flushEffects();
+    clickButton(container, 'Load');
+    await flushEffects();
+
+    const scheduleForm = container.querySelector('[data-testid="release-deck-schedule-form"]');
+    await act(async () => {
+      scheduleForm?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await Promise.resolve();
+      useAuthStore.getState().clearAuth();
+    });
+    await flushEffects();
+
+    await act(async () => {
+      resolveSchedule({
+        success: true,
+        data: {
+          id: 'schedule-stale-auth',
+          trackId: 'track-1',
+          communityId: 'community-1',
+          artistBandId: managedSource.id,
+          scheduledFor: '2026-07-20T00:00:00.000Z',
+          assignmentMode: 'soonest',
+          requestedFor: null,
+          status: 'scheduled',
+          createdById: user.id,
+        },
+      });
+      await Promise.resolve();
+    });
+
+    expect(container.textContent).toContain('Sign in is required before opening Release Deck.');
+    expect(container.textContent).not.toContain(
+      'Source Ready is scheduled for Jul 20, 2026 using the soonest valid date.'
+    );
 
     cleanupRender(root, container);
   });

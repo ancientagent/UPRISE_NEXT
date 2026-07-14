@@ -419,10 +419,18 @@ function ReleaseDeckSchedulePanel({
       <p className="text-[11px] font-black uppercase tracking-[0.12em] text-black/55">
         Release-date scheduling
       </p>
-      {soonestValidDate ? (
-        <p className="mt-2 text-lg font-black text-black">
-          Soonest available: {formatDateLabel(soonestValidDate)}
-        </p>
+      {availability ? (
+        <div aria-live="polite" role="status">
+          {soonestValidDate ? (
+            <p className="mt-2 text-lg font-black text-black">
+              Soonest available: {formatDateLabel(soonestValidDate)}
+            </p>
+          ) : (
+            <p className="mt-2 text-sm font-semibold text-black/65">
+              No schedulable date is currently available in the 30-day server lookahead.
+            </p>
+          )}
+        </div>
       ) : null}
       {availabilityError ? (
         <p className="mt-2 text-sm font-black text-[#7a1f1f]" role="alert">
@@ -434,12 +442,6 @@ function ReleaseDeckSchedulePanel({
           {scheduleError}
         </p>
       ) : null}
-      {!canSchedule && !scheduleError ? (
-        <p className="mt-2 text-sm font-semibold text-black/65">
-          No schedulable date is currently available in the 30-day server lookahead.
-        </p>
-      ) : null}
-
       {canSchedule ? (
         <form
           data-testid="release-deck-schedule-form"
@@ -1347,7 +1349,7 @@ export default function ReleaseDeckPage() {
                 <FileText aria-hidden className="h-8 w-8 shrink-0" />
                 <div>
                   <p className="text-xl font-black uppercase">Source Record</p>
-                      <p className="text-sm font-semibold text-black/65">{sourceRecordBoundaryCopy}</p>
+                  <p className="text-sm font-semibold text-black/65">{sourceRecordBoundaryCopy}</p>
                 </div>
               </div>
               <div className="border-t-2 border-black pt-3 lg:border-l-2 lg:border-t-0 lg:pl-4 lg:pt-0">
