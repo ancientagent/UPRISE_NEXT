@@ -272,6 +272,6 @@ schema_or_migration_verified: not_required
 
 linear_ready_to_close: no
 
-blockers: founder answers remain; remote documentation PR checks remain before merge
+blockers: founder answers remain; PR #241 checks remain before merge
 
-next_signal: submit the registered decision-only branch, then request the three founder answers
+next_signal: require green PR #241 checks, merge the decision packet, then request the three founder answers

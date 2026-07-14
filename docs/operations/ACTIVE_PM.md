@@ -26,7 +26,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Base branch: `origin/main` at `542c350` after Official Sect identity PR #240 merged
 - Current branch assignment: `codex/sect-readiness-decision-gate`, registered for the Slice 7 decision packet only
 - Local worktree state at refresh: Slice 7 founder-decision packet passed independent product-authority and implementation-planning review; Codex local remains the sole writer
-- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238, #239, and #240 are merged
+- Open PR queue at refresh: PR #241 carries the reviewed Slice 7 decision packet; draft PR #212 remains intentionally deprioritized; PRs #238, #239, and #240 are merged
 - Recently completed remote slices: scheduling-client PR #238, graduation PR #239, and Official Sect identity PR #240
 - Provider/db/schema state: no provider writes; Slice 7 is documentation/decision work and authorizes no schema or database change
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -64,6 +64,7 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
+| #241 | `codex/sect-readiness-decision-gate` | open | Require green documentation/policy checks, then merge and stop for founder answers. |
 | #240 | `codex/official-sect-backing-foundation` | merged at `542c350` | Official Sect identity baseline established; backing/readiness remains blocked on the next decision packet. |
 | #239 | `codex/new-releases-graduation` | merged at `c9992c3` | Graduation baseline established; preserve the local branch until sequential closeout is complete. |
 | #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
