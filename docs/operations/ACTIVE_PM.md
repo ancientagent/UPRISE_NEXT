@@ -26,7 +26,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Base branch: `origin/main` at `c9992c3` after scheduling-client PR #238 and graduation PR #239 merged
 - Current branch assignment: `codex/official-sect-backing-foundation`, registered for the reviewed Slice 6A Official Sect identity checkpoint
 - Local worktree state at refresh: identity-only schema checkpoint passed independent schema/code and product-authority review with zero findings; Codex local remains the sole writer
-- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238 and #239 are merged
+- Open PR queue at refresh: PR #240 carries the reviewed Slice 6A identity foundation; draft PR #212 remains intentionally deprioritized; PRs #238 and #239 are merged
 - Recently completed remote slices: scheduling-client PR #238 and graduation PR #239
 - Provider/db/schema state: no provider writes; the additive empty Official Sect identity migration exists only as a local schema file and has not been deployed
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -36,7 +36,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Submit the independently reviewed Slice 6A Official Sect identity foundation and require green remote migration/check gates.
+- Land the independently reviewed Slice 6A Official Sect identity foundation through PR #240 only after green remote migration/check gates.
 - Keep song-level backing blocked on the Slice 6B owner decisions before beginning a separately reviewed Slice 7 decision packet.
 
 Recently completed context:
@@ -64,6 +64,7 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
+| #240 | `codex/official-sect-backing-foundation` | open | Require all migration, verification, policy, and preview checks before merge; do not expand into backing/readiness runtime. |
 | #239 | `codex/new-releases-graduation` | merged at `c9992c3` | Graduation baseline established; preserve the local branch until sequential closeout is complete. |
 | #238 | `codex/release-deck-scheduling-client` | merged at `a55a54f` | Baseline established; preserve the local branch until sequential closeout is complete. |
 | #212 | `docs/linear-clean-context-agent-roles` | open draft, conflicting, intentionally deprioritized | Preserve as draft; do not merge/close unless user reprioritizes the Linear clean-context workflow. |

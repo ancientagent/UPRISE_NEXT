@@ -428,6 +428,6 @@ schema_or_migration_verified: yes
 
 linear_ready_to_close: no
 
-blockers: remote PR checks remain
+blockers: PR #240 remote checks remain
 
-next_signal: push the registered branch and open the remote PR
+next_signal: require green PR #240 checks before merge
