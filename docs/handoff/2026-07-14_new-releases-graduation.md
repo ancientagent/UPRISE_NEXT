@@ -3,7 +3,7 @@
 **Date:** 2026-07-14  
 **Branch:** `codex/new-releases-graduation`  
 **Starting HEAD:** `375d06c`  
-**Status:** plan approved by independent read-only review; implementation authorized
+**Status:** implementation checkpoint built and locally validated; independent execution reviews pending
 
 ## A. Evidence Used
 
@@ -153,8 +153,8 @@ reviewer_required: yes
 reviewer_passed: no  
 qa_required: yes  
 qa_passed: no  
-focused_tests_passed: no  
-package_typecheck_passed: no  
+focused_tests_passed: yes (5 suites, 24 tests)
+package_typecheck_passed: yes
 repo_verify_passed: no  
 workspace_audit_passed: no  
 worktree_clean: no  
@@ -169,4 +169,28 @@ schema_or_migration_touched: no
 schema_or_migration_verified: not_required  
 linear_ready_to_close: not_applicable  
 blockers: plan review, implementation, verification, and final reviews remain  
-next_signal: sole-writer implementation from the approved plan
+next_signal: commit the implementation checkpoint, then independent read-only code and product-contract reviews
+
+## Implementation Checkpoint
+
+Implemented by the sole branch writer:
+
+- `FairPlayGraduationService` with active city-tier validation, exact stored-timestamp window evaluation, recurrence snapshot reads, dry-run output, transactional write revalidation, and conditional idempotent row updates;
+- `FairPlayGraduationController` and Zod DTO for `POST /admin/fair-play/graduation/run`, guarded by the current `JwtAuthGuard` boundary;
+- Fair Play module provider/controller/export wiring;
+- focused service, controller, and module tests;
+- owner/admin implementation-status, architecture-state, changelog, and handoff updates without changing deferred policy.
+
+First validation on the uncommitted implementation checkpoint:
+
+- focused API tests: 5 suites, 24 tests passed;
+- API typecheck: passed;
+- `git diff --check`: passed.
+- full API suite attempted: 56 of 59 suites and 530 of 540 tests passed; the
+  three database-backed integration suites (`communities.test.ts`,
+  `registrar.invite-delivery.integration.test.ts`, and
+  `registrar.invite-delivery.replay.integration.test.ts`) could not connect to
+  PostgreSQL at `localhost:5432`, so this is classified as an environment
+  limitation rather than a graduation implementation failure.
+
+No schema, migration, provider, remote-repo, cron/queue, UI, vote, engagement-history, schedule, tier, or propagation mutation was added.

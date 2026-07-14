@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FairPlayModule } from '../src/fair-play/fair-play.module';
 import { FairPlayService } from '../src/fair-play/fair-play.service';
+import { FairPlayGraduationService } from '../src/fair-play/fair-play-graduation.service';
 import { PrismaModule } from '../src/prisma/prisma.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 
@@ -14,6 +15,7 @@ describe('FairPlayModule', () => {
       .compile();
 
     expect(module.get(FairPlayService)).toBeInstanceOf(FairPlayService);
+    expect(module.get(FairPlayGraduationService)).toBeInstanceOf(FairPlayGraduationService);
 
     await module.close();
   });
