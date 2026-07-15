@@ -255,6 +255,7 @@ export class OnboardingService {
           homeSceneState: state,
           homeSceneCommunity: musicCommunity,
           homeSceneTag: inferredTag,
+          homeSceneId: resolvedScene.id,
           tunedSceneId: resolvedScene.id,
           tunedSceneUpdatedAt: new Date(),
         },

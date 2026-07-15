@@ -87,6 +87,7 @@ describe('OnboardingService home-scene resolution', () => {
           homeSceneCity: 'Austin',
           homeSceneState: 'Texas',
           homeSceneCommunity: 'Punk',
+          homeSceneId: 'scene-austin-punk',
           tunedSceneId: 'scene-austin-punk',
         }),
       })

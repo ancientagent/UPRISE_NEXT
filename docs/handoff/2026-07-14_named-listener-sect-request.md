@@ -26,15 +26,20 @@ identity.
 
 - Added nullable one-to-one `Sect.requestRegistrarEntryId` provenance with an
   additive `ON DELETE SET NULL` migration; no backfill or database deployment.
+- Added nullable `User.homeSceneId` as the durable natural/proxy civic anchor,
+  with authoritative onboarding, Home Scene change, invite-claim, and
+  proxy-to-natural cutover writers. Its additive migration performs no guessed
+  backfill or database deployment.
 - Extracted Sect request/list/detail behavior into a dedicated Registrar
   service/controller while preserving all existing endpoint paths.
 - Required and normalized `sectName`, generated a deterministic parent-scoped
   slug, and narrowly translated expected identity collisions.
 - Kept request authority listener-side and Home Scene-scoped; no Artist/Band
   source ownership is required.
-- Reused the Home Scene selector's active natural/proxy resolution rule for
-  request authority. The resolver derives authority from submitted locality and
-  default music community, not transient `tunedSceneId` Away Scene state.
+- Request authority uses the durable Home Scene anchor rather than transient
+  `tunedSceneId` Away Scene state. Legacy null anchors use only a safe exact
+  active natural tuple or one unambiguous active same-community proxy
+  membership; ambiguous proxy history is rejected.
 - Normalized new and legacy list/detail responses to nullable name/slug and
   nullable linked Sect identity; aligned the web read type and tests.
 - Explicitly excluded Artist/Band membership, legitimacy/readiness evaluation,
@@ -48,6 +53,8 @@ identity.
 - Product/code review repair commit: `45f02ce`.
 - Migration file:
   `apps/api/prisma/migrations/20260715030000_add_sect_request_provenance/migration.sql`.
+- Civic-anchor migration file:
+  `apps/api/prisma/migrations/20260715033000_add_user_home_scene_anchor/migration.sql`.
 - Unicode display names are preserved. When ASCII slugging yields no content,
   the route uses `sect-` plus the first 16 lowercase hexadecimal characters of
   SHA-256 over the NFC-normalized trimmed name. Unicode combining marks across
@@ -57,7 +64,8 @@ identity.
 
 ## Validation Evidence
 
-- Focused API regression set after reviewer repairs: 7 suites, 229 tests passed.
+- Expanded API regression set after reviewer repairs: 12 suites, 284 tests
+  passed.
 - API typecheck and Prisma client generation passed.
 - Web Registrar client suite: 57 tests passed.
 - Web typecheck passed.
@@ -67,9 +75,11 @@ identity.
 ## Review Repairs
 
 - Product review found that submitted-locality equality alone excluded
-  listeners assigned to an active proxy Home Scene. Runtime now shares the
-  selector's natural/proxy resolver and explicitly ignores transient Away Scene
-  tuning for authority; exact, proxy, Away, and unresolved cases are covered.
+  listeners assigned to an active proxy Home Scene. The first repair reused the
+  selector resolver, but code re-review correctly found that this could differ
+  from onboarding's distance-selected proxy. Runtime now persists the actual
+  assigned natural/proxy civic anchor separately from Away tuning, with safe
+  non-guessing legacy fallbacks and exact/proxy/Away/ambiguous coverage.
 - Code review found that the first slug implementation removed only the common
   `U+0300-U+036F` combining-mark block. Runtime now removes the complete Unicode
   mark category and covers an extended combining mark regression.

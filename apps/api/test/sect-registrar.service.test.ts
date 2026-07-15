@@ -9,18 +9,21 @@ describe('SectRegistrarService', () => {
     state: 'TX',
     musicCommunity: 'punk',
     tier: 'city',
+    isActive: true,
   };
   const user = {
     id: 'listener-1',
     homeSceneCity: 'Austin',
     homeSceneState: 'TX',
     homeSceneCommunity: 'punk',
+    homeSceneId: scene.id,
   };
   const createdAt = new Date('2026-07-15T03:00:00.000Z');
   const updatedAt = new Date('2026-07-15T03:00:00.000Z');
 
   const prisma = {
     community: { findUnique: jest.fn(), findFirst: jest.fn() },
+    communityMember: { findMany: jest.fn() },
     user: { findUnique: jest.fn() },
     registrarEntry: { create: jest.fn(), findMany: jest.fn(), findUnique: jest.fn() },
     sect: { create: jest.fn() },
@@ -33,6 +36,7 @@ describe('SectRegistrarService', () => {
     jest.clearAllMocks();
     prisma.community.findUnique.mockResolvedValue(scene);
     prisma.community.findFirst.mockResolvedValue(scene);
+    prisma.communityMember.findMany.mockResolvedValue([]);
     prisma.user.findUnique.mockResolvedValue(user);
     resolver.resolveDefaultMusicCommunity.mockResolvedValue('punk');
     prisma.$transaction.mockImplementation(async (callback: (tx: typeof prisma) => unknown) => callback(prisma));
@@ -125,25 +129,22 @@ describe('SectRegistrarService', () => {
   });
 
   it('allows the active same-state proxy assigned from the listener Home Scene tuple', async () => {
-    prisma.user.findUnique.mockResolvedValue({ ...user, homeSceneCity: 'El Paso' });
-    prisma.community.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(scene);
+    prisma.user.findUnique.mockResolvedValue({ ...user, homeSceneCity: 'El Paso', homeSceneId: scene.id });
 
     await expect(
       service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),
     ).resolves.toMatchObject({ sect: { id: 'sect-1' } });
-    expect(prisma.community.findFirst).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        where: expect.objectContaining({ state: 'TX', musicCommunity: 'punk', isActive: true }),
-      }),
-    );
+    expect(prisma.communityMember.findMany).not.toHaveBeenCalled();
   });
 
   it('rejects an Away Scene even when tuned context could point there', async () => {
     const awayScene = { ...scene, id: 'scene-away', city: 'Seattle', state: 'WA' };
     prisma.community.findUnique.mockResolvedValue(awayScene);
-    prisma.user.findUnique.mockResolvedValue({ ...user, tunedSceneId: awayScene.id });
-    prisma.community.findFirst.mockResolvedValue(scene);
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      homeSceneId: scene.id,
+      tunedSceneId: awayScene.id,
+    });
 
     await expect(
       service.submitSectRequest('listener-1', { sceneId: awayScene.id, sectName: 'Noise Art' }),
@@ -152,12 +153,45 @@ describe('SectRegistrarService', () => {
   });
 
   it('rejects a request when the listener tuple has no active natural or proxy Home Scene', async () => {
-    prisma.community.findFirst.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue({ ...user, homeSceneCity: 'El Paso', homeSceneId: null });
 
     await expect(
       service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),
     ).rejects.toBeInstanceOf(ForbiddenException);
     expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('allows a legacy exact natural Home Scene with case-insensitive tuple matching', async () => {
+    prisma.user.findUnique.mockResolvedValue({ ...user, homeSceneId: null, homeSceneCommunity: 'PUNK' });
+    prisma.community.findUnique.mockResolvedValue({
+      ...scene,
+      city: 'AUSTIN',
+      state: 'tx',
+      musicCommunity: 'Punk',
+      isActive: true,
+    });
+
+    await expect(
+      service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),
+    ).resolves.toMatchObject({ sect: { id: 'sect-1' } });
+    expect(prisma.communityMember.findMany).not.toHaveBeenCalled();
+  });
+
+  it('allows only an unambiguous legacy active proxy membership', async () => {
+    prisma.user.findUnique.mockResolvedValue({ ...user, homeSceneCity: 'El Paso', homeSceneId: null });
+    prisma.communityMember.findMany.mockResolvedValue([{ communityId: scene.id }]);
+
+    await expect(
+      service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),
+    ).resolves.toMatchObject({ sect: { id: 'sect-1' } });
+
+    prisma.communityMember.findMany.mockResolvedValue([
+      { communityId: scene.id },
+      { communityId: 'another-proxy' },
+    ]);
+    await expect(
+      service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it('rejects missing and non-city scenes', async () => {

@@ -54,6 +54,7 @@ export class AuthService {
           select: {
             scene: {
               select: {
+                id: true,
                 city: true,
                 state: true,
                 musicCommunity: true,
@@ -96,6 +97,7 @@ export class AuthService {
           homeSceneCity: invite.registrarEntry.scene.city ?? undefined,
           homeSceneState: invite.registrarEntry.scene.state ?? undefined,
           homeSceneCommunity: invite.registrarEntry.scene.musicCommunity ?? undefined,
+          homeSceneId: invite.registrarEntry.scene.id,
           gpsVerified: false,
         },
       });

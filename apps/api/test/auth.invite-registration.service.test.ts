@@ -59,6 +59,7 @@ describe('AuthService.registerFromInvite', () => {
       claimedUserId: null,
       registrarEntry: {
         scene: {
+          id: 'scene-austin-punk',
           city: 'Austin',
           state: 'TX',
           musicCommunity: 'punk',
@@ -91,6 +92,7 @@ describe('AuthService.registerFromInvite', () => {
           homeSceneCity: 'Austin',
           homeSceneState: 'TX',
           homeSceneCommunity: 'punk',
+          homeSceneId: 'scene-austin-punk',
           gpsVerified: false,
         }),
       }),

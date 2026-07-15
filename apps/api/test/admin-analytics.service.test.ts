@@ -432,6 +432,7 @@ describe('AdminAnalyticsService', () => {
     expect(mockPrisma.user.updateMany).toHaveBeenCalledWith({
       where: { id: { in: ['listener-1', 'listener-2'] } },
       data: expect.objectContaining({
+        homeSceneId: 'scene-el-paso-punk',
         tunedSceneId: 'scene-el-paso-punk',
         tunedSceneUpdatedAt: expect.any(Date),
       }),

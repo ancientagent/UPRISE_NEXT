@@ -23,9 +23,10 @@ In scope:
 
 - any listener whose established Home Scene matches the target city-tier
   community may request a named Sect;
-- matching Home Scene authority resolves the active natural scene first, then
-  the same-state or cross-state proxy through the shared selector rule; a
-  transient `tunedSceneId` Away Scene never grants request authority;
+- matching Home Scene authority uses the durable `User.homeSceneId` civic
+  anchor written by onboarding, explicit Home Scene changes, invite claim, and
+  proxy-to-natural cutover; a transient `tunedSceneId` Away Scene never grants
+  request authority;
 - the requester does not need to own or manage an Artist/Band source;
 - a new request creates one `RegistrarEntry(type='sect_motion')` and one linked
   `Sect` identity in a transaction;
@@ -75,6 +76,20 @@ requestedSect Sect?
 ```
 
 Do not add membership, Track, status, approval, visibility, or history fields.
+
+Persist the listener civic anchor separately from tuning context:
+
+```prisma
+model User {
+  homeSceneId String?
+  homeScene   Community? @relation("ListenerHomeScene", fields: [homeSceneId], references: [id], onDelete: SetNull)
+}
+```
+
+The additive migration does not guess a backfill. Legacy rows without an anchor
+may use an exact active natural tuple or one unambiguous active same-community
+`CommunityMember` proxy membership; ambiguous legacy proxy memberships are
+rejected rather than authorizing the wrong scene.
 
 ## Compatibility Read Contract
 
@@ -342,13 +357,27 @@ git add apps/web docs
 git commit -m "docs: hand off named listener Sect request"
 ```
 
+### Reviewer Repair Addendum: Preserve Actual Assigned Home Scene
+
+Final review established that recomputing proxy assignment cannot safely
+recover onboarding's distance-selected scene after `tunedSceneId` changes for
+Away listening. The implementation therefore adds nullable durable
+`User.homeSceneId` authority and a separate additive migration, updates all
+current authoritative writers (onboarding, explicit Home Scene change, invite
+claim, and proxy-to-natural cutover), and leaves `tunedSceneId` as listening
+context. Tests cover the schema/migration, all writer paths, assigned proxy
+authority, Away rejection, case-insensitive legacy exact-natural matching,
+unique legacy proxy recovery, and ambiguous legacy rejection.
+
+No migration is executed and no legacy anchor is guessed.
+
 ### Task 5: Full Verification And Independent Review
 
 **Step 1: Run verification**
 
 ```bash
 pnpm --filter api exec prisma validate --schema prisma/schema.prisma
-pnpm --filter api test -- official-sect-schema.test.ts sect-registrar.service.test.ts sect-registrar.controller.test.ts registrar.dto.test.ts registrar.service.test.ts registrar.controller.test.ts
+pnpm --filter api test -- official-sect-schema.test.ts user-home-scene-anchor-schema.test.ts sect-registrar.service.test.ts sect-registrar.controller.test.ts registrar.dto.test.ts registrar.service.test.ts registrar.controller.test.ts onboarding.home-scene-resolution.test.ts communities.discovery.service.test.ts admin-analytics.service.test.ts auth.invite-registration.service.test.ts
 pnpm --filter web test -- registrar-client.test.ts registrar-contract-inventory.test.ts
 pnpm run verify
 pnpm run workspace:audit

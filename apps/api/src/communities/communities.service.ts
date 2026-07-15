@@ -1365,6 +1365,7 @@ export class CommunitiesService {
           homeSceneCity: scene.city,
           homeSceneState: scene.state,
           homeSceneCommunity: scene.musicCommunity,
+          homeSceneId: scene.id,
           tunedSceneId: scene.id,
           tunedSceneUpdatedAt: new Date(),
         },

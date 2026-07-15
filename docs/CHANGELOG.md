@@ -29,9 +29,10 @@
   expose the normalized request and nullable Sect identity while preserving
   legacy empty rows without inferred backfill. This does not add Artist/Band
   membership, readiness/progress, activation, public UI, approval, or any
-  provider/database deployment. Request authority follows the shared active
-  natural/proxy Home Scene resolver and cannot be gained by tuning to an Away
-  Scene.
+  provider/database deployment. Request authority follows a new durable
+  `User.homeSceneId` civic anchor, which authoritative Home Scene write/cutover
+  paths maintain separately from mutable Away Scene tuning. The additive anchor
+  migration performs no guessed legacy backfill.
 
 - Added the historical Slice 7 Sect backing/readiness founder-decision gate.
   Its original per-song backing and open-decision framing is now superseded and

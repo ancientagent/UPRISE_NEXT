@@ -339,6 +339,11 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.tunedSceneId).toBe('c2');
     expect(result.previousHomeSceneId).toBe('c1');
     expect(result.changed).toBe(true);
+    expect(mockPrisma.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ homeSceneId: 'c2', tunedSceneId: 'c2' }),
+      }),
+    );
     expect(mockPrisma.userMusicCommunityPreference.updateMany).toHaveBeenCalledWith({
       where: { userId: 'u1', isDefault: true },
       data: { isDefault: false },

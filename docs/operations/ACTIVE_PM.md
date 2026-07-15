@@ -55,7 +55,7 @@ Recently completed context:
 | --- | --- |
 | Lane | Registrar / Release Deck / communities backend implementation |
 | Branch | `codex/sect-membership-readiness` |
-| Scope | Named listener request DTO, additive nullable request provenance, dedicated Sect Registrar service/controller, legacy read compatibility, tests, and typed read contracts. |
+| Scope | Named listener request DTO, additive nullable request provenance, durable listener Home Scene civic anchor separated from Away tuning, dedicated Sect Registrar service/controller, legacy compatibility, tests, and typed read contracts. |
 | Out of Scope | Artist/Band membership writes, readiness/progress APIs, public UI, update channels, extra lifecycle states, routine admin approval, provider/database deployment, governance, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |

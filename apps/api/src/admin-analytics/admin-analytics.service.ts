@@ -486,6 +486,7 @@ export class AdminAnalyticsService {
           : await tx.user.updateMany({
               where: { id: { in: listenerIds } },
               data: {
+                homeSceneId: community.id,
                 tunedSceneId: community.id,
                 tunedSceneUpdatedAt: activatedAt,
               },

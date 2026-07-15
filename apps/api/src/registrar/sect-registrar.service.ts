@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { createHash } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import { resolveHomeSceneAssignment } from '../users/home-scene-assignment-resolver';
 import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
 import type { SectMotionRegistrationDto } from './dto/registrar.dto';
 
@@ -70,11 +69,25 @@ export class SectRegistrarService {
     const [scene, user] = await Promise.all([
       this.prisma.community.findUnique({
         where: { id: sceneId },
-        select: { id: true, name: true, city: true, state: true, musicCommunity: true, tier: true },
+        select: {
+          id: true,
+          name: true,
+          city: true,
+          state: true,
+          musicCommunity: true,
+          tier: true,
+          isActive: true,
+        },
       }),
       this.prisma.user.findUnique({
         where: { id: userId },
-        select: { id: true, homeSceneCity: true, homeSceneState: true, homeSceneCommunity: true },
+        select: {
+          id: true,
+          homeSceneCity: true,
+          homeSceneState: true,
+          homeSceneCommunity: true,
+          homeSceneId: true,
+        },
       }),
     ]);
 
@@ -96,13 +109,41 @@ export class SectRegistrarService {
       throw new ForbiddenException('Registrar access requires an established Home Scene');
     }
 
-    const resolvedHomeScene = await resolveHomeSceneAssignment(
-      this.prisma,
-      homeCity,
-      homeState,
-      homeCommunity,
+    const normalizeAuthorityPart = (value: string | null | undefined) =>
+      (value ?? '').trim().toLowerCase();
+    const sceneCommunity = normalizeAuthorityPart(scene.musicCommunity);
+    const defaultCommunity = normalizeAuthorityPart(homeCommunity);
+    const isAnchoredHomeScene = Boolean(
+      user.homeSceneId === scene.id && scene.isActive && sceneCommunity === defaultCommunity,
     );
-    if (resolvedHomeScene?.scene.id !== scene.id) {
+    const isLegacyExactNaturalScene = Boolean(
+      !user.homeSceneId &&
+        scene.isActive &&
+        normalizeAuthorityPart(scene.city) === normalizeAuthorityPart(homeCity) &&
+        normalizeAuthorityPart(scene.state) === normalizeAuthorityPart(homeState) &&
+        sceneCommunity === defaultCommunity,
+    );
+
+    let isUnambiguousLegacyProxy = false;
+    if (!user.homeSceneId && !isLegacyExactNaturalScene) {
+      const legacyProxyMemberships = await this.prisma.communityMember.findMany({
+        where: {
+          userId,
+          community: {
+            tier: 'city',
+            isActive: true,
+            musicCommunity: { equals: homeCommunity, mode: 'insensitive' },
+          },
+        },
+        select: { communityId: true },
+        orderBy: { joinedAt: 'desc' },
+        take: 2,
+      });
+      isUnambiguousLegacyProxy =
+        legacyProxyMemberships.length === 1 && legacyProxyMemberships[0].communityId === scene.id;
+    }
+
+    if (!isAnchoredHomeScene && !isLegacyExactNaturalScene && !isUnambiguousLegacyProxy) {
       throw new ForbiddenException('Registrar submissions are limited to your Home Scene');
     }
 
