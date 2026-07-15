@@ -112,11 +112,14 @@ Server-side slug generation is exact and deterministic:
 4. replace each run outside `[a-z0-9]` with `-`;
 5. trim leading/trailing `-`;
 6. cap at `120` characters and trim a trailing `-` again;
-7. reject with `BadRequestException` if the result is empty.
+7. if the ASCII result is empty, preserve the Unicode display name and use the
+   deterministic opaque fallback `sect-` plus the first `16` lowercase hex
+   characters of `sha256(trimmedName.normalize('NFC'))`.
 
-Punctuation-only and non-Latin-only names therefore fail rather than receiving
-an invented identifier. A parent-scoped slug collision returns a narrowly
-translated `ConflictException`.
+This slug is an internal routing identifier, not a restriction on a Sect's
+writing system. Punctuation-only and non-Latin-only nonblank names receive the
+same deterministic fallback on every request. A parent-scoped slug collision
+returns a narrowly translated `ConflictException`.
 
 ### Task 1: Add Migration-Safe Request Provenance
 
@@ -196,8 +199,9 @@ unknown-key stripping under current Zod behavior.
 
 Test named-request creation and compatibility normalization for an old row with
 `payload: {}` and no linked Sect. Test exact slug cases: normal words,
-punctuation, diacritics, punctuation-only, non-Latin-only, collision, and a
-140-character name whose slug is capped to 120.
+punctuation, diacritics, stable hashed fallback for punctuation-only and
+non-Latin-only names, collision, and a 140-character name whose slug is capped
+to 120.
 
 **Step 3: Confirm failure**
 
