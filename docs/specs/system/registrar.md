@@ -114,8 +114,8 @@ the readiness and Sect Uprise broadcast boundary at
   satisfaction of the settled artist-support and Release Deck music thresholds;
   no separate discretionary administrator approval gate follows them.
 - Sect voting authority belongs to sect members once a Sect Uprise exists; listening access alone does not grant sect voting authority.
-- Public visibility timing and the request/membership/progress surfaces remain
-  deferred until implemented from this contract.
+- Public visibility timing, public request UI, membership, and progress
+  surfaces remain deferred until implemented from this contract.
 
 ### Implemented Now
 - Registrar-link-ready Artist/Band identity foundation exists (slice 1):
