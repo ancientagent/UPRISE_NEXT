@@ -1,11 +1,16 @@
 # Named Listener Sect Request
 
-**Agent:** Codex local  
-**Date:** 2026-07-14  
-**Branch:** `codex/sect-membership-readiness`  
-**Base:** `origin/main@10787dc`  
+**Agent:** Codex local
+
+**Date:** 2026-07-14
+
+**Branch:** `codex/sect-membership-readiness`
+
+**Base:** `origin/main@10787dc`
+
 **Related Specs:** `docs/specs/system/registrar.md`,
-`docs/specs/communities/scenes-uprises-sects.md`  
+`docs/specs/communities/scenes-uprises-sects.md`
+
 **Scope:** API schema/migration, Registrar request runtime, web read types, tests,
 and current-state docs
 
