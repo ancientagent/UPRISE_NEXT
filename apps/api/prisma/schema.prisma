@@ -174,14 +174,16 @@ model Community {
 }
 
 model Sect {
-  id                String   @id @default(uuid())
-  parentCommunityId String
-  name              String
-  slug              String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                      String   @id @default(uuid())
+  parentCommunityId       String
+  requestRegistrarEntryId String?  @unique
+  name                    String
+  slug                    String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
-  parentCommunity Community @relation(fields: [parentCommunityId], references: [id], onDelete: Restrict)
+  parentCommunity       Community       @relation(fields: [parentCommunityId], references: [id], onDelete: Restrict)
+  requestRegistrarEntry RegistrarEntry? @relation(fields: [requestRegistrarEntryId], references: [id], onDelete: SetNull)
 
   @@unique([parentCommunityId, slug])
   @@map("sects")
@@ -293,6 +295,7 @@ model RegistrarEntry {
   codes                 RegistrarCode[]
   capabilityGrants      UserCapabilityGrant[]
   capabilityAuditEvents CapabilityGrantAuditLog[]
+  requestedSect         Sect?
 
   @@index([sceneId, type, status])
   @@index([sourceOriginCity, sourceOriginState, sourceOriginMusicCommunity])
