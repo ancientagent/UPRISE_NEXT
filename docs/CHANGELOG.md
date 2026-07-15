@@ -31,8 +31,14 @@
   membership, readiness/progress, activation, public UI, approval, or any
   provider/database deployment. Request authority follows a new durable
   `User.homeSceneId` civic anchor, which authoritative Home Scene write/cutover
-  paths maintain separately from mutable Away Scene tuning. The additive anchor
-  migration performs no guessed legacy backfill.
+  paths maintain separately from mutable Away Scene tuning. Activation preserves
+  former-proxy context from that civic anchor instead of the transient tuned
+  scene, and explicit Home Scene changes use the stored anchor before legacy
+  tuple fallback while resolving inactive requested cities to active proxies.
+  Default/star changes now atomically resolve and synchronize the active
+  natural/proxy anchor; unresolved preferences remain profile-only and cannot
+  replace the current default. The additive anchor migration performs no
+  guessed legacy backfill.
 
 - Added the historical Slice 7 Sect backing/readiness founder-decision gate.
   Its original per-song backing and open-decision framing is now superseded and

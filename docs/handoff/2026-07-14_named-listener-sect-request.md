@@ -55,6 +55,7 @@ identity.
 - Product/code review repair commit: `45f02ce`.
 - Durable Home Scene authority repair commit: `a2827a9`.
 - Durable Home Scene read-context repair commit: `8bd1eb7`.
+- Final civic-transition reviewer repair: pending closeout commit.
 - Migration file:
   `apps/api/prisma/migrations/20260715030000_add_sect_request_provenance/migration.sql`.
 - Civic-anchor migration file:
@@ -87,6 +88,17 @@ identity.
 - Code review found that the first slug implementation removed only the common
   `U+0300-U+036F` combining-mark block. Runtime now removes the complete Unicode
   mark category and covers an extended combining mark regression.
+- Final code re-review found two remaining transition paths that still derived
+  former civic state from compatibility or tuning data. Activation cutover now
+  preserves the former proxy from durable `homeSceneId`, never a transient Away
+  tune, and explicit Home Scene changes report the stored prior anchor before
+  using exact-tuple fallback for legacy null rows.
+- Final product re-review found two additional writers that could desynchronize
+  the new authority boundary. Default/star changes now resolve an active
+  natural/proxy scene and atomically update preference, anchor, tuning,
+  compatibility, and membership state; unresolved preferences cannot replace
+  the active default. Explicit Home Scene changes resolve inactive requested
+  cities to active natural/proxy scenes rather than persisting inactive anchors.
 
 ## Next Separate Slice
 

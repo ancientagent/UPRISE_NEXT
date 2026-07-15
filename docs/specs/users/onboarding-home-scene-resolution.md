@@ -92,7 +92,7 @@ Owner references:
 - `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points`
 
 - When a submitted/default Home Scene tuple becomes active after source-driven activation, matching users should resolve to the natural active Home Scene on the next supported Home Scene resolution/cutover path.
-- Current MVP runtime performs cutover in the manual activation trigger by updating matching users' `tunedSceneId` to the newly active natural scene, persisting a lightweight activation notice, and saving the former proxy scene as profile/collection Away Scene context when the user had a distinct prior proxy `tunedSceneId`.
+- Current MVP runtime performs cutover in the manual activation trigger by updating matching users' durable `homeSceneId` and current `tunedSceneId` to the newly active natural scene, persisting a lightweight activation notice, and saving the distinct former proxy from the pre-cutover `homeSceneId` as profile/collection Away Scene context. A transient Away `tunedSceneId` is never treated as the former proxy.
 - User profile music-community preferences remain the user's declared affiliations/interests; activation changes which scene those preferences resolve to, not the fact that the user holds the preference.
 - If a user was routed through a proxy scene for a music community, that proxy scene may remain available as an Away Scene or saved/listenable context where profile/collection support exists.
 - Voting authority follows the currently verified/default city and the resolved active Home Scene/proxy rules. Activation of the natural scene does not preserve city-tier voting authority in the former proxy scene unless the user is visiting it as an Away Scene under separate visitor rules.
@@ -161,7 +161,7 @@ Owner references:
   - `POST /users/me/music-community-preferences/default`
   - `GET /users/me/home-scene-selector`
 - Typed web client wrappers exist in `apps/web/src/lib/users/client.ts`.
-- The expanded listener profile in `/plot` now loads current preferences, shows registered music-community affiliations, marks whether each preference is currently in the Home Scene selector or profile-only until an active scene exists, lets the user add approved parent music communities, and lets the user explicitly mark a default/starred preference.
+- The expanded listener profile in `/plot` now loads current preferences, shows registered music-community affiliations, marks whether each preference is currently in the Home Scene selector or profile-only until an active scene exists, lets the user add approved parent music communities, and lets the user explicitly mark a resolvable preference as default/starred. An unresolved preference remains profile-only and cannot become the active default until an active natural/proxy scene exists.
 - The Home Scene selector read model resolves registered preferences against the user's current/default city: exact active natural scene first, same-state active proxy scene second, then any active proxy scene for that music community. Preferences with no active resolution remain profile-only and are excluded from the selector response.
 - `/plot` now consumes `GET /users/me/home-scene-selector` as the Home Scene selector shortcut. Selecting a selector item through the left/right arrow or swipe control tunes the user's scene context with `POST /discover/tune`, updates the active Plot community anchor, and keeps saved Away Scenes out of the selector.
 - The Fair Play voting gate now allows a GPS-verified user to vote in any registered music-community preference that resolves from their current/default city to the target exact natural scene or active proxy scene. This does not authorize unregistered music communities, arbitrary visitor scenes, or simultaneous multi-city voting authority.
@@ -171,7 +171,8 @@ Owner references:
 - Those authoritative Home Scene write paths persist `User.homeSceneId`; the
   proxy-to-natural activation cutover updates it to the new natural scene.
 - `CommunityMember` records membership in specific resolved communities, but it does not encode music-community preference order, profile affiliation intent, default-star semantics, or city-carried preference behavior.
-- `POST /discover/tune` mutates listening context by `sceneId`; `POST /discover/set-home-scene` mutates Home Scene context and now keeps the default preference row in sync.
+- `POST /users/me/music-community-preferences/default` resolves the selected preference against the user's current/default city and atomically updates the default row, `homeSceneCommunity` compatibility shadow, durable active natural/proxy `homeSceneId`, tuned context, and resolved-scene membership. The mutation is rejected when no active natural/proxy scene resolves, without changing the existing default or civic anchor.
+- `POST /discover/tune` mutates listening context by `sceneId`; `POST /discover/set-home-scene` mutates Home Scene context, resolves an inactive requested city to an active natural/proxy scene, reports the prior stored `homeSceneId`, and keeps the default preference row in sync. Exact-tuple lookup is used for the prior scene only for legacy rows whose durable anchor is null.
 - Discovery context reads return the durable `User.homeSceneId` civic anchor
   separately from the mutable tuned scene, with exact-tuple fallback only for
   legacy null anchors.
@@ -200,7 +201,7 @@ Phased cleanup:
 1. Read-path inversion: shared resolver foundation exists and Fair Play exact Home Scene voting, Registrar/source origin, Discover/community context, and activation cutover now prefer `UserMusicCommunityPreference.isDefault` while retaining `User.homeSceneCommunity` fallback. Remaining read paths to invert include user/profile compatibility reads and any future source-dashboard labels that still treat `homeSceneCommunity` as authority.
 2. Write-path sync: onboarding, Discover `set-home-scene`, default-preference mutations, and invite-claim registration now write the preference/default model while `User.homeSceneCommunity` remains a compatibility shadow for old clients/tests.
 3. Contract switch: update shared web/API types and tests so `homeSceneCommunity` is no longer required for new behavior, while city/state and tuned scene fields remain active.
-4. Staging verification: run a data audit proving every user with a `homeSceneCommunity` has an equivalent default preference row and every default preference can resolve or remain profile-only according to the selector contract.
+4. Staging verification: run a data audit proving every user with a `homeSceneCommunity` has an equivalent default preference row, every newly selected default resolves to an active natural/proxy scene, and any unresolved legacy preference remains profile-only rather than becoming a civic anchor.
 5. Schema cleanup: only after the steps above pass on staging, add a dedicated migration/removal slice for shadow fields. Do not bundle this with feature work.
 
 Acceptance checks before any migration:

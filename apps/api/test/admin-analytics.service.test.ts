@@ -324,7 +324,8 @@ describe('AdminAnalyticsService', () => {
     mockPrisma.user.findMany.mockResolvedValue([
       {
         id: 'listener-1',
-        tunedSceneId: 'scene-austin-punk',
+        homeSceneId: 'scene-austin-punk',
+        tunedSceneId: 'scene-seattle-away',
         homeSceneCity: 'El Paso',
         homeSceneState: 'Texas',
         homeSceneCommunity: 'Punk',
@@ -332,6 +333,7 @@ describe('AdminAnalyticsService', () => {
       },
       {
         id: 'listener-2',
+        homeSceneId: null,
         tunedSceneId: null,
         homeSceneCity: 'El Paso',
         homeSceneState: 'Texas',
@@ -391,7 +393,7 @@ describe('AdminAnalyticsService', () => {
       },
       select: {
         id: true,
-        tunedSceneId: true,
+        homeSceneId: true,
         homeSceneCity: true,
         homeSceneState: true,
         homeSceneCommunity: true,
@@ -548,6 +550,7 @@ describe('AdminAnalyticsService', () => {
     mockPrisma.user.findMany.mockResolvedValue([
       {
         id: 'listener-case',
+        homeSceneId: 'scene-austin-punk',
         tunedSceneId: 'scene-austin-punk',
         homeSceneCity: ' el   paso ',
         homeSceneState: 'TEXAS ',
@@ -556,6 +559,7 @@ describe('AdminAnalyticsService', () => {
       },
       {
         id: 'listener-default',
+        homeSceneId: null,
         tunedSceneId: null,
         homeSceneCity: 'EL PASO',
         homeSceneState: 'texas',
@@ -564,6 +568,7 @@ describe('AdminAnalyticsService', () => {
       },
       {
         id: 'listener-other-state',
+        homeSceneId: 'scene-austin-punk',
         tunedSceneId: 'scene-austin-punk',
         homeSceneCity: 'El Paso',
         homeSceneState: 'New Mexico',
@@ -646,6 +651,7 @@ describe('AdminAnalyticsService', () => {
     mockPrisma.user.findMany.mockResolvedValue([
       {
         id: 'listener-default',
+        homeSceneId: 'scene-austin-punk',
         tunedSceneId: 'scene-austin-punk',
         homeSceneCity: 'El Paso',
         homeSceneState: 'Texas',
@@ -685,7 +691,7 @@ describe('AdminAnalyticsService', () => {
       },
       select: {
         id: true,
-        tunedSceneId: true,
+        homeSceneId: true,
         homeSceneCity: true,
         homeSceneState: true,
         homeSceneCommunity: true,
@@ -754,6 +760,7 @@ describe('AdminAnalyticsService', () => {
     mockPrisma.user.findMany.mockResolvedValue([
       {
         id: 'listener-1',
+        homeSceneId: 'scene-austin-punk',
         tunedSceneId: 'scene-austin-punk',
         homeSceneCity: 'El Paso',
         homeSceneState: 'Texas',
