@@ -68,7 +68,7 @@ identity.
 
 ## Validation Evidence
 
-- Expanded API regression set after reviewer repairs: 12 suites, 284 tests
+- Expanded API regression set after reviewer repairs: 12 suites, 285 tests
   passed.
 - API typecheck and Prisma client generation passed.
 - Web Registrar client suite: 57 tests passed.
