@@ -86,7 +86,7 @@ Tests / verification files:
 - Official Sects are pre-Uprise Registrar-recognized subcommunities: visible/inspectable for affiliation and updates once enabled, but not independent broadcast authorities.
 - Registrar should eventually show active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
 - Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
-- Sect membership/affiliation grants sect voting authority; listening access alone does not.
+- Sect membership grants sect voting authority; listening access alone does not.
 
 ## Current Runtime Pointers
 - `/registrar` hosts Artist/Band registration, Promoter Registration, and Promoter Capability Code panels.

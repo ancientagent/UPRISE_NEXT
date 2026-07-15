@@ -233,19 +233,22 @@ Suggested fields:
 | `parentCommunityId` | `String` | Parent city-tier Home Scene. |
 | `name` | `String` | Display name. |
 | `slug` | `String` | Parent-scoped slug. |
-| `status` | `String` | `official`, `uprise_ready`, `uprisen`, `archived`. |
-| `createdByRegistrarEntryId` | `String?` | Source motion that created it. |
 | `createdAt` | `DateTime` | Default now. |
 | `updatedAt` | `DateTime` | Updated at. |
 
 Suggested constraints/indexes:
 
 - `@@unique([parentCommunityId, slug])`
-- `@@index([parentCommunityId, status])`
 
 Rationale: Official Sects need a durable entity before readiness can target them.
 Legacy tags can inform candidate analysis but should not become official authority
 without migration.
+
+The existing identity model intentionally carries no invented lifecycle enum or
+source-motion provenance. The fresh request/membership implementation plan must
+decide only the minimum persistence needed to link the Home Scene listener
+request and Artist/Band memberships; legitimate and active state must be derived
+from settled membership and current-deck evidence rather than unapproved states.
 
 ### `RotationEntry.newWindowDays`
 

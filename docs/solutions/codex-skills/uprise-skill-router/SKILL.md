@@ -309,7 +309,7 @@ Current locks:
 ### Registrar / Governance / Activation
 
 Use for source registration, GPS authority, city/source origin, community
-activation thresholds, sect affiliation, proposals, backing, formalization, and
+activation thresholds, listener Sect requests, Artist/Band membership, readiness, and
 authority boundaries.
 
 Load:

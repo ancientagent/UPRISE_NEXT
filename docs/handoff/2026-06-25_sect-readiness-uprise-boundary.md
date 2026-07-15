@@ -1,5 +1,12 @@
 # Sect Readiness And Sect Uprise Boundary
 
+> **Superseded in part on 2026-07-14:** The original affiliation/backing,
+> approval-state, and implementation-option language in this historical handoff
+> is replaced by the settled listener request, Registrar-held Artist/Band Sect
+> membership, five-member legitimacy, and current member-artist Release Deck
+> aggregation rules in the current owner specs. There is no song-level Sect
+> state or routine administrator approval stage.
+
 Date: 2026-06-25
 Branch: docs/abacus-fusion-swarm-strategy
 Slice: Community activation proxy lifecycle - Sect readiness owner boundary
@@ -29,9 +36,14 @@ No code, schema, migration, seed, provider, or DB action was added.
 ## Behavior Locked
 
 - Official Sect status is pre-Uprise and does not grant independent broadcast authority.
-- Sect affiliation must be explicit and Registrar-held; loose profile tags, passive genre/style metadata, and listener taste tags are not authoritative affiliation.
-- Sect readiness counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate through the Registrar-owned path.
-- The current readiness target mirrors community activation at `45` minutes of committed playable artist catalog.
+- Artist/Band Sect membership must be explicit and Registrar-held; loose profile
+  tags, passive genre/style metadata, and listener taste tags are not membership.
+- Five distinct eligible registered Artist/Band member sources make the listener-requested Sect legitimate.
+- Sect readiness counts those member artists' current eligible Home Scene
+  Release Deck music and becomes active at `45` aggregate minutes after the
+  existing `15`-minute per-source cap.
+- Songs have no separate Sect state, and prior songs cease counting after they
+  leave the current eligible deck.
 - Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
 - Sect voting authority belongs to sect members once a Sect Uprise exists; listening access alone does not grant voting authority.
 - Current runtime remains limited to Home Scene-scoped sect-motion submit/readback primitives.
@@ -47,8 +59,7 @@ Existing runtime:
 Still deferred:
 
 - readiness threshold validation;
-- approval state machine;
-- Official Sect affiliation records;
+- Artist/Band Sect membership records;
 - update channels;
 - public progress/creation surfaces;
 - listener request, Artist/Band Sect membership, and current member-artist
@@ -67,7 +78,7 @@ git diff --check
 
 ## Next Slice
 
-Either:
-
-1. define activation notification + saved Away Scene/profile preservation after manual activation, or
-2. define sect implementation artifacts if the project wants to continue the sect lane next: affiliation schema, updates-channel information architecture, approval state machine, visibility timing, and backing limits.
+Implement the settled listener request and Artist/Band membership primitives,
+then compute readiness from the members' current eligible Home Scene Release
+Deck music. Keep update-channel information architecture and public visibility
+out of this slice.

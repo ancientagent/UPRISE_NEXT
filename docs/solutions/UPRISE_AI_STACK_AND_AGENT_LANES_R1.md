@@ -90,7 +90,7 @@ Lane agents own work areas, not product truth. Product truth lives in owner spec
 | `uprise-fairplay-broadcast` | RADIYO, voting, rotation, tier propagation | `docs/agent-briefs/ACTIONS_AND_SIGNALS.md`, broadcast/Fair Play spec |
 | `uprise-media-release` | Release Deck, media limits, upload/transcode boundaries | Release Deck media spec, artist/source brief, media/storage decision docs |
 | `uprise-events-archive` | Events, Archive, flyers, descriptive history | `docs/agent-briefs/EVENTS_ARCHIVE.md`, event specs |
-| `uprise-sects-governance` | sect affiliation, official sects, Sect Uprises | Registrar/community sect specs |
+| `uprise-sects-governance` | listener Sect requests, Artist/Band Sect membership, legitimate/active Sects | Registrar/community sect specs |
 | `uprise-business-later` | monetization doctrine and deferred boundaries | `docs/agent-briefs/BUSINESS_MONETIZATION.md`, economy specs |
 | `uprise-design-ui` | screen hierarchy, visual handoffs, design-agent prompts | `docs/agent-briefs/UI_CURRENT.md`, relevant owner specs |
 | `uprise-infra-hosting` | Vercel/Fly/Neon/provider deployment and smoke checks | Heavy Authority Pack, deploy env docs |

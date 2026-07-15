@@ -91,7 +91,9 @@ Question: Can a source ever claim a city different from the registering user's v
 5. Proxy lifecycle: When a source's natural city activates, which parts of source state migrate immediately and which finish lifecycle in the proxy scene?
 6. Fair Play: Are votes in proxy scenes ever used for statewide/national tier eligibility after a source's natural Home Scene activates, or do they remain attached only to the proxy-scene lifecycle?
 7. Media eligibility: Is the active rotation cap still exactly up to 3 songs and 20 total minutes per source per Uprise rotation, with any additional uploads held outside active rotation?
-8. Sect readiness: Does sect readiness count the same active-rotation-eligible music pool or a broader approved-playable catalog tied to explicit sect affiliation?
+8. **Resolved 2026-07-14:** Sect readiness counts supporting member artists'
+   current eligible Home Scene Release Deck music; Artist/Band membership is
+   Registrar-held and songs have no separate Sect state.
 
 ## Output Expected From Hermes Reviewer
 

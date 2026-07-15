@@ -6,7 +6,8 @@
 - Reconciled sect language so new MVP work stops treating taste-tag structures as the live sect substrate.
 
 ## Key Founder Direction Captured
-- Sects are artist-based civic motions.
+- **Superseded 2026-07-14:** Sects begin as Home Scene listener requests;
+  eligible registered Artist/Band sources support them by becoming members.
 - Sect initiation belongs to the artist-facing interface.
 - The older tag-based sect substrate should not drive new MVP work.
 - Follow relationships should replace taste-tag association as the active audience-affinity/discovery layer around sects.

@@ -18,7 +18,7 @@ These questions are not implementation permission. If an item is answered later,
 - Same-state proxy assignment is required when any same-state active major-node exists for the selected music community.
 - Proxy votes/history stay with the proxy scene/tier where they occurred.
 - Existing proxy-scene songs finish their current lifecycle; songs cannot be actively listed in multiple Uprise rotations at once.
-- Sect affiliation belongs in Registrar, not loose profile tags.
+- Artist/Band Sect membership belongs in Registrar, not loose profile tags.
 - Official Sects are pre-Uprise Registrar-recognized subcommunities.
 - Official Sect update channels are source/system update channels, not open member chat.
 - Sect Uprises mirror Home Scene behavior wherever possible while staying inside the parent Home Scene/music community.
@@ -52,28 +52,41 @@ These questions are not implementation permission. If an item is answered later,
 21. What moderation/quality approval state is required before a song counts toward `45` minutes?
 22. What happens if an active source is suspended after its songs helped activate a Home Scene?
 
-## Official Sects / Sect Affiliation
+## Official Sects / Artist/Band Membership
 
-23. What exact threshold makes a sect an Official Sect?
-24. Is the Official Sect threshold purely member-affiliation count, source-affiliation count, moderator approval, or a hybrid?
-25. Should Official Sect creation require name moderation before appearing in Registrar?
+23. **Resolved 2026-07-14:** five distinct eligible registered Artist/Band
+    sources registering as Sect members makes the listener-requested Sect legitimate.
+24. **Resolved with 23:** legitimacy is Artist/Band membership count, not song
+    support or moderator approval; activation additionally requires `45`
+    aggregate current eligible member-artist Release Deck minutes after the
+    `15`-minute/source cap.
+25. **Superseded:** routine moderator/admin approval is not part of request,
+    legitimacy, or threshold-based activation. Ordinary input validation and
+    duplicate handling are implementation safeguards, not product approval.
 26. Are Official Sect names free-form, selected from a taxonomy, or proposed with alias/merge review?
 27. How are duplicate Official Sect proposals merged?
-28. Can a user affiliate with multiple Official Sects in the same Home Scene?
-29. Can a source account affiliate with multiple Official Sects in the same Home Scene?
-30. Should Official Sect affiliation be limited to rooted Home Scene members, or can visitors affiliate as non-voting followers?
-31. Can a user leave/unaffiliate from an Official Sect freely?
-32. Is there a cooldown for joining/leaving Official Sects to prevent spam?
-33. What visible profile/identity marker, if any, shows a user's Official Sect affiliations?
-34. Should Official Sect affiliation affect recommendations/discovery labels, or only Registrar/community identity?
+28. **Superseded:** listeners do not become supporting Artist/Band members;
+    listener follow/listen behavior is a separate future surface.
+29. Can an Artist/Band source be a member of multiple Sects in the same Home Scene?
+30. **Superseded:** listeners do not affiliate as Sect members; registered
+    Artist/Band sources support requests through Registrar-held membership.
+31. Can an Artist/Band source leave a Sect freely, and what happens to current readiness?
+32. Does future Artist/Band membership removal need a cooldown or other anti-abuse control?
+33. **Superseded:** the settled member is the Artist/Band source, not the listener profile.
+34. Should Artist/Band Sect membership receive any future discovery label? It
+    must not affect Fair Play ordering or create listener membership.
 35. What happens if an Official Sect drops below its official threshold?
 36. Can an Official Sect be retired, merged, renamed, or archived?
 
 ## Sect Uprises / Sect Broadcast
 
-37. What exact maturity milestone must a parent Home Scene meet before Sect Uprise creation can unlock?
-38. Does the Sect Uprise `45` minute threshold require the same `5` distinct registered-source account minimum as city Home Scene activation?
-39. Does the `20` minute per-source cap apply to Sect Uprise rotations exactly as it does to parent Uprise rotations?
+37. **Superseded:** no parent-scene maturity gate is part of the settled Sect
+    request, legitimacy, or threshold-based activation lifecycle.
+38. **Resolved 2026-07-14:** legitimacy requires `5` distinct eligible
+    registered Artist/Band member sources; activation requires `45` aggregate
+    current eligible minutes from member artists after the `15`-minute/source cap.
+39. If a future Sect broadcast uses a distinct rotation, how does the settled
+    `15`-minute Release Deck contribution cap relate to its rotation policy?
 40. Can a song be active in the parent Uprise and Sect Uprise at the same time?
 41. If a song moves from parent Uprise to Sect Uprise, does it finish parent lifecycle first?
 42. Can a Sect Uprise advance to state/national tiers?
@@ -89,7 +102,9 @@ These questions are not implementation permission. If an item is answered later,
 ## Official Sect Channels / Updates
 
 51. What surfaces show Official Sect updates: Registrar only, Feed, dedicated channel view, source dashboard, notifications, or some combination?
-52. What source accounts can post in an Official Sect updates channel: any source affiliated with the sect, only sources with active songs, or only approved moderators/source operators?
+52. What source accounts can post in an Official Sect updates channel: any
+    Artist/Band member source, only sources with current eligible music, or a
+    separately authorized source operator?
 53. What system updates appear in an Official Sect channel?
 54. Are Official Sect updates visible to all Home Scene members or only sect affiliates?
 55. Can non-member listeners see Official Sect updates when listening to a Sect Uprise?
@@ -101,13 +116,16 @@ These questions are not implementation permission. If an item is answered later,
 
 ## Registrar / Governance
 
-61. What Registrar entry types are needed for Official Sect affiliation, Official Sect recognition, Sect Uprise motion, and new Home Scene activation?
+61. What additive persistence and route names should implement the settled
+    listener Sect request and Artist/Band membership while retaining compatibility
+    with the legacy `sect_motion` entry type?
 62. Which Registrar actions are user-owned versus source-owned versus system/admin-owned?
 63. What records must be auditable for Home Scene activation and Sect Uprise activation?
 64. Should Registrar show active official sects only in the current Home Scene or globally by parent music community?
 65. Should Registrar show where a sect has already uprisen even outside the user's current scene?
 66. What does Registrar show for inactive/proxy users whose natural Home Scene is not active yet?
-67. What are the status states for Official Sect and Sect Uprise flows?
+67. Beyond the settled derived `requested`, `legitimate`, and `active` meanings,
+    does any future broadcast/update-channel lifecycle require additional state?
 68. What appeal/moderation path exists for rejected sect names, duplicate merges, or abusive affiliation?
 69. Can source operators trigger Registrar actions from Source Dashboard, or must they return to listener-side Registrar?
 
@@ -151,7 +169,10 @@ These questions are not implementation permission. If an item is answered later,
 
 ## Runtime / Data Model
 
-97. What concrete models represent Official Sect, sect affiliation, sect source backing, readiness minutes, update channels, and Sect Uprise lifecycle?
+97. **Partially settled:** request and membership persistence plus current-deck
+    readiness remain implementation work; Artist/Band Sect membership replaces
+    affiliation/source backing, and songs carry no Sect state. Update channels
+    and any separate Sect Uprise persistence remain deferred.
 98. Does `Community` remain the only active city-tier scene model, or do Sect Uprises need separate persistence before beta?
 99. How should legacy `SectTag` / `UserTag` tables be migrated or wrapped so they are not mistaken for official affiliation?
 100. What background job computes Home Scene activation readiness?

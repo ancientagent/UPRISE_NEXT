@@ -175,7 +175,7 @@ Report-paper visual treatment:
 Profile snapshot content in masthead:
 
 1. Follower count.
-2. Sect affiliations or unset state, pending terminology/data contract.
+2. Registrar-held Artist/Band Sect memberships or unset state; presentation remains pending.
 3. Bio/status summary.
 4. Official links/contact/donation readiness summary where current contracts
    support it.
@@ -263,7 +263,7 @@ Visible content to design:
 
 1. Public profile preview/open path.
 2. Follower count.
-3. Sect affiliations, if the terminology/data contract is available.
+3. Artist/Band Sect memberships, if the presentation contract is available.
 4. Band/source bio.
 5. Band/source members with avatars and what they play or contribute.
 6. Member role/access summary.
@@ -318,7 +318,7 @@ Design constraints:
 - Do not invent a broad permission system beyond the concrete `Can edit music`
   and `Can edit calendar` source-specific checkboxes unless an owner spec
   defines it.
-- Sect affiliations need terminology and data ownership before implementation.
+- Artist/Band Sect membership data is Registrar-owned; source-dashboard presentation remains deferred.
 
 ## Releases Section
 
@@ -665,7 +665,7 @@ The mockup or later Dev Spec should account for:
 4. For personal storage, is the beta target still URL-only with a future storage
    path, or should a new media-storage spec be created before this UI is
    implemented?
-5. What is the approved public/source-management term for sect affiliations?
+5. What presentation label should the Source Dashboard use for Registrar-held Artist/Band Sect memberships?
 6. Should the paid ad spot show a locked `Record` button in the mockup, or
    should it show only the future slot structure until paywall language is
    specified?

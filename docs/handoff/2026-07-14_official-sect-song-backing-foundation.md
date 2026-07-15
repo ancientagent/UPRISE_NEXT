@@ -332,9 +332,13 @@ Future implementation should persist:
 No track association, song reassignment, or Sect-specific song history is
 needed.
 
-## G. Slice 7 readiness gate
+## G. Corrected Slice 7 readiness gate
 
-The architecture plan's proposed five-distinct-source threshold is not a locked owner-spec rule. Runtime readiness work cannot begin until the backing authority/model and founder-approved threshold/counting semantics are promoted into the appropriate owner spec. Slice 7 may begin only as a narrow decision packet; it may not create readiness behavior from the architecture proposal alone.
+The July 14 founder clarification settles the rule: five distinct eligible
+registered Artist/Band member sources make the request legitimate, and the
+members' current eligible Home Scene Release Deck music activates the Sect at
+`45` aggregate minutes after the `15`-minute/source cap. A fresh reviewed plan
+may implement that rule; it must not add track-to-Sect state or routine approval.
 
 ## Execution Packet
 

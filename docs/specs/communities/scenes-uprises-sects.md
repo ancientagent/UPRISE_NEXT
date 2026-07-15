@@ -21,7 +21,10 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - A **Home Scene** is the user’s local music Scene of choice and civic anchor.
 - **Sects** are listener-requested, artist-supported subcommunities inside a Home Scene that can mature into sub-community Uprises.
 - Artist/Band Sect membership belongs in Registrar, not as a loose self-assigned profile tag.
-- A Sect can become an official subcommunity before it becomes a Sect Uprise. Official Sect status makes the sect visible in Registrar for discovery/affiliation and may provide an updates channel, but it does not grant independent broadcast authority.
+- A Sect can become a legitimate subcommunity before it becomes active. Future
+  Registrar presentation may expose it for discovery and Artist/Band membership
+  and may provide an updates channel, but legitimacy alone does not grant
+  independent broadcast authority.
 - A Sect Uprise should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
 - Sects exist to solve broad-community density: they let niche/sub/microgenre groups create a purer broadcast experience without forcing every niche into its own isolated city/music-community.
 - A Home Scene listener may request a Sect through Registrar.
@@ -295,7 +298,9 @@ justify subcommunity broadcast authority.
 - Lock implementation details for the metric storage/read path that evaluates the already-defined artist/source concentration threshold for splitting a new active city-tier community from an existing major-node/music-capital community.
 - Define implementation details for activation metrics read paths, trigger authority, notification delivery, source assignment/cutover, future upload routing, and listener helper messaging.
 - Retire or rename legacy `pioneer` runtime/test terminology once major-node assignment language is implemented end-to-end.
-- Beta-calibrate the community maturity milestone required before user-facing sect creation unlocks.
+- Define when request, membership, legitimacy, and active-state progress become
+  user-visible without adding a maturity, approval, or confirmation gate to the
+  settled lifecycle.
 - Define implementation artifacts for the now-owned Official Sect and Sect
   activation boundary: listener request persistence, Registrar-held
   Artist/Band Sect membership, current Release Deck aggregation, updates

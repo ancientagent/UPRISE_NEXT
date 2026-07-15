@@ -5,6 +5,14 @@ Branch: `docs/abacus-fusion-swarm-strategy`
 Status: working founder clarification, pending final spec patch
 Scope: Home Scene activation, proxy scenes, source registration, sect thresholds, Registrar visibility
 
+> **Sect sections superseded on 2026-07-14:** Any language below that implies
+> artist initiation, loose affiliation/backing, beta-calibrated member or music
+> thresholds, threshold confirmation, or administrator approval is replaced by
+> the settled listener-request / Artist/Band-membership / current-deck lifecycle
+> in `docs/founder-sessions/2026-07-14_sect-readiness-threshold-and-authority.md`
+> and the current owner specs. The Home Scene activation discussion remains
+> historical context and is not Sect authority.
+
 ## Purpose
 
 This note captures the current founder clarification from the live architecture discussion so future doc/spec patches do not rebuild the discarded `pioneer intent` model by accident.
@@ -115,15 +123,17 @@ When a natural Home Scene activates:
 - Sect activation also uses the `45 minutes of approved playable music` principle because it can support a radio-hour rotation.
 - Existing docs already point to this principle for sects.
 
-### 10. Sect Creation Should Be Gated By Community Maturity
+### 10. Sect Request, Legitimacy, And Activation
 
-- Tiny/new communities should not immediately split into sects if doing so would hollow out the primary Uprise.
-- A parent Home Scene should likely need to hit a community maturity milestone before sect creation unlocks.
-- The exact maturity milestone is not locked pre-launch; it should be calibrated during beta with real Home Scene catalog density, artist participation, and rotation health.
-- Sect readiness tracking can be built before it is visible to users.
-- User-facing sect progress/creation visibility may stay hidden, admin-only, or read-only until the maturity milestone is defined.
-- Registrar is the likely primary surface for tracking progress toward sect readiness.
-- Archive may show historical/read-only progress, but Registrar is the better procedural surface.
+- A Home Scene listener requests a Sect through Registrar.
+- At least `5` distinct eligible registered Artist/Band sources support the
+  request by registering as Sect members, making it legitimate.
+- The legitimate Sect becomes active when those member artists' current
+  eligible Home Scene Release Deck music collectively reaches `45` minutes
+  after applying the existing `15`-minute per-source cap.
+- This lifecycle has no routine administrator approval or maturity-calibration
+  gate. Public progress visibility and update-channel placement remain separate
+  presentation work.
 
 ### 10A. Sect Readiness Counting
 
@@ -136,23 +146,27 @@ When a natural Home Scene activates:
 - The old provisional paid/free or multiple-backed-Sect ideas are superseded and
   must not be used as implementation guidance.
 
-### 10B. Official Sect Affiliation
+### 10B. Official Artist/Band Sect Membership
 
 - The older idea that users freely tag themselves into sects from the profile is too chaotic for official status.
-- Official sect affiliation should be handled through Registrar.
-- An Official Sect is a pre-Uprise subcommunity that can appear in Registrar so others can inspect it and choose to affiliate.
+- Official Artist/Band Sect membership is explicit and Registrar-held.
+- An Official/legitimate Sect is a pre-active subcommunity that may eventually
+  appear in Registrar for eligible Artist/Band sources to join.
 - Official Sect status can provide an updates channel, but it does not grant independent broadcast authority.
 - Registrar should eventually expose active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
-- Exact Official Sect member threshold is beta/community-calibrated rather than locked pre-launch.
+- The legitimacy threshold is settled at `5` distinct eligible registered
+  Artist/Band member sources.
 
 ### 11. Sect Threshold Notification
 
-When tagged/affiliated artists collectively reach the sect threshold:
+When the registered member artists collectively reach the settled threshold:
 
-- relevant artists should receive a message that the threshold has been met;
-- the threshold-met state should route to Registrar action/confirmation;
-- the sect should not silently appear without the required procedure;
-- progress should be visible, likely in Registrar first.
+- future notification work may tell relevant listeners and artists that the
+  legitimate or active threshold has been met;
+- notification, public visibility, or a Registrar presentation step must not
+  become an approval gate or delay the settled threshold-derived state;
+- any progress surface should read current Registrar membership and current
+  eligible Release Deck evidence.
 
 ### 12. City Home Scene Threshold Notification
 

@@ -319,7 +319,9 @@ Acceptance checks before any migration:
 - Implement the Registrar/source activation workflow and artist/source concentration metric path for splitting a new active city-tier Home Scene from a major-node community.
 - Lock Home dashboard tooltip copy for users whose submitted/GPS city differs from their assigned active Home Scene.
 - Extend cutover notification/Away Scene preservation beyond the expanded listener profile only after final Home dashboard/source-dashboard placement is locked.
-- Sect uprising motion mechanics remain governed by `docs/specs/DECISIONS_REQUIRED.md`.
+- Sect request, Artist/Band membership, legitimacy, and active-state mechanics
+  are owned by the Registrar and community Sect specs; they are not an open
+  item in `docs/specs/DECISIONS_REQUIRED.md`.
 
 ## References
 

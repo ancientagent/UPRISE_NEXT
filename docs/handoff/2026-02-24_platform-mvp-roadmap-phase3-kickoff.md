@@ -52,7 +52,8 @@
 - Role registration code issuance/verification workflows.
 - Promoter capability progression beyond submission intake.
 - Project registration endpoint/status lifecycle.
-- Sect motion lifecycle + approval state machine.
+- **Superseded 2026-07-14:** listener Sect request plus Artist/Band membership;
+  no routine approval state machine.
 - Capability grant audit/admin role-management surfaces.
 
 ### Phase 4 — Communities Core

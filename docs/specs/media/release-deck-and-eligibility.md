@@ -292,8 +292,9 @@ required.
   broadcast-owned fixed `10` day protected New Releases run regardless of
   Uprise deck density.
 - Future Uprise-wide deck measurement tests should prove source caps, distinct
-  source counts, readiness inclusion/exclusion reasons, and sect-encoded minutes
-  are computed from server-side data.
+  source counts, readiness inclusion/exclusion reasons, and member-artist Sect
+  readiness minutes are computed from server-side data without song-level Sect
+  state.
 - API typecheck must pass.
 - Docs lint must pass.
 

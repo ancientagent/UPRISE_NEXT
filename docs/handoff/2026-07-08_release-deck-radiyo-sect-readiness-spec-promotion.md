@@ -57,7 +57,8 @@ This branch does not change runtime code, schema/migrations, provider state, dat
   Registrar-held Artist/Band Sect membership rather than per-song state.
 - Runtime replacement for dead/unwired Fair Play ingestion paths.
 - Production caller/controller for New Releases ingestion and recurrence aggregation.
-- Sect readiness read path, approval workflow, notices, update channels, and Sect Uprise activation.
+- Sect membership/readiness read path, notices, update channels, and active
+  Sect presentation. No routine approval workflow belongs in the lifecycle.
 
 ## Next Recommended Large Slice
 
@@ -70,7 +71,9 @@ The hard problem is cross-system sequencing:
 
 1. Release Deck has to schedule entry fairly across all source decks in one Uprise.
 2. Fair Play has to consume scheduled songs without using the deprecated density model.
-3. Sect readiness has to measure only explicitly encoded songs without accidentally counting whole-source affiliation.
+3. Sect readiness has to measure supporting member artists' current eligible
+   Home Scene Release Deck music without creating song-level Sect state or
+   counting non-member artists.
 4. Community/Sect activation analytics need read paths that can be trusted before any creation/cutover job exists.
 
 ## Validation

@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-08`
+**Last Updated:** `2026-07-14`
 
 ## Overview & Purpose
 Defines the Registrar as the listener-side civic registration surface inside The Plot where role/capability motions and prerequisite filings are formalized.
@@ -12,7 +12,8 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Listener starts Artist/Band entity registration.
 - Listener starts Promoter registration for event workflows.
 - Community participants formalize Registrar-stage civic prerequisites when active.
-- Sect participants file motion when uprising thresholds are met.
+- A Home Scene listener requests a Sect; authorized Artist/Band source
+  operators support it by registering their source as a Sect member.
 
 ## Functional Requirements
 - Registrar is a Home Scene civic surface (Activity Feed context in canon narrative).
@@ -41,7 +42,7 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Artist/Band Sect membership belongs in Registrar rather than as a loose self-assigned profile tag.
 - A legitimate Sect is a pre-Uprise Registrar-recorded subcommunity: it can appear in Registrar for discovery/membership and updates, but it does not grant independent broadcast authority until the music threshold is met.
 - Registrar should eventually expose Official Sect context: active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
-- Sect Uprises should mirror Home Scene behavior wherever possible while remaining scoped inside the parent Home Scene/music community; sect membership/affiliation grants sect voting authority, while listening access alone does not.
+- Sect Uprises should mirror Home Scene behavior wherever possible while remaining scoped inside the parent Home Scene/music community; Sect membership grants sect voting authority, while listening access alone does not.
 
 ## Source Origin Contract
 
@@ -319,7 +320,7 @@ the readiness and Sect Uprise broadcast boundary at
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
 - Registrar sect-motion submission skeleton (slice 99A):
   - `POST /registrar/sect-motion` implemented as additive skeleton submission primitive.
-  - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`) until motion artifact schema is canon-locked.
+  - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`). The product rule is now settled; named request and membership persistence remain unimplemented runtime work.
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
 - Registrar project web contract scaffolding (slice 98A web lane):
   - API surfaces are implemented and web typed contract/client support is available for:

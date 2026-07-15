@@ -218,8 +218,11 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Active-slot, per-song, active-duration, and reject-only at-cap enforcement is implemented against the new Release Deck media eligibility owner spec.
    - Next: define history-safe replacement/edit tooling only if a future source-management slice needs it without widening MVP media scope.
 7. **Slice 7 – Sect Readiness Parity Foundations**
-   - Completed as owner-contract foundation: community spec owns sect readiness / Sect Uprise broadcast boundary; Registrar spec owns affiliation and motion authority.
-   - Next: define implementation artifacts and visibility calibration without granting premature broadcast authority.
+   - Completed as owner-contract foundation: community spec owns Sect readiness
+     and active-state boundary; Registrar spec owns listener requests and
+     Artist/Band membership authority.
+   - Next: implement request/membership persistence and current member-artist
+     Release Deck readiness without song-level Sect state or an approval gate.
 8. **Slice 8 – Music-Community Preference Runtime Parity**
    - Runtime parity audit completed against the onboarding/Home Scene owner contract.
    - Preference persistence, migration backfill from `User.homeSceneCommunity`, current-user API endpoints, explicit default-star mutation, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, the Home Scene selector read model, Plot/Home selector consumption, and Fair Play voting across resolvable registered preferences are implemented as the runtime foundation.
