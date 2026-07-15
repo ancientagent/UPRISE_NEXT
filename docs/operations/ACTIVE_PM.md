@@ -24,7 +24,7 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 - Snapshot date: 2026-07-14
 - Base branch: `origin/main@10787dc`
-- Current branch assignment: `codex/sect-membership-readiness`, reviewed backend implementation of the settled Sect lifecycle
+- Current branch assignment: `codex/sect-membership-readiness`, named listener Sect request implementation; membership/readiness mechanics remain separately gated
 - Local worktree state at refresh: Codex local remains the sole writer; plan/product/code reviewers are read-only
 - Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238 through #244 are merged
 - Recently completed remote slices: Official Sect identity PR #240 and founder-authority correction PR #244
@@ -36,12 +36,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Implement the settled lifecycle: named Home Scene listener request; explicit
-  Registrar-held Artist/Band Sect memberships; legitimacy at `5` eligible member
-  sources; active state derived at `45` aggregate current eligible minutes after
-  the `15`-minute/source cap.
-- Reuse Release Deck measurement without adding track-to-Sect state, historical
-  song evidence, routine administrator approval, public UI, or provider writes.
+- Implement the unblocked named Home Scene listener request and durable link to
+  the existing Sect identity without requiring source ownership or approval.
+- Keep Artist/Band membership/readiness writes and visibility out until their
+  separate exclusivity, withdrawal/audit, reader, and legacy-eligibility mechanics are owned.
 
 Recently completed context:
 
@@ -56,8 +54,8 @@ Recently completed context:
 | --- | --- |
 | Lane | Registrar / Release Deck / communities backend implementation |
 | Branch | `codex/sect-membership-readiness` |
-| Scope | Fresh reviewed plan, additive request/membership persistence, source-operator membership action, and participant-scoped current-deck readiness diagnostics. |
-| Out of Scope | Public UI/progress, update channels, membership removal/history, extra lifecycle states, routine admin approval, provider/database deployment, governance, or legacy tag promotion. |
+| Scope | Named listener request DTO, additive nullable request provenance, dedicated Sect Registrar service/controller, legacy read compatibility, tests, and typed read contracts. |
+| Out of Scope | Artist/Band membership writes, readiness/progress APIs, public UI, update channels, extra lifecycle states, routine admin approval, provider/database deployment, governance, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
 | Validation | plan review; focused API/schema tests; Prisma validation; full verify; workspace audit; independent product and code review |
@@ -145,11 +143,10 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Write and commit a fresh executor plan for request, membership, and current-deck readiness.
-2. Obtain independent product/architecture plan review against the July 14 founder answers.
-3. Implement the reviewed backend slices with focused tests and additive migration only.
-4. Obtain independent product and code review, then submit through required checks.
-5. Keep public visibility, update channels, draft PR #212, provider state, and preserved UX references untouched.
+1. Review and implement the replacement named-listener-request plan.
+2. Obtain independent product and code review, then submit through required checks.
+3. Keep membership/readiness behavior gated on the four explicit mechanics in the replacement plan.
+4. Keep public visibility, update channels, draft PR #212, provider state, and preserved UX references untouched.
 
 ## PM Usage Rules For Agents
 

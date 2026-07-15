@@ -1,5 +1,13 @@
 # Sect Membership And Readiness Implementation Plan
 
+> **Superseded before runtime implementation (2026-07-14):** Independent plan
+> and product reviews found that this combined plan selected unowned membership
+> exclusivity, withdrawal/audit, and readiness-reader behavior. Do not execute
+> Tasks 1-7 below. The fully authorized named listener-request slice is replaced
+> by `docs/plans/2026-07-14-sect-listener-request.md`; membership and readiness
+> remain the next separate slice after those mechanics are owned. No runtime or
+> schema work from this superseded plan was performed.
+
 > **For Codex:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Implement named Home Scene listener Sect requests, explicit
