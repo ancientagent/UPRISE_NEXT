@@ -45,6 +45,7 @@ identity.
 
 - Schema/provenance commit: `75f4e87`.
 - Dedicated API workflow commit: `f51170e`.
+- Product/code review repair commit: `45f02ce`.
 - Migration file:
   `apps/api/prisma/migrations/20260715030000_add_sect_request_provenance/migration.sql`.
 - Unicode display names are preserved. When ASCII slugging yields no content,
