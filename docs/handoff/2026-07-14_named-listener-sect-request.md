@@ -51,6 +51,7 @@ identity.
 - Schema/provenance commit: `75f4e87`.
 - Dedicated API workflow commit: `f51170e`.
 - Product/code review repair commit: `45f02ce`.
+- Durable Home Scene authority repair commit: `a2827a9`.
 - Migration file:
   `apps/api/prisma/migrations/20260715030000_add_sect_request_provenance/migration.sql`.
 - Civic-anchor migration file:
