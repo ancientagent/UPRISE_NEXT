@@ -120,9 +120,12 @@ justify subcommunity broadcast authority.
 ### Official Sect Boundary
 
 - An Official Sect is a Registrar-recognized subcommunity inside a parent Home Scene/music community.
-- Official Sect status is pre-Uprise. It may make the sect visible in Registrar for affiliation, source/system updates, and progress context, but it does not grant independent broadcast authority.
+- Legitimate Sect status is pre-active. Future Registrar presentation may make
+  the Sect visible for Artist/Band membership, source/system updates, and
+  progress context, but legitimacy alone does not grant broadcast authority.
 - Artist/Band Sect membership must be explicit and Registrar-held. Loose profile tags, passive genre/style metadata, or listener taste tags do not create membership.
-- Official Sect visibility may remain hidden, admin-only, or read-only until the beta/community milestone and menu architecture are locked.
+- Sect visibility may remain hidden or read-only until its presentation and menu
+  architecture are locked; this does not add a maturity or approval gate.
 - Registrar may eventually show active Official Sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
 
 ### Readiness Inputs

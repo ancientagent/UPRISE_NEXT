@@ -1,5 +1,11 @@
 # Structural Integrity Cleanup Audit — 2026-06-30
 
+> **Sect authority correction (2026-07-14):** The audit's description of Sect
+> approval and Official affiliation below is superseded. Preserve only the
+> skeletal-runtime observation; current product authority is listener request,
+> Registrar-held Artist/Band membership, and current-deck thresholds with no
+> routine approval.
+
 Audit branch: `codex/audit-uprise-structural-integrity-for-cleanup`
 Original requested local audit branch: `audit/structural-integrity-cleanup-plan-2026-06-30`
 Verified base: `7c04fc1`
@@ -173,11 +179,13 @@ Final recommendation: **do visual QA first, then cleanup before major Plot/neigh
    - Evidence: `registrar.service.ts` is 2,104 lines and owns artist/band registration, promoter capability, project registration, sect-motion skeleton, invite delivery, and source-origin materialization checks.
    - Action: plan service extraction by workflow, but avoid changing behavior during UI cleanup.
 
-4. **Sect-motion runtime is correctly skeletal/deferred.**
+4. **Sect-request runtime is skeletal; the former approval framing is superseded.**
    - Classification: `deferred/quarantined correctly`
    - Severity: `Info`
-   - Evidence: active specs say sect-motion filing/readback exists while readiness validation, approval, official affiliation records, update channels, and Sect Uprise activation remain deferred.
-   - Action: preserve; do not expand without a Registrar/sect owner slice.
+   - Evidence: the legacy `sect-motion` filing/readback exists while named
+     requests, Artist/Band membership, readiness, and update channels remain unimplemented.
+   - Action: follow the current Registrar/community owner specs; do not add
+     song-level Sect state or routine approval.
 
 ### Docs / Tests / Authority Drift
 

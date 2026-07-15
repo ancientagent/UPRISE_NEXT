@@ -83,7 +83,9 @@ Tests / verification files:
   the owner contract rather than inventing per-song Sect state or administrator
   approval.
 - Artist/Band Sect membership belongs in Registrar rather than loose self-assigned profile tags.
-- Official Sects are pre-Uprise Registrar-recognized subcommunities: visible/inspectable for affiliation and updates once enabled, but not independent broadcast authorities.
+- Legitimate Sects are pre-active Registrar-recognized subcommunities:
+  visible/inspectable for Artist/Band membership and updates once enabled, but
+  not independent broadcast authorities until the music threshold is met.
 - Registrar should eventually show active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
 - Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
 - Sect membership grants sect voting authority; listening access alone does not.
