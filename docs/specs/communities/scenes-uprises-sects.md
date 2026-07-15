@@ -44,7 +44,11 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Citywide is the only tier with civic infrastructure. Statewide and National are aggregate broadcasts only.
 
 ### Implemented Behavior (Current)
-- Official Sect identity persistence now exists through the parent-community-scoped `Sect` model. This foundation does not implement listener requests, Artist/Band Sect membership, lifecycle status, readiness, visibility, update channels, or Sect activation.
+- Official Sect identity persistence exists through the parent-community-scoped
+  `Sect` model. A named Home Scene listener request now creates and links that
+  identity transactionally through nullable Registrar provenance; Artist/Band
+  Sect membership, lifecycle status, readiness, visibility, update channels,
+  and Sect activation remain unimplemented.
 - Home Scene selection currently resolves exact `{city, state, musicCommunity}` in `Community` (tier `city`).
 - If the selected city-tier community does not exist or is inactive, onboarding assigns the user to the nearest/relevant active major-node city-tier `Community` for the same parent music community.
 - Major-node/proxy assignment must stay in-state when any same-state active major-node exists for the selected music community. Cross-state assignment is allowed only when no same-state active major-node exists, and remains an edge case for statewide identity policy.
@@ -57,11 +61,14 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Community profile read surface is available in web at `apps/web/src/app/community/[id]/page.tsx` using:
   - `GET /communities/:id` for profile metadata
   - `GET /communities/:id/feed` for recent S.E.E.D activity projection
-- Registrar Sect request skeleton exists:
+- Registrar named listener Sect requests exist:
   - `POST /registrar/sect-motion` is the legacy-compatible route/type for a
     Home Scene listener request (`type = sect_motion`, `status = submitted`).
-  - Current primitive enforces scene locality but captures no Sect name,
-    Artist/Band memberships, threshold state, or activation.
+  - Current runtime requires the Sect name, enforces the requester's established
+    Home Scene locality, and transactionally creates the submitted Registrar
+    entry plus linked parent-scoped Sect identity.
+  - Request creation requires no Artist/Band ownership and creates no
+    Artist/Band membership, threshold state, progress, or activation.
 - Sect readiness tracking may be built before public visibility is enabled; visibility may remain hidden, admin-only, or read-only until the product surface is activated.
 - Sect readiness should read from the Release Deck/deck-system measurement
   path: current eligible songs, playable duration, source ownership, Home Scene
@@ -168,10 +175,17 @@ justify subcommunity broadcast authority.
 
 ### Current Runtime Boundary
 
-- The database can persist an authority-neutral Official Sect identity scoped to one parent `Community`; no runtime writer or read surface uses it yet.
-- `POST /registrar/sect-motion` exists only as a Home Scene-scoped skeleton filing primitive.
-- `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` exist for submitter-owned readback.
-- Current runtime does not capture a named Sect request, create Artist/Band Sect membership records, validate thresholds, create update channels, or activate Sects.
+- `POST /registrar/sect-motion` accepts a named request from a listener in the
+  matching established Home Scene and atomically creates the Registrar request
+  plus linked authority-neutral `Sect` identity scoped to the parent
+  `Community`.
+- `GET /registrar/sect-motion/entries` and
+  `GET /registrar/sect-motion/:entryId` provide submitter-owned readback with
+  normalized name/slug, nullable linked Sect identity, and scene context.
+- Legacy empty request rows remain readable with null request identity fields;
+  runtime does not guess or backfill their Sect identity.
+- Current runtime does not create Artist/Band Sect membership records, validate
+  thresholds, expose progress, create update channels, or activate Sects.
 - Existing `SectTag` / `UserTag` rows remain non-authoritative for Artist/Band Sect membership and Sect activation.
 - No current runtime persists Artist/Band Sect membership or computes Sect
   readiness from member artists' current Home Scene Release Decks.

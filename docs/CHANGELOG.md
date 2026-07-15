@@ -22,6 +22,15 @@
 
 ### Added
 
+- Completed the named Home Scene listener Sect request primitive behind the
+  legacy-compatible `/registrar/sect-motion` route. A valid request now stores
+  normalized name/slug data and transactionally creates a linked parent-scoped
+  `Sect` identity through nullable Registrar provenance. Submitter-owned reads
+  expose the normalized request and nullable Sect identity while preserving
+  legacy empty rows without inferred backfill. This does not add Artist/Band
+  membership, readiness/progress, activation, public UI, approval, or any
+  provider/database deployment.
+
 - Added the historical Slice 7 Sect backing/readiness founder-decision gate.
   Its original per-song backing and open-decision framing is now superseded and
   replaced in-place by the corrected listener-request / Artist/Band-membership /

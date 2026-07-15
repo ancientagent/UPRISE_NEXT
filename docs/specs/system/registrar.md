@@ -171,7 +171,11 @@ the readiness and Sect Uprise broadcast boundary at
 - Registrar sect-motion status read surfaces (slice 114A):
   - `GET /registrar/sect-motion/entries` implemented.
   - Submitter-only list read for sect-motion registrar entries (`type = sect_motion`) with reverse-chronological ordering.
-  - Includes top-level `countsByStatus` summary and per-entry scene context + normalized payload object.
+  - Includes top-level `countsByStatus` summary and per-entry scene context,
+    normalized named-request payload (`sectName`, `sectSlug`), and nullable linked
+    Sect identity.
+  - Legacy empty-payload rows remain readable as `{ sectName: null, sectSlug:
+    null }` with `sect: null`; no identity is inferred for historical rows.
   - `GET /registrar/sect-motion/:entryId` implemented for submitter-only detail read.
 - Registrar artist intake expansion (slice 3):
   - `POST /registrar/artist` requires submitter `gpsVerified = true`.
@@ -318,10 +322,17 @@ the readiness and Sect Uprise broadcast boundary at
   - `POST /registrar/project` implemented for Home Scene-scoped project registration submissions.
   - Persists registrar entry baseline lifecycle (`type = project_registration`, `status = submitted`) with project name payload.
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
-- Registrar sect-motion submission skeleton (slice 99A):
-  - `POST /registrar/sect-motion` implemented as additive skeleton submission primitive.
-  - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`). The product rule is now settled; named request and membership persistence remain unimplemented runtime work.
-  - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
+- Registrar named listener Sect request:
+  - `POST /registrar/sect-motion` remains the legacy-compatible route/type and
+    now accepts a required `sectName` for a listener request.
+  - Any listener whose established Home Scene matches the target city-tier
+    community may request; no Artist/Band source ownership or management role
+    is required.
+  - In one transaction, runtime persists the submitted Registrar entry with
+    normalized name/slug payload and creates the linked parent-scoped `Sect`
+    identity through nullable `requestRegistrarEntryId` provenance.
+  - The request does not create Artist/Band membership, calculate legitimacy or
+    readiness, activate the Sect, or perform a discretionary approval step.
 - Registrar project web contract scaffolding (slice 98A web lane):
   - API surfaces are implemented and web typed contract/client support is available for:
     - `POST /registrar/project`,
@@ -332,6 +343,8 @@ the readiness and Sect Uprise broadcast boundary at
   - API surfaces are implemented and web typed contract/client support is available for:
     - `GET /registrar/sect-motion/entries`,
     - `GET /registrar/sect-motion/:entryId`.
+  - The typed read contract exposes normalized nullable request name/slug and
+    nullable linked Sect identity for new and legacy rows.
   - Web endpoint inventory tracks these as API-implemented/web-action-gated gaps.
 - Registrar docs consistency pass (slice 152A):
   - Implemented-now wording is normalized for completed batch3/batch4 read-contract work so API-implemented surfaces and web action-gated status remain explicitly distinguished.
@@ -423,10 +436,10 @@ the readiness and Sect Uprise broadcast boundary at
 | POST | `/registrar/code/redeem` | required | Redeem registrar capability-code for authenticated user |
 | GET | `/registrar/project/entries` | required | List submitter-owned project registrar entries + scene context |
 | GET | `/registrar/project/:entryId` | required | Read submitter-owned project registrar entry detail + scene context |
-| GET | `/registrar/sect-motion/entries` | required | List submitter-owned sect-motion registrar entries + scene context |
-| GET | `/registrar/sect-motion/:entryId` | required | Read submitter-owned sect-motion registrar entry detail + scene context |
+| GET | `/registrar/sect-motion/entries` | required | List submitter-owned Sect requests + normalized request/Sect identity and scene context |
+| GET | `/registrar/sect-motion/:entryId` | required | Read submitter-owned Sect request detail + normalized request/Sect identity and scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
-| POST | `/registrar/sect-motion` | required | Legacy-compatible route for a Home Scene listener to request a Sect; current payload is only a locality-guarded skeleton |
+| POST | `/registrar/sect-motion` | required | Legacy-compatible route for a Home Scene listener to submit a named Sect request and create its linked parent-scoped Sect identity |
 
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.

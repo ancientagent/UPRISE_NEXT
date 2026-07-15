@@ -25,7 +25,8 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 - Snapshot date: 2026-07-14
 - Base branch: `origin/main@10787dc`
 - Current branch assignment: `codex/sect-membership-readiness`, named listener Sect request implementation; membership/readiness mechanics remain separately gated
-- Local worktree state at refresh: Codex local remains the sole writer; plan/product/code reviewers are read-only
+- Local worktree state at refresh: named-request implementation is assembled;
+  Codex local remains the sole writer and product/code reviewers are read-only
 - Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238 through #244 are merged
 - Recently completed remote slices: Official Sect identity PR #240 and founder-authority correction PR #244
 - Provider/db/schema state: additive Prisma migration work is in scope; no production database/provider operation is authorized
@@ -58,7 +59,7 @@ Recently completed context:
 | Out of Scope | Artist/Band membership writes, readiness/progress APIs, public UI, update channels, extra lifecycle states, routine admin approval, provider/database deployment, governance, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
-| Validation | plan review; focused API/schema tests; Prisma validation; full verify; workspace audit; independent product and code review |
+| Validation | replacement plan/product review passed; focused API/web/schema tests and typechecks passed; full verify, workspace audit, and final independent product/code review pending |
 
 ## Current Branch / Worktree State
 
@@ -77,7 +78,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/sect-membership-readiness` | planned from `origin/main@10787dc` | Sole-writer implementation workspace; reviewers remain read-only. |
+| `/home/baris/UPRISE_NEXT` | `codex/sect-membership-readiness` | implementation branch from `origin/main@10787dc` | Named-request implementation assembled; sole-writer verification/review/PR closeout in progress. |
 
 ### Preserved UX Reference Worktrees
 
@@ -143,8 +144,8 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Review and implement the replacement named-listener-request plan.
-2. Obtain independent product and code review, then submit through required checks.
+1. Complete full verification and workspace audit for the named listener request.
+2. Obtain independent product and code review of the exact commit, then submit through required checks.
 3. Keep membership/readiness behavior gated on the four explicit mechanics in the replacement plan.
 4. Keep public visibility, update channels, draft PR #212, provider state, and preserved UX references untouched.
 

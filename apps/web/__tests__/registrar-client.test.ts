@@ -418,7 +418,8 @@ describe('registrar sect-motion read client scaffolding', () => {
         type: 'sect_motion',
         status: 'submitted',
         sceneId: 'scene-1',
-        payload: {},
+        payload: { sectName: null, sectSlug: null },
+        sect: null,
         scene: null,
         createdAt: '2026-02-26T00:00:00.000Z',
         updatedAt: '2026-02-26T00:00:00.000Z',
@@ -436,7 +437,7 @@ describe('registrar sect-motion read client scaffolding', () => {
     );
   });
 
-  it('preserves nullable fields in sect-motion detail response shape', async () => {
+  it('preserves the normalized legacy Sect request response shape', async () => {
     mockedApiGet.mockResolvedValueOnce({
       success: true,
       data: {
@@ -445,9 +446,10 @@ describe('registrar sect-motion read client scaffolding', () => {
         status: 'approved',
         sceneId: 'scene-2',
         payload: {
-          notes: null,
-          priority: 'low',
+          sectName: null,
+          sectSlug: null,
         },
+        sect: null,
         scene: null,
         createdAt: '2026-02-27T03:00:00.000Z',
         updatedAt: '2026-02-27T03:15:00.000Z',
@@ -459,15 +461,16 @@ describe('registrar sect-motion read client scaffolding', () => {
     expect(response).toEqual(
       expect.objectContaining({
         payload: expect.objectContaining({
-          notes: null,
-          priority: 'low',
+          sectName: null,
+          sectSlug: null,
         }),
+        sect: null,
         scene: null,
       }),
     );
   });
 
-  it('keeps sect-motion detail contract stable when scene is present and payload contains nullable keys', async () => {
+  it('returns named Sect request identity with scene context', async () => {
     mockedApiGet.mockResolvedValueOnce({
       success: true,
       data: {
@@ -476,8 +479,14 @@ describe('registrar sect-motion read client scaffolding', () => {
         status: 'submitted',
         sceneId: 'scene-3',
         payload: {
-          notes: null,
-          rationale: 'community_priority',
+          sectName: 'Noise Art',
+          sectSlug: 'noise-art',
+        },
+        sect: {
+          id: 'sect-3',
+          parentCommunityId: 'scene-3',
+          name: 'Noise Art',
+          slug: 'noise-art',
         },
         scene: {
           id: 'scene-3',
@@ -496,7 +505,8 @@ describe('registrar sect-motion read client scaffolding', () => {
 
     expect(response).toEqual(
       expect.objectContaining({
-        payload: expect.objectContaining({ notes: null, rationale: 'community_priority' }),
+        payload: { sectName: 'Noise Art', sectSlug: 'noise-art' },
+        sect: expect.objectContaining({ id: 'sect-3', parentCommunityId: 'scene-3' }),
         scene: expect.objectContaining({ id: 'scene-3', tier: 'city' }),
       }),
     );
@@ -535,9 +545,10 @@ describe('registrar sect-motion read client scaffolding', () => {
         status: 'approved',
         sceneId: 'scene-4',
         payload: {
-          notes: null,
-          reason: 'rotation_update',
+          sectName: null,
+          sectSlug: null,
         },
+        sect: null,
         scene: null,
         createdAt: '2026-02-28T03:12:00.000Z',
         updatedAt: '2026-02-28T03:15:00.000Z',
@@ -547,7 +558,8 @@ describe('registrar sect-motion read client scaffolding', () => {
 
     expect(project.payload).toEqual({ projectName: null });
     expect(project.scene).toEqual(expect.objectContaining({ id: 'scene-4', tier: 'city' }));
-    expect(sect.payload).toEqual(expect.objectContaining({ notes: null, reason: 'rotation_update' }));
+    expect(sect.payload).toEqual({ sectName: null, sectSlug: null });
+    expect(sect.sect).toBeNull();
     expect(sect.scene).toBeNull();
   });
 
@@ -575,8 +587,14 @@ describe('registrar sect-motion read client scaffolding', () => {
         status: 'submitted',
         sceneId: 'scene-5',
         payload: {
-          notes: null,
-          reason: 'schedule_alignment',
+          sectName: 'Synth Commons',
+          sectSlug: 'synth-commons',
+        },
+        sect: {
+          id: 'sect-5',
+          parentCommunityId: 'scene-5',
+          name: 'Synth Commons',
+          slug: 'synth-commons',
         },
         scene: {
           id: 'scene-5',
@@ -594,7 +612,8 @@ describe('registrar sect-motion read client scaffolding', () => {
 
     expect(project.payload).toEqual({ projectName: 'Signal Bloom' });
     expect(project.scene).toBeNull();
-    expect(sect.payload).toEqual(expect.objectContaining({ notes: null, reason: 'schedule_alignment' }));
+    expect(sect.payload).toEqual({ sectName: 'Synth Commons', sectSlug: 'synth-commons' });
+    expect(sect.sect).toEqual(expect.objectContaining({ id: 'sect-5', parentCommunityId: 'scene-5' }));
     expect(sect.scene).toEqual(expect.objectContaining({ id: 'scene-5', tier: 'city' }));
   });
 
@@ -631,7 +650,8 @@ describe('registrar sect-motion read client scaffolding', () => {
             type: 'sect_motion',
             status: 'submitted',
             sceneId: 'scene-6',
-            payload: { notes: null, reason: 'community_update' },
+            payload: { sectName: null, sectSlug: null },
+            sect: null,
             scene: null,
             createdAt: '2026-02-28T06:06:00.000Z',
             updatedAt: '2026-02-28T06:08:00.000Z',
@@ -651,7 +671,8 @@ describe('registrar sect-motion read client scaffolding', () => {
     expect(sects.countsByStatus).toEqual({ submitted: 1 });
     expect(sects.entries[0]).toEqual(
       expect.objectContaining({
-        payload: expect.objectContaining({ notes: null, reason: 'community_update' }),
+        payload: { sectName: null, sectSlug: null },
+        sect: null,
         scene: null,
       }),
     );
