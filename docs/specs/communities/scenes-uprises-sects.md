@@ -200,8 +200,9 @@ justify subcommunity broadcast authority.
 - Registrar request/support validation and the runtime evaluator that realizes
   an active Sect after the settled artist-support and music thresholds are met.
 - Automated/scheduled city-tier activation and external notification delivery beyond the current profile notice context.
-- User-facing Sect request, Artist/Band membership, progress visibility, and
-  threshold-state presentation remain unimplemented.
+- Public Sect request UI, Artist/Band membership, progress visibility, and
+  threshold-state presentation remain unimplemented; the named request API and
+  submitter-owned readback are implemented.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
 ## Non-Functional Requirements
@@ -232,8 +233,10 @@ justify subcommunity broadcast authority.
 - `Sect`
   - authoritative Official Sect identity scoped by `parentCommunityId`
   - unique identity constraint on `(parentCommunityId, slug)`
-  - contains no lifecycle, Registrar provenance, backing, readiness, visibility, or Uprise-activation state
-  - has no runtime creation or read path in the current slice
+  - named listener requests create it transactionally with nullable
+    `requestRegistrarEntryId` provenance and submitter-owned request readback
+  - contains no lifecycle, Artist/Band membership, backing, readiness,
+    visibility, or Uprise-activation state
 - Future Artist/Band Sect membership references
   - should connect a registered Artist/Band source to the requested/legitimate
     Sect through Registrar-held membership
@@ -321,10 +324,9 @@ justify subcommunity broadcast authority.
 - Define when request, membership, legitimacy, and active-state progress become
   user-visible without adding a maturity, approval, or confirmation gate to the
   settled lifecycle.
-- Define implementation artifacts for the now-owned Official Sect and Sect
-  activation boundary: listener request persistence, Registrar-held
-  Artist/Band Sect membership, current Release Deck aggregation, updates
-  channel, threshold-state transitions, and visibility.
+- Define implementation artifacts for the remaining Official Sect activation
+  boundary: Registrar-held Artist/Band Sect membership, current Release Deck
+  aggregation, updates channel, threshold-state transitions, and visibility.
 - Add explicit Uprise model and Scene<->Uprise lifecycle constraints.
 - Lock propagation thresholds and policy in `docs/specs/DECISIONS_REQUIRED.md`.
 

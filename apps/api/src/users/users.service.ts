@@ -144,16 +144,15 @@ export class UsersService {
         },
       });
 
-      try {
-        await tx.communityMember.create({
-          data: { userId, communityId: resolved.scene.id, role: 'member' },
-        });
+      const membership = await tx.communityMember.createMany({
+        data: [{ userId, communityId: resolved.scene.id, role: 'member' }],
+        skipDuplicates: true,
+      });
+      if (membership.count === 1) {
         await tx.community.update({
           where: { id: resolved.scene.id },
           data: { memberCount: { increment: 1 } },
         });
-      } catch (error: any) {
-        if (error?.code !== 'P2002') throw error;
       }
     });
 

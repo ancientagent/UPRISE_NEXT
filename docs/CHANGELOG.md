@@ -37,7 +37,10 @@
   tuple fallback while resolving inactive requested cities to active proxies.
   Default/star changes now atomically resolve and synchronize the active
   natural/proxy anchor; unresolved preferences remain profile-only and cannot
-  replace the current default. The additive anchor migration performs no
+  replace the current default. All authoritative Home Scene writers now use
+  duplicate-safe membership insertion so revisiting an existing membership
+  cannot abort the surrounding PostgreSQL transaction; member counts increment
+  only for new membership rows. The additive anchor migration performs no
   guessed legacy backfill.
 
 - Added the historical Slice 7 Sect backing/readiness founder-decision gate.

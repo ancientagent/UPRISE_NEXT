@@ -100,6 +100,13 @@ identity.
   compatibility, and membership state; unresolved preferences cannot replace
   the active default. Explicit Home Scene changes resolve inactive requested
   cities to active natural/proxy scenes rather than persisting inactive anchors.
+- Final product/code re-review found that catching duplicate membership errors
+  inside PostgreSQL interactive transactions could still abort authoritative
+  Home Scene writes. Onboarding, default/star changes, and explicit Home Scene
+  changes now use non-throwing duplicate-safe membership insertion and increment
+  `memberCount` only for a newly inserted membership. Required onboarding and
+  Registrar/Sect routing docs were also reconciled to the durable civic anchor
+  and implemented named-request boundary.
 
 ## Next Separate Slice
 

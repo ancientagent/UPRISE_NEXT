@@ -30,7 +30,7 @@ describe('UsersService.getProfileWithCollection', () => {
       update: jest.fn(),
     },
     communityMember: {
-      create: jest.fn(),
+      createMany: jest.fn(),
     },
     userMusicCommunityPreference: {
       findMany: jest.fn(),
@@ -50,6 +50,7 @@ describe('UsersService.getProfileWithCollection', () => {
     mockPrisma.artistBand.findMany.mockResolvedValue([]);
     mockPrisma.userSavedScene.findMany.mockResolvedValue([]);
     mockPrisma.userActivationNotice.findMany.mockResolvedValue([]);
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 1 });
     service = new UsersService(mockPrisma as any);
   });
 
@@ -382,7 +383,7 @@ describe('UsersService.getProfileWithCollection', () => {
         isActive: true,
       });
     mockPrisma.user.update.mockResolvedValue({ id: 'target' });
-    mockPrisma.communityMember.create.mockResolvedValue({ id: 'member-metal' });
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 0 });
     mockPrisma.community.update.mockResolvedValue({ id: 'scene-austin-metal' });
 
     const result = await service.setDefaultMusicCommunityPreference('target', 'Metal');
@@ -404,9 +405,11 @@ describe('UsersService.getProfileWithCollection', () => {
         tunedSceneUpdatedAt: expect.any(Date),
       }),
     });
-    expect(mockPrisma.communityMember.create).toHaveBeenCalledWith({
-      data: { userId: 'target', communityId: 'scene-austin-metal', role: 'member' },
+    expect(mockPrisma.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'target', communityId: 'scene-austin-metal', role: 'member' }],
+      skipDuplicates: true,
     });
+    expect(mockPrisma.community.update).not.toHaveBeenCalled();
     expect(result[0]).toMatchObject({ musicCommunity: 'Metal', isDefault: true });
   });
 

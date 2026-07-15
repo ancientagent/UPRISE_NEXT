@@ -378,7 +378,8 @@ the readiness and Sect Uprise broadcast boundary at
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
 - Automated city-tier Home Scene trigger execution and cutover orchestration.
-- Sect request, Artist/Band membership, legitimacy, and activation state machine.
+- Artist/Band Sect membership, legitimacy, and activation state machine beyond
+  the implemented named listener request and linked identity primitive.
 - Sect readiness tracking visibility and unlock controls.
 - Artist/Band Sect membership, discovery, and updates-channel information architecture.
 
@@ -404,7 +405,7 @@ the readiness and Sect Uprise broadcast boundary at
 ### Target Models (Planned)
 - `RegistrarCode` (for capability completion handoff flows)
 - Project linkage to `Signal` rows for follow/blast/support
-- Listener Sect request artifact and Registrar-held Artist/Band Sect membership
+- Registrar-held Artist/Band Sect membership
 - Readiness references that join current eligible Home Scene Release Deck
   duration to supporting member artists; no track-to-Sect association
 - Registrar-held Artist/Band Sect membership records and update-channel references
@@ -412,6 +413,7 @@ the readiness and Sect Uprise broadcast boundary at
 
 ### Prisma Models (Implemented)
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
+- `Sect` (`parentCommunityId`, `name`, `slug`, `requestRegistrarEntryId?`, timestamps)
 - `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
 - `RegistrarInviteDelivery` (`registrarArtistMemberId`, `email`, `status`, `payload`, `dispatchedAt`, timestamps)
 - `UserCapabilityGrant` (`userId`, `capability`, `status`, `sourceRegistrarEntryId?`, `sourceRegistrarCodeId?`, `grantedAt`, `revokedAt?`, timestamps)
@@ -423,6 +425,10 @@ the readiness and Sect Uprise broadcast boundary at
 - `20260220170000_add_registrar_artist_members` adds `registrar_artist_members` roster/invite persistence for registrar artist submissions.
 - `20260220183000_add_registrar_invite_delivery` adds invite token fields + `registrar_invite_deliveries` queue table.
 - `20260224200000_add_user_capability_grants` adds additive `user_capability_grants` for capability transition tracking.
+- `20260715030000_add_sect_request_provenance` links a named listener request to
+  its parent-scoped Sect identity through nullable one-to-one provenance.
+- `20260715033000_add_user_home_scene_anchor` adds the nullable durable
+  natural/proxy civic anchor used by Registrar request authority.
 - `20260224213000_add_capability_grant_audit_logs` adds additive `capability_grant_audit_logs` for registrar capability traceability.
 
 ## API Design
@@ -476,8 +482,9 @@ the readiness and Sect Uprise broadcast boundary at
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
 - Lock any future scheduler/approval workflow for activation metrics and trigger authority before replacing the current manual admin trigger.
-- Implement the settled listener Sect request and authorized Artist/Band Sect
-  membership actions without adding routine administrator approval.
+- Implement authorized Artist/Band Sect membership actions without adding
+  routine administrator approval; the settled named listener request API,
+  linked identity, provenance, and submitter readback are already implemented.
 - Define when Sect request, membership, legitimacy, readiness, and active-state progress becomes public.
 - Define the Registrar menu architecture for legitimate/active Sect discovery, Artist/Band membership, updates, and cross-scene active-Sect context.
 - Implement readiness by joining Registrar-held member artists to their current

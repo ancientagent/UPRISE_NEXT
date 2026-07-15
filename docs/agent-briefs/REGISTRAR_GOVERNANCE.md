@@ -79,9 +79,11 @@ Tests / verification files:
   eligible deck.
 - Passive genre/style metadata does not count toward sect readiness or sect realization by itself.
 - Sect readiness and Sect Uprise broadcast authority are owned by `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`; Registrar-side listener request and Artist/Band membership authority are owned by `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority`.
-- Sect request/membership/progress surfaces remain unimplemented and must follow
-  the owner contract rather than inventing per-song Sect state or administrator
-  approval.
+- The named listener Sect request API, linked parent-scoped identity,
+  provenance, and submitter-owned readback are implemented. Public request UI,
+  Artist/Band membership, legitimacy/readiness/progress, updates, and
+  activation remain unimplemented and must follow the owner contract rather
+  than inventing per-song Sect state or administrator approval.
 - Artist/Band Sect membership belongs in Registrar rather than loose self-assigned profile tags.
 - Legitimate Sects are pre-active Registrar-recognized subcommunities:
   visible/inspectable for Artist/Band membership and updates once enabled, but

@@ -6,7 +6,7 @@ describe('CommunitiesService.discoverScenes', () => {
     user: { findUnique: jest.fn(), update: jest.fn() },
     userMusicCommunityPreference: { findFirst: jest.fn(), upsert: jest.fn(), updateMany: jest.fn(), update: jest.fn() },
     community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
-    communityMember: { create: jest.fn() },
+    communityMember: { createMany: jest.fn() },
     artistBand: { findMany: jest.fn(), findFirst: jest.fn() },
     track: { findMany: jest.fn() },
     rotationEntry: { findMany: jest.fn() },
@@ -24,6 +24,7 @@ describe('CommunitiesService.discoverScenes', () => {
     jest.clearAllMocks();
     mockPrisma.$transaction.mockImplementation(async (callback: any) => callback(mockPrisma));
     mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue(null);
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 1 });
     service = new CommunitiesService(mockPrisma as any);
   });
 
@@ -330,7 +331,6 @@ describe('CommunitiesService.discoverScenes', () => {
     });
 
     mockPrisma.user.update.mockResolvedValue({ id: 'u1' });
-    mockPrisma.communityMember.create.mockResolvedValue({ id: 'm1' });
     mockPrisma.community.update.mockResolvedValue({ id: 'c2' });
 
     const result = await service.setHomeScene('u1', { sceneId: 'c2' });
@@ -385,7 +385,7 @@ describe('CommunitiesService.discoverScenes', () => {
         isActive: true,
       });
     mockPrisma.user.update.mockResolvedValue({ id: 'u1' });
-    mockPrisma.communityMember.create.mockResolvedValue({ id: 'm2' });
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 0 });
     mockPrisma.community.update.mockResolvedValue({ id: 'active-austin-metal' });
 
     const result = await service.setHomeScene('u1', { sceneId: 'inactive-el-paso-metal' });
@@ -401,9 +401,11 @@ describe('CommunitiesService.discoverScenes', () => {
         }),
       }),
     );
-    expect(mockPrisma.communityMember.create).toHaveBeenCalledWith({
-      data: { userId: 'u1', communityId: 'active-austin-metal', role: 'member' },
+    expect(mockPrisma.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'u1', communityId: 'active-austin-metal', role: 'member' }],
+      skipDuplicates: true,
     });
+    expect(mockPrisma.community.update).not.toHaveBeenCalled();
     expect(result).toEqual(
       expect.objectContaining({
         previousHomeSceneId: 'c1',

@@ -1409,16 +1409,15 @@ export class CommunitiesService {
         });
       }
 
-      try {
-        await tx.communityMember.create({
-          data: { userId, communityId: resolvedScene.id, role: 'member' },
-        });
+      const membership = await tx.communityMember.createMany({
+        data: [{ userId, communityId: resolvedScene.id, role: 'member' }],
+        skipDuplicates: true,
+      });
+      if (membership.count === 1) {
         await tx.community.update({
           where: { id: resolvedScene.id },
           data: { memberCount: { increment: 1 } },
         });
-      } catch (error: any) {
-        if (error?.code !== 'P2002') throw error;
       }
     });
 
