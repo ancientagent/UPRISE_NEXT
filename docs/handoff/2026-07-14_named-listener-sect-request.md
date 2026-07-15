@@ -55,7 +55,7 @@ identity.
 - Product/code review repair commit: `45f02ce`.
 - Durable Home Scene authority repair commit: `a2827a9`.
 - Durable Home Scene read-context repair commit: `8bd1eb7`.
-- Final civic-transition reviewer repair: pending closeout commit.
+- Final civic-transition and default-authority reviewer repair commit: `2d4b377`.
 - Migration file:
   `apps/api/prisma/migrations/20260715030000_add_sect_request_provenance/migration.sql`.
 - Civic-anchor migration file:
@@ -69,13 +69,14 @@ identity.
 
 ## Validation Evidence
 
-- Expanded API regression set after reviewer repairs: 12 suites, 285 tests
+- Expanded API regression set after reviewer repairs: 12 suites, 287 tests
   passed.
 - API typecheck and Prisma client generation passed.
-- Web Registrar client suite: 57 tests passed.
+- Web Registrar contract suites: 2 suites, 87 tests passed.
 - Web typecheck passed.
-- Full repository verification, workspace audit, and exact-commit independent
-  product/code re-reviews are the remaining closeout gates before PR submission.
+- Full repository verification passed all 12 tasks; workspace audit passed with
+  all 72 entries covered. Exact-commit independent product/code re-reviews are
+  the remaining closeout gates before PR submission.
 
 ## Review Repairs
 
