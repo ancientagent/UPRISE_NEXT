@@ -1,5 +1,12 @@
 # Release Deck / RADIYO / Sect Readiness Planning Audit
 
+> **Superseded Sect context (2026-07-14):** This audit's per-song Sect premise,
+> questions, model, API, and test recommendations are rejected. Preserve the
+> file as historical review evidence only. Current authority is the July 14 raw
+> founder correction and the updated Registrar/community/Release Deck owner
+> specs: listener request, Artist/Band Sect membership, and current member-artist
+> Release Deck aggregation with no track-to-Sect state.
+
 **Agent:** Fable planning auditor
 **Date:** 2026-07-08
 **Phase:** planning/audit
@@ -215,7 +222,7 @@ Per the Handoff Promotion Rule: full rule in the owner spec, short pointers in l
 | P3 | `docs/specs/broadcast/radiyo-and-fair-play.md` | New Releases window | **Replace** "Density-Based New Window" with a fixed protected window (`10` days). Patch Song Lifecycle (drop "from current density target"), Telemetry (drop `current_new_window_days_target`; retain `ActiveNewCount` as diagnostic only), Acceptance (drop hysteresis + density-scenario criteria; add "every accepted song receives an equal protected window"). Mark `FairPlayConfig.newWindowBand*` / `bandPersistDays` deprecated-not-dropped. Leave engagement/upvote separation, `MAX_REPEAT_MAIN`, graduation, and propagation untouched. |
 | P4 | `docs/specs/broadcast/radiyo-and-fair-play.md` | Scheduling join point | State that congestion is resolved **before** New Releases entry by Release Deck scheduling, and that Fair Play never shortens a window. Add the ingest join point: scheduled release date → New Releases. |
 | P5 | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` | Sect readiness counting unit | Change "Readiness Inputs" from source-account backing to **song-level sect encoding on Release Deck songs**. Retain the `45`-minute target, the passive-tag prohibition, and beta-calibrated backing limits. State explicitly: source affiliation ≠ automatic song inclusion. |
-| P6 | `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` | Authority to encode song-level backing | Registrar owns **who may encode** (source must hold Registrar-recognized sect affiliation); Release Deck owns **where the encoding lives** (the song). Update `:34`, `:85`, and the `:361` target-model line. |
+| P6 | superseded | Rejected per-song authority model | Current owner contract is `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority`: Registrar owns Artist/Band membership and Release Deck supplies current eligible duration without song-level Sect state. |
 | P7 | `docs/specs/system/documentation-framework.md` | Contract Ownership table | Add rows: "Uprise-wide Release Deck measurement" → media spec; "Release-date scheduling" → media spec (broadcast holds the join point). Update the "Sect readiness" row to note song-level encoding. |
 | P8 | `ARTIST_PROFILE_SOURCE_DASHBOARD.md`, `REGISTRAR_GOVERNANCE.md`, `PLATFORM_START_HERE.md` | pointers only | After P1–P6 merge. `REGISTRAR_GOVERNANCE.md:68` must change source-level → song-level. `PLATFORM_START_HERE.md:25` gains one Uprise-wide deck sentence. `ACTIONS_AND_SIGNALS.md` needs **no** change (no action-grammar impact). |
 | P9 | `docs/CHANGELOG.md` | — | Handoff Promotion Rule step 5. |

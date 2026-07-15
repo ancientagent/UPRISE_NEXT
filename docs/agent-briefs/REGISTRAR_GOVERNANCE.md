@@ -71,14 +71,18 @@ Tests / verification files:
   gates stay open in `docs/specs/DECISIONS_REQUIRED.md` section 9 and grant no
   authority until locked.
 - Sect readiness tracking can be built before it is user-visible.
-- Sect readiness counts approved playable minutes only from Release Deck songs
-  that explicitly encode/back/affiliate that song with the sect through
-  Registrar-owned authority; a sect-affiliated source's whole catalog does not
-  count automatically.
+- A Home Scene listener requests a Sect; eligible registered Artist/Band
+  sources support it by registering as Sect members through Registrar. Each
+  supporting member artist's current eligible Home Scene Release Deck duration
+  counts automatically toward readiness. Songs have no separate Sect
+  relationship, and previous songs are irrelevant after leaving the current
+  eligible deck.
 - Passive genre/style metadata does not count toward sect readiness or sect realization by itself.
-- Sect readiness and Sect Uprise broadcast authority are owned by `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`; Registrar-side affiliation and motion authority are owned by `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority`.
-- Sect maturity milestones, backing limits, paid/free backing capacity, and user-facing visibility are beta/community-calibrated and must not be hard-coded pre-launch.
-- Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags.
+- Sect readiness and Sect Uprise broadcast authority are owned by `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`; Registrar-side listener request and Artist/Band membership authority are owned by `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority`.
+- Sect request/membership/progress surfaces remain unimplemented and must follow
+  the owner contract rather than inventing per-song Sect state or administrator
+  approval.
+- Artist/Band Sect membership belongs in Registrar rather than loose self-assigned profile tags.
 - Official Sects are pre-Uprise Registrar-recognized subcommunities: visible/inspectable for affiliation and updates once enabled, but not independent broadcast authorities.
 - Registrar should eventually show active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
 - Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community.
@@ -109,7 +113,7 @@ Load only if touched:
 - Do not let voting/governance authority depend on paid status, rankings, or popularity.
 - Do not widen cause/project/sect-motion runtime without explicit current locks.
 - Do not auto-create Sects from passive genre/style tags.
-- Do not make loose profile tags the official sect affiliation mechanism.
+- Do not make loose profile tags the Artist/Band Sect membership mechanism.
 - Do not treat Official Sect status as broadcast authority.
 - Do not turn Sect Uprises into standalone city/music-community replacements isolated from the parent Home Scene.
 - Do not expose sect progress or sect creation controls publicly before the visibility/unlock rule is explicitly activated.

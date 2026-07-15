@@ -352,7 +352,7 @@ describe('ReleaseDeckMeasurementService', () => {
     );
   });
 
-  it('does not read sect tag structures, so source-wide affiliation cannot leak into measurement', async () => {
+  it('does not infer Sect membership from passive tag structures', async () => {
     prisma.track.findMany.mockResolvedValue([sourced('source-a', 'Source A', { duration: 300 })]);
 
     const result = await service.measureCommunityDeck(CITY_COMMUNITY.id);
@@ -361,9 +361,10 @@ describe('ReleaseDeckMeasurementService', () => {
     expect(prisma.sectTag.findFirst).not.toHaveBeenCalled();
     expect(prisma.userTag.findMany).not.toHaveBeenCalled();
     expect(prisma.userTag.findFirst).not.toHaveBeenCalled();
-    // Slice 1 carries no song-level sect encoding, so no sect totals are reported.
+    // Slice 1 has no Registrar-held Artist/Band Sect membership input, so it
+    // reports only the complete community deck and no Sect-filtered totals.
     expect(result.data).not.toHaveProperty('sect');
-    expect(result.data.totals).not.toHaveProperty('sectEncodedPlayableSeconds');
+    expect(result.data.totals).not.toHaveProperty('sectMemberPlayableSeconds');
   });
 
   it('performs no writes and creates no rotation entries or schedules', async () => {

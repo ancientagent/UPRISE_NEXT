@@ -173,11 +173,17 @@ Still needs owner-level implementation detail:
 
 ## Sect Readiness / Sect Uprise Parallels
 
-Sect strategy should parallel community activation with scoped authority. Current Registrar/community language anchors Sect readiness to a `45`-minute committed playable-music threshold plus explicit support, and requires approved playable minutes from Release Deck songs explicitly encoded/backed for that sect by eligible registered sources.
+Sect strategy should parallel community activation with scoped authority. A
+Home Scene listener requests the Sect, at least `5` eligible registered
+Artist/Band sources support it by registering as Sect members, and the current
+eligible Home Scene Release Deck music of those supporting member artists must
+total at least `45` minutes after the `15`-minute per-source cap.
 
-- use explicit song-level Release Deck encoding/backing as readiness input;
+- use Registrar-held Artist/Band Sect membership plus current eligible member
+  artist Release Deck duration as readiness input;
 - use approved playable minutes accounting (not passive tags);
-- keep sect affiliation Registrar-held;
+- keep Artist/Band Sect membership Registrar-held;
+- do not add track-to-Sect backing or count historical songs;
 - keep sect governance/broadcast authority inside parent Home Scene until Sect Uprise threshold and authority contracts are enabled.
 
 This allows shared activation-metrics patterns without prematurely granting sect broadcast authority.

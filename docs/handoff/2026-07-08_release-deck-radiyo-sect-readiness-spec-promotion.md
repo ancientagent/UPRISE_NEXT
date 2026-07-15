@@ -1,5 +1,11 @@
 # Release Deck / RADIYO / Sect Readiness Spec Promotion
 
+> **Superseded Sect context (2026-07-14):** The per-song Sect rules recorded in
+> this historical handoff were based on a misinterpretation and are no longer
+> product authority. Current readiness uses Registrar-held Artist/Band Sect
+> membership and each supporting member artist's current eligible Home Scene
+> Release Deck. Songs do not support Sects individually.
+
 **Date:** 2026-07-08
 **Branch:** `docs/release-deck-radiyo-sect-readiness-spec-promotion`
 **Base:** `plan/release-deck-radiyo-sect-readiness` @ `6edd7f6`
@@ -21,9 +27,12 @@ This branch does not change runtime code, schema/migrations, provider state, dat
 - Every accepted song entering New Releases receives the same fixed protected run: `new_window_days = 10`.
 - Daily single volume and deck density must be handled by Release Deck scheduling, not by shrinking a song's protected RADIYO window.
 - The old `10 / 7 / 5` density-band model is deprecated and must not be reintroduced through `FairPlayConfig` compatibility fields.
-- Sect readiness counts eligible Release Deck songs with explicit song-level sect backing/affiliation.
-- A source affiliating with a sect does not make its whole catalog count automatically.
-- One song should be readiness-bearing for at most one sect unless a future owner spec changes that rule.
+- **Superseded original interpretation:** current Sect readiness does not use
+  per-song state. A listener requests the Sect; eligible registered Artist/Band
+  sources support it by registering as Sect members; and each supporting member
+  artist's current eligible Home Scene Release Deck duration counts
+  automatically.
+- Previous songs are irrelevant after leaving the current eligible deck.
 
 ## Files Changed
 
@@ -44,14 +53,18 @@ This branch does not change runtime code, schema/migrations, provider state, dat
 - Exact Release Deck scheduling capacity algorithm.
 - API response shape for requested dates that exceed capacity.
 - Scheduler/job wiring that moves scheduled songs into New Releases.
-- Schema for scheduled release dates and song-level sect backing.
+- Schema for scheduled release dates and, after the July 14 correction,
+  Registrar-held Artist/Band Sect membership rather than per-song state.
 - Runtime replacement for dead/unwired Fair Play ingestion paths.
 - Production caller/controller for New Releases ingestion and recurrence aggregation.
 - Sect readiness read path, approval workflow, notices, update channels, and Sect Uprise activation.
 
 ## Next Recommended Large Slice
 
-Map the implementation architecture for Release Deck scheduling, Fair Play New Releases entry, and song-level Sect readiness end-to-end. The output should be a buildable plan with model/API/service/test boundaries, not a runtime patch yet.
+Map the implementation architecture for Release Deck scheduling, Fair Play New
+Releases entry, and the corrected listener-request / ArtistBand-membership /
+current-deck Sect readiness lifecycle end-to-end. Do not add track-to-Sect
+state.
 
 The hard problem is cross-system sequencing:
 

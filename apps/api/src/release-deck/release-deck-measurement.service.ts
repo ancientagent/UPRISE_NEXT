@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
  * why. Owned by `docs/specs/media/release-deck-and-eligibility.md#uprise-wide-deck-system`.
  *
  * This service performs no writes. It must not create schedules, rotation
- * entries, sect backings, or mutate any row.
+ * entries, Sect requests/memberships, or mutate any row.
  *
  * Thresholds mirror the activation-readiness diagnostics in
  * `AdminAnalyticsService` on purpose. They are duplicated locally rather than

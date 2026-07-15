@@ -1,5 +1,12 @@
 # Release Deck / RADIYO / Sect Implementation Architecture Handoff
 
+> **Superseded Sect context (2026-07-14):** Preserve this handoff as execution
+> history, but do not implement its `TrackSectBacking`, per-song Sect API, or
+> song-level readiness design. Current authority is
+> `docs/founder-sessions/2026-07-14_sect-readiness-threshold-and-authority.md`:
+> listener request + Registrar-held Artist/Band Sect membership + current
+> member-artist Home Scene Release Deck aggregation.
+
 **Date:** 2026-07-08
 **Branch:** `plan/release-deck-radiyo-sect-implementation-architecture`
 **Base:** `docs/release-deck-radiyo-sect-readiness-spec-promotion` @ `8df3807`
@@ -9,7 +16,8 @@
 
 ## Summary
 
-Added a buildable architecture plan for Release Deck scheduling, Fair Play New Releases ingestion, and song-level Sect readiness.
+Added the historical architecture plan for Release Deck scheduling, Fair Play
+New Releases ingestion, and the now-superseded per-song Sect design.
 
 No runtime code, schema/migration, provider, database, or art state was changed.
 
@@ -20,9 +28,11 @@ No runtime code, schema/migration, provider, database, or art state was changed.
 The plan maps:
 
 - current runtime seams and missing production callers;
-- proposed models for `ReleaseDeckSchedule`, `TrackSectBacking`, `Sect`, `RotationEntry.newWindowDays`, and `FairPlayConfig.newReleaseWindowDays`;
+- proposed models including the implemented/historical scheduling fields and a
+  rejected `TrackSectBacking` model that must not be implemented;
 - service boundaries for measurement, scheduling, ingestion, graduation, and readiness;
-- API boundaries for measurement, availability, scheduling, manual ingestion, graduation, and sect backing;
+- API boundaries for measurement, availability, scheduling, manual ingestion,
+  graduation, and the rejected per-song Sect path;
 - manual job flow before cron/provider automation;
 - nine implementation slices with files and validation commands;
 - recommended first PR: read-only Uprise-wide Release Deck measurement.

@@ -140,9 +140,11 @@ These questions are not implementation permission. If an item is answered later,
 
 ## Business / Paid Capability Boundaries
 
-91. Can paid accounts back more Official Sects or Sect Uprises than free accounts?
-92. If paid sect-backing capacity exists, how do we guarantee it does not create voting, governance, or rotation advantage?
-93. Are paid/free sect-backing limits source-level, user-level, or song-level?
+91. **Superseded:** the corrected Sect model has listener requests and
+    Registrar-held Artist/Band membership, not purchasable per-song or
+    source-capacity backing. Do not build the former paid-backing premise.
+92. **Superseded with 91.**
+93. **Superseded with 91.**
 94. Is the paid `4th` Release Deck ad slot ever allowed inside Sect Uprise contexts?
 95. Can businesses sponsor Official Sect update channels without affecting Fair Play?
 96. What paid visibility is allowed around sects without becoming pay-for-placement?

@@ -186,7 +186,7 @@ Current owner contracts:
 | Registrar source/capability workflows | `docs/specs/system/registrar.md` |
 | Source registration and source origin | `docs/specs/system/registrar.md#source-origin-contract` |
 | Community activation threshold workflow | `docs/specs/communities/scenes-uprises-sects.md#city-tier-activation-workflow` plus `docs/specs/system/registrar.md#city-tier-activation-authority` |
-| Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority`; readiness minutes come from song-level Release Deck encoding, with media measurement owned by `docs/specs/media/release-deck-and-eligibility.md` |
+| Sect readiness and Sect Uprise boundary | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority`; readiness minutes come from supporting member artists' current eligible Home Scene Release Decks, with media measurement owned by `docs/specs/media/release-deck-and-eligibility.md` |
 | Proxy scene music lifecycle and migration | `docs/specs/broadcast/radiyo-and-fair-play.md#proxy-cutover-and-lifecycle-join-points` plus `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` |
 | Activation notification and former-proxy Away Scene preservation | `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` |
 | Plot/Home Scene shell | `docs/specs/communities/plot-and-scene-plot.md` |
@@ -204,7 +204,7 @@ Contracts still needing dedicated owner sections or cleanup:
 
 | Needed Contract | Current Best Home | Why It Matters |
 | --- | --- | --- |
-| Sect implementation artifacts and visibility calibration | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` | Boundary is owned; affiliation schema, song-level Release Deck encoding schema, update channels, approval state machine, visibility timing, and backing limits remain follow-up implementation decisions. |
+| Sect implementation artifacts and visibility | `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` plus `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority` | Boundary is owned: listener request, Registrar-held Artist/Band Sect membership, five-member legitimacy, and current member-artist Release Deck aggregation to 45 minutes. Request/membership persistence, threshold-state transitions, update channels, and visibility remain implementation work; no track-to-Sect model or routine admin approval stage belongs in the design. |
 | Activation notification/Away Scene implementation artifacts | `docs/specs/users/onboarding-home-scene-resolution.md#proxy-to-natural-cutover-user-contract` | User-facing contract is owned; UI placement, notification persistence, and saved-scene storage remain implementation decisions. |
 | Music-community preference runtime implementation | `docs/specs/users/onboarding-home-scene-resolution.md#music-community-preference-contract` | Persistence, backfill, API, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, Home Scene selector read model, Plot/Home selector consumption, and Fair Play voting across resolvable registered preferences exist; compatibility cleanup is planned and remains implementation work. |
 
@@ -221,7 +221,7 @@ Lane agents own work areas, not product truth. Product truth lives in owner cont
 | `uprise-fairplay-broadcast` | RADIYO, voting, rotation, tier propagation | `ACTIONS_AND_SIGNALS`, broadcast/Fair Play spec | action grammar, votes, Fair Play, tier lifecycle |
 | `uprise-media-release` | Release Deck, media limits, upload/transcode boundaries | Release Deck media spec, artist/source brief, media/storage decision docs | song limits, active rotation eligibility, deferred media pipeline |
 | `uprise-events-archive` | Events, Archive, flyers, descriptive history | `EVENTS_ARCHIVE`, event specs | prevent Statistics/Promotions drift, event read/write boundaries |
-| `uprise-sects-governance` | sect affiliation, official sects, Sect Uprises | Registrar/community sect specs | sect readiness, official status, Uprise threshold |
+| `uprise-sects-governance` | listener Sect requests, Artist/Band Sect membership, legitimate/active Sects | Registrar/community sect specs | membership, readiness, legitimacy, active-state threshold |
 | `uprise-business-later` | monetization doctrine and deferred boundaries | `BUSINESS_MONETIZATION`, economy specs | prevent premature billing/promotions/analytics implementation |
 | `uprise-design-ui` | screen hierarchy, visual handoffs, design-agent prompts | `UI_CURRENT`, relevant owner specs | Claude/Stitch/Uizard/v0 prompts, screen states, visual direction |
 | `uprise-infra-hosting` | Vercel/Fly/Neon/provider deployment and smokes | Heavy Authority Pack, deploy env docs | hosted stack readiness, env, CI, smoke scripts |
@@ -479,10 +479,21 @@ Do not ask if the question only changes:
 
 For clarification sessions:
 
-1. State the documented assumption.
-2. Explain why it affects multiple systems.
-3. Ask exactly one question.
-4. If answered, patch the owner spec or backlog it explicitly.
+1. Reconstruct the existing rule as one plain-language actor-and-state sequence
+   from canon, the owner spec, and relevant founder wording before treating any
+   part of it as unresolved.
+2. Separate missing implementation mechanics from missing product decisions.
+   An architecture option or open-tracker entry is not proof that the original
+   product rule is absent.
+3. State the documented assumption and identify the exact missing decision.
+4. Explain why it affects multiple systems.
+5. Ask exactly one question only if the reconstructed rule does not answer it.
+6. If answered, patch the owner spec or backlog it explicitly.
+
+Reviewers of founder-decision packets must challenge the premise of every open
+question, not only the completeness of its options. A review fails if an option
+replaces a simpler existing actor sequence, reopens a settled threshold, or
+turns implementation detail into new product authority.
 
 ## Reviewer Routing
 

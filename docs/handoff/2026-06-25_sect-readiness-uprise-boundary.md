@@ -11,7 +11,7 @@ Promoted the scattered Sect readiness / Sect Uprise rules into explicit owner se
 Owner contract updates:
 
 - `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary` now owns the community-side Official Sect, readiness, and Sect Uprise broadcast boundary.
-- `docs/specs/system/registrar.md#sect-affiliation-and-motion-authority` now owns Registrar-held sect affiliation, explicit source backing, and sect-motion filing authority.
+- **Corrected 2026-07-14:** `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority` owns the listener request and Registrar-held Artist/Band Sect membership; songs carry no separate Sect state.
 - `docs/specs/system/documentation-framework.md` now routes Sect readiness / Sect Uprise boundary to those owner sections and narrows the remaining gap to implementation artifacts and visibility calibration.
 
 No code, schema, migration, seed, provider, or DB action was added.
@@ -51,8 +51,9 @@ Still deferred:
 - Official Sect affiliation records;
 - update channels;
 - public progress/creation surfaces;
-- source/song backing limits and paid/free backing capacity;
-- automatic Sect-to-Uprise activation;
+- listener request, Artist/Band Sect membership, and current member-artist
+  Release Deck readiness implementation;
+- threshold-state transition implementation;
 - dedicated Uprise persistence model.
 
 ## Validation

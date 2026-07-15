@@ -48,8 +48,9 @@ passed the bounded re-review.
 
 After this scheduling client is locally verified and reviewed, do not infer a
 second implementation slice from this package. New Releases graduation,
-song-level sect backing, source metrics, replacement, uploads, and paid-ad
-runtime each require their own current owner-contract check before execution.
+Registrar-held Artist/Band Sect membership/readiness, source metrics,
+replacement, uploads, and paid-ad runtime each require their own current
+owner-contract check before execution. Do not add per-song Sect controls.
 
 Optional artifacts remain available when risk requires them:
 

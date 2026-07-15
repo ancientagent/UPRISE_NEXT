@@ -57,7 +57,7 @@ and assignment mode.
 
 - No Fair Play ordering, ranking, recurrence, propagation, or priority control.
 - No paid placement or shorter protected run.
-- No automatic ingestion job, graduation, or sect backing behavior.
+- No automatic ingestion job, graduation, or Sect request/membership/readiness behavior.
 - No replacement/removal, upload/storage/transcoding, metrics, paid-ad runtime,
   or new route.
 - No database client or server-only import in `apps/web`.

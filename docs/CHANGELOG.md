@@ -7,15 +7,25 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Corrected the Sect decision gate to preserve the original simple lifecycle:
+  a Home Scene listener requests a Sect; at least `5` distinct eligible
+  registered Artist/Band sources support it by registering as Sect members;
+  and it becomes active once those member artists' current eligible Home Scene
+  Release Deck music collectively reaches `45` minutes after the existing
+  `15`-minute per-source cap. Songs do not support Sects individually, previous
+  songs are irrelevant after leaving the current eligible deck, and no
+  track-to-Sect backing/history or routine platform-admin approval stage exists.
+  The correction also adds a reviewer guardrail requiring reconstruction of the
+  plain-language founder lifecycle before proposing implementation options.
+
 ### Added
 
-- Added the Slice 7 Sect backing/readiness founder-decision gate. It preserves
-  the settled explicit song-level, eligible Release Deck evidence and 45-minute
-  target while isolating three unresolved locks: Registrar authority,
-  backing lifecycle/history, and a source-diversity minimum under the existing
-  per-source cap. Recommendations
-  are planning guidance only; no owner rule, schema, runtime, UI, or provider
-  action is activated. See
+- Added the historical Slice 7 Sect backing/readiness founder-decision gate.
+  Its original per-song backing and open-decision framing is now superseded and
+  replaced in-place by the corrected listener-request / Artist/Band-membership /
+  current-deck lifecycle. See
   `docs/handoff/2026-07-14_sect-backing-readiness-decision-gate.md`.
 - Added the authority-neutral Official Sect identity persistence foundation:
   `Sect` is scoped to a parent `Community` with parent-scoped slug uniqueness,
@@ -101,8 +111,14 @@
 - Added scheduled Release Deck to Fair Play ingestion so due schedules can dry-run or create fixed 10-day `NEW_RELEASES` rotation entries without reading deprecated density-band config; see `docs/handoff/2026-07-08_release-deck-fair-play-ingestion.md`.
 - Added the Release Deck schedule write path so source operators can create `ReleaseDeckSchedule` rows through `soonest` or valid `chosen` date assignment without creating Fair Play rotation entries; see `docs/handoff/2026-07-08_release-deck-schedule-write-path.md`.
 - Added Release Deck schedule availability preview: `ReleaseDeckSchedule` schema/migration plus read-only `/release-deck/schedule/availability` diagnostics for requested date capacity, alternatives, and playable-second scheduling pressure; see `docs/handoff/2026-07-08_release-deck-schedule-availability-preview.md`.
-- Added the Release Deck / RADIYO / Sect implementation architecture plan, mapping scheduling, Fair Play ingestion, graduation, song-level Sect backing, readiness diagnostics, and the recommended first read-only measurement slice; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-implementation-architecture.md`.
-- Promoted Release Deck / RADIYO / Sect readiness owner contracts: Release Deck now owns Uprise-wide deck measurement and release-date scheduling before RADIYO entry, Fair Play uses a fixed 10-day New Releases run, and sect readiness counts song-level Release Deck backing rather than source-wide affiliation; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-readiness-spec-promotion.md`.
+- Added the Release Deck / RADIYO / Sect implementation architecture plan. Its
+  scheduling/Fair Play history remains useful, while its original per-song Sect
+  model is explicitly superseded by the July 14 membership/current-deck
+  correction; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-implementation-architecture.md`.
+- Promoted the historical Release Deck / RADIYO / Sect readiness contracts;
+  the per-song Sect interpretation from that promotion is now superseded by
+  Registrar-held Artist/Band membership plus current member-artist Home Scene
+  Release Deck aggregation; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-readiness-spec-promotion.md`.
 - Refreshed Active PM and branch workspace registry after PR #227 merged, recording the clean main/worktree state plus remote-only branch cleanup candidates; see `docs/handoff/2026-07-07_branch-workspace-hygiene-refresh.md`.
 - Captured Home Scene photo-rotation and community-list founder clarification,
   promoted the atmosphere-photo presentation boundary into Plot/UI docs, and

@@ -1,5 +1,12 @@
 # Official Sect Identity Foundation — Slice 6A Execution Plan
 
+> **Founder correction (2026-07-14):** The implemented Official `Sect` identity
+> foundation remains valid because it deliberately added no track-to-Sect
+> model. All planning language in this historical handoff about song-level
+> backing, reassignment, or backing history is rejected. The next model is
+> Registrar-held Artist/Band Sect membership; readiness dynamically totals each
+> supporting member artist's current eligible Home Scene Release Deck.
+
 **Date:** 2026-07-14
 
 **Branch:** `codex/official-sect-backing-foundation`
@@ -37,14 +44,12 @@ The architecture plan is implementation guidance, not product doctrine. Where it
 - The database has no track-to-Sect backing model.
 - No service, controller, API, UI, or provider workflow currently creates an Official Sect.
 
-### Deferred or unknown
+### Deferred at the time; corrected by later founder clarification
 
 - Official Sect lifecycle states, including whether states such as `uprise_ready`, `uprisen`, or `archived` should exist.
-- Who may establish, approve, remove, or reassign an Official Sect or its track backing.
-- Registrar provenance and the durable meaning of Registrar affiliation or approval.
-- Whether track backing is current-state-only, historical, or both.
-- Backing replacement, removal, rejection, retention, reassignment, and deletion behavior.
-- Whether one row per track, one active row per track, or another constraint represents the product rule.
+- Listener request persistence and Registrar-held Artist/Band Sect membership.
+- Legitimacy and activation state transitions for the settled five-member and
+  45-current-minute thresholds.
 - Public visibility and update-channel behavior.
 - Readiness calculation and the proposed distinct-source threshold.
 
@@ -313,18 +318,19 @@ No push or PR is allowed until both report zero Critical and zero Important find
 
 A future authorized creation writer must verify that `parentCommunityId` identifies an active, eligible city-tier Home Scene. The foreign key cannot enforce that cross-row business invariant, and this slice creates no writer or rows.
 
-## F. Slice 6B decision gate
+## F. Corrected next model
 
-Track-to-Sect backing work cannot begin until the owner contract resolves:
+Do not begin track-to-Sect backing work. It does not belong to the product.
+Future implementation should persist:
 
-1. current-state versus historical backing semantics;
-2. active uniqueness and reassignment behavior;
-3. lifecycle vocabulary and transitions, if any;
-4. authorization and Registrar provenance;
-5. removal, rejection, retention, and deletion behavior;
-6. the relationship, if any, between backing and Support or Participation.
+1. the listener's Home Scene Sect request;
+2. Registrar-held membership for each supporting registered Artist/Band source;
+3. legitimacy after at least five distinct eligible Artist/Band members; and
+4. activation/readiness derived from those members' current eligible Home Scene
+   Release Decks, capped at 15 minutes per member artist and totaling 45 minutes.
 
-Those decisions must be promoted into the appropriate owner spec before schema, API, or UI implementation.
+No track association, song reassignment, or Sect-specific song history is
+needed.
 
 ## G. Slice 7 readiness gate
 

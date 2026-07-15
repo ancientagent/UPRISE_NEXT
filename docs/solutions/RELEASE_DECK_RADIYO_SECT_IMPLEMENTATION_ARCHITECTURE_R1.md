@@ -1,6 +1,6 @@
 # Release Deck / RADIYO / Sect Implementation Architecture R1
 
-**Status:** `active implementation sequence`
+**Status:** `partially superseded; Release Deck/Fair Play history retained; Sect architecture corrected 2026-07-14`
 **Date:** `2026-07-14`
 **Owner lane:** media / broadcast / registrar / communities
 **Deployment Target:** local runtime slices; no deployment implied
@@ -9,7 +9,12 @@
 ## Purpose
 
 Map the implementation architecture for Release Deck scheduling, Fair Play New
-Releases ingestion, and song-level Sect readiness before runtime work starts.
+Releases ingestion, and Sect readiness before runtime work starts.
+
+The original R1 Sect design incorrectly proposed per-song Sect backing. That
+design is void. Current Sect implementation must use listener requests,
+Registrar-held Artist/Band Sect membership, and current member-artist Home Scene
+Release Deck aggregation as defined below and in the owner specs.
 
 This document does not change product doctrine. It turns the current owner specs
 into a buildable sequence and identifies the concrete model, service, API, job,
@@ -39,7 +44,7 @@ Implemented:
 
 Missing:
 
-- song-level Sect backing/encoding;
+- listener Sect requests and Registrar-held Artist/Band Sect membership;
 - readiness diagnostics for Sect Uprise creation;
 - production scheduler/queue automation.
 
@@ -83,10 +88,10 @@ Implemented:
 
 Missing:
 
-- official `Sect` entity;
-- source-to-sect affiliation authority;
-- song-level `Track` to `Sect` backing/encoding;
-- readiness measurement from Release Deck songs;
+- runtime creation/read paths for the persisted official `Sect` entity;
+- listener Sect request and Artist/Band Sect membership persistence;
+- readiness measurement from supporting member artists' current Home Scene
+  Release Decks;
 - official Sect visibility/update channel;
 - Sect Uprise activation workflow.
 
@@ -115,7 +120,7 @@ Release Deck owns everything before a track enters RADIYO/New Releases:
 - Uprise-wide deck measurement;
 - release-date request or auto-assignment;
 - schedule availability diagnostics;
-- song-level Sect backing metadata.
+- no Sect-specific track metadata; membership is held at Artist/Band level.
 
 Fair Play should not decide whether a source may submit or when a song should be
 scheduled. Fair Play should only ingest eligible scheduled songs when their entry
@@ -132,15 +137,19 @@ Fair Play owns everything after a scheduled song enters New Releases:
 - repeat caps and pool metrics;
 - propagation/vote rules.
 
-### Principle 3: Registrar Owns Authority, Release Deck Owns Song Encoding
+### Principle 3: Registrar Owns Artist Membership, Release Deck Owns Current Music
 
-Registrar should decide which source operators have authority to affiliate with,
-back, or encode a Sect. Release Deck should store/read the encoding on the song.
+A listener requests the Sect through Registrar. Eligible registered Artist/Band
+sources support the request by registering as Sect members through Registrar.
+That membership makes each supporting artist's current eligible Home Scene
+Release Deck duration count automatically. Release Deck stores no per-song Sect
+encoding.
 
-This prevents two drift cases:
+This prevents three drift cases:
 
-- loose source affiliation counting the whole catalog;
-- loose listener/profile tags counting toward readiness.
+- treating songs as the actors supporting a Sect;
+- counting non-member artists from passive listener/profile tags; and
+- retaining historical songs after they leave the current eligible deck.
 
 ### Principle 4: Measurement First, Mutation Second
 
@@ -186,32 +195,30 @@ Suggested constraints/indexes:
 Rationale: use a separate schedule model rather than only `Track.scheduledAt` so
 schedule state, capacity snapshot, mode, and ingestion status remain auditable.
 
-### `TrackSectBacking`
+### `ArtistBandSectMembership`
 
-Purpose: explicit song-level Sect readiness encoding.
+Purpose: Registrar-held evidence that one eligible registered Artist/Band
+supports and belongs to a requested Sect.
 
 Suggested fields:
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `id` | `String @id @default(uuid())` | Primary key. |
-| `trackId` | `String` | Release Deck song. |
-| `sectId` | `String` | Official Sect. |
-| `artistBandId` | `String` | Source claiming/backing this song for the Sect. |
-| `encodedById` | `String` | User/operator who encoded it. |
-| `status` | `String` | `active`, `removed`, `rejected`. |
+| `sectId` | `String` | Requested/legitimate Sect. |
+| `artistBandId` | `String` | Supporting registered Artist/Band member. |
+| `registeredById` | `String` | Authorized user registering the Artist/Band membership. |
 | `createdAt` | `DateTime` | Default now. |
 | `updatedAt` | `DateTime` | Updated at. |
 
 Suggested constraints/indexes:
 
-- `@@unique([trackId])` for R1, enforcing one readiness-bearing Sect per song.
-- `@@index([sectId, status])`
-- `@@index([artistBandId, sectId])`
+- `@@unique([sectId, artistBandId])`
+- `@@index([artistBandId])`
 
-Rationale: R1 should prevent double-counting one song into multiple Sect Uprises.
-A future owner-spec change can relax the uniqueness if multi-Sect encoding is
-approved.
+Readiness does not persist track associations. It joins current eligible
+Release Deck rows by `artistBandId + parent Home Scene`, caps each member artist
+at `900` seconds, and recalculates whenever current deck state changes.
 
 ### `Sect`
 
@@ -352,7 +359,8 @@ Responsibilities:
 - compute per-source capped seconds and remaining source capacity;
 - compute distinct source count;
 - compute scheduled release pressure;
-- compute sect-encoded minutes when a `sectId` is supplied.
+- when a `sectId` is supplied, receive supporting Artist/Band member IDs from
+  Registrar and compute their current eligible Home Scene Release Deck minutes.
 
 Suggested file:
 
@@ -422,28 +430,26 @@ Owns Sect readiness diagnostics.
 Responsibilities:
 
 - read official `Sect` by parent community;
-- read active `TrackSectBacking` rows;
-- join to eligible Release Deck tracks;
+- read supporting `ArtistBandSectMembership` rows;
+- join each member artist to that artist's current eligible Home Scene Release
+  Deck tracks;
 - cap per source at `900` seconds;
 - require `45` capped minutes and `5` distinct eligible sources for readiness;
 - return included/excluded song reasons;
-- do not activate a Sect Uprise directly in R1.
+- expose the threshold state required for the later activation transition.
 
 Suggested file:
 
 - `apps/api/src/sects/sect-readiness.service.ts`
 
-### Registrar Authority Join
+### Registrar Membership Join
 
-Registrar owns who may back or encode a Sect.
+Registrar owns the listener request and Artist/Band Sect membership. Release
+Deck owns only the current eligible music being counted.
 
-Implementation options:
-
-- add a `source_sect_affiliation` model in the Registrar/Sect slice;
-- or use approved Registrar entries as the first authority source for R1.
-
-The architecture should not let the Release Deck UI write `TrackSectBacking`
-unless Registrar confirms the selected source can back that Sect.
+The architecture must not add per-song Sect controls or track-to-Sect writes.
+The Release Deck readiness reader receives supporting member artist IDs from
+Registrar and aggregates their current eligible tracks in the parent Home Scene.
 
 ## API Boundaries
 
@@ -554,21 +560,24 @@ Behavior:
 - dry run returns entries that would graduate;
 - non-dry-run updates entries to `MAIN_ROTATION` and sets `graduatedAt`.
 
-### Sect Backing
+### Sect Request, Membership, And Readiness
 
 ```http
-POST /release-deck/tracks/:trackId/sect-backing
-DELETE /release-deck/tracks/:trackId/sect-backing/:sectId
+POST /registrar/sect-requests
+POST /registrar/sect-requests/:sectId/memberships
 GET /sects/:sectId/readiness
 ```
 
 R1 guardrails:
 
-- source operator only;
-- source must have Registrar-recognized authority for that Sect;
-- track must belong to that source;
-- track must be in the parent community/Uprise context;
-- one active Sect backing per song unless owner spec changes.
+- any eligible Home Scene listener may request a Sect;
+- an Artist/Band membership write requires authority to manage that registered
+  Artist/Band source;
+- membership and counted deck music must share the parent Home Scene context;
+- five distinct member artists make the requested Sect legitimate;
+- current member-artist deck duration, capped at `900` seconds per artist, must
+  total at least `2,700` seconds for activation;
+- no track-to-Sect state is written.
 
 ## Job / Scheduler Flow
 
@@ -716,33 +725,35 @@ Validation:
 
 - `pnpm --filter api test -- fair-play.graduation.service.test.ts fair-play.service.test.ts`
 
-### Slice 6: Official Sect And Song-Level Backing Schema
+### Slice 6: Listener Request And Artist/Band Sect Membership
 
-Goal: create durable backing primitives without activating Sect Uprise creation.
+Goal: create the simple request and supporting-artist membership primitives.
 
 Files likely touched:
 
 - `apps/api/prisma/schema.prisma`
-- migration adding `Sect` and `TrackSectBacking`
+- migration adding request/lifecycle state and `ArtistBandSectMembership` around
+  the existing `Sect` identity
 - `apps/api/src/sects/sects.service.ts`
-- `apps/api/src/release-deck/track-sect-backing.service.ts`
-- `apps/api/test/track-sect-backing.service.test.ts`
+- Registrar Sect request/membership service and controller paths
+- focused request/membership tests
 
 Acceptance:
 
 - official Sect is parented to one city-tier community;
-- song backing requires eligible source-owned track;
-- Registrar authority is checked before backing;
-- one active backing per song in R1;
-- source-wide affiliation alone does not count songs.
+- a Home Scene listener can request it;
+- authorized Artist/Band operators can register their source as a Sect member;
+- five distinct eligible member artists make the request legitimate;
+- no song-level Sect state exists.
 
 Validation:
 
-- `pnpm --filter api test -- track-sect-backing.service.test.ts registrar.controller.test.ts`
+- `pnpm --filter api test -- registrar.controller.test.ts registrar.service.test.ts`
 
 ### Slice 7: Sect Readiness Diagnostics
 
-Goal: compute readiness from song-level Release Deck backing.
+Goal: compute readiness from supporting member artists' current eligible Home
+Scene Release Deck music.
 
 Files likely touched:
 
@@ -752,12 +763,12 @@ Files likely touched:
 
 Acceptance:
 
-- counts only active `TrackSectBacking` rows;
-- joins to ready playable source-owned tracks;
+- counts only current eligible tracks owned by supporting member artists in the
+  parent Home Scene;
 - caps per source at `900` seconds;
 - requires `2700` capped seconds and `5` distinct sources;
 - returns included/excluded song reasons;
-- does not create or activate a Sect Uprise.
+- does not retain previous songs as Sect evidence.
 
 Validation:
 
@@ -817,12 +828,12 @@ Validation:
 | Risk | Mitigation |
 | --- | --- |
 | Reintroducing `10 / 7 / 5` density windows | Add tests proving `newWindowDays = 10` regardless of active new-song count. |
-| Counting whole-source Sect affiliation | Add tests where source is sect-affiliated but zero songs are backed; readiness must be zero. |
+| Counting a non-member artist or historical deck rows | Join only Registrar-held member artists and current eligible Home Scene Release Deck state. |
 | Ingesting duplicate active rotations | Keep `@@unique([trackId, sceneId])`; also reject active schedule/rotation conflicts before write. |
 | Artist display-name collision | Use `artistBandId` for source-level active-new checks. |
 | UI invents paid priority | Keep scheduling deterministic; no priority purchase controls. |
 | Cron moves state before manual path is proven | Manual dry-run/run first; cron only after explicit follow-up. |
-| Schema migration too broad | Split schedule, Fair Play entry, and Sect backing migrations unless a single migration is required by Prisma relation constraints. |
+| Schema migration invents track-to-Sect state | Persist only listener request/Sect lifecycle and Artist/Band membership; calculate music from current Release Deck rows. |
 
 ## First PR Recommendation
 
@@ -863,7 +874,7 @@ Scope:
 - No schema migration.
 - No Fair Play ingestion.
 - No scheduling writes.
-- No Sect backing writes.
+- No Sect request, membership, or readiness writes.
 - No provider/db state changes.
 
 Build:

@@ -127,10 +127,14 @@ When a natural Home Scene activates:
 
 ### 10A. Sect Readiness Counting
 
-- Sect readiness counts approved playable minutes only from registered source accounts that explicitly tag/back/affiliate with that sect.
+- **Corrected 2026-07-14:** a listener requests the Sect; registered
+  Artist/Band sources support it by registering as Sect members; each member
+  artist's current eligible Home Scene Release Deck duration counts
+  automatically. Songs have no separate Sect relationship and previous songs
+  do not count after leaving the current eligible deck.
 - Passive genre/style metadata can inform discovery or candidate analysis but does not count toward sect readiness by itself.
-- Exact backing limits are beta/community-calibrated.
-- Provisional ideas such as one active sect by default or up to three backed sects for paid accounts are not locked product rules yet.
+- The old provisional paid/free or multiple-backed-Sect ideas are superseded and
+  must not be used as implementation guidance.
 
 ### 10B. Official Sect Affiliation
 
