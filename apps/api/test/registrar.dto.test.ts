@@ -44,22 +44,62 @@ describe('Registrar DTO schemas', () => {
     expect(parsed.projectName).toBe('All-Ages Venue Buildout');
   });
 
-  it('accepts sect motion registration payload with sceneId only', () => {
+  it('accepts and trims a named listener Sect request', () => {
     const parsed = SectMotionRegistrationSchema.parse({
       sceneId: '11111111-1111-1111-1111-111111111111',
+      sectName: '  Noise Art  ',
     });
 
     expect(parsed).toEqual({
       sceneId: '11111111-1111-1111-1111-111111111111',
+      sectName: 'Noise Art',
     });
   });
 
   it('rejects invalid sect motion sceneId payload', () => {
     const parsed = SectMotionRegistrationSchema.safeParse({
       sceneId: 'not-a-uuid',
+      sectName: 'Noise Art',
     });
 
     expect(parsed.success).toBe(false);
+  });
+
+  it('rejects a missing or blank Sect request name', () => {
+    expect(
+      SectMotionRegistrationSchema.safeParse({
+        sceneId: '11111111-1111-1111-1111-111111111111',
+      }).success,
+    ).toBe(false);
+    expect(
+      SectMotionRegistrationSchema.safeParse({
+        sceneId: '11111111-1111-1111-1111-111111111111',
+        sectName: '   ',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects Sect request names longer than 140 characters', () => {
+    const parsed = SectMotionRegistrationSchema.safeParse({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      sectName: 'a'.repeat(141),
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it('does not pass unknown Sect request fields to persistence', () => {
+    const parsed = SectMotionRegistrationSchema.parse({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      sectName: 'Noise Art',
+      status: 'active',
+      sourceIds: ['artist-1'],
+    });
+
+    expect(parsed).toEqual({
+      sceneId: '11111111-1111-1111-1111-111111111111',
+      sectName: 'Noise Art',
+    });
   });
 
   it('rejects whitespace-only artist/band member identity fields', () => {
