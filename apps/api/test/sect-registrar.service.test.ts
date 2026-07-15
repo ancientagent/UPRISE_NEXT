@@ -20,7 +20,7 @@ describe('SectRegistrarService', () => {
   const updatedAt = new Date('2026-07-15T03:00:00.000Z');
 
   const prisma = {
-    community: { findUnique: jest.fn() },
+    community: { findUnique: jest.fn(), findFirst: jest.fn() },
     user: { findUnique: jest.fn() },
     registrarEntry: { create: jest.fn(), findMany: jest.fn(), findUnique: jest.fn() },
     sect: { create: jest.fn() },
@@ -32,6 +32,7 @@ describe('SectRegistrarService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     prisma.community.findUnique.mockResolvedValue(scene);
+    prisma.community.findFirst.mockResolvedValue(scene);
     prisma.user.findUnique.mockResolvedValue(user);
     resolver.resolveDefaultMusicCommunity.mockResolvedValue('punk');
     prisma.$transaction.mockImplementation(async (callback: (tx: typeof prisma) => unknown) => callback(prisma));
@@ -92,6 +93,7 @@ describe('SectRegistrarService', () => {
   it.each([
     ['Noise / Art', 'noise-art'],
     ['Déjà Vu', 'deja-vu'],
+    ['a\u1AB0b', 'ab'],
     ['東京', 'sect-130016b2599bf7e5'],
     ['!!!', 'sect-e84c538e7fe25073'],
   ])('builds deterministic slug for %s', (name, expected) => {
@@ -122,8 +124,35 @@ describe('SectRegistrarService', () => {
     ).rejects.toBe(failure);
   });
 
-  it('rejects requests outside the listener Home Scene without source checks', async () => {
-    prisma.community.findUnique.mockResolvedValue({ ...scene, city: 'Dallas' });
+  it('allows the active same-state proxy assigned from the listener Home Scene tuple', async () => {
+    prisma.user.findUnique.mockResolvedValue({ ...user, homeSceneCity: 'El Paso' });
+    prisma.community.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(scene);
+
+    await expect(
+      service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),
+    ).resolves.toMatchObject({ sect: { id: 'sect-1' } });
+    expect(prisma.community.findFirst).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: expect.objectContaining({ state: 'TX', musicCommunity: 'punk', isActive: true }),
+      }),
+    );
+  });
+
+  it('rejects an Away Scene even when tuned context could point there', async () => {
+    const awayScene = { ...scene, id: 'scene-away', city: 'Seattle', state: 'WA' };
+    prisma.community.findUnique.mockResolvedValue(awayScene);
+    prisma.user.findUnique.mockResolvedValue({ ...user, tunedSceneId: awayScene.id });
+    prisma.community.findFirst.mockResolvedValue(scene);
+
+    await expect(
+      service.submitSectRequest('listener-1', { sceneId: awayScene.id, sectName: 'Noise Art' }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('rejects a request when the listener tuple has no active natural or proxy Home Scene', async () => {
+    prisma.community.findFirst.mockResolvedValue(null);
 
     await expect(
       service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),

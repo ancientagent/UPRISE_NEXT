@@ -328,6 +328,9 @@ the readiness and Sect Uprise broadcast boundary at
   - Any listener whose established Home Scene matches the target city-tier
     community may request; no Artist/Band source ownership or management role
     is required.
+  - Matching uses the shared active natural/proxy Home Scene resolver derived
+    from submitted city/state plus the default music community. Transient Away
+    Scene tuning does not grant Registrar request authority.
   - In one transaction, runtime persists the submitted Registrar entry with
     normalized name/slug payload and creates the linked parent-scoped `Sect`
     identity through nullable `requestRegistrarEntryId` provenance.

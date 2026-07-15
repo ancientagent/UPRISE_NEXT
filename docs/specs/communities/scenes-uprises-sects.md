@@ -65,8 +65,9 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
   - `POST /registrar/sect-motion` is the legacy-compatible route/type for a
     Home Scene listener request (`type = sect_motion`, `status = submitted`).
   - Current runtime requires the Sect name, enforces the requester's established
-    Home Scene locality, and transactionally creates the submitted Registrar
-    entry plus linked parent-scoped Sect identity.
+    active natural/proxy Home Scene assignment, and transactionally creates the
+    submitted Registrar entry plus linked parent-scoped Sect identity. A
+    transient Away Scene tuning context does not grant request authority.
   - Request creation requires no Artist/Band ownership and creates no
     Artist/Band membership, threshold state, progress, or activation.
 - Sect readiness tracking may be built before public visibility is enabled; visibility may remain hidden, admin-only, or read-only until the product surface is activated.
@@ -176,9 +177,9 @@ justify subcommunity broadcast authority.
 ### Current Runtime Boundary
 
 - `POST /registrar/sect-motion` accepts a named request from a listener in the
-  matching established Home Scene and atomically creates the Registrar request
-  plus linked authority-neutral `Sect` identity scoped to the parent
-  `Community`.
+  matching established active natural/proxy Home Scene and atomically creates
+  the Registrar request plus linked authority-neutral `Sect` identity scoped to
+  the parent `Community`; transient Away Scene tuning is ignored for authority.
 - `GET /registrar/sect-motion/entries` and
   `GET /registrar/sect-motion/:entryId` provide submitter-owned readback with
   normalized name/slug, nullable linked Sect identity, and scene context.

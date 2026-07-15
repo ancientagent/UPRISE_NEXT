@@ -23,6 +23,9 @@ In scope:
 
 - any listener whose established Home Scene matches the target city-tier
   community may request a named Sect;
+- matching Home Scene authority resolves the active natural scene first, then
+  the same-state or cross-state proxy through the shared selector rule; a
+  transient `tunedSceneId` Away Scene never grants request authority;
 - the requester does not need to own or manage an Artist/Band source;
 - a new request creates one `RegistrarEntry(type='sect_motion')` and one linked
   `Sect` identity in a transaction;

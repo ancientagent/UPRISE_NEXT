@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { createHash } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { resolveHomeSceneAssignment } from '../users/home-scene-assignment-resolver';
 import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
 import type { SectMotionRegistrationDto } from './dto/registrar.dto';
 
@@ -27,7 +28,7 @@ export function slugifySectName(name: string): string {
   const trimmed = name.trim();
   const asciiSlug = trimmed
     .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\p{M}+/gu, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
@@ -87,17 +88,21 @@ export class SectRegistrarService {
       userId,
       user.homeSceneCommunity,
     );
-    const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
-    const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
-    const homeCommunity = (homeMusicCommunity ?? '').trim().toLowerCase();
-    const sceneCity = (scene.city ?? '').trim().toLowerCase();
-    const sceneState = (scene.state ?? '').trim().toLowerCase();
-    const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
+    const homeCity = (user.homeSceneCity ?? '').trim();
+    const homeState = (user.homeSceneState ?? '').trim();
+    const homeCommunity = (homeMusicCommunity ?? '').trim();
 
     if (!homeCity || !homeState || !homeCommunity) {
       throw new ForbiddenException('Registrar access requires an established Home Scene');
     }
-    if (homeCity !== sceneCity || homeState !== sceneState || homeCommunity !== sceneCommunity) {
+
+    const resolvedHomeScene = await resolveHomeSceneAssignment(
+      this.prisma,
+      homeCity,
+      homeState,
+      homeCommunity,
+    );
+    if (resolvedHomeScene?.scene.id !== scene.id) {
       throw new ForbiddenException('Registrar submissions are limited to your Home Scene');
     }
 

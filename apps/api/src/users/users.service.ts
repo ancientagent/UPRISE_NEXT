@@ -2,6 +2,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { COLLECTION_SHELVES } from '../common/constants/collection-shelves';
+import { resolveHomeSceneAssignment } from './home-scene-assignment-resolver';
 
 type MusicCommunityPreferenceRecord = {
   id: string;
@@ -10,16 +11,6 @@ type MusicCommunityPreferenceRecord = {
   isDefault: boolean;
   createdAt: Date;
   updatedAt: Date;
-};
-
-type HomeSceneSelectorScene = {
-  id: string;
-  name: string;
-  city: string | null;
-  state: string | null;
-  musicCommunity: string | null;
-  tier: string;
-  isActive: boolean;
 };
 
 @Injectable()
@@ -119,51 +110,6 @@ export class UsersService {
     return this.listMusicCommunityPreferences(userId);
   }
 
-  private async resolveHomeSceneSelectorScene(
-    city: string,
-    state: string,
-    musicCommunity: string,
-  ): Promise<{ scene: HomeSceneSelectorScene; resolution: 'natural' | 'proxy' } | null> {
-    const select = {
-      id: true,
-      name: true,
-      city: true,
-      state: true,
-      musicCommunity: true,
-      tier: true,
-      isActive: true,
-    };
-    const orderBy = [{ memberCount: 'desc' as const }, { name: 'asc' as const }, { id: 'asc' as const }];
-
-    const exactScene = await this.prisma.community.findFirst({
-      where: { city, state, musicCommunity, tier: 'city', isActive: true },
-      select,
-    });
-    if (exactScene) {
-      return { scene: exactScene, resolution: 'natural' };
-    }
-
-    const sameStateProxy = await this.prisma.community.findFirst({
-      where: { state, musicCommunity, tier: 'city', isActive: true },
-      select,
-      orderBy,
-    });
-    if (sameStateProxy) {
-      return { scene: sameStateProxy, resolution: 'proxy' };
-    }
-
-    const anyProxy = await this.prisma.community.findFirst({
-      where: { musicCommunity, tier: 'city', isActive: true },
-      select,
-      orderBy,
-    });
-    if (anyProxy) {
-      return { scene: anyProxy, resolution: 'proxy' };
-    }
-
-    return null;
-  }
-
   async getHomeSceneSelector(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -194,7 +140,7 @@ export class UsersService {
 
     const items = [];
     for (const preference of preferences) {
-      const resolved = await this.resolveHomeSceneSelectorScene(city, state, preference.musicCommunity);
+      const resolved = await resolveHomeSceneAssignment(this.prisma, city, state, preference.musicCommunity);
       if (!resolved) continue;
 
       items.push({

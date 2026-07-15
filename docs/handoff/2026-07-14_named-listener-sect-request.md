@@ -32,6 +32,9 @@ identity.
   slug, and narrowly translated expected identity collisions.
 - Kept request authority listener-side and Home Scene-scoped; no Artist/Band
   source ownership is required.
+- Reused the Home Scene selector's active natural/proxy resolution rule for
+  request authority. The resolver derives authority from submitted locality and
+  default music community, not transient `tunedSceneId` Away Scene state.
 - Normalized new and legacy list/detail responses to nullable name/slug and
   nullable linked Sect identity; aligned the web read type and tests.
 - Explicitly excluded Artist/Band membership, legitimacy/readiness evaluation,
@@ -46,18 +49,29 @@ identity.
   `apps/api/prisma/migrations/20260715030000_add_sect_request_provenance/migration.sql`.
 - Unicode display names are preserved. When ASCII slugging yields no content,
   the route uses `sect-` plus the first 16 lowercase hexadecimal characters of
-  SHA-256 over the NFC-normalized trimmed name.
+  SHA-256 over the NFC-normalized trimmed name. Unicode combining marks across
+  the full mark category are removed before ASCII slug shaping.
 - A same-parent slug collision returns `ConflictException`; unrelated database
   failures are not masked.
 
 ## Validation Evidence
 
-- Focused API regression set: 6 suites, 212 tests passed.
+- Focused API regression set after reviewer repairs: 7 suites, 229 tests passed.
 - API typecheck and Prisma client generation passed.
 - Web Registrar client suite: 57 tests passed.
 - Web typecheck passed.
 - Full repository verification, workspace audit, and exact-commit independent
-  product/code reviews are the remaining closeout gates before PR submission.
+  product/code re-reviews are the remaining closeout gates before PR submission.
+
+## Review Repairs
+
+- Product review found that submitted-locality equality alone excluded
+  listeners assigned to an active proxy Home Scene. Runtime now shares the
+  selector's natural/proxy resolver and explicitly ignores transient Away Scene
+  tuning for authority; exact, proxy, Away, and unresolved cases are covered.
+- Code review found that the first slug implementation removed only the common
+  `U+0300-U+036F` combining-mark block. Runtime now removes the complete Unicode
+  mark category and covers an extended combining mark regression.
 
 ## Next Separate Slice
 
