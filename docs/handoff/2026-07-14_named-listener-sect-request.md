@@ -40,6 +40,8 @@ identity.
   `tunedSceneId` Away Scene state. Legacy null anchors use only a safe exact
   active natural tuple or one unambiguous active same-community proxy
   membership; ambiguous proxy history is rejected.
+- Discovery context now reads the same durable civic anchor separately from
+  mutable tuning, retaining exact-tuple fallback only for legacy null anchors.
 - Normalized new and legacy list/detail responses to nullable name/slug and
   nullable linked Sect identity; aligned the web read type and tests.
 - Explicitly excluded Artist/Band membership, legitimacy/readiness evaluation,

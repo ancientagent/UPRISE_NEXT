@@ -1130,6 +1130,7 @@ export class CommunitiesService {
         where: { id: userId },
         select: {
           id: true,
+          homeSceneId: true,
           homeSceneCity: true,
           homeSceneState: true,
           homeSceneCommunity: true,
@@ -1157,10 +1158,10 @@ export class CommunitiesService {
       throw new NotFoundException(`Community with ID ${dto.sceneId} not found`);
     }
 
-    let homeSceneId: string | null = null;
+    let homeSceneId: string | null = user.homeSceneId ?? null;
     const homeSceneCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
 
-    if (user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
+    if (!homeSceneId && user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
       const homeScene = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,
@@ -1217,6 +1218,7 @@ export class CommunitiesService {
       where: { id: userId },
       select: {
         id: true,
+        homeSceneId: true,
         tunedSceneId: true,
         homeSceneCity: true,
         homeSceneState: true,
@@ -1228,10 +1230,10 @@ export class CommunitiesService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    let homeSceneId: string | null = null;
+    let homeSceneId: string | null = user.homeSceneId ?? null;
     const homeSceneCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
 
-    if (user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
+    if (!homeSceneId && user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
       const homeScene = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,

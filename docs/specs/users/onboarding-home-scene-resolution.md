@@ -172,6 +172,9 @@ Owner references:
   proxy-to-natural activation cutover updates it to the new natural scene.
 - `CommunityMember` records membership in specific resolved communities, but it does not encode music-community preference order, profile affiliation intent, default-star semantics, or city-carried preference behavior.
 - `POST /discover/tune` mutates listening context by `sceneId`; `POST /discover/set-home-scene` mutates Home Scene context and now keeps the default preference row in sync.
+- Discovery context reads return the durable `User.homeSceneId` civic anchor
+  separately from the mutable tuned scene, with exact-tuple fallback only for
+  legacy null anchors.
 - `pnpm run verify:music-community-preferences` is a read-only database audit for default-preference consistency and compatibility-field drift.
 - Remaining runtime work: user/profile read-path cleanup and migration cleanup once compatibility fields are retired.
 

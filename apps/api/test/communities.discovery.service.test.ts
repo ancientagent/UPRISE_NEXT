@@ -382,6 +382,33 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.isVisitor).toBe(true);
   });
 
+  it('keeps durable proxy Home Scene authority separate from Away tuning context', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneId: 'c1',
+      tunedSceneId: 'c2',
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c2',
+      name: 'Seattle Punk',
+      city: 'Seattle',
+      state: 'WA',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    await expect(service.getDiscoveryContext('u1')).resolves.toMatchObject({
+      homeSceneId: 'c1',
+      tunedSceneId: 'c2',
+      isVisitor: true,
+    });
+    expect(mockPrisma.community.findFirst).not.toHaveBeenCalled();
+  });
+
   it('returns neutral context when discovery context is requested without auth', async () => {
     const result = await service.getDiscoveryContext(null);
 
