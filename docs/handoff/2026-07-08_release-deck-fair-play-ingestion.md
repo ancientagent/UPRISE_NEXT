@@ -30,7 +30,7 @@ Added the scheduled Release Deck to Fair Play ingestion path. Due `ReleaseDeckSc
 - Existing track rotations and active source `NEW_RELEASES` entries cause a skip instead of duplicate ingestion.
 - Schedule status changes to `ingested` only after `RotationEntry.create` succeeds.
 - No Release Deck scheduling rows are created by this slice.
-- No graduation, main-rotation propagation, or sect backing behavior is added by this slice.
+- No graduation, main-rotation propagation, or Sect request/membership/readiness behavior is added by this slice.
 
 ## Files Changed
 
@@ -57,4 +57,6 @@ Planned before checkpoint commit:
 ## Remaining Work
 
 - Reviewer pass against the local checkpoint commit.
-- Later slices should implement new-release graduation/lifecycle and song-level sect backing. Those are intentionally not part of this ingestion slice.
+- Later slices may implement the corrected listener Sect request,
+  Registrar-held Artist/Band membership, and current member-artist Release Deck
+  readiness model. Per-song Sect backing must not be implemented.

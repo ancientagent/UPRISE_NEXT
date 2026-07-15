@@ -11,7 +11,7 @@
 
 Implemented Slice 2 from `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`: a durable `ReleaseDeckSchedule` model plus a read-only schedule availability preview endpoint.
 
-This slice does not schedule songs, create Fair Play rotation entries, ingest into New Releases, write Sect backing rows, or touch provider/database state outside normal local schema/code changes.
+This slice does not schedule songs, create Fair Play rotation entries, ingest into New Releases, write Sect request/membership state, or touch provider/database state outside normal local schema/code changes.
 
 ## Files Changed
 
@@ -106,5 +106,6 @@ Still deferred:
 - Fair Play scheduled-song ingestion.
 - `RotationEntry.newWindowDays` migration/usage.
 - graduation job.
-- song-level Sect backing and readiness diagnostics.
+- corrected listener Sect request, Artist/Band membership, and current
+  member-artist Release Deck readiness diagnostics.
 - real media upload/storage/transcoding.

@@ -1,5 +1,9 @@
 # 2026-02-24 — Platform-Wide MVP Roadmap + Phase 3 Kickoff
 
+> **Sect authority correction (2026-07-14):** Any Sect approval-state language
+> in this historical roadmap is superseded by listener request, Artist/Band
+> membership, and threshold-derived legitimate/active state.
+
 ## Scope Lock
 1. Publish one canonical execution roadmap for the entire platform MVP (not registrar-only).
 2. Keep roadmap canon/spec-driven with no new product semantics added.
@@ -52,7 +56,7 @@
 - Role registration code issuance/verification workflows.
 - Promoter capability progression beyond submission intake.
 - Project registration endpoint/status lifecycle.
-- Sect motion lifecycle + approval state machine.
+- Listener Sect request plus Artist/Band membership; no routine approval state machine.
 - Capability grant audit/admin role-management surfaces.
 
 ### Phase 4 — Communities Core

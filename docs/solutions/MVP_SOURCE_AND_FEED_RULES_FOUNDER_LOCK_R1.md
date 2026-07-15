@@ -323,24 +323,28 @@ After officialization:
 - its first community entry is announced by the community update layer
 - after that, its own announcements are follower-only like other sources
 
-### 8.4 Shared motion/backing system rule
-Causes and sects use the same formal civic process pattern:
-- motion
-- backing
-- threshold
-- officialization
+### 8.4 Registrar civic-process relationship
+Causes and Sects may share a Registrar-mediated civic-process pattern, but they
+do not share the same support artifact or actor sequence.
 
-The difference is the backing threshold:
-- sects reach official realization through artist backing
-- causes reach official realization through listener backing
+For Sects, the locked sequence is:
+- a Home Scene listener requests the Sect
+- eligible registered Artist/Band sources support it by becoming members
+- five distinct eligible member sources make it legitimate
+- current eligible Home Scene Release Deck music from those member artists
+  activates it at `45` aggregate minutes after the `15`-minute/source cap
+
+Cause mechanics remain separate and deferred; they must not be used to invent
+Sect motion, backing, or approval requirements.
 
 Conceptual framing:
 - a sect is the community formation
-- the cause/motion layer is the formal process carrying it toward realization
-- when the threshold is satisfied, the sect can become an Uprise
+- Registrar holds the request and Artist/Band membership actions
+- settled membership and current-music thresholds determine legitimate and
+  active Sect state without routine administrator approval
 
-Do not treat sects and causes as unrelated systems.
-They are parallel expressions of the same underlying registrar-mediated motion/backing model, with different qualifying backers.
+Do not force the deferred Cause model onto Sects. They may share civic surface
+patterns later, but Sect authority comes from the dedicated owner specs.
 
 ### 8.3 Cause actions after officialization
 Once official and public:
@@ -367,7 +371,8 @@ Underlying carry-forward remains:
 
 ## 9) Sect Realization And Source Behavior Lock
 ### 9.1 Realization result
-When a sect completes its motion/backing/threshold process:
+When a Sect completes its listener-request / Artist/Band-membership /
+current-deck threshold process:
 - it becomes its own source
 - it becomes a sub-community / community source inside the parent community
 
@@ -410,17 +415,27 @@ Once the sect has formed, people should be able to reach that Uprise from the se
 Realized sects do not remain only tag/statistical constructs.
 Once realized, they participate in the shared source system as sub-community/community sources.
 
-### 9.6 Sect motion origin and tag replacement
-Sects should be treated as artist-based civic motions.
+### 9.6 Sect request origin, Artist/Band membership, and tag replacement
+Sects begin as listener requests in the Home Scene Registrar.
 
 Locked interpretation:
-- sect initiation belongs to the artist-facing interface rather than a listener taste-tag manager
+- a Home Scene listener requests the Sect through Registrar
+- an authorized source operator supports the request by registering their
+  Artist/Band source as a Sect member
+- five distinct eligible registered Artist/Band member sources make the
+  requested Sect legitimate
+- the legitimate Sect becomes active when those member artists' current
+  eligible Home Scene Release Deck music totals `45` minutes after the existing
+  `15`-minute per-source cap
+- songs do not support, join, back, or affiliate with Sects individually, and
+  prior songs stop counting when they leave the current eligible deck
 - the older tag-based sect substrate should not drive new MVP sect work
 - follow relationships govern ongoing awareness/update behavior once a sect is realized as a source; they do not replace Home Scene affiliation or system-order identity
 
 Implementation boundary:
 - `homeSceneTag` remains part of the system-order model where needed for Home Scene affiliation, voting-rights logic, and visitor/local distinction
-- older tag-era sect assignment flows should not be treated as sufficient by themselves for sect realization; realization still depends on artist-backing motion/backing rules
+- older tag-era sect assignment flows should not be treated as sufficient by
+  themselves for Artist/Band Sect membership, legitimacy, or activation
 - do not collapse Home Scene affiliation into follow relationships
 
 ## 10) Event Ontology Lock
@@ -468,7 +483,8 @@ The following are now flagged for deliberate development/reconciliation work:
 - reconcile current registrar `project` APIs/contracts to the locked cause lifecycle and backing boundary when causes are reactivated beyond later-version scope
 
 5. Sect realization/runtime alignment
-- reconcile sect motion/runtime surfaces so realized sects become source-like sub-community profiles with followable updates and Uprise signal access
+- reconcile the legacy `sect-motion` route/runtime naming with listener request
+  and Artist/Band membership semantics while keeping compatible endpoints
 
 6. Community information-area follow-up
 - reconcile the current `Statistics` framing with the broader community-information role the founder described

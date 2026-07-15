@@ -173,11 +173,17 @@ Still needs owner-level implementation detail:
 
 ## Sect Readiness / Sect Uprise Parallels
 
-Sect strategy should parallel community activation with scoped authority. Current Registrar/community language anchors Sect readiness to a `45`-minute committed playable-music threshold plus explicit support, and requires approved playable minutes from Release Deck songs explicitly encoded/backed for that sect by eligible registered sources.
+Sect strategy should parallel community activation with scoped authority. A
+Home Scene listener requests the Sect, at least `5` eligible registered
+Artist/Band sources support it by registering as Sect members, and the current
+eligible Home Scene Release Deck music of those supporting member artists must
+total at least `45` minutes after the `15`-minute per-source cap.
 
-- use explicit song-level Release Deck encoding/backing as readiness input;
+- use Registrar-held Artist/Band Sect membership plus current eligible member
+  artist Release Deck duration as readiness input;
 - use approved playable minutes accounting (not passive tags);
-- keep sect affiliation Registrar-held;
+- keep Artist/Band Sect membership Registrar-held;
+- do not add track-to-Sect backing or count historical songs;
 - keep sect governance/broadcast authority inside parent Home Scene until Sect Uprise threshold and authority contracts are enabled.
 
 This allows shared activation-metrics patterns without prematurely granting sect broadcast authority.
@@ -212,8 +218,11 @@ Sequence translates blockers into implementation order (without runtime edits in
    - Active-slot, per-song, active-duration, and reject-only at-cap enforcement is implemented against the new Release Deck media eligibility owner spec.
    - Next: define history-safe replacement/edit tooling only if a future source-management slice needs it without widening MVP media scope.
 7. **Slice 7 – Sect Readiness Parity Foundations**
-   - Completed as owner-contract foundation: community spec owns sect readiness / Sect Uprise broadcast boundary; Registrar spec owns affiliation and motion authority.
-   - Next: define implementation artifacts and visibility calibration without granting premature broadcast authority.
+   - Completed as owner-contract foundation: community spec owns Sect readiness
+     and active-state boundary; Registrar spec owns listener requests and
+     Artist/Band membership authority.
+   - Next: implement request/membership persistence and current member-artist
+     Release Deck readiness without song-level Sect state or an approval gate.
 8. **Slice 8 – Music-Community Preference Runtime Parity**
    - Runtime parity audit completed against the onboarding/Home Scene owner contract.
    - Preference persistence, migration backfill from `User.homeSceneCommunity`, current-user API endpoints, explicit default-star mutation, typed web wrappers, expanded listener-profile preference management with unresolved/profile-only labels, the Home Scene selector read model, Plot/Home selector consumption, and Fair Play voting across resolvable registered preferences are implemented as the runtime foundation.

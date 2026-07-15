@@ -40,7 +40,12 @@ Use the following terms exactly as defined.
 **Locally Affiliated:** a Listener who has selected a Home Scene. GPS verification affects voting only.  
 **Visitor:** a Listener present in a Scene that is not their Home Scene. The term “Observer” is deprecated and must not be used.
 
-**Sect:** an artist-based civic motion inside a Home Scene that can mature into a sub-community Uprise. A Sect becomes an Uprise only after meeting the backing threshold and having sufficient committed artist catalog to sustain rotation.
+**Sect:** a listener-requested subcommunity inside a Home Scene. Registered
+Artist/Band sources support the request by becoming Sect members; five distinct
+eligible member sources make it legitimate, and it becomes active when those
+members' current eligible Home Scene Release Deck music collectively reaches
+`45` minutes after the existing `15`-minute per-source cap. Songs do not support
+or join Sects individually.
 
 **The Plot:** the Home-side sectional dashboard surface inside `Home`. It is a civic interface, not a personalized feed.
 **Activity Feed (S.E.E.D Feed):** the default Plot surface. S.E.E.D stands for Support, Explore, Engage, Distribute. It reflects explicit community actions only and is identical for all listeners in the Home Scene.

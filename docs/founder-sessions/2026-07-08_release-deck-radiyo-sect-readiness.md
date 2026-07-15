@@ -10,6 +10,26 @@ Owner spec candidates:
 - `docs/specs/communities/scenes-uprises-sects.md`
 - `docs/specs/system/registrar.md`
 
+## Superseding clarification — 2026-07-14
+
+Preserve the raw founder wording below, but do not use this note's former
+song-level interpretation as current product truth. The founder clarified the
+actual lifecycle in
+`docs/founder-sessions/2026-07-14_sect-readiness-threshold-and-authority.md`:
+
+- a listener requests the Sect;
+- artists support it by registering as Sect members;
+- each supporting member artist's current eligible Home Scene Release Deck
+  duration counts automatically toward the Sect;
+- songs do not support or join Sects individually; and
+- previous songs are irrelevant after leaving the current eligible Release
+  Deck.
+
+All `Clarifications`, `Feature Sets`, `Working Interpretation`, promotion
+targets, and `Do Not Drift` language below that requires per-song Sect
+encoding/backing is superseded. The raw quotes remain historical evidence of
+the conversation that was later misinterpreted.
+
 ## Raw Founder Notes
 
 > i dont think that can work because people are dropping singles everyday

@@ -282,7 +282,8 @@ Do not implement these as launch-critical work unless a new owner-spec update ex
 - Discover map view, Seek mode, front-door/back-door transport, and Travel UI.
 - Cross-Uprise Blast cards and outside-Uprise Travel buttons in launch Feed.
 - Saved/custom Uprise playback from collection-owned context.
-- Sect visibility, official sect channels, backing limits, and Sect Uprise UI.
+- Sect visibility, update channels, and active Sect UI; membership and current
+  Release Deck thresholds are settled and must not be reopened as backing limits.
 - Business runtime, billing, coupons/offers, paid boosts, premium analytics.
 - Real media upload/storage/transcode/waveform pipeline.
 - Dedicated Uprise persistence model or Prime model.

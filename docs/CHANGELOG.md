@@ -7,15 +7,25 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Corrected the Sect decision gate to preserve the original simple lifecycle:
+  a Home Scene listener requests a Sect; at least `5` distinct eligible
+  registered Artist/Band sources support it by registering as Sect members;
+  and it becomes active once those member artists' current eligible Home Scene
+  Release Deck music collectively reaches `45` minutes after the existing
+  `15`-minute per-source cap. Songs do not support Sects individually, previous
+  songs are irrelevant after leaving the current eligible deck, and no
+  track-to-Sect backing/history or routine platform-admin approval stage exists.
+  The correction also adds a reviewer guardrail requiring reconstruction of the
+  plain-language founder lifecycle before proposing implementation options.
+
 ### Added
 
-- Added the Slice 7 Sect backing/readiness founder-decision gate. It preserves
-  the settled explicit song-level, eligible Release Deck evidence and 45-minute
-  target while isolating three unresolved locks: Registrar authority,
-  backing lifecycle/history, and a source-diversity minimum under the existing
-  per-source cap. Recommendations
-  are planning guidance only; no owner rule, schema, runtime, UI, or provider
-  action is activated. See
+- Added the historical Slice 7 Sect backing/readiness founder-decision gate.
+  Its original per-song backing and open-decision framing is now superseded and
+  replaced in-place by the corrected listener-request / Artist/Band-membership /
+  current-deck lifecycle. See
   `docs/handoff/2026-07-14_sect-backing-readiness-decision-gate.md`.
 - Added the authority-neutral Official Sect identity persistence foundation:
   `Sect` is scoped to a parent `Community` with parent-scoped slug uniqueness,
@@ -101,8 +111,14 @@
 - Added scheduled Release Deck to Fair Play ingestion so due schedules can dry-run or create fixed 10-day `NEW_RELEASES` rotation entries without reading deprecated density-band config; see `docs/handoff/2026-07-08_release-deck-fair-play-ingestion.md`.
 - Added the Release Deck schedule write path so source operators can create `ReleaseDeckSchedule` rows through `soonest` or valid `chosen` date assignment without creating Fair Play rotation entries; see `docs/handoff/2026-07-08_release-deck-schedule-write-path.md`.
 - Added Release Deck schedule availability preview: `ReleaseDeckSchedule` schema/migration plus read-only `/release-deck/schedule/availability` diagnostics for requested date capacity, alternatives, and playable-second scheduling pressure; see `docs/handoff/2026-07-08_release-deck-schedule-availability-preview.md`.
-- Added the Release Deck / RADIYO / Sect implementation architecture plan, mapping scheduling, Fair Play ingestion, graduation, song-level Sect backing, readiness diagnostics, and the recommended first read-only measurement slice; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-implementation-architecture.md`.
-- Promoted Release Deck / RADIYO / Sect readiness owner contracts: Release Deck now owns Uprise-wide deck measurement and release-date scheduling before RADIYO entry, Fair Play uses a fixed 10-day New Releases run, and sect readiness counts song-level Release Deck backing rather than source-wide affiliation; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-readiness-spec-promotion.md`.
+- Added the Release Deck / RADIYO / Sect implementation architecture plan. Its
+  scheduling/Fair Play history remains useful, while its original per-song Sect
+  model is explicitly superseded by the July 14 membership/current-deck
+  correction; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-implementation-architecture.md`.
+- Promoted the historical Release Deck / RADIYO / Sect readiness contracts;
+  the per-song Sect interpretation from that promotion is now superseded by
+  Registrar-held Artist/Band membership plus current member-artist Home Scene
+  Release Deck aggregation; see `docs/handoff/2026-07-08_release-deck-radiyo-sect-readiness-spec-promotion.md`.
 - Refreshed Active PM and branch workspace registry after PR #227 merged, recording the clean main/worktree state plus remote-only branch cleanup candidates; see `docs/handoff/2026-07-07_branch-workspace-hygiene-refresh.md`.
 - Captured Home Scene photo-rotation and community-list founder clarification,
   promoted the atmosphere-photo presentation boundary into Plot/UI docs, and
@@ -320,8 +336,12 @@
 - Clarified Home Scene membership mechanics: onboarding collects one primary scene-of-choice music community and users later add music-community preferences from the profile, GPS verification gates voting/source-registration authority without auto-enrolling every city-local music community, onboarding sets the initial active/default Home Scene, the Home Scene selector shows registered music-community preferences resolved against the current city, users anchor their login Home Scene by starring a default music-community preference in their profile, and the selected Home Scene is the scene they are in, one successful city GPS verification grants voting across registered music-community preferences resolved in that city, verifying a new city replaces prior city voting authority, moving verified city automatically preserves the same registered music-community preferences while re-resolving scene content to the new city, with primary music communities expected to exist across active major-node cities, unresolved preferences staying profile-visible but hidden from the Home Scene selector until active/resolvable, and saved Away Scenes remain profile/collection interests.
 - Clarified major-node/proxy Home Scene activation behavior: matched users transfer into the newly active natural Home Scene when the source/catalog threshold is met, GPS verification controls voting rights, existing artist/source songs finish their current rotation lifecycle, and post-activation uploads attach to the new Home Scene.
 - Clarified that a new city-tier Home Scene activates through Registrar/source activity once it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts, with no single source occupying more than `15` minutes of any one Uprise rotation; listener demand alone does not activate a music community.
-- Clarified sect readiness strategy: build readiness tracking from explicit registered-source backing only, keep passive genre/style tags non-authoritative, and leave sect visibility/unlock/backing limits beta/community-calibrated until real Home Scene density can be tested.
-- Clarified the Official Sect model: sect affiliation should be Registrar-held rather than loose profile tags, official sects may appear in Registrar for discovery/affiliation and updates, and official status does not grant independent broadcast authority until Sect Uprise requirements are met.
+- Historical clarification (superseded 2026-07-14): the former registered-source
+  backing and beta-calibrated threshold framing was replaced by the settled
+  five-member / current-deck lifecycle recorded under Unreleased.
+- Historical Official Sect clarification (superseded 2026-07-14): replace
+  affiliation language with Registrar-held Artist/Band membership; no routine
+  approval, per-song state, or beta-calibrated threshold remains.
 - Clarified the governing Sect architecture principle: Sect Uprises mirror Home Scene behavior where possible while staying inside the parent Home Scene/music community, giving niche/sub/microgenre groups purer broadcasts without isolating every niche as a separate city/community.
 - Clarified proxy-scene transfer and song lifecycle rules: proxy votes/history stay with the proxy scene/tier, existing active songs finish their proxy lifecycle, songs cannot be active in multiple Uprise rotations, same-state proxy assignment is required when available, and cross-state advancement remains a provisional edge case.
 - Reinforced invariant Home Scene/community architecture in `COMM-SCENES`: city/music-community tuples change scene data and activity, not screens, menus, tabs, player behavior, actions, or routing.

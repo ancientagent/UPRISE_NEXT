@@ -11,7 +11,7 @@
 
 Implemented the source-operator schedule write path for Release Deck songs.
 
-This extends the Slice 2 availability preview with a guarded write endpoint that creates `ReleaseDeckSchedule` rows only. It does not create Fair Play `RotationEntry` rows, ingest into New Releases, schedule jobs, or write Sect backing rows.
+This extends the Slice 2 availability preview with a guarded write endpoint that creates `ReleaseDeckSchedule` rows only. It does not create Fair Play `RotationEntry` rows, ingest into New Releases, schedule jobs, or write Sect request/membership state.
 
 ## Runtime Contract Added
 

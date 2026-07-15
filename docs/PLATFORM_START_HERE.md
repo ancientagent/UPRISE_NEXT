@@ -38,8 +38,8 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 21. The starred default music-community preference determines the Home Scene loaded on login; the Home Scene selector is only a shortcut to resolvable primary communities in the current city.
 22. Saved Away Scenes live in the user profile/collection, not in the Home Scene selector.
 23. Missing music-community requests are intake/review only; they do not create live communities.
-24. Sect readiness tracking may be built before it is visible, but user-facing sect creation, sect backing limits, and unlock criteria remain beta/community-calibrated. Readiness minutes come from eligible Release Deck songs explicitly encoded/backed for that sect, not from loose tags or a source's whole catalog.
-25. Sect affiliation belongs in Registrar rather than as loose self-assigned profile tags; Official Sects may become visible subcommunities with update channels, but they do not gain independent broadcast authority until they Uprise.
+24. A Home Scene listener may request a Sect. Support from at least `5` distinct eligible registered Artist/Band sources that register as Sect members makes the requested Sect legitimate, and it becomes active once the current eligible music in those supporting artists' Home Scene Release Decks totals at least `45` minutes. Apply the existing `15`-minute per-source contribution cap; do not require `45` minutes from each artist. Songs do not support or join Sects individually, and previous songs are irrelevant after leaving the current eligible Release Deck. Routine platform-admin approval is not a stage in this lifecycle. Public progress visibility remains deferred.
+25. Artist/Band Sect membership belongs in Registrar rather than loose self-assigned profile tags; Official Sects may become visible subcommunities with update channels, but they do not gain independent broadcast authority until they become active through the settled thresholds.
 26. Sect Uprises should mirror Home Scene behavior wherever possible while staying scoped inside the parent Home Scene/music community. They exist to give niche/sub/microgenre groups a purer broadcast without fragmenting the parent music community into isolated city/community silos.
 27. Business runtime, billing, paid promotion management, premium analytics, media upload/transcode, Prime model, and a dedicated Uprise model are deferred unless explicitly activated.
 
@@ -56,8 +56,10 @@ UPRISE is a music-community platform organized around local Home Scenes. A Home 
 - Do not auto-enroll a GPS-verified user into every active music community in their city; Home Scene membership is an explicit user-profile affiliation.
 - Do not put saved Away Scenes in the Home Scene selector; the selector is for resolvable primary music-community preferences in the current city.
 - Do not treat every music-community preference as the default. Onboarding sets the initial default, and later default changes must be explicit.
-- Do not auto-create Sects from passive genre/style tags; explicit registered-source backing is required, and visibility/unlock rules remain beta-calibrated.
-- Do not use loose profile tags as the official sect affiliation mechanism; route official sect affiliation through Registrar.
+- Do not auto-create Sects from passive genre/style tags. A Home Scene listener
+  requests the Sect, and explicit Registrar-held Artist/Band membership supplies
+  support; visibility timing remains separate presentation work.
+- Do not use loose profile tags as Artist/Band Sect membership; membership is an explicit Registrar action by the registered artist/source.
 - Do not implement a dedicated `Uprise` model only because canon names Uprise.
 
 ## Surface Map

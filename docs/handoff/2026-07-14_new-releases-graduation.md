@@ -181,7 +181,7 @@ schema_or_migration_touched: no
 schema_or_migration_verified: not_required
 linear_ready_to_close: not_applicable
 blockers: none
-next_signal: review Slice 6 official Sect and song-level backing against current owner contracts before any schema implementation
+next_signal: historical signal superseded; review the corrected listener request, Registrar-held Artist/Band Sect membership, and current member-artist Release Deck readiness plan before any schema implementation
 ```
 
 ## Implementation Checkpoint

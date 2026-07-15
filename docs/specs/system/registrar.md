@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-08`
+**Last Updated:** `2026-07-14`
 
 ## Overview & Purpose
 Defines the Registrar as the listener-side civic registration surface inside The Plot where role/capability motions and prerequisite filings are formalized.
@@ -12,7 +12,8 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Listener starts Artist/Band entity registration.
 - Listener starts Promoter registration for event workflows.
 - Community participants formalize Registrar-stage civic prerequisites when active.
-- Sect participants file motion when uprising thresholds are met.
+- A Home Scene listener requests a Sect; authorized Artist/Band source
+  operators support it by registering their source as a Sect member.
 
 ## Functional Requirements
 - Registrar is a Home Scene civic surface (Activity Feed context in canon narrative).
@@ -29,18 +30,19 @@ Defines the Registrar as the listener-side civic registration surface inside The
 - Artist/Band source registration requires the registering user to be GPS-verified before materialized source identity can count toward Home Scene activation.
 - A new Home Scene activates when it has at least `45` minutes of approved playable music from at least `5` distinct registered source accounts.
 - No single source may occupy more than `15` minutes of any one Uprise rotation at a time.
-- Sect uprising motions are registrar-mediated when threshold criteria are met
-  (45-minute committed artist playtime threshold + explicit support from
-  eligible Release Deck songs encoded for that sect).
-- Sect readiness tracking may be built before it is user-visible; visibility may remain hidden, admin-only, or read-only until beta/community calibration locks maturity and backing limits.
-- Sect readiness counts approved playable minutes only from Release Deck songs
-  that explicitly encode/back/affiliate that song with the sect through
-  Registrar-owned authority; passive genre/style metadata does not count by
-  itself.
-- Sect affiliation belongs in Registrar rather than as a loose self-assigned profile tag.
-- An Official Sect is a pre-Uprise Registrar-recognized subcommunity: it can appear in Registrar for discovery/affiliation and updates, but it does not grant independent broadcast authority.
+- A Home Scene listener may request a Sect through Registrar. Support from at
+  least `5` distinct eligible registered Artist/Band sources makes the
+  requested Sect legitimate. It becomes active once the current eligible music
+  in those supporting artists' Home Scene Release Decks totals at least `45`
+  counted minutes. The threshold is not `45` minutes from each artist.
+- Sect readiness tracking may be built before it is user-visible; public progress presentation remains deferred.
+- Sect readiness counts the current approved playable minutes in the Home Scene
+  Release Decks of Artist/Band sources whose Registrar-held Sect membership
+  supports the request; songs have no separate Sect relationship.
+- Artist/Band Sect membership belongs in Registrar rather than as a loose self-assigned profile tag.
+- A legitimate Sect is a pre-Uprise Registrar-recorded subcommunity: it can appear in Registrar for discovery/membership and updates, but it does not grant independent broadcast authority until the music threshold is met.
 - Registrar should eventually expose Official Sect context: active official sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
-- Sect Uprises should mirror Home Scene behavior wherever possible while remaining scoped inside the parent Home Scene/music community; sect membership/affiliation grants sect voting authority, while listening access alone does not.
+- Sect Uprises should mirror Home Scene behavior wherever possible while remaining scoped inside the parent Home Scene/music community; Sect membership grants sect voting authority, while listening access alone does not.
 
 ## Source Origin Contract
 
@@ -79,26 +81,41 @@ Registrar/source activation is the only authority path for creating or activatin
 - The operational trigger mechanism (automatic evaluator vs explicit Registrar/admin approval gate) is an implementation contract to lock before runtime automation. The threshold itself is source/music-driven and does not depend on listener demand.
 - Once activated, future listener resolution and future source uploads should route to the natural active Home Scene; existing proxy-scene songs and votes remain governed by the cutover/Fair Play lifecycle rules in the community and broadcast specs.
 
-## Sect Affiliation And Motion Authority
+## Sect Request And Artist/Band Membership Authority
 
-This section owns the Registrar-side authority for sect affiliation, explicit
-source/song backing authority, and sect-motion filing. The community spec owns
+This section owns the Registrar-side authority for listener Sect requests,
+Artist/Band Sect membership, and Sect state transitions. The community spec owns
 the readiness and Sect Uprise broadcast boundary at
 `docs/specs/communities/scenes-uprises-sects.md#sect-readiness-and-sect-uprise-boundary`.
 
-- Official Sect affiliation belongs in Registrar. Loose profile tags, passive genre/style metadata, and listener taste tags must not become official sect affiliation by themselves.
-- Explicit song-level sect backing/encoding on eligible Release Deck songs is
-  required before approved playable minutes count toward sect readiness.
-- A registered source may affiliate with a sect through Registrar, but that
-  source-level affiliation does not automatically make every song in the
-  source's catalog count toward the sect.
-- Registrar owns who is allowed to encode or back a song for a sect; Release
-  Deck owns where that song-level encoding is recorded and measured.
-- Sect-motion filing is Home Scene-scoped and does not change source origin, listener Home Scene, or parent community membership by itself.
-- Official Sect status is pre-Uprise: it can make a sect discoverable/inspectable for affiliation and updates once enabled, but it does not grant independent broadcast authority.
-- Sect Uprise realization requires the community-side readiness boundary plus Registrar approval/authority. The current runtime must not treat a submitted sect motion as an approved Sect Uprise.
+- Artist/Band Sect membership belongs in Registrar. Loose profile tags, passive genre/style metadata, and listener taste tags must not become membership by themselves.
+- The actor sequence is intentionally simple: a Home Scene listener requests
+  the Sect; eligible registered artists support the request by registering as
+  Sect members; and their current eligible Home Scene Release Deck music is
+  counted. The requesting listener does not need to manage an Artist/Band
+  source or supply music.
+- Routine platform-admin approval is not a stage in Sect request, legitimacy,
+  or threshold-based activation.
+- A registered Artist/Band source supports the request by registering as a Sect
+  member through Registrar. That membership makes the artist's current eligible
+  Home Scene Release Deck music count toward the Sect.
+- Songs do not support, join, or back a Sect individually. Registrar owns
+  Artist/Band membership; Release Deck owns the current eligible music and
+  duration read by readiness measurement.
+- The legacy-compatible `sect_motion` filing is the Home Scene-scoped listener
+  request primitive. A request does not change source origin, listener Home
+  Scene, or parent community membership by itself.
+- Readiness requires `2,700` counted seconds collectively across at least `5`
+  distinct eligible registered sources after applying the existing
+  `900`-second per-source contribution cap. It never requires `2,700` seconds
+  from each source.
+- Legitimate Sect status is pre-Uprise: it can make a Sect discoverable/inspectable for membership and updates once enabled, but it does not grant independent broadcast authority until the music threshold is met.
+- A submitted listener request alone is not an active Sect. Activation follows
+  satisfaction of the settled artist-support and Release Deck music thresholds;
+  no separate discretionary administrator approval gate follows them.
 - Sect voting authority belongs to sect members once a Sect Uprise exists; listening access alone does not grant sect voting authority.
-- Beta/community calibration still owns public visibility timing, backing limits, source/song capacity rules, and paid/free backing capacity.
+- Public visibility timing and the request/membership/progress surfaces remain
+  deferred until implemented from this contract.
 
 ### Implemented Now
 - Registrar-link-ready Artist/Band identity foundation exists (slice 1):
@@ -303,7 +320,7 @@ the readiness and Sect Uprise broadcast boundary at
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
 - Registrar sect-motion submission skeleton (slice 99A):
   - `POST /registrar/sect-motion` implemented as additive skeleton submission primitive.
-  - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`) until motion artifact schema is canon-locked.
+  - Persists registrar entry baseline lifecycle (`type = sect_motion`, `status = submitted`) with minimal payload (`{}`). The product rule is now settled; named request and membership persistence remain unimplemented runtime work.
   - Reuses registrar scene/user guardrails (city-tier scene + requester Home Scene tuple match).
 - Registrar project web contract scaffolding (slice 98A web lane):
   - API surfaces are implemented and web typed contract/client support is available for:
@@ -341,11 +358,9 @@ the readiness and Sect Uprise broadcast boundary at
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
 - Automated city-tier Home Scene trigger execution and cutover orchestration.
-- Sect motion lifecycle and approval state machine.
+- Sect request, Artist/Band membership, legitimacy, and activation state machine.
 - Sect readiness tracking visibility and unlock controls.
-- Official Sect affiliation, discovery, and updates-channel information architecture.
-- Source/song sect-backing limits, song-level Release Deck encoding, and
-  paid/free backing capacity after beta/community calibration.
+- Artist/Band Sect membership, discovery, and updates-channel information architecture.
 
 ### Policy Lock (2026-02-24, P3-REV-001)
 - `RegistrarCode` issuance authority is system-only (trusted API-tier registrar paths); no user self-issuance.
@@ -361,7 +376,7 @@ the readiness and Sect Uprise broadcast boundary at
 - Registrar cannot bypass Fair Play, voting, or propagation constraints.
 - Registrar actions do not grant automatic visibility or authority.
 - Registrar must remain Scene-scoped to preserve structural locality.
-- Registrar-held sect affiliation must preserve the parent Home Scene context and must not turn sects into isolated standalone city/music-community replacements.
+- Registrar-held Artist/Band Sect membership must preserve the parent Home Scene context and must not turn Sects into isolated standalone city/music-community replacements.
 - Registrar promoter capability should be interpreted as gating a source-facing Print Shop/event lane, not a listener-facing event-creation surface.
 - Registrar source-origin authority must not be overridden by proxy-scene routing or source-dashboard context.
 
@@ -369,11 +384,10 @@ the readiness and Sect Uprise broadcast boundary at
 ### Target Models (Planned)
 - `RegistrarCode` (for capability completion handoff flows)
 - Project linkage to `Signal` rows for follow/blast/support
-- Sect motion artifact and committed artist-catalog references
-- Explicit song-level Release Deck sect backing/readiness references tied to
-  Registrar-authorized source/sect affiliation; passive tags and whole-source
-  affiliation must remain non-authoritative for realization
-- Registrar-held Official Sect affiliation records and update-channel references
+- Listener Sect request artifact and Registrar-held Artist/Band Sect membership
+- Readiness references that join current eligible Home Scene Release Deck
+  duration to supporting member artists; no track-to-Sect association
+- Registrar-held Artist/Band Sect membership records and update-channel references
 - Activation diagnostics/read models for source-origin readiness may be added later, but no migration is required by this R1 contract.
 
 ### Prisma Models (Implemented)
@@ -412,7 +426,7 @@ the readiness and Sect Uprise broadcast boundary at
 | GET | `/registrar/sect-motion/entries` | required | List submitter-owned sect-motion registrar entries + scene context |
 | GET | `/registrar/sect-motion/:entryId` | required | Read submitter-owned sect-motion registrar entry detail + scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
-| POST | `/registrar/sect-motion` | required | File sect uprising motion (post-threshold) |
+| POST | `/registrar/sect-motion` | required | Legacy-compatible route for a Home Scene listener to request a Sect; current payload is only a locality-guarded skeleton |
 
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.
@@ -427,9 +441,9 @@ the readiness and Sect Uprise broadcast boundary at
 - Registrar submissions are Scene-scoped and auditable.
 - Artist/Band source origin is preserved separately from temporary proxy assignment.
 - Activation readiness counts only approved playable music from matching source-origin sources.
-- Sect readiness counts only approved playable Release Deck songs that carry
-  explicit song-level sect encoding from eligible registered sources; source
-  affiliation alone does not count the source's whole catalog.
+- Sect readiness counts current approved playable Home Scene Release Deck music
+  from Artist/Band sources whose Registrar-held membership supports the Sect;
+  no song-level Sect encoding is required.
 - Listener onboarding or missing-community request counts do not satisfy city-tier activation readiness.
 - Duplicate submissions are idempotent or explicitly versioned by state.
 - Registrar outcomes never alter Fair Play ordering directly.
@@ -442,12 +456,12 @@ the readiness and Sect Uprise broadcast boundary at
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
 - Lock any future scheduler/approval workflow for activation metrics and trigger authority before replacing the current manual admin trigger.
-- Define who can submit and approve Sect uprising motions.
-- Beta-calibrate when sect progress becomes public and which paid/free backing limits are allowed.
-- Define the Registrar menu architecture for Official Sect discovery, affiliation, updates, and cross-scene uprisen-sect context.
-- Define the exact Registrar-authorized flow for encoding Release Deck songs as
-  readiness-bearing for a sect.
-- Lock registrar moderation/appeal behavior for rejected motions.
+- Implement the settled listener Sect request and authorized Artist/Band Sect
+  membership actions without adding routine administrator approval.
+- Define when Sect request, membership, legitimacy, readiness, and active-state progress becomes public.
+- Define the Registrar menu architecture for legitimate/active Sect discovery, Artist/Band membership, updates, and cross-scene active-Sect context.
+- Implement readiness by joining Registrar-held member artists to their current
+  eligible Home Scene Release Decks; do not encode Sect state on songs.
 
 ## References
 - `docs/canon/Legacy Narrative plus Context .md`

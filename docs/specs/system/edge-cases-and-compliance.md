@@ -10,7 +10,8 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 
 ## User Roles & Use Cases
 - Listener changes Home Scene after relocation.
-- Sect broadcast pauses when thresholds drop.
+- Sect readiness may drop when current eligible member-artist music changes;
+  broadcast handling remains deferred.
 - Admin resolves naming conflicts.
 
 ## Functional Requirements
@@ -19,9 +20,9 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
   - 30‑day cooldown between changes.
   - Voting transfers only after GPS verification.
 - Sect threshold drop:
-  - Broadcast pauses.
-  - Members are routed back to Parent Scene.
-  - Content is preserved for reactivation.
+  - readiness recalculates from current eligible member-artist Release Deck music;
+  - no historical song evidence is retained to preserve a threshold;
+  - broadcast pause, routing, or reactivation behavior remains deferred.
 - Name conflicts resolved by system key and admin review.
 - Copyright compliance:
   - Prohibit unlicensed covers, remixes, samples, and AI impersonation.
@@ -54,7 +55,9 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 
 ### Planned Models
 - `HomeSceneChangeLog`
-- `SectStatus`
+- Sect request and Artist/Band membership persistence; legitimate/active state
+  should be derived from settled current evidence unless a later owner contract
+  explicitly requires additional stored lifecycle state
 - `CopyrightClaim`
 - optional `DMCARequest` / `CounterClaim`
 
@@ -78,7 +81,8 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 
 ## Acceptance Tests / Test Plan
 - Home Scene change blocked within cooldown.
-- Sect broadcast pauses on threshold failure.
+- Sect readiness reflects the current eligible member-artist Release Deck;
+  broadcast pause/reactivation behavior is not activated by this R1 spec.
 - GPS verify reason codes map to clear user-facing compliance/help text.
 
 ## References
@@ -86,4 +90,6 @@ Defines edge cases for Home Scene changes, Sect thresholds, naming conflicts, an
 - `docs/canon/Master Narrative Canon.md`
 
 ## Future Work & Open Questions
-- Confirm Sect threshold values for pause/reactivation. See `docs/specs/DECISIONS_REQUIRED.md`.
+- If Sect broadcast runtime is implemented, define the operational response to
+  a current-deck drop after activation without reopening the settled five-member,
+  `45`-minute, and `15`-minute/source thresholds.

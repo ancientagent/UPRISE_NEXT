@@ -57,7 +57,7 @@ Compact masthead:
 - `Home Scene: Austin, TX - Indie Rock` directly beneath the name;
 - compact source/profile snapshot beside the source image/title, including
   followers, bio/status summary, official links/contact/donation readiness, and
-  sect affiliation as pending/unset if needed;
+  Artist/Band Sect membership as pending/unset if needed;
 - member avatar strip on the far right with four belly-up avatar profiles and
   names;
 - optional public profile preview/open path;

@@ -78,16 +78,26 @@ The Uprise-wide Release Deck system is responsible for read-side measurement of:
 - distinct source count for readiness measurements;
 - songs included in or excluded from readiness calculations, with exclusion
   reasons such as draft, failed, over cap, not approved/playable, missing
-  source ownership, wrong Home Scene/source origin, or missing sect encoding;
-- total approved playable minutes explicitly encoded for a sect;
-- remaining approved playable minutes needed for a sect to reach the `45`
-  minute readiness target;
+  source ownership, wrong Home Scene, or source not registered as a supporting
+  member of the Sect;
+- total approved playable minutes in the current Home Scene Release Decks of
+  supporting Sect-member Artist/Band sources;
+- remaining approved playable minutes and distinct eligible sources needed for
+  a sect to reach one aggregate readiness threshold: `45` total counted
+  minutes across at least `5` distinct eligible registered sources, after the
+  `15`-minute per-source contribution cap is applied;
 - release-date scheduling capacity and pressure for songs waiting to enter
   RADIYO/New Releases.
 
 This read-side system must remain deterministic and auditable. It must not
 become personalization, pay-for-placement, manual song ordering, or a way to
 bypass Release Deck caps.
+
+The Sect threshold is collective. It must not be implemented as `45` minutes
+from each of the five artists. Songs do not carry separate Sect backing. The
+read model joins Registrar-held Artist/Band Sect membership to each member
+artist's current eligible Home Scene Release Deck and recalculates from current
+deck state.
 
 ## Release-Date Scheduling Contract
 
@@ -198,8 +208,9 @@ Current schedule persistence uses `ReleaseDeckSchedule`:
 
 The model was introduced by
 `apps/api/prisma/migrations/20260708150000_add_release_deck_schedule/migration.sql`.
-Song-level sect backing remains future work and is not part of this schedule
-model.
+Artist/Band Sect membership and Sect readiness aggregation remain future work
+and are not part of this schedule model. No track-to-Sect backing model is
+required.
 
 ## API Design
 
@@ -281,8 +292,9 @@ model.
   broadcast-owned fixed `10` day protected New Releases run regardless of
   Uprise deck density.
 - Future Uprise-wide deck measurement tests should prove source caps, distinct
-  source counts, readiness inclusion/exclusion reasons, and sect-encoded minutes
-  are computed from server-side data.
+  source counts, readiness inclusion/exclusion reasons, and member-artist Sect
+  readiness minutes are computed from server-side data without song-level Sect
+  state.
 - API typecheck must pass.
 - Docs lint must pass.
 
@@ -293,8 +305,9 @@ model.
   the current admin endpoint supports explicit dry-run/write invocation.
 - Define a dedicated schedule listing/read model if future Source Dashboard
   views need to load every schedule without checking rows individually.
-- Define the exact song-level sect backing schema and Release Deck UI for
-  encoding a song's sect readiness contribution.
+- Define the Registrar-held Artist/Band Sect membership schema and the read-side
+  join that totals each supporting member artist's current eligible Home Scene
+  Release Deck. Do not add per-song Sect controls or persistence.
 - Define if and when paid ad-slot runtime becomes visible.
 - Define the paid ad category and link-target contract for `release date`,
   `general`, `event`, and `sponsor`, including business-account linking and

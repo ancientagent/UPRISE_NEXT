@@ -1,5 +1,10 @@
 # 2026-02-25 — P3-REV-098A: Project + Sect Registrar Risk Signoff
 
+> **Sect authority correction (2026-07-14):** The `sect_motion` skeleton remains
+> historical runtime fact, but the pending approval/threshold framing below is
+> superseded by the settled listener-request / Artist/Band-membership /
+> current-deck lifecycle. No routine Sect approval stage exists.
+
 ## Scope Reviewed
 - Slice `P3-API-099A`: registrar sect-motion submission skeleton (`POST /registrar/sect-motion`).
 - Slice `P3-WEB-098A`: web typed contract/client scaffolding for `POST /registrar/project`.
@@ -9,7 +14,8 @@
 - None.
 
 ## Residual Risks
-- Sect-motion payload is intentionally minimal (`sceneId` only + empty persisted payload) pending canon-locked motion artifact schema and threshold/approval workflow.
+- Sect-motion payload remains minimal (`sceneId` only + empty persisted payload);
+  named request and Artist/Band membership persistence are still unimplemented.
 - Project/sect endpoints remain unexposed in web UI actions by design; this is expected and spec-aligned.
 
 ## Rollback
