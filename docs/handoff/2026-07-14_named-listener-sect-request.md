@@ -75,8 +75,10 @@ identity.
 - Web Registrar contract suites: 2 suites, 87 tests passed.
 - Web typecheck passed.
 - Full repository verification passed all 12 tasks; workspace audit passed with
-  all 72 entries covered. Exact-commit independent product/code re-reviews are
-  the remaining closeout gates before PR submission.
+  all 72 entries covered. PR #245 is open and its implementation/docs checks
+  have been green. Independent product/code review of the final exact head is
+  the remaining closeout gate before merge; any repair changes require another
+  exact-head check and green CI.
 
 ## Review Repairs
 

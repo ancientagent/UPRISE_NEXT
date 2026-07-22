@@ -22,12 +22,12 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-14
+- Snapshot date: 2026-07-22
 - Base branch: `origin/main@10787dc`
-- Current branch assignment: `codex/sect-membership-readiness`, named listener Sect request implementation; membership/readiness mechanics remain separately gated
-- Local worktree state at refresh: named-request implementation is assembled;
-  Codex local remains the sole writer and product/code reviewers are read-only
-- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238 through #244 are merged
+- Current branch assignment: `codex/sect-membership-readiness`, PR #245 named listener Sect request implementation; membership/readiness mechanics remain separately gated
+- Local worktree state at refresh: clean and synchronized with the PR head;
+  Codex local remains the sole writer and the final reviewer is read-only
+- Open PR queue at refresh: PR #245 is the active merge candidate; draft PR #212 remains intentionally deprioritized
 - Recently completed remote slices: Official Sect identity PR #240 and founder-authority correction PR #244
 - Provider/db/schema state: additive Prisma migration work is in scope; no production database/provider operation is authorized
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
@@ -37,8 +37,8 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Implement the unblocked named Home Scene listener request and durable link to
-  the existing Sect identity without requiring source ownership or approval.
+- Complete independent exact-HEAD review and merge closeout for the implemented
+  named Home Scene listener request and durable linked Sect identity.
 - Keep Artist/Band membership/readiness writes and visibility out until their
   separate exclusivity, withdrawal/audit, reader, and legacy-eligibility mechanics are owned.
 
@@ -59,7 +59,7 @@ Recently completed context:
 | Out of Scope | Artist/Band membership writes, readiness/progress APIs, public UI, update channels, extra lifecycle states, routine admin approval, provider/database deployment, governance, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
-| Validation | replacement plan/product review passed; focused API/web/schema tests and typechecks passed; full verify, workspace audit, and final independent product/code review pending |
+| Validation | focused and full local verification previously passed; GitHub CI is green through the latest implementation/docs head before this operations refresh; workspace audit passes; independent exact-HEAD product/code review remains the final gate and CI must be green on that reviewed head |
 
 ## Current Branch / Worktree State
 
@@ -78,7 +78,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/sect-membership-readiness` | implementation branch from `origin/main@10787dc` | Named-request implementation assembled; sole-writer verification/review/PR closeout in progress. |
+| `/home/baris/UPRISE_NEXT` | `codex/sect-membership-readiness` | PR #245 branch from `origin/main@10787dc` | Clean shared checkout; exact-HEAD independent review and merge closeout in progress. |
 
 ### Preserved UX Reference Worktrees
 
@@ -144,8 +144,8 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Complete full verification and workspace audit for the named listener request.
-2. Obtain independent product and code review of the exact commit, then submit through required checks.
+1. Obtain independent product and code review of PR #245 at the exact final head.
+2. Patch any findings, rerun required validation/checks, and merge only the reviewed green head.
 3. Keep membership/readiness behavior gated on the four explicit mechanics in the replacement plan.
 4. Keep public visibility, update channels, draft PR #212, provider state, and preserved UX references untouched.
 
