@@ -3,7 +3,7 @@
 **ID:** `SYS-REGISTRAR`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-14`
+**Last Updated:** `2026-07-22`
 
 ## Overview & Purpose
 Defines the Registrar as the listener-side civic registration surface inside The Plot where role/capability motions and prerequisite filings are formalized.
@@ -119,6 +119,10 @@ the readiness and Sect Uprise broadcast boundary at
   instance does not grant voting rights or membership in the originating Home
   Scene's Sect. The community owner contract defines the local-instance and
   Sect Uprise boundary.
+- Registrar reuses the Official Sect identity across eligible Home Scenes
+  because those local instances contribute to the same Sect-specific
+  Citywide-to-Statewide-to-National broadcast system. Registrar does not own or
+  compute the upper-tier promotion rules.
 - A submitted listener request alone is not an active Sect. Activation follows
   satisfaction of the settled artist-support and Release Deck music thresholds;
   no separate discretionary administrator approval gate follows them.

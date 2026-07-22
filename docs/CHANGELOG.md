@@ -22,7 +22,10 @@
   Once a Sect becomes legitimate/Official, its title is also recognized by
   Registrars in other Home Scenes within the same parent music community so
   they can form their own local instances; membership, readiness, voting
-  authority, and Uprise activation remain local to each Home Scene.
+  authority, and Uprise activation remain local to each Home Scene. Those local
+  Sect Uprises are the Citywide contributors to that Official Sect's own
+  Statewide and National aggregate broadcasts; exact promotion mechanics remain
+  deferred.
 
 ### Added
 

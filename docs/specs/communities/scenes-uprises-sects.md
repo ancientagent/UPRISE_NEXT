@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-14`
+**Last Updated:** `2026-07-22`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -187,6 +187,27 @@ justify subcommunity broadcast authority.
   supply at least `45` counted minutes through their current eligible music in
   the parent Home Scene's combined Release Deck. There is no separate
   routine platform-admin approval stage after the settled thresholds are met.
+
+### Sect Three-Tier Architecture
+
+- An Official Sect identity connects its local Home Scene instances into that
+  Sect's own Citywide-to-Statewide-to-National broadcast system. Shared title
+  recognition is therefore a tier identity contract, not merely a discovery
+  label.
+- Each active local Sect Uprise is the Citywide tier instance for that Sect in
+  its parent Home Scene. Its eligible results can contribute to the matching
+  Statewide Sect aggregate; matching Statewide results can contribute to the
+  National Sect aggregate.
+- The parent music community remains part of Sect identity at every tier. A
+  same-named Sect under a different parent music community is not part of this
+  tier chain.
+- Citywide remains the only civic infrastructure tier. Sect membership, local
+  voting authority, readiness, and governance remain attached to each local
+  Home Scene instance. Statewide and National Sect tiers are aggregate
+  broadcasts, not separate civic communities with direct membership or voting.
+- Exact Sect promotion thresholds, eligibility evidence, and aggregation jobs
+  remain deferred Fair Play contracts. Implementations must not invent those
+  mechanics from the existence of the settled three-tier architecture.
 
 ### Current Runtime Boundary
 

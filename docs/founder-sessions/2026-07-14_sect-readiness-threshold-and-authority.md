@@ -2,6 +2,7 @@
 
 Status: raw founder-session capture
 Date: 2026-07-14
+Continued: 2026-07-22
 Source: current chat/session
 Related lane(s): REGISTRAR_GOVERNANCE, ARTIST_SOURCE, sect governance
 Owner spec candidates: `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md`
@@ -19,6 +20,10 @@ Owner spec candidates: `docs/specs/communities/scenes-uprises-sects.md`, `docs/s
 > right, jsut fyi this should then show up in other registrars as an official sect that others can join
 
 > yes as long as its the same music community make sense?
+
+> this is important because these will all contribute to its own 3 tier system, make sensE?
+
+> yes please make sure this context is made clear where necessary
 
 ## Clarifications
 
@@ -54,6 +59,11 @@ Owner spec candidates: `docs/specs/communities/scenes-uprises-sects.md`, `docs/s
   lifecycle.
   - Type: settled authority boundary
   - Likely owner: `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority`
+- Local Home Scene instances sharing one Official Sect identity supply that
+  Sect's own city-to-state-to-national broadcast tier system. Citywide remains
+  the civic/member tier; Statewide and National are aggregate Sect broadcasts.
+  - Type: settled tier architecture
+  - Likely owner: `docs/specs/communities/scenes-uprises-sects.md#sect-three-tier-architecture`
 
 ## Feature Sets
 
@@ -77,6 +87,9 @@ None. This session corrects product authority; it does not activate new runtime,
   Home Scenes in the same parent music community. The resulting membership and
   readiness remain local to each Home Scene rather than joining everyone to the
   originating city's Sect.
+- The shared title is functional tier identity, not merely shared vocabulary:
+  each active local Sect Uprise contributes to that Sect's Statewide aggregate,
+  and Statewide Sect results contribute to its National aggregate.
 
 ## Promotion Targets
 
@@ -101,3 +114,7 @@ None. This session corrects product authority; it does not activate new runtime,
   music community.
 - Do not treat cross-Registrar discovery as cross-city membership or voting
   authority in the originating Sect.
+- Do not model same-title local Sect instances as unrelated broadcasts; they
+  belong to one Sect-specific three-tier broadcast system.
+- Do not add civic membership or direct voting to Statewide or National Sect
+  aggregates.
