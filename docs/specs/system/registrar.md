@@ -114,6 +114,10 @@ the readiness and Sect Uprise broadcast boundary at
   do not create Artist/Band Sect membership, Official status, readiness music,
   voting authority, or activation. Those authorities remain governed by the
   explicit source-membership and Release Deck thresholds below.
+- The future potential/referral read model should give prospective Artist/Band
+  operators credible aggregate evidence of local fan Support so that interest
+  can persuade voluntary registration and Sect membership. It must not enroll a
+  source automatically or expose unsettled supporter identity/private amounts.
 - Readiness requires `2,700` counted seconds collectively across at least `5`
   distinct eligible registered sources after applying the existing
   `900`-second per-source contribution cap. It never requires `2,700` seconds

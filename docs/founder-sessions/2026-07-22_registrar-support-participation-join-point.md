@@ -20,6 +20,8 @@ Owner spec candidates: `docs/specs/engagement/support-and-participation.md`, `do
 
 > Im thinking yes? however they may not want to because of the support cost since they themself cant be an activator? however What we can do is give them a "refer a friend" code.  that way they could go to their school and give it to bands in their school.  This would absolutely qualify the user as someone who has actively contributed to the development of their sect/community even if they dont have a band
 
+> this way the fan support can sway an artist
+
 ## Clarifications
 
 - Verified work that establishes, develops, expands, or enriches a community is
@@ -59,6 +61,11 @@ Owner spec candidates: `docs/specs/engagement/support-and-participation.md`, `do
   cannot personally supply Artist/Band membership or music.
   - Type: settled Participation direction; code lifecycle, attribution window, values, and abuse controls remain open
   - Likely owner: Support/Participation matrix plus Registrar referral contract
+- Bounded fan Support on the potential is intended to give prospective artists
+  credible evidence of local interest and persuade them to register and join.
+  It is an influence signal, not artist consent or threshold authority.
+  - Type: settled purpose and authority boundary; exact artist-facing projection remains open
+  - Likely owner: Registrar potential read model plus Support analytics
 
 ## Feature Sets
 
@@ -77,6 +84,9 @@ Owner spec candidates: `docs/specs/engagement/support-and-participation.md`, `do
   allocations describe interest, not source eligibility or music readiness.
 - A Registrar-issued referral code can attribute recruited Artist/Band
   registrations to a non-artist listener who helped develop the potential.
+- The referral/potential context should let a prospective artist understand that
+  real listeners have allocated scarce Support, making the opportunity more
+  persuasive than an unweighted petition or follower count.
 
 ## Open Contract Boundary
 
@@ -108,3 +118,5 @@ Owner spec candidates: `docs/specs/engagement/support-and-participation.md`, `do
 - Do not count follows, Support allocations, or referral-code distribution as
   Artist/Band membership. Only a completed eligible source registration and
   explicit Sect membership can supply that authority.
+- Do not convert fan interest into automatic Artist/Band enrollment; the source
+  operator must explicitly register and join.

@@ -111,6 +111,9 @@ Do not implement these items until they are locked.
 - **Sect referral codes**: issuance, recipient/claim flow, source consent,
   materialization and membership requirements, expiry/use limits, self-referral,
   attribution windows, and Participation reward values.
+- **Artist-facing fan-interest projection**: which aggregate potential metrics a
+  referred artist can see, minimum privacy cohort, whether amounts or only
+  follower/interest bands appear, freshness, and anti-manipulation disclosures.
 - **Formation satisfaction and non-activation**: confirm that local Sect Uprise
   activation restores allocated Support; define withdrawal, expiry, cancellation,
   dormancy, failure, and partial-progress behavior.

@@ -20,8 +20,10 @@
   records that any listener may originate a Sect potential with the highest
   Support allocation, followers contribute smaller interest-only allocations,
   and referral-code-attributed Artist/Band recruitment can earn Participation
-  for a non-artist listener. No runtime, Sect threshold, or Part 1 dependency
-  changed.
+  for a non-artist listener. Bounded aggregate fan Support is an artist-facing
+  persuasion signal for voluntary registration and Sect membership, never
+  automatic consent or threshold authority. No runtime, Sect threshold, or Part
+  1 dependency changed.
 - Corrected the Sect decision gate to preserve the original simple lifecycle:
   a Home Scene listener requests a Sect; at least `5` distinct eligible
   registered Artist/Band sources support it by registering as Sect members;
