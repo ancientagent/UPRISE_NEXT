@@ -19,6 +19,10 @@
   track-to-Sect backing/history or routine platform-admin approval stage exists.
   The correction also adds a reviewer guardrail requiring reconstruction of the
   plain-language founder lifecycle before proposing implementation options.
+  Once a Sect becomes legitimate/Official, its title is also recognized by
+  Registrars in other Home Scenes within the same parent music community so
+  they can form their own local instances; membership, readiness, voting
+  authority, and Uprise activation remain local to each Home Scene.
 
 ### Added
 

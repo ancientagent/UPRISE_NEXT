@@ -136,6 +136,19 @@ justify subcommunity broadcast authority.
 - Sect visibility may remain hidden or read-only until its presentation and menu
   architecture are locked; this does not add a maturity or approval gate.
 - Registrar may eventually show active Official Sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
+- Once a Sect becomes legitimate/Official, its recognized title becomes
+  discoverable through Registrars in other Home Scenes belonging to the same
+  parent music community. Those Home Scenes may establish or join their own
+  local instance of that Sect without creating a new unrelated Sect title.
+- Official Sect recognition never crosses into a different parent music
+  community. Each Home Scene's local Sect instance retains its own membership,
+  readiness, voting authority, and eventual Sect Uprise lifecycle; discovering
+  or joining a local instance does not grant authority in the originating Home
+  Scene's Sect.
+- The persistence/linking mechanism for shared Official Sect identity and local
+  Home Scene instances remains a future implementation contract. Do not infer a
+  global membership row or shared cross-city voting authority from title
+  recognition alone.
 
 ### Readiness Inputs
 

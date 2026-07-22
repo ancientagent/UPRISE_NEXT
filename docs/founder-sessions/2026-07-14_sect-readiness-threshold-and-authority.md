@@ -16,6 +16,10 @@ Owner spec candidates: `docs/specs/communities/scenes-uprises-sects.md`, `docs/s
 
 > so songs dont "support" sects,   an artist has registered themself as a sect member in support of a sect request. that artist has 3 songs in their homescene's release deck totalling15 minutes of music.  because this artist has registered as a sect member this is 15 minutes of music going toward that sect.  this happens until the threshold is met,  so previous songs are irellevant as what only matters is the total music time registered in the release deck
 
+> right, jsut fyi this should then show up in other registrars as an official sect that others can join
+
+> yes as long as its the same music community make sense?
+
 ## Clarifications
 
 - A listener in the Home Scene may submit a request for a Sect through the Registrar.
@@ -39,6 +43,17 @@ Owner spec candidates: `docs/specs/communities/scenes-uprises-sects.md`, `docs/s
   totaling `15` minutes contributes `15` minutes to the Sect.
   - Type: already documented implementation join point clarified by the settled threshold
   - Likely owner: `docs/specs/media/release-deck-and-eligibility.md#uprise-wide-deck-system`
+- Once a Sect becomes legitimate/Official, its title becomes discoverable in
+  other Registrars within the same parent music community so other Home Scenes
+  can establish or join their own local instance of that Sect.
+  - Type: settled cross-Registrar lifecycle rule
+  - Likely owner: `docs/specs/communities/scenes-uprises-sects.md#official-sect-boundary`
+- Cross-Registrar recognition does not cross parent music communities and does
+  not grant membership or voting authority in the originating Home Scene's
+  Sect. Each Home Scene retains its own local membership, readiness, and Uprise
+  lifecycle.
+  - Type: settled authority boundary
+  - Likely owner: `docs/specs/system/registrar.md#sect-request-and-artistband-membership-authority`
 
 ## Feature Sets
 
@@ -58,6 +73,10 @@ None. This session corrects product authority; it does not activate new runtime,
   supply music. Routine platform-admin approval is not a stage in the lifecycle.
 - There is no song-backing lifecycle/history decision. Previous songs are
   irrelevant to Sect readiness after leaving the current eligible Release Deck.
+- Official Sect titles can propagate as recognized Registrar options across
+  Home Scenes in the same parent music community. The resulting membership and
+  readiness remain local to each Home Scene rather than joining everyone to the
+  originating city's Sect.
 
 ## Promotion Targets
 
@@ -78,3 +97,7 @@ None. This session corrects product authority; it does not activate new runtime,
   Deck music with routine platform-admin approval.
 - Do not add a discretionary approval gate after the settled artist-support and
   music thresholds are satisfied.
+- Do not expose an Official Sect title in Registrars for a different parent
+  music community.
+- Do not treat cross-Registrar discovery as cross-city membership or voting
+  authority in the originating Sect.

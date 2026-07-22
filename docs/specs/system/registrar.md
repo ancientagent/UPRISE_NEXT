@@ -110,6 +110,15 @@ the readiness and Sect Uprise broadcast boundary at
   `900`-second per-source contribution cap. It never requires `2,700` seconds
   from each source.
 - Legitimate Sect status is pre-Uprise: it can make a Sect discoverable/inspectable for membership and updates once enabled, but it does not grant independent broadcast authority until the music threshold is met.
+- A legitimate/Official Sect title is discoverable through other Registrars in
+  the same parent music community so another Home Scene can establish or join
+  its own local instance. It must not appear as an available Sect in an
+  unrelated parent music community.
+- Cross-Registrar title recognition is not cross-city membership. Registrar
+  must preserve Home Scene-local membership and authority; joining a local
+  instance does not grant voting rights or membership in the originating Home
+  Scene's Sect. The community owner contract defines the local-instance and
+  Sect Uprise boundary.
 - A submitted listener request alone is not an active Sect. Activation follows
   satisfaction of the settled artist-support and Release Deck music thresholds;
   no separate discretionary administrator approval gate follows them.
