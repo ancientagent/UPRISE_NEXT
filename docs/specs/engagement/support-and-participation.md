@@ -3,7 +3,7 @@
 **ID:** `ENG-SUPPORT`
 **Status:** `draft`
 **Owner:** `platform`
-**Last Updated:** `2026-07-11`
+**Last Updated:** `2026-07-22`
 
 ## Overview & Purpose
 
@@ -36,6 +36,8 @@ Consolidates founder direction from:
 - `docs/founder-sessions/2026-07-10_support-civic-loop.md`
 - `docs/founder-sessions/2026-07-11_support-reaction-model-correction.md`
   (supersedes the commit/RSVP framing of the 07-10 capture)
+- `docs/founder-sessions/2026-07-22_registrar-support-participation-join-point.md`
+  (community-development bonuses and proposed formation Support join point)
 
 ## Draft Status And Sequencing Boundary
 
@@ -96,6 +98,28 @@ Plot, events — may take a dependency on Support/Participation runtime.
   contribute their defined values; listeners are never required to support the
   community in one particular way.
 
+### Registrar community-development join point (proposed; not locked)
+
+- Verified acts that establish, develop, expand, or enrich a community are
+  intended to earn Participation and may carry higher Participation bonus
+  values than routine acts. The evidence catalog, values, caps, attribution,
+  and anti-gaming rules remain open.
+- Registrar formation efforts, including local Sect formation, need an explicit
+  Support join point. The current proposed model uses a larger upfront Support
+  allocation that remains allocated during formation and is restored when the
+  local Sect Uprise activates.
+- The proposal does not yet settle who supplies the allocation, whether multiple
+  supporters pool it, the required amount, whether it precedes or follows the
+  filing, withdrawal/expiry, or treatment of dormant and failed formations.
+- The existing Part 1 independence rule remains in force. No Registrar or Sect
+  runtime may require the unimplemented Support ledger until the open decisions
+  explicitly determine whether this join point becomes mandatory after Part 2
+  activation.
+- Support/Participation records annotate the formation lifecycle; they do not
+  replace the settled Artist/Band membership and eligible-music thresholds.
+  Current Registrar language that artists "support" a Sect request means
+  explicit Artist/Band Sect membership, not a finite listener Support allocation.
+
 ### Lifecycle: Announce / Support / Satisfy (labels open)
 
 Per the 2026-07-11 correction this supersedes both the agreement/debt
@@ -117,6 +141,46 @@ method, value, attribution rules, and duplicate/cap rules. Request templates
 supply their default proof automatically; sources do not configure contract
 mechanics per announcement (they may attach optional extra opportunities and
 digital goodies).
+
+## Support And Participation Action Matrix
+
+This matrix is the required control surface for Support/Participation behavior.
+It prevents action costs, restoration, Participation rewards, proof, and
+activation events from being independently invented in Feed, Registrar,
+events, playback, or governance code.
+
+Before an action family becomes runtime, its row must settle:
+
+- actor and beneficiary;
+- whether Support can or must be allocated;
+- Support allocation amount or calculation;
+- satisfaction/activation event;
+- Support restoration amount and timing;
+- base Participation value and any milestone bonus;
+- required evidence and verifier;
+- attribution, duplicate, frequency, and anti-farming caps;
+- cancellation, expiry, reversal, and dispute behavior;
+- contract owner and implementation status.
+
+`TBD` means the value is an open founder/owner-contract decision. `N/A` means
+the mechanism does not apply. No runtime may convert a `TBD` cell into a default.
+
+| Action / contract family | Actor / beneficiary | Support allocation | Satisfaction / activation | Support restoration | Participation value / bonus | Evidence / verifier | Caps / attribution | Status / owner |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Qualifying music listen | Listener / source and Home Scene | N/A | Qualifying playback threshold | N/A | Base value TBD | Playback completion/engagement evidence; player/RADIYO owner | Repeat, mute/background, and farming limits TBD | Open; broadcast evidence + this spec |
+| Feed-card Support | Listener / card-resolved source | Action-specific amount TBD | Action-specific verified satisfaction | Amount satisfied, up to allocation; exact schedule TBD | Support tap itself earns none; verified act value TBD | Action-owned proof | One allocation per listener/card plus action caps TBD | Open; actions/signals + this spec |
+| Event attendance | Listener / event beneficiaries | Event amount TBD when supported; N/A when unsupported | Valid attendance proof | Restores attributed event allocation; exact value TBD | Attendance value TBD; multi-artist bonus allocation TBD | QR, artist correction, or later approved proof | Identity/time/event replay protection; one attendance award | Open; events + this spec |
+| Artist-acknowledged supportive work | Listener / source or event | Uses related active allocation when present | Source verifies qualifying act | Defined act value against allocation TBD | Defined act value/bonus TBD | Source acknowledgment plus evidence rules TBD | Anti-self-dealing, dispute, and per-act caps TBD | Open; source/event owner + this spec |
+| Verified recommendation/influence | Listener / attributable downstream source or signal | No required allocation currently | Approved causal attribution threshold | Future indirect restoration or bandwidth award TBD | Influence value/bonus TBD | Influence graph; raw clicks insufficient | Window, confidence, deduplication, and collusion caps TBD | Future; attribution contract |
+| Named Sect request / formation effort | Home Scene listener and other formation supporters / local Sect | Proposed large upfront allocation; contributor and pooled amount TBD | Local Sect Uprise activates after separate artist/music thresholds | Proposed restoration at activation; failure/dormancy rules TBD | Request/work bonus and activation milestone bonus TBD | Registrar provenance, participant actions, and activation audit | Filing spam, pooling, duplicate, expiry, and attribution rules TBD | Proposed; Registrar/community + this spec |
+| Artist/Band joins requested Sect | Authorized source operator / local Sect | Distinct from listener Support allocation; additional allocation TBD | Registrar-held eligible membership; activation remains separate | TBD only if a Support allocation is explicitly linked later | Membership/contribution bonus TBD | Registrar membership and source authority | One eligible membership per source/Sect; exclusivity/withdrawal open | Open; Registrar + this spec |
+| Local Sect Uprise activation | Verified formation participants / local Sect | Consumes no new allocation by itself | Five eligible member sources plus 45 counted Release Deck minutes | Proposed restoration of attributed formation allocations | Activation milestone bonus and distribution TBD | Registrar membership, Release Deck measurement, activation audit | One activation event; contributor attribution TBD | Proposed; community + this spec |
+| City-tier Home Scene activation | Verified formation participants / new Home Scene | Formation Support join point TBD | Settled source/music activation threshold | TBD | Community-establishment bonuses TBD | Source-origin readiness and activation audit | One activation event; source/listener contribution attribution TBD | Future Support join point; community + this spec |
+| Cause, venue, business, or other community-expanding entity establishment | Filing participants / community entity | Entity-specific allocation TBD | Entity-specific verified activation | Entity-specific TBD | Establishment value/bonus TBD | Registrar/entity owner evidence | Duplicate, self-dealing, and qualification rules TBD | Future; respective owner contract |
+
+The matrix does not alter Fair Play, Sect readiness, Home Scene activation, or
+Registrar authority. It defines how the separate civic ledgers may recognize
+and reward verified participation around those existing lifecycle events.
 
 `Announce` is the source-facing publication action: any eligible dashboard
 signal can be Announced into the Feed, parallel to listener `Recommend`. The

@@ -97,6 +97,23 @@ Do not implement these items until they are locked.
   Roles; no `coin`/`token`/`wallet`/`spend` language without explicit approval.
 - **Trusted Role gates**: role catalog, thresholds, and Registrar/governance
   join point.
+- **Registrar formation Support requirement**: whether a Sect/community/entity
+  filing is accepted before Support is allocated, whether Support is optional
+  or becomes mandatory only after Part 2 activation, and which formation types
+  use the mechanism.
+- **Formation allocation and pooling**: who contributes the proposed large
+  upfront Support amount, whether multiple supporters may pool it, the required
+  amount, and duplicate/collusion limits.
+- **Formation satisfaction and non-activation**: confirm that local Sect Uprise
+  activation restores allocated Support; define withdrawal, expiry, cancellation,
+  dormancy, failure, and partial-progress behavior.
+- **Community-development Participation bonuses**: qualifying Registrar and
+  community-enrichment acts, evidence requirements, attribution, value scale,
+  caps, and whether activation awards an additional milestone bonus.
+- **Action-matrix values**: complete every required `TBD` cell in
+  `support-and-participation.md#support-and-participation-action-matrix` before
+  activating the corresponding action family. Do not infer shared costs,
+  restoration, bonuses, proof, or caps across different action families.
 
 ## 10) Digital Artifact Lifecycle (owner section: `docs/specs/economy/print-shop-and-promotions.md`)
 - **Edition semantics**: numbering scheme, public visibility of edition
