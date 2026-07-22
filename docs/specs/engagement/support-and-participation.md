@@ -108,9 +108,20 @@ Plot, events — may take a dependency on Support/Participation runtime.
   Support join point. The current proposed model uses a larger upfront Support
   allocation that remains allocated during formation and is restored when the
   local Sect Uprise activates.
-- The proposal does not yet settle who supplies the allocation, whether multiple
-  supporters pool it, the required amount, whether it precedes or follows the
-  filing, withdrawal/expiry, or treatment of dormant and failed formations.
+- Any eligible Home Scene listener may originate the Sect potential whether or
+  not they operate an Artist/Band. The originator bears the highest proposed
+  Support allocation; later followers bear smaller proposed allocations.
+- Follower count and follower Support describe community interest only. They do
+  not make the Sect Official, count as Artist/Band membership, satisfy the
+  five-source threshold, or contribute eligible Release Deck minutes.
+- A listener who cannot personally activate the Sect can still earn
+  Participation by recruiting eligible Artist/Band sources through an
+  attributable Registrar referral code. Code issuance, claim, consent,
+  attribution windows, Participation values, and abuse controls remain open.
+- The proposal does not yet settle exact originator/follower amounts, whether
+  follower allocations pool toward a presentation threshold, whether allocation
+  precedes or follows the filing, withdrawal/expiry, or treatment of dormant and
+  failed formations.
 - The existing Part 1 independence rule remains in force. No Registrar or Sect
   runtime may require the unimplemented Support ledger until the open decisions
   explicitly determine whether this join point becomes mandatory after Part 2
@@ -172,7 +183,9 @@ the mechanism does not apply. No runtime may convert a `TBD` cell into a default
 | Event attendance | Listener / event beneficiaries | Event amount TBD when supported; N/A when unsupported | Valid attendance proof | Restores attributed event allocation; exact value TBD | Attendance value TBD; multi-artist bonus allocation TBD | QR, artist correction, or later approved proof | Identity/time/event replay protection; one attendance award | Open; events + this spec |
 | Artist-acknowledged supportive work | Listener / source or event | Uses related active allocation when present | Source verifies qualifying act | Defined act value against allocation TBD | Defined act value/bonus TBD | Source acknowledgment plus evidence rules TBD | Anti-self-dealing, dispute, and per-act caps TBD | Open; source/event owner + this spec |
 | Verified recommendation/influence | Listener / attributable downstream source or signal | No required allocation currently | Approved causal attribution threshold | Future indirect restoration or bandwidth award TBD | Influence value/bonus TBD | Influence graph; raw clicks insufficient | Window, confidence, deduplication, and collusion caps TBD | Future; attribution contract |
-| Named Sect request / formation effort | Home Scene listener and other formation supporters / local Sect | Proposed large upfront allocation; contributor and pooled amount TBD | Local Sect Uprise activates after separate artist/music thresholds | Proposed restoration at activation; failure/dormancy rules TBD | Request/work bonus and activation milestone bonus TBD | Registrar provenance, participant actions, and activation audit | Filing spam, pooling, duplicate, expiry, and attribution rules TBD | Proposed; Registrar/community + this spec |
+| Named Sect request / formation effort | Any eligible Home Scene listener / local Sect | Originator pays highest amount TBD; no Artist/Band account required | Local Sect Uprise activates after separate artist/music thresholds | Proposed restoration at activation; failure/dormancy rules TBD | Origination/work bonus and activation milestone bonus TBD | Registrar provenance, participant actions, and activation audit | Filing spam, duplicate, expiry, and attribution rules TBD | Proposed; Registrar/community + this spec |
+| Follow a Sect potential | Home Scene listener / local Sect potential | Smaller follower amount TBD | Interest threshold/presentation state TBD; never Official status or activation | Proposed restoration at Sect Uprise activation; withdrawal/dormancy TBD | Follow alone earns no Participation; later verified contribution may earn it | Authenticated follow and Support allocation | One active follow per listener/potential; collusion limits TBD | Proposed; Registrar + this spec |
+| Recruit an Artist/Band through a Sect referral code | Referring listener / recruited source and local Sect | No separate allocation settled; may relate to active formation allocation | Referred source completes eligible registration and explicitly joins the Sect | Does not itself restore Support unless matrix later assigns a value | Successful recruitment value/bonus TBD; activation milestone attribution TBD | Issued code, source claim, Registrar materialization, explicit Sect membership | Single-use/limited-use, self-referral, duplicate-source, expiry, and collusion rules TBD | Proposed; Registrar + this spec |
 | Artist/Band joins requested Sect | Authorized source operator / local Sect | Distinct from listener Support allocation; additional allocation TBD | Registrar-held eligible membership; activation remains separate | TBD only if a Support allocation is explicitly linked later | Membership/contribution bonus TBD | Registrar membership and source authority | One eligible membership per source/Sect; exclusivity/withdrawal open | Open; Registrar + this spec |
 | Local Sect Uprise activation | Verified formation participants / local Sect | Consumes no new allocation by itself | Five eligible member sources plus 45 counted Release Deck minutes | Proposed restoration of attributed formation allocations | Activation milestone bonus and distribution TBD | Registrar membership, Release Deck measurement, activation audit | One activation event; contributor attribution TBD | Proposed; community + this spec |
 | City-tier Home Scene activation | Verified formation participants / new Home Scene | Formation Support join point TBD | Settled source/music activation threshold | TBD | Community-establishment bonuses TBD | Source-origin readiness and activation audit | One activation event; source/listener contribution attribution TBD | Future Support join point; community + this spec |

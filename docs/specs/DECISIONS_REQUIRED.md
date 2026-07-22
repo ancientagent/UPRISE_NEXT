@@ -102,8 +102,15 @@ Do not implement these items until they are locked.
   or becomes mandatory only after Part 2 activation, and which formation types
   use the mechanism.
 - **Formation allocation and pooling**: who contributes the proposed large
-  upfront Support amount, whether multiple supporters may pool it, the required
-  amount, and duplicate/collusion limits.
+  upfront Support amount, exact originator and follower costs, whether follower
+  allocations pool toward a presentation threshold, and duplicate/collusion
+  limits. The originator cost is higher; follower costs are lower.
+- **Sect-potential interest state**: follower threshold, what user-visible or
+  Registrar state it unlocks, and whether allocations remain fixed as follower
+  count changes. Interest never creates Official status or activation.
+- **Sect referral codes**: issuance, recipient/claim flow, source consent,
+  materialization and membership requirements, expiry/use limits, self-referral,
+  attribution windows, and Participation reward values.
 - **Formation satisfaction and non-activation**: confirm that local Sect Uprise
   activation restores allocated Support; define withdrawal, expiry, cancellation,
   dormancy, failure, and partial-progress behavior.

@@ -16,8 +16,12 @@
   Contributor, pooling, amount, filing timing, withdrawal, dormancy, and failure
   rules remain open. Added a required action matrix covering allocation,
   satisfaction, restoration, Participation rewards, proof, caps, attribution,
-  and implementation status without inventing unresolved values; no runtime,
-  Sect threshold, or Part 1 dependency changed.
+  and implementation status without inventing unresolved values. The draft now
+  records that any listener may originate a Sect potential with the highest
+  Support allocation, followers contribute smaller interest-only allocations,
+  and referral-code-attributed Artist/Band recruitment can earn Participation
+  for a non-artist listener. No runtime, Sect threshold, or Part 1 dependency
+  changed.
 - Corrected the Sect decision gate to preserve the original simple lifecycle:
   a Home Scene listener requests a Sect; at least `5` distinct eligible
   registered Artist/Band sources support it by registering as Sect members;

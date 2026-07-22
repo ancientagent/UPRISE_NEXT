@@ -105,6 +105,15 @@ the readiness and Sect Uprise broadcast boundary at
 - The legacy-compatible `sect_motion` filing is the Home Scene-scoped listener
   request primitive. A request does not change source origin, listener Home
   Scene, or parent community membership by itself.
+- A future Support/Participation layer may present the request as a potential:
+  the originating listener allocates the largest Support amount, later followers
+  allocate smaller amounts, and an attributable referral code can credit a
+  listener who recruits eligible Artist/Band sources. Any Home Scene listener
+  may still originate; Artist/Band ownership is not required.
+- Potential followers and their Support allocations prove interest only. They
+  do not create Artist/Band Sect membership, Official status, readiness music,
+  voting authority, or activation. Those authorities remain governed by the
+  explicit source-membership and Release Deck thresholds below.
 - Readiness requires `2,700` counted seconds collectively across at least `5`
   distinct eligible registered sources after applying the existing
   `900`-second per-source contribution cap. It never requires `2,700` seconds
