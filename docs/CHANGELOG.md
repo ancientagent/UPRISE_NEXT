@@ -9,6 +9,12 @@
 
 ### Changed
 
+- Consolidated listener-avatar visual development into the indexed
+  `art/avatar-system/` project: legacy Avatar Boards, Claude/Fable system
+  specifications, R1-R5 prompts and comparison images, research/approval
+  placeholders, and future production-package guidance now share one canonical
+  Art Department location. Existing design-handoff references were updated;
+  no runtime, schema, or owner-spec behavior changed.
 - Corrected the Sect decision gate to preserve the original simple lifecycle:
   a Home Scene listener requests a Sect; at least `5` distinct eligible
   registered Artist/Band sources support it by registering as Sect members;

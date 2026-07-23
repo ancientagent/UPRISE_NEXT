@@ -26,6 +26,9 @@ Shipped/product assets still belong in the appropriate runtime locations, such a
   - reference captures, inspirational direction, visual comparison material
 - `art/specifications/`
   - visual/specification docs for asset classes, layout rules, and design constraints
+- `art/avatar-system/`
+  - canonical listener-avatar project: specifications, research, references,
+    review rounds, approvals, and future production handoff
 - `art/website/`
   - website-specific visual work
 - `art/mockups/web-ui/`
