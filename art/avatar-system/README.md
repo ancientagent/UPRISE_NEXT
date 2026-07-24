@@ -22,33 +22,54 @@ The Claude/Fable R1 specification is the existing architectural foundation.
 The R2 contract records later founder-reviewed refinements. New art must fit
 that larger system instead of creating a parallel avatar model.
 
-## Directory Map
+## Current Direction
 
-- `specifications/`
-  - Claude/Fable R1 foundation, R2 refinement, source map, production matrix,
-    approval plan, and bounded handoff material.
-- `research/`
-  - Source-backed visual and cultural research used to define asset families.
-- `references/`
-  - Historical boards and retained comparison material. Reference-only unless
-    an approval record says otherwise.
-- `rounds/`
-  - Versioned exploration batches. Each round keeps its prompt, images, and
-    review notes together.
-- `approved/`
-  - Founder-approved visual directions or individual assets only.
-- `production-package/`
-  - Layered masters, exports, manifests, compatibility data, and QA evidence
-    prepared for a separately authorized implementation task.
+- `specifications/avatar-system-contract-r2.md` is the current visual and
+  modular construction proposal.
+- `specifications/asset-production-matrix.md` is the current provisional asset
+  inventory and QA sheet.
+- `specifications/avatar-asset-production-approval-plan.md` controls future
+  visual approval batches.
+- `specifications/source-map.md` connects the project to current repo-owned
+  product truth.
+- `rounds/01-style-calibration/R5-punk-skin-comparison/` is the latest visual
+  comparison. Neither R5 direction is approved until the founder records a
+  Gate 1 selection.
+
+## Historical Foundation
+
+- `specifications/fable-avatar-system-design-spec.md` is the Claude/Fable R1
+  architectural foundation. Later repo decisions supersede its original
+  Personal Space creation placement as described in the file and source map.
+- `specifications/avatar-design-context-packet.md` and
+  `specifications/fable-restriction-prompt.md` are retained inputs, not current
+  product authority.
+- Earlier R1-R4 prompts and reviews remain in
+  `rounds/01-style-calibration/` as review evidence.
+
+## Reference Only
+
+- `references/legacy-avatar-boards/` contains the original repo Avatar Boards.
+- `references/platform-art-gallery-avatar-merch-personal-space.png` is the
+  retained avatar, merch, and Personal Space gallery reference.
+
+These files are not production-ready modular parts. Do not crop or ship them
+without explicit approval and a rights/provenance review.
 
 ## Current State
 
-- R1-R5 style-calibration material is in `rounds/01-style-calibration/`.
-- The R5 die-cut ink sheet is the current front-runner, not an approved base.
-- The older Avatar Boards are retained under
-  `references/legacy-avatar-boards/`.
 - No file belongs in `approved/` until the founder explicitly approves it.
 - No full catalog should be produced before a modular construction proof passes.
+- Create `approved/`, `research/`, and `production-package/` only when they have
+  retained content. Do not reserve empty directories with README files.
+- Every approved asset or direction must record the approval date, source
+  round, approved scope, and remaining restrictions.
+- Research that informs hair, clothing, headwear, accessories, body
+  compatibility, or cultural safety must remain source-backed. Punk and other
+  scene research must produce interchangeable asset vocabulary rather than
+  fixed demographic costumes.
+- The first planned study is a punk-expression matrix covering overlapping
+  movements and scenes under that rule.
 
 ## Batch Rule
 
@@ -58,4 +79,4 @@ Every retained generation batch must include:
 2. all comparison outputs using consistent subjects when applicable;
 3. a review note recording approved, rejected, or revision-needed status;
 4. provenance and rights notes when the source is external or generated;
-5. a link from this index or the relevant subdirectory index.
+5. a link from this index when the retained result changes current direction.

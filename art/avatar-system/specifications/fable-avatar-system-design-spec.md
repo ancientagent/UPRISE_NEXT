@@ -1,6 +1,7 @@
 # UPRISE Modular Listener Avatar And Wearable Asset System R1
 
-Status: design-system specification for founder/owner review
+Status: historical R1 design foundation; superseded where the R2 contract,
+source map, or current owner specs differ
 Date: 2026-07-11
 Prepared by: Fable (avatar-system design architect)
 Mode: read-only synthesis from the bounded task packet and its named sources
@@ -604,8 +605,10 @@ brief), public Artist Profile changes.
 
 **Acceptance criteria:**
 
-- A listener can create, save, and re-edit a configuration in Personal Space;
-  every render context updates from one save with no per-surface uploads.
+- A listener can create, save, and re-edit a base configuration from the
+  listener account/profile surface; every render context updates from one save
+  with no per-surface uploads. Personal Space remains the later
+  inventory/equipment context.
 - Swapping a top changes no other layer asset — verified by asset-id diff of
   the rendered layer stack.
 - A garment added to the catalog after launch renders on existing avatars

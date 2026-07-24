@@ -294,7 +294,11 @@ contract or approval gate.
 
 ## Immediate Next Batch
 
-`AVATAR-STYLE-01`, revision `R3`: three controlled, facially ambiguous,
-monochrome-plus-one-accent style-calibration sheets.
+The R5 punk/skin comparison is the latest retained style-calibration batch.
+The founder must select an R5 direction at Gate 1 before it advances. After
+that approval, use the selected direction for one modular construction proof:
+interchangeable body, head-face preset, hair, open outerwear, readable starter
+top, and one compatible button or patch.
 
-The batch starts only after Gate 0 is accepted or corrected.
+The construction proof starts only after Gate 0 is accepted or corrected and
+Gate 1 records the selected visual direction.
