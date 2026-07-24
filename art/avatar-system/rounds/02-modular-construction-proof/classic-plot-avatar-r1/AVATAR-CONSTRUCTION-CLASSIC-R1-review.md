@@ -1,7 +1,7 @@
 # AVATAR-CONSTRUCTION-CLASSIC-R1 Review
 
 Batch ID: AVATAR-CONSTRUCTION-CLASSIC-R1
-Status: IN REVIEW
+Status: SUPERSEDED BY R2
 Date: 2026-07-23
 Founder decision: pending
 
@@ -29,6 +29,21 @@ Image-generation output is a visual construction proof only. It is not an
 editable layered master, transparent production export, recolor mask, or
 developer-ready asset package. Gate 2 approval authorizes a separately redrawn
 layered proof set; it does not authorize the full beta catalog.
+
+## Internal R1 Findings
+
+- Directional strengths: classic black-ink readability, open outerwear,
+  exposed shirt plane, restrained accent, and consistent compact/large crop.
+- Revision required: body bases baked in tees and used tall collar-like neck
+  geometry.
+- Revision required: head presets included their own neck bases.
+- Revision required: hair appeared on blank placeholder heads instead of as
+  true standalone silhouettes.
+- Revision required: six-tone recolor and beanie compatibility were not proved.
+- Revision required: the button was not clearly attached to an authored host
+  zone.
+
+R1 remains evidence only. Founder Gate 2 review should use R2.
 
 ## Founder Decision
 

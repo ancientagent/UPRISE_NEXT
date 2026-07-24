@@ -37,7 +37,9 @@ that larger system instead of creating a parallel avatar model.
 - `references/legacy-avatar-boards/0_3 (1).jpeg` is the primary character
   language anchor for the selected classic black-ink illustrated direction.
 - `rounds/02-modular-construction-proof/classic-plot-avatar-r1/` is the active
-  bounded Stage 2 proof.
+  bounded Stage 2 proof. Its current founder-review candidate is
+  `02-classic-modular-construction-proof-r2.png`; R1 is retained as superseded
+  internal evidence.
 - `rounds/01-style-calibration/R5-punk-skin-comparison/` remains historical
   exploration and is not the production baseline.
 
