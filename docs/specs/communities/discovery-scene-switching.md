@@ -113,6 +113,7 @@ Saved Uprises/custom Uprises are Discover-owned collection playback contexts.
 - API endpoint `POST /discover/set-home-scene` is implemented for explicit Home Scene reassignment:
   - target must be `city` tier
   - cross-state switches are rejected when the user already has a Home Scene state
+  - an inactive requested city resolves to an active natural/proxy city scene for the same music community; the inactive row is never persisted as the durable civic anchor
   - action is separate from tune transport context
 - API endpoint `POST /discover/tune` persists tuned-scene transport context on the user record.
 - Current web `/discover` route is reduced to a `Coming Soon` placeholder.

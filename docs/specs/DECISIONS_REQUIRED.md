@@ -97,6 +97,33 @@ Do not implement these items until they are locked.
   Roles; no `coin`/`token`/`wallet`/`spend` language without explicit approval.
 - **Trusted Role gates**: role catalog, thresholds, and Registrar/governance
   join point.
+- **Registrar formation Support requirement**: whether a Sect/community/entity
+  filing is accepted before Support is allocated, whether Support is optional
+  or becomes mandatory only after Part 2 activation, and which formation types
+  use the mechanism.
+- **Formation allocation and pooling**: who contributes the proposed large
+  upfront Support amount, exact originator and follower costs, whether follower
+  allocations pool toward a presentation threshold, and duplicate/collusion
+  limits. The originator cost is higher; follower costs are lower.
+- **Sect-potential interest state**: follower threshold, what user-visible or
+  Registrar state it unlocks, and whether allocations remain fixed as follower
+  count changes. Interest never creates Official status or activation.
+- **Sect referral codes**: issuance, recipient/claim flow, source consent,
+  materialization and membership requirements, expiry/use limits, self-referral,
+  attribution windows, and Participation reward values.
+- **Artist-facing fan-interest projection**: which aggregate potential metrics a
+  referred artist can see, minimum privacy cohort, whether amounts or only
+  follower/interest bands appear, freshness, and anti-manipulation disclosures.
+- **Formation satisfaction and non-activation**: confirm that local Sect Uprise
+  activation restores allocated Support; define withdrawal, expiry, cancellation,
+  dormancy, failure, and partial-progress behavior.
+- **Community-development Participation bonuses**: qualifying Registrar and
+  community-enrichment acts, evidence requirements, attribution, value scale,
+  caps, and whether activation awards an additional milestone bonus.
+- **Action-matrix values**: complete every required `TBD` cell in
+  `support-and-participation.md#support-and-participation-action-matrix` before
+  activating the corresponding action family. Do not infer shared costs,
+  restoration, bonuses, proof, or caps across different action families.
 
 ## 10) Digital Artifact Lifecycle (owner section: `docs/specs/economy/print-shop-and-promotions.md`)
 - **Edition semantics**: numbering scheme, public visibility of edition

@@ -6,7 +6,7 @@ function createPrismaMock() {
       update: jest.fn(),
     },
     communityMember: {
-      create: jest.fn(),
+      createMany: jest.fn().mockResolvedValue({ count: 1 }),
     },
     community: {
       update: jest.fn(),
@@ -29,7 +29,7 @@ function createPrismaMock() {
       update: jest.fn(),
     },
     communityMember: {
-      create: jest.fn(),
+      createMany: jest.fn(),
     },
     sectTag: {
       upsert: jest.fn(),
@@ -87,12 +87,14 @@ describe('OnboardingService home-scene resolution', () => {
           homeSceneCity: 'Austin',
           homeSceneState: 'Texas',
           homeSceneCommunity: 'Punk',
+          homeSceneId: 'scene-austin-punk',
           tunedSceneId: 'scene-austin-punk',
         }),
       })
     );
-    expect(prisma.__tx.communityMember.create).toHaveBeenCalledWith({
-      data: { userId: 'user-1', communityId: 'scene-austin-punk', role: 'member' },
+    expect(prisma.__tx.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'user-1', communityId: 'scene-austin-punk', role: 'member' }],
+      skipDuplicates: true,
     });
     expect(result).toMatchObject({
       sceneId: 'scene-austin-punk',
@@ -173,7 +175,7 @@ describe('OnboardingService home-scene resolution', () => {
       tunedSceneId: exactScene.id,
       gpsVerified: false,
     });
-    prisma.__tx.communityMember.create.mockResolvedValue({ id: 'member-1' });
+    prisma.__tx.communityMember.createMany.mockResolvedValue({ count: 0 });
     prisma.__tx.community.update.mockResolvedValue({ id: exactScene.id });
 
     await service.setHomeScene('user-1', {
@@ -191,6 +193,7 @@ describe('OnboardingService home-scene resolution', () => {
       update: { isDefault: true },
       create: { userId: 'user-1', musicCommunity: 'Punk', isDefault: true },
     });
+    expect(prisma.__tx.community.update).not.toHaveBeenCalled();
   });
 
   it('routes an inactive exact tuple to the first active same-state scene while preserving pioneer intent', async () => {
@@ -248,8 +251,9 @@ describe('OnboardingService home-scene resolution', () => {
         }),
       })
     );
-    expect(prisma.__tx.communityMember.create).toHaveBeenCalledWith({
-      data: { userId: 'user-1', communityId: 'scene-austin-punk', role: 'member' },
+    expect(prisma.__tx.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'user-1', communityId: 'scene-austin-punk', role: 'member' }],
+      skipDuplicates: true,
     });
     expect(result).toMatchObject({
       sceneId: 'scene-austin-punk',
@@ -310,8 +314,9 @@ describe('OnboardingService home-scene resolution', () => {
         }),
       })
     );
-    expect(prisma.__tx.communityMember.create).toHaveBeenCalledWith({
-      data: { userId: 'user-1', communityId: 'scene-los-angeles-punk', role: 'member' },
+    expect(prisma.__tx.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'user-1', communityId: 'scene-los-angeles-punk', role: 'member' }],
+      skipDuplicates: true,
     });
     expect(result).toMatchObject({
       sceneId: 'scene-los-angeles-punk',
@@ -474,8 +479,9 @@ describe('OnboardingService home-scene resolution', () => {
     expect(boundValues).toContain('Texas');
 
     expect(prisma.community.create).not.toHaveBeenCalled();
-    expect(prisma.__tx.communityMember.create).toHaveBeenCalledWith({
-      data: { userId: 'user-1', communityId: 'scene-houston-punk', role: 'member' },
+    expect(prisma.__tx.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'user-1', communityId: 'scene-houston-punk', role: 'member' }],
+      skipDuplicates: true,
     });
     expect(result).toMatchObject({
       sceneId: 'scene-houston-punk',

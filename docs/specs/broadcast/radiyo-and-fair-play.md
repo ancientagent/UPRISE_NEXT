@@ -3,7 +3,7 @@
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-14`
+**Last Updated:** `2026-07-22`
 
 ## Overview & Purpose
 Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
@@ -108,6 +108,15 @@ Hard constraints:
 
 ## Propagation / Tier Advancement
 - Upvotes are the only advancement signal.
+- Parent music-community Uprises and Official Sect Uprises both follow the
+  Citywide-to-Statewide-to-National broadcast shape. Local Sect Uprises sharing
+  one Official Sect identity feed that Sect's matching Statewide and National
+  aggregate lanes; they do not feed unrelated Sect titles or parent music
+  communities.
+- Citywide Sect instances retain local civic membership and voting context.
+  Statewide and National Sect lanes are aggregate broadcasts and are not direct
+  voting targets. Exact Sect promotion thresholds and aggregation jobs remain
+  deferred and must be locked before automation.
 - Public-facing wheel/save language should use `Collect`, not `Add`, when listeners keep a song in profile-bound shelves or playlists.
 - The positive `RADIYO` wheel action is `Play It Loud`, not `Blast`.
 - Threshold model is configurable and must support:

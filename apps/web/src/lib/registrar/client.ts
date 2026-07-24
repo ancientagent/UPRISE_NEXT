@@ -105,7 +105,16 @@ export interface RegistrarSectMotionEntry {
   type: 'sect_motion';
   status: RegistrarEntryStatus;
   sceneId: string;
-  payload: Record<string, unknown>;
+  payload: {
+    sectName: string | null;
+    sectSlug: string | null;
+  };
+  sect: {
+    id: string;
+    parentCommunityId: string;
+    name: string;
+    slug: string;
+  } | null;
   scene: RegistrarSceneSummary | null;
   createdAt: string;
   updatedAt: string;

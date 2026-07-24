@@ -11,10 +11,25 @@
 
 - Consolidated listener-avatar visual development into the indexed
   `art/avatar-system/` project: legacy Avatar Boards, Claude/Fable system
-  specifications, R1-R5 prompts and comparison images, research/approval
-  placeholders, and future production-package guidance now share one canonical
-  Art Department location. Existing design-handoff references were updated;
-  no runtime, schema, or owner-spec behavior changed.
+  specifications, R1-R5 prompts, comparison images, approval rules, and future
+  production guidance now share one canonical Art Department location.
+  Existing design-handoff references were updated; no runtime, schema, or
+  owner-spec behavior changed.
+- Recorded the proposed Registrar join point for the draft Support and
+  Participation civic layer: verified community-development work is intended to
+  earn Participation bonuses, while formation efforts may use larger upfront
+  Support allocations restored when the resulting local Sect Uprise activates.
+  Contributor, pooling, amount, filing timing, withdrawal, dormancy, and failure
+  rules remain open. Added a required action matrix covering allocation,
+  satisfaction, restoration, Participation rewards, proof, caps, attribution,
+  and implementation status without inventing unresolved values. The draft now
+  records that any listener may originate a Sect potential with the highest
+  Support allocation, followers contribute smaller interest-only allocations,
+  and referral-code-attributed Artist/Band recruitment can earn Participation
+  for a non-artist listener. Bounded aggregate fan Support is an artist-facing
+  persuasion signal for voluntary registration and Sect membership, never
+  automatic consent or threshold authority. No runtime, Sect threshold, or Part
+  1 dependency changed.
 - Corrected the Sect decision gate to preserve the original simple lifecycle:
   a Home Scene listener requests a Sect; at least `5` distinct eligible
   registered Artist/Band sources support it by registering as Sect members;
@@ -25,8 +40,36 @@
   track-to-Sect backing/history or routine platform-admin approval stage exists.
   The correction also adds a reviewer guardrail requiring reconstruction of the
   plain-language founder lifecycle before proposing implementation options.
+  Once a Sect becomes legitimate/Official, its title is also recognized by
+  Registrars in other Home Scenes within the same parent music community so
+  they can form their own local instances; membership, readiness, voting
+  authority, and Uprise activation remain local to each Home Scene. Those local
+  Sect Uprises are the Citywide contributors to that Official Sect's own
+  Statewide and National aggregate broadcasts; exact promotion mechanics remain
+  deferred.
 
 ### Added
+
+- Completed the named Home Scene listener Sect request primitive behind the
+  legacy-compatible `/registrar/sect-motion` route. A valid request now stores
+  normalized name/slug data and transactionally creates a linked parent-scoped
+  `Sect` identity through nullable Registrar provenance. Submitter-owned reads
+  expose the normalized request and nullable Sect identity while preserving
+  legacy empty rows without inferred backfill. This does not add Artist/Band
+  membership, readiness/progress, activation, public UI, approval, or any
+  provider/database deployment. Request authority follows a new durable
+  `User.homeSceneId` civic anchor, which authoritative Home Scene write/cutover
+  paths maintain separately from mutable Away Scene tuning. Activation preserves
+  former-proxy context from that civic anchor instead of the transient tuned
+  scene, and explicit Home Scene changes use the stored anchor before legacy
+  tuple fallback while resolving inactive requested cities to active proxies.
+  Default/star changes now atomically resolve and synchronize the active
+  natural/proxy anchor; unresolved preferences remain profile-only and cannot
+  replace the current default. All authoritative Home Scene writers now use
+  duplicate-safe membership insertion so revisiting an existing membership
+  cannot abort the surrounding PostgreSQL transaction; member counts increment
+  only for new membership rows. The additive anchor migration performs no
+  guessed legacy backfill.
 
 - Added the historical Slice 7 Sect backing/readiness founder-decision gate.
   Its original per-song backing and open-decision framing is now superseded and

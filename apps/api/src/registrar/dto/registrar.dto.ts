@@ -48,6 +48,7 @@ export type ProjectRegistrationDto = z.infer<typeof ProjectRegistrationSchema>;
 
 export const SectMotionRegistrationSchema = z.object({
   sceneId: z.string().uuid(),
+  sectName: z.string().trim().min(1).max(140),
 });
 
 export type SectMotionRegistrationDto = z.infer<typeof SectMotionRegistrationSchema>;

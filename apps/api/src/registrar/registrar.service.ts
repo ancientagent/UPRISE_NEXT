@@ -5,7 +5,6 @@ import type {
   ArtistBandRegistrationDto,
   PromoterRegistrationDto,
   ProjectRegistrationDto,
-  SectMotionRegistrationDto,
 } from './dto/registrar.dto';
 import { createHash, randomBytes, randomUUID } from 'crypto';
 
@@ -50,17 +49,6 @@ const mapProjectRegistrationRead = (entry: any) => {
     updatedAt: entry.updatedAt,
   };
 };
-
-const mapSectMotionRegistrationRead = (entry: any) => ({
-  id: entry.id,
-  type: entry.type,
-  status: entry.status,
-  sceneId: entry.sceneId,
-  payload: normalizeRegistrarPayloadObject(entry.payload),
-  scene: entry.scene,
-  createdAt: entry.createdAt,
-  updatedAt: entry.updatedAt,
-});
 
 type PromoterCapabilityReadSummary = {
   codeIssuedCount: number;
@@ -873,75 +861,6 @@ export class RegistrarService {
     });
   }
 
-  async submitSectMotionRegistration(userId: string, dto: SectMotionRegistrationDto) {
-    const [scene, user] = await Promise.all([
-      this.prisma.community.findUnique({
-        where: { id: dto.sceneId },
-        select: {
-          id: true,
-          city: true,
-          state: true,
-          musicCommunity: true,
-          tier: true,
-        },
-      }),
-      this.prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          homeSceneCity: true,
-          homeSceneState: true,
-          homeSceneCommunity: true,
-        },
-      }),
-    ]);
-
-    if (!scene) {
-      throw new NotFoundException('Scene not found');
-    }
-    if (scene.tier !== 'city') {
-      throw new ForbiddenException('Registrar submissions are restricted to city-tier Home Scenes');
-    }
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const homeCity = (user.homeSceneCity ?? '').trim().toLowerCase();
-    const homeState = (user.homeSceneState ?? '').trim().toLowerCase();
-    const homeMusicCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
-    const homeCommunity = (homeMusicCommunity ?? '').trim().toLowerCase();
-    const sceneCity = (scene.city ?? '').trim().toLowerCase();
-    const sceneState = (scene.state ?? '').trim().toLowerCase();
-    const sceneCommunity = (scene.musicCommunity ?? '').trim().toLowerCase();
-
-    if (!homeCity || !homeState || !homeCommunity) {
-      throw new ForbiddenException('Registrar access requires an established Home Scene');
-    }
-
-    if (homeCity !== sceneCity || homeState !== sceneState || homeCommunity !== sceneCommunity) {
-      throw new ForbiddenException('Registrar submissions are limited to your Home Scene');
-    }
-
-    return this.prisma.registrarEntry.create({
-      data: {
-        type: 'sect_motion',
-        status: 'submitted',
-        sceneId: scene.id,
-        createdById: user.id,
-        payload: {},
-      },
-      select: {
-        id: true,
-        type: true,
-        status: true,
-        sceneId: true,
-        createdById: true,
-        payload: true,
-        createdAt: true,
-      },
-    });
-  }
-
   async listPromoterRegistrations(userId: string) {
     const entries = await this.prisma.registrarEntry.findMany({
       where: {
@@ -1258,84 +1177,6 @@ export class RegistrarService {
     }
 
     return mapProjectRegistrationRead(entry);
-  }
-
-  async listSectMotionRegistrations(userId: string) {
-    const entries = await this.prisma.registrarEntry.findMany({
-      where: {
-        createdById: userId,
-        type: 'sect_motion',
-      },
-      select: {
-        id: true,
-        type: true,
-        status: true,
-        sceneId: true,
-        payload: true,
-        createdAt: true,
-        updatedAt: true,
-        scene: {
-          select: {
-            id: true,
-            name: true,
-            city: true,
-            state: true,
-            musicCommunity: true,
-            tier: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const countsByStatus = entries.reduce((acc: Record<string, number>, entry: any) => {
-      acc[entry.status] = (acc[entry.status] ?? 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    return {
-      total: entries.length,
-      countsByStatus,
-      entries: entries.map(mapSectMotionRegistrationRead),
-    };
-  }
-
-  async getSectMotionRegistration(userId: string, entryId: string) {
-    const entry = await this.prisma.registrarEntry.findUnique({
-      where: { id: entryId },
-      select: {
-        id: true,
-        type: true,
-        status: true,
-        sceneId: true,
-        createdById: true,
-        payload: true,
-        createdAt: true,
-        updatedAt: true,
-        scene: {
-          select: {
-            id: true,
-            name: true,
-            city: true,
-            state: true,
-            musicCommunity: true,
-            tier: true,
-          },
-        },
-      },
-    });
-
-    if (!entry) {
-      throw new NotFoundException('Registrar entry not found');
-    }
-    if (entry.type !== 'sect_motion') {
-      throw new ForbiddenException('Registrar entry is not a sect motion');
-    }
-    if (entry.createdById !== userId) {
-      throw new ForbiddenException('Only the submitting user can read this sect motion');
-    }
-
-    return mapSectMotionRegistrationRead(entry);
   }
 
   async listArtistBandRegistrations(userId: string) {

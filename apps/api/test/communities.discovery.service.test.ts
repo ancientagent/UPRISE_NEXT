@@ -6,7 +6,7 @@ describe('CommunitiesService.discoverScenes', () => {
     user: { findUnique: jest.fn(), update: jest.fn() },
     userMusicCommunityPreference: { findFirst: jest.fn(), upsert: jest.fn(), updateMany: jest.fn(), update: jest.fn() },
     community: { findMany: jest.fn(), findUnique: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
-    communityMember: { create: jest.fn() },
+    communityMember: { createMany: jest.fn() },
     artistBand: { findMany: jest.fn(), findFirst: jest.fn() },
     track: { findMany: jest.fn() },
     rotationEntry: { findMany: jest.fn() },
@@ -24,6 +24,7 @@ describe('CommunitiesService.discoverScenes', () => {
     jest.clearAllMocks();
     mockPrisma.$transaction.mockImplementation(async (callback: any) => callback(mockPrisma));
     mockPrisma.userMusicCommunityPreference.findFirst.mockResolvedValue(null);
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 1 });
     service = new CommunitiesService(mockPrisma as any);
   });
 
@@ -313,6 +314,7 @@ describe('CommunitiesService.discoverScenes', () => {
   it('sets home scene to a city-tier scene in the same state', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'u1',
+      homeSceneId: 'c1',
       homeSceneCity: 'Austin',
       homeSceneState: 'TX',
       homeSceneCommunity: 'Punk',
@@ -328,9 +330,7 @@ describe('CommunitiesService.discoverScenes', () => {
       isActive: true,
     });
 
-    mockPrisma.community.findFirst.mockResolvedValue({ id: 'c1' });
     mockPrisma.user.update.mockResolvedValue({ id: 'u1' });
-    mockPrisma.communityMember.create.mockResolvedValue({ id: 'm1' });
     mockPrisma.community.update.mockResolvedValue({ id: 'c2' });
 
     const result = await service.setHomeScene('u1', { sceneId: 'c2' });
@@ -339,6 +339,12 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.tunedSceneId).toBe('c2');
     expect(result.previousHomeSceneId).toBe('c1');
     expect(result.changed).toBe(true);
+    expect(mockPrisma.community.findFirst).not.toHaveBeenCalled();
+    expect(mockPrisma.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ homeSceneId: 'c2', tunedSceneId: 'c2' }),
+      }),
+    );
     expect(mockPrisma.userMusicCommunityPreference.updateMany).toHaveBeenCalledWith({
       where: { userId: 'u1', isDefault: true },
       data: { isDefault: false },
@@ -348,6 +354,66 @@ describe('CommunitiesService.discoverScenes', () => {
       update: { isDefault: true },
       create: { userId: 'u1', musicCommunity: 'Punk', isDefault: true },
     });
+  });
+
+  it('anchors an inactive requested city to an active same-state proxy', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneId: 'c1',
+      homeSceneCity: 'Austin',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'inactive-el-paso-metal',
+      name: 'El Paso Metal',
+      city: 'El Paso',
+      state: 'TX',
+      musicCommunity: 'Metal',
+      tier: 'city',
+      isActive: false,
+    });
+    mockPrisma.community.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'active-austin-metal',
+        name: 'Austin Metal',
+        city: 'Austin',
+        state: 'TX',
+        musicCommunity: 'Metal',
+        tier: 'city',
+        isActive: true,
+      });
+    mockPrisma.user.update.mockResolvedValue({ id: 'u1' });
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 0 });
+    mockPrisma.community.update.mockResolvedValue({ id: 'active-austin-metal' });
+
+    const result = await service.setHomeScene('u1', { sceneId: 'inactive-el-paso-metal' });
+
+    expect(mockPrisma.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          homeSceneCity: 'El Paso',
+          homeSceneState: 'TX',
+          homeSceneCommunity: 'Metal',
+          homeSceneId: 'active-austin-metal',
+          tunedSceneId: 'active-austin-metal',
+        }),
+      }),
+    );
+    expect(mockPrisma.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'u1', communityId: 'active-austin-metal', role: 'member' }],
+      skipDuplicates: true,
+    });
+    expect(mockPrisma.community.update).not.toHaveBeenCalled();
+    expect(result).toEqual(
+      expect.objectContaining({
+        previousHomeSceneId: 'c1',
+        homeSceneId: 'active-austin-metal',
+        tunedSceneId: 'active-austin-metal',
+        changed: true,
+      }),
+    );
   });
 
   it('returns persisted tuned scene context when available', async () => {
@@ -375,6 +441,33 @@ describe('CommunitiesService.discoverScenes', () => {
     expect(result.tunedSceneId).toBe('c2');
     expect(result.homeSceneId).toBe('c1');
     expect(result.isVisitor).toBe(true);
+  });
+
+  it('keeps durable proxy Home Scene authority separate from Away tuning context', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'u1',
+      homeSceneId: 'c1',
+      tunedSceneId: 'c2',
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'TX',
+      homeSceneCommunity: 'Punk',
+    });
+    mockPrisma.community.findUnique.mockResolvedValue({
+      id: 'c2',
+      name: 'Seattle Punk',
+      city: 'Seattle',
+      state: 'WA',
+      musicCommunity: 'Punk',
+      tier: 'city',
+      isActive: true,
+    });
+
+    await expect(service.getDiscoveryContext('u1')).resolves.toMatchObject({
+      homeSceneId: 'c1',
+      tunedSceneId: 'c2',
+      isVisitor: true,
+    });
+    expect(mockPrisma.community.findFirst).not.toHaveBeenCalled();
   });
 
   it('returns neutral context when discovery context is requested without auth', async () => {

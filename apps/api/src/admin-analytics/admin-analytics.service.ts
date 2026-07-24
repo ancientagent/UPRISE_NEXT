@@ -439,16 +439,16 @@ export class AdminAnalyticsService {
       const listeners = await this.findActivationListeners(tx, activationCity, activationState, activationMusicCommunity);
       const listenerIds = listeners.map((listener: { id: string }) => listener.id);
       const formerProxyScenes = listeners.filter(
-        (listener: { tunedSceneId: string | null }) => Boolean(listener.tunedSceneId) && listener.tunedSceneId !== community.id,
+        (listener: { homeSceneId: string | null }) => Boolean(listener.homeSceneId) && listener.homeSceneId !== community.id,
       );
 
       const savedAwayScenes =
         formerProxyScenes.length === 0
           ? { count: 0 }
           : await tx.userSavedScene.createMany({
-              data: formerProxyScenes.map((listener: { id: string; tunedSceneId: string | null }) => ({
+              data: formerProxyScenes.map((listener: { id: string; homeSceneId: string | null }) => ({
                 userId: listener.id,
-                communityId: listener.tunedSceneId as string,
+                communityId: listener.homeSceneId as string,
                 reason: 'former_proxy_cutover',
                 context: {
                   from: 'activation_cutover',
@@ -466,9 +466,9 @@ export class AdminAnalyticsService {
         listeners.length === 0
           ? { count: 0 }
           : await tx.userActivationNotice.createMany({
-              data: listeners.map((listener: { id: string; tunedSceneId: string | null }) => ({
+              data: listeners.map((listener: { id: string; homeSceneId: string | null }) => ({
                 userId: listener.id,
-                fromSceneId: listener.tunedSceneId === community.id ? null : listener.tunedSceneId,
+                fromSceneId: listener.homeSceneId === community.id ? null : listener.homeSceneId,
                 toSceneId: community.id,
                 city: activationCity,
                 state: activationState,
@@ -486,6 +486,7 @@ export class AdminAnalyticsService {
           : await tx.user.updateMany({
               where: { id: { in: listenerIds } },
               data: {
+                homeSceneId: community.id,
                 tunedSceneId: community.id,
                 tunedSceneUpdatedAt: activatedAt,
               },
@@ -605,7 +606,7 @@ export class AdminAnalyticsService {
       },
       select: {
         id: true,
-        tunedSceneId: true,
+        homeSceneId: true,
         homeSceneCity: true,
         homeSceneState: true,
         homeSceneCommunity: true,
@@ -636,9 +637,9 @@ export class AdminAnalyticsService {
           (preference) => this.activationTupleKey(listener.homeSceneCity, listener.homeSceneState, preference.musicCommunity) === targetTupleKey,
         );
       })
-      .map((listener: { id: string; tunedSceneId: string | null }) => ({
+      .map((listener: { id: string; homeSceneId: string | null }) => ({
         id: listener.id,
-        tunedSceneId: listener.tunedSceneId,
+        homeSceneId: listener.homeSceneId,
       }));
   }
 
