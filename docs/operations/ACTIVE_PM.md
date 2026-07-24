@@ -18,18 +18,19 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `codex/workflow-policy-simplification` |
-| Base | `main@a108bdf` |
-| Scope | Reduce documentation and branch-management ceremony while preserving repo authority, active workspace safety, and protected UX references. |
+| Branch | `codex/historical-branch-cleanup` |
+| Base | `main@3f5ef12` |
+| Scope | Preserve PR #212's unique raw founder capture, retire only proven merged/superseded refs, and reduce active routing to current and protected-risk work. |
 | Owner | Codex local, sole writer |
-| Validation | `pnpm run docs:lint`, `pnpm run workspace:audit`, focused registry-script checks, `git diff --check` |
-| Out of Scope | Product behavior, canon, owner-spec semantics, legacy-document deletion, preserved UX extraction, and provider/database changes |
+| Validation | exact founder-file hash comparison, independent branch audit, `pnpm run verify`, `pnpm run workspace:audit`, `git diff --check` |
+| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, and deciding the unresolved Prisma schema draft |
 
 ## Open Queue
 
 | PR / Branch | State | Action |
 | --- | --- | --- |
-| PR #212 / `docs/linear-clean-context-agent-roles` | Draft, conflicting, deprioritized | Classify during the approved historical cleanup; do not merge as-is. |
+| PR #212 / `docs/linear-clean-context-agent-roles` | Draft, superseded by PR #247 | Close and delete its refs after the extracted founder capture lands on `main`. |
+| closed PR #1 / `codex/propose-prisma-schema-migration` | Unmerged unique schema/spec draft | Preserve for a dedicated schema/product-authority review. |
 
 ## Preserved Workspaces
 
@@ -39,20 +40,21 @@ as implementation evidence.
 | `/home/baris/UPRISE_NEXT_uxmobile` / `ux-mobile-r1-build` | Preserved | Mobile-first UX reference; extract intentionally, never merge wholesale. |
 | `feat/ux-batch17` | Preserved branch | Historical UX/Reliant batch reference. |
 | `feat/ux-batch18-run` | Preserved branch | Historical UX/Reliant batch reference. |
-| `codex/founder-regenerative-ownership-capture` | Review needed | Local founder-session source checkpoint; classify before deletion. |
+| `codex/propose-prisma-schema-migration` | Preserved branch | Unmerged unique schema/spec draft; no cleanup decision in this pass. |
 
 ## Blockers
 
-- None for the workflow-policy slice.
-- Branch deletion still requires verified merge/supersession evidence.
+- None for the cleanup PR.
+- PR #212 cannot close until its extracted founder note lands on `main`.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Next Signal
 
-1. Validate and merge the workflow-policy simplification.
-2. Run the approved historical branch inventory against the merged policy.
-3. Delete only refs proven merged or superseded; preserve unknown or protected
-   work.
+1. Validate and merge the cleanup branch.
+2. Close PR #212 and delete its refs after verifying the founder capture on
+   `main`.
+3. Retire the cleanup branch and the redundant local founder-source checkpoint;
+   leave the four UX refs and unresolved Prisma draft preserved.
 
 ## Agent Rules
 
