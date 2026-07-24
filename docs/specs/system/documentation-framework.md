@@ -116,7 +116,9 @@ Files:
 Rules:
 
 - Operations docs are execution state, not product doctrine.
-- Keep them short and current: active branch/PR queue, blockers, worktrees to preserve, next execution signal, and validation seed.
+- Keep them short and current: active branch/PR queue, blockers, preserved-risk
+  worktrees, next execution signal, and validation seed. Do not retain merged
+  PR tables or remote-branch inventories here.
 - Link to owner specs, handoffs, PRs, and Linear instead of duplicating long reports.
 - Refresh when active branch, PR queue, blocker, preserved-worktree list, or next execution signal changes.
 - If operations state conflicts with owner specs or runtime evidence, report the conflict and update operations state; do not rewrite product truth from operations notes.
@@ -131,13 +133,20 @@ Files:
 
 Rules:
 
-- Branch/worktree/workspace creation is incomplete until the registry has an entry.
+- The current write branch/worktree must have a registry entry before work
+  begins. Preserve non-obvious worktrees, prototype refs, and external-agent
+  assignments explicitly.
 - Every entry must state branch name, worktree/path if any, PR/Linear link if any, base/head, status, accountable owner, assigned agents, what is on it, last update date, and closeout plan.
-- Update the registry when creating, assigning, pushing, opening a PR, preserving, merging, closing, deleting, or archiving branch/worktree work.
-- Run `pnpm run workspace:audit` before push, PR creation, branch cleanup, and closeout. The audit fails on unregistered local branches, worktree branches, and open PR heads.
+- Update the current entry when ownership, scope, preservation status, or
+  closeout intent changes. Git and GitHub own live branch, PR, and merge state.
+- Run `pnpm run workspace:audit` from the current workspace before push, PR
+  creation, branch cleanup, and closeout. It validates the current write
+  workspace and warns about other branch-local snapshots without requiring one
+  unmerged branch to know another branch's private registry update.
 - Remote-only historical branches may require a dedicated cleanup pass; use `node scripts/workspace-registry.mjs audit --include-remote` to inventory them without making them product truth.
 - This registry is execution state, not product doctrine. It should point to owner specs, PRs, handoffs, and Linear instead of duplicating product rules.
-- Do not create a follow-up PR solely to mark a just-merged operations/registry refresh PR as merged. GitHub/`gh pr view` is live PR truth; `ACTIVE_PM` and the registry are routing snapshots. Update stale self-closing refresh rows in the next real work branch, or immediately only when stale state would misroute, hide an unsafe branch/worktree, or affect branch cleanup.
+- Remove merged/closed rows with `pnpm run workspace:compact`; do not create a
+  follow-up PR solely to record a merge GitHub already owns.
 
 ### Layer 4d: Screen Packages
 
@@ -305,9 +314,12 @@ Do not:
 - pnpm --filter <pkg> typecheck
 
 ## Docs Required
-- docs/CHANGELOG.md
 - owner spec if behavior changes
-- dated handoff if multi-step
+- docs/CHANGELOG.md only for user-visible product/runtime changes or meaningful
+  authority/operations-policy changes
+- dated handoff only for unresolved transfer, meaningful multi-agent
+  continuation, provider/schema incidents, or material QA evidence that must
+  survive the PR
 
 ## Founder Decision Required
 yes/no
@@ -325,7 +337,7 @@ Use the smallest safe workflow before reaching for the full packet/review appara
 
 1. implement the scoped change from current repo truth;
 2. run focused validation for the touched package/surface;
-3. update only required docs/changelog/handoff;
+3. update only triggered owner docs/changelog/handoff;
 4. open/update the PR;
 5. merge or enable auto-merge when required checks pass.
 

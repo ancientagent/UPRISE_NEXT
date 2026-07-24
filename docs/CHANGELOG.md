@@ -1,7 +1,10 @@
 # 📜 CHANGELOG.md — UPRISE Monorepo
 
 **Repository:** `music-community-platform`
-**Policy:** Auto-updated via CI from PR titles & labels. Manual edits allowed for summaries.
+**Policy:** Record user-visible product/runtime changes and meaningful
+authority or operations-policy changes. Do not record routine branch routing,
+review acknowledgements, validation success, registry refreshes, or ordinary
+single-owner closeout.
 
 ---
 
@@ -9,6 +12,12 @@
 
 ### Changed
 
+- Simplified the repo execution-control policy: focused startup now loads two
+  routing documents, handoffs and changelog entries are trigger-based,
+  `ACTIVE_PM` and the workspace registry retain current/preserved-risk state
+  instead of merged history, and `workspace:audit` validates the current write
+  workspace without failing on another unmerged branch's private registry
+  snapshot.
 - Consolidated listener-avatar visual development into the indexed
   `art/avatar-system/` project: legacy Avatar Boards, Claude/Fable system
   specifications, R1-R5 prompts, comparison images, approval rules, and future

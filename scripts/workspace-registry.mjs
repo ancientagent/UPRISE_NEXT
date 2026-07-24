@@ -13,6 +13,7 @@ function usage(exitCode = 1) {
   console.log(`Usage:
   node scripts/workspace-registry.mjs audit [--include-remote] [--strict-remote]
   node scripts/workspace-registry.mjs add --id ID --kind KIND --branch BRANCH --status STATUS --owner OWNER --agents AGENTS --scope SCOPE [--path PATH] [--pr PR] [--base BASE] [--head HEAD] [--updated YYYY-MM-DD] [--closeout TEXT]
+  node scripts/workspace-registry.mjs compact
 
 Required add fields: id, kind, branch, status, owner, agents, scope.
 Recommended kind values: primary, branch, worktree, preserved-branch, external-agent.
@@ -186,27 +187,45 @@ function listOpenPrBranches() {
 function audit(args) {
   const { entries } = loadRegistry();
   const registered = registryBranchSet(entries);
-  const allowedUnregisteredLocal = new Set(['main']);
   const failures = [];
   const warnings = [];
+  const currentBranch = normalizeBranchName(git(['branch', '--show-current']));
+  const currentRoot = git(['rev-parse', '--show-toplevel']);
+  const localBranches = listLocalBranches();
 
-  for (const branch of listLocalBranches()) {
-    if (allowedUnregisteredLocal.has(branch)) continue;
-    if (!registered.has(branch)) failures.push(`local branch not in registry: ${branch}`);
+  if (currentBranch && currentBranch !== 'main' && !registered.has(currentBranch)) {
+    failures.push(`current branch not in registry: ${currentBranch}`);
   }
 
   for (const wt of listWorktrees()) {
     if (!wt.branch) continue;
-    if (!registered.has(wt.branch)) failures.push(`worktree branch not in registry: ${wt.branch} (${wt.path})`);
+    if (wt.path === currentRoot) continue;
+    if (!registered.has(wt.branch)) {
+      warnings.push(
+        `other worktree is not in this branch's registry snapshot: ${wt.branch} (${wt.path}); audit that worktree from its own branch`,
+      );
+    }
   }
 
   const prBranches = listOpenPrBranches();
   if (prBranches === null) {
     warnings.push('could not query open PRs with gh; skipped PR-head registry audit');
   } else {
-    for (const branch of prBranches) {
-      if (!registered.has(branch)) failures.push(`open PR head not in registry: ${branch}`);
+    const missingPrBranches = prBranches.filter((branch) => !registered.has(branch));
+    if (missingPrBranches.length > 0) {
+      warnings.push(
+        `${missingPrBranches.length} open PR head(s) are not in this branch's registry snapshot; GitHub remains live PR truth`,
+      );
     }
+  }
+
+  const unregisteredLocalCount = localBranches.filter(
+    (branch) => branch !== 'main' && !registered.has(branch),
+  ).length;
+  if (unregisteredLocalCount > 0) {
+    warnings.push(
+      `${unregisteredLocalCount} local branch ref(s) are outside the active registry; Git owns historical refs and cleanup requires classification`,
+    );
   }
 
   if (args['include-remote'] || args['strict-remote']) {
@@ -226,7 +245,9 @@ function audit(args) {
     console.error(`[workspace-registry] FAIL: update ${REGISTRY_PATH} before continuing.`);
     process.exit(1);
   }
-  console.log(`[workspace-registry] OK: ${entries.length} registry entries cover local branches, worktrees, and open PR heads.`);
+  console.log(
+    `[workspace-registry] OK: current workspace is registered; ${entries.length} active/preserved routing entries loaded.`,
+  );
 }
 
 function add(args) {
@@ -265,12 +286,25 @@ function safeHead() {
   }
 }
 
+function compact() {
+  const registry = loadRegistry();
+  const removableStatuses = new Set(['merged', 'closed']);
+  const nextEntries = registry.entries.filter(
+    (entry) => !removableStatuses.has(entry.status),
+  );
+  writeRegistry(registry, nextEntries);
+  console.log(
+    `[workspace-registry] compacted ${registry.entries.length} entries to ${nextEntries.length}; merged/closed history remains in Git and GitHub`,
+  );
+}
+
 function main() {
   const [command, ...rest] = process.argv.slice(2);
   const args = parseArgs(rest);
   try {
     if (command === 'audit') return audit(args);
     if (command === 'add') return add(args);
+    if (command === 'compact') return compact();
     usage(command ? 1 : 0);
   } catch (error) {
     console.error(`[workspace-registry] ${error.message}`);
