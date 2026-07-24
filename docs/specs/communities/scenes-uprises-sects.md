@@ -3,7 +3,7 @@
 **ID:** `COMM-SCENES`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-14`
+**Last Updated:** `2026-07-22`
 
 ## Overview & Purpose
 This spec defines the structural hierarchy of **Scenes**, **Communities**, **Uprises**, and **Sects**. It formalizes how place, people, and broadcast relate, and how a Sect can mature into its own Uprise.
@@ -44,11 +44,15 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Citywide is the only tier with civic infrastructure. Statewide and National are aggregate broadcasts only.
 
 ### Implemented Behavior (Current)
-- Official Sect identity persistence now exists through the parent-community-scoped `Sect` model. This foundation does not implement listener requests, Artist/Band Sect membership, lifecycle status, readiness, visibility, update channels, or Sect activation.
+- Official Sect identity persistence exists through the parent-community-scoped
+  `Sect` model. A named Home Scene listener request now creates and links that
+  identity transactionally through nullable Registrar provenance; Artist/Band
+  Sect membership, lifecycle status, readiness, visibility, update channels,
+  and Sect activation remain unimplemented.
 - Home Scene selection currently resolves exact `{city, state, musicCommunity}` in `Community` (tier `city`).
 - If the selected city-tier community does not exist or is inactive, onboarding assigns the user to the nearest/relevant active major-node city-tier `Community` for the same parent music community.
 - Major-node/proxy assignment must stay in-state when any same-state active major-node exists for the selected music community. Cross-state assignment is allowed only when no same-state active major-node exists, and remains an edge case for statewide identity policy.
-- Onboarding does not create inactive `Community` rows or listener-side pioneer activation queues. The active listening/voting anchor is stored through `User.tunedSceneId` where current runtime needs an explicit resolved anchor.
+- Onboarding does not create inactive `Community` rows or listener-side pioneer activation queues. The durable active natural/proxy civic anchor is stored in `User.homeSceneId`; `User.tunedSceneId` is mutable Home/Away listening context and is not civic authority by itself.
 - UPRISE starts with fixed active major-node Home Scenes / music capitals for each parent music community. Those nodes absorb surrounding or inactive-city listeners and sources until enough local artist/source concentration exists to split off a new city-tier `Community`.
 - New city-tier communities are created through artist/source registration and Registrar/source activation, not listener onboarding or listener demand. Without active local artists/music, there is no music community to activate.
 - When a new city-tier Home Scene splits off from a major node, future listener assignment and future source uploads attach according to the newly active Home Scene. Existing songs finish their current rotation lifecycle in their prior active scene unless a later approved spec changes the cutover rule.
@@ -57,11 +61,16 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 - Community profile read surface is available in web at `apps/web/src/app/community/[id]/page.tsx` using:
   - `GET /communities/:id` for profile metadata
   - `GET /communities/:id/feed` for recent S.E.E.D activity projection
-- Registrar Sect request skeleton exists:
+- Registrar named listener Sect requests exist:
   - `POST /registrar/sect-motion` is the legacy-compatible route/type for a
     Home Scene listener request (`type = sect_motion`, `status = submitted`).
-  - Current primitive enforces scene locality but captures no Sect name,
-    Artist/Band memberships, threshold state, or activation.
+  - Current runtime requires the Sect name, enforces the requester's established
+    durable active natural/proxy `User.homeSceneId` assignment, and
+    transactionally creates the submitted Registrar entry plus linked
+    parent-scoped Sect identity. A transient Away Scene tuning context does not
+    grant request authority.
+  - Request creation requires no Artist/Band ownership and creates no
+    Artist/Band membership, threshold state, progress, or activation.
 - Sect readiness tracking may be built before public visibility is enabled; visibility may remain hidden, admin-only, or read-only until the product surface is activated.
 - Sect readiness should read from the Release Deck/deck-system measurement
   path: current eligible songs, playable duration, source ownership, Home Scene
@@ -127,6 +136,19 @@ justify subcommunity broadcast authority.
 - Sect visibility may remain hidden or read-only until its presentation and menu
   architecture are locked; this does not add a maturity or approval gate.
 - Registrar may eventually show active Official Sects in the current Home Scene, sects that have already uprisen, and where those uprisen sects exist.
+- Once a Sect becomes legitimate/Official, its recognized title becomes
+  discoverable through Registrars in other Home Scenes belonging to the same
+  parent music community. Those Home Scenes may establish or join their own
+  local instance of that Sect without creating a new unrelated Sect title.
+- Official Sect recognition never crosses into a different parent music
+  community. Each Home Scene's local Sect instance retains its own membership,
+  readiness, voting authority, and eventual Sect Uprise lifecycle; discovering
+  or joining a local instance does not grant authority in the originating Home
+  Scene's Sect.
+- The persistence/linking mechanism for shared Official Sect identity and local
+  Home Scene instances remains a future implementation contract. Do not infer a
+  global membership row or shared cross-city voting authority from title
+  recognition alone.
 
 ### Readiness Inputs
 
@@ -166,12 +188,41 @@ justify subcommunity broadcast authority.
   the parent Home Scene's combined Release Deck. There is no separate
   routine platform-admin approval stage after the settled thresholds are met.
 
+### Sect Three-Tier Architecture
+
+- An Official Sect identity connects its local Home Scene instances into that
+  Sect's own Citywide-to-Statewide-to-National broadcast system. Shared title
+  recognition is therefore a tier identity contract, not merely a discovery
+  label.
+- Each active local Sect Uprise is the Citywide tier instance for that Sect in
+  its parent Home Scene. Its eligible results can contribute to the matching
+  Statewide Sect aggregate; matching Statewide results can contribute to the
+  National Sect aggregate.
+- The parent music community remains part of Sect identity at every tier. A
+  same-named Sect under a different parent music community is not part of this
+  tier chain.
+- Citywide remains the only civic infrastructure tier. Sect membership, local
+  voting authority, readiness, and governance remain attached to each local
+  Home Scene instance. Statewide and National Sect tiers are aggregate
+  broadcasts, not separate civic communities with direct membership or voting.
+- Exact Sect promotion thresholds, eligibility evidence, and aggregation jobs
+  remain deferred Fair Play contracts. Implementations must not invent those
+  mechanics from the existence of the settled three-tier architecture.
+
 ### Current Runtime Boundary
 
-- The database can persist an authority-neutral Official Sect identity scoped to one parent `Community`; no runtime writer or read surface uses it yet.
-- `POST /registrar/sect-motion` exists only as a Home Scene-scoped skeleton filing primitive.
-- `GET /registrar/sect-motion/entries` and `GET /registrar/sect-motion/:entryId` exist for submitter-owned readback.
-- Current runtime does not capture a named Sect request, create Artist/Band Sect membership records, validate thresholds, create update channels, or activate Sects.
+- `POST /registrar/sect-motion` accepts a named request from a listener in the
+  matching established durable active natural/proxy Home Scene and atomically
+  creates the Registrar request plus linked authority-neutral `Sect` identity
+  scoped to the parent `Community`; transient Away Scene tuning is ignored for
+  authority.
+- `GET /registrar/sect-motion/entries` and
+  `GET /registrar/sect-motion/:entryId` provide submitter-owned readback with
+  normalized name/slug, nullable linked Sect identity, and scene context.
+- Legacy empty request rows remain readable with null request identity fields;
+  runtime does not guess or backfill their Sect identity.
+- Current runtime does not create Artist/Band Sect membership records, validate
+  thresholds, expose progress, create update channels, or activate Sects.
 - Existing `SectTag` / `UserTag` rows remain non-authoritative for Artist/Band Sect membership and Sect activation.
 - No current runtime persists Artist/Band Sect membership or computes Sect
   readiness from member artists' current Home Scene Release Decks.
@@ -183,8 +234,9 @@ justify subcommunity broadcast authority.
 - Registrar request/support validation and the runtime evaluator that realizes
   an active Sect after the settled artist-support and music thresholds are met.
 - Automated/scheduled city-tier activation and external notification delivery beyond the current profile notice context.
-- User-facing Sect request, Artist/Band membership, progress visibility, and
-  threshold-state presentation remain unimplemented.
+- Public Sect request UI, Artist/Band membership, progress visibility, and
+  threshold-state presentation remain unimplemented; the named request API and
+  submitter-owned readback are implemented.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
 ## Non-Functional Requirements
@@ -215,8 +267,10 @@ justify subcommunity broadcast authority.
 - `Sect`
   - authoritative Official Sect identity scoped by `parentCommunityId`
   - unique identity constraint on `(parentCommunityId, slug)`
-  - contains no lifecycle, Registrar provenance, backing, readiness, visibility, or Uprise-activation state
-  - has no runtime creation or read path in the current slice
+  - named listener requests create it transactionally with nullable
+    `requestRegistrarEntryId` provenance and submitter-owned request readback
+  - contains no lifecycle, Artist/Band membership, backing, readiness,
+    visibility, or Uprise-activation state
 - Future Artist/Band Sect membership references
   - should connect a registered Artist/Band source to the requested/legitimate
     Sect through Registrar-held membership
@@ -304,10 +358,9 @@ justify subcommunity broadcast authority.
 - Define when request, membership, legitimacy, and active-state progress become
   user-visible without adding a maturity, approval, or confirmation gate to the
   settled lifecycle.
-- Define implementation artifacts for the now-owned Official Sect and Sect
-  activation boundary: listener request persistence, Registrar-held
-  Artist/Band Sect membership, current Release Deck aggregation, updates
-  channel, threshold-state transitions, and visibility.
+- Define implementation artifacts for the remaining Official Sect activation
+  boundary: Registrar-held Artist/Band Sect membership, current Release Deck
+  aggregation, updates channel, threshold-state transitions, and visibility.
 - Add explicit Uprise model and Scene<->Uprise lifecycle constraints.
 - Lock propagation thresholds and policy in `docs/specs/DECISIONS_REQUIRED.md`.
 

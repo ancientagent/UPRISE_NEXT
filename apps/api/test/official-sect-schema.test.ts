@@ -4,7 +4,7 @@ import path from 'node:path';
 const apiRoot = path.resolve(__dirname, '..');
 const migrationPath = path.join(
   apiRoot,
-  'prisma/migrations/20260714223000_add_official_sects/migration.sql',
+  'prisma/migrations/20260715030000_add_sect_request_provenance/migration.sql',
 );
 
 function readApiFile(relativePath: string): string {
@@ -33,14 +33,16 @@ function normalizeExactText(value: string): string {
 
 const expectedSectModel = `
 model Sect {
-  id                String   @id @default(uuid())
-  parentCommunityId String
-  name              String
-  slug              String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                      String   @id @default(uuid())
+  parentCommunityId       String
+  requestRegistrarEntryId String?  @unique
+  name                    String
+  slug                    String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
-  parentCommunity Community @relation(fields: [parentCommunityId], references: [id], onDelete: Restrict)
+  parentCommunity      Community       @relation(fields: [parentCommunityId], references: [id], onDelete: Restrict)
+  requestRegistrarEntry RegistrarEntry? @relation(fields: [requestRegistrarEntryId], references: [id], onDelete: SetNull)
 
   @@unique([parentCommunityId, slug])
   @@map("sects")
@@ -48,23 +50,14 @@ model Sect {
 `;
 
 const expectedMigration = `
--- CreateTable
-CREATE TABLE "sects" (
-    "id" TEXT NOT NULL,
-    "parentCommunityId" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "slug" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "sects_pkey" PRIMARY KEY ("id")
-);
+-- AlterTable
+ALTER TABLE "sects" ADD COLUMN "requestRegistrarEntryId" TEXT;
 
 -- CreateIndex
-CREATE UNIQUE INDEX "sects_parentCommunityId_slug_key" ON "sects"("parentCommunityId", "slug");
+CREATE UNIQUE INDEX "sects_requestRegistrarEntryId_key" ON "sects"("requestRegistrarEntryId");
 
 -- AddForeignKey
-ALTER TABLE "sects" ADD CONSTRAINT "sects_parentCommunityId_fkey" FOREIGN KEY ("parentCommunityId") REFERENCES "communities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "sects" ADD CONSTRAINT "sects_requestRegistrarEntryId_fkey" FOREIGN KEY ("requestRegistrarEntryId") REFERENCES "registrar_entries"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 `;
 
 describe('Official Sect identity schema contract', () => {
@@ -79,6 +72,10 @@ describe('Official Sect identity schema contract', () => {
     );
     expect(community).toMatch(/^\s+sects\s+Sect\[\]$/m);
     expect(schema).not.toContain('model TrackSectBacking');
+    expect(readPrismaModel(schema, 'Track')).not.toMatch(/sect/i);
+    expect(sect).not.toContain('status');
+    expect(schema).not.toContain('ArtistBandSectMembership');
+    expect(readPrismaModel(schema, 'RegistrarEntry')).toMatch(/^\s+requestedSect\s+Sect\?$/m);
   });
 
   it('keeps the hand-written migration exactly equivalent to the accepted DDL', () => {

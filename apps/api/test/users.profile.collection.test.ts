@@ -27,6 +27,10 @@ describe('UsersService.getProfileWithCollection', () => {
     },
     community: {
       findFirst: jest.fn(),
+      update: jest.fn(),
+    },
+    communityMember: {
+      createMany: jest.fn(),
     },
     userMusicCommunityPreference: {
       findMany: jest.fn(),
@@ -46,6 +50,7 @@ describe('UsersService.getProfileWithCollection', () => {
     mockPrisma.artistBand.findMany.mockResolvedValue([]);
     mockPrisma.userSavedScene.findMany.mockResolvedValue([]);
     mockPrisma.userActivationNotice.findMany.mockResolvedValue([]);
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 1 });
     service = new UsersService(mockPrisma as any);
   });
 
@@ -361,6 +366,25 @@ describe('UsersService.getProfileWithCollection', () => {
         updatedAt: new Date('2026-06-25T10:02:00.000Z'),
       },
     ]);
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'target',
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'Texas',
+    });
+    mockPrisma.community.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'scene-austin-metal',
+        name: 'Austin Metal',
+        city: 'Austin',
+        state: 'Texas',
+        musicCommunity: 'Metal',
+        tier: 'city',
+        isActive: true,
+      });
+    mockPrisma.user.update.mockResolvedValue({ id: 'target' });
+    mockPrisma.communityMember.createMany.mockResolvedValue({ count: 0 });
+    mockPrisma.community.update.mockResolvedValue({ id: 'scene-austin-metal' });
 
     const result = await service.setDefaultMusicCommunityPreference('target', 'Metal');
 
@@ -372,7 +396,46 @@ describe('UsersService.getProfileWithCollection', () => {
       where: { id: 'pref-metal' },
       data: { isDefault: true },
     });
+    expect(mockPrisma.user.update).toHaveBeenCalledWith({
+      where: { id: 'target' },
+      data: expect.objectContaining({
+        homeSceneCommunity: 'Metal',
+        homeSceneId: 'scene-austin-metal',
+        tunedSceneId: 'scene-austin-metal',
+        tunedSceneUpdatedAt: expect.any(Date),
+      }),
+    });
+    expect(mockPrisma.communityMember.createMany).toHaveBeenCalledWith({
+      data: [{ userId: 'target', communityId: 'scene-austin-metal', role: 'member' }],
+      skipDuplicates: true,
+    });
+    expect(mockPrisma.community.update).not.toHaveBeenCalled();
     expect(result[0]).toMatchObject({ musicCommunity: 'Metal', isDefault: true });
+  });
+
+  it('rejects an unresolved preference without changing the existing default or civic anchor', async () => {
+    mockPrisma.userMusicCommunityPreference.findUnique.mockResolvedValue({
+      id: 'pref-noise',
+      userId: 'target',
+      musicCommunity: 'Noise',
+      isDefault: false,
+      createdAt: new Date('2026-06-25T10:01:00.000Z'),
+      updatedAt: new Date('2026-06-25T10:01:00.000Z'),
+    });
+    mockPrisma.user.findUnique.mockResolvedValue({
+      id: 'target',
+      homeSceneCity: 'El Paso',
+      homeSceneState: 'Texas',
+    });
+    mockPrisma.community.findFirst.mockResolvedValue(null);
+
+    await expect(service.setDefaultMusicCommunityPreference('target', 'Noise')).rejects.toThrow(
+      'No active Home Scene is available for this music community',
+    );
+
+    expect(mockPrisma.userMusicCommunityPreference.updateMany).not.toHaveBeenCalled();
+    expect(mockPrisma.userMusicCommunityPreference.update).not.toHaveBeenCalled();
+    expect(mockPrisma.user.update).not.toHaveBeenCalled();
   });
 
   it('resolves Home Scene selector items from registered preferences and excludes unresolved preferences', async () => {

@@ -9,12 +9,15 @@ import { INVITE_DELIVERY_PROVIDER } from './invite-delivery.provider';
 import { WebhookInviteDeliveryProvider } from './webhook-invite-delivery.provider';
 import { selectInviteDeliveryProvider } from './invite-delivery-provider-selector';
 import { UsersModule } from '../users/users.module';
+import { SectRegistrarController } from './sect-registrar.controller';
+import { SectRegistrarService } from './sect-registrar.service';
 
 @Module({
   imports: [UsersModule],
-  controllers: [RegistrarController],
+  controllers: [RegistrarController, SectRegistrarController],
   providers: [
     RegistrarService,
+    SectRegistrarService,
     NoopInviteDeliveryProvider,
     WebhookInviteDeliveryProvider,
     {

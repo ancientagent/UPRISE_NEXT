@@ -158,7 +158,7 @@
  | `Rock` | collected displayable artifacts | direct live action | yes | Means public display on avatar/body or wall/grid, not mere possession. |
 | `Add` | events | direct live action | no | Event-specific only. Means add to calendar. |
 | `React` | posts, comments, replies | direct live action | no | Lightweight social response. Not a signal action. Not a source action. |
-| `Support` | eligible source-backed Feed cards | founder-locked direct action; runtime pending | listener must have an available activity-earned amount | A listener chooses an amount to give in support through the card; it is applied to the source resolved by that card, not to the card body or its carried signal. |
+| `Support` | eligible source-backed Feed cards | founder-locked direct action; runtime pending | listener must have available Support from the finite revolving pool | A listener allocates Support through the card to the source resolved by that card. The owner contract and action matrix live in `docs/specs/engagement/support-and-participation.md`; proposed Registrar formation join points are not active action targets yet. |
 
 Future ad-linked visit note:
 

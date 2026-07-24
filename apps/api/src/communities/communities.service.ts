@@ -3,6 +3,7 @@ import { Injectable, NotFoundException, BadRequestException, InternalServerError
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
+import { UsersService } from '../users/users.service';
 import {
   CreateCommunityWithGeoDto,
   FindNearbyCommunitiesDto,
@@ -202,12 +203,19 @@ export class CommunitiesService {
     private prisma: PrismaService,
     @Optional()
     private readonly musicCommunityPreferenceResolver?: MusicCommunityPreferenceResolverService,
+    @Optional()
+    private readonly usersService?: UsersService,
   ) {}
 
   private async resolveHomeMusicCommunity(userId: string, compatibilityCommunity: string | null | undefined) {
     const resolver =
       this.musicCommunityPreferenceResolver ?? new MusicCommunityPreferenceResolverService(this.prisma);
     return resolver.resolveDefaultMusicCommunity(userId, compatibilityCommunity);
+  }
+
+  private resolveActiveHomeSceneForPreference(city: string, state: string, musicCommunity: string) {
+    const usersService = this.usersService ?? new UsersService(this.prisma);
+    return usersService.resolveActiveHomeSceneForPreference(city, state, musicCommunity);
   }
 
   private toSceneSummary(scene: {
@@ -1130,6 +1138,7 @@ export class CommunitiesService {
         where: { id: userId },
         select: {
           id: true,
+          homeSceneId: true,
           homeSceneCity: true,
           homeSceneState: true,
           homeSceneCommunity: true,
@@ -1157,10 +1166,10 @@ export class CommunitiesService {
       throw new NotFoundException(`Community with ID ${dto.sceneId} not found`);
     }
 
-    let homeSceneId: string | null = null;
+    let homeSceneId: string | null = user.homeSceneId ?? null;
     const homeSceneCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
 
-    if (user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
+    if (!homeSceneId && user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
       const homeScene = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,
@@ -1217,6 +1226,7 @@ export class CommunitiesService {
       where: { id: userId },
       select: {
         id: true,
+        homeSceneId: true,
         tunedSceneId: true,
         homeSceneCity: true,
         homeSceneState: true,
@@ -1228,10 +1238,10 @@ export class CommunitiesService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    let homeSceneId: string | null = null;
+    let homeSceneId: string | null = user.homeSceneId ?? null;
     const homeSceneCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
 
-    if (user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
+    if (!homeSceneId && user.homeSceneCity && user.homeSceneState && homeSceneCommunity) {
       const homeScene = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,
@@ -1307,6 +1317,7 @@ export class CommunitiesService {
       where: { id: userId },
       select: {
         id: true,
+        homeSceneId: true,
         homeSceneCity: true,
         homeSceneState: true,
         homeSceneCommunity: true,
@@ -1342,10 +1353,25 @@ export class CommunitiesService {
       throw new BadRequestException('Home Scene switch must stay within your current home state');
     }
 
-    let previousHomeSceneId: string | null = null;
+    const sceneCity = scene.city?.trim();
+    const sceneState = scene.state?.trim();
+    const sceneMusicCommunity = scene.musicCommunity?.trim();
+    if (!sceneCity || !sceneState || !sceneMusicCommunity) {
+      throw new BadRequestException('Home Scene requires city, state, and music community identity');
+    }
+
+    const resolved = scene.isActive
+      ? { scene, resolution: 'natural' as const }
+      : await this.resolveActiveHomeSceneForPreference(sceneCity, sceneState, sceneMusicCommunity);
+    if (!resolved) {
+      throw new BadRequestException('No active Home Scene is available for this music community');
+    }
+    const resolvedScene = resolved.scene;
+
+    let previousHomeSceneId: string | null = user.homeSceneId;
     const previousHomeMusicCommunity = await this.resolveHomeMusicCommunity(userId, user.homeSceneCommunity);
 
-    if (user.homeSceneCity && user.homeSceneState && previousHomeMusicCommunity) {
+    if (!previousHomeSceneId && user.homeSceneCity && user.homeSceneState && previousHomeMusicCommunity) {
       const previousHome = await this.prisma.community.findFirst({
         where: {
           city: user.homeSceneCity,
@@ -1365,7 +1391,8 @@ export class CommunitiesService {
           homeSceneCity: scene.city,
           homeSceneState: scene.state,
           homeSceneCommunity: scene.musicCommunity,
-          tunedSceneId: scene.id,
+          homeSceneId: resolvedScene.id,
+          tunedSceneId: resolvedScene.id,
           tunedSceneUpdatedAt: new Date(),
         },
       });
@@ -1382,27 +1409,26 @@ export class CommunitiesService {
         });
       }
 
-      try {
-        await tx.communityMember.create({
-          data: { userId, communityId: scene.id, role: 'member' },
-        });
+      const membership = await tx.communityMember.createMany({
+        data: [{ userId, communityId: resolvedScene.id, role: 'member' }],
+        skipDuplicates: true,
+      });
+      if (membership.count === 1) {
         await tx.community.update({
-          where: { id: scene.id },
+          where: { id: resolvedScene.id },
           data: { memberCount: { increment: 1 } },
         });
-      } catch (error: any) {
-        if (error?.code !== 'P2002') throw error;
       }
     });
 
     return {
       previousHomeSceneId,
-      homeSceneId: scene.id,
-      tunedSceneId: scene.id,
-      tunedScene: scene,
+      homeSceneId: resolvedScene.id,
+      tunedSceneId: resolvedScene.id,
+      tunedScene: resolvedScene,
       isVisitor: false,
-      homeScene: scene,
-      changed: previousHomeSceneId !== scene.id,
+      homeScene: resolvedScene,
+      changed: previousHomeSceneId !== resolvedScene.id,
     };
   }
 

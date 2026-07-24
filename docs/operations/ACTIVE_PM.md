@@ -22,13 +22,14 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 
 ## Current Workspace Snapshot
 
-- Snapshot date: 2026-07-14
-- Base branch: `origin/main@62f2d58`
-- Current branch assignment: `codex/sect-threshold-founder-clarification`, founder clarification promotion plus code-comment/test-language correction
-- Local worktree state at refresh: Codex local remains the sole writer; runtime development remains stopped for this authority correction and a fresh reviewed implementation plan
-- Open PR queue at refresh: draft PR #212 remains intentionally deprioritized; PRs #238, #239, #240, and #241 are merged
-- Recently completed remote slices: scheduling-client PR #238, graduation PR #239, Official Sect identity PR #240, and Sect backing/readiness decision-gate PR #241
-- Provider/db/schema state: no provider writes; Slice 7 is documentation/decision work and authorizes no schema or database change
+- Snapshot date: 2026-07-22
+- Base branch: `origin/main@10787dc`
+- Current branch assignment: `codex/sect-membership-readiness`, PR #245 named listener Sect request implementation; membership/readiness mechanics remain separately gated
+- Local worktree state at refresh: clean and synchronized with the PR head;
+  Codex local remains the sole writer and the final reviewer is read-only
+- Open PR queue at refresh: PR #245 is the active merge candidate; draft PR #212 remains intentionally deprioritized
+- Recently completed remote slices: Official Sect identity PR #240 and founder-authority correction PR #244
+- Provider/db/schema state: additive Prisma migration work is in scope; no production database/provider operation is authorized
 - Preserved worktrees: `/home/baris/UPRISE_NEXT_uximpl`, `/home/baris/UPRISE_NEXT_uxmobile`
 
 ## Active Goal
@@ -36,11 +37,10 @@ For branch/worktree ownership, assigned agents, what is on each branch, and clos
 Current goal:
 
 - Keep Codex local as the sole writer and all review agents read-only.
-- Preserve the simple lifecycle: listener request; at least `5` Registrar-held
-  Artist/Band Sect memberships for legitimacy; activation when those member
-  artists' current eligible Home Scene Release Deck music totals `45` minutes.
-- Remove the rejected track-to-Sect backing/history design. No founder decision
-  remains from the prior packet.
+- Complete independent exact-HEAD review and merge closeout for the implemented
+  named Home Scene listener request and durable linked Sect identity.
+- Keep Artist/Band membership/readiness writes and visibility out until their
+  separate exclusivity, withdrawal/audit, reader, and legacy-eligibility mechanics are owned.
 
 Recently completed context:
 
@@ -53,13 +53,13 @@ Recently completed context:
 
 | Field | Current Value |
 | --- | --- |
-| Lane | Registrar / Release Deck / communities founder clarification |
-| Branch | `codex/sect-threshold-founder-clarification` (authority and language correction only; no product implementation) |
-| Scope | Capture and promote listener request + Artist/Band Sect membership + current member-artist Release Deck aggregation; remove rejected platform-admin, per-song backing/history, and reopened-threshold language. |
-| Out of Scope | Prisma/migration changes, request/membership/readiness service or API work, UI, public progress, update channels, provider/database deployment, governance, or legacy tag promotion. |
+| Lane | Registrar / Release Deck / communities backend implementation |
+| Branch | `codex/sect-membership-readiness` |
+| Scope | Named listener request DTO, additive nullable request provenance, durable listener Home Scene civic anchor separated from Away tuning, dedicated Sect Registrar service/controller, legacy compatibility, tests, and typed read contracts. |
+| Out of Scope | Artist/Band membership writes, readiness/progress APIs, public UI, update channels, extra lifecycle states, routine admin approval, provider/database deployment, governance, or legacy tag promotion. |
 | Owner Contracts | `docs/specs/communities/scenes-uprises-sects.md`, `docs/specs/system/registrar.md`, `docs/specs/media/release-deck-and-eligibility.md` |
 | Companion Docs | `docs/agent-briefs/REGISTRAR_GOVERNANCE.md`, `docs/solutions/RELEASE_DECK_RADIYO_SECT_IMPLEMENTATION_ARCHITECTURE_R1.md`, current Prisma schema/migrations and Registrar/Release Deck services/tests |
-| Validation | docs lint; workspace audit; diff check; independent product-authority and implementation-planning review |
+| Validation | focused and full local verification previously passed; GitHub CI is green through the latest implementation/docs head before this operations refresh; workspace audit passes; independent exact-HEAD product/code review remains the final gate and CI must be green on that reviewed head |
 
 ## Current Branch / Worktree State
 
@@ -67,6 +67,7 @@ Recently completed context:
 
 | PR | Branch | State | Recommended Action |
 | --- | --- | --- | --- |
+| #244 | `codex/sect-threshold-founder-clarification` | merged at `10787dc` | Corrected authority is now the implementation baseline. |
 | #241 | `codex/sect-readiness-decision-gate` | merged at `563fd91` | Superseded decision framing; do not use its original options. |
 | #240 | `codex/official-sect-backing-foundation` | merged at `542c350` | Official Sect identity baseline only; it correctly contains no track-to-Sect model. |
 | #239 | `codex/new-releases-graduation` | merged at `c9992c3` | Graduation baseline established; preserve the local branch until sequential closeout is complete. |
@@ -77,7 +78,7 @@ Recently completed context:
 
 | Path | Branch | HEAD | State |
 | --- | --- | --- | --- |
-| `/home/baris/UPRISE_NEXT` | `codex/sect-threshold-founder-clarification` | from `origin/main@62f2d58` | Founder clarification plus code-comment/test-language correction; no runtime behavior is changed. |
+| `/home/baris/UPRISE_NEXT` | `codex/sect-membership-readiness` | PR #245 branch from `origin/main@10787dc` | Clean shared checkout; exact-HEAD independent review and merge closeout in progress. |
 
 ### Preserved UX Reference Worktrees
 
@@ -143,12 +144,10 @@ Needs explicit review/approval before deletion:
 
 ## Next Queue
 
-1. Merge the founder clarification after docs validation and product-authority review.
-2. Write a fresh executor plan for listener request, Registrar-held Artist/Band
-   Sect membership, and current member-artist Release Deck readiness.
-3. Independently review that plan against the raw July 14 founder answers before
-   any runtime implementation.
-4. Keep public visibility, update channels, draft PR #212, and preserved UX references untouched.
+1. Obtain independent product and code review of PR #245 at the exact final head.
+2. Patch any findings, rerun required validation/checks, and merge only the reviewed green head.
+3. Keep membership/readiness behavior gated on the four explicit mechanics in the replacement plan.
+4. Keep public visibility, update channels, draft PR #212, provider state, and preserved UX references untouched.
 
 ## PM Usage Rules For Agents
 

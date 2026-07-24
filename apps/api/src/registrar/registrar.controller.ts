@@ -11,8 +11,6 @@ import {
   type PromoterRegistrationDto,
   ProjectRegistrationSchema,
   type ProjectRegistrationDto,
-  SectMotionRegistrationSchema,
-  type SectMotionRegistrationDto,
   RegistrarCodeRedeemSchema,
   type RegistrarCodeRedeemDto,
   RegistrarCodeVerifySchema,
@@ -41,16 +39,6 @@ export class RegistrarController {
     @Request() req: { user: { userId: string } },
   ) {
     const entry = await this.registrarService.submitProjectRegistration(req.user.userId, dto);
-    return { success: true, data: entry };
-  }
-
-  @Post('sect-motion')
-  @ZodBody(SectMotionRegistrationSchema)
-  async submitSectMotionRegistration(
-    @Body() dto: SectMotionRegistrationDto,
-    @Request() req: { user: { userId: string } },
-  ) {
-    const entry = await this.registrarService.submitSectMotionRegistration(req.user.userId, dto);
     return { success: true, data: entry };
   }
 
@@ -107,21 +95,6 @@ export class RegistrarController {
     @Request() req: { user: { userId: string } },
   ) {
     const result = await this.registrarService.getProjectRegistration(req.user.userId, entryId);
-    return { success: true, data: result };
-  }
-
-  @Get('sect-motion/entries')
-  async listMySectMotionRegistrations(@Request() req: { user: { userId: string } }) {
-    const result = await this.registrarService.listSectMotionRegistrations(req.user.userId);
-    return { success: true, data: result };
-  }
-
-  @Get('sect-motion/:entryId')
-  async getMySectMotionRegistration(
-    @Param('entryId') entryId: string,
-    @Request() req: { user: { userId: string } },
-  ) {
-    const result = await this.registrarService.getSectMotionRegistration(req.user.userId, entryId);
     return { success: true, data: result };
   }
 
