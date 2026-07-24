@@ -6,8 +6,7 @@ This file is the primary agent entry point for this repo. If another agent-facin
 
 ### Always Read (Focused Default)
 1. `docs/PLATFORM_START_HERE.md`
-2. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
-3. `docs/agent-briefs/CONTEXT_ROUTER.md`
+2. `docs/agent-briefs/CONTEXT_ROUTER.md`
 
 ### Heavy Authority Pack
 Use this pack for broad audits, architecture planning, deployment/infra work, multi-agent strategy, repo-structure changes, or when the task explicitly asks for full-platform review.
@@ -27,9 +26,9 @@ Load only the minimum additional material required for the task.
 - Founder clarification/session capture: `docs/founder-sessions/README.md` + `docs/solutions/codex-skills/uprise-founder-session-capture/SKILL.md` + `docs/solutions/codex-skills/uprise-founder-clarification-capture/SKILL.md`; raw founder wording goes in `docs/founder-sessions/`, durable product truth is promoted into the relevant owner spec under `docs/specs/**`, and unresolved decisions can be tracked in `docs/specs/DECISIONS_REQUIRED.md`.
 - Architecture/repo-shape/deployment work: the Heavy Authority Pack above
 - Recurring incidents / operating failures: `docs/solutions/README.md` + only the relevant playbook
-- Multi-agent/tooling strategy or handoff review: `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` + `docs/specs/system/documentation-framework.md` + `docs/handoff/README.md` + the latest relevant dated handoff(s)
+- Multi-agent/tooling strategy or handoff review: `docs/AGENT_STRATEGY_AND_HANDOFF.md` + `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md` + `docs/specs/system/documentation-framework.md` + `docs/handoff/README.md` + only the directly relevant dated handoff(s)
 - Current execution state / PM queue: `docs/operations/ACTIVE_PM.md` after the focused default docs; use it for active branch, PR, blocker, and worktree state only, not product doctrine.
-- Branch/worktree/workspace creation or cleanup: `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` + `docs/operations/ACTIVE_PM.md`; creation is not complete until the registry has the branch/worktree/agent assignment entry.
+- Branch/worktree/workspace creation or cleanup: `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` + `docs/operations/ACTIVE_PM.md`; register the current write workspace and preserve non-obvious worktree/external-agent ownership. Git and GitHub remain live branch/PR/merge truth.
 
 ## Legacy Reference Archives (Non-Canon)
 - `docs/legacy/uprise_mob/` — prior mobile-era documentation set (reference only)
@@ -49,7 +48,7 @@ Load only the minimum additional material required for the task.
 - **Canon import rule:** never bulk-overwrite `docs/canon/*.md` from external exports; stage raw imports in `docs/legacy/` and apply intentional canon edits separately.
 - **Contract owner rule:** cross-system product rules must live in one owner spec or owner section under `docs/specs/**`; lane briefs and handoffs should summarize/link instead of duplicating full rules. Use `docs/specs/system/documentation-framework.md`.
 - **Rollback checkpoint rule:** for multi-agent throughput runs, follow `docs/solutions/ROLLBACK_CHECKPOINT_CHEATSHEET.md` and default to non-destructive rollback (`git switch`/`git revert`); use `git reset --hard` only with explicit in-thread approval.
-- **Branch/workspace registry rule:** before creating, assigning, pushing, preserving, closing, merging, or deleting a branch/worktree/external-agent workspace, update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` with branch name, path, status, owner, assigned agents, scope, base/head, PR/Linear link, and closeout plan. Run `pnpm run workspace:audit` before push/PR/closeout.
+- **Branch/workspace registry rule:** register the current write branch/worktree before work begins and record preserved-risk or external-agent workspaces that Git cannot explain by itself. Run `pnpm run workspace:audit` from the current workspace before push/PR/closeout. Git/GitHub own live branch, PR, and merge history; do not retain merged/closed rows as a parallel ledger.
 - **Windows-visible artifact rule:** for user-visible generated artifacts from WSL agents, run `just artifacts <issue-or-task-slug>` first. Write screenshots, HTML previews, reports, logs, and bundles to the printed `ARTIFACT_DIR_WSL` path and report both `ARTIFACT_DIR_WSL` and `ARTIFACT_DIR_WINDOWS`. This makes files visible from Windows, but it does not force Codex's native artifact viewer to render them; use a native artifact/render tool separately when the task specifically requires in-app viewer rendering.
 
 ## Working Rules
@@ -64,7 +63,7 @@ Load only the minimum additional material required for the task.
 ## Before You Push
 - Preferred: run `pnpm run verify` (docs:lint + infra-policy-check + typecheck)
 - Optional (slower / DB required): `DATABASE_URL=... pnpm run verify:full` (verify + test + build)
-- Update `docs/CHANGELOG.md` and any touched specs; add a handoff note under `docs/handoff/` for multi-step work.
+- Update owner specs when behavior changes. Update `docs/CHANGELOG.md` only for user-visible product/runtime changes or meaningful authority/operations-policy changes. Add a handoff only for unresolved transfer, meaningful multi-agent continuation, provider/schema incidents, or material QA evidence that must survive the PR.
 
 ## PR Metadata (required)
 Include in PR description:

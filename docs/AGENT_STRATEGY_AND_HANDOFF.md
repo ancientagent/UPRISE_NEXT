@@ -24,10 +24,16 @@ Use this precedence when evaluating what to trust:
 
 ## Reading Model
 ### Core set
-Every coding agent should start from `AGENTS.md`, `docs/PLATFORM_START_HERE.md`, and the minimum core protocol named by `AGENTS.md`. Do not expand that into every active solution, handoff, canon file, or design document by default.
+Every coding agent should start from `AGENTS.md`,
+`docs/PLATFORM_START_HERE.md`, and
+`docs/agent-briefs/CONTEXT_ROUTER.md`. This strategy document is task-specific
+for multi-agent coordination, handoff review, or workflow policy. Do not load
+it for a focused single-owner edit unless the task requires it.
 
 ### Layered context modes
-- Focused implementation mode: read `AGENTS.md`, `docs/PLATFORM_START_HERE.md`, this file, `docs/agent-briefs/CONTEXT_ROUTER.md`, the active lane brief, and exact touched files/specs/tests.
+- Focused implementation mode: read `AGENTS.md`,
+  `docs/PLATFORM_START_HERE.md`, `docs/agent-briefs/CONTEXT_ROUTER.md`, the
+  active lane brief, and exact touched files/specs/tests.
 - Heavy authority mode: for broad audits, architecture planning, deployment/infra work, multi-agent strategy, repo-structure changes, or explicit full-platform review, load the heavier pack in `AGENTS.md` plus the exact canon/spec/brief files routed by the task.
 - Legacy/handoff mode: load dated handoffs and legacy docs only by topic. They are context, not higher authority than current code/specs.
 
@@ -126,7 +132,10 @@ Before closing a batch or slice:
 - targeted verification complete
 - `pnpm run verify` preferred
 - final QA rerun on current committed `HEAD`
-- changelog + dated handoff updated
+- changelog updated only when its product/runtime/authority trigger applies
+- handoff added only when unresolved transfer, meaningful multi-agent
+  continuation, provider/schema incident, or material QA evidence must survive
+  the PR
 - `docs/operations/ACTIVE_PM.md` refreshed when the active branch, PR queue, blockers, preserved worktrees, or next execution signal changed
 - `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` updated when branch/worktree/PR status, assigned agents, scope, or closeout plan changed
 - do not create a follow-up PR solely to mark the just-merged operations/registry refresh PR as merged; use GitHub/`gh` as live PR truth and let the next real work branch clean harmless self-closing stale rows
@@ -137,16 +146,18 @@ Before closing a batch or slice:
 ## Handoff Rules
 ### What handoffs are for
 Use `docs/handoff/` for:
-- dated execution notes
-- closeout summaries
-- carry-forward corrections
-- batch/QA reports
+- unresolved work that another owner must continue
+- meaningful multi-agent reconciliation or carry-forward corrections
+- provider/schema incident evidence
+- material QA evidence that must survive beyond the PR
 
 ### What handoffs are not
 Do not use handoffs as:
 - canon replacements
 - permanent feature specs
 - parallel memory artifacts for the same issue when one reconciliation note will do
+- routine single-owner PR summaries, successful validation logs, registry
+  refreshes, or ordinary closeout acknowledgements
 
 ### Current carry-forward pattern
 - Prefer one reconciliation note when multiple agents have overlapping context.

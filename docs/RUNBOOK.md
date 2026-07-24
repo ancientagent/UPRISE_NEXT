@@ -27,8 +27,8 @@
 - Treat `city/state/national` as structural scopes, not concentric distance rings.
 
 ## 🧾 Documentation Update Policy (Required)
-After any **meaningful change** (new feature, endpoint, model, migration, or canon update):
-1. **Update `docs/CHANGELOG.md`** with a concise entry.
+Update documentation according to the surface changed:
+1. **Update `docs/CHANGELOG.md`** for user-visible product/runtime changes, canon changes, or meaningful authority/operations-policy changes. Routine tests, internal refactors, and bookkeeping-only changes do not require an entry.
 2. **Do not** rewrite the Runbook for every change; keep it stable.
 3. **At milestones**, add a short summary to `docs/README.md` or a `docs/handoff/phase-*.md` report.
 4. **Never bulk-overwrite `docs/canon/*.md`** from imported exports. Stage raw imports under `docs/legacy/` and apply intentional canon edits in a separate commit.
@@ -501,14 +501,14 @@ import { api } from '@/lib/api';
 | Specs (legacy) | [Specifications/README.md](./Specifications/README.md) | Canonical IDs referenced elsewhere |
 | Environments | [ENVIRONMENTS.md](./ENVIRONMENTS.md) | Windows/WSL setup rules |
 | Structure | [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) | Folder map & conventions |
-| Changelog | [CHANGELOG.md](./CHANGELOG.md) | Auto-generated PR logs |
+| Changelog | [CHANGELOG.md](./CHANGELOG.md) | Material product, runtime, canon, and authority changes |
 
 ---
 
 ## 🧩 Agent Rules
 
 1. **Follow the Critical Infra Note** — Supercomputer may run tests, not production workloads.
-2. **Keep Docs Current** — Every merged PR must update `CHANGELOG.md` and, if scope touches architecture or ops, update this `RUNBOOK.md`.
+2. **Keep Docs Current** — Update owner specs when behavior changes. Update `CHANGELOG.md` only when the documentation policy above requires it; update this `RUNBOOK.md` only when its operational policy changes.
 3. **Annotate PRs** — Link to affected specification(s) in `/docs/specs` (and `/docs/Specifications` while legacy IDs are still referenced).
 4. **Blockers** — Any CI error tagged `infra-policy-check` halts merge until fixed.
 
@@ -520,7 +520,7 @@ import { api } from '@/lib/api';
 |----------|------|-------|
 | Daily | CI: lint/type/build pass | Supercomputer |
 | Nightly | E2E (web) + socket smoke | Supercomputer |
-| Weekly | Update CHANGELOG from merged PRs | Supercomputer |
+| Weekly | Review applicable changelog entries for accuracy | Supercomputer |
 | Per Phase | Publish phase completion report | PM/Lead Agent |
 
 ---

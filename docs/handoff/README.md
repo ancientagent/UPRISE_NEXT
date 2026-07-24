@@ -1,101 +1,46 @@
 # Handoff
 
-Dated execution notes, QA reports, closeout memos, and carry-forward corrections live here.
+Handoffs are temporary execution evidence. They are lower authority than
+`AGENTS.md`, owner specs, current code, and tests.
 
-## Use This Folder For
-- execution summaries tied to a date/commit
-- QA reports and closeout notes
-- reconciliation / carry-forward notes when multiple agents touched the same topic
-- phase or batch summaries
+## Create A Handoff Only For
 
-## Do Not Use This Folder For
-- canon/product semantics
-- long-term feature specifications
-- parallel “memory” docs for the same issue when one reconciliation note will do
+- unresolved work that another owner must continue;
+- meaningful multi-agent reconciliation or carry-forward corrections;
+- provider/schema incidents whose evidence must survive the PR;
+- material QA evidence that cannot be represented by tests or the PR itself.
 
-## How To Read Handoffs Safely
-- Treat handoffs as lower authority than current specs and current code.
-- Prefer the latest relevant dated handoff over older notes on the same topic.
-- If a handoff conflicts with current `HEAD`, call it out as stale instead of carrying it forward.
+## Do Not Create A Handoff For
 
-## Current High-Value Handoffs
-- [`2026-07-14_release-deck-scheduling-client.md`](./2026-07-14_release-deck-scheduling-client.md) — connects the loaded Source Dashboard Release Deck row to server-owned availability and `soonest` / returned-`chosen` schedule writes, restores durable schedule state, and preserves Fair Play boundaries in a local-only single-writer slice.
-- [`2026-07-01_active-pm-post-reviewer-protocol-refresh.md`](./2026-07-01_active-pm-post-reviewer-protocol-refresh.md) — refreshes `ACTIVE_PM` after PR #178 and the founder-approved branch cleanup / reviewer-auditor protocol promotion.
-- [`2026-07-01_active-pm-post-plot-top-shell-component-refresh.md`](./2026-07-01_active-pm-post-plot-top-shell-component-refresh.md) — refreshes `ACTIVE_PM` after PR #176 so future agents start from clean `main` after Plot top-shell component extraction.
-- [`2026-07-01_plot-top-shell-component-extraction.md`](./2026-07-01_plot-top-shell-component-extraction.md) — extracts the non-expanded `/plot` top shell into `PlotTopShell` while preserving route-owned selector, player, profile, and notification behavior.
-- [`2026-07-01_active-pm-post-plot-top-shell-refresh.md`](./2026-07-01_active-pm-post-plot-top-shell-refresh.md) — refreshes `ACTIVE_PM` after PR #174, records current `main`, empty PR queue, and completed Plot top-shell composition slice.
-- [`2026-07-01_plot-top-shell-visual-composition.md`](./2026-07-01_plot-top-shell-visual-composition.md) — groups listener identity, the Home Scene selector, and the top RADIYO player into one non-expanded `/plot` visual cockpit without adding transport behavior.
-- [`2026-07-01_active-pm-post-archive-registrar-refresh.md`](./2026-07-01_active-pm-post-archive-registrar-refresh.md) — refreshes `ACTIVE_PM` after PR #172, records current `main`, empty PR queue, and completed Archive Registrar placement slice.
-- [`2026-07-01_archive-registrar-community-info.md`](./2026-07-01_archive-registrar-community-info.md) — implements Registrar placement inside `/plot` Archive/community information with the entry/control on top and records/status history below.
-- [`2026-07-01_active-pm-post-profile-source-refresh.md`](./2026-07-01_active-pm-post-profile-source-refresh.md) — refreshes `ACTIVE_PM` after PR #170, records current `main`, empty PR queue, and completed profile source identity access slice.
-- [`2026-07-01_profile-source-identity-access.md`](./2026-07-01_profile-source-identity-access.md) — moves source account identity access into the expanded `/plot` listener profile while keeping source tools out of non-expanded Plot and listener collection body.
-- [`2026-07-01_plot-context-panel-removal.md`](./2026-07-01_plot-context-panel-removal.md) — removes the forced non-expanded `/plot` community context panel and records the Archive/community information placement clarification.
-- [`2026-07-01_discover-transport-owner-spec-promotion.md`](./2026-07-01_discover-transport-owner-spec-promotion.md) — promotes Discover front-door/back-door, map-view, seek-mode, saved-Uprise, and no-transport-inside-Plot founder-session decisions into active owner docs.
-- [`2026-07-01_active-pm-post-plot-cleanup-refresh.md`](./2026-07-01_active-pm-post-plot-cleanup-refresh.md) — refreshes `ACTIVE_PM` after the Plot/Home/Profile/Print Shop cleanup run, records current `main`, empty PR queue, and preserved UX reference worktrees.
-- [`2026-07-01_print-shop-source-facing-boundary.md`](./2026-07-01_print-shop-source-facing-boundary.md) — removes the direct `/plot` Print Shop shortcut, preserves source-facing availability through Source Dashboard/source profile routes, and records the founder clarification.
-- [`2026-07-01_plot-listener-profile-component-extraction.md`](./2026-07-01_plot-listener-profile-component-extraction.md) — extracts the expanded `/plot` listener profile body into `PlotListenerProfile` while preserving route-owned profile state, player placement, collection reads, Home Scene selector behavior, and source/admin separation.
-- [`2026-07-01_home-scene-selector-component-extraction.md`](./2026-07-01_home-scene-selector-component-extraction.md) — extracts the `/plot` Home Scene selector presentation into a focused component while preserving route-owned selector loading/tuning and clarifying switch/select/tune versus Away Scene transport language.
-- [`2026-07-01_home-scene-selector-terminology.md`](./2026-07-01_home-scene-selector-terminology.md) — supersedes the old Home Scene switching term with Home Scene selector/swiper language, updates active docs/runtime endpoint names, and keeps older terminology only as historical handoff context.
-- [`2026-07-01_founder-session-plot-visual-skin.md`](./2026-07-01_founder-session-plot-visual-skin.md) — captures founder clarification for Plot/Home Scene switching, invariant shell, and variable community visual-skin direction.
-- [`2026-07-01_approved-branch-worktree-cleanup.md`](./2026-07-01_approved-branch-worktree-cleanup.md) — records the founder-approved cleanup of reviewed superseded branches and worktrees, leaving only protected UX reference branches/worktrees.
-- [`2026-07-01_ux-prototype-branch-review.md`](./2026-07-01_ux-prototype-branch-review.md) — reviews remaining UX/prototype branches, classifies queue/prep branches as cleanup candidates pending explicit worktree/branch removal approval, and preserves broader UX prototype branches as design/runtime references.
-- [`2026-07-01_phase3-automation-runtime-branch-review.md`](./2026-07-01_phase3-automation-runtime-branch-review.md) — reviews Phase3 automation/runtime branches and classifies them as superseded cleanup candidates while preserving branches/worktrees pending explicit deletion/removal approval.
-- [`2026-07-01_docs-audit-branch-review.md`](./2026-07-01_docs-audit-branch-review.md) — reviews the remaining docs/audit preserved branches and classifies them as superseded cleanup candidates while preserving them pending explicit deletion approval.
-- [`2026-07-01_resolver-onboarding-branch-review.md`](./2026-07-01_resolver-onboarding-branch-review.md) — reviews resolver/onboarding preserved branches and classifies them as superseded cleanup candidates while preserving them pending explicit deletion approval.
-- [`2026-07-01_active-pm-post-cleanup.md`](./2026-07-01_active-pm-post-cleanup.md) — records the approved cleanup-candidate branch/worktree removal and updates `docs/operations/ACTIVE_PM.md` to leave only preserve/review branches in queue.
-- [`2026-07-01_active-pm-branch-triage.md`](./2026-07-01_active-pm-branch-triage.md) — refreshes `docs/operations/ACTIVE_PM.md` after PR #150 with cleanup-candidate and preserve/review branch classifications.
-- [`2026-07-01_active-pm-current-work.md`](./2026-07-01_active-pm-current-work.md) — adds the lightweight `docs/operations/ACTIVE_PM.md` current-work snapshot so agents can check active branch/PR/blocker/worktree state without treating it as product doctrine.
-- [`2026-07-01_plot-primary-tab-body-extraction.md`](./2026-07-01_plot-primary-tab-body-extraction.md) — extracts the active `/plot` Feed/Events/Archive body renderer into `PlotPrimaryTabBody` as the first low-risk route-shell cleanup from the structural integrity roadmap.
-- [`2026-07-01_plot-deferred-panel-quarantine.md`](./2026-07-01_plot-deferred-panel-quarantine.md) — marks retained `StatisticsPanel` and `PlotPromotionsPanel` files as deferred/non-current import targets and adds Plot component-folder guidance so future agents do not revive stale Statistics/Promotions tabs.
-- [`2026-06-29_plot-feed-avatar-merch-clarification.md`](./2026-06-29_plot-feed-avatar-merch-clarification.md) — captures the Feed-as-Home-Scene-mainpage clarification, reusable feed card-family taxonomy, and deferred avatar-wearable merch fit-model direction for future design agents.
-- [`2026-06-29_activation-cutover-fixture-smoke.md`](./2026-06-29_activation-cutover-fixture-smoke.md) — adds the API-owned fixture-backed activation write smoke for synthetic source/listener/proxy cutover verification, with dry-run and host/database-scoped confirmation before non-local writes.
-- [`2026-06-29_activation-cutover-transaction-revalidation.md`](./2026-06-29_activation-cutover-transaction-revalidation.md) — hardens manual Home Scene activation cutover with transaction-time readiness revalidation, normalized source/listener tuple matching, and post-merge Fly staging deploy/read-only smoke evidence.
-- [`2026-06-29_release-deck-song-cap-registrar-gps.md`](./2026-06-29_release-deck-song-cap-registrar-gps.md) — records the Release Deck 6-minute per-song cap, reject-only at-cap behavior, Registrar GPS materialization re-check, and staging source-origin readiness smoke cleanup evidence.
-- [`2026-06-29_release-deck-15-minute-source-cap.md`](./2026-06-29_release-deck-15-minute-source-cap.md) — records the founder decision changing the Release Deck / activation readiness per-source cap from 20 minutes to 15 minutes per Uprise rotation, with owner docs and runtime constants updated.
-- [`2026-06-29_users-me-current-route-staging-closeout.md`](./2026-06-29_users-me-current-route-staging-closeout.md) — records the post-merge Fly API staging deploy, health checks, authenticated `/users/me` smoke, and temporary user cleanup for PR #135.
-- [`2026-06-29_users-me-current-route.md`](./2026-06-29_users-me-current-route.md) — fixes the authenticated bare `GET /users/me` route-order gap found during staging browser QA and locks current-user `me/*` routes ahead of parameterized `/users/:id` routes.
-- [`2026-06-29_authenticated-onboarding-browser-qa.md`](./2026-06-29_authenticated-onboarding-browser-qa.md) — records signed-in staging browser QA for manual Austin/Texas/Punk onboarding with GPS denied, Plot/Home Scene selector/profile verification, temporary user cleanup, and the non-blocking bare `/users/me` route-order observation.
-- [`2026-06-29_authenticated-onboarding-persistence-smoke.md`](./2026-06-29_authenticated-onboarding-persistence-smoke.md) — adds the authenticated onboarding persistence smoke path for temporary-user Home Scene/default preference/Home Scene selector verification after login, with host/database-scoped confirmation for staging writes.
-- [`2026-06-29_hosted-migration-runner.md`](./2026-06-29_hosted-migration-runner.md) — closes the Fly API production-image Prisma CLI gap by adding an API-owned `migrate:deploy` command, production-deploy verification helper, and the exact Fly staging migration command to use before the next schema change.
-- [`2026-06-29_launch-readiness-verification.md`](./2026-06-29_launch-readiness-verification.md) — current launch-readiness verification pass and post-deploy closeout: Google Places, launch-community DB verification, focused API/web contracts, stable Vercel/Fly/Neon smoke, staging preference migration, and signed-out onboarding browser QA now pass after PR #127 and PR #128.
-- [`2026-06-29_staging-truth-refresh.md`](./2026-06-29_staging-truth-refresh.md) — previous read-only staging baseline: Vercel stable web load, Fly API health, Neon/PostGIS readiness, and Vercel-to-Fly CORS passed before the later launch-readiness pass ran Places and direct DB verification.
-- [`2026-06-19_distance-based-pioneer-fallback.md`](./2026-06-19_distance-based-pioneer-fallback.md) — makes unavailable Home Scene fallback actually distance-based when submitted city coordinates and active scene geofences are available.
-- [`2026-06-18_fake-location-provider-smoke.md`](./2026-06-18_fake-location-provider-smoke.md) — local fake location provider and onboarding smoke command for manual, GPS-first, and pioneer fallback flows without routine Google Maps API calls.
-- [`2026-06-18_onboarding-gps-location-authority.md`](./2026-06-18_onboarding-gps-location-authority.md) — locks manual-first location authority, GPS-derived city/state fallback when the user does not enter location, and GPS recheck after Home Scene persistence for voting eligibility.
-- [`2026-06-17_archive-runtime-contract.md`](./2026-06-17_archive-runtime-contract.md) — current `/plot` Archive runtime contract hardening: Archive remains descriptive and does not revive map/analytics exploration as the default MVP body.
-- [`2026-06-16_uprise-spark-high-ui-alignment-pass.md`](./2026-06-16_uprise-spark-high-ui-alignment-pass.md) — current Spark-safe UI/UX docs alignment pass for active Plot tab language, Archive wording, and design-agent packet setup.
-- [`2026-06-16_linear-ready-ui-context-issues.md`](./2026-06-16_linear-ready-ui-context-issues.md) — Linear-ready follow-up cards for UI context routing, stale-tab lint expansion, and Archive runtime verification after the next UI slice.
-- [`2026-06-15_deploy-readiness-and-env-matrix.md`](./2026-06-15_deploy-readiness-and-env-matrix.md) — current hosted-stack readiness context for Vercel/Fly/App Runner/Neon/S3/R2 planning and deploy env ownership.
-- [`2026-04-26_listener-profile-source-management-separation.md`](./2026-04-26_listener-profile-source-management-separation.md) — locks the distinction between listener user profile, public Artist Profile, and separate source-management surface/domain.
-- [`2026-04-25_missing-focus-lane-briefs.md`](./2026-04-25_missing-focus-lane-briefs.md) — closes the missing business, onboarding, registrar, and external-tool lane brief gaps called out by the focus-stage inventory.
-- [`2026-04-25_cloud-codex-stale-language-audit-cleanup.md`](./2026-04-25_cloud-codex-stale-language-audit-cleanup.md) — accepted Cloud Codex stale-language audit cleanup for active Plot/Archive/Discover-placeholder docs.
-- [`2026-04-25_context-router-focus-lanes.md`](./2026-04-25_context-router-focus-lanes.md) — current focus-lane context router for loading only the work area and companion briefs a task needs.
-- [`2026-04-25_section-briefs-and-stale-term-guard.md`](./2026-04-25_section-briefs-and-stale-term-guard.md) — current section-brief expansion and targeted stale-term docs lint guard for active agent-facing context.
-- [`2026-04-25_agent-section-briefs.md`](./2026-04-25_agent-section-briefs.md) — current section-specific agent brief system and maintenance rule.
-- [`2026-04-18_handoff-staleness-reconciliation.md`](./2026-04-18_handoff-staleness-reconciliation.md) — current guide to which older handoffs are historical-only versus still useful carry-forward.
-- [`2026-04-18_repo-authority-map-and-wiki-steering.md`](./2026-04-18_repo-authority-map-and-wiki-steering.md) — current repo authority and generated-wiki steering layer for external assistants.
-- [`2026-04-18_art-department-structure.md`](./2026-04-18_art-department-structure.md) — current art/design workspace structure.
-- [`2026-04-17_abacus-external-assistant-briefing.md`](./2026-04-17_abacus-external-assistant-briefing.md) — current external-assistant setup context.
-- [`2026-04-16_notebooklm_artist-profile-and-dashboard_briefing.md`](./2026-04-16_notebooklm_artist-profile-and-dashboard_briefing.md) — current curated briefing for artist-profile/source-dashboard questions.
-- [`2026-04-16_discover-feed-insert-and-artist-demo-lock.md`](./2026-04-16_discover-feed-insert-and-artist-demo-lock.md) — current discovery-to-artist-profile demo-listen lock.
-- [`2026-04-16_discover-deferred-local-only-mvp.md`](./2026-04-16_discover-deferred-local-only-mvp.md) — current MVP Discover deferment and feed-insert position.
+- routine single-owner PR summaries or successful closeout;
+- validation output already visible in CI;
+- branch-registry, `ACTIVE_PM`, or changelog refreshes;
+- product rules that belong in an owner spec;
+- another copy of a prompt, plan, review, or decision stored elsewhere.
 
-## Finding Relevant Notes
-Use search instead of reading large historical batches by default.
+## Reading Rules
+
+- Search by topic; do not bulk-load this directory.
+- Prefer owner specs and current runtime evidence.
+- Treat a handoff as stale when current `HEAD` contradicts it.
+- Promote accepted durable decisions into the relevant owner spec and leave
+  the handoff as history.
 
 Examples:
+
 ```bash
 rg -n "discover|plot|onboarding|registrar" docs/handoff
 find docs/handoff -maxdepth 1 -type f | sort | tail -n 40
 ```
 
 ## Templates
+
 - [`TEMPLATE_agent-handoff.md`](./TEMPLATE_agent-handoff.md)
 - [`TEMPLATE_handoff-phase.md`](./TEMPLATE_handoff-phase.md)
 
 ## Coordination Control Plane
+
 - [`agent-control/README.md`](./agent-control/README.md)
 - [`agent-control/AGENT_DIRECTIVES.md`](./agent-control/AGENT_DIRECTIVES.md)
 
-## Historical Material
-Older phase notes and large slice batches remain in this folder for traceability, but they are historical context, not default reading.
+Older files remain searchable historical evidence and are not default reading.
