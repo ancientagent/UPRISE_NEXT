@@ -20,11 +20,13 @@ Load for the lane, not for the whole platform, unless the task is explicitly a b
 Default stack:
 1. `AGENTS.md`
 2. `docs/PLATFORM_START_HERE.md`
-3. `docs/AGENT_STRATEGY_AND_HANDOFF.md`
-4. this router
-5. the active lane brief
-6. companion briefs only if the task crosses into that domain
-7. exact runtime/spec/lock files only when editing or auditing that surface
+3. this router
+4. the active lane brief
+5. companion briefs only if the task crosses into that domain
+6. exact runtime/spec/lock files only when editing or auditing that surface
+
+Load `docs/AGENT_STRATEGY_AND_HANDOFF.md` only for multi-agent coordination,
+handoff review, or workflow-policy work.
 
 If the task depends on what is active now, also check `docs/operations/ACTIVE_PM.md` for branch/PR/blocker/worktree execution state before opening old handoffs or external-agent reports. Do not treat the PM snapshot as product authority.
 
@@ -434,7 +436,8 @@ Use this when starting a new agent on a focused lane:
 
 ```text
 Work in the <LANE> focus lane.
-Read AGENTS.md, docs/AGENT_STRATEGY_AND_HANDOFF.md, docs/agent-briefs/CONTEXT_ROUTER.md, and the <LANE> brief.
+Read AGENTS.md, docs/PLATFORM_START_HERE.md, docs/agent-briefs/CONTEXT_ROUTER.md, and the <LANE> brief.
+Add docs/AGENT_STRATEGY_AND_HANDOFF.md only for multi-agent coordination, handoff review, or workflow-policy work.
 Do not bulk-read every related document.
 Load companion briefs only if the task touches their domain.
 If you need implementation evidence, open the exact route/component/spec files you will touch.
