@@ -11,8 +11,8 @@ Primary Design Specs:
 `docs/screen-packages/artist-profile-source-dashboard/design-spec/source-dashboard-management-shell-layout-brief.md`
 Founder Session:
 `docs/founder-sessions/2026-07-06_public-artist-profile-headshots.md`
-Companion System Spec (external, not in repo):
-`uprise-agent-artifacts/fable-avatar-system-design-spec/fable-avatar-system-design-spec.md`
+Companion System Spec:
+`art/avatar-system/specifications/fable-avatar-system-design-spec.md`
 (UPRISE Modular Listener Avatar And Wearable Asset System R1)
 
 ## Purpose
@@ -76,7 +76,8 @@ layout brief. Design the finished treatment:
   invisible responsive container; mockup baseline is four members);
 - initials fallback treatment when no image exists (allowed here — this is
   source-facing internal tooling);
-- visual direction reference: `art/Avatar Boards/0_3 (1).jpeg` for the
+- visual direction reference:
+  `art/avatar-system/references/legacy-avatar-boards/0_3 (1).jpeg` for the
   belly-up posture and clothing-readable crop. The boards are direction
   reference only, not production art.
 

@@ -9,6 +9,12 @@
 
 ### Changed
 
+- Consolidated listener-avatar visual development into the indexed
+  `art/avatar-system/` project: legacy Avatar Boards, Claude/Fable system
+  specifications, R1-R5 prompts, comparison images, approval rules, and future
+  production guidance now share one canonical Art Department location.
+  Existing design-handoff references were updated; no runtime, schema, or
+  owner-spec behavior changed.
 - Recorded the proposed Registrar join point for the draft Support and
   Participation civic layer: verified community-development work is intended to
   earn Participation bonuses, while formation efforts may use larger upfront

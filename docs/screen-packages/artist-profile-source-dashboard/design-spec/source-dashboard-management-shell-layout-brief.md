@@ -193,7 +193,8 @@ Member avatar strip:
 - Avatars can serve as links and may expose hover info later.
 - Resolved member avatars may later link to the member's listener account or
   profile after identity routing and privacy rules are defined.
-- Use the visual direction from `art/Avatar Boards/0_3 (1).jpeg` for the
+- Use the visual direction from
+  `art/avatar-system/references/legacy-avatar-boards/0_3 (1).jpeg` for the
   four displayed member avatars.
 - A Dev Spec should define how avatar sizing, truncation, wrapping, hover info,
   link targets, and accessible labels behave across different member counts.
