@@ -37,4 +37,5 @@ Each session note should separate:
 - [`2026-07-02_branch-workspace-registry-protocol.md`](./2026-07-02_branch-workspace-registry-protocol.md) — raw branch/workspace registry protocol clarification.
 - [`2026-07-02_radiyo-track-mode-player-terminology.md`](./2026-07-02_radiyo-track-mode-player-terminology.md) — raw RADIYO track mode and player terminology clarification.
 - [`2026-07-03_feature-plan-review-gate.md`](./2026-07-03_feature-plan-review-gate.md) — raw feature-plan review gate clarification.
+- [`2026-07-03_linear-clean-context-agent-roles.md`](./2026-07-03_linear-clean-context-agent-roles.md) — raw founder direction separating the assigning agent, assigned executor, and optional read-only excavator while keeping repo authority above Linear.
 - [`2026-07-03_source-listener-messaging-boundary.md`](./2026-07-03_source-listener-messaging-boundary.md) — raw source/listener messaging, Registrar placement, and source credential-validation clarification.
