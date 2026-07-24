@@ -18,18 +18,17 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `codex/historical-branch-cleanup` |
-| Base | `main@3f5ef12` |
-| Scope | Preserve PR #212's unique raw founder capture, retire only proven merged/superseded refs, and reduce active routing to current and protected-risk work. |
+| Branch | `codex/classic-avatar-asset-production` |
+| Base | `main@ba969f8` |
+| Scope | Lock the classic illustrated Plot/Home Scene avatar direction and produce a small modular construction proof under `art/avatar-system/`. |
 | Owner | Codex local, sole writer |
-| Validation | exact founder-file hash comparison, independent branch audit, `pnpm run verify`, `pnpm run workspace:audit`, `git diff --check` |
-| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, and deciding the unresolved Prisma schema draft |
+| Validation | founder Gate 1 record, source-reference inspection, consistent-scale construction sheet, crop/readability review, `pnpm run docs:lint`, `pnpm run workspace:audit` |
+| Out of Scope | Avatar editor/runtime, persistence/API work, full beta catalog, Personal Space implementation, public Artist Profile headshots, and the unresolved Prisma draft |
 
 ## Open Queue
 
 | PR / Branch | State | Action |
 | --- | --- | --- |
-| PR #212 / `docs/linear-clean-context-agent-roles` | Draft, superseded by PR #247 | Close and delete its refs after the extracted founder capture lands on `main`. |
 | closed PR #1 / `codex/propose-prisma-schema-migration` | Unmerged unique schema/spec draft | Preserve for a dedicated schema/product-authority review. |
 
 ## Preserved Workspaces
@@ -44,17 +43,15 @@ as implementation evidence.
 
 ## Blockers
 
-- None for the cleanup PR.
-- PR #212 cannot close until its extracted founder note lands on `main`.
+- None for the first avatar construction proof.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Next Signal
 
-1. Validate and merge the cleanup branch.
-2. Close PR #212 and delete its refs after verifying the founder capture on
-   `main`.
-3. Retire the cleanup branch and the redundant local founder-source checkpoint;
-   leave the four UX refs and unresolved Prisma draft preserved.
+1. Record the founder's classic Plot/Home Scene style selection.
+2. Create one bounded Stage 2 modular construction proof using the existing
+   avatar contract and production matrix.
+3. Stop for founder Gate 2 approval before creating the beta catalog.
 
 ## Agent Rules
 

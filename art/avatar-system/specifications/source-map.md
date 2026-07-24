@@ -51,6 +51,8 @@ These are reference-only and must be redrawn as layered production assets:
 - `art/avatar-system/references/legacy-avatar-boards/I_need_a_202603311857.png`
 - `art/avatar-system/references/legacy-avatar-boards/Voider_a_set_of_black_white_and_color_icons_featuring_simple__3758a8cf-3de2-4d1e-b59a-82dfbf1ce40b_1.png`
 - the three `Voider_ten_cartoon_avatars...` boards
+- `art/mockups/a43315d7-5c4f-4638-bab3-90f3a4b43591.png`
+- `art/mockups/Gemini_Generated_Image_1mao4j1mao4j1mao.png`
 
 Use them for crop, silhouette, clothing readability, and illustrated attitude.
 Do not crop them into production avatar parts.

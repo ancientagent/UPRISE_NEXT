@@ -88,6 +88,20 @@ No art direction is locked at this stage.
 
 ### Stage 1 - Style Calibration
 
+Current state: complete.
+
+Gate 1 decision recorded 2026-07-23:
+
+- selected direction: classic black-ink illustrated listener avatars already
+  used in Plot/Home Scene work;
+- primary character-language anchor:
+  `art/avatar-system/references/legacy-avatar-boards/0_3 (1).jpeg`;
+- context anchors:
+  `art/mockups/a43315d7-5c4f-4638-bab3-90f3a4b43591.png` and
+  `art/mockups/Gemini_Generated_Image_1mao4j1mao4j1mao.png`;
+- R4/R5 experimental sheets remain historical exploration and are not the
+  production baseline.
+
 Create three independent illustrated/comic directions using the same controlled
 character requirements. These are art-direction proofs, not production assets.
 
@@ -116,6 +130,9 @@ No blending of directions occurs unless the founder names the exact traits to
 combine.
 
 ### Stage 2 - Modular Construction Proof
+
+Current state: in progress under
+`rounds/02-modular-construction-proof/classic-plot-avatar-r1/`.
 
 Rebuild a small subset of the approved direction as separated production parts.
 This proves that the chosen look can function as a system before the full asset
