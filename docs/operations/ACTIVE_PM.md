@@ -20,7 +20,7 @@ as implementation evidence.
 | --- | --- |
 | Branch | `codex/classic-avatar-asset-production` |
 | Base | `main@ba969f8` |
-| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, then hand off the next city-tier Release Deck/RADIYO automation decision packet. |
+| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, then advance the reviewed city-tier Release Deck/RADIYO automation plan. |
 | Owner | Codex local, sole writer |
 | Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; final Sol review passed at `ce31f6d` with no findings |
 | Out of Scope | Live provider calls, database migration execution, provider/database state changes, media upload/storage/transcoding, unapproved avatar privacy/retention/moderation policy, destructive stash/branch/worktree cleanup, full beta avatar catalog, and unrelated preserved UX extraction |
@@ -71,6 +71,10 @@ as implementation evidence.
   `a30a414`, and `09fe879`.
 - Final integrated Sol review passed `ce31f6d` with no blocking or non-blocking
   findings.
+- Independent Sol plan review on 2026-08-02 confirmed ingestion and graduation
+  can be coordinated in preview mode, but corrected the first slice: recurrence
+  has no non-mutating preview path or durable 48-hour cadence state, so it is
+  deferred to the ledger-bearing Slice B.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Blockers
@@ -81,15 +85,18 @@ as implementation evidence.
 - Public Signal archive runtime remains unapproved and intentionally isolated.
 - RADIYO production automation requires approval of a dedicated worker and a
   database-backed run/lease ledger before schema or provider work begins.
+- The no-schema Slice A preview coordinator still needs explicit approval;
+  it must not invoke recurrence or any write path.
 - Playable staging media remains deferred: the active Release Deck contract is
   URL-only and does not authorize first-party upload/storage/transcoding.
 
 ## Next Signal
 
-1. Review
-   `docs/handoff/2026-08-01_city-tier-radiyo-automation-execution-packet.md`.
-2. If its dedicated-worker and durable-run-ledger boundary is approved, begin
-   Slice A only; do not start schema/provider work without separate approval.
+1. Review the corrected Slice A boundary in
+   `docs/handoff/2026-08-01_city-tier-radiyo-automation-execution-packet.md`
+   and `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-a-plan-review.md`.
+2. If preview-only Slice A is approved, implement it as a local no-schema
+   coordinator. Do not start schema/provider work without separate approval.
 
 ## Agent Rules
 

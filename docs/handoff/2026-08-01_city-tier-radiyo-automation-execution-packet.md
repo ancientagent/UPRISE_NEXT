@@ -2,10 +2,10 @@
 
 **Date:** 2026-08-01
 
-**Status:** decision-ready continuation packet; runtime automation not started
+**Status:** reviewed continuation packet; runtime automation not started
 
 **Branch evidence:** normalized stack through
-`codex/classic-avatar-asset-production@34d1db6`, plus this docs closeout
+`codex/classic-avatar-asset-production@28b149f`, plus the 2026-08-02 plan review
 
 **Owner:** next sole branch-owning executor
 
@@ -102,8 +102,10 @@ Create a dedicated server-side lifecycle worker, proposed home:
 
 The worker should import or call bounded server-side lifecycle services and run
 outside the web tier. Do not add a production `setInterval()` to the API
-process. Fly/App Runner may run multiple API replicas, restart them, or overlap
-deployments; an in-process API timer cannot prove singleton execution.
+process. API replicas may restart or overlap deployments, so an in-process API
+timer cannot prove singleton execution. The infrastructure directive names AWS
+Fargate as the production worker target; the first staging host remains an
+explicit operational decision and is not selected by this packet.
 
 ### Durable Coordination
 
@@ -160,12 +162,10 @@ doctrine:
 
 1. Approve a dedicated RADIYO lifecycle worker rather than an API-local timer.
 2. Approve a schema migration for durable run/lease records.
-3. Select the first worker host and scheduler:
-   - recommended staging path: one Fly worker process or equivalent scheduled
-     worker;
-   - acceptable later path: AWS Fargate/EventBridge or another external worker
-     scheduler;
-   - rejected production default: a timer in every API replica.
+3. Select the first worker host and scheduler. Production must remain aligned
+   with the infrastructure directive's AWS Fargate worker target; a staging
+   equivalent requires explicit approval. A timer in every API replica is
+   rejected.
 4. Set operational polling/dispatch frequency. The product invariants remain
    date-based ingestion, exact stored-window graduation, and 48-hour recurrence;
    the worker may wake more often as long as durable buckets prevent early or
@@ -178,20 +178,31 @@ approving this packet.
 
 ## Implementation Slices
 
-### Slice A: Owner Contract And Pure Coordinator
+### Slice A: Preview-Only Thin Coordinator
 
-- Promote the approved worker/coordination boundary into
-  `docs/specs/broadcast/radiyo-and-fair-play.md`.
-- Add a coordinator service with an injected clock and explicit `runOnce()`.
+- Add a thin coordinator with an injected clock and explicit preview-only
+  `runOnce()`. It owns no direct lifecycle writes.
 - Enumerate active city-tier communities in deterministic order.
-- Delegate to existing ingestion, graduation, and recurrence services.
-- Keep production trigger disabled and do not add schema in this slice.
+- Delegate to ingestion and graduation with explicit `dryRun: true`.
+- Report recurrence as deferred: the existing recurrence service has no
+  non-mutating preview API and no durable 48-hour cadence state.
+- Catch failures independently per stage and city-tier community.
+- Add no controller, startup hook, timer, worker process, schema, or
+  write-enabled path in this slice.
+
+`Pure coordinator` was inaccurate terminology: this component reads
+communities and delegates to read-capable services. It is a thin orchestrator,
+not a pure function.
 
 ### Slice B: Durable Run Ledger And Claiming
 
+- Promote the approved worker/coordination boundary into
+  `docs/specs/broadcast/radiyo-and-fair-play.md` before schema work.
 - Add the approved Prisma model and migration.
 - Add atomic claim/complete/fail semantics with unique cadence buckets.
 - Prove two concurrent workers cannot both claim the same successful bucket.
+- Add the recurrence preview/apply seam and city-tier revalidation required to
+  enforce the 48-hour cadence through the ledger.
 - Do not touch provider state.
 
 ### Slice C: Worker Process And Configuration
@@ -226,14 +237,12 @@ and graduation, and recurrence has only its job wrapper/tests.
 
 ## Acceptance And Anti-Regression Tests
 
-- no work when automation is disabled;
+- Slice A scans only in explicit preview mode; it has no automation trigger;
 - only active city-tier communities are scanned;
 - deterministic community order;
-- due ingestion delegates once per claimed scene/bucket;
-- graduation delegates once per claimed scene/bucket;
-- recurrence cannot run before the 48-hour bucket is due;
-- concurrent claims yield one winner;
-- a failed job can retry while a completed job cannot duplicate;
+- one injected clock snapshot is shared across the preview run;
+- due ingestion and graduation receive explicit dry-run delegation;
+- recurrence is not called by Slice A;
 - one scene's failure does not block other scenes;
 - no state/national tier mutation;
 - no tier propagation, voting, removal/floor, or Sect behavior;
@@ -242,6 +251,10 @@ and graduation, and recurrence has only its job wrapper/tests.
 - dry mode performs no lifecycle mutation;
 - logs contain counts/identifiers needed for operations but no secrets or
   direct personal data.
+
+Slice B adds the remaining acceptance coverage: 48-hour recurrence cadence,
+atomic claims, one concurrent winner, retryable failed leases, and no duplicate
+completed bucket.
 
 ## Stop Conditions
 
