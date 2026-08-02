@@ -3,12 +3,27 @@
 **ID:** `ENG-SUPPORT`
 **Status:** `draft`
 **Owner:** `platform`
-**Last Updated:** `2026-07-22`
+**Last Updated:** `2026-08-01`
 
 ## Overview & Purpose
 
 Defines the Support/Participation civic layer: the contract system beneath
-source announcements, listener commitments, and verified supportive action.
+source announcements, weighted listener reactions, and verified supportive
+action.
+
+The system-level purpose is to help establish a viable, community-powered music
+industry that can mature toward self-governance and self-sufficiency. Proof of
+Support is the enabling protocol that makes community backing credible,
+participation auditable, and future stewardship accountable. It must not be
+reduced to an event response, reaction counter, loyalty program, or isolated
+points feature.
+
+This is not a financial, cryptocurrency, token, or blockchain system. Support
+and Participation cannot be bought, sold, traded, redeemed for cash, or used to
+buy Fair Play placement, voting power, propagation, or artist rank. The mature
+self-governance direction is not permission to invent councils, weighted
+authority, treasury custody, legal ownership, or decentralization mechanics
+before those owner contracts are approved.
 
 Two related but distinct values:
 
@@ -36,6 +51,8 @@ Consolidates founder direction from:
 - `docs/founder-sessions/2026-07-10_support-civic-loop.md`
 - `docs/founder-sessions/2026-07-11_support-reaction-model-correction.md`
   (supersedes the commit/RSVP framing of the 07-10 capture)
+- `docs/founder-sessions/2026-07-13_community-powered-music-industry-purpose.md`
+  (platform purpose, rallying frame, and non-financial protocol boundary)
 - `docs/founder-sessions/2026-07-22_registrar-support-participation-join-point.md`
   (community-development bonuses and proposed formation Support join point)
 

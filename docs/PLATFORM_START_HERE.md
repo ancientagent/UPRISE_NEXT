@@ -1,7 +1,7 @@
 # UPRISE Platform Start Here
 
 Status: active orientation
-Last Updated: 2026-06-25
+Last Updated: 2026-08-01
 
 ## Purpose
 
@@ -12,6 +12,14 @@ This file does not replace canon, specs, lane briefs, or runtime tests. It gives
 ## One-Paragraph Model
 
 UPRISE is a music-community platform organized around local Home Scenes. A Home Scene is identified by `city + state + music community`. Every Home Scene uses the same architecture: location and music community change the scene data, membership, sources, events, signals, and history, but not the screens, player behavior, actions, tabs, or routing. Listeners participate through the Home/Plot/player experience; artists, bands, promoters, and other sources are separate managed entities with source-facing tools; business, paid promotion, advanced media infrastructure, Prime-model structures, and dedicated Uprise persistence are deferred unless explicitly activated by current specs.
+
+UPRISE's north star is to establish a viable, community-powered music industry
+that can mature toward self-governance and self-sufficiency through the Proof of
+Support protocol. It is not another streaming app or music social network.
+`Blueprints for the next DIY revolution` is the current rallying frame. Proof
+of Support is the enabling civic protocol, not a financial, cryptocurrency, or
+blockchain system; its governance, funding, and ownership mechanics remain
+staged until their owner contracts are approved.
 
 ## Current Truths To Preserve
 
