@@ -8,6 +8,10 @@ import { FairPlayIngestionController } from './fair-play-ingestion.controller';
 import { FairPlayIngestionService } from './fair-play-ingestion.service';
 import { FairPlayGraduationController } from './fair-play-graduation.controller';
 import { FairPlayGraduationService } from './fair-play-graduation.service';
+import {
+  RADIYO_LIFECYCLE_CLOCK,
+  RadiyoLifecyclePreviewCoordinator,
+} from './radiyo-lifecycle-preview.coordinator';
 import { UsersModule } from '../users/users.module';
 
 @Module({
@@ -24,12 +28,18 @@ import { UsersModule } from '../users/users.module';
     FairPlayIngestionService,
     FairPlayGraduationService,
     RecurrenceAggregationJob,
+    RadiyoLifecyclePreviewCoordinator,
+    {
+      provide: RADIYO_LIFECYCLE_CLOCK,
+      useValue: { now: () => new Date() },
+    },
   ],
   exports: [
     FairPlayService,
     FairPlayIngestionService,
     FairPlayGraduationService,
     RecurrenceAggregationJob,
+    RadiyoLifecyclePreviewCoordinator,
   ],
 })
 export class FairPlayModule {}

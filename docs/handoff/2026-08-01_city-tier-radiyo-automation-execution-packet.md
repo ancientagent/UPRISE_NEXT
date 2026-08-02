@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-01
 
-**Status:** reviewed continuation packet; runtime automation not started
+**Status:** Slice A preview coordinator implemented and reviewed; production automation not started
 
 **Branch evidence:** normalized stack through
 `codex/classic-avatar-asset-production@28b149f`, plus the 2026-08-02 plan review
@@ -204,6 +204,26 @@ not a pure function.
 - Add the recurrence preview/apply seam and city-tier revalidation required to
   enforce the 48-hour cadence through the ledger.
 - Do not touch provider state.
+
+### Slice A Implementation Checkpoint
+
+Implemented locally on the shared sole-writer branch after explicit founder
+authorization:
+
+- `RadiyoLifecyclePreviewCoordinator.runOnce()` reads one injected clock value,
+  scans active city-tier communities in stable full-tuple order, and delegates
+  only to ingestion and graduation with `dryRun: true`.
+- Each stage failure is returned for that community without preventing later
+  stages or communities from being previewed.
+- Recurrence remains `deferred_no_preview_api`; it is neither injected nor
+  called because the current recurrence service is write-capable only.
+- No controller, startup hook, timer, worker process, schema, migration,
+  provider configuration, lifecycle write path, or deployment behavior was
+  added.
+
+Focused tests cover the empty case, city-tier selector/order, injected clock,
+explicit dry-run delegation, per-stage failure isolation, recurrence deferral,
+and module wiring. An independent Sol code review passed with no findings.
 
 ### Slice C: Worker Process And Configuration
 
