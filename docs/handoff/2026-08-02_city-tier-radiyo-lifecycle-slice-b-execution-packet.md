@@ -222,7 +222,7 @@ provider or shared database: report the test as prepared but not run.
 ### Required Commands
 
 ```bash
-pnpm --filter api test -- fair-play*.test.ts --runInBand
+pnpm --filter api test -- fair-play.lifecycle-run.service.test.ts fair-play.lifecycle-run.integration.test.ts fair-play.ingestion.service.test.ts fair-play.graduation.service.test.ts fair-play.recurrence.test.ts fair-play.service.test.ts fair-play.module.test.ts --runInBand
 pnpm --filter api typecheck
 pnpm run verify
 pnpm run workspace:audit

@@ -8,6 +8,7 @@ import { FairPlayIngestionController } from './fair-play-ingestion.controller';
 import { FairPlayIngestionService } from './fair-play-ingestion.service';
 import { FairPlayGraduationController } from './fair-play-graduation.controller';
 import { FairPlayGraduationService } from './fair-play-graduation.service';
+import { FairPlayLifecycleRunService } from './fair-play-lifecycle-run.service';
 import {
   RADIYO_LIFECYCLE_CLOCK,
   RadiyoLifecyclePreviewCoordinator,
@@ -27,6 +28,7 @@ import { UsersModule } from '../users/users.module';
     FairPlayService,
     FairPlayIngestionService,
     FairPlayGraduationService,
+    FairPlayLifecycleRunService,
     RecurrenceAggregationJob,
     RadiyoLifecyclePreviewCoordinator,
     {
@@ -38,6 +40,7 @@ import { UsersModule } from '../users/users.module';
     FairPlayService,
     FairPlayIngestionService,
     FairPlayGraduationService,
+    FairPlayLifecycleRunService,
     RecurrenceAggregationJob,
     RadiyoLifecyclePreviewCoordinator,
   ],

@@ -20,9 +20,9 @@ as implementation evidence.
 | --- | --- |
 | Branch | `codex/classic-avatar-asset-production` |
 | Base | `main@ba969f8` |
-| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, with the city-tier RADIYO lifecycle preview coordinator, durable run/lease owner contract, and Slice B schema/transaction packet independently reviewed. |
+| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, with the city-tier RADIYO lifecycle preview coordinator, durable run/lease owner contract, and completed Slice B run-ledger/transaction seams. |
 | Owner | Codex local, sole writer |
-| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; Slice A, durable run/lease owner-contract, and corrected Slice B plan Sol reviews passed with no findings |
+| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); Slice B targeted API tests passed (`32` passed, `2` skipped); `pnpm --filter api typecheck`, `pnpm --filter api exec prisma validate`, `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; Slice A, durable run/lease owner-contract, Slice B plan, and two independent Slice B runtime Sol reviews passed with no findings |
 | Out of Scope | Live provider calls, database migration execution, provider/database state changes, media upload/storage/transcoding, unapproved avatar privacy/retention/moderation policy, destructive stash/branch/worktree cleanup, full beta avatar catalog, and unrelated preserved UX extraction |
 
 ## Open Queue
@@ -88,6 +88,12 @@ as implementation evidence.
   Its first plan review found and corrected database-clock, fencing, recurrence-
   bucket, boundary-test, and test-database safety gaps; independent re-review
   passed with no findings.
+- Slice B now has a committed-but-unapplied `FairPlayLifecycleRun` migration,
+  fenced lease service, and transaction-aware ingestion, graduation, and
+  recurrence seams. It has no worker, timer, route, controller, production
+  caller, provider, staging, or database-state activation. Its explicitly gated
+  local Postgres integration suite remains prepared but skipped without
+  `UPRISE_TEST_DATABASE_URL`.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Blockers
@@ -96,23 +102,20 @@ as implementation evidence.
   privacy, consent, retention, moderation, minors, storage, and provider
   boundaries are owner-locked.
 - Public Signal archive runtime remains unapproved and intentionally isolated.
-- RADIYO production automation still requires a dedicated worker, database-
-  backed run/lease ledger, and operations approval before provider or staging
-  work begins.
-- Slice B is bounded to the reviewed schema/transaction refactor. It must not
-  introduce a scheduler, worker caller, provider/staging state, or automatic
-  write path.
+- RADIYO production automation still requires a separately approved dedicated
+  worker/host decision and operations approval before provider or staging work
+  begins. The committed lifecycle ledger is not an automatic write path.
 - Playable staging media remains deferred: the active Release Deck contract is
   URL-only and does not authorize first-party upload/storage/transcoding.
 
 ## Next Signal
 
-1. Preserve the reviewed Slice A and durable contract checkpoints described in
-   `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-a-preview.md` and
-   `docs/handoff/2026-08-02_city-tier-radiyo-durable-run-contract.md`.
-2. Implement the reviewed Slice B schema/transaction refactor and obtain an
-   independent runtime review. Do not start provider, worker-host, or staging
-   work.
+1. Preserve the Slice A, durable-contract, and Slice B closeout checkpoints
+   described in `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-a-preview.md`,
+   `docs/handoff/2026-08-02_city-tier-radiyo-durable-run-contract.md`, and
+   `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-b-ledger.md`.
+2. Treat any worker/host, staging preview, migration application, or provider
+   work as a new, separately reviewed and approved slice.
 
 ## Agent Rules
 

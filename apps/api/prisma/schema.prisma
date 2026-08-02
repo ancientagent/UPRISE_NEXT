@@ -171,6 +171,7 @@ model Community {
   activationNoticesFrom UserActivationNotice[] @relation("ActivationNoticeFromScene")
   activationAudits      CommunityActivationAudit[]
   releaseDeckSchedules  ReleaseDeckSchedule[]
+  fairPlayLifecycleRuns FairPlayLifecycleRun[]
   sects                 Sect[]
   homeSceneListeners    User[]            @relation("ListenerHomeScene")
 
@@ -558,6 +559,32 @@ model RotationEntry {
   @@index([sceneId, pool, recurrenceScore])
   @@index([pool, enteredPoolAt])
   @@map("rotation_entries")
+}
+
+model FairPlayLifecycleRun {
+  id             String   @id @default(uuid())
+  jobType        String
+  communityId    String
+  cadenceBucket  String
+  status         String   @default("leased")
+  attemptCount   Int      @default(1)
+  workerId       String
+  leaseToken     String
+  claimedAt      DateTime @default(now())
+  leaseExpiresAt DateTime
+  completedAt    DateTime?
+  failedAt       DateTime?
+  resultSummary  Json?
+  errorSummary   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([jobType, communityId, cadenceBucket])
+  @@index([status, leaseExpiresAt])
+  @@index([communityId, jobType, status, completedAt])
+  @@map("fair_play_lifecycle_runs")
 }
 
 model TrackVote {

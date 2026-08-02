@@ -12,6 +12,11 @@ single-owner closeout.
 
 ### Changed
 
+- Added the internal city-tier RADIYO lifecycle run ledger and guarded
+  transaction seams for Release Deck ingestion, New Releases graduation, and
+  recurrence recomputation. The database migration is committed but not
+  applied; no scheduler, worker, controller, provider, staging, or automatic
+  lifecycle write path is active.
 - Promoted the RADIYO lifecycle automation contract into the Fair Play owner
   spec. Any future city-tier worker now requires a durable run/lease ledger,
   repeatable UTC dispatch buckets, fenced lease ownership, a 48-hour recurrence

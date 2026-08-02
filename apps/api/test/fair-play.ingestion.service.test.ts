@@ -72,6 +72,7 @@ function createPrismaMockTransaction(overrides: Record<string, any> = {}) {
       ...(overrides.community ?? {}),
     },
     releaseDeckSchedule: {
+      findMany: jest.fn().mockResolvedValue([createDueSchedule()]),
       findUnique: jest.fn().mockResolvedValue(createDueSchedule()),
       update: jest.fn().mockResolvedValue({ id: 'schedule-1', status: 'ingested' }),
       ...(overrides.releaseDeckSchedule ?? {}),
@@ -170,6 +171,11 @@ describe('FairPlayIngestionService', () => {
       data: { status: 'ingested' },
       select: expect.any(Object),
     });
+    expect(tx.releaseDeckSchedule.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ communityId: COMMUNITY.id, status: 'scheduled' }),
+      }),
+    );
     expect(tx.fairPlayConfig.findUnique).not.toHaveBeenCalled();
     expect(tx.fairPlayConfig.findFirst).not.toHaveBeenCalled();
   });
@@ -238,9 +244,9 @@ describe('FairPlayIngestionService', () => {
   });
 
   it('skips schedules that fail transaction-time eligibility revalidation', async () => {
-    tx.releaseDeckSchedule.findUnique.mockResolvedValueOnce(
-      createDueSchedule({ track: { ...createDueSchedule().track, status: 'processing' } })
-    );
+    tx.releaseDeckSchedule.findMany.mockResolvedValueOnce([
+      createDueSchedule({ track: { ...createDueSchedule().track, status: 'processing' } }),
+    ]);
 
     const result = await service.ingestDueSchedules({
       communityId: COMMUNITY.id,
@@ -259,9 +265,9 @@ describe('FairPlayIngestionService', () => {
   });
 
   it('skips schedules that are no longer due inside the transaction', async () => {
-    tx.releaseDeckSchedule.findUnique.mockResolvedValueOnce(
-      createDueSchedule({ scheduledFor: new Date('2026-07-09T00:00:00.000Z') })
-    );
+    tx.releaseDeckSchedule.findMany.mockResolvedValueOnce([
+      createDueSchedule({ scheduledFor: new Date('2026-07-09T00:00:00.000Z') }),
+    ]);
 
     const result = await service.ingestDueSchedules({
       communityId: COMMUNITY.id,
@@ -280,9 +286,9 @@ describe('FairPlayIngestionService', () => {
   });
 
   it('skips schedules whose stored source no longer matches the track source', async () => {
-    tx.releaseDeckSchedule.findUnique.mockResolvedValueOnce(
-      createDueSchedule({ artistBandId: 'stale-source' })
-    );
+    tx.releaseDeckSchedule.findMany.mockResolvedValueOnce([
+      createDueSchedule({ artistBandId: 'stale-source' }),
+    ]);
 
     const result = await service.ingestDueSchedules({
       communityId: COMMUNITY.id,
