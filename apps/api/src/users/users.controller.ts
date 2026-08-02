@@ -31,6 +31,12 @@ export class UsersController {
     return { success: true, data: user };
   }
 
+  @Get('me/entry-status')
+  async getMyAccountEntryStatus(@Request() req: { user: { userId: string } }) {
+    const status = await this.usersService.getAccountEntryStatus(req.user.userId);
+    return { success: true, data: status };
+  }
+
   @Post('me/collection-display')
   @ZodBody(SetCollectionDisplaySchema)
   async setCollectionDisplay(

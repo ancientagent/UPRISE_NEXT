@@ -264,12 +264,21 @@ Acceptance checks before any migration:
 | POST   | `/onboarding/gps-verify`               | required | Verify exact Home Scene geofence or submitted-location fallback voting eligibility  |
 | POST   | `/onboarding/music-community-requests` | required | Store missing music-community intake for later review without creating a live Scene |
 | GET    | `/communities/resolve-home`            | required | Resolve exact Home Scene tuple for Plot/community anchoring                         |
+| GET    | `/users/me/entry-status`               | required | Return the authenticated account's private stored Home Scene tuple and server-computed completion flag for website entry routing |
 | GET    | `/users/me/music-community-preferences` | required | List current user's profile-held music-community preferences                       |
 | POST   | `/users/me/music-community-preferences` | required | Add a profile-held music-community preference without implicitly changing default  |
 | POST   | `/users/me/music-community-preferences/default` | required | Set the user's explicit default music-community preference                |
 | GET    | `/users/me/home-scene-selector` | required | List resolvable Home Scene selector items from the user's registered preferences |
 
 ### Request/Response
+
+- `GET /users/me/entry-status` response:
+  - private `homeSceneCity`, `homeSceneState`, and `homeSceneCommunity` values
+    for the authenticated account only
+  - `hasCompleteHomeScene: boolean`, computed server-side after trimming the
+    three stored tuple values
+  - this status must not be added to the parameterized `/users/:id` public
+    profile projection
 
 - `POST /onboarding/home-scene` request:
   - `city: string`
@@ -316,9 +325,12 @@ Acceptance checks before any migration:
 - `apps/web/src/app/page.tsx`:
   - provides conventional account creation and sign-in before Home Scene
     onboarding
-  - routes new or incomplete accounts to `/onboarding`
+  - reads the authenticated-only `/users/me/entry-status` projection after
+    account creation/sign-in
+  - routes new or incomplete accounts to `/onboarding` from the server-computed
+    completion flag
   - routes returning accounts with a complete stored Home Scene tuple to
-    `/plot`
+    `/plot` from the same flag
 - `apps/web/src/app/onboarding/page.tsx`:
   - captures City/State, optional ZIP/postal code, and Music Community (selection-only parent community)
   - lets manual city/state input set the submitted Home Scene when GPS is denied or skipped

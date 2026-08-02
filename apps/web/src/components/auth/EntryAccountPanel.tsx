@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@uprise/ui';
 import type { User } from '@uprise/types';
 import { api } from '@/lib/api';
-import { resolveAccountEntryDestination } from '@/lib/auth/entry-routing';
+import { loadAccountEntryDestination } from '@/lib/auth/entry-routing';
 import { useAuthStore } from '@/store/auth';
 
 type AuthMode = 'create' | 'sign-in';
@@ -54,13 +54,16 @@ export default function EntryAccountPanel() {
         throw new Error('Account session could not be created.');
       }
 
-      const me = await api.get<User>('/users/me', { token: tokens.accessToken });
+      const [me, destination] = await Promise.all([
+        api.get<User>('/users/me', { token: tokens.accessToken }),
+        loadAccountEntryDestination(tokens.accessToken),
+      ]);
       if (!me.data) {
         throw new Error('Account profile could not be loaded.');
       }
 
       setAuth(me.data, tokens.accessToken);
-      router.push(resolveAccountEntryDestination(me.data));
+      router.push(destination);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Account setup could not be completed.');
     } finally {
