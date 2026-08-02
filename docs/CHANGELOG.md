@@ -12,6 +12,12 @@ single-owner closeout.
 
 ### Changed
 
+- Promoted the RADIYO lifecycle automation contract into the Fair Play owner
+  spec. Any future city-tier worker now requires a durable run/lease ledger,
+  repeatable UTC dispatch buckets, fenced lease ownership, a 48-hour recurrence
+  anchor based on the prior successful run, atomic recurrence apply/completion,
+  disabled-by-default operation, and supervised staging preview. No worker,
+  migration, provider, or automatic lifecycle write was activated.
 - Added conventional website account creation/sign-in as the entry to Home
   Scene onboarding. New or incomplete accounts continue to onboarding, while
   returning accounts with a complete stored Home Scene tuple enter Plot without

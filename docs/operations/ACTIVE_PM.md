@@ -20,9 +20,9 @@ as implementation evidence.
 | --- | --- |
 | Branch | `codex/classic-avatar-asset-production` |
 | Base | `main@ba969f8` |
-| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, with the city-tier RADIYO lifecycle preview coordinator now implemented and reviewed. |
+| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, with the city-tier RADIYO lifecycle preview coordinator implemented and the durable run/lease owner contract independently reviewed. |
 | Owner | Codex local, sole writer |
-| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; final Sol review passed at `ce31f6d` with no findings |
+| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; Slice A and durable run/lease owner-contract Sol reviews passed with no findings |
 | Out of Scope | Live provider calls, database migration execution, provider/database state changes, media upload/storage/transcoding, unapproved avatar privacy/retention/moderation policy, destructive stash/branch/worktree cleanup, full beta avatar catalog, and unrelated preserved UX extraction |
 
 ## Open Queue
@@ -78,6 +78,11 @@ as implementation evidence.
 - Slice A is now implemented as a local preview-only coordinator. It delegates
   only to dry-run ingestion/graduation, has no caller or trigger, and was passed
   by an independent Sol implementation review with no findings.
+- The durable run/lease contract is promoted in
+  `docs/specs/broadcast/radiyo-and-fair-play.md` and passed independent owner-
+  contract review with no findings. It requires repeatable UTC dispatch windows,
+  token-fenced leases, canonical recurrence buckets, and same-transaction
+  city-tier recurrence application/completion.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Blockers
@@ -86,20 +91,22 @@ as implementation evidence.
   privacy, consent, retention, moderation, minors, storage, and provider
   boundaries are owner-locked.
 - Public Signal archive runtime remains unapproved and intentionally isolated.
-- RADIYO production automation requires approval of a dedicated worker and a
-  database-backed run/lease ledger before schema or provider work begins.
-- Slice B requires a separately approved run/lease schema migration and owner
-  contract promotion before recurrence or any automatic write path can begin.
+- RADIYO production automation still requires a dedicated worker, database-
+  backed run/lease ledger, and operations approval before provider or staging
+  work begins.
+- Slice B has an approved owner contract but still requires a reviewed
+  schema-bearing execution packet before recurrence or any automatic write path
+  can begin.
 - Playable staging media remains deferred: the active Release Deck contract is
   URL-only and does not authorize first-party upload/storage/transcoding.
 
 ## Next Signal
 
-1. Preserve the reviewed Slice A checkpoint described in
-   `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-a-preview.md`.
-2. Stop before Slice B until the durable run/lease schema and owner-contract
-   promotion are separately approved. Do not start provider, worker-host, or
-   staging work.
+1. Preserve the reviewed Slice A and durable contract checkpoints described in
+   `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-a-preview.md` and
+   `docs/handoff/2026-08-02_city-tier-radiyo-durable-run-contract.md`.
+2. Prepare and independently review the Slice B schema-bearing execution packet.
+   Do not start provider, worker-host, or staging work.
 
 ## Agent Rules
 
