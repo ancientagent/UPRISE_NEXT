@@ -12,6 +12,20 @@ single-owner closeout.
 
 ### Changed
 
+- Added conventional website account creation/sign-in as the entry to Home
+  Scene onboarding. New or incomplete accounts continue to onboarding, while
+  returning accounts with a complete stored Home Scene tuple enter Plot without
+  repeating onboarding.
+- Promoted UPRISE's confirmed north star: establish a viable,
+  community-powered music industry that can mature toward self-governance and
+  self-sufficiency through Proof of Support. The Support owner spec now
+  preserves the non-financial/non-crypto boundary and prevents the protocol
+  from being reduced to an event reaction or isolated points feature.
+- Preserved the unapproved photo-avatar/Registrar integration and public Signal
+  archive experiments as non-runtime screen packages, with explicit owner,
+  privacy, storage, provider, and route decisions required before restoration.
+  The shared checkout control plane and Windows-artifact helper were corrected
+  during the same non-destructive normalization pass.
 - Simplified the repo execution-control policy: focused startup now loads two
   routing documents, handoffs and changelog entries are trigger-based,
   `ACTIVE_PM` and the workspace registry retain current/preserved-risk state

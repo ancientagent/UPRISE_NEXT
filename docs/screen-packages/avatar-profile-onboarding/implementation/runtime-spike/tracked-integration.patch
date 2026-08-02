@@ -1,0 +1,268 @@
+diff --git a/apps/api/prisma/schema.prisma b/apps/api/prisma/schema.prisma
+index 6a46c32..2e8bb8e 100644
+--- a/apps/api/prisma/schema.prisma
++++ b/apps/api/prisma/schema.prisma
+@@ -61,6 +61,7 @@ model User {
+   capabilityAuditActorEvents  CapabilityGrantAuditLog[] @relation("CapabilityAuditActorUser")
+   musicCommunityRequests      MusicCommunityRequest[]
+   musicCommunityPreferences   UserMusicCommunityPreference[]
++  avatarProfile               AvatarProfile?
+   releaseDeckSchedulesCreated ReleaseDeckSchedule[]
+   homeScene                   Community?             @relation("ListenerHomeScene", fields: [homeSceneId], references: [id], onDelete: SetNull)
+
+@@ -68,6 +69,21 @@ model User {
+   @@map("users")
+ }
+
++model AvatarProfile {
++  id             String   @id @default(uuid())
++  userId         String   @unique
++  identityRender String
++  musicCommunity String
++  starterTopId   String   @default("uprise-tee-black")
++  configuration  Json
++  createdAt      DateTime @default(now())
++  updatedAt      DateTime @updatedAt
++
++  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
++
++  @@map("avatar_profiles")
++}
++
+ model UserMusicCommunityPreference {
+   id             String   @id @default(uuid())
+   userId         String
+diff --git a/apps/api/src/app.module.ts b/apps/api/src/app.module.ts
+index db271c6..9f83095 100644
+--- a/apps/api/src/app.module.ts
++++ b/apps/api/src/app.module.ts
+@@ -18,6 +18,7 @@ import { AdminAnalyticsModule } from './admin-analytics/admin-analytics.module';
+ import { ArtistBandsModule } from './artist-bands/artist-bands.module';
+ import { RegistrarModule } from './registrar/registrar.module';
+ import { ReleaseDeckModule } from './release-deck/release-deck.module';
++import { AvatarLabModule } from './avatar-lab/avatar-lab.module';
+
+ @Module({
+   imports: [
+@@ -46,6 +47,7 @@ import { ReleaseDeckModule } from './release-deck/release-deck.module';
+     ArtistBandsModule,
+     RegistrarModule,
+     ReleaseDeckModule,
++    AvatarLabModule,
+   ],
+ })
+ export class AppModule {}
+diff --git a/apps/api/src/users/dto/user-profile.dto.ts b/apps/api/src/users/dto/user-profile.dto.ts
+index a163928..6bcc254 100644
+--- a/apps/api/src/users/dto/user-profile.dto.ts
++++ b/apps/api/src/users/dto/user-profile.dto.ts
+@@ -11,3 +11,9 @@ export const MusicCommunityPreferenceSchema = z.object({
+ });
+
+ export type MusicCommunityPreferenceDto = z.infer<typeof MusicCommunityPreferenceSchema>;
++
++export const UpdateMyProfileSchema = z.object({
++  bio: z.string().trim().max(1_000).optional(),
++});
++
++export type UpdateMyProfileDto = z.infer<typeof UpdateMyProfileSchema>;
+diff --git a/apps/api/src/users/users.controller.ts b/apps/api/src/users/users.controller.ts
+index 85d911e..0825d34 100644
+--- a/apps/api/src/users/users.controller.ts
++++ b/apps/api/src/users/users.controller.ts
+@@ -8,6 +8,8 @@ import {
+   MusicCommunityPreferenceSchema,
+   SetCollectionDisplayDto,
+   SetCollectionDisplaySchema,
++  UpdateMyProfileDto,
++  UpdateMyProfileSchema,
+ } from './dto/user-profile.dto';
+
+ @Controller('users')
+@@ -31,6 +33,16 @@ export class UsersController {
+     return { success: true, data: user };
+   }
+
++  @Post('me/profile')
++  @ZodBody(UpdateMyProfileSchema)
++  async updateMyProfile(
++    @Body() dto: UpdateMyProfileDto,
++    @Request() req: { user: { userId: string } },
++  ) {
++    const result = await this.usersService.updateMyProfile(req.user.userId, dto);
++    return { success: true, data: result };
++  }
++
+   @Post('me/collection-display')
+   @ZodBody(SetCollectionDisplaySchema)
+   async setCollectionDisplay(
+diff --git a/apps/api/src/users/users.service.ts b/apps/api/src/users/users.service.ts
+index 22fba4d..44742c8 100644
+--- a/apps/api/src/users/users.service.ts
++++ b/apps/api/src/users/users.service.ts
+@@ -3,6 +3,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
+ import { Prisma } from '@prisma/client';
+ import { PrismaService } from '../prisma/prisma.service';
+ import { COLLECTION_SHELVES } from '../common/constants/collection-shelves';
++import type { UpdateMyProfileDto } from './dto/user-profile.dto';
+
+ type MusicCommunityPreferenceRecord = {
+   id: string;
+@@ -271,6 +272,22 @@ export class UsersService {
+     return this.prisma.user.create({ data });
+   }
+
++  async updateMyProfile(userId: string, dto: UpdateMyProfileDto) {
++    return this.prisma.user.update({
++      where: { id: userId },
++      data: {
++        bio: dto.bio?.trim() || null,
++      },
++      select: {
++        id: true,
++        username: true,
++        displayName: true,
++        bio: true,
++        avatar: true,
++      },
++    });
++  }
++
+   async findByEmail(email: string) {
+     return this.prisma.user.findUnique({ where: { email } });
+   }
+diff --git a/apps/web/src/app/onboarding/page.tsx b/apps/web/src/app/onboarding/page.tsx
+index a6945ce..155f87a 100644
+--- a/apps/web/src/app/onboarding/page.tsx
++++ b/apps/web/src/app/onboarding/page.tsx
+@@ -16,7 +16,7 @@ import {
+ import { useOnboardingStore } from '@/store/onboarding';
+ import { useAuthStore } from '@/store/auth';
+
+-const steps = ['Scene Details', 'Review'];
++const steps = ['Scene Details', 'Review', 'Profile'];
+
+ function formatGpsReasonForDisplay(reason?: string | null): string | null {
+   if (!reason) return null;
+@@ -379,7 +379,7 @@ export default function OnboardingPage() {
+   };
+
+   const handleFinish = () => {
+-    router.push('/plot');
++    router.push('/registrar?onboarding=profile');
+   };
+
+   const handleMissingMusicCommunityRequest = async () => {
+@@ -466,24 +466,28 @@ export default function OnboardingPage() {
+
+           {step === 0 && (
+             <section className="rounded-3xl border border-black/10 bg-white/80 p-8 shadow-sm">
++              <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-black/55">
++                Registrar / Listener record
++              </p>
+               <h1 className="text-2xl font-semibold leading-tight text-black sm:text-3xl">
+-                Join Your Home Scene
++                Complete your listener record.
+               </h1>
+               <p className="mt-2 text-sm text-black/60">
+-                Your Home Scene is your local music scene of choice. If you don&apos;t have one,
+-                select a music community you are most interested in exploring.
++                Confirm your location and music community to establish the Home Scene attached
++                to your profile.
+               </p>
+
+               {showGpsPrompt && (
+                 <div className="mt-5 rounded-2xl border border-black/10 bg-black/[0.03] p-4">
+                   <p className="text-sm font-medium text-black">
+-                    Allow UPRISE to use GPS to verify location?
++                    Location signal hidden. Expose it to verify this session?
+                   </p>
+                   <p className="mt-1 text-xs text-black/60">
+-                    Verification is required in order to vote in your Home Scene.
++                    The Registrar checks this device&apos;s current location against the Home Scene
++                    attached to your profile. Verification is required for voting.
+                   </p>
+                   <p className="mt-1 text-xs text-black/60">
+-                    Your GPS data will not be used by any third party.
++                    Your precise location is not published or shared with third parties.
+                   </p>
+                   <div className="mt-3 flex flex-wrap gap-2">
+                     <Button
+@@ -491,10 +495,10 @@ export default function OnboardingPage() {
+                       disabled={isDetectingLocation}
+                       onClick={handleGpsPromptEnable}
+                     >
+-                      {isDetectingLocation ? 'Detecting location...' : 'OK'}
++                      {isDetectingLocation ? 'Reading GPS...' : 'Expose'}
+                     </Button>
+                     <Button size="sm" variant="outline" onClick={handleGpsPromptDeny}>
+-                      Deny
++                      Keep private
+                     </Button>
+                   </div>
+                 </div>
+@@ -757,7 +761,7 @@ export default function OnboardingPage() {
+
+               <div className="mt-8 flex flex-wrap gap-3">
+                 <Button size="lg" onClick={handleFinish}>
+-                  Enter The Plot
++                  Continue to Registrar
+                 </Button>
+                 <Button size="lg" variant="outline" onClick={() => setStep(0)}>
+                   Edit Home Scene
+diff --git a/apps/web/src/app/registrar/page.tsx b/apps/web/src/app/registrar/page.tsx
+index 6d37a4a..1598329 100644
+--- a/apps/web/src/app/registrar/page.tsx
++++ b/apps/web/src/app/registrar/page.tsx
+@@ -1,7 +1,7 @@
+ 'use client';
+
+-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+-import { useRouter } from 'next/navigation';
++import { Suspense, useEffect, useMemo, useState, type FormEvent } from 'react';
++import { useRouter, useSearchParams } from 'next/navigation';
+ import Link from 'next/link';
+ import { Button } from '@uprise/ui';
+ import { api } from '@/lib/api';
+@@ -44,6 +44,7 @@ import {
+   type RegistrarPromoterRegistrationResult,
+ } from '@/lib/registrar/client';
+ import { formatArtistBandEntityType } from '@/lib/registrar/artistBandLabels';
++import ListenerProfileTutorial from '@/components/registrar/ListenerProfileTutorial';
+
+ type HomeSceneResolution = {
+   id: string;
+@@ -54,8 +55,9 @@ type HomeSceneResolution = {
+   tier: 'city' | 'state' | 'national';
+ };
+
+-export default function RegistrarPage() {
++function RegistrarPageContent() {
+   const router = useRouter();
++  const searchParams = useSearchParams();
+   const { token, user } = useAuthStore();
+   const { homeScene, isVisitor, tunedScene } = useOnboardingStore();
+   const { activeSourceId, activeSourceUserId, clearActiveSourceId } = useSourceAccountStore();
+@@ -656,6 +658,10 @@ export default function RegistrarPage() {
+           </div>
+         </header>
+
++        {searchParams.get('onboarding') === 'profile' ? (
++          <ListenerProfileTutorial musicCommunity={homeScene?.musicCommunity ?? null} />
++        ) : null}
++
+         <section className="rounded-2xl border border-black/10 bg-white p-6">
+           <h2 className="text-lg font-semibold text-black">Source Context</h2>
+           {profileError ? (
+@@ -1180,3 +1186,11 @@ export default function RegistrarPage() {
+     </main>
+   );
+ }
++
++export default function RegistrarPage() {
++  return (
++    <Suspense fallback={null}>
++      <RegistrarPageContent />
++    </Suspense>
++  );
++}
