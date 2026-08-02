@@ -22,7 +22,7 @@ as implementation evidence.
 | Base | `main@ba969f8` |
 | Scope | Close out the completed shared-local normalization, preserve the verified rollback checkpoint and parked work, and hand off the next city-tier Release Deck/RADIYO automation decision packet. |
 | Owner | Codex local, sole writer |
-| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; final independent review in progress |
+| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; final Sol review passed at `ce31f6d` with no findings |
 | Out of Scope | Live provider calls, database migration execution, provider/database state changes, unapproved avatar privacy/retention/moderation policy, destructive stash/branch/worktree cleanup, full beta avatar catalog, and unrelated preserved UX extraction |
 
 ## Open Queue
@@ -62,6 +62,8 @@ as implementation evidence.
   (`C:\Users\baris\uprise-agent-artifacts\uprise-shared-checkout-pre-normalization`).
 - The next city-tier lifecycle packet is
   `docs/handoff/2026-08-01_city-tier-radiyo-automation-execution-packet.md`.
+- Final integrated Sol review passed `ce31f6d` with no blocking or non-blocking
+  findings.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Blockers
@@ -75,11 +77,9 @@ as implementation evidence.
 
 ## Next Signal
 
-1. Integrate the final read-only review and commit the docs-only closeout.
-2. Push the normalized branch after workspace audit and clean-tree validation.
-3. Review
+1. Review
    `docs/handoff/2026-08-01_city-tier-radiyo-automation-execution-packet.md`.
-4. If its dedicated-worker and durable-run-ledger boundary is approved, begin
+2. If its dedicated-worker and durable-run-ledger boundary is approved, begin
    Slice A only; do not start schema/provider work without separate approval.
 
 ## Agent Rules
