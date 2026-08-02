@@ -78,7 +78,7 @@ interface LaunchCommunitySeedPrisma {
 }
 
 interface LaunchCommunityGeofencePrisma {
-  $executeRawUnsafe(query: string, ...values: any[]): Promise<number>;
+  $executeRaw(query: TemplateStringsArray, ...values: unknown[]): Promise<number>;
 }
 
 export function slugifyLaunchCommunity(
@@ -224,29 +224,21 @@ export async function seedLaunchCommunityGeofences(
   let updated = 0;
 
   for (const record of records) {
-    const affectedRows = await prisma.$executeRawUnsafe(
-      `
+    const affectedRows = await prisma.$executeRaw`
         UPDATE communities
         SET
-          geofence = ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
-          radius = $3
-        WHERE city = $4
-          AND state = $5
-          AND "musicCommunity" = $6
+          geofence = ST_SetSRID(ST_MakePoint(${record.longitude}, ${record.latitude}), 4326)::geography,
+          radius = ${record.radiusMeters}
+        WHERE city = ${record.city}
+          AND state = ${record.state}
+          AND "musicCommunity" = ${record.musicCommunity}
           AND tier = 'city'
           AND "isActive" = true
-      `,
-      record.longitude,
-      record.latitude,
-      record.radiusMeters,
-      record.city,
-      record.state,
-      record.musicCommunity
-    );
+      `;
 
     if (affectedRows !== 1) {
       throw new Error(
-        `Expected to update exactly one active launch geofence for ${record.city}, ${record.state} • ${record.musicCommunity}; updated ${affectedRows}`
+        `Expected to update exactly one active launch geofence for ${record.city}, ${record.state} - ${record.musicCommunity}; updated ${affectedRows}`
       );
     }
 

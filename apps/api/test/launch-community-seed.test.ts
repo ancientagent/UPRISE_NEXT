@@ -172,7 +172,7 @@ describe('launch community Prisma seed runner', () => {
 
   it('updates launch geofences with parameterized PostGIS SQL for every active tuple', async () => {
     const prisma = {
-      $executeRawUnsafe: jest.fn().mockResolvedValue(1),
+      $executeRaw: jest.fn().mockResolvedValue(1),
     };
 
     const result = await seedLaunchCommunityGeofences(prisma as any, {
@@ -185,10 +185,13 @@ describe('launch community Prisma seed runner', () => {
     });
 
     expect(result).toEqual({ updated: 2, total: 2 });
-    expect(prisma.$executeRawUnsafe).toHaveBeenCalledTimes(2);
-    expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
+    expect(prisma.$executeRaw).toHaveBeenCalledTimes(2);
+    expect(prisma.$executeRaw).toHaveBeenNthCalledWith(
       1,
-      expect.stringContaining('ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography'),
+      expect.arrayContaining([
+        expect.stringContaining('ST_SetSRID(ST_MakePoint('),
+        expect.stringContaining(')::geography'),
+      ]),
       -97.7431,
       30.2672,
       50000,
@@ -196,9 +199,9 @@ describe('launch community Prisma seed runner', () => {
       'Texas',
       'Punk'
     );
-    expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
+    expect(prisma.$executeRaw).toHaveBeenNthCalledWith(
       2,
-      expect.any(String),
+      expect.any(Array),
       -97.7431,
       30.2672,
       50000,
@@ -210,7 +213,7 @@ describe('launch community Prisma seed runner', () => {
 
   it('aborts launch geofence updates when an expected active tuple is missing', async () => {
     const prisma = {
-      $executeRawUnsafe: jest.fn().mockResolvedValue(0),
+      $executeRaw: jest.fn().mockResolvedValue(0),
     };
 
     await expect(
@@ -222,6 +225,6 @@ describe('launch community Prisma seed runner', () => {
           expectedCityTierSceneCount: 1,
         },
       })
-    ).rejects.toThrow('Expected to update exactly one active launch geofence for Austin, Texas • Punk');
+    ).rejects.toThrow('Expected to update exactly one active launch geofence for Austin, Texas - Punk');
   });
 });
