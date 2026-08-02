@@ -123,9 +123,13 @@ Hard constraints:
   - minimum unique eligible listeners
   - rate-based thresholding
   - optional confidence-bound gate
-- A song is only graduation-eligible after a minimum active lifecycle age of `14 days`.
-- Graduation execution runs every `14 days` (batched promotion runs, not continuous draining).
-- Graduation cap per run is enforced to prevent pool churn (`GRADUATION_CAP_PER_RUN`, value TBD).
+- A song is only tier-propagation eligible after a minimum active lifecycle age
+  of `14 days`.
+- Tier-propagation evaluation runs every `14 days` as a batch; this is separate
+  from the New Releases-to-Main Rotation transition at the end of each song's
+  stored `newWindowDays`.
+- The compatibility setting `GRADUATION_CAP_PER_RUN` caps tier-propagation
+  promotions per batch to prevent churn; its numeric value remains TBD.
 
 ## Proxy Cutover And Lifecycle Join Points
 
@@ -161,7 +165,9 @@ Owner references:
 - No activation evaluator is created here.
 - No migration or dedicated Uprise model is required by this section.
 - No new song-removal policy is defined here.
-- Exact promotion thresholds, graduation cap, and low-recurrence removal/floor policy remain governed by the open Fair Play decisions below.
+- Exact promotion thresholds, tier-propagation batch cap, and
+  low-recurrence removal/floor policy remain governed by the open Fair Play
+  decisions below.
 
 ## Non-Functional Requirements
 - No personalization.
@@ -227,7 +233,8 @@ Owner references:
 ## Open Decisions
 - Exact propagation threshold formula.
 - Practical floor/removal policy for persistently low-recurrence songs.
-- `GRADUATION_CAP_PER_RUN` numeric value.
+- Tier-propagation batch-cap value (`GRADUATION_CAP_PER_RUN`, compatibility
+  field name).
 - Automated production policy for cross-state proxy advancement identity.
 - Production tuning for Release Deck scheduling capacity values and
   scheduler/job wiring.

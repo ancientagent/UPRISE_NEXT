@@ -2,7 +2,7 @@
 
 Status: active operations registry
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-23
+Last Updated: 2026-08-01
 
 ## Purpose
 
@@ -88,7 +88,7 @@ cleanup pass.
 | ux-batch17-reference | preserved-branch | feat/ux-batch17 | - | - | older main snapshot | 9fb382e | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Historical UX/Reliant batch-output reference with canonical blockers documented. | 2026-07-02 | preserve until extraction/archive decision |
 | ux-batch18-reference | preserved-branch | feat/ux-batch18-run | - | - | older main snapshot | 77d2e26 | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Historical UX/Reliant batch-output reference with Social-hidden MVP precedence notes. | 2026-07-02 | preserve until extraction/archive decision |
 | prisma-schema-migration-draft | preserved-branch | codex/propose-prisma-schema-migration | - | closed PR #1 https://github.com/ancientagent/UPRISE_NEXT/pull/1 | older main snapshot | be54087 | review-needed | owner pending | no active agent | Unmerged schema/spec draft with unique content. Not evaluated for current product or migration authority. | 2026-07-23 | preserve until a dedicated schema/product review decides extract or delete |
-| shared-local-normalization | branch | codex/classic-avatar-asset-production | /home/baris/UPRISE_NEXT | - | main@ba969f8 | bae6895 | active | Codex local, sole writer | Fresh bounded Terra read-only research agents; final Sol review when retained runtime is ready | Stabilize and separate the mixed post-avatar-proof local batch: avatar art/runtime, entry/onboarding/Registrar, public Signal prototype, founder captures, and recoverable parked work. Full rollback checkpoint: `C:\Users\baris\uprise-agent-artifacts\uprise-shared-checkout-pre-normalization`. | 2026-08-01 | preserve unique work, reconcile authority, validate coherent slices, and leave the shared checkout clean/review-ready |
+| shared-local-normalization | branch | codex/classic-avatar-asset-production | /home/baris/UPRISE_NEXT | - | main@ba969f8 | pending | active | Codex local, sole writer | Sol final read-only review; fresh Terra docs-packet sanity check | Completed non-destructive normalization: retained account entry and SQL hardening, restored founder purpose, preserved art/founder work, and isolated unapproved avatar/public-Signal runtime as non-runtime packages. Rollback checkpoint: `C:\Users\baris\uprise-agent-artifacts\uprise-shared-checkout-pre-normalization`. | 2026-08-01 | integrate final review, validate, commit/push the clean branch, then continue only from the city-tier RADIYO packet after required approvals |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches

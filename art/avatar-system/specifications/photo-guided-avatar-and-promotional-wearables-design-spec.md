@@ -1,7 +1,7 @@
 # Photo-Guided Avatar And Promotional Wearables Design Spec
 
-Status: implementation contract for the camera-capture, candidate-selection, and
-starter-identity slice; wardrobe and wearables remain deferred
+Status: non-authoritative design/prototype evidence; no camera, provider,
+persistence, privacy, storage, wardrobe, or wearable runtime is authorized here
 Date: 2026-07-26
 Surface owner: listener account/profile for base identity; Personal
 Space/Inventory for collected wearable equipment
@@ -16,10 +16,13 @@ independently choose clothing and equip source-owned buttons, patches, pins,
 shirts, and compatible outerwear that visually promote music-community artists
 and organizations.
 
-This document authorizes only the narrow camera-capture, AI candidate-generation,
-selection, and starter-identity persistence slice. It does not activate
-photo-file upload, public avatar editing, payments, collectible issuance, source
-analytics, or promotional click behavior.
+This document does not authorize camera capture, AI candidate generation,
+provider submission, or starter-identity persistence. It records a proposed
+experience and asset direction only. Runtime work remains blocked until the
+relevant owner specs settle consent, retention, moderation, minors, storage,
+provider, and server-authoritative selection boundaries. It also does not
+activate photo-file upload, public avatar editing, payments, collectible
+issuance, source analytics, or promotional click behavior.
 
 ## Avatar Maker Boundary
 
@@ -150,9 +153,10 @@ community expression without rerolling their face.
 Base avatar creation remains associated with listener account/profile. Personal
 Space remains the later inventory/equipment surface.
 
-The first runtime path is guided camera capture. It does not provide a
-local-file upload/submission alternative. Any future accessibility or
-generation-failure fallback requires separate owner-spec approval.
+The first proposed path is guided camera capture without a local-file
+upload/submission alternative. This is not active runtime. Camera use and any
+future accessibility or generation-failure fallback require owner-spec
+approval.
 
 ### Photo-Guided Flow
 
@@ -211,20 +215,19 @@ generation-failure fallback requires separate owner-spec approval.
 9. **Save**
    - Save one avatar configuration consumed by every authorized surface.
 
-### Runtime Persistence Boundary
+### Proposed Persistence Boundary (Not Active)
 
-- The raw camera capture is submitted to the image provider to generate the
-  comparison set and is not written to the UPRISE database.
-- Selection persists the generated illustrated identity, user-selected music
-  community context, fixed `uprise-tee-black` starter top,
+- The proposal assumes a raw camera capture could be submitted to an approved
+  image provider without writing that raw capture to the UPRISE database, but
+  neither the provider nor retention boundary is approved.
+- The proposed selected configuration includes the generated illustrated
+  identity, user-selected music-community context, fixed
+  `uprise-tee-black` starter top,
   `outerwear-open-denim-vest-black` starter outerwear, and an initial empty
   wearable configuration.
-- Existing surfaces may continue to read the selected flattened render from
-  `User.avatar` while consumers migrate to the richer avatar-profile record.
-- Object-storage URLs and normalized composited render variants are a follow-up
-  implementation slice. The initial local runtime record stores the selected
-  render directly so the creator can be tested without inventing an unapproved
-  storage provider.
+- Any compatibility use of `User.avatar`, richer avatar-profile record,
+  object-storage URL, normalized render, or local development persistence
+  remains an implementation proposal requiring owner-spec and schema review.
 
 ## Generator Ideas For Review
 

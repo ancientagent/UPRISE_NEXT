@@ -20,9 +20,9 @@ as implementation evidence.
 | --- | --- |
 | Branch | `codex/classic-avatar-asset-production` |
 | Base | `main@ba969f8` |
-| Scope | Stabilize and normalize the mixed shared-local avatar, onboarding, public-entry, founder-context, and parked-work batch without losing unique work. Reconcile retained behavior with owner specs, correct build/security/migration defects, and leave coherent validated slices. |
+| Scope | Close out the completed shared-local normalization, preserve the verified rollback checkpoint and parked work, and hand off the next city-tier Release Deck/RADIYO automation decision packet. |
 | Owner | Codex local, sole writer |
-| Validation | focused API/web tests, API/web typecheck, production web build, `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check`, and one independent final review for retained runtime |
+| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; final independent review in progress |
 | Out of Scope | Live provider calls, database migration execution, provider/database state changes, unapproved avatar privacy/retention/moderation policy, destructive stash/branch/worktree cleanup, full beta avatar catalog, and unrelated preserved UX extraction |
 
 ## Open Queue
@@ -43,14 +43,25 @@ as implementation evidence.
 
 ## Current Evidence
 
-- The classic avatar construction proof is complete through `bae6895`.
-- The post-proof working tree contains a mixed local batch spanning avatar art,
-  avatar runtime/persistence, website entry/onboarding, Registrar profile setup,
-  a public Signal prototype, and founder-session captures.
+- The classic avatar style and construction proof is preserved in `731682b` and
+  `bae6895`.
+- SQL seed hardening is committed in `f0cd143`.
+- Home Scene-aware website account entry is committed in `5331efa`; the final
+  review correction in `34d1db6` routes from an authenticated private
+  server-computed status instead of the incomplete general user projection.
+- The community-powered platform purpose and Proof of Support boundary are
+  committed in `a3a0469`.
+- Approved avatar/design assets and founder captures are committed in
+  `0b00586`.
+- Unapproved avatar runtime and public Signal experiments are isolated as
+  non-runtime screen packages in `53db0f7`; the live web build contains neither
+  route.
 - A complete non-destructive pre-normalization checkpoint is stored outside the
   repo at
   `/mnt/c/Users/baris/uprise-agent-artifacts/uprise-shared-checkout-pre-normalization`
   (`C:\Users\baris\uprise-agent-artifacts\uprise-shared-checkout-pre-normalization`).
+- The next city-tier lifecycle packet is
+  `docs/handoff/2026-08-01_city-tier-radiyo-automation-execution-packet.md`.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Blockers
@@ -58,22 +69,18 @@ as implementation evidence.
 - Photo-guided avatar runtime cannot be treated as production-ready until its
   privacy, consent, retention, moderation, minors, storage, and provider
   boundaries are owner-locked.
-- The current `/registrar` integration fails the production web build because
-  `useSearchParams()` is not under a Suspense boundary.
-- The mixed local batch must be separated into coherent validated slices before
-  any PR or merge.
+- Public Signal archive runtime remains unapproved and intentionally isolated.
+- RADIYO production automation requires approval of a dedicated worker and a
+  database-backed run/lease ledger before schema or provider work begins.
 
 ## Next Signal
 
-1. Recover unique founder-purpose and SQL-hardening parked work without applying
-   unrelated stash content.
-2. Preserve and classify the art/founder, public Signal, WSL preview, avatar
-   runtime, and onboarding/Registrar slices.
-3. Reconcile owner specs before retaining product behavior, then patch only
-   settled low-risk build, security, migration, and contract defects.
-4. Run focused and production validation plus one independent final review.
-5. Leave the shared checkout clean and review-ready, then prepare the next
-   city-tier Release Deck/RADIYO automation packet.
+1. Integrate the final read-only review and commit the docs-only closeout.
+2. Push the normalized branch after workspace audit and clean-tree validation.
+3. Review
+   `docs/handoff/2026-08-01_city-tier-radiyo-automation-execution-packet.md`.
+4. If its dedicated-worker and durable-run-ledger boundary is approved, begin
+   Slice A only; do not start schema/provider work without separate approval.
 
 ## Agent Rules
 
