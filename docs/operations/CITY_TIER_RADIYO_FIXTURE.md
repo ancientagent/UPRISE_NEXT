@@ -16,6 +16,8 @@ the current Release Deck and Fair Play constraints:
 - at least `5` distinct fixture source slots;
 - no more than `3` ready tracks and `15` playable minutes per source slot;
 - no track longer than `6` minutes;
+- byte-identical audio is counted once; duplicate filenames and backup copies
+  are reported as exclusions and cannot fill an extra source slot;
 - a Uprise-wide schedule respecting the `15` minute daily intake cap and `45`
   minute overlapping protected-pool cap;
 - each scheduled track enters New Releases on its scheduled date and becomes

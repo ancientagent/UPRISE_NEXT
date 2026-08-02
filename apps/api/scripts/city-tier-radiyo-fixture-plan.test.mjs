@@ -52,3 +52,25 @@ test('rejects tracks over six minutes and reports a city fixture shortfall inste
   assert.equal(plan.inventory.excludedTracks[0].reason, 'OVER_MAX_TRACK_SECONDS');
   assert.equal(plan.readiness.remainingPlayableSeconds, 1500);
 });
+
+test('excludes byte-identical files so filename variants cannot become extra source capacity', () => {
+  const duplicated = track(1, 300);
+  const plan = buildCityTierRadiyoFixturePlan({
+    city: 'Austin',
+    state: 'TX',
+    musicCommunity: 'Punk',
+    startDate: '2026-08-01',
+    tracks: [
+      duplicated,
+      { ...duplicated, fileName: 'track-1-copy.wav', path: '/fixtures/track-1-copy.wav' },
+      ...Array.from({ length: 4 }, (_, index) => track(index + 2, 300)),
+    ],
+  });
+
+  assert.equal(plan.inventory.audioFileCount, 6);
+  assert.equal(plan.inventory.uniqueAudioFileCount, 5);
+  assert.equal(plan.inventory.eligibleFileCount, 5);
+  assert.equal(plan.inventory.excludedTracks[0].reason, 'DUPLICATE_AUDIO_CONTENT');
+  assert.equal(plan.readiness.distinctSourceCount, 5);
+  assert.equal(plan.readiness.meetsPlayableThreshold, false);
+});

@@ -138,13 +138,29 @@ function normalizeTrack(track) {
 
 export function buildCityTierRadiyoFixturePlan({ city, state, musicCommunity, startDate, tracks }) {
   const normalizedTracks = tracks.map(normalizeTrack).sort(compareTracks);
-  const excludedTracks = normalizedTracks
+  const durationExcludedTracks = normalizedTracks
     .filter((track) => track.durationSeconds <= 0 || track.durationSeconds > CITY_TIER_RADIYO_FIXTURE_RULES.maxTrackSeconds)
     .map((track) => ({
       ...track,
       reason: track.durationSeconds <= 0 ? 'INVALID_DURATION' : 'OVER_MAX_TRACK_SECONDS',
     }));
-  const eligibleTracks = normalizedTracks.filter((track) => track.durationSeconds > 0 && track.durationSeconds <= CITY_TIER_RADIYO_FIXTURE_RULES.maxTrackSeconds);
+  const contentHashes = new Map();
+  const duplicateExcludedTracks = [];
+  const eligibleTracks = [];
+  for (const track of normalizedTracks.filter((candidate) => candidate.durationSeconds > 0 && candidate.durationSeconds <= CITY_TIER_RADIYO_FIXTURE_RULES.maxTrackSeconds)) {
+    const original = contentHashes.get(track.sha256);
+    if (original) {
+      duplicateExcludedTracks.push({
+        ...track,
+        reason: 'DUPLICATE_AUDIO_CONTENT',
+        duplicateOf: original.path,
+      });
+      continue;
+    }
+    contentHashes.set(track.sha256, track);
+    eligibleTracks.push(track);
+  }
+  const excludedTracks = [...durationExcludedTracks, ...duplicateExcludedTracks].sort(compareTracks);
   const sourceSlots = selectTracksForSources(eligibleTracks);
   const selectedTracks = sourceSlots.flatMap((source) => source.tracks);
   const totalPlayableSeconds = sumSeconds(selectedTracks);
@@ -166,6 +182,7 @@ export function buildCityTierRadiyoFixturePlan({ city, state, musicCommunity, st
     contract: CITY_TIER_RADIYO_FIXTURE_RULES,
     inventory: {
       audioFileCount: normalizedTracks.length,
+      uniqueAudioFileCount: contentHashes.size,
       eligibleFileCount: eligibleTracks.length,
       excludedTracks,
     },
