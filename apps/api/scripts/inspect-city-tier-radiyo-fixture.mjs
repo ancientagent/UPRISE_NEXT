@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, extname, resolve } from 'node:path';
+import { dirname, extname, relative, resolve, sep } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { buildCityTierRadiyoFixturePlan } from './city-tier-radiyo-fixture-plan.mjs';
 
@@ -10,7 +10,7 @@ const SUPPORTED_EXTENSIONS = new Set(['.aac', '.flac', '.m4a', '.mp3', '.ogg', '
 function usage() {
   return [
     'Usage:',
-    '  node scripts/inspect-city-tier-radiyo-fixture.mjs --audio-dir <path> --city <city> --state <state> --music-community <community> [--start-date YYYY-MM-DD] [--output <manifest.json>] [--ffprobe <path>]',
+    '  node scripts/inspect-city-tier-radiyo-fixture.mjs (--audio-dir <path> | --inventory <tracks.json>) --city <city> --state <state> --music-community <community> [--source-group-depth <n>] [--start-date YYYY-MM-DD] [--output <manifest.json>] [--ffprobe <path>]',
     '',
     'This command reads local audio metadata and writes only an optional JSON manifest.',
     'It never copies audio, connects to Prisma, calls an API, or starts a worker.',
@@ -61,7 +61,7 @@ function listAudioFiles(directory) {
   return files.sort((left, right) => left.localeCompare(right));
 }
 
-function probeAudio(filePath, ffprobe) {
+function probeAudio(filePath, ffprobe, sourceKey = null) {
   const output = execFileSync(ffprobe, [
     '-v', 'error',
     '-show_entries', 'format=duration,format_name',
@@ -79,7 +79,27 @@ function probeAudio(filePath, ffprobe) {
     durationSeconds,
     format: parsed?.format?.format_name ?? null,
     sha256: createHash('sha256').update(readFileSync(filePath)).digest('hex'),
+    sourceKey,
   };
+}
+
+function sourceKeyForPath(audioDirectory, filePath, groupDepth) {
+  if (!groupDepth) {
+    return null;
+  }
+  const segments = relative(audioDirectory, filePath).split(sep).filter(Boolean);
+  return segments.slice(0, groupDepth).join('/');
+}
+
+function readInventory(inventoryPath) {
+  // PowerShell's Windows UTF-8 output can include a BOM. Accept it so a
+  // read-only Windows inventory remains portable to the WSL planner.
+  const parsed = JSON.parse(readFileSync(inventoryPath, 'utf8').replace(/^\uFEFF/, ''));
+  const tracks = Array.isArray(parsed) ? parsed : parsed?.tracks;
+  if (!Array.isArray(tracks)) {
+    throw new Error('--inventory must contain a JSON array or an object with a tracks array');
+  }
+  return tracks;
 }
 
 function writeManifest(outputPath, manifest) {
@@ -93,7 +113,7 @@ function main() {
     console.log(usage());
     return;
   }
-  for (const required of ['audio-dir', 'city', 'state', 'music-community']) {
+  for (const required of ['city', 'state', 'music-community']) {
     if (!options[required]) {
       throw new Error(`--${required} is required\n\n${usage()}`);
     }
@@ -102,35 +122,50 @@ function main() {
     throw new Error('--start-date must use YYYY-MM-DD');
   }
 
-  const audioDirectory = resolve(options['audio-dir']);
-  if (!existsSync(audioDirectory)) {
-    throw new Error(`Audio directory does not exist: ${audioDirectory}`);
+  if (!options['audio-dir'] && !options.inventory) {
+    throw new Error('Provide either --audio-dir or --inventory');
   }
-  const audioPaths = listAudioFiles(audioDirectory);
-  if (audioPaths.length === 0) {
+  if (options['audio-dir'] && options.inventory) {
+    throw new Error('Use either --audio-dir or --inventory, not both');
+  }
+  const groupDepth = options['source-group-depth'] === undefined ? 0 : Number(options['source-group-depth']);
+  if (!Number.isInteger(groupDepth) || groupDepth < 0) {
+    throw new Error('--source-group-depth must be a non-negative integer');
+  }
+
+  let tracks = [];
+  const probeFailures = [];
+  if (options.inventory) {
+    tracks = readInventory(resolve(options.inventory));
+  } else {
+    const audioDirectory = resolve(options['audio-dir']);
+    if (!existsSync(audioDirectory)) {
+      throw new Error(`Audio directory does not exist: ${audioDirectory}`);
+    }
+    const audioPaths = listAudioFiles(audioDirectory);
+    if (audioPaths.length === 0) {
     const result = {
       manifestVersion: 1,
       mode: 'read-only-local-preflight',
       readiness: { readyForStaging: false },
       safety: { audioCopiedIntoGit: false, databaseWrites: false, providerUploads: false },
-      nextStep: `No supported hydrated audio files were found under ${audioDirectory}. Make the OneDrive files available locally, then rerun this command.`,
+      nextStep: `No supported hydrated audio files were found under ${audioDirectory}. Make the source files available locally, then rerun this command.`,
     };
     if (options.output) {
       writeManifest(resolve(options.output), result);
     }
     console.log(JSON.stringify(result, null, 2));
     process.exitCode = 2;
-    return;
-  }
+      return;
+    }
 
-  const ffprobe = options.ffprobe ?? 'ffprobe';
-  const tracks = [];
-  const probeFailures = [];
-  for (const path of audioPaths) {
-    try {
-      tracks.push(probeAudio(path, ffprobe));
-    } catch (error) {
-      probeFailures.push({ path, reason: error instanceof Error ? error.message : String(error) });
+    const ffprobe = options.ffprobe ?? 'ffprobe';
+    for (const path of audioPaths) {
+      try {
+        tracks.push(probeAudio(path, ffprobe, sourceKeyForPath(audioDirectory, path, groupDepth)));
+      } catch (error) {
+        probeFailures.push({ path, reason: error instanceof Error ? error.message : String(error) });
+      }
     }
   }
   const manifest = buildCityTierRadiyoFixturePlan({

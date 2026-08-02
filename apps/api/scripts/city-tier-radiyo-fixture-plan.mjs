@@ -40,6 +40,32 @@ function buildSourceSlots() {
   }));
 }
 
+function buildExplicitSourceSlots(eligibleTracks) {
+  const tracksBySource = new Map();
+  for (const track of eligibleTracks) {
+    const sourceTracks = tracksBySource.get(track.sourceKey) ?? [];
+    sourceTracks.push(track);
+    tracksBySource.set(track.sourceKey, sourceTracks);
+  }
+
+  return [...tracksBySource.entries()]
+    .map(([sourceKey, tracks]) => {
+      const source = { sourceKey, tracks: [], playableSeconds: 0 };
+      for (const track of tracks.sort(compareTracks)) {
+        if (source.tracks.length >= CITY_TIER_RADIYO_FIXTURE_RULES.maxTracksPerSource) {
+          break;
+        }
+        if (source.playableSeconds + track.durationSeconds <= CITY_TIER_RADIYO_FIXTURE_RULES.maxSourceSeconds) {
+          assignTrack(source, track);
+        }
+      }
+      return source;
+    })
+    .filter((source) => source.tracks.length > 0)
+    .sort((left, right) => right.playableSeconds - left.playableSeconds || left.sourceKey.localeCompare(right.sourceKey))
+    .slice(0, CITY_TIER_RADIYO_FIXTURE_RULES.requiredSourceCount);
+}
+
 function eligibleSourceSlots(sourceSlots, track) {
   return sourceSlots
     .filter((source) => source.tracks.length < CITY_TIER_RADIYO_FIXTURE_RULES.maxTracksPerSource)
@@ -53,6 +79,9 @@ function assignTrack(source, track) {
 }
 
 function selectTracksForSources(eligibleTracks) {
+  if (eligibleTracks.length > 0 && eligibleTracks.every((track) => track.sourceKey)) {
+    return buildExplicitSourceSlots(eligibleTracks);
+  }
   const sourceSlots = buildSourceSlots();
   const remaining = [...eligibleTracks].sort(compareTracks);
 
@@ -133,6 +162,7 @@ function normalizeTrack(track) {
     durationSeconds: Math.round(track.durationSeconds),
     sha256: track.sha256,
     format: track.format,
+    sourceKey: typeof track.sourceKey === 'string' && track.sourceKey.trim() ? track.sourceKey.trim() : null,
   };
 }
 
@@ -162,6 +192,9 @@ export function buildCityTierRadiyoFixturePlan({ city, state, musicCommunity, st
   }
   const excludedTracks = [...durationExcludedTracks, ...duplicateExcludedTracks].sort(compareTracks);
   const sourceSlots = selectTracksForSources(eligibleTracks);
+  const sourceMappingMode = eligibleTracks.length > 0 && eligibleTracks.every((track) => track.sourceKey)
+    ? 'provided-source-groups'
+    : 'fixture-source-slots';
   const selectedTracks = sourceSlots.flatMap((source) => source.tracks);
   const totalPlayableSeconds = sumSeconds(selectedTracks);
   const nonEmptySources = sourceSlots.filter((source) => source.tracks.length > 0);
@@ -188,7 +221,9 @@ export function buildCityTierRadiyoFixturePlan({ city, state, musicCommunity, st
     },
     sourceMapping: sourceSlots.map((source) => ({
       sourceKey: source.sourceKey,
-      requiredStagingMapping: 'Map this fixture key to one distinct registered Artist/Band source in the target city-tier Home Scene before any database write.',
+      requiredStagingMapping: sourceMappingMode === 'provided-source-groups'
+        ? 'Map this supplied source group to one distinct registered Artist/Band source in the target city-tier Home Scene before any database write.'
+        : 'Map this fixture key to one distinct registered Artist/Band source in the target city-tier Home Scene before any database write.',
       playableSeconds: source.playableSeconds,
       trackCount: source.tracks.length,
       tracks: source.tracks,
@@ -207,6 +242,7 @@ export function buildCityTierRadiyoFixturePlan({ city, state, musicCommunity, st
       remainingPlayableSeconds: Math.max(0, CITY_TIER_RADIYO_FIXTURE_RULES.requiredPlayableSeconds - totalPlayableSeconds),
       readyForStaging,
     },
+    sourceMappingMode,
     safety: {
       audioCopiedIntoGit: false,
       databaseWrites: false,

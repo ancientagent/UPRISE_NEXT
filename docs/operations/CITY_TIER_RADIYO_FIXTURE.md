@@ -45,6 +45,23 @@ Use a hydrated local OneDrive folder. A no-audio result is an intentional
 failure: it must not be replaced by generated tones, duplicate files, or music
 from another fixture. The output path should remain outside the repository.
 
+When the local corpus is already grouped by artist/source, preserve that
+evidence instead of allowing the preflight to split tracks into synthetic
+source slots:
+
+```bash
+pnpm --filter api run inspect:city-tier-radiyo-fixture -- \
+  --audio-dir "/path/to/music-by-artist" \
+  --source-group-depth 1 \
+  --city "Austin" --state "TX" --music-community "Punk"
+```
+
+`--inventory` accepts a JSON array (or `{ "tracks": [...] }`) collected by a
+read-only platform-specific inventory command. Each track needs `fileName`,
+`path`, `durationSeconds`, `sha256`, `format`, and optionally `sourceKey`.
+When every eligible track supplies `sourceKey`, the preflight preserves those
+groups as the five required fixture sources.
+
 ## Boundary Before Staging
 
 A green local manifest is not authority to write a database. Before any staging
