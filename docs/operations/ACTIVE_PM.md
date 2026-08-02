@@ -20,9 +20,9 @@ as implementation evidence.
 | --- | --- |
 | Branch | `codex/classic-avatar-asset-production` |
 | Base | `main@ba969f8` |
-| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, with the city-tier RADIYO lifecycle preview coordinator implemented and the durable run/lease owner contract independently reviewed. |
+| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, with the city-tier RADIYO lifecycle preview coordinator, durable run/lease owner contract, and Slice B schema/transaction packet independently reviewed. |
 | Owner | Codex local, sole writer |
-| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; Slice A and durable run/lease owner-contract Sol reviews passed with no findings |
+| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; Slice A, durable run/lease owner-contract, and corrected Slice B plan Sol reviews passed with no findings |
 | Out of Scope | Live provider calls, database migration execution, provider/database state changes, media upload/storage/transcoding, unapproved avatar privacy/retention/moderation policy, destructive stash/branch/worktree cleanup, full beta avatar catalog, and unrelated preserved UX extraction |
 
 ## Open Queue
@@ -83,6 +83,11 @@ as implementation evidence.
   contract review with no findings. It requires repeatable UTC dispatch windows,
   token-fenced leases, canonical recurrence buckets, and same-transaction
   city-tier recurrence application/completion.
+- The reviewed Slice B packet is
+  `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-b-execution-packet.md`.
+  Its first plan review found and corrected database-clock, fencing, recurrence-
+  bucket, boundary-test, and test-database safety gaps; independent re-review
+  passed with no findings.
 - Preserved UX workspaces remain outside cleanup scope.
 
 ## Blockers
@@ -94,9 +99,9 @@ as implementation evidence.
 - RADIYO production automation still requires a dedicated worker, database-
   backed run/lease ledger, and operations approval before provider or staging
   work begins.
-- Slice B has an approved owner contract but still requires a reviewed
-  schema-bearing execution packet before recurrence or any automatic write path
-  can begin.
+- Slice B is bounded to the reviewed schema/transaction refactor. It must not
+  introduce a scheduler, worker caller, provider/staging state, or automatic
+  write path.
 - Playable staging media remains deferred: the active Release Deck contract is
   URL-only and does not authorize first-party upload/storage/transcoding.
 
@@ -105,8 +110,9 @@ as implementation evidence.
 1. Preserve the reviewed Slice A and durable contract checkpoints described in
    `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-a-preview.md` and
    `docs/handoff/2026-08-02_city-tier-radiyo-durable-run-contract.md`.
-2. Prepare and independently review the Slice B schema-bearing execution packet.
-   Do not start provider, worker-host, or staging work.
+2. Implement the reviewed Slice B schema/transaction refactor and obtain an
+   independent runtime review. Do not start provider, worker-host, or staging
+   work.
 
 ## Agent Rules
 

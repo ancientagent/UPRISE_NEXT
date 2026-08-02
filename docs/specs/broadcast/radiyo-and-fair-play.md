@@ -118,8 +118,9 @@ Each row must contain:
 - `status` (`leased`, `completed`, or `failed`), `attemptCount`, worker/run
   identity, a fresh opaque `leaseToken` for every claim or re-claim,
   claim/lease timestamps including `leaseExpiresAt`, completion/failure
-  timestamps, a bounded non-secret error summary, and summarized result
-  counts.
+  timestamps, a non-secret error summary limited to 2,000 characters, and a
+  result summary limited to aggregate operational counts plus no more than 8 KB
+  of serialized data.
 
 Ingestion and graduation use repeatable, canonical UTC dispatch-window buckets.
 The enabled worker's operations-owned interval determines each window boundary;
@@ -142,10 +143,15 @@ completed bucket must never be applied again.
 
 1. Claiming, re-claiming an expired lease, completion, and failure updates must
    be atomic and scoped to one job, city-tier community, and cadence bucket.
+   Database time is authoritative for claim, expiry, reclaim, completion,
+   failure, and recurrence-eligibility timestamps; a worker clock may only
+   supply a separate domain execution instant where an apply path requires one.
    A re-claim generates a new `leaseToken`; apply, completion, and failure
    mutations must match the leased row's current worker identity, token, and
    unexpired lease under the same transaction/row lock. A worker whose lease
-   was reclaimed must not apply or complete stale work.
+   was reclaimed must not apply or complete stale work. Claim/reclaim also
+   revalidates the community is active and `tier = city`, and clears prior
+   terminal timestamps and summaries before the new attempt begins.
 2. Dry-run/preview mode must not create, claim, update, or complete ledger rows.
 3. The future worker must call transaction-aware internal apply paths for
    ingestion, graduation, and recurrence. Existing manual endpoint wrappers

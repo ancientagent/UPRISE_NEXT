@@ -24,9 +24,10 @@ now owns:
   the canonical `initial` / `after:<priorSuccessfulRunId>` bucket derivation
   and at least 48 hours between successful runs;
 - retry semantics for failed/expired leases;
-- fresh-token fencing for reclaimed leases, transaction-aware internal apply
-  paths, and the required atomic city-tier-validated recurrence apply plus
-  ledger completion transaction;
+- database-time lease/cadence decisions, fresh-token fencing for reclaimed
+  leases, claim-time city-tier revalidation/terminal-state clearing, transaction-
+  aware internal apply paths, and the required atomic city-tier-validated
+  recurrence apply plus ledger completion transaction;
 - city-tier-only, disabled-by-default, no-API-timer, provider-identity, and
   staging-preview boundaries.
 
