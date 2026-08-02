@@ -51,6 +51,36 @@ describe('api client base URL resolution', () => {
     );
   });
 
+  it('uses the current non-local hostname for a WSL-hosted preview', async () => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { hostname: '172.30.113.96', protocol: 'http:' },
+    });
+    const { api } = await import('../src/lib/api');
+
+    await api.get('/health');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://172.30.113.96:4000/health',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('does not infer an API origin from a public website hostname', async () => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { hostname: 'uprise.example', protocol: 'https:' },
+    });
+    const { api } = await import('../src/lib/api');
+
+    await api.get('/health');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      'http://localhost:4000/health',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
   it('prefers NEXT_PUBLIC_API_URL when configured', async () => {
     process.env.NEXT_PUBLIC_API_URL = 'https://api.example.test';
     Object.defineProperty(window, 'location', {

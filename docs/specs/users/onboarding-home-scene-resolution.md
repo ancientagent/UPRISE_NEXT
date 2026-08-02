@@ -3,21 +3,32 @@
 **ID:** `USER-ONBOARDING`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-06-25`
+**Last Updated:** `2026-08-01`
 
 ## Overview & Purpose
 
-Defines the onboarding flow for selecting a Home Scene and deterministic assignment to an active major-node Home Scene when a submitted city-tier scene is inactive or unavailable.
+Defines the account-entry and onboarding flow for selecting a Home Scene and
+deterministic assignment to an active major-node Home Scene when a submitted
+city-tier scene is inactive or unavailable.
 
 ## User Roles & Use Cases
 
 - New Listener selects a Home Scene during onboarding.
+- New Listener creates a conventional website account before Home Scene
+  onboarding.
+- Returning Listener with an existing resolved Home Scene signs in and enters
+  Home/Plot without repeating onboarding.
 - Listener denies GPS and still participates without voting.
 - User enters a city/community not yet active and is assigned to the nearest/relevant active major-node Home Scene for the same parent music community.
 
 ## Functional Requirements
 
 - Onboarding asks for local scene context using **City**, **State**, optional **ZIP/postal code**, and one **Music Community** as the user's primary scene of choice.
+- Website account creation uses the existing credential contract, then sends a
+  new or incomplete account into Home Scene onboarding.
+- Sign-in sends a returning account with a complete stored Home Scene tuple to
+  Home/Plot. An account without a complete stored Home Scene tuple resumes
+  onboarding.
 - Listener location authority is manual-first: if the user enters city/state, that submitted location is the Home Scene intent even when GPS is denied. Optional ZIP/postal code is submitted-location detail for preview/context only and does not replace city/state/music-community identity.
 - If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review and may prefill ZIP/postal code when the provider returns it.
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
@@ -302,6 +313,12 @@ Acceptance checks before any migration:
 
 ## Web UI / Client Behavior
 
+- `apps/web/src/app/page.tsx`:
+  - provides conventional account creation and sign-in before Home Scene
+    onboarding
+  - routes new or incomplete accounts to `/onboarding`
+  - routes returning accounts with a complete stored Home Scene tuple to
+    `/plot`
 - `apps/web/src/app/onboarding/page.tsx`:
   - captures City/State, optional ZIP/postal code, and Music Community (selection-only parent community)
   - lets manual city/state input set the submitted Home Scene when GPS is denied or skipped
