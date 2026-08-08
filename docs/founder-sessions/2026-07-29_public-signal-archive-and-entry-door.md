@@ -27,6 +27,10 @@ Related lane(s): public launch site, onboarding, Home Scene, RADIYO voice
 
 > thats it we may want to reach the actual ground /cement and then keep going (have it just turn black as it passes through the concrete and into the underground lair
 
+> so i see the "dispatch index" being like a section for checking community updates from the team. at the top or on the right should be other sections like blog, system(explains how it works) contact etc stuff thats important like that
+
+> i like this look a lot
+
 ## Clarifications
 
 - The public launch surface is an in-universe dispatch archive, not the in-app
@@ -41,9 +45,10 @@ Related lane(s): public launch site, onboarding, Home Scene, RADIYO voice
 - A manila-folder packet and access phrase are narrative artifacts, not actual
   authentication credentials.
 - The public pre-launch experience is a vertical illustrated descent: city and
-  tower construction above ground, alley/ladder at street level, then an
-  underground local-music space. This is launch narrative, not a Home Scene
-  or Feed replacement.
+  tower construction above ground, the tower footing/concrete threshold, then
+  an underground local-music space. Earlier alley/ladder framing is superseded
+  by the later continuous tower-centered camera route. This is launch
+  narrative, not a Home Scene or Feed replacement.
 - Launch activation has a distinct upward return animation: the completed
   tower rises from underground, the sky gains color and sunrise, and an UPRISE
   title presentation precedes Registrar. Status: design-only / deferred.
@@ -62,9 +67,9 @@ Related lane(s): public launch site, onboarding, Home Scene, RADIYO voice
 - The public visual language should avoid urgency-marketing and feature sales.
   It is a dark, greenscale launch-console / transmission aesthetic, with
   UPRISE green as the active-signal accent. Status: settled visual direction.
-- Candidate public modules are a secure-transmission status widget, mission
-  text, text-mode broadcast, spoken-manifesto playback, update alerts, and a
-  progress view. These are visual/content concepts only; their content owners,
+- Candidate public modules are a public-signal status mark, mission text,
+  text-mode broadcast, spoken-manifesto playback, update alerts, and a progress
+  view. These are visual/content concepts only; their content owners,
   persistence, and notification behavior remain open.
 - The Dispatch Index is one public content section for community/team updates,
   not the whole public launch surface. The terminal shell should also expose
@@ -112,6 +117,10 @@ Related lane(s): public launch site, onboarding, Home Scene, RADIYO voice
 - The initial public descent is black-and-white xerox/zine illustration with
   chartreuse reserved for active signal/light/UI emphasis. Restrained red can
   carry a meaningful annotation or route, not decorative saturation.
+- The current public terminal candidate uses muted amber/olive screen type on
+  a charcoal/xerox ground rather than bright UPRISE green or neon. Treat that
+  as the favored terminal-screen direction unless a later approved visual
+  target changes it.
 - The ascent is a launch-state presentation, not an everyday navigation path.
   A normal returning-user path must stay direct once its account/launch rules
   are specified.
