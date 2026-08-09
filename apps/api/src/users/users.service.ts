@@ -331,6 +331,33 @@ export class UsersService {
     };
   }
 
+  async getAccountEntryStatus(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const homeSceneCity = user.homeSceneCity?.trim() || null;
+    const homeSceneState = user.homeSceneState?.trim() || null;
+    const homeSceneCommunity = user.homeSceneCommunity?.trim() || null;
+
+    return {
+      homeSceneCity,
+      homeSceneState,
+      homeSceneCommunity,
+      hasCompleteHomeScene: Boolean(
+        homeSceneCity && homeSceneState && homeSceneCommunity,
+      ),
+    };
+  }
+
   async setCollectionDisplay(userId: string, enabled: boolean) {
     return this.prisma.user.update({
       where: { id: userId },

@@ -31,6 +31,9 @@ describe('FairPlayService.aggregateRecurrenceScores', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPrisma.fairPlayConfig.findUnique.mockResolvedValue({ recurrenceRollingWindowDays: 14 });
+    mockPrisma.$transaction.mockImplementation(async (input: any) =>
+      typeof input === 'function' ? input(mockPrisma) : Promise.all(input),
+    );
     service = new FairPlayService(mockPrisma as any);
   });
 
@@ -55,8 +58,6 @@ describe('FairPlayService.aggregateRecurrenceScores', () => {
       where,
       data,
     }));
-    mockPrisma.$transaction.mockResolvedValue([]);
-
     const result = await service.aggregateRecurrenceScores('scene-1', asOf);
 
     expect(result.success).toBe(true);
@@ -65,10 +66,14 @@ describe('FairPlayService.aggregateRecurrenceScores', () => {
       where: { sceneId: 'scene-1', pool: RotationPool.MAIN_ROTATION },
       select: { id: true, trackId: true },
     });
-    expect(mockPrisma.$transaction).toHaveBeenCalledWith([
-      { where: { id: 'entry-1' }, data: { recurrenceScore: 5 } },
-      { where: { id: 'entry-2' }, data: { recurrenceScore: 1 } },
-    ]);
+    expect(mockPrisma.rotationEntry.update).toHaveBeenCalledWith({
+      where: { id: 'entry-1' },
+      data: { recurrenceScore: 5 },
+    });
+    expect(mockPrisma.rotationEntry.update).toHaveBeenCalledWith({
+      where: { id: 'entry-2' },
+      data: { recurrenceScore: 1 },
+    });
   });
 
   it('is idempotent for same inputs', async () => {
@@ -79,16 +84,17 @@ describe('FairPlayService.aggregateRecurrenceScores', () => {
       where,
       data,
     }));
-    mockPrisma.$transaction.mockResolvedValue([]);
-
     await service.aggregateRecurrenceScores('scene-1', asOf);
     await service.aggregateRecurrenceScores('scene-1', asOf);
 
-    expect(mockPrisma.$transaction).toHaveBeenNthCalledWith(1, [
-      { where: { id: 'entry-1' }, data: { recurrenceScore: 3 } },
-    ]);
-    expect(mockPrisma.$transaction).toHaveBeenNthCalledWith(2, [
-      { where: { id: 'entry-1' }, data: { recurrenceScore: 3 } },
-    ]);
+    expect(mockPrisma.rotationEntry.update).toHaveBeenCalledTimes(2);
+    expect(mockPrisma.rotationEntry.update).toHaveBeenNthCalledWith(1, {
+      where: { id: 'entry-1' },
+      data: { recurrenceScore: 3 },
+    });
+    expect(mockPrisma.rotationEntry.update).toHaveBeenNthCalledWith(2, {
+      where: { id: 'entry-1' },
+      data: { recurrenceScore: 3 },
+    });
   });
 });

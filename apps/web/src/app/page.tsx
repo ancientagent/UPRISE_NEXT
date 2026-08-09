@@ -1,50 +1,36 @@
 
-import Link from 'next/link';
-import { Button } from '@uprise/ui';
+import EntryAccountPanel from '@/components/auth/EntryAccountPanel';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#f6f1e7_0%,_#f5f5f5_40%,_#e9eef5_100%)]">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-20">
-        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-1 text-xs uppercase tracking-[0.2em] text-black/70">
-          UPRISE
-          <span className="h-1 w-1 rounded-full bg-black/40" />
-          Local Broadcast Infrastructure
-        </div>
-        <h1 className="mt-6 text-5xl font-semibold leading-tight text-black md:text-6xl">
-          Build your local music community.
-          <span className="block text-black/70">Broadcast it without algorithms.</span>
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg text-black/70">
-          UPRISE is a scene‑centered broadcast platform where listeners and artists work together to move
-          music from local scenes to wider awareness—without personalization, rankings, or pay‑to‑play.
-        </p>
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Button asChild size="lg">
-            <Link href="/onboarding">Start onboarding</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/plot">Open The Plot</Link>
-          </Button>
-          <Button size="lg" variant="outline" disabled className="gap-2">
-            <span>Discover</span>
-            <span className="rounded-full border border-black/10 bg-black/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-black/60">
-              Soon
-            </span>
-          </Button>
-        </div>
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
-          {[
-            { title: 'Scene First', desc: 'Your Home Scene is your civic anchor. Voting stays local.' },
-            { title: 'Fair Play', desc: 'Equal exposure at entry. Community actions guide rotation.' },
-            { title: 'No Recommendation Engine', desc: 'Discovery is user‑initiated, not algorithmic.' },
-          ].map((item) => (
-            <div key={item.title} className="rounded-2xl border border-black/10 bg-white/80 p-5">
-              <h3 className="text-base font-semibold text-black">{item.title}</h3>
-              <p className="mt-2 text-sm text-black/70">{item.desc}</p>
-            </div>
-          ))}
-        </div>
+    <main className="min-h-screen bg-[#171717] px-4 py-5 text-black sm:px-8 sm:py-8">
+      <div className="mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-6xl overflow-hidden border-2 border-black bg-[#f7f3e9] md:grid-cols-[1.15fr_0.85fr]">
+        <section className="relative flex min-h-[48vh] flex-col justify-between overflow-hidden border-b-2 border-black bg-[#e6e0d3] p-6 sm:p-10 md:min-h-0 md:border-b-0 md:border-r-2">
+          <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(#111_1px,transparent_1px)] [background-size:8px_8px]" />
+          <div className="relative">
+            <p className="text-4xl font-black tracking-tight sm:text-5xl">UPRISE</p>
+            <p className="mt-2 border-l-4 border-[#cbed19] pl-3 font-mono text-sm uppercase tracking-[0.12em]">
+              Local music. Local power.
+            </p>
+          </div>
+          <div className="relative max-w-xl py-16 md:py-0">
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.16em]">Open a listener account</p>
+            <h1 className="mt-3 text-4xl font-black leading-none sm:text-6xl">
+              Find the music already moving around you.
+            </h1>
+            <p className="mt-5 max-w-lg text-base leading-relaxed sm:text-lg">
+              Start with your Home Scene. Enter the local broadcast when your
+              account is ready.
+            </p>
+          </div>
+          <div className="relative flex items-end justify-between border-t-2 border-black pt-4 font-mono text-xs font-bold uppercase tracking-[0.1em]">
+            <span>Home Scene / Plot / RADIYO</span>
+            <span aria-hidden="true">[U]</span>
+          </div>
+        </section>
+        <section className="flex items-center justify-center bg-[#d7f52a] p-5 sm:p-10">
+          <EntryAccountPanel />
+        </section>
       </div>
     </main>
   );

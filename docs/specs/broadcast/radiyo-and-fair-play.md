@@ -3,7 +3,7 @@
 **ID:** `BROADCAST-FP`  
 **Status:** `active`  
 **Owner:** `platform`  
-**Last Updated:** `2026-07-22`
+**Last Updated:** `2026-08-02`
 
 ## Overview & Purpose
 Defines Fair Play V1 as a two-pool broadcast system that preserves radio-like listening while separating recurrence logic from propagation logic.
@@ -89,6 +89,97 @@ Hard constraints:
 - `MAX_REPEAT_MAIN = 60 minutes`
 - No removal purely from low engagement; low-performing songs become increasingly infrequent before any lifecycle removal policy applies.
 
+## Lifecycle Automation Coordination
+
+Current runtime exposes manual, authenticated R1 ingestion and graduation
+primitives. The local preview coordinator may read city-tier candidates and
+delegate only through their explicit dry-run paths; it is not a trigger, worker,
+or write-enabled automation path.
+
+The later autonomous lifecycle worker is limited to active city-tier
+communities and must reuse the owner-defined Release Deck and Fair Play
+eligibility services. It must not reimplement release eligibility, shorten the
+fixed New Releases window, introduce per-source exceptions, or enter state,
+national, Sect, propagation, voting, removal, or personalization behavior.
+
+### Durable Run Ledger
+
+Before any lifecycle worker can make writes, it must use a database-backed
+`FairPlayLifecycleRun` ledger. The ledger coordinates attempts; it is not a
+song, vote, engagement, source, listener, or Fair Play ranking record.
+
+Each row must contain:
+
+- a `jobType`: `release_deck_ingestion`, `new_releases_graduation`, or
+  `recurrence_recompute`;
+- the active city-tier `communityId` it applies to;
+- a stable `cadenceBucket` and a unique boundary across
+  `jobType + communityId + cadenceBucket`;
+- `status` (`leased`, `completed`, or `failed`), `attemptCount`, worker/run
+  identity, a fresh opaque `leaseToken` for every claim or re-claim,
+  claim/lease timestamps including `leaseExpiresAt`, completion/failure
+  timestamps, a non-secret error summary limited to 2,000 characters, and a
+  result summary limited to aggregate operational counts plus no more than 8 KB
+  of serialized data.
+
+Ingestion and graduation use repeatable, canonical UTC dispatch-window buckets.
+The enabled worker's operations-owned interval determines each window boundary;
+the bucket records that deterministic boundary, not only a release-date day.
+Release eligibility remains date-based under the Release Deck contract, so a
+later dispatch window on the same UTC day can ingest a schedule created after
+an earlier completed window. No dispatch interval or same-day cutoff is locked
+by this contract.
+
+Recurrence uses the last successful recurrence completion as its next
+eligibility anchor. The claim transaction must select the latest completed
+`recurrence_recompute` row for the same city-tier community: the first run uses
+the canonical `initial` bucket; each later run uses `after:<priorSuccessfulRunId>`
+only when `now >= prior.completedAt + 48 hours`. This guarantees at least 48
+hours between successful recurrence runs, including after a failed or expired
+lease. A failed or expired lease remains retryable in its same bucket; a
+completed bucket must never be applied again.
+
+### Claim And Apply Rules
+
+1. Claiming, re-claiming an expired lease, completion, and failure updates must
+   be atomic and scoped to one job, city-tier community, and cadence bucket.
+   Database time is authoritative for claim, expiry, reclaim, completion,
+   failure, and recurrence-eligibility timestamps; a worker clock may only
+   supply a separate domain execution instant where an apply path requires one.
+   A re-claim generates a new `leaseToken`; apply, completion, and failure
+   mutations must match the leased row's current worker identity, token, and
+   unexpired lease under the same transaction/row lock. A worker whose lease
+   was reclaimed must not apply or complete stale work. Claim/reclaim also
+   revalidates the community is active and `tier = city`, and clears prior
+   terminal timestamps and summaries before the new attempt begins.
+2. Dry-run/preview mode must not create, claim, update, or complete ledger rows.
+3. The future worker must call transaction-aware internal apply paths for
+   ingestion, graduation, and recurrence. Existing manual endpoint wrappers
+   remain unchanged. Ingestion and graduation retain transaction-time
+   revalidation and conditional writes; their retry effects remain idempotent
+   when a worker crashes after a lease but before completion is recorded.
+4. Recurrence is different: its score updates and successful ledger completion
+   must occur in one database transaction, which revalidates that the community
+   is active and `tier = city` before any `RotationEntry` update. Retrying a
+   crashed recurrence after independent score updates would otherwise violate
+   the 48-hour cadence by rewriting `updatedAt` and recurrence rows in the same
+   logical run.
+5. A failed job for one community or stage must not roll back completed work or
+   prevent other eligible city-tier communities from running.
+6. The worker must record only operational identifiers/counts and bounded
+   errors. It must not log secrets or direct listener data.
+
+### Activation And Operations Boundary
+
+- The worker process, host, scheduler, concurrency, lease duration, provider
+  configuration, staging rollout, and write enablement remain separate
+  operations work.
+- The worker defaults to disabled. It must first run supervised preview mode
+  against staging and compare candidates with the current manual primitives.
+- An API-local `setInterval()` is not an acceptable production trigger.
+- Provider/database identity must be verified before staging or production
+  writes. No provider state follows from this owner contract alone.
+
 ## Scheduling
 ### Release Deck Join Point
 - Release Deck owns release-date scheduling before a song enters RADIYO.
@@ -123,9 +214,13 @@ Hard constraints:
   - minimum unique eligible listeners
   - rate-based thresholding
   - optional confidence-bound gate
-- A song is only graduation-eligible after a minimum active lifecycle age of `14 days`.
-- Graduation execution runs every `14 days` (batched promotion runs, not continuous draining).
-- Graduation cap per run is enforced to prevent pool churn (`GRADUATION_CAP_PER_RUN`, value TBD).
+- A song is only tier-propagation eligible after a minimum active lifecycle age
+  of `14 days`.
+- Tier-propagation evaluation runs every `14 days` as a batch; this is separate
+  from the New Releases-to-Main Rotation transition at the end of each song's
+  stored `newWindowDays`.
+- The compatibility setting `GRADUATION_CAP_PER_RUN` caps tier-propagation
+  promotions per batch to prevent churn; its numeric value remains TBD.
 
 ## Proxy Cutover And Lifecycle Join Points
 
@@ -161,7 +256,9 @@ Owner references:
 - No activation evaluator is created here.
 - No migration or dedicated Uprise model is required by this section.
 - No new song-removal policy is defined here.
-- Exact promotion thresholds, graduation cap, and low-recurrence removal/floor policy remain governed by the open Fair Play decisions below.
+- Exact promotion thresholds, tier-propagation batch cap, and
+  low-recurrence removal/floor policy remain governed by the open Fair Play
+  decisions below.
 
 ## Non-Functional Requirements
 - No personalization.
@@ -199,7 +296,11 @@ Owner references:
 - `POST /tracks` currently creates a valid track row with uploader ownership, file URL, duration, and optional community attachment.
 - This is a runtime ingestion contract, not a full upload/transcoding pipeline definition.
 - Track creation support exists so artist/discover flows can be exercised through the API instead of direct DB fixture insertion.
-- Fair Play lifecycle mutation is manual/admin-triggered in R1; cron/queue automation and full admin RBAC are not activated by the ingestion or graduation endpoints.
+- Fair Play lifecycle mutation remains manual/admin-triggered in current R1
+  runtime. The local preview coordinator has no trigger or write path. The
+  approved durable automation contract is defined above, but its ledger, worker,
+  and full admin RBAC are not yet implemented or activated by the ingestion or
+  graduation endpoints.
 - Proxy-to-natural song, vote, and tier behavior follows `Proxy Cutover And Lifecycle Join Points`.
 
 ### Planned
@@ -227,7 +328,8 @@ Owner references:
 ## Open Decisions
 - Exact propagation threshold formula.
 - Practical floor/removal policy for persistently low-recurrence songs.
-- `GRADUATION_CAP_PER_RUN` numeric value.
+- Tier-propagation batch-cap value (`GRADUATION_CAP_PER_RUN`, compatibility
+  field name).
 - Automated production policy for cross-state proxy advancement identity.
 - Production tuning for Release Deck scheduling capacity values and
   scheduler/job wiring.

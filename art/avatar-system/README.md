@@ -1,6 +1,6 @@
 # UPRISE Avatar System Art Project
 
-Status: canonical design-art workspace; no production asset set is approved
+Status: classic direction and R3 punk character style approved; production proof remains open
 
 This directory is the single repo home for listener-avatar visual research,
 system specifications, reference boards, review rounds, approved artwork, and
@@ -30,11 +30,30 @@ that larger system instead of creating a parallel avatar model.
   inventory and QA sheet.
 - `specifications/avatar-asset-production-approval-plan.md` controls future
   visual approval batches.
+- `specifications/photo-guided-avatar-and-promotional-wearables-design-spec.md`
+  is the founder-review concept for Google Flow-assisted photo stylization and
+  deterministic promotional-wearable attachment; it does not activate runtime
+  generation or promotion behavior.
 - `specifications/source-map.md` connects the project to current repo-owned
   product truth.
-- `rounds/01-style-calibration/R5-punk-skin-comparison/` is the latest visual
-  comparison. Neither R5 direction is approved until the founder records a
-  Gate 1 selection.
+- `docs/founder-sessions/2026-07-23_classic-plot-avatar-style-selection.md`
+  records the Gate 1 founder selection.
+- `references/legacy-avatar-boards/0_3 (1).jpeg` is the primary character
+  language anchor for the selected classic black-ink illustrated direction.
+- `rounds/02-modular-construction-proof/classic-plot-avatar-r1/` is the active
+  bounded Stage 2 proof. Its current founder-review candidate is
+  `02-classic-modular-construction-proof-r2.png`; R1 is retained as superseded
+  internal evidence.
+- `rounds/03-professional-specification/stylized-punk-character-sheet-r3/` is
+  the founder-approved character-detail and illustration balance for future
+  punk cast sheets. The generated sheet is a visual anchor, not a runtime asset.
+- `rounds/03-professional-specification/punk-male-character-sheet-p03/` is a
+  retained improved reference for all-male Punk cast and patch-panel balance.
+- `rounds/03-professional-specification/punk-male-character-sheet-p04/` is the
+  current founder-review candidate, adding stronger spikes/studs and installed
+  fictional band patches without oversized blank placeholders.
+- `rounds/01-style-calibration/R5-punk-skin-comparison/` remains historical
+  exploration and is not the production baseline.
 
 ## Historical Foundation
 
@@ -58,7 +77,8 @@ without explicit approval and a rights/provenance review.
 
 ## Current State
 
-- No file belongs in `approved/` until the founder explicitly approves it.
+- No modular production asset belongs in `approved/` until the founder
+  explicitly approves the Stage 2 construction language.
 - No full catalog should be produced before a modular construction proof passes.
 - Create `approved/`, `research/`, and `production-package/` only when they have
   retained content. Do not reserve empty directories with README files.

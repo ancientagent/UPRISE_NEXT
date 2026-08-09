@@ -88,6 +88,20 @@ No art direction is locked at this stage.
 
 ### Stage 1 - Style Calibration
 
+Current state: complete.
+
+Gate 1 decision recorded 2026-07-23:
+
+- selected direction: classic black-ink illustrated listener avatars already
+  used in Plot/Home Scene work;
+- primary character-language anchor:
+  `art/avatar-system/references/legacy-avatar-boards/0_3 (1).jpeg`;
+- context anchors:
+  `art/mockups/a43315d7-5c4f-4638-bab3-90f3a4b43591.png` and
+  `art/mockups/Gemini_Generated_Image_1mao4j1mao4j1mao.png`;
+- R4/R5 experimental sheets remain historical exploration and are not the
+  production baseline.
+
 Create three independent illustrated/comic directions using the same controlled
 character requirements. These are art-direction proofs, not production assets.
 
@@ -116,6 +130,9 @@ No blending of directions occurs unless the founder names the exact traits to
 combine.
 
 ### Stage 2 - Modular Construction Proof
+
+Current state: in progress under
+`rounds/02-modular-construction-proof/classic-plot-avatar-r1/`.
 
 Rebuild a small subset of the approved direction as separated production parts.
 This proves that the chosen look can function as a system before the full asset
@@ -176,6 +193,17 @@ Each clothing asset must declare compatible body bases or provide the required
 body variants. Buttons and patches remain separate digital-merch objects; they
 are not permanently painted into starter garments.
 
+At least one jacket or vest construction must reserve a large, quiet front
+panel for readable patch art while preserving the open undershirt print zone.
+Use the successful panel geometry in the retained R1/R2 male bust outfit
+studies as construction reference, then redraw it in the approved R3 character
+language.
+
+Character-sheet and fit-proof renders should demonstrate the zone with a
+separate installed sample band-name or logo patch rather than an empty outlined
+placeholder. The production garment remains clean underneath the removable
+sample object.
+
 Gate 4 decision: approve fit, layer order, and attachment-zone behavior.
 
 ### Stage 5 - Details and Digital-Merch Proofs
@@ -187,6 +215,12 @@ Produce the approved limited detail set:
 - a minimal button and patch proof set;
 - placement examples on suspenders, hats, lapels, jackets, or other authorized
   host zones.
+
+Present face and wearable details on one or two dedicated accessory sheets.
+Use neutral standard heads or garments only as fit models; accessories remain
+separate assets and the preview combinations do not become fixed identities.
+Keep the final split between one and two sheets open until the approved catalog
+can be grouped without crowding.
 
 This stage proves attachment behavior. It does not create a marketplace catalog
 or authorize collectible/economy rules.
@@ -294,11 +328,10 @@ contract or approval gate.
 
 ## Immediate Next Batch
 
-The R5 punk/skin comparison is the latest retained style-calibration batch.
-The founder must select an R5 direction at Gate 1 before it advances. After
-that approval, use the selected direction for one modular construction proof:
-interchangeable body, head-face preset, hair, open outerwear, readable starter
-top, and one compatible button or patch.
+Gate 1 is complete. The founder selected the classic Plot/Home Scene direction
+and approved the R3 punk character-detail balance as the visual anchor.
 
-The construction proof starts only after Gate 0 is accepted or corrected and
-Gate 1 records the selected visual direction.
+The retained classic modular construction proof is the Gate 2 review candidate.
+Do not start full catalog production until Gate 2 confirms or corrects its
+interchangeable body, head-face preset, hair, open outerwear, readable starter
+top, and compatible button/patch construction.

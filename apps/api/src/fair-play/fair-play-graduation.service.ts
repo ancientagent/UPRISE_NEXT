@@ -132,10 +132,17 @@ export class FairPlayGraduationService {
       return this.evaluateGraduation(this.prisma, communityId, asOf, true);
     }
 
-    return this.prisma.$transaction(async (tx: any) => {
-      await this.assertActiveCityCommunity(tx, communityId);
-      return this.evaluateGraduation(tx, communityId, asOf, false);
-    });
+    return this.prisma.$transaction((tx: any) =>
+      this.applyGraduationInTransaction(tx, { communityId, asOf }),
+    );
+  }
+
+  async applyGraduationInTransaction(
+    tx: any,
+    input: { communityId: string; asOf: Date },
+  ): Promise<any> {
+    await this.assertActiveCityCommunity(tx, input.communityId);
+    return this.evaluateGraduation(tx, input.communityId, input.asOf, false);
   }
 
   private async assertActiveCityCommunity(client: GraduationClient, communityId: string) {

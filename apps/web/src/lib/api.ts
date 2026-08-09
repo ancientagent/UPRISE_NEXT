@@ -1,12 +1,29 @@
 import type { ApiResponse } from '@uprise/types';
 
+function isPrivateIpv4Hostname(hostname: string): boolean {
+  const octets = hostname.split('.').map(Number);
+  if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) {
+    return false;
+  }
+
+  return octets[0] === 10
+    || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)
+    || (octets[0] === 192 && octets[1] === 168);
+}
+
 export function resolveApiUrl(): string {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
 
-  if (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1') {
-    return 'http://127.0.0.1:4000';
+  if (typeof window !== 'undefined') {
+    const { hostname, protocol } = window.location;
+    if (hostname === '127.0.0.1') {
+      return 'http://127.0.0.1:4000';
+    }
+    if (isPrivateIpv4Hostname(hostname)) {
+      return `${protocol}//${hostname}:4000`;
+    }
   }
 
   return 'http://localhost:4000';

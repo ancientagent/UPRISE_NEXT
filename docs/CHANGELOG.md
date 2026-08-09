@@ -12,6 +12,36 @@ single-owner closeout.
 
 ### Changed
 
+- Added the internal city-tier RADIYO lifecycle run ledger and guarded
+  transaction seams for Release Deck ingestion, New Releases graduation, and
+  recurrence recomputation. The database migration is committed but not
+  applied; no scheduler, worker, controller, provider, staging, or automatic
+  lifecycle write path is active.
+- Promoted the RADIYO lifecycle automation contract into the Fair Play owner
+  spec. Any future city-tier worker now requires a durable run/lease ledger,
+  repeatable UTC dispatch buckets, fenced lease ownership, a 48-hour recurrence
+  anchor based on the prior successful run, atomic recurrence apply/completion,
+  disabled-by-default operation, and supervised staging preview. No worker,
+  migration, provider, or automatic lifecycle write was activated.
+- Added conventional website account creation/sign-in as the entry to Home
+  Scene onboarding. New or incomplete accounts continue to onboarding, while
+  returning accounts with a complete stored Home Scene tuple enter Plot without
+  repeating onboarding. Entry routing now uses an authenticated private
+  server projection and does not expose the stored Home Scene tuple through
+  parameterized public user-profile reads.
+- Promoted UPRISE's confirmed north star: establish a viable,
+  community-powered music industry that can mature toward self-governance and
+  self-sufficiency through Proof of Support. The Support owner spec now
+  preserves the non-financial/non-crypto boundary and prevents the protocol
+  from being reduced to an event reaction or isolated points feature.
+- Preserved the unapproved photo-avatar/Registrar integration and public Signal
+  archive experiments as non-runtime screen packages, with explicit owner,
+  privacy, storage, provider, and route decisions required before restoration.
+  The shared checkout control plane and Windows-artifact helper were corrected
+  during the same non-destructive normalization pass.
+- Clarified that the existing 14-day Fair Play eligibility/cadence and
+  `GRADUATION_CAP_PER_RUN` names govern tier propagation, not the locked
+  10-day New Releases-to-Main Rotation transition.
 - Simplified the repo execution-control policy: focused startup now loads two
   routing documents, handoffs and changelog entries are trigger-based,
   `ACTIVE_PM` and the workspace registry retain current/preserved-risk state

@@ -14,7 +14,7 @@ construction and visual style before commissioning the full catalog.
 | Head-Face Preset | 6 | 12 | 24 | Fits every body neck socket; six skin-tone masks; hat/hair safe zones |
 | Skin Tone | 6 | 6 | 8 only after review | Same palette IDs across every head/body; line contrast QA |
 | Hair | 6 | 18 including bald | 36 | Back/front split where needed; head compatibility; headwear rule |
-| Hair Color | 4 | 8 | 12 | Authored palette; contrast with skin/background/headwear |
+| Hair Color | 4 | 8 | 12 | Alternate color layers within hair source; contrast QA |
 | Starter Top | 2 | 8 | 16 | All body variants or declared variants; chest-print zone |
 | Outerwear / Strap | 3 | Contract only; optional 4 | 12 | All compatible tops/bodies; local lapel/panel/strap/suspender zones |
 | Headwear | 2 | Open: 0 or 4 plain items | 12 | Hair compressed/masked variants; hat-band attachment zone where valid |
@@ -51,10 +51,24 @@ Avoid assigning gender, race, personality, or music-community names to presets.
 
 ## Visual Style Lock
 
+- Selected character-style reference:
+  `../rounds/03-professional-specification/stylized-punk-character-sheet-r3/01-stylized-punk-character-sheet-r3.png`.
+- The selected balance is simplified and ambiguous in facial construction,
+  while hair, clothing, posture, expression, and accessories carry strong
+  authored personality.
 - Treat every avatar as a stylized fit model, not a specific-person portrait.
 - Use strongly differentiated head silhouettes with minimal facial marks.
 - Do not use detailed lips, nostrils, cheekbones, eyelashes, wrinkles, realistic
   facial-hair texture, or anatomy shading.
+- Ear jewelry is optional accessory art, not base-head anatomy. Keep most base
+  heads unpierced and avoid repeating one jewelry shape across a character
+  sheet.
+- Accessory studies may include plugs, single-ear dangles, asymmetric ear
+  combinations, and ox/bull-ring-style septum jewelry.
+- Hair color is selected separately from hairstyle geometry. Keep one approved
+  silhouette and author alternate solid colors, roots, tips, split dye,
+  bleach, or limited multicolor treatments as selectable color layers clipped
+  within the hair source asset.
 - Keep the base presentation monochrome: black, off-white, and grayscale.
 - Use one fluorescent accent sparingly on hair, clothing, or optional
   accessories; never use the accent as skin.
@@ -118,6 +132,15 @@ Every wearable with attachments must declare designer-authored local geometry.
 An object must not render if the host lacks a compatible zone. The object stays
 owned and can be re-equipped elsewhere.
 
+Patch-compatible outerwear must reserve at least one primary quiet panel large
+enough to evaluate readable patch artwork in the expanded top-shell
+`bust-large` crop. Compact crops need only preserve a recognizable patch mark.
+Smaller lapel, suspender, and pocket zones remain appropriate for pins and buttons. Use the
+panel proportions demonstrated by `male-bust-outfit-study-r1` Vest 01 and
+`male-bust-outfit-study-r2` Patched Vest 01 / Folk Overshirt 01 as construction
+references; these studies are not promoted to approved runtime art by this
+reference.
+
 ## Hair And Headwear QA
 
 - Every headwear asset declares `fits`, `mask`, `compressed`, or `excludes` for
@@ -131,10 +154,10 @@ owned and can be re-equipped elsewhere.
 | Surface | Minimum acceptance |
 | --- | --- |
 | Compact Home/Plot shell | Face and top readable within the framed city-atmosphere area. |
-| Expanded Home/Plot shell | Same configuration survives larger centered crop without changing proportions. |
+| Expanded Home/Plot shell | Same configuration survives larger centered crop; primary patch name/art is readable. |
 | Feed rail | Belly-up silhouette remains identifiable; merch detail does not become noise. |
-| Listener profile | Part choices and fallback states are legible without hover. |
-| Personal Space | Compatible equip zones are understandable without unrestricted drag. |
+| Listener profile | Part choices, fallback states, and primary patch artwork are legible without hover. |
+| Personal Space | Compatible equip zones and primary patch artwork are understandable without unrestricted drag. |
 | Source Dashboard internal fallback | Crop remains belly-up and does not imply public listener identity linkage. |
 
 ## Approval Sequence
@@ -145,4 +168,5 @@ owned and can be re-equipped elsewhere.
 4. Select one style and redraw a tiny layered proof set.
 5. Test part swapping, skin masks, hair/headwear, garment zones, bust crop, and
    Feed rail crop.
-6. Only then commission the beta catalog counts.
+6. Review one or two dedicated accessory sheets using neutral fit models.
+7. Only then commission the beta catalog counts.

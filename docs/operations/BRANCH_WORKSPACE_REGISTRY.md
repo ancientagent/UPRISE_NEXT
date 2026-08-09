@@ -2,7 +2,7 @@
 
 Status: active operations registry
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-23
+Last Updated: 2026-08-01
 
 ## Purpose
 
@@ -87,10 +87,8 @@ cleanup pass.
 | ux-mobile-r1-reference | worktree | ux-mobile-r1-build | /home/baris/UPRISE_NEXT_uxmobile | - | older main snapshot | b59a63c | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Broad mobile-first UX prototype. Preserve as design/runtime reference; do not merge wholesale. | 2026-07-02 | extract intentionally or archive after review |
 | ux-batch17-reference | preserved-branch | feat/ux-batch17 | - | - | older main snapshot | 9fb382e | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Historical UX/Reliant batch-output reference with canonical blockers documented. | 2026-07-02 | preserve until extraction/archive decision |
 | ux-batch18-reference | preserved-branch | feat/ux-batch18-run | - | - | older main snapshot | 77d2e26 | preserved | UX extraction owner pending | Codex/design agents by explicit approval only | Historical UX/Reliant batch-output reference with Social-hidden MVP precedence notes. | 2026-07-02 | preserve until extraction/archive decision |
-| linear-clean-context-agent-roles | branch | docs/linear-clean-context-agent-roles | /home/baris/UPRISE_NEXT | PR #212 https://github.com/ancientagent/UPRISE_NEXT/pull/212 | main | 8d559b8 | review-needed | Codex local | Codex local | Superseded draft workflow-policy branch. Its sole unique durable founder-session capture is preserved verbatim on the cleanup branch. | 2026-07-23 | after cleanup lands on main, close PR #212 and delete local/remote refs |
 | prisma-schema-migration-draft | preserved-branch | codex/propose-prisma-schema-migration | - | closed PR #1 https://github.com/ancientagent/UPRISE_NEXT/pull/1 | older main snapshot | be54087 | review-needed | owner pending | no active agent | Unmerged schema/spec draft with unique content. Not evaluated for current product or migration authority. | 2026-07-23 | preserve until a dedicated schema/product review decides extract or delete |
-| main-workspace | primary | main | /home/baris/UPRISE_NEXT | - | origin/main | 3f5ef12 | primary | Codex local | current branch owner | Primary UPRISE baseline after workflow-policy simplification PR #247. | 2026-07-23 | keep current and clean |
-| historical-branch-cleanup | branch | codex/historical-branch-cleanup | /home/baris/UPRISE_NEXT | - | main@3f5ef12 | fcf1305 | active | Codex local | Codex local; read-only branch auditor | Preserve unique PR #212 founder wording, remove only proven-safe historical refs, and retain protected UX worktrees/branches. | 2026-07-23 | merge through PR, close #212, then retire superseded local/topic refs after proof |
+| shared-local-normalization | branch | codex/classic-avatar-asset-production | /home/baris/UPRISE_NEXT | - | main@ba969f8 | 9c2ca5a | active | Codex local, sole writer | no active subagents; 2026-08-02 Sol plan, implementation, durable-contract, Slice B plan, and two Slice B runtime reviews completed and agents closed | Completed non-destructive normalization plus local-only city-tier RADIYO fixture preflight, no-schema preview-only lifecycle coordinator, independently reviewed durable run/lease owner contract, and Slice B durable `FairPlayLifecycleRun` ledger plus transaction seams. The migration is committed but unapplied; no worker, scheduler, controller, provider, staging, or DB state has changed. The preflight inspects founder-supplied hydrated audio without copying it or touching DB/provider state. Also includes the design-only public-launch terminal package and its raw founder capture; no public runtime route or account/content behavior is authorized. Rollback checkpoint: `C:\Users\baris\uprise-agent-artifacts\uprise-shared-checkout-pre-normalization`. | 2026-08-08 | preserve the committed Slice B checkpoint; treat worker/host, migration application, provider, and staging work as separately gated slices |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches

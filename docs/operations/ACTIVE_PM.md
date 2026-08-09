@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-23
+Last Updated: 2026-08-02
 
 ## Purpose
 
@@ -18,18 +18,17 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `codex/historical-branch-cleanup` |
-| Base | `main@3f5ef12` |
-| Scope | Preserve PR #212's unique raw founder capture, retire only proven merged/superseded refs, and reduce active routing to current and protected-risk work. |
+| Branch | `codex/classic-avatar-asset-production` |
+| Base | `main@ba969f8` |
+| Scope | Preserve the completed shared-local normalization and validated Austin Punk local RADIYO fixture, with the city-tier RADIYO lifecycle preview coordinator, durable run/lease owner contract, and completed Slice B run-ledger/transaction seams. |
 | Owner | Codex local, sole writer |
-| Validation | exact founder-file hash comparison, independent branch audit, `pnpm run verify`, `pnpm run workspace:audit`, `git diff --check` |
-| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, and deciding the unresolved Prisma schema draft |
+| Validation | focused API/web tests passed; `pnpm run verify` passed; production web build passed; RADIYO measurement/scheduling/ingestion/graduation tests passed (`53` tests); Slice B targeted API tests passed (`32` passed, `2` skipped); `pnpm --filter api typecheck`, `pnpm --filter api exec prisma validate`, `pnpm run docs:lint`, `pnpm run workspace:audit`, and `git diff --check` passed; Slice A, durable run/lease owner-contract, Slice B plan, and two independent Slice B runtime Sol reviews passed with no findings |
+| Out of Scope | Live provider calls, database migration execution, provider/database state changes, media upload/storage/transcoding, unapproved avatar privacy/retention/moderation policy, destructive stash/branch/worktree cleanup, full beta avatar catalog, and unrelated preserved UX extraction |
 
 ## Open Queue
 
 | PR / Branch | State | Action |
 | --- | --- | --- |
-| PR #212 / `docs/linear-clean-context-agent-roles` | Draft, superseded by PR #247 | Close and delete its refs after the extracted founder capture lands on `main`. |
 | closed PR #1 / `codex/propose-prisma-schema-migration` | Unmerged unique schema/spec draft | Preserve for a dedicated schema/product-authority review. |
 
 ## Preserved Workspaces
@@ -42,25 +41,90 @@ as implementation evidence.
 | `feat/ux-batch18-run` | Preserved branch | Historical UX/Reliant batch reference. |
 | `codex/propose-prisma-schema-migration` | Preserved branch | Unmerged unique schema/spec draft; no cleanup decision in this pass. |
 
+## Current Evidence
+
+- The classic avatar style and construction proof is preserved in `731682b` and
+  `bae6895`.
+- SQL seed hardening is committed in `f0cd143`.
+- Home Scene-aware website account entry is committed in `5331efa`; the final
+  review correction in `34d1db6` routes from an authenticated private
+  server-computed status instead of the incomplete general user projection.
+- The community-powered platform purpose and Proof of Support boundary are
+  committed in `a3a0469`.
+- Approved avatar/design assets and founder captures are committed in
+  `0b00586`.
+- Unapproved avatar runtime and public Signal experiments are isolated as
+  non-runtime screen packages in `53db0f7`; the live web build contains neither
+  route.
+- A complete non-destructive pre-normalization checkpoint is stored outside the
+  repo at
+  `/mnt/c/Users/baris/uprise-agent-artifacts/uprise-shared-checkout-pre-normalization`
+  (`C:\Users\baris\uprise-agent-artifacts\uprise-shared-checkout-pre-normalization`).
+- The next city-tier lifecycle packet is
+  `docs/handoff/2026-08-01_city-tier-radiyo-automation-execution-packet.md`.
+- A real, local-only Austin Punk fixture is inventory-backed and validated at
+  `C:\Users\baris\uprise-agent-artifacts\radiyo-austin-punk-fixture`.
+  It has five source groups, fifteen selected tracks, and `62.13` playable
+  minutes; no audio was copied into Git, and no database/provider state was
+  touched. The reusable inspector and constraints are in
+  `docs/operations/CITY_TIER_RADIYO_FIXTURE.md` and commits `01ff887`,
+  `a30a414`, and `09fe879`.
+- Final integrated Sol review passed `ce31f6d` with no blocking or non-blocking
+  findings.
+- Independent Sol plan review on 2026-08-02 confirmed ingestion and graduation
+  can be coordinated in preview mode, but corrected the first slice: recurrence
+  has no non-mutating preview path or durable 48-hour cadence state, so it is
+  deferred to the ledger-bearing Slice B.
+- Slice A is now implemented as a local preview-only coordinator. It delegates
+  only to dry-run ingestion/graduation, has no caller or trigger, and was passed
+  by an independent Sol implementation review with no findings.
+- The durable run/lease contract is promoted in
+  `docs/specs/broadcast/radiyo-and-fair-play.md` and passed independent owner-
+  contract review with no findings. It requires repeatable UTC dispatch windows,
+  token-fenced leases, canonical recurrence buckets, and same-transaction
+  city-tier recurrence application/completion.
+- The reviewed Slice B packet is
+  `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-b-execution-packet.md`.
+  Its first plan review found and corrected database-clock, fencing, recurrence-
+  bucket, boundary-test, and test-database safety gaps; independent re-review
+  passed with no findings.
+- Slice B now has a committed-but-unapplied `FairPlayLifecycleRun` migration,
+  fenced lease service, and transaction-aware ingestion, graduation, and
+  recurrence seams. It has no worker, timer, route, controller, production
+  caller, provider, staging, or database-state activation. Its explicitly gated
+  local Postgres integration suite remains prepared but skipped without
+  `UPRISE_TEST_DATABASE_URL`.
+- Preserved UX workspaces remain outside cleanup scope.
+
 ## Blockers
 
-- None for the cleanup PR.
-- PR #212 cannot close until its extracted founder note lands on `main`.
-- Preserved UX workspaces remain outside cleanup scope.
+- Photo-guided avatar runtime cannot be treated as production-ready until its
+  privacy, consent, retention, moderation, minors, storage, and provider
+  boundaries are owner-locked.
+- Public Signal archive runtime remains unapproved and intentionally isolated.
+- RADIYO production automation still requires a separately approved dedicated
+  worker/host decision and operations approval before provider or staging work
+  begins. The committed lifecycle ledger is not an automatic write path.
+- Playable staging media remains deferred: the active Release Deck contract is
+  URL-only and does not authorize first-party upload/storage/transcoding.
 
 ## Next Signal
 
-1. Validate and merge the cleanup branch.
-2. Close PR #212 and delete its refs after verifying the founder capture on
-   `main`.
-3. Retire the cleanup branch and the redundant local founder-source checkpoint;
-   leave the four UX refs and unresolved Prisma draft preserved.
+1. Preserve the Slice A, durable-contract, and Slice B closeout checkpoints
+   described in `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-a-preview.md`,
+   `docs/handoff/2026-08-02_city-tier-radiyo-durable-run-contract.md`, and
+   `docs/handoff/2026-08-02_city-tier-radiyo-lifecycle-slice-b-ledger.md`.
+2. Treat any worker/host, staging preview, migration application, or provider
+   work as a new, separately reviewed and approved slice.
 
 ## Agent Rules
 
 - Load `docs/agent-briefs/CONTEXT_ROUTER.md` for product-lane work.
 - Use `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` for current ownership and
   preservation intent.
+- Keep `/home/baris/UPRISE_NEXT` as the one branch-owning local write workspace.
+  Use fresh bounded subagents only for independent read-only research or review,
+  and close them before assigning unrelated work.
 - Do not add merged PR history or remote-ref inventories here.
 - Refresh this file only when current work, blockers, preserved-risk
   workspaces, or the immediate next signal changes.

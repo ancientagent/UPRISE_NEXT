@@ -38,9 +38,9 @@ Defines the Super Admin’s platform oversight capabilities.
     - `RECURRENCE_ROLLING_WINDOW_DAYS`
     - `NEW_WINDOW_DAYS_BANDS`
     - `BAND_PERSIST_DAYS`
-    - `GRADUATION_MIN_AGE`
-    - `GRADUATION_EXECUTION_CADENCE`
-    - `GRADUATION_CAP_PER_RUN`
+    - `GRADUATION_MIN_AGE` (compatibility name for tier-propagation eligibility age)
+    - `GRADUATION_EXECUTION_CADENCE` (compatibility name for tier-propagation evaluation cadence)
+    - `GRADUATION_CAP_PER_RUN` (compatibility name for tier-propagation batch cap)
     - propagation threshold parameters (minimum unique listeners, rate threshold, confidence gate)
 
 ### Implemented Now

@@ -193,114 +193,122 @@ export class FairPlayIngestionService {
       return this.buildResponse({ communityId, asOfDay, dryRun, dueSchedules, results });
     }
 
-    const results = await this.prisma.$transaction(async (tx: any) => {
-      const transactionResults: any[] = [];
-      const transactionCommunity = await tx.community.findUnique({
-        where: { id: communityId },
-        select: { id: true, tier: true, isActive: true },
+    return this.prisma.$transaction((tx: any) =>
+      this.applyDueSchedulesInTransaction(tx, { communityId, asOf: dto.asOf }),
+    );
+  }
+
+  async applyDueSchedulesInTransaction(
+    tx: any,
+    input: Pick<IngestDueSchedulesDto, 'communityId' | 'asOf'>,
+  ): Promise<any> {
+    const communityId = input.communityId?.trim();
+    if (!communityId) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'communityId is required' },
       });
-      if (!transactionCommunity || transactionCommunity.tier !== 'city' || !transactionCommunity.isActive) {
-        throw new BadRequestException({
-          success: false,
-          error: { message: 'Fair Play ingestion is limited to active city-tier communities' },
-        });
+    }
+
+    const asOfDay = parseAsOf(input.asOf);
+    const asOfEnd = addDays(asOfDay, 1);
+    const transactionCommunity = await tx.community.findUnique({
+      where: { id: communityId },
+      select: { id: true, tier: true, isActive: true },
+    });
+    if (!transactionCommunity || transactionCommunity.tier !== 'city' || !transactionCommunity.isActive) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'Fair Play ingestion is limited to active city-tier communities' },
+      });
+    }
+
+    const dueSchedules = (await tx.releaseDeckSchedule.findMany({
+      where: {
+        communityId,
+        status: 'scheduled',
+        scheduledFor: { lt: asOfEnd },
+      },
+      select: {
+        id: true,
+        trackId: true,
+        communityId: true,
+        artistBandId: true,
+        scheduledFor: true,
+        status: true,
+        track: {
+          select: {
+            id: true,
+            title: true,
+            duration: true,
+            status: true,
+            communityId: true,
+            artistBandId: true,
+            artistBand: { select: { id: true, homeSceneId: true } },
+          },
+        },
+      },
+      orderBy: [{ scheduledFor: 'asc' }, { id: 'asc' }],
+    })) as DueSchedule[];
+    const results: any[] = [];
+
+    for (const schedule of dueSchedules) {
+      const reason = resolveSkipReason(schedule, communityId, asOfEnd);
+      if (reason) {
+        results.push(resultFor(schedule, 'skipped', { reason }));
+        continue;
       }
 
-      for (const dueSchedule of dueSchedules) {
-        const schedule = (await tx.releaseDeckSchedule.findUnique({
-          where: { id: dueSchedule.id },
+      const runtimeReason = await this.resolveRuntimeBlocker(tx, schedule, communityId);
+      if (runtimeReason) {
+        results.push(resultFor(schedule, 'skipped', { reason: runtimeReason }));
+        continue;
+      }
+
+      let rotationEntry;
+      try {
+        rotationEntry = await tx.rotationEntry.create({
+          data: {
+            trackId: schedule.trackId,
+            sceneId: communityId,
+            pool: RotationPool.NEW_RELEASES,
+            enteredPoolAt: asOfDay,
+            newWindowDays: NEW_RELEASE_WINDOW_DAYS,
+          },
           select: {
             id: true,
             trackId: true,
-            communityId: true,
-            artistBandId: true,
-            scheduledFor: true,
-            status: true,
-            track: {
-              select: {
-                id: true,
-                title: true,
-                duration: true,
-                status: true,
-                communityId: true,
-                artistBandId: true,
-                artistBand: { select: { id: true, homeSceneId: true } },
-              },
-            },
+            sceneId: true,
+            pool: true,
+            enteredPoolAt: true,
+            newWindowDays: true,
           },
-        })) as DueSchedule | null;
-
-        if (!schedule) {
-          transactionResults.push({
-            scheduleId: dueSchedule.id,
-            trackId: dueSchedule.trackId,
-            communityId: dueSchedule.communityId,
-            artistBandId: dueSchedule.artistBandId,
-            scheduledFor: toDateOnly(dueSchedule.scheduledFor),
-            action: 'skipped',
-            reason: 'SCHEDULE_NOT_FOUND' satisfies SkipReason,
-          });
-          continue;
-        }
-
-        const reason = resolveSkipReason(schedule, communityId, asOfEnd);
-        if (reason) {
-          transactionResults.push(resultFor(schedule, 'skipped', { reason }));
-          continue;
-        }
-
-        const runtimeReason = await this.resolveRuntimeBlocker(tx, schedule, communityId);
-        if (runtimeReason) {
-          transactionResults.push(resultFor(schedule, 'skipped', { reason: runtimeReason }));
-          continue;
-        }
-
-        let rotationEntry;
-        try {
-          rotationEntry = await tx.rotationEntry.create({
-            data: {
-              trackId: schedule.trackId,
-              sceneId: communityId,
-              pool: RotationPool.NEW_RELEASES,
-              enteredPoolAt: asOfDay,
-              newWindowDays: NEW_RELEASE_WINDOW_DAYS,
-            },
-            select: {
-              id: true,
-              trackId: true,
-              sceneId: true,
-              pool: true,
-              enteredPoolAt: true,
-              newWindowDays: true,
-            },
-          });
-        } catch (error: any) {
-          if (error?.code === 'P2002') {
-            throw new ConflictException({
-              success: false,
-              error: { code: 'ROTATION_ENTRY_EXISTS', message: 'Track already has a rotation entry' },
-            });
-          }
-          throw error;
-        }
-
-        await tx.releaseDeckSchedule.update({
-          where: { id: schedule.id },
-          data: { status: 'ingested' },
-          select: { id: true, status: true },
         });
-
-        transactionResults.push(
-          resultFor(schedule, 'ingested', {
-            rotationEntryId: rotationEntry.id,
-            newWindowDays: NEW_RELEASE_WINDOW_DAYS,
-          })
-        );
+      } catch (error: any) {
+        if (error?.code === 'P2002') {
+          throw new ConflictException({
+            success: false,
+            error: { code: 'ROTATION_ENTRY_EXISTS', message: 'Track already has a rotation entry' },
+          });
+        }
+        throw error;
       }
-      return transactionResults;
-    });
 
-    return this.buildResponse({ communityId, asOfDay, dryRun, dueSchedules, results });
+      await tx.releaseDeckSchedule.update({
+        where: { id: schedule.id },
+        data: { status: 'ingested' },
+        select: { id: true, status: true },
+      });
+
+      results.push(
+        resultFor(schedule, 'ingested', {
+          rotationEntryId: rotationEntry.id,
+          newWindowDays: NEW_RELEASE_WINDOW_DAYS,
+        }),
+      );
+    }
+
+    return this.buildResponse({ communityId, asOfDay, dryRun: false, dueSchedules, results });
   }
 
   private async resolveRuntimeBlocker(

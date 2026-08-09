@@ -253,6 +253,44 @@ describe('UsersService.getProfileWithCollection', () => {
     ]);
   });
 
+  it('returns a complete server-authoritative account entry status', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      homeSceneCity: ' Austin ',
+      homeSceneState: ' Texas ',
+      homeSceneCommunity: ' Punk ',
+    });
+
+    await expect(service.getAccountEntryStatus('target')).resolves.toEqual({
+      homeSceneCity: 'Austin',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      hasCompleteHomeScene: true,
+    });
+    expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
+      where: { id: 'target' },
+      select: {
+        homeSceneCity: true,
+        homeSceneState: true,
+        homeSceneCommunity: true,
+      },
+    });
+  });
+
+  it('returns an incomplete account entry status for a partial tuple', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      homeSceneCity: 'Austin',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: '   ',
+    });
+
+    await expect(service.getAccountEntryStatus('target')).resolves.toEqual({
+      homeSceneCity: 'Austin',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: null,
+      hasCompleteHomeScene: false,
+    });
+  });
+
   it('seeds the current home scene community as the default music-community preference', async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: 'target',
@@ -526,6 +564,7 @@ describe('UsersService.getProfileWithCollection', () => {
 describe('UsersController music-community preferences', () => {
   const usersService = {
     findById: jest.fn(),
+    getAccountEntryStatus: jest.fn(),
     listMusicCommunityPreferences: jest.fn(),
     addMusicCommunityPreference: jest.fn(),
     setDefaultMusicCommunityPreference: jest.fn(),
@@ -542,12 +581,14 @@ describe('UsersController music-community preferences', () => {
   it('registers current-user routes before parameterized user routes', () => {
     const source = readFileSync(join(__dirname, '../src/users/users.controller.ts'), 'utf8');
     const currentUserRoute = source.indexOf("@Get('me')");
+    const entryStatusRoute = source.indexOf("@Get('me/entry-status')");
     const musicPreferencesRoute = source.indexOf("@Get('me/music-community-preferences')");
     const selectorRoute = source.indexOf("@Get('me/home-scene-selector')");
     const parameterizedUserRoute = source.indexOf("@Get(':id')");
 
     expect(currentUserRoute).toBeGreaterThan(-1);
     expect(currentUserRoute).toBeLessThan(parameterizedUserRoute);
+    expect(entryStatusRoute).toBeLessThan(parameterizedUserRoute);
     expect(musicPreferencesRoute).toBeLessThan(parameterizedUserRoute);
     expect(selectorRoute).toBeLessThan(parameterizedUserRoute);
   });
@@ -570,6 +611,30 @@ describe('UsersController music-community preferences', () => {
         id: 'user-1',
         username: 'verified-listener',
         displayName: 'Verified Listener',
+      },
+    });
+  });
+
+  it('returns server-authoritative entry status for the authenticated user', async () => {
+    usersService.getAccountEntryStatus.mockResolvedValue({
+      homeSceneCity: 'Austin',
+      homeSceneState: 'Texas',
+      homeSceneCommunity: 'Punk',
+      hasCompleteHomeScene: true,
+    });
+
+    const response = await controller.getMyAccountEntryStatus({
+      user: { userId: 'user-1' },
+    });
+
+    expect(usersService.getAccountEntryStatus).toHaveBeenCalledWith('user-1');
+    expect(response).toEqual({
+      success: true,
+      data: {
+        homeSceneCity: 'Austin',
+        homeSceneState: 'Texas',
+        homeSceneCommunity: 'Punk',
+        hasCompleteHomeScene: true,
       },
     });
   });

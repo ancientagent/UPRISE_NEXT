@@ -14,7 +14,8 @@ Do not implement these items until they are locked.
 - **Main Rotation recurrence mapping** (discrete frequency tiers vs weighted scheduler implementation)
 - **Practical floor/removal policy** for persistently low-recurrence songs
 - **Propagation threshold formula** (minimum unique listeners + rate + optional confidence bound)
-- **Graduation cap per run** (`GRADUATION_CAP_PER_RUN`)
+- **Tier-propagation batch cap** (`GRADUATION_CAP_PER_RUN`, compatibility field
+  name; this does not govern New Releases-to-Main Rotation graduation)
 
 ## 3) Activity Points
 - **Scoring table**

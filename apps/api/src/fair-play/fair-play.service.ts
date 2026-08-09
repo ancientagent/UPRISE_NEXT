@@ -257,8 +257,8 @@ export class FairPlayService {
     return anyProxy?.id === scene.id;
   }
 
-  private async getFairPlayConfigSnapshot() {
-    const config = await this.prisma.fairPlayConfig.findUnique({
+  private async getFairPlayConfigSnapshot(client: Pick<PrismaService, 'fairPlayConfig'> = this.prisma) {
+    const config = await client.fairPlayConfig.findUnique({
       where: { scope: 'global' },
       select: {
         recurrenceRollingWindowDays: true,
@@ -324,19 +324,40 @@ export class FairPlayService {
   }
 
   async aggregateRecurrenceScores(sceneId: string, asOf = new Date()) {
-    const scene = await this.prisma.community.findUnique({
-      where: { id: sceneId },
-      select: { id: true },
+    return this.prisma.$transaction((tx: any) =>
+      this.aggregateRecurrenceScoresInTransaction(tx, {
+        sceneId,
+        asOf,
+        requireActiveCity: false,
+      }),
+    );
+  }
+
+  async aggregateRecurrenceScoresInTransaction(
+    tx: any,
+    input: { sceneId: string; asOf: Date; requireActiveCity: boolean },
+  ) {
+    const scene = await tx.community.findUnique({
+      where: { id: input.sceneId },
+      select: { id: true, tier: true, isActive: true },
     });
     if (!scene) {
       throw new NotFoundException({ success: false, error: { message: 'Scene not found' } });
     }
+    if (input.requireActiveCity && (scene.tier !== 'city' || !scene.isActive)) {
+      throw new BadRequestException({
+        success: false,
+        error: { message: 'Fair Play recurrence is limited to active city-tier communities' },
+      });
+    }
 
-    const config = await this.getFairPlayConfigSnapshot();
-    const windowStart = new Date(asOf.getTime() - config.recurrenceRollingWindowDays * 24 * 60 * 60 * 1000);
-    const entries = await this.prisma.rotationEntry.findMany({
+    const config = await this.getFairPlayConfigSnapshot(tx);
+    const windowStart = new Date(
+      input.asOf.getTime() - config.recurrenceRollingWindowDays * 24 * 60 * 60 * 1000,
+    );
+    const entries = await tx.rotationEntry.findMany({
       where: {
-        sceneId,
+        sceneId: input.sceneId,
         pool: ROTATION_POOL.MAIN_ROTATION as any,
       },
       select: {
@@ -349,20 +370,20 @@ export class FairPlayService {
       return {
         success: true,
         data: {
-          sceneId,
+          sceneId: input.sceneId,
           updatedCount: 0,
           windowStart,
-          asOf,
+          asOf: input.asOf,
         },
       };
     }
 
-    const scores = await this.prisma.trackEngagement.findMany({
+    const scores = await tx.trackEngagement.findMany({
       where: {
         trackId: { in: entries.map((entry: { trackId: string }) => entry.trackId) },
         createdAt: {
           gte: windowStart,
-          lte: asOf,
+          lte: input.asOf,
         },
       },
       select: {
@@ -377,21 +398,21 @@ export class FairPlayService {
     }
 
     const updates = entries.map((entry: { id: string; trackId: string }) =>
-      this.prisma.rotationEntry.update({
+      tx.rotationEntry.update({
         where: { id: entry.id },
         data: { recurrenceScore: scoreByTrackId.get(entry.trackId) ?? 0 },
       }),
     );
 
-    await this.prisma.$transaction(updates);
+    await Promise.all(updates);
 
     return {
       success: true,
       data: {
-        sceneId,
+        sceneId: input.sceneId,
         updatedCount: updates.length,
         windowStart,
-        asOf,
+        asOf: input.asOf,
       },
     };
   }
