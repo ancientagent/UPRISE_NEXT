@@ -1,9 +1,9 @@
 # City-Tier RADIYO Lifecycle Slice B Execution Packet
 
-**Date:** 2026-08-02  
-**Branch:** `codex/classic-avatar-asset-production`  
-**Phase:** schema-bearing runtime slice, plan only  
-**Status:** independently reviewed and ready for the bounded Slice B implementation  
+**Date:** 2026-08-02
+**Branch:** `codex/classic-avatar-asset-production`
+**Phase:** schema-bearing runtime slice, plan only
+**Status:** independently reviewed and ready for the bounded Slice B implementation
 **Deployment target:** local/shared checkout only; no staging or provider action
 
 ## Goal
