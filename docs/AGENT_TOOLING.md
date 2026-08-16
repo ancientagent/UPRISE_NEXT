@@ -1,7 +1,7 @@
 ---
-title: Agent Tooling — codebase-memory-mcp and skills
-status: reference · created 2026-08-12
-summary: What every agent working in this repo should know about the code graph, the invocation that actually works, and which Claude skills genuinely exist.
+title: Agent Tooling — code graph and agent loadouts
+status: active operations reference · updated 2026-08-16
+summary: Codebase Memory use plus the narrow UPRISE Hermes automation loadouts and task-mode boundaries.
 ---
 
 # Agent tooling in this repo
@@ -70,30 +70,27 @@ and honours `.gitignore`, so large data dumps are skipped without configuration.
 The index is a snapshot. If the branch or HEAD has changed since it was built,
 run `detect_changes` or re-index before trusting structural answers.
 
-## 2 · Shared code-knowledge loop — required for code work
+## 2 · Shared code-knowledge loop — read-only for ordinary agents
 
-`manage_adr` stores an Architecture Decision Record **inside the graph**, so the
-next code-working agent can retrieve verified architectural knowledge without
-rediscovering it. This is the shared code-knowledge mechanism; it replaces the
-planned Perseus dependency for architecture continuity.
+The graph can retain an Architecture Decision Record (ADR), but UPRISE agents
+must treat it as an optional architecture aid rather than an authority source.
+The currently routed Hermes profiles deliberately exclude `manage_adr`,
+`delete_project`, `ingest_traces`, and `index_repository`; they may inspect the
+current index but must not mutate it.
 
 For every Codex, Claude, or Hermes role that plans, changes, reviews, or hands
 off code:
 
 1. Confirm this checkout and the full project key above.
-2. Run `detect_changes` or `index_repository` after a branch change or when the
-   graph is stale.
-3. Read `manage_adr` before making structural claims or selecting a shared
-   implementation surface.
-4. Verify decisive claims in current source, tests, and authority documents.
-5. At closeout, update the ADR only when the work produced a verified, durable
-   architectural insight. A no-learning closeout leaves it unchanged.
+2. Run `detect_changes` after a branch change or when the graph may be stale.
+3. Verify decisive claims in current source, tests, and authority documents.
+4. Record durable product rules in owner specs, not in a graph ADR.
 
-Completion criterion: the handoff names the project key, the graph freshness
-check, whether the ADR was read, and either the durable ADR update or `no ADR
-update needed`.
+Only a separately authorized architecture-maintenance task may update an ADR or
+refresh the index. That task must follow `AGENTS.md` and name the exact graph
+mutation it needs.
 
-Read the current ADR:
+An authorized architecture-maintenance task may read the current ADR with:
 
 ```bash
 echo '{"project":"home-baris-UPRISE_NEXT"}' \
@@ -113,8 +110,8 @@ decisions, lane assignments, public-communication posture, blockers, and plans
 stay in their authority files. The ADR records durable code architecture,
 patterns, tradeoffs, and philosophy — not product truth and not an activity log.
 
-Read-only roles may retrieve the ADR; only an agent closing verified architecture
-work should update it.
+Read-only roles should not rely on an ADR when current code/spec evidence is
+available.
 
 ## 3 · Skills — each agent family has its own set
 
@@ -132,8 +129,48 @@ work should update it.
 > binary, plus a SessionStart hook that already tells you to prefer the graph over
 > grep.
 >
-> **Hermes agents (DeepSeek / hy3 via OpenRouter)** — no skills of any kind. §1 and
-> §2 still apply if you can call the binary.
+## 4 · UPRISE Hermes automation loadouts
+
+Hermes is the low-cost automation layer for UPRISE planning, evidence gathering,
+review, and watchdog work. It is not the default code writer. Coding remains a
+Codex or explicitly assigned coding-agent task under the one-writer rule.
+
+All listed profiles use a fresh one-shot by default, no persistent memory, no
+browser/provider/database access, and the read-only code-graph tool subset. The
+profile config excludes `delete_project`, `manage_adr`, `ingest_traces`, and
+`index_repository`. The old broad skill sets were preserved under
+`/home/baris/.hermes/docs/profile-snapshots/2026-08-09-pre-loadout-curation/`;
+they are not active.
+
+| Profile | Model | Use | Enabled skills | Enabled toolsets |
+| --- | --- | --- | --- | --- |
+| `uprise` | HY3 via OpenRouter | bounded planning, packet creation, classification | `codebase-inspection`, `plan`, `writing-plans`, `spike`, `uprise-doc-authority-audit` | `file`, `terminal`, `skills`, `clarify`, `todo` |
+| `upriseauditorminus` | HY3 via OpenRouter | read-only authority, drift, branch, or evidence audit | `codebase-inspection`, `evidence-based-audit`, `systematic-debugging`, `uprise-doc-authority-audit` | `file`, `terminal`, `skills`, `clarify` |
+| `uprisereviewerminus` | HY3 via OpenRouter | bounded requirement-to-result or plan review | `codebase-inspection`, `github-code-review`, `evidence-based-audit`, `requesting-code-review`, `simplify-code`, `uprise-doc-authority-audit` | `file`, `terminal`, `skills`, `clarify` |
+| `uprisewatchdog` | HY3 via OpenRouter | cheap heartbeat: branch/head/dirty/PM/registry/output status | `codebase-inspection`, `evidence-based-audit` | `file`, `terminal`, `skills`, `clarify` |
+| `uprisedeepscout` | DeepSeek V4 Flash via OpenRouter | optional bounded dependency map before a large slice | `codebase-inspection`, `evidence-based-audit`, `plan`, `uprise-doc-authority-audit` | `file`, `terminal`, `skills`, `clarify` |
+| `uprisedeepcoder` | DeepSeek V4 Pro via OpenRouter | optional sole executor for a well-specified, benchmarked coding slice | `codebase-inspection`, `requesting-code-review`, `simplify-code`, `systematic-debugging`, `test-driven-development`, `uprise-doc-authority-audit` | `file`, `terminal`, `skills`, `clarify`, `todo` |
+
+Do not auto-load the full skill catalog. The current profile pack is the default
+loadout. A task packet may name at most three extra skills and must explain why;
+otherwise use the profile as configured. `bfl`, image/video generation, browser,
+delegation, cron, memory, and computer-use toolsets are disabled on all six
+profiles.
+
+Use task modes, not more persistent profiles, for occasional work:
+
+- public/web research: a short-lived HY3 task with explicit web authorization;
+- product design or visual asset work: an approved design/art packet and the
+  appropriate design tool, never a product-authority role;
+- attended browser QA: an explicit browser/auth session under `AGENTS.md`;
+- security/privacy, data/metrics, or large-scope architecture critique: a
+  separate bounded specialist task; Claude Opus may be used for the last case
+  only with a strict packet and no implicit write authority.
+
+`uprisewatchdog` only reports stalled or missing work. No profile can approve a
+merge, provider/database mutation, product truth, or destructive cleanup.
+
+## 5 · Subagents worth dispatching
 
 Claude skills observed 2026-08-12:
 
@@ -156,8 +193,6 @@ skill**, despite those names appearing in some older planning documents across
 these projects. `web-artifacts-builder` is the only real front-end skill. Any
 plan that assigns work to the missing ones needs re-pointing.
 
-## 4 · Subagents worth dispatching
-
 `Explore` (broad read-only search fan-out) · `Plan` (implementation strategy) ·
 `feature-dev:code-architect` · `feature-dev:code-explorer` ·
 `feature-dev:code-reviewer` · `code-simplifier:code-simplifier` ·
@@ -166,7 +201,7 @@ plan that assigns work to the missing ones needs re-pointing.
 Prefer the code graph over spawning a search agent: a `search_graph` call is far
 cheaper than an agent that re-derives context from cold.
 
-## 5 · Harmless noise you can ignore
+## 6 · Harmless noise you can ignore
 
 Every WSL command prints:
 

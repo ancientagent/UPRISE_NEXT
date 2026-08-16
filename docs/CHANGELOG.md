@@ -12,6 +12,13 @@ single-owner closeout.
 
 ### Changed
 
+- Curated the UPRISE agent automation loadouts: fresh HY3 Hermes planner,
+  reviewer, auditor, and watchdog profiles now have narrow task-specific skill
+  packs and no browser, provider, database, delegation, memory, or media tool
+  access. The routing docs now use HY3 for bounded non-coding plan/review/audit
+  work while retaining Codex or an explicitly assigned coding model as the sole
+  implementation writer. DeepSeek and Opus remain bounded task modes, not
+  autonomous authority.
 - Simplified the repo execution-control policy: focused startup now loads two
   routing documents, handoffs and changelog entries are trigger-based,
   `ACTIVE_PM` and the workspace registry retain current/preserved-risk state

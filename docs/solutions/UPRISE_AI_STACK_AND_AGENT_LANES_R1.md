@@ -2,7 +2,7 @@
 
 Status: active
 Owner: context-steward
-Last Updated: 2026-06-26
+Last Updated: 2026-08-16
 
 ## Purpose
 
@@ -63,12 +63,13 @@ When dispatching subagents, use `uprise-lane-loader` as the compact skill-sharin
 
 | Tool / Agent | Best Use | Avoid Using For | Required Output |
 | --- | --- | --- | --- |
-| Codex local | Tightly coupled implementation, docs patches, validation, commits, PR coordination, default first-pass review/audit | broad unsupervised rewrites, provider mutation without explicit approval | changed files, tests run, branch/commit state, handoff when multi-step |
+| Codex local | Tightly coupled implementation, docs patches, validation, commits, PR coordination | broad unsupervised rewrites, provider mutation without explicit approval | changed files, tests run, branch/commit state, handoff when multi-step |
 | Cloud Codex | Isolated branch work, focused implementation slices, large repo scans, contract hardening, repo-only audit branches | tasks needing live local browser sessions or local provider auth state | branch, commit, files changed, tests, PR or patch |
-| Codex `gpt-5.3-codex-spark` | Basic/small review or audit, packet sanity, stale/fixed-work checks, changed-file skims, and test-output summaries | final safety gates, provider/db/security risk, branch absorption | concise evidence summary and next signal |
-| Codex `gpt-5.5` with `reasoning_effort=xhigh` | Heavy/final review or audit, provider/db/security risk, branch absorption, owner-spec promotion risk, layered/drift-prone cleanup, and closeout gates | small packet sanity or routine changed-file scans | final safe/not-safe gate with blocking findings |
-| Hermes `uprisereviewer+` / `uprisereviewer-` | Explicit manual fallback or second opinion when PM names Hermes-specific value | default branch audits, final gates, broad doctrine audits, or implementation | evidence/recommendations for PM/Codex decision |
-| Hermes `upriseauditor+` / `upriseauditor-` | Explicit manual fallback for specialist drift/docs/owner-spec evidence when PM names Hermes-specific value | default stale checks, routine changed-file scans, code edits, PR ownership, provider changes | classified findings for PM/Codex review, not automatic approval |
+| Hermes `uprise` | default HY3 planning, narrow execution packets, classification | code execution, provider/database/browser work | packet with authority, scope, stop conditions, validation seed |
+| Hermes `uprisereviewerminus` | default HY3 bounded plan/requirement-to-result review | code edits, open-ended repo archaeology, automatic merge approval | pass/fail findings tied to commit, authority, and validation |
+| Hermes `upriseauditorminus` | default HY3 read-only drift, branch, contract, and evidence audits | code edits, self-remediation, automatic merge/deletion approval | classified evidence and a next signal |
+| Hermes `uprisewatchdog` | cheap HY3 heartbeat for stalled/missing work | review gates, edits, provider/database/browser work | current state and one next signal |
+| Hermes `uprisedeepscout` / `uprisedeepcoder` | optional DeepSeek dependency map / benchmarked sole coding slice | automatic final gate, unsupervised cross-lane work | bounded report or tested patch, always independently reviewed |
 | Abacus / Agent Swarm | Complex cross-lane mapping with independent worker lanes, decision packets, architecture scouting | one tightly coupled implementation slice, source of final product truth | lane findings, synthesis, provenance, owner-spec patch recommendations |
 | NotebookLM | External memory over large source packs, philosophical/doctrine comparison, source-list exploration | direct implementation, deciding current runtime truth | claims inventory, gap list, source map, current-vs-historical caveats |
 | Design tools: Claude Designer, Stitch, Gemini, Uizard, v0 | visual exploration, mockups, screen hierarchy options, UI direction | redefining action grammar, product surfaces, data contracts, or runtime architecture | annotated design options tied to current lane brief and constraints |
@@ -106,28 +107,28 @@ Use Codex local or Cloud Codex when:
 - a runtime behavior must be verified against code/tests.
 - a routine audit/review can be handled from current repo docs, changed files, test output, and issue packets without Hermes profile memory.
 
-Use Hermes `uprisereviewer` only as manual fallback when:
+Use fresh HY3 `uprisereviewerminus` when:
 
 - a PR, commit, or launch slice needs a second-pass read-only review;
 - the output should be concrete findings and recommendations;
 - the task is narrow enough that broad audit context would create noise;
-- PM explicitly wants Hermes profile memory, a second opinion after Codex, or a fallback specialist pass.
+- the task has named owner docs, code/test evidence, and a bounded review target.
 
-Use Hermes `upriseauditor` only as manual fallback when:
+Use fresh HY3 `upriseauditorminus` when:
 
 - the task is a broad drift audit across docs/specs/runtime;
 - the goal is to classify gaps, stale language, and missing owner contracts;
 - no edits should be made during the pass;
-- PM explicitly wants Hermes profile memory or a specialist owner-spec/docs drift pass after Codex routing.
+- the task must classify gaps, stale language, owner-contract drift, or branch evidence without edits.
 
-## Codex-First Audit Rule
+## HY3 Automation Review Rule
 
 Current default model:
 
-- Codex subagents are the default review/audit lane.
-- `gpt-5.3-codex-spark` handles basic/small review and audit packets.
-- `gpt-5.5` with `reasoning_effort=xhigh` handles heavy/final gates.
-- Hermes is watchdog/manual fallback only; `/clear` starts a fresh Hermes session and is not a mid-task context compactor.
+- Fresh HY3 Hermes profiles handle non-coding planning, review, audit, and watchdog work.
+- Codex or an explicitly assigned coding model handles implementation under the one-writer rule.
+- DeepSeek profiles are optional, bounded, and benchmarked before they become a regular coding path.
+- `/clear` starts a fresh Hermes session and is not a mid-task context compactor.
 - Linear tracks execution state only; durable truth stays in owner specs/current repo docs/code/tests.
 - Product ambiguity stops for founder clarification, then the answer is recorded in the appropriate owner doc or handoff/backlog.
 
@@ -141,20 +142,24 @@ Default UPRISE development should optimize for shipping correct scoped work, not
 4. open/update the PR with required metadata;
 5. enable auto-merge or merge once checks pass.
 
-Use one bounded Codex review pass for behavior-changing work when it materially reduces risk. Do not stack multiple reviewers, repeated plan loops, branch-registry head-chasing commits, or follow-up operations PRs for small/medium slices unless a real blocker or safety risk appears. Poll CI once or enable auto-merge; do not babysit pending checks unless they fail or the user is explicitly waiting on the deploy result.
+Use one bounded independent review pass for behavior-changing work when it materially reduces risk. Default to HY3 for that pass. Do not stack multiple reviewers, repeated plan loops, branch-registry head-chasing commits, or follow-up operations PRs for small/medium slices unless a real blocker or safety risk appears. Poll CI once or enable auto-merge; do not babysit pending checks unless they fail or the user is explicitly waiting on the deploy result.
 
-Escalate to heavier review only for high-impact runtime changes, complex cross-lane work, provider/db/schema/security/canon/doc-authority changes, branch absorption, broad cleanup, or failed checks. Tiny docs-only/local cleanup PRs can skip independent review when low risk is proven.
+Escalate to a separately assigned large-scope reviewer only for high-impact runtime changes, complex cross-lane work, provider/db/schema/security/canon/doc-authority changes, branch absorption, broad cleanup, or failed checks. Tiny docs-only/local cleanup PRs can skip independent review when low risk is proven.
 
-Ordinary audits and reviews are Codex-first. Use Codex for branch diffs, stale/fixed-work checks, changed-file review, test-output summaries, packet sanity, first-pass implementation review, PM closeout review, and final safe/not-safe gates. Use Hermes only as an explicit manual fallback when the prompt names the added Hermes value: profile memory, owner-spec/docs specialization, QA planning state, second opinion, synthesis across worker outputs, or feedback/profile-skill learning.
+Ordinary non-coding audits and reviews are HY3-first. Use `upriseauditorminus` for branch diffs, stale/fixed-work checks, contract drift, and evidence gathering; use `uprisereviewerminus` for packet sanity, changed-file review, test-output summaries, and completed-slice verification. Codex remains the local implementation and reconciliation owner. A reviewer verdict never bypasses required checks or human/codeowner merge approval.
 
-PM should choose the lightest Codex model that protects the task:
+PM should choose the lightest assigned agent/profile that protects the task:
 
 | Task class | Preferred Codex model | Examples |
 | --- | --- | --- |
-| Basic/small review or audit | `gpt-5.3-codex-spark` | Docs sanity, packet review, stale/fixed-work check, changed-file skim, test-output summary |
-| Heavy/final review or audit | `gpt-5.5` with `reasoning_effort=xhigh` | Implementation review, multi-file UI/state review, PM closeout review, cross-lane audit, provider/db/security risk, branch absorption, owner-spec promotion risk, layered/drift-prone cleanup |
+| Bounded non-coding plan review | `uprisereviewerminus` (HY3) | Packet/acceptance review, changed-file requirement check, validation-evidence review |
+| Read-only evidence or drift audit | `upriseauditorminus` (HY3) | Docs/runtime drift, stale/fixed-work, branch classification, current-state reconciliation |
+| Heartbeat only | `uprisewatchdog` (HY3) | Stalled/missing output or PM/registry/git state |
+| Large-scope independent critique | explicitly assigned Codex or Claude Opus task mode | Cross-lane architecture or risk a bounded HY3 packet cannot safely settle |
 
-Escalate beyond `gpt-5.5` with `reasoning_effort=xhigh` only when PM names the reason. Claude Opus and Fugu/Fugu Ultra are backup or exceptional heavyweight lanes, not default routing.
+Escalate beyond HY3 only when PM names the reason and the packet explains why a
+bounded HY3 pass cannot safely answer it. Claude Opus and other heavyweight
+models are exceptional task modes, not default routing.
 
 ## Screen Package Workflow
 
@@ -167,7 +172,7 @@ Default shape:
 3. Use the package seed (`README.md`, `instruction-packet.md`, `source-map.md`) as the shared context. If the slice is still ambiguous, create one short `implementation/slice-contract.md`.
 4. Implement with one branch-owning executor. Subagents are sidecars only: bounded research, product design, or review. They do not own competing branches or edit the same files.
 5. Add focused validation and only the docs/changelog/handoff updates the slice actually requires.
-6. Run one bounded review when behavior or risk justifies it. Use `gpt-5.5` with `reasoning_effort=xhigh` only for final/high-risk gates.
+6. Run one bounded independent review when behavior or risk justifies it. Use fresh HY3 by default; name a different reviewer only when the risk cannot be safely bounded for HY3.
 
 Optional artifacts are risk-triggered, not automatic:
 
@@ -181,24 +186,34 @@ Durable truth stays in `docs/specs/**`. Screen-package artifacts are execution h
 
 Use `pnpm run screen-package:flow -- status --package <slug>` to inspect package seed state and optional artifacts. Use `pnpm run screen-package:flow -- next --package <slug> --write` only when a slice contract would help. The runner is deterministic and file-based; it inventories the workspace, not a mandatory gate ladder.
 
-Do not spend Hermes fallback runs on routine scouting or final gates. Basic Hermes can gather evidence and recommend; heavy Hermes can provide a manual fallback opinion only when PM explicitly asks for it. Codex remains the approving/blocking gate. If Hermes credits are exhausted or a run is too expensive for the expected value, classify that as an infrastructure/budget blocker and route back to Codex.
+Do not spend broad or duplicate review runs on routine work. HY3 profiles are the
+normal UPRISE automation lane; retain one bounded reviewer/auditor pass rather
+than stacking agents. If HY3 is unavailable or a packet cannot be safely
+bounded, classify that as an infrastructure/scope blocker and assign a specific
+alternative task mode.
 
 ## Hermes Watchdog Rule
 
 Use `uprisewatchdog` for PM heartbeat checks only. It should run the lowest-cost configured Hermes model, use the minimal `hermes-cli` toolset, and keep prompts bounded to repo/git/branch state, PM artifacts, worker logs, PR state, and expected handoff paths.
 
-`uprisewatchdog` may wake the right Codex, Cloud Codex, Windows proof, or manually approved specialist lane, and may report blocked/stalled/missing agents back to PM. It must not perform review/audit gates, approve merge readiness, mutate Linear, edit repo files, inspect secrets, browse provider dashboards, or load broad optional toolsets. If a heartbeat check reveals real review work, route that to Codex by model tier.
+`uprisewatchdog` may wake the right coding writer or explicitly assigned
+specialist lane, and may report blocked/stalled/missing agents back to PM. It
+must not perform review/audit gates, approve merge readiness, mutate Linear,
+edit repo files, inspect secrets, browse provider dashboards, or load broad
+optional toolsets. If a heartbeat check reveals review work, route it to the
+fresh HY3 reviewer or auditor profile.
 
-## Hermes Manual Fallback Rule
+## Hermes Profile Rule
 
-Use explicit basic/heavy Hermes calls only after the Codex-first rule says Hermes adds value:
+Use the current curated profiles from `docs/AGENT_TOOLING.md`:
 
-| Call | Command/profile | Model tier | Authority |
-| --- | --- | --- | --- |
-| `reviewer-heavy` | `uprisereviewer+` / `uprisereviewerplus` | Manual fallback profile; model is operational, not authority | Advisory specialist opinion for PR, merge, closeout, provider/db risk, owner-spec changes, branch absorption, or high-impact runtime behavior. |
-| `reviewer-basic` | `uprisereviewer-` / `uprisereviewerminus` | Manual fallback profile; model is operational, not authority | Non-approving changed-file scan, packet sanity, stale/duplicate evidence, or second opinion. |
-| `auditor-heavy` | `upriseauditor+` / `upriseauditorplus` | Manual fallback profile; model is operational, not authority | Advisory specialist drift/safety opinion for branch cleanup, merge, owner-spec promotion, or closeout. |
-| `auditor-basic` | `upriseauditor-` / `upriseauditorminus` | Manual fallback profile; model is operational, not authority | Preliminary drift map, docs/source scan, stale branch search, or evidence gathering. |
+| Task | Profile | Boundary |
+| --- | --- | --- |
+| planning / packet creation | `uprise` | no implementation edits unless explicitly reassigned as the sole writer |
+| bounded review | `uprisereviewerminus` | read-only; verify a fixed target and return findings |
+| authority / drift / branch audit | `upriseauditorminus` | read-only; classify evidence, do not remediate |
+| stalled-work heartbeat | `uprisewatchdog` | status only; never a review gate |
+| optional dependency map / coding experiment | `uprisedeepscout` / `uprisedeepcoder` | bounded and independently reviewed |
 
 Hermes results are inputs for PM/Codex, not automatic approvals. They cannot independently approve safety, merge, branch deletion, product truth, provider changes, database changes, or closeout.
 
@@ -214,7 +229,10 @@ just hermes-audit-heavy path/to/prompt.md
 just hermes-audit-basic path/to/prompt.md
 ```
 
-`just hermes-watchdog` is the only normal Hermes recipe here. The review/audit recipes fail closed and print the manual Hermes fallback command. They exist so older prompts do not silently run expensive Hermes gates. Use Codex first: `gpt-5.3-codex-spark` for basic/small review or audit, and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final review or audit.
+Use fresh one-shot Hermes calls for planning, review, audit, and watchdog work.
+The older `just hermes-*` recipes may remain as compatibility wrappers but do
+not define routing. A review result still never bypasses required checks or
+human/codeowner merge approval.
 
 Prompts should direct Hermes to use bounded subagents or an agent swarm when independent read-only slices can lower context, wall time, or model cost. Each subagent must get one lane, named docs/files, no edits, no secrets, no provider mutation, no branch deletion, and a concise output cap. Preserve disagreements in the synthesis instead of averaging them away.
 
@@ -263,7 +281,7 @@ For implementation prompts, also require:
 
 - branch name;
 - repo-grounded feature review scope before edits;
-- development plan reviewed by an independent Codex reviewer before execution when behavior/risk justifies it;
+- development plan reviewed by an independent designated reviewer before execution when behavior/risk justifies it;
 - tests to run;
 - `docs/CHANGELOG.md` update when product/docs behavior changes;
 - dated handoff for multi-step work;
@@ -297,7 +315,7 @@ owner_contract_identified: yes/no
 source_drift_or_bug_identified: yes/no/not_applicable
 feature_reviewed_against_repo: yes/no/not_applicable
 development_plan_written: yes/no/not_applicable
-development_plan_reviewed_by_codex: yes/no/not_required
+development_plan_reviewed: yes/no/not_required
 files_and_tests_clear: yes/no
 risk_impacts_named: yes/no
 provider_or_db_risk: yes/no
@@ -331,14 +349,14 @@ These blocks are optional for tiny surgical docs-only or local cleanup PRs where
 
 UPRISE is not in the same operating posture as projects where most work is cleanup of already-implemented flows. Many UPRISE issues are first-pass feature slices. For those, the packet should point to the repo owner spec, active lane brief, exact code surfaces to inspect, validation seed, and out-of-scope boundaries. Do not force a source-behavior-removal or excavator model unless the issue is actually stale-code cleanup, wrong existing behavior, refactor/absorption work, or a risky cross-lane correction. Linear should carry the packet and repo links for clean execution context; it should not become the durable product/canon source.
 
-For feature implementation or behavior-changing UI/API/runtime work, the executor must review the feature against current repo authority before implementation edits. Use one independent Codex plan review when the slice changes behavior or carries meaningful risk; skip it for tiny docs-only/local cleanup when low risk is proven. The feature review must include the owner spec, lane brief, relevant runtime/code paths, tests, directly relevant founder-session notes or handoffs, deferred/out-of-scope boundaries, and validation seed. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans. Record the reviewer/model/artifact in `Plan Review` or the dated handoff when a reviewer is used.
+For feature implementation or behavior-changing UI/API/runtime work, the executor must review the feature against current repo authority before implementation edits. Use one independent HY3 plan review when the slice changes behavior or carries meaningful risk; skip it for tiny docs-only/local cleanup when low risk is proven. The feature review must include the owner spec, lane brief, relevant runtime/code paths, tests, directly relevant founder-session notes or handoffs, deferred/out-of-scope boundaries, and validation seed. Use fresh `uprisereviewerminus` unless the packet explicitly assigns a different large-scope reviewer. Record the reviewer/model/artifact in `Plan Review` or the dated handoff when a reviewer is used.
 
 Use the feature implementation loop from `docs/specs/system/documentation-framework.md#feature-implementation-loop` for behavior-changing work:
 
 1. PM/current owner selects the next issue and gives the assigned executor a context packet with lane, owner contract, required docs, likely files, known runtime/tests to inspect, validation seed, out-of-scope boundaries, and stop conditions.
 2. A fresh executor agent/session starts from that packet, verifies it against current repo evidence, and writes the execution plan from docs/code/tests, not from chat or Linear alone.
 3. The plan is confirmed/corrected before edits; founder ambiguity stops for clarification and repo-visible capture.
-4. When risk justifies it, an independent Codex reviewer checks the plan before implementation.
+4. When risk justifies it, an independent reviewer checks the plan before implementation.
 5. The same branch-owning executor implements the accepted plan.
 6. When reviewer gates are required, an independent reviewer checks the completed execution and either passes it or returns concrete findings to the executor.
 
@@ -347,10 +365,9 @@ This is not a new PM harness and does not require per-issue packet files. It is 
 For large refactors, complex issues, broad branch/worktree cleanup, or any
 branch-absorption decision where valuable product/spec/runtime content may be
 hidden in stale-looking work, require an independent reviewer/auditor pass
-before merge/delete decisions. Use a Codex reviewer/auditor by default:
-`gpt-5.3-codex-spark` for basic branch evidence and `gpt-5.5` with
-`reasoning_effort=xhigh` when the result can decide merge, deletion,
-absorption, provider/db risk, owner-spec promotion, or closeout. The review
+before merge/delete decisions. Use fresh HY3 `upriseauditorminus` or
+`uprisereviewerminus` by default; assign a different large-scope reviewer only
+when the packet states why HY3 cannot safely answer it. The review
 should classify content as absorbed, superseded, extract-only, preserve-only, or
 unsafe to merge before cleanup.
 
@@ -375,13 +392,13 @@ Use `docs/operations/ACTIVE_PM.md` as the repo-visible companion snapshot for lo
 
 ## Review Routing
 
-- Use `gpt-5.3-codex-spark` for basic packet sanity, changed-file scans, stale/duplicate evidence, and test-output summaries.
-- Use `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final reviews or audits that can block branch cleanup, merge, owner-spec promotion, provider/db risk, or closeout.
-- Use `uprisereviewer+`, `uprisereviewer-`, `upriseauditor+`, or `upriseauditor-` only as manual fallback when PM names Hermes-specific value: profile memory, second opinion, owner-spec/docs specialization, synthesis, or feedback learning.
+- Use `uprisereviewerminus` (HY3) for bounded packet sanity, changed-file requirement checks, and validation-output review.
+- Use `upriseauditorminus` (HY3) for stale/duplicate evidence, branch classification, and owner-spec/runtime drift.
+- Use `uprisewatchdog` (HY3) only for heartbeat state. It is not a review or approval lane.
+- Use `uprisedeepscout` / `uprisedeepcoder` only for a bounded optional DeepSeek task and retain independent review.
 - Use an independent reviewer/auditor before deleting or merging branches from
   large refactors, complex issues, prototype work, or uncertain branch
-  absorption; route that reviewer/auditor gate to the matching Codex model
-  tier by default. Do not rely only on the implementation agent's summary when
+  absorption; route that reviewer/auditor gate to fresh HY3 by default. Do not rely only on the implementation agent's summary when
   a branch might contain unpromoted product/spec/runtime work.
 - Use Codex local for final reconciliation, staging, commits, PR creation, and validation coordination.
 - Use Abacus / Agent Swarm only when the work can be split into independent lanes with a final synthesis pass.

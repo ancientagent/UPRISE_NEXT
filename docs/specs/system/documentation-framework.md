@@ -379,7 +379,7 @@ owner_contract_identified: yes/no
 source_drift_or_bug_identified: yes/no/not_applicable
 feature_reviewed_against_repo: yes/no/not_applicable
 development_plan_written: yes/no/not_applicable
-development_plan_reviewed_by_codex: yes/no/not_required
+development_plan_reviewed: yes/no/not_required
 files_and_tests_clear: yes/no
 risk_impacts_named: yes/no
 provider_or_db_risk: yes/no
@@ -415,7 +415,7 @@ next_signal:
 
 Do not require `reviewer_passed` or `qa_passed` for every PR. Use `reviewer_required` and `qa_required` to make those gates explicit only when the work needs them.
 
-For feature implementation or behavior-changing UI/API/runtime work, `ready_for_executor` must stay `no` until the executor has reviewed the feature against current repo authority and, when the risk justifies it, an independent Codex reviewer has reviewed the development plan. The feature review should cover the owner spec, lane brief, relevant runtime/code paths, tests, current founder-session notes or handoffs when directly cited, and known out-of-scope/deferred boundaries. Keep plan review to one bounded pass unless blockers are found. Use `gpt-5.3-codex-spark` for small/medium plan sanity checks and `gpt-5.5` with `reasoning_effort=xhigh` for complex, cross-lane, schema/provider/security/canon, or high-impact plans.
+For feature implementation or behavior-changing UI/API/runtime work, `ready_for_executor` must stay `no` until the executor has reviewed the feature against current repo authority and, when the risk justifies it, an independent reviewer has reviewed the development plan. The feature review should cover the owner spec, lane brief, relevant runtime/code paths, tests, current founder-session notes or handoffs when directly cited, and known out-of-scope/deferred boundaries. Keep plan review to one bounded pass unless blockers are found. Use fresh HY3 `uprisereviewerminus` by default; use a separately assigned coding or large-scope reviewer only when the task cannot be safely bounded for HY3. See `docs/AGENT_TOOLING.md`.
 
 #### Feature Implementation Loop
 
@@ -425,9 +425,9 @@ For each feature or behavior-changing implementation issue, use a fresh executor
 2. The assigned executor starts from that context packet, then gathers the necessary current repo evidence from the owner spec, lane brief, relevant runtime/code paths, tests, and directly cited founder-session notes or handoffs.
 3. The executor writes an execution plan that states the current written contract, what will change, what must not change, files/tests expected, risk points, unresolved questions, and any correction needed to the packet.
 4. The plan is confirmed or corrected before implementation edits begin. If founder clarification is needed, stop and record the confirmed answer in the owner spec or appropriate founder-session/handoff path.
-5. When behavior/risk requires it, an independent Codex reviewer checks the plan against repo authority. If it fails, return the issue to the executor for correction before implementation edits.
+5. When behavior/risk requires it, an independent reviewer checks the plan against repo authority. If it fails, return the issue to the executor for correction before implementation edits.
 6. The same branch-owning executor implements the accepted plan.
-7. When reviewer gates are required, an independent reviewer checks the completed execution against the plan, owner specs, runtime evidence, and validation output. If it fails, return it to the executor with concrete findings; do not merge or close the issue.
+7. When reviewer gates are required, an independent reviewer checks the completed execution against the plan, owner specs, runtime evidence, and validation output. If it fails, return it to the executor with concrete findings; do not merge or close the issue. A reviewer verdict informs the human/codeowner merge gate; it is never an automatic approval.
 
 This loop prevents an executor from implementing from a thin Linear/chat summary when the current written contract would change the work. It is required for risky behavior-changing work and optional for tiny surgical docs-only or local cleanup PRs where the branch owner can prove low risk.
 
@@ -441,7 +441,7 @@ Use this workflow for whole pages/modules, major screens, or flows such as Plot,
 4. Add a Product Design or Design Spec pass only when visible hierarchy, states, responsive behavior, accessibility, or art direction must be settled before implementation.
 5. Keep one branch-owning executor. Subagents may do bounded research, product design, or review sidecars only; they must not create competing branch ownership or edit the same files.
 6. Implement the accepted slice, then run focused validation.
-7. Run one bounded review only when behavior/risk justifies it. Use `gpt-5.5` with `reasoning_effort=xhigh` for final/high-risk gates, not routine planning artifacts.
+7. Run one bounded review only when behavior/risk justifies it. Use fresh HY3 review by default; reserve a separately assigned large-scope reviewer for work HY3 cannot safely bound, not routine planning artifacts.
 8. Promote accepted durable product decisions back to owner specs. Routine package artifacts remain execution history, not product doctrine.
 
 Anti-drift constraints for every major screen package: no design-agent contract invention, no source/listener/admin boundary leaks, no one-off city/community/source behavior, no unapproved placeholder CTAs, no platform-trope imports, no deferred feature revival, and no product truth stored only in the package.
@@ -509,12 +509,13 @@ turns implementation detail into new product authority.
 
 ## Reviewer Routing
 
-Use reviewers as second-pass checks, not source of truth. Codex subagents are the default UPRISE review/audit lane.
+Use reviewers as second-pass checks, not source of truth. Fresh HY3 Hermes profiles are the default UPRISE non-coding review/audit lane; Codex or another explicitly assigned coding agent is the implementation writer.
 
-- `gpt-5.3-codex-spark`: basic/small review or audit, including docs drift, stale branch checks, changed-file sanity, PM packet checks, low-risk UI/test/docs PRs, and test-output summaries.
-- `gpt-5.5` with `reasoning_effort=xhigh`: heavy/final review or audit for high-impact merges, branch deletion, schema/provider/database/security/canon/owner-spec changes, broad cleanup audits, closeout gates, and any review whose result can approve/block action.
-- `uprisewatchdog`: Hermes heartbeat/wake-up checks only. It may report stalled or missing outputs, but it does not approve merges, closeout, branch deletion, or product truth.
-- `uprisereviewer+`, `uprisereviewer-`, `upriseauditor+`, `upriseauditor-`: Hermes manual fallback/advisory profiles only when explicitly assigned.
+- `uprisereviewerminus`: default bounded plan/requirement-to-result review against named authority, code, tests, and validation evidence.
+- `upriseauditorminus`: default read-only drift, branch, contract, or evidence audit.
+- `uprisewatchdog`: heartbeat/wake-up checks only. It may report stalled or missing outputs, but it does not approve merges, closeout, branch deletion, or product truth.
+- `uprisedeepscout` / `uprisedeepcoder`: optional OpenRouter DeepSeek tasks for dependency mapping or a benchmarked, well-specified sole coding slice. They do not self-approve.
+- A separately assigned Codex or Claude Opus task mode is reserved for coding execution or genuinely large, complex, cross-lane critique. It must receive a strict packet; it does not become product authority or an automatic merge gate.
 - Cloud Codex / OpenClaw / Abacus: scoped implementation/audit/design support when the repo and branch are available.
 
 Linear tracks execution state only. Durable product/canon/API/runtime truth remains in owner specs and current repo docs/code/tests. Product ambiguity stops for founder clarification, then the answer must be recorded in the owner spec, founder-session note, handoff, or backlog item named by the task.
@@ -540,10 +541,9 @@ bulk-load the platform.
 
 For large refactors, complex issues, prototype/reference branches, and branch
 cleanup where absorption is uncertain, run an independent reviewer/auditor pass
-before merge/delete decisions. Route that gate to Codex by default: use
-`gpt-5.3-codex-spark` for preliminary branch evidence and `gpt-5.5` with
-`reasoning_effort=xhigh` when the result can decide merge, deletion, absorption,
-provider/database risk, owner-spec promotion, or closeout. The review should
+before merge/delete decisions. Start with fresh HY3 `upriseauditorminus` or
+`uprisereviewerminus`; escalate only when its bounded evidence cannot safely
+answer the gate. The review should
 classify what is already on current `main`, what should be extracted into a fresh
 branch, what is stale, and what must remain preserve-only.
 

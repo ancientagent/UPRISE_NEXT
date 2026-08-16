@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-23
+Last Updated: 2026-08-16
 
 ## Purpose
 
@@ -18,19 +18,19 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `codex/historical-branch-cleanup` |
-| Base | `main@3f5ef12` |
-| Scope | Preserve PR #212's unique raw founder capture, retire only proven merged/superseded refs, and reduce active routing to current and protected-risk work. |
+| Branch | `fable/handoff` @ `5a3546c` |
+| Base | `main@ba969f8` |
+| Scope | Preserve the Fable handoff and record the current narrow Hermes automation loadouts; then resume the city-tier RADIYO worker plan from a fresh authority packet. |
 | Owner | Codex local, sole writer |
-| Validation | exact founder-file hash comparison, independent branch audit, `pnpm run verify`, `pnpm run workspace:audit`, `git diff --check` |
-| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, and deciding the unresolved Prisma schema draft |
+| Validation | Hermes profile tool/skill checks and fresh HY3 smoke calls; `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
+| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, provider/database changes, and RADIYO implementation before its fresh packet is accepted |
 
 ## Open Queue
 
-| PR / Branch | State | Action |
+| Work | State | Action |
 | --- | --- | --- |
-| PR #212 / `docs/linear-clean-context-agent-roles` | Draft, superseded by PR #247 | Close and delete its refs after the extracted founder capture lands on `main`. |
-| closed PR #1 / `codex/propose-prisma-schema-migration` | Unmerged unique schema/spec draft | Preserve for a dedicated schema/product-authority review. |
+| Hermes automation loadouts | Active | Keep HY3 planner/auditor/reviewer/watchdog profiles narrow and use their documented loadouts only. |
+| City-tier RADIYO lifecycle worker | Next | Reconstruct the current Release Deck/Fair Play seam, then create one fresh implementation packet. Do not infer status from dated planning notes. |
 
 ## Preserved Workspaces
 
@@ -44,17 +44,16 @@ as implementation evidence.
 
 ## Blockers
 
-- None for the cleanup PR.
-- PR #212 cannot close until its extracted founder note lands on `main`.
-- Preserved UX workspaces remain outside cleanup scope.
+- No active blocker for the tooling update.
+- RADIYO implementation requires a fresh repo/contract trace before code work.
+- Preserved UX workspaces remain outside the current scope.
 
 ## Next Signal
 
-1. Validate and merge the cleanup branch.
-2. Close PR #212 and delete its refs after verifying the founder capture on
-   `main`.
-3. Retire the cleanup branch and the redundant local founder-source checkpoint;
-   leave the four UX refs and unresolved Prisma draft preserved.
+1. Validate the current agent-loadout update and preserve its handoff.
+2. Re-enter the RADIYO lifecycle goal with a fresh, small execution packet.
+3. Keep the preserved UX references and unresolved Prisma draft untouched until
+   a dedicated review assigns them.
 
 ## Agent Rules
 
