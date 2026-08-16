@@ -18,19 +18,19 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` @ `5a3546c` |
+| Branch | `fable/handoff` @ `5e6781e` |
 | Base | `main@ba969f8` |
-| Scope | Preserve the Fable handoff and record the current narrow Hermes automation loadouts; then resume the city-tier RADIYO worker plan from a fresh authority packet. |
+| Scope | Preserve the Fable handoff and current narrow Hermes automation loadouts; prepare the city-tier RADIYO worker contract and implement only the untriggered, no-schema Slice A. |
 | Owner | Codex local, sole writer |
 | Validation | Hermes profile tool/skill checks and fresh HY3 smoke calls; `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
-| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, provider/database changes, and RADIYO implementation before its fresh packet is accepted |
+| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, provider/database changes, automatic polling/cron, recurrence automation, durable lease schema, and production deployment |
 
 ## Open Queue
 
 | Work | State | Action |
 | --- | --- | --- |
 | Hermes automation loadouts | Active | Keep HY3 planner/auditor/reviewer/watchdog profiles narrow and use their documented loadouts only. |
-| City-tier RADIYO lifecycle worker | Next | Reconstruct the current Release Deck/Fair Play seam, then create one fresh implementation packet. Do not infer status from dated planning notes. |
+| City-tier RADIYO lifecycle worker | Active | Fresh trace and HY3 audit confirm scheduling/manual ingestion/manual graduation exist but no worker invokes them. Owner spec now permits a bounded untriggered worker seam; defer runner activation and durable lease/run persistence. |
 
 ## Preserved Workspaces
 
@@ -45,13 +45,13 @@ as implementation evidence.
 ## Blockers
 
 - No active blocker for the tooling update.
-- RADIYO implementation requires a fresh repo/contract trace before code work.
+- RADIYO Slice A must not activate automatic polling, recurrence aggregation, or production deployment; durable run/lease persistence remains a separate schema/operations decision.
 - Preserved UX workspaces remain outside the current scope.
 
 ## Next Signal
 
 1. Validate the current agent-loadout update and preserve its handoff.
-2. Re-enter the RADIYO lifecycle goal with a fresh, small execution packet.
+2. Implement the approved untriggered RADIYO worker Slice A from the fresh packet.
 3. Keep the preserved UX references and unresolved Prisma draft untouched until
    a dedicated review assigns them.
 

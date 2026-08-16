@@ -12,6 +12,11 @@ single-owner closeout.
 
 ### Changed
 
+- Authorized a bounded internal city-tier RADIYO lifecycle worker contract:
+  it may orchestrate existing due-ingestion and graduation services but is
+  untriggered by default. Production runner activation, recurrence automation,
+  and durable run/lease persistence remain explicitly deferred.
+
 - Curated the UPRISE agent automation loadouts: fresh HY3 Hermes planner,
   reviewer, auditor, and watchdog profiles now have narrow task-specific skill
   packs and no browser, provider, database, delegation, memory, or media tool

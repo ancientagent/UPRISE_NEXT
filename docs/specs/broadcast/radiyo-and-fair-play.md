@@ -199,7 +199,17 @@ Owner references:
 - `POST /tracks` currently creates a valid track row with uploader ownership, file URL, duration, and optional community attachment.
 - This is a runtime ingestion contract, not a full upload/transcoding pipeline definition.
 - Track creation support exists so artist/discover flows can be exercised through the API instead of direct DB fixture insertion.
-- Fair Play lifecycle mutation is manual/admin-triggered in R1; cron/queue automation and full admin RBAC are not activated by the ingestion or graduation endpoints.
+- Fair Play lifecycle mutation remains callable through the authenticated
+  ingestion and graduation endpoints while full admin RBAC remains deferred.
+- A bounded internal city-tier lifecycle worker is authorized as an
+  orchestration seam: it may invoke the existing ingestion and graduation
+  services for active city-tier communities, but it must remain untriggered
+  until a later operational slice explicitly authorizes its runner.
+- The bounded worker must not run recurrence aggregation, create a production
+  cron/queue, or treat a process-local overlap flag as a durable
+  cross-instance lease. Durable run/lease persistence, retry observability,
+  and deployment ownership require a separate approved schema/operations
+  slice.
 - Proxy-to-natural song, vote, and tier behavior follows `Proxy Cutover And Lifecycle Join Points`.
 
 ### Planned
@@ -213,7 +223,8 @@ Owner references:
 - Every accepted song receives the same protected New Releases run (`10` days)
   once it enters RADIYO/New Releases.
 - New-window duration must not shrink because of active new-song density.
-- Songs graduate automatically after window expiry.
+- When the authorized lifecycle runner evaluates them, songs whose protected
+  window has expired graduate into Main Rotation.
 - Main Rotation recurrence changes only at 48-hour recompute cadence.
 - No Main Rotation repeat faster than once/hour.
 - Upvotes do not affect recurrence.
@@ -231,6 +242,8 @@ Owner references:
 - Automated production policy for cross-state proxy advancement identity.
 - Production tuning for Release Deck scheduling capacity values and
   scheduler/job wiring.
+- Durable lifecycle-run lease, retry, and deployment policy for production
+  automation.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`
