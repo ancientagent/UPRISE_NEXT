@@ -18,7 +18,7 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` @ `5e6781e` |
+| Branch | `fable/handoff` @ `ac1f35b` |
 | Base | `main@ba969f8` |
 | Scope | Preserve the Fable handoff and current narrow Hermes automation loadouts; prepare the city-tier RADIYO worker contract and implement only the untriggered, no-schema Slice A. |
 | Owner | Codex local, sole writer |
