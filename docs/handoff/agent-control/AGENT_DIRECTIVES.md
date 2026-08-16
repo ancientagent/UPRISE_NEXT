@@ -27,10 +27,10 @@ These templates are the canonical operating prompts for lane-specialized Codex a
 ## Recommended Model Split
 Current AI/tool routing is owned by `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`.
 
-- Basic/small review or audit: `gpt-5.3-codex-spark`.
-- Heavy/final review or audit: `gpt-5.5` with `reasoning_effort=xhigh`.
-- Hermes reviewer/auditor profiles are manual fallback only; `uprisewatchdog` is heartbeat-only.
-- Implementation/planning model choices should use the fastest available model that still fits the role without overriding the current AI stack doc for review/audit gates.
+- Bounded non-coding review: fresh HY3 `uprisereviewerminus`.
+- Read-only evidence/drift/branch audit: fresh HY3 `upriseauditorminus`.
+- `uprisewatchdog` is heartbeat-only; it is not a review/audit gate.
+- Implementation remains one explicitly assigned coding writer. Use a larger task-mode reviewer only when the packet explains why HY3 cannot safely answer it.
 
 ## Parallel Guardrails (enforced by queue)
 - Orchestrator is spawn authority by default.
@@ -76,7 +76,7 @@ Required behavior:
 - Do not add unauthorized user-facing actions.
 
 ## QA Template (`codex-qa-1`)
-Recommended model: `gpt-5.3-codex-spark` for basic QA/audit, or `gpt-5.5` with `reasoning_effort=xhigh` for final/risky review gates
+Recommended reviewer: fresh HY3 `uprisereviewerminus` for a bounded requirement-to-result pass, or `upriseauditorminus` for read-only evidence gathering. Use a separately assigned large-scope reviewer only when the packet names the reason.
 
 Role:
 - Validation lanes, test harness updates, CI checks.
@@ -87,7 +87,7 @@ Required behavior:
 - Escalate blockers with concrete failing command and root cause.
 
 ## Docs Template (`codex-docs-1`)
-Recommended model: see `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`; use the fastest adequate implementation/planning model, and route review/audit gates through the Codex-first tiers
+Recommended model: see `UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`; use the fastest adequate implementation/planning model, and route non-coding review/audit gates through the current HY3 profiles.
 
 Role:
 - Specs/changelog/handoff and roadmap hygiene.

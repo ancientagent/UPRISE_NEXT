@@ -83,13 +83,13 @@ Deliverable: a triage report the founder can act on, not code.
   (sol/terra/luna, ChatGPT subscription, approval policy baked in configs)
   do heavier lifting; every claimed fix gets a different-vendor read-only
   review; founder is the only merge gate.
-- Hermes profiles for this repo already exist: uprise, upriseauditor(+/-),
-  uprisereviewer(+/-), uprisedeepcoder, uprisedeepscout, uprisewatchdog.
-  Audit their configs before trusting them (GISTer lesson: agents pull
-  too many tools by default).
+- Current curated Hermes profiles are `uprise`, `upriseauditorminus`,
+  `uprisereviewerminus`, `uprisedeepscout`, `uprisedeepcoder`, and
+  `uprisewatchdog`. Read `docs/AGENT_TOOLING.md` before using them; do not
+  infer their skills or tools from old profile names or global catalogs.
 - Commit everything; dated founder words are citations; update the front
   door in the same commit as the work.
 - One partner, one session per repo per sitting. Cross-repo lessons live
-  in `~/.claude/projects/-home-baris-record/memory/` and each repo's
-  FABLE_HANDOFF.md (GISTer: enable-first; CTH: the gates are the product;
-  UPRISE: reverence — know which reflex you're in).
+  in `~/.claude/projects/-home-baris-record/memory/` and each repo's dated
+  handoff (GISTer: enable-first; CTH: the gates are the product; UPRISE:
+  reverence — know which reflex you're in).
