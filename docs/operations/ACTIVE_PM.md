@@ -30,7 +30,7 @@ as implementation evidence.
 | Work | State | Action |
 | --- | --- | --- |
 | Hermes automation loadouts | Active | Keep HY3 planner/auditor/reviewer/watchdog profiles narrow and use their documented loadouts only. |
-| City-tier RADIYO lifecycle worker | Active | Fresh trace and HY3 audit confirm scheduling/manual ingestion/manual graduation exist but no worker invokes them. Owner spec now permits a bounded untriggered worker seam; defer runner activation and durable lease/run persistence. |
+| City-tier RADIYO lifecycle worker | Complete (Slice A) | Internal untriggered worker now orchestrates existing ingestion/graduation per active city-tier community. Fresh HY3 review passed. Defer runner activation, recurrence automation, and durable lease/run persistence. |
 
 ## Preserved Workspaces
 
@@ -45,13 +45,13 @@ as implementation evidence.
 ## Blockers
 
 - No active blocker for the tooling update.
-- RADIYO Slice A must not activate automatic polling, recurrence aggregation, or production deployment; durable run/lease persistence remains a separate schema/operations decision.
+- RADIYO automatic polling, recurrence aggregation, production deployment, and durable run/lease persistence remain separate schema/operations decisions.
 - Preserved UX workspaces remain outside the current scope.
 
 ## Next Signal
 
 1. Validate the current agent-loadout update and preserve its handoff.
-2. Implement the approved untriggered RADIYO worker Slice A from the fresh packet.
+2. Retain Slice A as an untriggered internal seam; do not activate a runner without a durable lease/run design and explicit approval.
 3. Keep the preserved UX references and unresolved Prisma draft untouched until
    a dedicated review assigns them.
 
