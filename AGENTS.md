@@ -60,6 +60,12 @@ Load only the minimum additional material required for the task.
 - Classify issues before acting: `bug`, `stale`, `environment`, `fixture/data`, or `product decision`.
 - Use dated handoffs as context, not as higher authority than current code/specs.
 
+## PM Check-Ins
+- After meaningful implementation, investigation, QA, research, or other work that materially changes or clarifies project state, create a new PM check-in under `.pm/checkins/YYYY-MM-DD/` using a unique `HHMM-short-task-name.md` filename.
+- Report factual outcomes and evidence, not a narrative of everything done. Do not claim completion without evidence, edit another agent's check-in, update a master roadmap, or redefine project priorities.
+- Agents are workers, not the cross-project PM: they may recommend a technical next step, but must not decide project or cross-project priority, roadmap changes, or the founder's personal focus.
+- Skip the check-in for trivial interactions that produce no meaningful change, discovery, decision, blocker, or result. Use `.pm/checkins/TEMPLATE.md`.
+
 ## Before You Push
 - Preferred: run `pnpm run verify` (docs:lint + infra-policy-check + typecheck)
 - Optional (slower / DB required): `DATABASE_URL=... pnpm run verify:full` (verify + test + build)
