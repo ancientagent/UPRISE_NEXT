@@ -29,7 +29,7 @@ Own one narrow product or operational lane. Route cross-system rules into one
 owner spec, not the chat or repeated handoffs. Permit one writing executor at a
 time and obey the branch/workspace registry and upstream gates.
 
-Name rooms `UPRISE • <seat> • <state>`, using `Onboarding`, `Active`, `Blocked`,
+Name rooms `🟣 UPRISE • <seat> • <state>`, using `Onboarding`, `Active`, `Blocked`,
 `Parked`, `Handoff`, or `Retired`.
 
 Before activation, assign the room's exact `🟣 [UPRISE • ROLE]` badge and verify
