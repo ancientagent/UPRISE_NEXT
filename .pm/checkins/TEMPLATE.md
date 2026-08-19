@@ -5,8 +5,11 @@ meaningful session. Create a new file; never edit or overwrite another
 agent's check-in. Keep the record factual and concise. It is not a roadmap.
 
 **Date/Time:**
+**Run ID:**
 **Agent/Thread:**
+**Area:**
 **Task:**
+**Branch/Commit:**
 
 ## Result
 
@@ -15,6 +18,11 @@ What actually happened.
 ## Evidence
 
 Commit, PR, tests, build, QA result, deployment evidence, screenshots, etc.
+
+## Status
+
+Use a precise state: implemented, verification pending, tested, merged,
+deployed, production verified, blocked, or another evidence-backed state.
 
 ## Changed
 

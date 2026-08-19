@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-08-16
+Last Updated: 2026-08-18
 
 ## Purpose
 
@@ -18,18 +18,18 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` @ `ac1f35b` |
+| Branch | `fable/handoff` @ `87fffe80`; tracks `origin/fable/handoff` |
 | Base | `main@ba969f8` |
-| Scope | Preserve the Fable handoff and current narrow Hermes automation loadouts; prepare the city-tier RADIYO worker contract and implement only the untriggered, no-schema Slice A. |
-| Owner | Codex local, sole writer |
-| Validation | Hermes profile tool/skill checks and fresh HY3 smoke calls; `pnpm run docs:lint`, `pnpm run workspace:audit`, `git diff --check` |
-| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, provider/database changes, automatic polling/cron, recurrence automation, durable lease schema, and production deployment |
+| Scope | Reconcile the existing dirty checkout and missing upstream, then appoint the next narrow project-native manager seat. The latest OSS fit audit was read-only and is complete. |
+| Owner | No write-enabled owner confirmed. Codex OSS auditor is read-only/resumable. |
+| Validation | Scoped onboarding diffs pass `git diff --check`; no clean-worktree, push, PR, deployment, or full-project verification is claimed. |
+| Out of Scope | New product behavior, canon changes, legacy-document deletion, preserved UX extraction, provider/database changes, automatic polling/cron, recurrence automation, durable lease schema, and production deployment |
 
 ## Open Queue
 
 | Work | State | Action |
 | --- | --- | --- |
-| Hermes automation loadouts | Active | Keep HY3 planner/auditor/reviewer/watchdog profiles narrow and use their documented loadouts only. |
+| Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
 | City-tier RADIYO lifecycle worker | Complete (Slice A) | Internal untriggered worker now orchestrates existing ingestion/graduation per active city-tier community. Fresh HY3 review passed. Defer runner activation, recurrence automation, and durable lease/run persistence. |
 
 ## Preserved Workspaces
@@ -44,15 +44,20 @@ as implementation evidence.
 
 ## Blockers
 
-- No active blocker for the tooling update.
+- The checkout contains pre-existing modified and untracked work. Ownership and
+  intended disposition must be reconciled before implementation.
 - RADIYO automatic polling, recurrence aggregation, production deployment, and durable run/lease persistence remain separate schema/operations decisions.
 - Preserved UX workspaces remain outside the current scope.
 
 ## Next Signal
 
-1. Validate the current agent-loadout update and preserve its handoff.
-2. Retain Slice A as an untriggered internal seam; do not activate a runner without a durable lease/run design and explicit approval.
-3. Keep the preserved UX references and unresolved Prisma draft untouched until
+1. Reconcile the dirty checkout, intended upstream, current room ownership, and
+   the latest relevant check-ins.
+2. Appoint a narrow manager seat using `.pm/AGENT_ONBOARDING.md` before assigning
+   a write-enabled executor.
+3. Retain Slice A as an untriggered internal seam; do not activate a runner
+   without a durable lease/run design and explicit approval.
+4. Keep the preserved UX references and unresolved Prisma draft untouched until
    a dedicated review assigns them.
 
 ## Agent Rules

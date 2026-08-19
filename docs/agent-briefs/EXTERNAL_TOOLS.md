@@ -38,6 +38,7 @@ When an external-agent task depends on current branch, PR queue, blocker, or wor
 
 External guidance:
 
+- `docs/agent-briefs/OPEN_SOURCE_TECHNOLOGY_RADAR.md` for evaluated third-party open-source seams and explicit rejection boundaries
 - `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 - `docs/operations/ACTIVE_PM.md` for current execution-state snapshot when branch/PR/blocker context matters
 - `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`
