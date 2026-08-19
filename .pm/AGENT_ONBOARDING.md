@@ -13,11 +13,12 @@ binding. Unpaired agents are read-only.
 1. `AGENTS.md`
 2. `docs/PLATFORM_START_HERE.md`
 3. `docs/agent-briefs/CONTEXT_ROUTER.md`
-4. the one routed owner spec or active lane brief
-5. `docs/operations/ACTIVE_PM.md`
-6. recent relevant `.pm/checkins/`
-7. `.pm/HERMES_AGENT_REGISTRY.md` for current desktop/CLI bindings
-8. `.pm/IDENTITY_AND_SCOPE_PROTOCOL.md` for the response badge and wrong-room gate
+4. `.pm/PROJECT_CREW.md` and `.pm/WORK_CYCLE.md`
+5. the one routed owner spec or active lane brief
+6. `docs/operations/ACTIVE_PM.md`
+7. recent relevant `.pm/checkins/`
+8. `.pm/HERMES_AGENT_REGISTRY.md` for current desktop/CLI bindings
+9. `.pm/IDENTITY_AND_SCOPE_PROTOCOL.md` for the response badge and wrong-room gate
 
 Use Codebase Memory project `home-baris-UPRISE_NEXT` for structure and impact.
 Use only a verified UPRISE-scoped decision-memory collection; never substitute

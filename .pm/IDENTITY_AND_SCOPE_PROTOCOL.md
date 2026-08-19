@@ -13,7 +13,8 @@ Begin every substantive user-facing response with:
 
 Use the assigned role exactly, such as `MANAGER`, `CONTEXT STEWARD`,
 `LANDING PAGE + LAUNCH ENTRY`, `DESIGN`, `AUDITOR`, or `EXECUTOR`. The badge
-identifies the speaker; it grants no authority.
+identifies the speaker; it grants no authority. `MARKETING + COMMUNITY GROWTH`
+is the campaign/content/outreach role, not a product manager or designer.
 
 ## Scope gate
 
