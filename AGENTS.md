@@ -1,5 +1,9 @@
 # UPRISE_NEXT Agent Guide
 
+## Operational continuity
+
+Every persistent seat, replacement, and night crew follows `.pm/OPERATIONAL_MEMORY.md`: recall only after Git and authority verification, then save one concise seat event after the authoritative repo check-in.
+
 This file is the primary agent entry point for this repo. If another agent-facing doc conflicts with this file, `AGENTS.md` wins.
 
 **Identity and scope:** Before responding or acting, follow

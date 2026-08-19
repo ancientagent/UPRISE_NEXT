@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "perseus-operations": {
+      "command": "cmd.exe",
+      "args": ["/d", "/c", "C:\\Users\\baris\\.perseus-vault\\launchers\\uprise.cmd"]
+    }
+  }
+}

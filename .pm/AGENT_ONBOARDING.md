@@ -1,5 +1,9 @@
 # UPRISE Manager Onboarding
 
+## Operational-memory acceptance gate
+
+Read `.pm/OPERATIONAL_MEMORY.md`, recall only the UPRISE project and assigned seat, verify recalled claims against the repo, and report whether recall succeeded or is degraded. Replacements and night crews complete the same closeout after their authoritative check-in.
+
 Use this for a new persistent app-side manager. CLI executors use
 `.pm/EXECUTOR_CONTRACT.md`.
 
