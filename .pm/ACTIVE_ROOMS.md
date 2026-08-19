@@ -8,7 +8,7 @@ Operational snapshot refreshed 2026-08-19. Reverify before granting write access
 | --- | --- | --- | --- | --- |
 | `🟣 UPRISE • Manager • Active` | `01a011fa-7958-7412-9af3-17a942f6cec6` | Project integration, packets, writer assignment, and disposition | Accepted read-only manager | None unless a packet records the lease |
 | `🟣 UPRISE • Landing Page + Launch Entry • Active` | `019f2f16-1ab2-76c3-92bb-e8d9fe625f02` | Public prelaunch zine, launch activation/transition, and handoff into Registrar/onboarding | Bounded design room; prototype exists; durable handoff required | None unless a packet records the lease |
-| `🟣 UPRISE • Marketing + Community Growth • Onboarding` | `01a01ab9-eac5-7090-aaaa-6a14fb690be6` | Campaign/launch roadmap, positioning, landing/media briefs, community outreach, measurement proposals | Read-only acceptance pending | None |
+| `🟣 UPRISE • Marketing + Community Growth • Active` | `01a01ab9-eac5-7090-aaaa-6a14fb690be6` | Campaign/launch roadmaps, positioning, landing/content briefs, media, channels, community outreach, and measurement proposals | Accepted read-only department head | None |
 
 The design room does not own Home/Plot, Registrar internals, Avatar/Wardrobe,
 Public Artist Profile, Source Dashboard, Events, or Print Shop. Its next durable
