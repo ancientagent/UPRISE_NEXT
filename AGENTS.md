@@ -2,6 +2,10 @@
 
 This file is the primary agent entry point for this repo. If another agent-facing doc conflicts with this file, `AGENTS.md` wins.
 
+**Identity and scope:** Before responding or acting, follow
+`.pm/IDENTITY_AND_SCOPE_PROTOCOL.md`. Display the assigned room/worker badge and
+stop safely on wrong-room requests.
+
 **CLI executors:** Before starting or finishing write-enabled work, follow
 `.pm/EXECUTOR_CONTRACT.md`. Use the single checkout and shared branch it names;
 do not create task branches or worktrees. A meaningful task is not complete

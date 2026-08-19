@@ -17,6 +17,7 @@ binding. Unpaired agents are read-only.
 5. `docs/operations/ACTIVE_PM.md`
 6. recent relevant `.pm/checkins/`
 7. `.pm/HERMES_AGENT_REGISTRY.md` for current desktop/CLI bindings
+8. `.pm/IDENTITY_AND_SCOPE_PROTOCOL.md` for the response badge and wrong-room gate
 
 Use Codebase Memory project `home-baris-UPRISE_NEXT` for structure and impact.
 Use only a verified UPRISE-scoped decision-memory collection; never substitute
@@ -30,6 +31,10 @@ time and obey the branch/workspace registry and upstream gates.
 
 Name rooms `UPRISE • <seat> • <state>`, using `Onboarding`, `Active`, `Blocked`,
 `Parked`, `Handoff`, or `Retired`.
+
+Before activation, assign the room's exact `🟣 [UPRISE • ROLE]` badge and verify
+that it can identify an out-of-scope request, name the correct destination, and
+stop before work begins. A room that cannot pass this check remains read-only.
 
 ## First response
 
