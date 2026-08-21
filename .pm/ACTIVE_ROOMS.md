@@ -1,12 +1,13 @@
 # UPRISE Active Rooms
 
-Operational snapshot refreshed 2026-08-19. Reverify before granting write access.
+Operational snapshot refreshed 2026-08-21. Reverify before granting write access.
 
 ## Current app-side rooms
 
 | Room | Task ID | Scope | State | Write authority |
 | --- | --- | --- | --- | --- |
 | `🟣 UPRISE • Manager • Active` | `01a011fa-7958-7412-9af3-17a942f6cec6` | Project integration, packets, writer assignment, and disposition | Accepted read-only manager | None unless a packet records the lease |
+| `🟣 UPRISE • Context Steward • Active` | `01a0233e-1dfd-7b41-8adc-fb38b5709125` | Documentation authority, owner-contract routing, handoff promotion, and stale-doc cleanup | Accepted for the bounded 2026-08-21 documentation packet | This packet only; no product or implementation authority, and no standing lease after its scoped commit is pushed |
 | `🟣 UPRISE • Landing Page + Launch Entry • Active` | `019f2f16-1ab2-76c3-92bb-e8d9fe625f02` | Public prelaunch zine, launch activation/transition, and handoff into Registrar/onboarding | Bounded design room; prototype exists; durable handoff required | None unless a packet records the lease |
 | `🟣 UPRISE • Marketing + Community Growth • Active` | `01a01ab9-eac5-7090-aaaa-6a14fb690be6` | Campaign/launch roadmaps, positioning, landing/content briefs, media, channels, community outreach, and measurement proposals | Accepted read-only department head | None |
 
@@ -21,10 +22,11 @@ visualization prototype is exploration evidence, not production completion.
 | --- | --- | --- | --- | --- |
 | `uprise-codex-oss-audit-01` / Codex `01a012ca-dd14-7470-850a-7058e7c6330d` | Independent OSS fit audit | Unpaired legacy session; audit complete and shell resumable | None | Park or bind only to a bounded OSS-audit room |
 
-No write-enabled executor is recorded. The checkout was clean at
-`6b36b2d9` on `fable/handoff`, aligned 0/0 with `origin/fable/handoff`, before
-this room-registry update. The executor contract still requires an accepted
-packet and one explicit writer lease before implementation.
+The Manager granted the Context Steward one documentation-only lease starting
+from clean, aligned `fable/handoff` at `66afd375`. The lease covers the scoped
+operations reconciliation, landing readiness shell, and factual check-in in
+the same pushed commit; it does not survive that commit. No standing writer or
+implementation authority is recorded.
 
 Identity, profile, desktop-room, and WSL-checkout bindings live in
 `.pm/HERMES_AGENT_REGISTRY.md`.

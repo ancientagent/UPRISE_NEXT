@@ -2,7 +2,7 @@
 
 Status: active operations registry
 Owner: current branch owner / context-steward
-Last Updated: 2026-07-23
+Last Updated: 2026-08-21
 
 ## Purpose
 
@@ -91,7 +91,7 @@ cleanup pass.
 | prisma-schema-migration-draft | preserved-branch | codex/propose-prisma-schema-migration | - | closed PR #1 https://github.com/ancientagent/UPRISE_NEXT/pull/1 | older main snapshot | be54087 | review-needed | owner pending | no active agent | Unmerged schema/spec draft with unique content. Not evaluated for current product or migration authority. | 2026-07-23 | preserve until a dedicated schema/product review decides extract or delete |
 | main-workspace | primary | main | /home/baris/UPRISE_NEXT | - | origin/main | 3f5ef12 | primary | Codex local | current branch owner | Primary UPRISE baseline after workflow-policy simplification PR #247. | 2026-07-23 | keep current and clean |
 | historical-branch-cleanup | branch | codex/historical-branch-cleanup | /home/baris/UPRISE_NEXT | - | main@3f5ef12 | fcf1305 | active | Codex local | Codex local; read-only branch auditor | Preserve unique PR #212 founder wording, remove only proven-safe historical refs, and retain protected UX worktrees/branches. | 2026-07-23 | merge through PR, close #212, then retire superseded local/topic refs after proof |
-| shared-local-fable-handoff | branch | fable/handoff | /home/baris/UPRISE_NEXT | - | main@ba969f8 | ac1f35b | active | Codex local, sole writer | Codex local; HY3 plan auditor/reviewer | Preserves the Fable handoff/tooling guide and records bounded UPRISE automation loadouts. City-tier RADIYO Slice A adds the reviewed untriggered worker seam only. | 2026-08-16 | retain Slice A locally; require a separate approved schema/operations packet before durable lease or runner activation |
+| shared-local-fable-handoff | branch | fable/handoff | /home/baris/UPRISE_NEXT | - | main@ba969f8 | pending | active | No standing writer; Manager assigns one packet lease at a time | Context Steward for the 2026-08-21 documentation-only reconciliation; lease ends with this commit/push | Preserves the Fable handoff/tooling guide and bounded automation records. Starting from clean/aligned `66afd375`, this packet reconciles operations routing and adds a Landing Page readiness shell; it changes no product or runtime behavior. | 2026-08-21 | Keep clean and aligned after the packet; any later writer requires a fresh Manager lease. Slice A runner/schema activation remains separately gated. |
 <!-- workspace-registry:end -->
 
 ## Remote-Only Historical Branches

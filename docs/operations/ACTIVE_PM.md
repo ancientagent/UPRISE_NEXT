@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: current branch owner / context-steward
-Last Updated: 2026-08-18
+Last Updated: 2026-08-21
 
 ## Purpose
 
@@ -18,17 +18,18 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` @ `87fffe80`; tracks `origin/fable/handoff` |
+| Branch | `fable/handoff`, starting baseline `66afd375`; tracks `origin/fable/handoff` and was clean/aligned 0/0 at packet start |
 | Base | `main@ba969f8` |
-| Scope | Reconcile the existing dirty checkout and missing upstream, then appoint the next narrow project-native manager seat. The latest OSS fit audit was read-only and is complete. |
-| Owner | No write-enabled owner confirmed. Codex OSS auditor is read-only/resumable. |
-| Validation | Scoped onboarding diffs pass `git diff --check`; no clean-worktree, push, PR, deployment, or full-project verification is claimed. |
-| Out of Scope | New product behavior, canon changes, legacy-document deletion, preserved UX extraction, provider/database changes, automatic polling/cron, recurrence automation, durable lease schema, and production deployment |
+| Scope | Register the Context Steward, reconcile current room/workspace routing, and create a readiness-only Landing Page + Launch Entry package shell. |
+| Owner | Context Steward is the sole writer for this one documentation packet. The lease ends with its scoped pushed commit; no standing writer follows it. |
+| Validation | `pnpm run docs:lint` passed (including 10-file canon lint); `pnpm run workspace:audit` passed with one unregistered open-PR head warning and one unregistered local-ref warning; `git diff --check` exited 0 with line-ending warnings only. Commit, push, and clean-worktree proof remain the closeout gate. |
+| Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 
 ## Open Queue
 
 | Work | State | Action |
 | --- | --- | --- |
+| Landing Page + Launch Entry readiness | Blocked on required inputs | Marketing must provide an approved landing/content brief and the Manager must record disposition before design continuation or implementation. The existing prototype remains exploration evidence. |
 | Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
 | City-tier RADIYO lifecycle worker | Complete (Slice A) | Internal untriggered worker now orchestrates existing ingestion/graduation per active city-tier community. Fresh HY3 review passed. Defer runner activation, recurrence automation, and durable lease/run persistence. |
 
@@ -44,17 +45,18 @@ as implementation evidence.
 
 ## Blockers
 
-- The checkout contains pre-existing modified and untracked work. Ownership and
-  intended disposition must be reconciled before implementation.
+- No repo-owned approved Marketing landing/content brief was found for the
+  Landing Page + Launch Entry package.
+- Manager disposition is required after that brief exists and before design
+  continuation or implementation.
 - RADIYO automatic polling, recurrence aggregation, production deployment, and durable run/lease persistence remain separate schema/operations decisions.
 - Preserved UX workspaces remain outside the current scope.
 
 ## Next Signal
 
-1. Reconcile the dirty checkout, intended upstream, current room ownership, and
-   the latest relevant check-ins.
-2. Appoint a narrow manager seat using `.pm/AGENT_ONBOARDING.md` before assigning
-   a write-enabled executor.
+1. Marketing supplies an approved landing/content brief through the Manager.
+2. The Manager records disposition and, if accepted, issues the next bounded
+   Landing Page + Launch Entry design-package packet.
 3. Retain Slice A as an untriggered internal seam; do not activate a runner
    without a durable lease/run design and explicit approval.
 4. Keep the preserved UX references and unresolved Prisma draft untouched until
