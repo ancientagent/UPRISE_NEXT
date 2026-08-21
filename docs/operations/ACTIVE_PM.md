@@ -1,7 +1,7 @@
 # UPRISE Active PM
 
 Status: active execution snapshot
-Owner: current branch owner / context-steward
+Owner: context-steward for documentation routing; this label is not a writer lease
 Last Updated: 2026-08-21
 
 ## Purpose
@@ -18,11 +18,12 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff`, starting baseline `66afd375`; tracks `origin/fable/handoff` and was clean/aligned 0/0 at packet start |
+| Branch | `fable/handoff` @ `8bd1c740`; tracks `origin/fable/handoff` and was clean/aligned 0/0 at closeout-correction start |
 | Base | `main@ba969f8` |
-| Scope | Register the Context Steward, reconcile current room/workspace routing, and create a readiness-only Landing Page + Launch Entry package shell. |
-| Owner | Context Steward is the sole writer for this one documentation packet. The lease ends with its scoped pushed commit; no standing writer follows it. |
-| Validation | `pnpm run docs:lint` passed (including 10-file canon lint); `pnpm run workspace:audit` passed with one unregistered open-PR head warning and one unregistered local-ref warning; `git diff --check` exited 0 with line-ending warnings only. Commit, push, and clean-worktree proof remain the closeout gate. |
+| Scope | No active write packet. Landing Page + Launch Entry readiness remains blocked on an approved Marketing brief and Manager disposition before design continuation or implementation. |
+| Owner | No active writer and no standing writer lease. The Context Steward reconciliation packet completed and was pushed at `8bd1c740`; every subsequent writer requires a fresh Manager lease. |
+| Validation | The completed reconciliation packet was pushed at `8bd1c740`. This post-push correction passed `pnpm docs:lint`, `pnpm run workspace:audit`, focused diff review, and `git diff --check`; its factual check-in and closeout report carry commit/push and clean/aligned evidence. |
+| BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 
 ## Open Queue
