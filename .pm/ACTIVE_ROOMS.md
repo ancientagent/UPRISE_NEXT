@@ -14,9 +14,12 @@ Operational snapshot refreshed 2026-08-21. Reverify before granting write access
 | `🟣 UPRISE • Design • Active` | `01a03517-9d8c-7503-8b87-5415212f5c80` | Post-onboarding Listener Profile UX, onboarding continuity, design-reference extraction, and design handoffs | Read-only first packet: extract only relevant patterns from preserved UX worktrees | None; no Landing or implementation authority |
 
 The design room does not own Home/Plot, Registrar internals, Avatar/Wardrobe,
-Public Artist Profile, Source Dashboard, Events, or Print Shop. Its next durable
-output belongs under `docs/screen-packages/landing-page/`; the existing
-visualization prototype is exploration evidence, not production completion.
+Public Artist Profile, Source Dashboard, Events, Print Shop, or the public
+Landing Page + Launch Entry. Landing retains exclusive ownership of
+`docs/screen-packages/landing-page/`. After a separate Manager design-package
+lease, Design's next approved package belongs under
+`docs/screen-packages/listener-profile/`; Design remains read-only now and no
+Listener Profile package is authorized by this routing correction.
 
 The Auditor reads `AGENTS.md`, `docs/PLATFORM_START_HERE.md`,
 `docs/agent-briefs/CONTEXT_ROUTER.md`, `.pm/OPERATIONAL_MEMORY.md`, and its

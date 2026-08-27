@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: context-steward for documentation routing; this label is not a writer lease
-Last Updated: 2026-08-21
+Last Updated: 2026-08-27
 
 ## Purpose
 
@@ -18,11 +18,11 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` @ `8bd1c740`; tracks `origin/fable/handoff` and was clean/aligned 0/0 at closeout-correction start |
+| Branch | `fable/handoff`; this Phase 0 routing correction started clean and aligned 0/0 at `05f1b92e`; Git owns the live revision |
 | Base | `main@ba969f8` |
-| Scope | No active write packet. Landing Page + Launch Entry readiness remains blocked on an approved Marketing brief and Manager disposition before design continuation or implementation. |
-| Owner | No active writer and no standing writer lease. The Context Steward reconciliation packet completed and was pushed at `8bd1c740`; every subsequent writer requires a fresh Manager lease. |
-| Validation | The completed reconciliation packet was pushed at `8bd1c740`. This post-push correction passed `pnpm docs:lint`, `pnpm run workspace:audit`, focused diff review, and `git diff --check`; its factual check-in and closeout report carry commit/push and clean/aligned evidence. |
+| Scope | The Manager-approved Phase 0 routing correction is complete: the next product slice is `Onboarding → Listener Profile`. This is execution sequencing only and authorizes no design package or implementation. Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
+| Owner | No active writer and no standing writer lease. The Context Steward held only this bounded documentation lease; every subsequent writer requires a fresh Manager lease. |
+| Validation | The Phase 0 routing correction passed `pnpm run docs:lint`, `pnpm run workspace:audit`, focused diff review, and `git diff --check`; its factual check-in and Manager closeout carry scoped commit/push and clean/aligned evidence. |
 | BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 
@@ -30,6 +30,7 @@ as implementation evidence.
 
 | Work | State | Action |
 | --- | --- | --- |
+| Onboarding → Listener Profile | Phase 0 routing approved; no design package or active lease | The Manager may issue a separate design-package lease for `docs/screen-packages/listener-profile/`; Design remains read-only until then. |
 | Landing Page + Launch Entry readiness | Blocked on required inputs | Marketing must provide an approved landing/content brief and the Manager must record disposition before design continuation or implementation. The existing prototype remains exploration evidence. |
 | Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
 | City-tier RADIYO lifecycle worker | Complete (Slice A) | Internal untriggered worker now orchestrates existing ingestion/graduation per active city-tier community. Fresh HY3 review passed. Defer runner activation, recurrence automation, and durable lease/run persistence. |
@@ -55,9 +56,11 @@ as implementation evidence.
 
 ## Next Signal
 
-1. Marketing supplies an approved landing/content brief through the Manager.
-2. The Manager records disposition and, if accepted, issues the next bounded
-   Landing Page + Launch Entry design-package packet.
+1. The Manager may issue a separate design-package lease for `Onboarding →
+   Listener Profile`; until then, Design remains read-only and no package is
+   authorized.
+2. Separately, Marketing supplies an approved landing/content brief through the
+   Manager before any Landing design continuation or implementation.
 3. Retain Slice A as an untriggered internal seam; do not activate a runner
    without a durable lease/run design and explicit approval.
 4. Keep the preserved UX references and unresolved Prisma draft untouched until
