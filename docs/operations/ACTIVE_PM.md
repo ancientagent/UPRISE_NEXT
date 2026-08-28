@@ -18,11 +18,11 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` @ `b64439de`; tracks `origin/fable/handoff` and was clean/aligned 0/0 at this closeout start |
+| Branch | `fable/handoff`; Listener Profile reduced-motion parity started from clean/aligned `858ca5df` (live Git remains revision authority) |
 | Base | `main@ba969f8` |
-| Scope | The Listener Profile design package was completed and pushed at `b64439de`. It is the accepted design baseline, not implementation authorization. Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
-| Owner | No active writer and no standing writer lease. Any QA, preflight, or implementation work requires a fresh Manager packet; implementation also requires a separate writer lease. |
-| Validation | Package closeout evidence is recorded in `.pm/checkins/2026-08-27/2330-listener-profile-design-package.md`. Browser QA has not run. |
+| Scope | The Listener Profile design package remains the accepted baseline. A bounded Manager lease implemented reduced-motion parity for the existing expanded profile panel only; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
+| Owner | One bounded reduced-motion implementation lease is active only through its scoped commit/push; no standing writer lease follows it. Any further work requires a fresh Manager packet. |
+| Validation | Source lock and four focused regression/contract suites passed (44 tests), and `pnpm --filter web typecheck` passed for the reduced-motion parity implementation. Browser QA has not run. |
 | BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 
@@ -30,7 +30,7 @@ as implementation evidence.
 
 | Work | State | Action |
 | --- | --- | --- |
-| Onboarding → Listener Profile | Design package completed at `b64439de`; accepted design baseline; no active lease | Run a read-only QA/preflight against `docs/screen-packages/listener-profile/` before any implementation packet. |
+| Onboarding → Listener Profile | Design package baseline plus reduced-motion source parity; browser proof remains unverified | Run independent browser QA against `docs/screen-packages/listener-profile/` at the implementation commit before accepting the first-session slice as complete. |
 | Landing Page + Launch Entry readiness | Blocked on required inputs | Marketing must provide an approved landing/content brief and the Manager must record disposition before design continuation or implementation. The existing prototype remains exploration evidence. |
 | Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
 | City-tier RADIYO lifecycle worker | Complete (Slice A) | Internal untriggered worker now orchestrates existing ingestion/graduation per active city-tier community. Fresh HY3 review passed. Defer runner activation, recurrence automation, and durable lease/run persistence. |
@@ -56,8 +56,7 @@ as implementation evidence.
 
 ## Next Signal
 
-1. Run a read-only QA/preflight against the accepted Listener Profile package;
-   no implementation packet or writer lease is authorized yet.
+1. Complete independent browser QA for the Listener Profile package and reduced-motion parity at the implementation commit; a dedicated authorized UPRISE browser target is required. Do not treat source tests/typecheck as browser proof.
 2. Separately, Marketing supplies an approved landing/content brief through the
    Manager before any Landing design continuation or implementation.
 3. Retain Slice A as an untriggered internal seam; do not activate a runner

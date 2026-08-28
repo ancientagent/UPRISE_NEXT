@@ -229,7 +229,7 @@ export default function PlotListenerProfile({
   return (
     <section
       id="plot-profile-panel"
-      className="mt-4 space-y-4 rounded-[1.4rem] border border-black bg-[#f7f7ef] p-4 shadow-[3px_3px_0_rgba(0,0,0,0.3)] transition-all duration-200"
+      className="mt-4 space-y-4 rounded-[1.4rem] border border-black bg-[#f7f7ef] p-4 shadow-[3px_3px_0_rgba(0,0,0,0.3)] transition-all duration-200 motion-reduce:transition-none"
       aria-labelledby="plot-profile-seam-toggle"
     >
       <header className="grid gap-4 rounded-[1.15rem] border border-black bg-[#efefe2] p-4 lg:grid-cols-[minmax(0,1.6fr)_240px]">
