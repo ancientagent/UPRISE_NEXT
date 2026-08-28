@@ -10,6 +10,16 @@ single-owner closeout.
 
 ## [Unreleased]
 
+### Added
+
+- Settled `Cardboard and Toner` as the primary UPRISE visual theme (founder
+  decision 2026-07-14): canonical light/dark palette tokens, the Archivo
+  Black / Libre Franklin / IBM Plex Mono type stack, and motif vocabulary in
+  `docs/solutions/UPRISE_VISUAL_THEME_CARDBOARD_AND_TONER_R1.md`, captured in
+  `docs/founder-sessions/2026-07-14_cardboard-and-toner-primary-theme.md` and
+  routed from `docs/agent-briefs/UI_CURRENT.md`. Formalizes the existing
+  `plot-wire` values; `apps/web` token migration remains a separate slice.
+
 ### Changed
 
 - Authorized a bounded internal city-tier RADIYO lifecycle worker contract:
