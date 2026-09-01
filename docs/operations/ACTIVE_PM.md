@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: context-steward for documentation routing; this label is not a writer lease
-Last Updated: 2026-08-28
+Last Updated: 2026-09-01
 
 ## Purpose
 
@@ -18,10 +18,10 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff`; Listener Profile reduced-motion parity started from clean/aligned `858ca5df` (live Git remains revision authority) |
+| Branch | `fable/handoff` at `68efa16826ee7636d2702cf68c9144835e87380a`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
 | Base | `main@ba969f8` |
 | Scope | The Listener Profile design package remains the accepted baseline. A bounded Manager lease implemented reduced-motion parity for the existing expanded profile panel only; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
-| Owner | One bounded reduced-motion implementation lease is active only through its scoped commit/push; no standing writer lease follows it. Any further work requires a fresh Manager packet. |
+| Owner | No active writer lease. The bounded Listener Profile reduced-motion lease closed at `df4a0054`; any further work requires a fresh Manager packet and collision check. |
 | Validation | Source lock and four focused regression/contract suites passed (44 tests), and `pnpm --filter web typecheck` passed for the reduced-motion parity implementation. Browser QA has not run. |
 | BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
