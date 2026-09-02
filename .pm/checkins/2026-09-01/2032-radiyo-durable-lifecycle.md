@@ -5,7 +5,7 @@
 **Agent/Thread:** Codex CLI executor / radiyo_durable_lifecycle
 **Area:** Fair Play / RADIYO internal lifecycle worker
 **Task:** Durable, untriggered lifecycle lease and run-history foundation
-**Branch/Commit:** `fable/handoff` / pending closeout commit
+**Branch/Commit:** `fable/handoff` / `f624401d` (amended closeout commit pending)
 
 ## Result
 
@@ -19,7 +19,7 @@ Implemented durable atomic lifecycle ownership and factual run history for direc
 
 ## Status
 
-Implemented and validated locally; commit/push closeout pending.
+Implemented and validated locally; push closeout pending.
 
 ## Changed
 
