@@ -5,7 +5,7 @@
 **Agent/Thread:** Codex CLI executor / radiyo_durable_lifecycle
 **Area:** Fair Play / RADIYO internal lifecycle worker
 **Task:** Correct independent-review findings for durable lifecycle ownership
-**Branch/Commit:** `fable/handoff` / pending closeout commit
+**Branch/Commit:** `fable/handoff` / `d40a8eb0` (check-in evidence amendment pending)
 
 ## Result
 
@@ -20,7 +20,7 @@ Replaced host-clock lease handling with PostgreSQL-time conditional ownership; a
 
 ## Status
 
-Implemented and validated locally; commit/push closeout pending.
+Implemented and validated locally; push closeout pending.
 
 ## Changed
 
