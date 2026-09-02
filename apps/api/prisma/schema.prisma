@@ -716,8 +716,8 @@ model FairPlayLifecycleRun {
   operationKey             String
   ownerId                  String
   attemptId                String
-  mode                     String
-  status                   String
+  mode                     FairPlayLifecycleRunMode
+  status                   FairPlayLifecycleRunStatus
   startedAt                DateTime
   finishedAt               DateTime?
   activeCityCommunityCount Int       @default(0)
@@ -730,4 +730,17 @@ model FairPlayLifecycleRun {
   @@index([operationKey, startedAt])
   @@index([status, startedAt])
   @@map("fair_play_lifecycle_runs")
+}
+
+enum FairPlayLifecycleRunMode {
+  DRY_RUN
+  MUTATION
+}
+
+enum FairPlayLifecycleRunStatus {
+  RUNNING
+  COMPLETED
+  PARTIAL_FAILURE
+  FAILED
+  LEASE_REFUSED
 }

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { FairPlayLifecycleRunMode, FairPlayLifecycleRunStatus } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FairPlayGraduationService } from './fair-play-graduation.service';
 import { FairPlayIngestionService } from './fair-play-ingestion.service';
 
 const LIFECYCLE_OPERATION_KEY = 'fair-play-city-tier-lifecycle';
-const LIFECYCLE_LEASE_MILLISECONDS = 5 * 60 * 1000;
 const ERROR_SUMMARY_LIMIT = 500;
+const STORED_COMMUNITY_SUMMARY_LIMIT = 25;
+const STORED_FAILED_STEP_SUMMARY_LIMIT = 25;
 
 type LifecycleRunOptions = {
   asOf?: string;
@@ -19,6 +21,7 @@ type LifecycleStepResult =
   | { status: 'failed'; error: string };
 
 type LeaseRow = { operationKey: string };
+type DatabaseTimeRow = { now: Date };
 
 type LifecycleResult = {
   communityId: string;
@@ -31,8 +34,12 @@ function errorMessage(error: unknown): string {
   return value.slice(0, ERROR_SUMMARY_LIMIT);
 }
 
-function modeFor(options: LifecycleRunOptions): 'dry_run' | 'mutation' {
-  return options.dryRun === false ? 'mutation' : 'dry_run';
+function modeFor(options: LifecycleRunOptions): FairPlayLifecycleRunMode {
+  return options.dryRun === false ? FairPlayLifecycleRunMode.MUTATION : FairPlayLifecycleRunMode.DRY_RUN;
+}
+
+function toUtcDateOnly(date: Date): string {
+  return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -48,11 +55,12 @@ export class FairPlayLifecycleWorkerService {
   ) {}
 
   async runForActiveCityCommunities(options: LifecycleRunOptions = {}) {
-    const startedAt = new Date();
+    const startedAt = await this.databaseNow();
+    const asOf = options.asOf ?? toUtcDateOnly(startedAt);
     const runId = randomUUID();
     const attemptId = randomUUID();
     const ownerId = options.ownerId?.trim() || `manual:${process.pid}`;
-    const acquired = await this.acquireLease({ ownerId, runId, now: startedAt });
+    const acquired = await this.acquireLease({ ownerId, runId });
 
     if (!acquired) {
       await this.recordLeaseRefusal({ ownerId, attemptId, runId, startedAt, options });
@@ -73,7 +81,7 @@ export class FairPlayLifecycleWorkerService {
           ownerId,
           attemptId,
           mode: modeFor(options),
-          status: 'running',
+          status: FairPlayLifecycleRunStatus.RUNNING,
           startedAt,
         },
       });
@@ -99,13 +107,14 @@ export class FairPlayLifecycleWorkerService {
       for (const community of communities) {
         const request = {
           communityId: community.id,
-          ...(options.asOf === undefined ? {} : { asOf: options.asOf }),
+          asOf,
           ...(options.dryRun === undefined ? {} : { dryRun: options.dryRun }),
         };
+        await this.assertActiveLease({ ownerId, runId });
         const ingestion = await this.runStep(() => this.ingestionService.ingestDueSchedules(request));
+        await this.assertActiveLease({ ownerId, runId });
         const graduation = await this.runStep(() => this.graduationService.runGraduation(request));
         results.push({ communityId: community.id, ingestion, graduation });
-        await this.refreshLease({ ownerId, runId });
       }
 
       const failedStepCount = results.reduce(
@@ -113,17 +122,26 @@ export class FairPlayLifecycleWorkerService {
           count + Number(result.ingestion.status === 'failed') + Number(result.graduation.status === 'failed'),
         0,
       );
-      const finishedAt = new Date();
-      const summary = this.summarizeResults(results);
+      const finishedAt = await this.databaseNow();
+      const summary = this.summarizeResults(results, failedStepCount);
       await this.prisma.fairPlayLifecycleRun.update({
         where: { id: runId },
         data: {
-          status: failedStepCount === 0 ? 'completed' : 'partial_failure',
+          status:
+            failedStepCount === 0
+              ? FairPlayLifecycleRunStatus.COMPLETED
+              : FairPlayLifecycleRunStatus.PARTIAL_FAILURE,
           finishedAt,
           activeCityCommunityCount: communities.length,
           failedStepCount,
           resultSummary: summary,
-          errorSummary: summary.failedSteps.length === 0 ? undefined : { failedSteps: summary.failedSteps },
+          errorSummary:
+            summary.failedSteps.length === 0
+              ? undefined
+              : {
+                  failedSteps: summary.failedSteps,
+                  omittedFailedStepCount: summary.omittedFailedStepCount,
+                },
         },
       });
 
@@ -137,11 +155,11 @@ export class FairPlayLifecycleWorkerService {
         },
       };
     } catch (error) {
-      const finishedAt = new Date();
+      const finishedAt = await this.databaseNow();
       await this.prisma.fairPlayLifecycleRun.update({
         where: { id: runId },
         data: {
-          status: 'failed',
+          status: FairPlayLifecycleRunStatus.FAILED,
           finishedAt,
           failedStepCount: 1,
           errorSummary: { error: errorMessage(error) },
@@ -156,20 +174,26 @@ export class FairPlayLifecycleWorkerService {
     }
   }
 
-  private async acquireLease(input: { ownerId: string; runId: string; now: Date }): Promise<boolean> {
-    const leaseExpiresAt = new Date(input.now.getTime() + LIFECYCLE_LEASE_MILLISECONDS);
+  private async databaseNow(): Promise<Date> {
+    const rows = await this.prisma.$queryRaw<DatabaseTimeRow[]>`
+      SELECT CURRENT_TIMESTAMP AS "now";
+    `;
+    return rows[0].now;
+  }
+
+  private async acquireLease(input: { ownerId: string; runId: string }): Promise<boolean> {
     const rows = await this.prisma.$queryRaw<LeaseRow[]>`
       INSERT INTO "fair_play_lifecycle_leases"
         ("operationKey", "ownerId", "currentRunId", "leaseExpiresAt", "createdAt", "updatedAt")
       VALUES
-        (${LIFECYCLE_OPERATION_KEY}, ${input.ownerId}, ${input.runId}, ${leaseExpiresAt}, ${input.now}, ${input.now})
+        (${LIFECYCLE_OPERATION_KEY}, ${input.ownerId}, ${input.runId}, CURRENT_TIMESTAMP + INTERVAL '5 minutes', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       ON CONFLICT ("operationKey") DO UPDATE
       SET
         "ownerId" = EXCLUDED."ownerId",
         "currentRunId" = EXCLUDED."currentRunId",
         "leaseExpiresAt" = EXCLUDED."leaseExpiresAt",
-        "updatedAt" = EXCLUDED."updatedAt"
-      WHERE "fair_play_lifecycle_leases"."leaseExpiresAt" <= ${input.now}
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE "fair_play_lifecycle_leases"."leaseExpiresAt" <= CURRENT_TIMESTAMP
       RETURNING "operationKey";
     `;
     return rows.length === 1;
@@ -189,47 +213,54 @@ export class FairPlayLifecycleWorkerService {
         ownerId: input.ownerId,
         attemptId: input.attemptId,
         mode: modeFor(input.options),
-        status: 'lease_refused',
+        status: FairPlayLifecycleRunStatus.LEASE_REFUSED,
         startedAt: input.startedAt,
-        finishedAt: new Date(),
+        finishedAt: await this.databaseNow(),
         errorSummary: { code: 'LIFECYCLE_LEASE_HELD' },
       },
     });
   }
 
-  private async refreshLease(input: { ownerId: string; runId: string }) {
-    const refreshed = await this.prisma.fairPlayLifecycleLease.updateMany({
-      where: {
-        operationKey: LIFECYCLE_OPERATION_KEY,
-        ownerId: input.ownerId,
-        currentRunId: input.runId,
-      },
-      data: { leaseExpiresAt: new Date(Date.now() + LIFECYCLE_LEASE_MILLISECONDS) },
-    });
-    if (refreshed.count !== 1) {
-      throw new Error('Fair Play lifecycle lease was lost before the run completed.');
+  private async assertActiveLease(input: { ownerId: string; runId: string }) {
+    const rows = await this.prisma.$queryRaw<LeaseRow[]>`
+      UPDATE "fair_play_lifecycle_leases"
+      SET
+        "leaseExpiresAt" = CURRENT_TIMESTAMP + INTERVAL '5 minutes',
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE
+        "operationKey" = ${LIFECYCLE_OPERATION_KEY}
+        AND "ownerId" = ${input.ownerId}
+        AND "currentRunId" = ${input.runId}
+        AND "leaseExpiresAt" > CURRENT_TIMESTAMP
+      RETURNING "operationKey";
+    `;
+    if (rows.length !== 1) {
+      throw new Error('Fair Play lifecycle lease was lost before the next lifecycle step.');
     }
   }
 
   private async releaseLease(input: { ownerId: string; runId: string }) {
-    await this.prisma.fairPlayLifecycleLease.updateMany({
-      where: {
-        operationKey: LIFECYCLE_OPERATION_KEY,
-        ownerId: input.ownerId,
-        currentRunId: input.runId,
-      },
-      data: { leaseExpiresAt: new Date() },
-    });
+    await this.prisma.$queryRaw<LeaseRow[]>`
+      UPDATE "fair_play_lifecycle_leases"
+      SET
+        "leaseExpiresAt" = CURRENT_TIMESTAMP,
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE
+        "operationKey" = ${LIFECYCLE_OPERATION_KEY}
+        AND "ownerId" = ${input.ownerId}
+        AND "currentRunId" = ${input.runId}
+      RETURNING "operationKey";
+    `;
   }
 
-  private summarizeResults(results: LifecycleResult[]) {
+  private summarizeResults(results: LifecycleResult[], failedStepCount: number) {
     const failedSteps: Array<{ communityId: string; step: 'ingestion' | 'graduation'; error: string }> = [];
-    const communities = results.map((result) => {
+    const communities = results.slice(0, STORED_COMMUNITY_SUMMARY_LIMIT).map((result) => {
       for (const [step, stepResult] of Object.entries({
         ingestion: result.ingestion,
         graduation: result.graduation,
       }) as Array<['ingestion' | 'graduation', LifecycleStepResult]>) {
-        if (stepResult.status === 'failed') {
+        if (stepResult.status === 'failed' && failedSteps.length < STORED_FAILED_STEP_SUMMARY_LIMIT) {
           failedSteps.push({ communityId: result.communityId, step, error: stepResult.error });
         }
       }
@@ -239,7 +270,16 @@ export class FairPlayLifecycleWorkerService {
         graduation: result.graduation.status,
       };
     });
-    return { communities, failedSteps };
+    return {
+      communitySummaryLimit: STORED_COMMUNITY_SUMMARY_LIMIT,
+      failedStepSummaryLimit: STORED_FAILED_STEP_SUMMARY_LIMIT,
+      totalCommunityCount: results.length,
+      omittedCommunityCount: Math.max(0, results.length - communities.length),
+      totalFailedStepCount: failedStepCount,
+      omittedFailedStepCount: Math.max(0, failedStepCount - failedSteps.length),
+      communities,
+      failedSteps,
+    };
   }
 
   private async runStep(run: () => Promise<unknown>): Promise<LifecycleStepResult> {

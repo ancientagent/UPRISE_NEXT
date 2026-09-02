@@ -1,4 +1,14 @@
 -- Durable ownership and factual history for the internal, manually invoked Fair Play lifecycle seam.
+CREATE TYPE "FairPlayLifecycleRunMode" AS ENUM ('DRY_RUN', 'MUTATION');
+
+CREATE TYPE "FairPlayLifecycleRunStatus" AS ENUM (
+    'RUNNING',
+    'COMPLETED',
+    'PARTIAL_FAILURE',
+    'FAILED',
+    'LEASE_REFUSED'
+);
+
 CREATE TABLE "fair_play_lifecycle_leases" (
     "operationKey" TEXT NOT NULL,
     "ownerId" TEXT NOT NULL,
@@ -15,8 +25,8 @@ CREATE TABLE "fair_play_lifecycle_runs" (
     "operationKey" TEXT NOT NULL,
     "ownerId" TEXT NOT NULL,
     "attemptId" TEXT NOT NULL,
-    "mode" TEXT NOT NULL,
-    "status" TEXT NOT NULL,
+    "mode" "FairPlayLifecycleRunMode" NOT NULL,
+    "status" "FairPlayLifecycleRunStatus" NOT NULL,
     "startedAt" TIMESTAMP(3) NOT NULL,
     "finishedAt" TIMESTAMP(3),
     "activeCityCommunityCount" INTEGER NOT NULL DEFAULT 0,

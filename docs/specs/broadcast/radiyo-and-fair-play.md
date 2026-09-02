@@ -207,14 +207,21 @@ Owner references:
   until a later operational slice explicitly authorizes its runner.
 - Every direct internal lifecycle invocation must first acquire the single
   durable lease for `fair-play-city-tier-lifecycle`. Acquisition is atomic
-  across instances: a live lease is never overwritten, while an expired lease
-  may be reclaimed. The owner/run identity and expiry stay on that stable
-  operation key; a run that loses its lease must stop rather than continue.
+  across instances using PostgreSQL time: a live lease is never overwritten,
+  while an expired lease may be reclaimed. Ownership is conditionally refreshed
+  before every ingestion and graduation call, never revives an expired lease,
+  and stops the run before a later lifecycle mutation if ownership is lost. The
+  owner/run identity and expiry stay on that stable operation key.
 - Every acquired invocation records its owner/attempt identity, dry-run versus
   mutation mode, start/end, terminal status, active-city count, failed-step
-  count, and bounded structured result/error summary. Step failures remain
-  isolated per city so later cities are still evaluated. A process death leaves
-  the run record for observation and the lease reclaimable only after expiry.
+  count, and bounded structured result/error summary. Persisted summary detail
+  is capped at 25 communities and 25 failed steps while the aggregate counts
+  retain the full run totals. Step failures remain isolated per city so later
+  cities are still evaluated. A process death leaves the run record for
+  observation and the lease reclaimable only after expiry.
+- Persisted modes are constrained to `DRY_RUN` or `MUTATION`; terminal run
+  statuses are constrained to `COMPLETED`, `PARTIAL_FAILURE`, `FAILED`, or
+  `LEASE_REFUSED` (with `RUNNING` only while an acquired run is open).
 - An invocation refused by a live lease records a terminal `lease_refused`
   attempt without altering the current owner/run identity.
 - This durable manual capability must not run recurrence aggregation, create a
