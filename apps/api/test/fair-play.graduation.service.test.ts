@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { RotationPool } from '@prisma/client';
 import { FairPlayGraduationService } from '../src/fair-play/fair-play-graduation.service';
+import { FairPlayLifecycleLeaseLostError } from '../src/fair-play/fair-play-lifecycle-lease';
 
 const COMMUNITY = {
   id: 'community-austin-punk',
@@ -22,6 +23,7 @@ function createEntry(overrides: Record<string, any> = {}) {
 
 function createClient(overrides: Record<string, any> = {}) {
   return {
+    $queryRaw: jest.fn().mockResolvedValue([{ operationKey: 'fair-play-city-tier-lifecycle' }]),
     community: {
       findUnique: jest.fn().mockResolvedValue(COMMUNITY),
       ...(overrides.community ?? {}),
@@ -188,6 +190,38 @@ describe('FairPlayGraduationService', () => {
     expect((tx as any).trackVote).toBeUndefined();
     expect((tx as any).releaseDeckSchedule).toBeUndefined();
     expect((tx as any).track).toBeUndefined();
+  });
+
+  it('keeps direct manual graduation callable without an internal lifecycle lease', async () => {
+    await service.runGraduation({
+      communityId: COMMUNITY.id,
+      asOf: '2026-07-11',
+      dryRun: false,
+    });
+
+    expect(tx.$queryRaw).not.toHaveBeenCalled();
+    expect(tx.rotationEntry.updateMany).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not mutate graduation when the internal lease is absent, expired, or reclaimed in its transaction', async () => {
+    tx.$queryRaw.mockResolvedValueOnce([]);
+
+    await expect(
+      service.runGraduation({
+        communityId: COMMUNITY.id,
+        asOf: '2026-07-11',
+        dryRun: false,
+        lifecycleLease: { ownerId: 'worker-a', runId: 'run-a' },
+      }),
+    ).rejects.toThrow(FairPlayLifecycleLeaseLostError);
+
+    expect(tx.rotationEntry.updateMany).not.toHaveBeenCalled();
+    expect(tx.$queryRaw).toHaveBeenCalledWith(
+      expect.arrayContaining([expect.stringContaining('"leaseExpiresAt" > CURRENT_TIMESTAMP')]),
+      'fair-play-city-tier-lifecycle',
+      'worker-a',
+      'run-a',
+    );
   });
 
   it('reports a deterministic skip when a concurrent run changes the entry first', async () => {

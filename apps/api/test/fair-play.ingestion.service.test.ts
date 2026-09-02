@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { RotationPool } from '@prisma/client';
 import { FairPlayIngestionService } from '../src/fair-play/fair-play-ingestion.service';
+import { FairPlayLifecycleLeaseLostError } from '../src/fair-play/fair-play-lifecycle-lease';
 
 const COMMUNITY = {
   id: 'community-austin-punk',
@@ -67,6 +68,7 @@ function createPrismaMock() {
 
 function createPrismaMockTransaction(overrides: Record<string, any> = {}) {
   return {
+    $queryRaw: jest.fn().mockResolvedValue([{ operationKey: 'fair-play-city-tier-lifecycle' }]),
     community: {
       findUnique: jest.fn().mockResolvedValue(COMMUNITY),
       ...(overrides.community ?? {}),
@@ -172,6 +174,39 @@ describe('FairPlayIngestionService', () => {
     });
     expect(tx.fairPlayConfig.findUnique).not.toHaveBeenCalled();
     expect(tx.fairPlayConfig.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('keeps direct manual ingestion callable without an internal lifecycle lease', async () => {
+    await service.ingestDueSchedules({
+      communityId: COMMUNITY.id,
+      asOf: '2026-07-08',
+      dryRun: false,
+    });
+
+    expect(tx.$queryRaw).not.toHaveBeenCalled();
+    expect(tx.rotationEntry.create).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not mutate ingestion when the internal lease is absent, expired, or reclaimed in its transaction', async () => {
+    tx.$queryRaw.mockResolvedValueOnce([]);
+
+    await expect(
+      service.ingestDueSchedules({
+        communityId: COMMUNITY.id,
+        asOf: '2026-07-08',
+        dryRun: false,
+        lifecycleLease: { ownerId: 'worker-a', runId: 'run-a' },
+      }),
+    ).rejects.toThrow(FairPlayLifecycleLeaseLostError);
+
+    expect(tx.rotationEntry.create).not.toHaveBeenCalled();
+    expect(tx.releaseDeckSchedule.update).not.toHaveBeenCalled();
+    expect(tx.$queryRaw).toHaveBeenCalledWith(
+      expect.arrayContaining([expect.stringContaining('"leaseExpiresAt" > CURRENT_TIMESTAMP')]),
+      'fair-play-city-tier-lifecycle',
+      'worker-a',
+      'run-a',
+    );
   });
 
   it('uses artistBandId for active source guard instead of display artist name', async () => {
