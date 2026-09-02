@@ -205,11 +205,20 @@ Owner references:
   orchestration seam: it may invoke the existing ingestion and graduation
   services for active city-tier communities, but it must remain untriggered
   until a later operational slice explicitly authorizes its runner.
-- The bounded worker must not run recurrence aggregation, create a production
-  cron/queue, or treat a process-local overlap flag as a durable
-  cross-instance lease. Durable run/lease persistence, retry observability,
-  and deployment ownership require a separate approved schema/operations
-  slice.
+- Every direct internal lifecycle invocation must first acquire the single
+  durable lease for `fair-play-city-tier-lifecycle`. Acquisition is atomic
+  across instances: a live lease is never overwritten, while an expired lease
+  may be reclaimed. The owner/run identity and expiry stay on that stable
+  operation key; a run that loses its lease must stop rather than continue.
+- Every acquired invocation records its owner/attempt identity, dry-run versus
+  mutation mode, start/end, terminal status, active-city count, failed-step
+  count, and bounded structured result/error summary. Step failures remain
+  isolated per city so later cities are still evaluated. A process death leaves
+  the run record for observation and the lease reclaimable only after expiry.
+- This durable manual capability must not run recurrence aggregation, create a
+  production cron/queue, add a runner/endpoint, or authorize automatic retry.
+  Runner activation, recurrence scheduling, retry policy, and deployment
+  ownership remain separate approved operational decisions.
 - Proxy-to-natural song, vote, and tier behavior follows `Proxy Cutover And Lifecycle Join Points`.
 
 ### Planned
@@ -242,8 +251,8 @@ Owner references:
 - Automated production policy for cross-state proxy advancement identity.
 - Production tuning for Release Deck scheduling capacity values and
   scheduler/job wiring.
-- Durable lifecycle-run lease, retry, and deployment policy for production
-  automation.
+- Automatic lifecycle-run retry, runner activation, and deployment policy for
+  production automation.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

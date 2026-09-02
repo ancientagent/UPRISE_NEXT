@@ -33,7 +33,7 @@ as implementation evidence.
 | Onboarding → Listener Profile | Design package baseline plus reduced-motion source parity; browser proof remains unverified | Run independent browser QA against `docs/screen-packages/listener-profile/` at the implementation commit before accepting the first-session slice as complete. |
 | Landing Page + Launch Entry readiness | Blocked on required inputs | Marketing must provide an approved landing/content brief and the Manager must record disposition before design continuation or implementation. The existing prototype remains exploration evidence. |
 | Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
-| City-tier RADIYO lifecycle worker | Complete (Slice A) | Internal untriggered worker now orchestrates existing ingestion/graduation per active city-tier community. Fresh HY3 review passed. Defer runner activation, recurrence automation, and durable lease/run persistence. |
+| City-tier RADIYO lifecycle worker | Durable manual capability implemented; still untriggered | Every direct internal run now uses a cross-instance durable lease and factual run record while orchestrating existing ingestion/graduation per active city-tier community. Defer runner activation, automatic retry, recurrence automation, and deployment. |
 
 ## Preserved Workspaces
 
@@ -51,7 +51,7 @@ as implementation evidence.
   Landing Page + Launch Entry package.
 - Manager disposition is required after that brief exists and before design
   continuation or implementation.
-- RADIYO automatic polling, recurrence aggregation, production deployment, and durable run/lease persistence remain separate schema/operations decisions.
+- RADIYO automatic polling, recurrence aggregation, automatic retry, and production deployment remain separate operational decisions. The durable manual run/lease capability is implemented but has no trigger.
 - Preserved UX workspaces remain outside the current scope.
 
 ## Next Signal
@@ -59,8 +59,8 @@ as implementation evidence.
 1. Complete independent browser QA for the Listener Profile package and reduced-motion parity at the implementation commit; a dedicated authorized UPRISE browser target is required. Do not treat source tests/typecheck as browser proof.
 2. Separately, Marketing supplies an approved landing/content brief through the
    Manager before any Landing design continuation or implementation.
-3. Retain Slice A as an untriggered internal seam; do not activate a runner
-   without a durable lease/run design and explicit approval.
+3. Retain the durable manual lifecycle seam as untriggered; do not activate a
+   runner without explicit approval for its operational model.
 4. Keep the preserved UX references and unresolved Prisma draft untouched until
    a dedicated review assigns them.
 
