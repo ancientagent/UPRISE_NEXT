@@ -58,7 +58,15 @@ describe('FairPlayLifecycleWorkerService', () => {
         message: 'A Fair Play lifecycle run currently owns the durable lease.',
       },
     });
-    expect(prisma.fairPlayLifecycleRun.create).not.toHaveBeenCalled();
+    expect(prisma.fairPlayLifecycleRun.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        operationKey: 'fair-play-city-tier-lifecycle',
+        mode: 'dry_run',
+        status: 'lease_refused',
+        finishedAt: expect.any(Date),
+        errorSummary: { code: 'LIFECYCLE_LEASE_HELD' },
+      }),
+    });
     expect(prisma.community.findMany).not.toHaveBeenCalled();
     expect(ingestionService.ingestDueSchedules).not.toHaveBeenCalled();
     expect(graduationService.runGraduation).not.toHaveBeenCalled();

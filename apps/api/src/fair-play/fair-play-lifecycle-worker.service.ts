@@ -55,6 +55,7 @@ export class FairPlayLifecycleWorkerService {
     const acquired = await this.acquireLease({ ownerId, runId, now: startedAt });
 
     if (!acquired) {
+      await this.recordLeaseRefusal({ ownerId, attemptId, runId, startedAt, options });
       return {
         success: false as const,
         error: {
@@ -172,6 +173,28 @@ export class FairPlayLifecycleWorkerService {
       RETURNING "operationKey";
     `;
     return rows.length === 1;
+  }
+
+  private async recordLeaseRefusal(input: {
+    ownerId: string;
+    attemptId: string;
+    runId: string;
+    startedAt: Date;
+    options: LifecycleRunOptions;
+  }) {
+    await this.prisma.fairPlayLifecycleRun.create({
+      data: {
+        id: input.runId,
+        operationKey: LIFECYCLE_OPERATION_KEY,
+        ownerId: input.ownerId,
+        attemptId: input.attemptId,
+        mode: modeFor(input.options),
+        status: 'lease_refused',
+        startedAt: input.startedAt,
+        finishedAt: new Date(),
+        errorSummary: { code: 'LIFECYCLE_LEASE_HELD' },
+      },
+    });
   }
 
   private async refreshLease(input: { ownerId: string; runId: string }) {

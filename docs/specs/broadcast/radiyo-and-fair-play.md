@@ -215,6 +215,8 @@ Owner references:
   count, and bounded structured result/error summary. Step failures remain
   isolated per city so later cities are still evaluated. A process death leaves
   the run record for observation and the lease reclaimable only after expiry.
+- An invocation refused by a live lease records a terminal `lease_refused`
+  attempt without altering the current owner/run identity.
 - This durable manual capability must not run recurrence aggregation, create a
   production cron/queue, add a runner/endpoint, or authorize automatic retry.
   Runner activation, recurrence scheduling, retry policy, and deployment
