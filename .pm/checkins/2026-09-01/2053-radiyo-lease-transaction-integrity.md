@@ -5,7 +5,7 @@
 **Agent/Thread:** Codex CLI executor / radiyo_durable_lifecycle
 **Area:** Fair Play / RADIYO internal lifecycle worker
 **Task:** Final atomic run/lease and mutation-boundary integrity correction
-**Branch/Commit:** `fable/handoff` / pending closeout commit
+**Branch/Commit:** `fable/handoff` / `0be3ea33` (check-in evidence amendment pending)
 
 ## Result
 
@@ -19,7 +19,7 @@ Made lifecycle attempt creation and durable lease claiming one database transact
 
 ## Status
 
-Implemented and validated locally; commit/push closeout pending.
+Implemented and validated locally; push closeout pending.
 
 ## Changed
 
