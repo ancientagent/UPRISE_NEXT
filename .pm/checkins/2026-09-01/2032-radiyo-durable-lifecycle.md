@@ -5,11 +5,11 @@
 **Agent/Thread:** Codex CLI executor / radiyo_durable_lifecycle
 **Area:** Fair Play / RADIYO internal lifecycle worker
 **Task:** Durable, untriggered lifecycle lease and run-history foundation
-**Branch/Commit:** `fable/handoff` / `f624401d` (amended closeout commit pending)
+**Branch/Commit:** `fable/handoff` / `f624401d`, `50f1d663` (check-in evidence amendment pending)
 
 ## Result
 
-Implemented durable atomic lifecycle ownership and factual run history for direct internal worker calls. The worker remains untriggered and invokes only the existing ingestion and graduation services.
+Implemented durable atomic lifecycle ownership and factual run history for direct internal worker calls, including terminal records for lease-refused attempts. The worker remains untriggered and invokes only the existing ingestion and graduation services.
 
 ## Evidence
 
@@ -24,7 +24,7 @@ Implemented and validated locally; push closeout pending.
 ## Changed
 
 - Added durable lease/run Prisma models and migration.
-- Added atomic expired-lease reclamation, release on closeout, bounded result/error summaries, and lost-lease stopping behavior.
+- Added atomic expired-lease reclamation, lease-refusal records, release on closeout, bounded result/error summaries, and lost-lease stopping behavior.
 - Recorded the manual/no-trigger boundary in the Fair Play owner spec and active operations snapshot.
 
 ## Still Open
