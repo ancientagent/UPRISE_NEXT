@@ -4,6 +4,7 @@ import {
   ProjectRegistrationSchema,
   RegistrarCodeRedeemSchema,
   RegistrarCodeVerifySchema,
+  SectArtistBandMembershipSchema,
   SectMotionRegistrationSchema,
 } from '../src/registrar/dto/registrar.dto';
 
@@ -100,6 +101,16 @@ describe('Registrar DTO schemas', () => {
       sceneId: '11111111-1111-1111-1111-111111111111',
       sectName: 'Noise Art',
     });
+  });
+
+  it('accepts only canonical Artist/Band identity for Sect membership', () => {
+    const parsed = SectArtistBandMembershipSchema.safeParse({
+      artistBandId: '11111111-1111-1111-1111-111111111111',
+      sectTagId: 'legacy-tag-1',
+      trackId: 'song-1',
+    });
+
+    expect(parsed.success).toBe(false);
   });
 
   it('rejects whitespace-only artist/band member identity fields', () => {

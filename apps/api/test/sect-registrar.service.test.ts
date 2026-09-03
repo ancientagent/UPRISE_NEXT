@@ -26,7 +26,9 @@ describe('SectRegistrarService', () => {
     communityMember: { findMany: jest.fn() },
     user: { findUnique: jest.fn() },
     registrarEntry: { create: jest.fn(), findMany: jest.fn(), findUnique: jest.fn() },
-    sect: { create: jest.fn() },
+    sect: { create: jest.fn(), findUnique: jest.fn() },
+    artistBand: { findUnique: jest.fn() },
+    sectArtistBandMembership: { findUnique: jest.fn(), create: jest.fn() },
     $transaction: jest.fn(),
   };
   const resolver = { resolveDefaultMusicCommunity: jest.fn() };
@@ -54,6 +56,23 @@ describe('SectRegistrarService', () => {
       parentCommunityId: scene.id,
       name: 'Noise Art',
       slug: 'noise-art',
+    });
+    prisma.sect.findUnique.mockResolvedValue({ id: 'sect-1', parentCommunity: scene });
+    prisma.artistBand.findUnique.mockResolvedValue({
+      id: 'artist-band-1',
+      createdById: 'owner-1',
+      registrarEntryRef: 'registrar-entry-1',
+      sourceOriginCity: 'Austin',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
+    });
+    prisma.sectArtistBandMembership.findUnique.mockResolvedValue(null);
+    prisma.sectArtistBandMembership.create.mockResolvedValue({
+      id: 'membership-1',
+      sectId: 'sect-1',
+      artistBandId: 'artist-band-1',
+      createdById: 'owner-1',
+      createdAt,
     });
     service = new SectRegistrarService(prisma as any, resolver as any);
   });
@@ -228,6 +247,117 @@ describe('SectRegistrarService', () => {
       service.submitSectRequest('listener-1', { sceneId: scene.id, sectName: 'Noise Art' }),
     ).rejects.toBeInstanceOf(ForbiddenException);
     expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('records one explicit canonical Artist/Band membership for the matching local source owner', async () => {
+    const result = await service.registerArtistBandMembership('owner-1', 'sect-1', {
+      artistBandId: 'artist-band-1',
+    });
+
+    expect(prisma.artistBand.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'artist-band-1' },
+        select: expect.objectContaining({
+          createdById: true,
+          registrarEntryRef: true,
+          sourceOriginCity: true,
+          sourceOriginState: true,
+          sourceOriginMusicCommunity: true,
+        }),
+      }),
+    );
+    expect(prisma.sectArtistBandMembership.create).toHaveBeenCalledWith({
+      data: { sectId: 'sect-1', artistBandId: 'artist-band-1', createdById: 'owner-1' },
+      select: { id: true, sectId: true, artistBandId: true, createdById: true, createdAt: true },
+    });
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'membership-1',
+        sectId: 'sect-1',
+        artistBandId: 'artist-band-1',
+        createdById: 'owner-1',
+        created: true,
+      }),
+    );
+  });
+
+  it('rejects a caller who is not the canonical Artist/Band source owner', async () => {
+    await expect(
+      service.registerArtistBandMembership('not-owner', 'sect-1', { artistBandId: 'artist-band-1' }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    expect(prisma.sectArtistBandMembership.create).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['different city', { sourceOriginCity: 'Seattle' }],
+    ['different state', { sourceOriginState: 'WA' }],
+    ['different music community', { sourceOriginMusicCommunity: 'noise' }],
+    ['normalized-only city spelling', { sourceOriginCity: ' Austin ' }],
+    ['normalized-only community casing', { sourceOriginMusicCommunity: 'Punk' }],
+    ['missing legacy origin', { sourceOriginCity: null }],
+  ])('rejects %s instead of substituting proxy, tag, or tuned context', async (_label, sourceOrigin) => {
+    prisma.artistBand.findUnique.mockResolvedValue({
+      id: 'artist-band-1',
+      createdById: 'owner-1',
+      registrarEntryRef: 'registrar-entry-1',
+      sourceOriginCity: 'Austin',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
+      ...sourceOrigin,
+    });
+
+    await expect(
+      service.registerArtistBandMembership('owner-1', 'sect-1', { artistBandId: 'artist-band-1' }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    expect(prisma.sectArtistBandMembership.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects a canonical record that was not materialized from Registrar registration', async () => {
+    prisma.artistBand.findUnique.mockResolvedValue({
+      id: 'artist-band-1',
+      createdById: 'owner-1',
+      registrarEntryRef: null,
+      sourceOriginCity: 'Austin',
+      sourceOriginState: 'TX',
+      sourceOriginMusicCommunity: 'punk',
+    });
+
+    await expect(
+      service.registerArtistBandMembership('owner-1', 'sect-1', { artistBandId: 'artist-band-1' }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    expect(prisma.sectArtistBandMembership.create).not.toHaveBeenCalled();
+  });
+
+  it('returns an existing local membership without duplicate creation or capability change', async () => {
+    prisma.sectArtistBandMembership.findUnique.mockResolvedValue({
+      id: 'membership-1',
+      sectId: 'sect-1',
+      artistBandId: 'artist-band-1',
+      createdById: 'owner-1',
+      createdAt,
+    });
+
+    await expect(
+      service.registerArtistBandMembership('owner-1', 'sect-1', { artistBandId: 'artist-band-1' }),
+    ).resolves.toEqual(expect.objectContaining({ id: 'membership-1', created: false }));
+    expect(prisma.sectArtistBandMembership.create).not.toHaveBeenCalled();
+  });
+
+  it('returns the concurrent winner after a unique membership race', async () => {
+    prisma.sectArtistBandMembership.create.mockRejectedValueOnce({ code: 'P2002' });
+    prisma.sectArtistBandMembership.findUnique
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'membership-concurrent',
+        sectId: 'sect-1',
+        artistBandId: 'artist-band-1',
+        createdById: 'owner-1',
+        createdAt,
+      });
+
+    await expect(
+      service.registerArtistBandMembership('owner-1', 'sect-1', { artistBandId: 'artist-band-1' }),
+    ).resolves.toEqual(expect.objectContaining({ id: 'membership-concurrent', created: false }));
   });
 
   it('normalizes legacy empty request rows without inventing identity', async () => {

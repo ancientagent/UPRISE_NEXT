@@ -7,7 +7,10 @@ import {
 import { createHash } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { MusicCommunityPreferenceResolverService } from '../users/music-community-preference-resolver.service';
-import type { SectMotionRegistrationDto } from './dto/registrar.dto';
+import type {
+  SectArtistBandMembershipDto,
+  SectMotionRegistrationDto,
+} from './dto/registrar.dto';
 
 const SECT_SLUG_MAX_LENGTH = 120;
 
@@ -56,6 +59,10 @@ function mapSectRequest(entry: any) {
     createdAt: entry.createdAt,
     updatedAt: entry.updatedAt,
   };
+}
+
+function normalizeAuthorityPart(value: string | null | undefined) {
+  return (value ?? '').trim().toLowerCase();
 }
 
 @Injectable()
@@ -109,8 +116,6 @@ export class SectRegistrarService {
       throw new ForbiddenException('Registrar access requires an established Home Scene');
     }
 
-    const normalizeAuthorityPart = (value: string | null | undefined) =>
-      (value ?? '').trim().toLowerCase();
     const sceneCommunity = normalizeAuthorityPart(scene.musicCommunity);
     const defaultCommunity = normalizeAuthorityPart(homeCommunity);
     const isAnchoredHomeScene = Boolean(
@@ -194,6 +199,84 @@ export class SectRegistrarService {
       ) {
         throw new ConflictException('A Sect with this name already exists in your Home Scene');
       }
+      throw error;
+    }
+  }
+
+  async registerArtistBandMembership(
+    userId: string,
+    sectId: string,
+    dto: SectArtistBandMembershipDto,
+  ) {
+    const [sect, artistBand] = await Promise.all([
+      this.prisma.sect.findUnique({
+        where: { id: sectId },
+        select: {
+          id: true,
+          parentCommunity: {
+            select: { city: true, state: true, musicCommunity: true, tier: true },
+          },
+        },
+      }),
+      this.prisma.artistBand.findUnique({
+        where: { id: dto.artistBandId },
+        select: {
+          id: true,
+          createdById: true,
+          registrarEntryRef: true,
+          sourceOriginCity: true,
+          sourceOriginState: true,
+          sourceOriginMusicCommunity: true,
+        },
+      }),
+    ]);
+
+    if (!sect) throw new NotFoundException('Sect not found');
+    if (!artistBand) throw new NotFoundException('Artist/Band source not found');
+    if (artistBand.createdById !== userId) {
+      throw new ForbiddenException('Only the registered Artist/Band source owner can register Sect membership');
+    }
+    if (!artistBand.registrarEntryRef) {
+      throw new ForbiddenException('Sect membership requires a Registrar-materialized Artist/Band source');
+    }
+
+    const parentCommunity = sect.parentCommunity;
+    const hasExactLocalOrigin = Boolean(
+      parentCommunity?.tier === 'city' &&
+        parentCommunity.city &&
+        parentCommunity.state &&
+        parentCommunity.musicCommunity &&
+        artistBand.sourceOriginCity &&
+        artistBand.sourceOriginState &&
+        artistBand.sourceOriginMusicCommunity &&
+        artistBand.sourceOriginCity === parentCommunity.city &&
+        artistBand.sourceOriginState === parentCommunity.state &&
+        artistBand.sourceOriginMusicCommunity === parentCommunity.musicCommunity,
+    );
+
+    if (!hasExactLocalOrigin) {
+      throw new ForbiddenException('Artist/Band source origin must match the Sect parent Home Scene');
+    }
+
+    const existing = await this.prisma.sectArtistBandMembership.findUnique({
+      where: { sectId_artistBandId: { sectId, artistBandId: artistBand.id } },
+      select: { id: true, sectId: true, artistBandId: true, createdById: true, createdAt: true },
+    });
+    if (existing) return { ...existing, created: false };
+
+    try {
+      const membership = await this.prisma.sectArtistBandMembership.create({
+        data: { sectId, artistBandId: artistBand.id, createdById: userId },
+        select: { id: true, sectId: true, artistBandId: true, createdById: true, createdAt: true },
+      });
+      return { ...membership, created: true };
+    } catch (error: any) {
+      if (error?.code !== 'P2002') throw error;
+      const concurrent = await this.prisma.sectArtistBandMembership.findUnique({
+        where: { sectId_artistBandId: { sectId, artistBandId: artistBand.id } },
+        select: { id: true, sectId: true, artistBandId: true, createdById: true, createdAt: true },
+      });
+      if (concurrent) return { ...concurrent, created: false };
       throw error;
     }
   }

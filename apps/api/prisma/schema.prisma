@@ -53,6 +53,7 @@ model User {
   trackVotes                  TrackVote[]
   createdArtistBands          ArtistBand[]
   artistBandMembers           ArtistBandMember[]
+  sectArtistBandMemberships   SectArtistBandMembership[]
   registrarEntries            RegistrarEntry[]
   registrarArtistMemberships  RegistrarArtistMember[]   @relation("RegistrarExistingUser")
   registrarClaimedMemberships RegistrarArtistMember[]   @relation("RegistrarClaimedUser")
@@ -111,6 +112,7 @@ model ArtistBand {
   tracks           Track[]
   events           Event[]
   releaseDeckSchedules ReleaseDeckSchedule[]
+  sectMemberships      SectArtistBandMembership[]
 
   @@index([homeSceneId])
   @@index([sourceOriginCity, sourceOriginState, sourceOriginMusicCommunity])
@@ -188,9 +190,28 @@ model Sect {
 
   parentCommunity       Community       @relation(fields: [parentCommunityId], references: [id], onDelete: Restrict)
   requestRegistrarEntry RegistrarEntry? @relation(fields: [requestRegistrarEntryId], references: [id], onDelete: SetNull)
+  artistBandMemberships SectArtistBandMembership[]
 
   @@unique([parentCommunityId, slug])
   @@map("sects")
+}
+
+model SectArtistBandMembership {
+  id           String   @id @default(uuid())
+  sectId       String
+  artistBandId String
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sect       Sect       @relation(fields: [sectId], references: [id], onDelete: Cascade)
+  artistBand ArtistBand @relation(fields: [artistBandId], references: [id], onDelete: Cascade)
+  createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([sectId, artistBandId])
+  @@index([artistBandId])
+  @@index([createdById])
+  @@map("sect_artist_band_memberships")
 }
 
 model UserSavedScene {
