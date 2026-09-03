@@ -83,6 +83,62 @@ describe('PlacesService test location provider', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
+  it('filters fake city suggestions by either a state name or USPS abbreviation', async () => {
+    process.env.UPRISE_LOCATION_PROVIDER = 'fake';
+    delete process.env.GOOGLE_PLACES_API_KEY;
+
+    const service = new PlacesService();
+
+    const byName = await service.autocompleteCities('aus', 'us', 'Texas');
+    const byAbbreviation = await service.autocompleteCities('aus', 'us', 'TX');
+
+    expect(byName).toEqual([{ description: 'Austin, Texas, USA', placeId: 'fake-city-austin-texas' }]);
+    expect(byAbbreviation).toEqual(byName);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('uses the local Census place artifact without a Google key, with stable capped ordering', async () => {
+    delete process.env.UPRISE_LOCATION_PROVIDER;
+    delete process.env.GOOGLE_PLACES_API_KEY;
+
+    const service = new PlacesService();
+
+    const byName = await service.autocompleteCities('Austin', 'us', 'Texas');
+    const byAbbreviation = await service.autocompleteCities('Austin', 'us', 'TX');
+    const broadFirst = await service.autocompleteCities('a', 'us', 'TX');
+    const broadSecond = await service.autocompleteCities('a', 'us', 'TX');
+
+    expect(byName).toEqual(byAbbreviation);
+    expect(byName).toContainEqual({
+      description: 'Austin, Texas, USA',
+      placeId: expect.stringMatching(/^census-gazetteer-2024-place-\d+$/),
+    });
+    expect(broadFirst).toEqual(broadSecond);
+    expect(broadFirst).toHaveLength(8);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('keeps the configured Google autocomplete provider behavior unchanged', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = 'test-key';
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: 'OK',
+        predictions: [{ description: 'Austin, TX, USA', place_id: 'google-austin' }],
+      }),
+    } as any);
+
+    const service = new PlacesService();
+
+    await expect(service.autocompleteCities('Austin', 'us', 'Texas')).resolves.toEqual([
+      { description: 'Austin, TX, USA', placeId: 'google-austin' },
+    ]);
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('https://maps.googleapis.com/maps/api/place/autocomplete/json?'),
+    );
+    expect(global.fetch).toHaveBeenCalledWith(expect.not.stringContaining('state=Texas'));
+  });
+
   it('geocodes supported fake cities without calling Google', async () => {
     process.env.UPRISE_LOCATION_PROVIDER = 'fake';
     process.env.GOOGLE_PLACES_API_KEY = 'should-not-be-used';

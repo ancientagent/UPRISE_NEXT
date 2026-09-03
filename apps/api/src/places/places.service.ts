@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import localUsPlaces from './data/us-census-2024-places.json';
 
 export interface PlaceSuggestion {
   description: string;
@@ -21,6 +22,76 @@ export interface CityGeocodeResult {
 }
 
 const FAKE_LOCATION_PROVIDER = 'fake';
+
+const LOCAL_US_PLACE_SUGGESTION_LIMIT = 8;
+
+const US_STATE_NAMES_BY_ABBREVIATION: Record<string, string> = {
+  AL: 'Alabama',
+  AK: 'Alaska',
+  AZ: 'Arizona',
+  AR: 'Arkansas',
+  CA: 'California',
+  CO: 'Colorado',
+  CT: 'Connecticut',
+  DE: 'Delaware',
+  FL: 'Florida',
+  GA: 'Georgia',
+  HI: 'Hawaii',
+  ID: 'Idaho',
+  IL: 'Illinois',
+  IN: 'Indiana',
+  IA: 'Iowa',
+  KS: 'Kansas',
+  KY: 'Kentucky',
+  LA: 'Louisiana',
+  ME: 'Maine',
+  MD: 'Maryland',
+  MA: 'Massachusetts',
+  MI: 'Michigan',
+  MN: 'Minnesota',
+  MS: 'Mississippi',
+  MO: 'Missouri',
+  MT: 'Montana',
+  NE: 'Nebraska',
+  NV: 'Nevada',
+  NH: 'New Hampshire',
+  NJ: 'New Jersey',
+  NM: 'New Mexico',
+  NY: 'New York',
+  NC: 'North Carolina',
+  ND: 'North Dakota',
+  OH: 'Ohio',
+  OK: 'Oklahoma',
+  OR: 'Oregon',
+  PA: 'Pennsylvania',
+  RI: 'Rhode Island',
+  SC: 'South Carolina',
+  SD: 'South Dakota',
+  TN: 'Tennessee',
+  TX: 'Texas',
+  UT: 'Utah',
+  VT: 'Vermont',
+  VA: 'Virginia',
+  WA: 'Washington',
+  WV: 'West Virginia',
+  WI: 'Wisconsin',
+  WY: 'Wyoming',
+  DC: 'District of Columbia',
+  AS: 'American Samoa',
+  GU: 'Guam',
+  MP: 'Northern Mariana Islands',
+  PR: 'Puerto Rico',
+  VI: 'U.S. Virgin Islands',
+};
+
+const US_STATE_ABBREVIATIONS_BY_NORMALIZED_NAME = Object.fromEntries(
+  Object.entries(US_STATE_NAMES_BY_ABBREVIATION).map(([abbreviation, name]) => [
+    normalizeStateValue(name),
+    abbreviation,
+  ]),
+);
+
+const LOCAL_US_PLACES = localUsPlaces.places as [string, string][];
 
 const FAKE_STATE_ALIASES: Record<string, string> = {
   ca: 'california',
@@ -100,8 +171,51 @@ function formatFakePlaceId(city: string, state: string): string {
 }
 
 function normalizeFakeState(value: string): string {
-  const normalized = value.trim().toLowerCase();
+  const normalized = normalizeStateValue(value);
   return FAKE_STATE_ALIASES[normalized] ?? normalized;
+}
+
+function normalizeStateValue(value: string): string {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ');
+}
+
+function normalizeUsStateAbbreviation(value: string | undefined): string | null {
+  const normalized = normalizeStateValue(value ?? '');
+  if (!normalized) return null;
+
+  const compact = normalized.replace(/\s+/g, '').toUpperCase();
+  if (US_STATE_NAMES_BY_ABBREVIATION[compact]) return compact;
+
+  return US_STATE_ABBREVIATIONS_BY_NORMALIZED_NAME[normalized] ?? null;
+}
+
+function matchesStateFilter(stateAbbreviation: string, filter: string | undefined): boolean {
+  if (!filter?.trim()) return true;
+  return normalizeUsStateAbbreviation(filter) === stateAbbreviation;
+}
+
+function autocompleteLocalUsPlaces(input: string, state?: string): PlaceSuggestion[] {
+  const normalizedInput = input.trim().toLowerCase();
+  const stateFilter = state?.trim();
+  if (!normalizedInput || (stateFilter && !normalizeUsStateAbbreviation(stateFilter))) {
+    return [];
+  }
+
+  return LOCAL_US_PLACES.flatMap(([city, stateAbbreviation], index) => {
+    if (
+      !city.toLowerCase().includes(normalizedInput) ||
+      !matchesStateFilter(stateAbbreviation, stateFilter)
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        description: `${city}, ${US_STATE_NAMES_BY_ABBREVIATION[stateAbbreviation]}, USA`,
+        placeId: `census-gazetteer-2024-place-${index}`,
+      },
+    ];
+  }).slice(0, LOCAL_US_PLACE_SUGGESTION_LIMIT);
 }
 
 function haversineMeters(
@@ -201,22 +315,31 @@ export class PlacesService {
     };
   }
 
-  async autocompleteCities(input: string, country = 'us'): Promise<PlaceSuggestion[]> {
+  async autocompleteCities(input: string, country = 'us', state?: string): Promise<PlaceSuggestion[]> {
     if (isFakeLocationProvider()) {
       const normalizedInput = input.trim().toLowerCase();
       if (!normalizedInput) return [];
 
-      return FAKE_CITY_FIXTURES.filter((fixture) =>
-        fixture.aliases.some((alias) => alias.includes(normalizedInput))
+      return FAKE_CITY_FIXTURES.filter(
+        (fixture) =>
+          fixture.aliases.some((alias) => alias.includes(normalizedInput)) &&
+          matchesStateFilter(
+            normalizeUsStateAbbreviation(fixture.state) ?? '',
+            state,
+          ),
       ).map((fixture) => ({
-        description: `${fixture.city}, ${fixture.state}, USA`,
-        placeId: formatFakePlaceId(fixture.city, fixture.state),
-      }));
+          description: `${fixture.city}, ${fixture.state}, USA`,
+          placeId: formatFakePlaceId(fixture.city, fixture.state),
+        }));
     }
 
     const apiKey = process.env.GOOGLE_PLACES_API_KEY;
-    if (!apiKey || !input.trim()) {
+    if (!input.trim()) {
       return [];
+    }
+
+    if (!apiKey) {
+      return country.trim().toLowerCase() === 'us' ? autocompleteLocalUsPlaces(input, state) : [];
     }
 
     const params = new URLSearchParams({

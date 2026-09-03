@@ -19,6 +19,7 @@ Defines the onboarding flow for selecting a Home Scene and deterministic assignm
 
 - Onboarding asks for local scene context using **City**, **State**, optional **ZIP/postal code**, and one **Music Community** as the user's primary scene of choice.
 - Listener location authority is manual-first: if the user enters city/state, that submitted location is the Home Scene intent even when GPS is denied. Optional ZIP/postal code is submitted-location detail for preview/context only and does not replace city/state/music-community identity.
+- Manual City/State entry must offer deterministic U.S. place suggestions as the listener types without requiring a paid location provider. When a Google Places key is configured, the existing Google provider remains available; when it is absent, the API uses the locally shipped U.S. Census Gazetteer place artifact, returns normalized full state names, accepts a state name or USPS abbreviation as an optional filter, and makes no runtime external request for suggestions.
 - If the user does not enter city/state and accepts GPS, GPS-derived reverse geocoding supplies the submitted city/state before Home Scene review and may prefill ZIP/postal code when the provider returns it.
 - Onboarding music community input is **selection-only** from approved parent communities (no free-text genre/community creation).
 - Current MVP launch selection uses the implementation list in `docs/specs/seed/music-communities.json`.
@@ -329,6 +330,7 @@ Acceptance checks before any migration:
 - Duplicate scene join does not create duplicate `CommunityMember` rows.
 - Denied GPS keeps participation intact and voting disabled.
 - Geofence miss returns `OUTSIDE_GEOFENCE` and leaves `gpsVerified=false`.
+- No-key manual city suggestions return stable, capped U.S. place results from the local Census artifact, including full-state and USPS-abbreviation filtering, without a network request.
 
 ## Future Work & Open Questions
 

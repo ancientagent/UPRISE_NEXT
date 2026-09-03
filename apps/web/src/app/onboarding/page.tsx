@@ -13,6 +13,11 @@ import {
   resolveOnboardingReviewState,
   type OnboardingReviewResolutionMode,
 } from '@/lib/onboarding/review-resolution';
+import {
+  buildCityAutocompletePath,
+  parseSelectedCitySuggestion,
+  type CitySuggestion,
+} from '@/lib/onboarding/city-suggestions';
 import { useOnboardingStore } from '@/store/onboarding';
 import { useAuthStore } from '@/store/auth';
 
@@ -94,7 +99,7 @@ export default function OnboardingPage() {
   const [manualLocationMode, setManualLocationMode] = useState(
     !(homeScene?.city && homeScene?.state)
   );
-  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
+  const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
   const [cityLoading, setCityLoading] = useState(false);
   const [cityError, setCityError] = useState<string | null>(null);
   const [isPioneer, setIsPioneer] = useState(false);
@@ -425,16 +430,8 @@ export default function OnboardingPage() {
     try {
       setCityLoading(true);
       setCityError(null);
-      const response = await api.get<{ description: string }[]>(
-        `/places/cities?input=${encodeURIComponent(input)}&country=us`
-      );
-      const suggestions = response.data?.map((item) => item.description) ?? [];
-      const filtered = stateValue
-        ? suggestions.filter((suggestion) =>
-            suggestion.toLowerCase().includes(stateValue.toLowerCase())
-          )
-        : suggestions;
-      setCitySuggestions(filtered.slice(0, 8));
+      const response = await api.get<CitySuggestion[]>(buildCityAutocompletePath(input, stateValue));
+      setCitySuggestions(response.data?.slice(0, 8) ?? []);
     } catch {
       setCityError('City suggestions are unavailable right now.');
     } finally {
@@ -545,6 +542,18 @@ export default function OnboardingPage() {
                       value={city}
                       onChange={(event) => {
                         const value = event.target.value;
+                        const selected = citySuggestions.find(
+                          (suggestion) => suggestion.description === value
+                        );
+                        const parsed = selected && parseSelectedCitySuggestion(selected.description);
+
+                        if (parsed) {
+                          setCity(parsed.city);
+                          setState(parsed.state);
+                          setCitySuggestions([]);
+                          return;
+                        }
+
                         setCity(value);
                         fetchCitySuggestions(value, state);
                       }}
@@ -553,7 +562,7 @@ export default function OnboardingPage() {
                     />
                     <datalist id="cities">
                       {citySuggestions.map((suggestion) => (
-                        <option key={suggestion} value={suggestion} />
+                        <option key={suggestion.placeId} value={suggestion.description} />
                       ))}
                     </datalist>
                     {cityLoading && (
@@ -568,7 +577,11 @@ export default function OnboardingPage() {
                     <input
                       list="states"
                       value={state}
-                      onChange={(event) => setState(event.target.value)}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setState(value);
+                        fetchCitySuggestions(city, value);
+                      }}
                       className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm shadow-sm"
                       placeholder="Select your state"
                     />
