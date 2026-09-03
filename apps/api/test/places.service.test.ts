@@ -1,4 +1,5 @@
 import { PlacesService } from '../src/places/places.service';
+import localUsPlaces from '../src/places/data/us-census-2024-places.json';
 
 describe('PlacesService test location provider', () => {
   const originalEnv = process.env;
@@ -118,6 +119,27 @@ describe('PlacesService test location provider', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
+  it('retains Census provenance and a coordinate pair for every local place record', () => {
+    expect(localUsPlaces.source).toMatchObject({
+      publisher: 'U.S. Census Bureau',
+      dataset: '2024 Gazetteer Files - Places (national)',
+      sourceUrl:
+        'https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2024_Gazetteer/2024_Gaz_place_national.zip',
+      archiveSha256: 'cf262fc92b2326f7a8c62a89d156a60eb17d64d6d35f7a62310c43bb08972c06',
+    });
+    expect(localUsPlaces.places).toHaveLength(32143);
+    expect(
+      localUsPlaces.places.every(
+        (place) =>
+          place.length === 4 &&
+          typeof place[2] === 'number' &&
+          Number.isFinite(place[2]) &&
+          typeof place[3] === 'number' &&
+          Number.isFinite(place[3]),
+      ),
+    ).toBe(true);
+  });
+
   it('keeps the configured Google autocomplete provider behavior unchanged', async () => {
     process.env.GOOGLE_PLACES_API_KEY = 'test-key';
     (global.fetch as jest.Mock).mockResolvedValue({
@@ -152,6 +174,31 @@ describe('PlacesService test location provider', () => {
       longitude: -106.485,
       formattedAddress: 'El Paso, Texas, USA',
     });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('geocodes exact local Census city/state input without a Google key', async () => {
+    delete process.env.UPRISE_LOCATION_PROVIDER;
+    delete process.env.GOOGLE_PLACES_API_KEY;
+
+    const service = new PlacesService();
+
+    await expect(service.geocodeCity('Austin', 'Texas')).resolves.toEqual({
+      city: 'Austin',
+      state: 'Texas',
+      latitude: 30.298622,
+      longitude: -97.754134,
+      formattedAddress: 'Austin, Texas, USA',
+    });
+    await expect(service.geocodeCity('  austin  ', 'TX')).resolves.toEqual({
+      city: 'Austin',
+      state: 'Texas',
+      latitude: 30.298622,
+      longitude: -97.754134,
+      formattedAddress: 'Austin, Texas, USA',
+    });
+    await expect(service.geocodeCity('Not A Census Place', 'Texas')).resolves.toBeNull();
+    await expect(service.geocodeCity('Austin', 'Texas', 'CA')).resolves.toBeNull();
     expect(global.fetch).not.toHaveBeenCalled();
   });
 });

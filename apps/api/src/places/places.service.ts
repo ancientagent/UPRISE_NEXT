@@ -21,6 +21,13 @@ export interface CityGeocodeResult {
   formattedAddress: string;
 }
 
+type LocalUsPlace = readonly [
+  city: string,
+  stateAbbreviation: string,
+  latitude: number,
+  longitude: number,
+];
+
 const FAKE_LOCATION_PROVIDER = 'fake';
 
 const LOCAL_US_PLACE_SUGGESTION_LIMIT = 8;
@@ -91,7 +98,7 @@ const US_STATE_ABBREVIATIONS_BY_NORMALIZED_NAME = Object.fromEntries(
   ]),
 );
 
-const LOCAL_US_PLACES = localUsPlaces.places as [string, string][];
+const LOCAL_US_PLACES = localUsPlaces.places as unknown as LocalUsPlace[];
 
 const FAKE_STATE_ALIASES: Record<string, string> = {
   ca: 'california',
@@ -175,6 +182,10 @@ function normalizeFakeState(value: string): string {
   return FAKE_STATE_ALIASES[normalized] ?? normalized;
 }
 
+function normalizePlaceName(value: string): string {
+  return value.trim().toLowerCase();
+}
+
 function normalizeStateValue(value: string): string {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ');
 }
@@ -195,7 +206,7 @@ function matchesStateFilter(stateAbbreviation: string, filter: string | undefine
 }
 
 function autocompleteLocalUsPlaces(input: string, state?: string): PlaceSuggestion[] {
-  const normalizedInput = input.trim().toLowerCase();
+  const normalizedInput = normalizePlaceName(input);
   const stateFilter = state?.trim();
   if (!normalizedInput || (stateFilter && !normalizeUsStateAbbreviation(stateFilter))) {
     return [];
@@ -203,7 +214,7 @@ function autocompleteLocalUsPlaces(input: string, state?: string): PlaceSuggesti
 
   return LOCAL_US_PLACES.flatMap(([city, stateAbbreviation], index) => {
     if (
-      !city.toLowerCase().includes(normalizedInput) ||
+      !normalizePlaceName(city).includes(normalizedInput) ||
       !matchesStateFilter(stateAbbreviation, stateFilter)
     ) {
       return [];
@@ -216,6 +227,28 @@ function autocompleteLocalUsPlaces(input: string, state?: string): PlaceSuggesti
       },
     ];
   }).slice(0, LOCAL_US_PLACE_SUGGESTION_LIMIT);
+}
+
+function geocodeLocalUsPlace(city: string, state: string): CityGeocodeResult | null {
+  const normalizedCity = normalizePlaceName(city);
+  const place = LOCAL_US_PLACES.find(
+    ([placeCity, stateAbbreviation]) =>
+      normalizePlaceName(placeCity) === normalizedCity &&
+      matchesStateFilter(stateAbbreviation, state),
+  );
+  if (!place) return null;
+
+  const [canonicalCity, stateAbbreviation, latitude, longitude] = place;
+  const canonicalState = US_STATE_NAMES_BY_ABBREVIATION[stateAbbreviation];
+  if (!canonicalState) return null;
+
+  return {
+    city: canonicalCity,
+    state: canonicalState,
+    latitude,
+    longitude,
+    formattedAddress: `${canonicalCity}, ${canonicalState}, USA`,
+  };
 }
 
 function haversineMeters(
@@ -244,7 +277,7 @@ export class PlacesService {
     state: string,
     country = 'US',
   ): Promise<CityGeocodeResult | null> {
-    const normalizedCity = city.trim().toLowerCase();
+    const normalizedCity = normalizePlaceName(city);
     const normalizedState = normalizeFakeState(state);
     if (!normalizedCity || !normalizedState || country.toUpperCase() !== 'US') {
       return null;
@@ -269,7 +302,7 @@ export class PlacesService {
     }
 
     const apiKey = process.env.GOOGLE_PLACES_API_KEY;
-    if (!apiKey) return null;
+    if (!apiKey) return geocodeLocalUsPlace(city, state);
 
     const params = new URLSearchParams({
       address: `${city.trim()}, ${state.trim()}`,
