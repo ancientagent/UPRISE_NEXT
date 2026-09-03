@@ -199,7 +199,41 @@ Owner references:
 - `POST /tracks` currently creates a valid track row with uploader ownership, file URL, duration, and optional community attachment.
 - This is a runtime ingestion contract, not a full upload/transcoding pipeline definition.
 - Track creation support exists so artist/discover flows can be exercised through the API instead of direct DB fixture insertion.
-- Fair Play lifecycle mutation is manual/admin-triggered in R1; cron/queue automation and full admin RBAC are not activated by the ingestion or graduation endpoints.
+- Fair Play lifecycle mutation remains callable through the authenticated
+  ingestion and graduation endpoints while full admin RBAC remains deferred.
+- A bounded internal city-tier lifecycle worker is authorized as an
+  orchestration seam: it may invoke the existing ingestion and graduation
+  services for active city-tier communities, but it must remain untriggered
+  until a later operational slice explicitly authorizes its runner.
+- Every direct internal lifecycle invocation must first acquire the single
+  durable lease for `fair-play-city-tier-lifecycle`. The attempt's `RUNNING`
+  record and PostgreSQL-time conditional lease claim commit in one database
+  transaction: a run-record creation failure leaves no durable live lease. A
+  live lease is never overwritten, while an expired lease may be reclaimed.
+  The owner/run identity and expiry stay on that stable operation key.
+- Every attempt records its owner/attempt identity, dry-run versus mutation
+  mode, start/end, terminal status, active-city count, failed-step count, and
+  bounded structured result/error summary. Persisted summary detail is capped
+  at 25 communities and 25 failed steps while the aggregate counts retain the
+  full run totals. Step failures remain isolated per city so later cities are
+  still evaluated. A process death leaves the run record for observation and
+  the lease reclaimable only after expiry.
+- When the internal worker invokes a mutating ingestion or graduation step,
+  that service refreshes the exact owner/run lease using PostgreSQL time inside
+  its own write transaction before applying lifecycle mutation. Missing,
+  expired, or reclaimed ownership aborts the affected transaction with no
+  lifecycle write; the locked lease row prevents a concurrent claimant from
+  overlapping that transaction. Direct manual endpoint calls omit this internal
+  context and retain their current callable semantics.
+- Persisted modes are constrained to `DRY_RUN` or `MUTATION`; terminal run
+  statuses are constrained to `COMPLETED`, `PARTIAL_FAILURE`, `FAILED`, or
+  `LEASE_REFUSED` (with `RUNNING` only while an acquired run is open).
+- An invocation refused by a live lease records a terminal `LEASE_REFUSED`
+  attempt without altering the current owner/run identity.
+- This durable manual capability must not run recurrence aggregation, create a
+  production cron/queue, add a runner/endpoint, or authorize automatic retry.
+  Runner activation, recurrence scheduling, retry policy, and deployment
+  ownership remain separate approved operational decisions.
 - Proxy-to-natural song, vote, and tier behavior follows `Proxy Cutover And Lifecycle Join Points`.
 
 ### Planned
@@ -213,7 +247,8 @@ Owner references:
 - Every accepted song receives the same protected New Releases run (`10` days)
   once it enters RADIYO/New Releases.
 - New-window duration must not shrink because of active new-song density.
-- Songs graduate automatically after window expiry.
+- When the authorized lifecycle runner evaluates them, songs whose protected
+  window has expired graduate into Main Rotation.
 - Main Rotation recurrence changes only at 48-hour recompute cadence.
 - No Main Rotation repeat faster than once/hour.
 - Upvotes do not affect recurrence.
@@ -231,6 +266,8 @@ Owner references:
 - Automated production policy for cross-state proxy advancement identity.
 - Production tuning for Release Deck scheduling capacity values and
   scheduler/job wiring.
+- Automatic lifecycle-run retry, runner activation, and deployment policy for
+  production automation.
 
 ## References
 - `docs/canon/Master Narrative Canon.md`

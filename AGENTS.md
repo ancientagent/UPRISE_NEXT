@@ -1,6 +1,26 @@
 # UPRISE_NEXT Agent Guide
 
+## Operational continuity
+
+Every persistent seat, replacement, and night crew follows `.pm/OPERATIONAL_MEMORY.md`: recall only after Git and authority verification, then save one concise seat event after the authoritative repo check-in.
+
 This file is the primary agent entry point for this repo. If another agent-facing doc conflicts with this file, `AGENTS.md` wins.
+
+**Identity and scope:** Before responding or acting, follow
+`.pm/IDENTITY_AND_SCOPE_PROTOCOL.md`. Display the assigned room/worker badge and
+stop safely on wrong-room requests.
+
+**CLI executors:** Before starting or finishing write-enabled work, follow
+`.pm/EXECUTOR_CONTRACT.md`. Use the single checkout and shared branch it names;
+do not create task branches or worktrees. A meaningful task is not complete
+until its factual `.pm/checkins/` entry is committed and pushed.
+
+**App-side managers:** Use `.pm/AGENT_ONBOARDING.md`; reconcile ownership in
+`.pm/ACTIVE_ROOMS.md`; retire a seat with `.pm/SUCCESSION_HANDOFF.md`.
+
+**Agent builders:** Before creating, naming, moving, or pairing a Hermes/CLI
+agent, read `.pm/HERMES_AGENTS.md` and update
+`.pm/HERMES_AGENT_REGISTRY.md`.
 
 ## Required Reading
 
@@ -59,6 +79,14 @@ Load only the minimum additional material required for the task.
 - QA findings must be tied to a commit/branch state and fixture/setup context.
 - Classify issues before acting: `bug`, `stale`, `environment`, `fixture/data`, or `product decision`.
 - Use dated handoffs as context, not as higher authority than current code/specs.
+
+## PM Check-Ins
+- After meaningful implementation, investigation, QA, research, or other work that materially changes or clarifies project state, create a new PM check-in under `.pm/checkins/YYYY-MM-DD/` using a unique `HHMM-short-task-name.md` filename.
+- Report factual outcomes and evidence, not a narrative of everything done. Do not claim completion without evidence, edit another agent's check-in, update a master roadmap, or redefine project priorities.
+- Agents are workers, not the cross-project PM: they may recommend a technical next step, but must not decide project or cross-project priority, roadmap changes, or the founder's personal focus.
+- Skip the check-in for trivial interactions that produce no meaningful change, discovery, decision, blocker, or result. Use `.pm/checkins/TEMPLATE.md`.
+- Write-enabled CLI work must also satisfy the commit, push, clean-worktree,
+  and one-writer completion gate in `.pm/EXECUTOR_CONTRACT.md`.
 
 ## Before You Push
 - Preferred: run `pnpm run verify` (docs:lint + infra-policy-check + typecheck)

@@ -1,10 +1,9 @@
 # Hermes Launch Review Shim
 
-Current routing note (2026-07-02): UPRISE reviews/audits are Codex-first. Use
-`gpt-5.3-codex-spark` for basic/small passes and `gpt-5.5` with
-`reasoning_effort=xhigh` for heavy/final gates. This shim is
-legacy/manual fallback scaffolding only when PM explicitly names
-Hermes-specific value.
+Current routing note (2026-08-16): use fresh HY3 `uprisereviewerminus` for a
+bounded read-only UPRISE review and `upriseauditorminus` for a read-only audit.
+This shim cannot grant automatic merge/closeout authority. See
+`docs/AGENT_TOOLING.md` for active skills and tool boundaries.
 
 Use this shim to launch Hermes as a read-only reviewer for a named UPRISE slice.
 

@@ -329,6 +329,14 @@ describe('/plot UX regression lock', () => {
     expect(listenerProfileSource).not.toContain('Registrar');
   });
 
+  it('keeps the expanded profile transition minimal for reduced-motion users', () => {
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
+
+    expect(listenerProfileSource).toContain(
+      'transition-all duration-200 motion-reduce:transition-none'
+    );
+  });
+
   it('locks expanded profile header to conditional band and promoter status cards', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
 

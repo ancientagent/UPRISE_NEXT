@@ -6,7 +6,7 @@
 
 **Architecture:** This is an execution plan, not product doctrine. Product truth stays in `docs/specs/**`, canon, active lane briefs, runtime code, and tests; this file sequences the work and defines when a PM agent is needed. Work proceeds through one branch-owning executor at a time unless the plan explicitly splits independent lanes.
 
-**Tech Stack:** UPRISE monorepo, pnpm, Next.js web, Nest API, Prisma/PostGIS, docs/spec owner contracts, Active PM, Branch / Workspace Registry, Codex-first review/audit routing.
+**Tech Stack:** UPRISE monorepo, pnpm, Next.js web, Nest API, Prisma/PostGIS, docs/spec owner contracts, Active PM, Branch / Workspace Registry, HY3-first non-coding review/audit routing.
 
 ---
 
@@ -33,7 +33,7 @@ When a PM agent is used, it is execution-state only. It may prepare execution pa
 - Codex local is the default executor and PM for sequential slices.
 - Codex subagents are allowed for independent read-only lane checks, focused audits, changed-file sanity, or test-output review.
 - Cloud Codex is used for isolated branch work only when the execution packet is explicit and the branch can be pushed back for local review.
-- Hermes is watchdog/manual fallback only.
+- Fresh HY3 Hermes profiles are the default non-coding planning/review/audit lane; `uprisewatchdog` remains heartbeat-only.
 - Linear tracks execution state only; owner specs and current runtime/tests remain durable truth.
 - Founder clarifications are captured verbatim first, then promoted into owner specs/briefs when accepted.
 - Branch/workspace creation or cleanup must update `docs/operations/BRANCH_WORKSPACE_REGISTRY.md` and pass `pnpm run workspace:audit`.

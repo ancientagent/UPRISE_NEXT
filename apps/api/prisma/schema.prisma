@@ -698,3 +698,49 @@ model FairPlayConfig {
 
   @@map("fair_play_config")
 }
+
+model FairPlayLifecycleLease {
+  operationKey   String   @id
+  ownerId        String
+  currentRunId   String
+  leaseExpiresAt DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([leaseExpiresAt])
+  @@map("fair_play_lifecycle_leases")
+}
+
+model FairPlayLifecycleRun {
+  id                       String    @id
+  operationKey             String
+  ownerId                  String
+  attemptId                String
+  mode                     FairPlayLifecycleRunMode
+  status                   FairPlayLifecycleRunStatus
+  startedAt                DateTime
+  finishedAt               DateTime?
+  activeCityCommunityCount Int       @default(0)
+  failedStepCount          Int       @default(0)
+  resultSummary            Json?
+  errorSummary             Json?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  @@index([operationKey, startedAt])
+  @@index([status, startedAt])
+  @@map("fair_play_lifecycle_runs")
+}
+
+enum FairPlayLifecycleRunMode {
+  DRY_RUN
+  MUTATION
+}
+
+enum FairPlayLifecycleRunStatus {
+  RUNNING
+  COMPLETED
+  PARTIAL_FAILURE
+  FAILED
+  LEASE_REFUSED
+}

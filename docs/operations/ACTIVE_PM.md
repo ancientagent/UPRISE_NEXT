@@ -1,8 +1,8 @@
 # UPRISE Active PM
 
 Status: active execution snapshot
-Owner: current branch owner / context-steward
-Last Updated: 2026-07-23
+Owner: context-steward for documentation routing; this label is not a writer lease
+Last Updated: 2026-09-01
 
 ## Purpose
 
@@ -18,19 +18,22 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `codex/historical-branch-cleanup` |
-| Base | `main@3f5ef12` |
-| Scope | Preserve PR #212's unique raw founder capture, retire only proven merged/superseded refs, and reduce active routing to current and protected-risk work. |
-| Owner | Codex local, sole writer |
-| Validation | exact founder-file hash comparison, independent branch audit, `pnpm run verify`, `pnpm run workspace:audit`, `git diff --check` |
-| Out of Scope | Product behavior, canon, legacy-document deletion, preserved UX extraction, and deciding the unresolved Prisma schema draft |
+| Branch | `fable/handoff` at `68efa16826ee7636d2702cf68c9144835e87380a`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
+| Base | `main@ba969f8` |
+| Scope | The Listener Profile design package remains the accepted baseline. A bounded Manager lease implemented reduced-motion parity for the existing expanded profile panel only; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
+| Owner | No active writer lease. The bounded Listener Profile reduced-motion lease closed at `df4a0054`; any further work requires a fresh Manager packet and collision check. |
+| Validation | Source lock and four focused regression/contract suites passed (44 tests), and `pnpm --filter web typecheck` passed for the reduced-motion parity implementation. Browser QA has not run. |
+| BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
+| Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 
 ## Open Queue
 
-| PR / Branch | State | Action |
+| Work | State | Action |
 | --- | --- | --- |
-| PR #212 / `docs/linear-clean-context-agent-roles` | Draft, superseded by PR #247 | Close and delete its refs after the extracted founder capture lands on `main`. |
-| closed PR #1 / `codex/propose-prisma-schema-migration` | Unmerged unique schema/spec draft | Preserve for a dedicated schema/product-authority review. |
+| Onboarding → Listener Profile | Design package baseline plus reduced-motion source parity; browser proof remains unverified | Run independent browser QA against `docs/screen-packages/listener-profile/` at the implementation commit before accepting the first-session slice as complete. |
+| Landing Page + Launch Entry readiness | Blocked on required inputs | Marketing must provide an approved landing/content brief and the Manager must record disposition before design continuation or implementation. The existing prototype remains exploration evidence. |
+| Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
+| City-tier RADIYO lifecycle worker | Durable manual capability implemented; still untriggered | Every direct internal run now uses a cross-instance durable lease and factual run record while orchestrating existing ingestion/graduation per active city-tier community. Defer runner activation, automatic retry, recurrence automation, and deployment. |
 
 ## Preserved Workspaces
 
@@ -44,17 +47,22 @@ as implementation evidence.
 
 ## Blockers
 
-- None for the cleanup PR.
-- PR #212 cannot close until its extracted founder note lands on `main`.
-- Preserved UX workspaces remain outside cleanup scope.
+- No repo-owned approved Marketing landing/content brief was found for the
+  Landing Page + Launch Entry package.
+- Manager disposition is required after that brief exists and before design
+  continuation or implementation.
+- RADIYO automatic polling, recurrence aggregation, automatic retry, and production deployment remain separate operational decisions. The durable manual run/lease capability is implemented but has no trigger.
+- Preserved UX workspaces remain outside the current scope.
 
 ## Next Signal
 
-1. Validate and merge the cleanup branch.
-2. Close PR #212 and delete its refs after verifying the founder capture on
-   `main`.
-3. Retire the cleanup branch and the redundant local founder-source checkpoint;
-   leave the four UX refs and unresolved Prisma draft preserved.
+1. Complete independent browser QA for the Listener Profile package and reduced-motion parity at the implementation commit; a dedicated authorized UPRISE browser target is required. Do not treat source tests/typecheck as browser proof.
+2. Separately, Marketing supplies an approved landing/content brief through the
+   Manager before any Landing design continuation or implementation.
+3. Retain the durable manual lifecycle seam as untriggered; do not activate a
+   runner without explicit approval for its operational model.
+4. Keep the preserved UX references and unresolved Prisma draft untouched until
+   a dedicated review assigns them.
 
 ## Agent Rules
 

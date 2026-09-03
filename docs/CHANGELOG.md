@@ -10,8 +10,30 @@ single-owner closeout.
 
 ## [Unreleased]
 
+### Added
+
+- Settled `Cardboard and Toner` as the primary UPRISE visual theme (founder
+  decision 2026-07-14): canonical light/dark palette tokens, the Archivo
+  Black / Libre Franklin / IBM Plex Mono type stack, and motif vocabulary in
+  `docs/solutions/UPRISE_VISUAL_THEME_CARDBOARD_AND_TONER_R1.md`, captured in
+  `docs/founder-sessions/2026-07-14_cardboard-and-toner-primary-theme.md` and
+  routed from `docs/agent-briefs/UI_CURRENT.md`. Formalizes the existing
+  `plot-wire` values; `apps/web` token migration remains a separate slice.
+
 ### Changed
 
+- Authorized a bounded internal city-tier RADIYO lifecycle worker contract:
+  it may orchestrate existing due-ingestion and graduation services but is
+  untriggered by default. Production runner activation, recurrence automation,
+  and durable run/lease persistence remain explicitly deferred.
+
+- Curated the UPRISE agent automation loadouts: fresh HY3 Hermes planner,
+  reviewer, auditor, and watchdog profiles now have narrow task-specific skill
+  packs and no browser, provider, database, delegation, memory, or media tool
+  access. The routing docs now use HY3 for bounded non-coding plan/review/audit
+  work while retaining Codex or an explicitly assigned coding model as the sole
+  implementation writer. DeepSeek and Opus remain bounded task modes, not
+  autonomous authority.
 - Simplified the repo execution-control policy: focused startup now loads two
   routing documents, handoffs and changelog entries are trigger-based,
   `ACTIVE_PM` and the workspace registry retain current/preserved-risk state

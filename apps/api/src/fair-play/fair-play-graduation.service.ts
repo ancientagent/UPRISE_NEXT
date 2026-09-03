@@ -1,6 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { RotationPool } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  assertFairPlayLifecycleLease,
+  FairPlayLifecycleLeaseContext,
+} from './fair-play-lifecycle-lease';
 
 const DEFAULT_RECURRENCE_ROLLING_WINDOW_DAYS = 14;
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
@@ -9,6 +13,8 @@ type RunGraduationDto = {
   communityId: string;
   asOf?: string;
   dryRun?: boolean;
+  /** Internal worker-only context; manual endpoint calls intentionally omit it. */
+  lifecycleLease?: FairPlayLifecycleLeaseContext;
 };
 
 type GraduationEntry = {
@@ -134,6 +140,7 @@ export class FairPlayGraduationService {
 
     return this.prisma.$transaction(async (tx: any) => {
       await this.assertActiveCityCommunity(tx, communityId);
+      await assertFairPlayLifecycleLease(tx, dto.lifecycleLease);
       return this.evaluateGraduation(tx, communityId, asOf, false);
     });
   }

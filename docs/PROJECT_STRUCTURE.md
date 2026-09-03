@@ -11,6 +11,7 @@
 apps/
   web/                    # Next.js 15 (Vercel)
   api/                    # NestJS (Fly.io / App Runner)
+    prisma/               # Prisma schema + PostGIS migrations + seeds
   socket/                 # Socket.IO (Fly.io / App Runner)
   workers/
     transcoder/           # FFmpeg worker (AWS Fargate / Fly.io)
@@ -20,9 +21,6 @@ packages/
   ui/                     # Shared UI components (Tailwind + shadcn/ui)
   types/                  # Zod schemas; emits OpenAPI
   sdk/                    # Generated API/Socket clients from OpenAPI
-infra/
-  prisma/                 # Prisma schema + PostGIS migrations + seeds
-
 .docs/ (generated)
 ```
 

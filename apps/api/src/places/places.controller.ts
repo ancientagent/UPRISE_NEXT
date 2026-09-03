@@ -9,8 +9,9 @@ export class PlacesController {
   async cities(
     @Query('input') input = '',
     @Query('country') country = 'us',
+    @Query('state') state?: string,
   ): Promise<{ success: true; data: PlaceSuggestion[] }> {
-    const suggestions = await this.placesService.autocompleteCities(input, country);
+    const suggestions = await this.placesService.autocompleteCities(input, country, state);
     return { success: true, data: suggestions };
   }
 

@@ -58,7 +58,8 @@ Load only the materials directly needed for the current task:
 - Use local Codex skills only when the user request or task risk triggers them; do not load UPRISE routing skills merely because the workspace is UPRISE.
 - For exact-file edits, self-contained Q&A, and already-scoped docs work, prefer `AGENTS.md`, the named file, direct references, and current repo evidence.
 - For broad or ambiguous work, use one UPRISE routing/lane skill to choose the smallest defensible packet, then stop expanding unless evidence is missing, stale, conflicting, or high-risk.
-- For behavior-changing work, use the feature implementation loop and independent Codex plan review instead of loading more skills to compensate for unclear scope.
+- For behavior-changing work, use the feature implementation loop and one independent designated review pass instead of loading more skills to compensate for unclear scope. Use the current HY3 UPRISE reviewer by default; use a coding or large-scope reviewer only when the risk warrants it.
+- Use `docs/AGENT_TOOLING.md` for the current local Hermes profile/skill/tool loadouts. Do not infer a profile's capabilities from an old handoff or global catalog.
 
 ### Contract owner rule
 - Cross-system behavior belongs in one owner spec or owner section under `docs/specs/**`.
@@ -92,9 +93,9 @@ Load only the materials directly needed for the current task:
 
 ### Pre-implementation feature gate
 - Before implementing a feature or behavior-changing UI/API/runtime slice, the executor must review the feature against current repo authority and write a development plan.
-- A separate Codex reviewer must review that development plan before implementation edits begin when the slice changes product/runtime behavior or carries cross-lane risk; keep this as one bounded pass unless blockers are found.
+- A separate designated reviewer must review that development plan before implementation edits begin when the slice changes product/runtime behavior or carries cross-lane risk; keep this as one bounded pass unless blockers are found. The default non-coding reviewer is fresh HY3 `uprisereviewerminus`; the implementation writer remains Codex or another explicitly assigned coding agent.
 - Record the feature review scope and plan-review artifact in the Execution Packet / Executor Readiness blocks from `docs/specs/system/documentation-framework.md`.
-- For each behavior-changing implementation issue, use the loop in `docs/specs/system/documentation-framework.md#feature-implementation-loop`: the PM/current owner gives the assigned executor a context packet with where to look, what to inspect, what to do, what not to do, and validation seed; a fresh executor verifies that packet against repo evidence and writes the plan; the plan is confirmed/corrected; an independent Codex reviewer checks it; the same branch-owning executor implements it; and an independent reviewer either passes the execution or sends concrete findings back to the executor.
+- For each behavior-changing implementation issue, use the loop in `docs/specs/system/documentation-framework.md#feature-implementation-loop`: the PM/current owner gives the assigned executor a context packet with where to look, what to inspect, what to do, what not to do, and validation seed; a fresh executor verifies that packet against repo evidence and writes the plan; the plan is confirmed/corrected; an independent reviewer checks it; the same branch-owning executor implements it; and an independent reviewer either passes the execution or sends concrete findings back to the executor.
 - Tiny surgical docs-only or local cleanup PRs may skip this gate only when no product/runtime behavior is being implemented and the branch owner can prove low risk.
 - UPRISE still has many first-pass implementation slices. For those, packets should define what to build from owner specs, lane briefs, current code surfaces, validation seeds, and explicit out-of-scope boundaries. Do not force a cleanup/excavator model unless the issue is actually stale-code cleanup, wrong existing behavior, refactor/absorption work, or risky cross-lane correction.
 
