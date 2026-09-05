@@ -75,7 +75,7 @@ Load only the minimum additional material required for the task.
 - Prefer current repo truth over stale handoff memory.
 - Do not audit or implement against a mixed uncommitted worktree unless you are the explicit implementation owner.
 - Do not create off-book branches or worktrees. If a branch/worktree exists, it must be registered or explicitly classified for cleanup.
-- Routine scoped work follows one closeout path: focused validation, one independent review, one factual check-in, then the normal PR/merge workflow. Reconcile lease state within that closeout; add a changelog, handoff, or other documentation only when its existing trigger applies. Keep heightened controls for production deployment, migrations, credentials/sessions, payments, destructive or external mutation, and the one-writer rule.
+- Routine scoped work follows one closeout path: focused validation, one independent review, one factual check-in, then the normal PR/merge workflow. Record one named active writer at a time; that record closes automatically on reviewer PASS/RETURN, cancellation, or merge. Add a changelog, handoff, or other documentation only when its existing trigger applies. Keep heightened controls for production deployment, migrations, credentials/sessions, payments, destructive or external mutation, and the one-writer rule.
 - QA findings must be tied to a commit/branch state and fixture/setup context.
 - Classify issues before acting: `bug`, `stale`, `environment`, `fixture/data`, or `product decision`.
 - Use dated handoffs as context, not as higher authority than current code/specs.

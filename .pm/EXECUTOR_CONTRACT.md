@@ -35,7 +35,10 @@ or PM chats.
   related documentation.
 - Do not create or switch branches or worktrees, change the upstream, expand
   scope, assign follow-up work, or change project priority.
-- One write-enabled CLI executor may own this project at a time.
+- Record one named active writer for the project at a time. The active-writer
+  record closes automatically when review returns PASS or RETURN, the task is
+  cancelled, or the change merges; no separate release artifact, approval, or
+  waiting step is part of routine closeout.
 
 ## Completion Gate
 
