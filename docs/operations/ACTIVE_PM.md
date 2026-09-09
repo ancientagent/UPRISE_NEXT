@@ -2,7 +2,7 @@
 
 Status: active execution snapshot
 Owner: context-steward for documentation routing; this label is not a writer lease
-Last Updated: 2026-09-01
+Last Updated: 2026-09-09
 
 ## Purpose
 
@@ -18,7 +18,7 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` at `68efa16826ee7636d2702cf68c9144835e87380a`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
+| Branch | `fable/handoff` at `f96897458439e63e34c64bfbed98b377360498e9`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
 | Base | `main@ba969f8` |
 | Scope | The Listener Profile design package remains the accepted baseline. A bounded Manager lease implemented reduced-motion parity for the existing expanded profile panel only; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
 | Owner | Active writer: Fable (`listener-profile-pointercancel-cleanup`), bounded to pointercancel cleanup on the existing Listener Profile gesture path plus focused coverage and the browser QA rerun. Closes on reviewer PASS/RETURN. Prior interaction fix landed at `9b4400ac`. |
