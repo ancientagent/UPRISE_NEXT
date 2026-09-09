@@ -18,11 +18,11 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` at `287c5ccb`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) after this packet is pushed |
+| Branch | `fable/handoff` at `cf815ddd16f9646c1579b7b3cb4af8bf5f97dc3d`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) after this packet is pushed |
 | Base | `main@ba969f8` |
-| Scope | The Listener Profile design package remains the accepted baseline. Reduced-motion parity and the bounded pointer-gesture/focus correction are implemented and independently reviewed; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
+| Scope | The Listener Profile design package remains the accepted baseline. Reduced-motion parity and the bounded pointer-gesture/focus/visibility correction are source-reviewed; current-revision browser confirmation remains pending. Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
 | Owner | Active writer: Fable (`listener-profile-return-visibility`), bounded to post-return seam visibility in the existing Listener Profile close path plus focused coverage and browser rerun. Closes on reviewer PASS/RETURN. |
-| Validation | Independent browser QA at `1f5308d1` returned three pre-existing gesture/focus findings; `9b4400ac` fixed them and `f9689745` added `pointercancel` cleanup. Four focused suites (46 tests), web typecheck, `pnpm run verify`, workspace audit, and diff check passed. Chromium-emulated browser rerun passed for touch, mouse, pointer cancellation, keyboard focus execution, ARIA, and reduced motion. Visual seam visibility after return remains deferred: the shorter collapsed page clamps scroll from 798 to 486, leaving the focused seam above the viewport (artifact `41-rerun-desktop-after-return-1280.png`). Physical-device touch and screen-reader announcement proof remain unverified. |
+| Validation | Independent browser QA at `1f5308d1` returned three pre-existing gesture/focus findings; `9b4400ac` fixed them, `f9689745` added `pointercancel` cleanup, and `cf815ddd` adds post-return seam visibility handling. Source review PASS and focused suites (46 tests), web typecheck, `pnpm run verify`, workspace audit, and diff check passed. Current-revision Chromium rerun is unverified because no authorized UPRISE browser tab was available. Physical-device touch and screen-reader announcement proof remain unverified. |
 | BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 
@@ -30,7 +30,7 @@ as implementation evidence.
 
 | Work | State | Action |
 | --- | --- | --- |
-| Onboarding → Listener Profile | Design package baseline plus reduced-motion and pointer/pointercancel parity accepted at `ed677217`; focus returns programmatically, but visual seam visibility after return is deferred because scroll clamps on the shorter page | Decide whether to adjust the bounded scroll/focus behavior or accept the current proof boundary; physical-touch and screen-reader evidence also require an authorized environment. |
+| Onboarding → Listener Profile | Code and regression correction source-reviewed PASS at `cf815ddd`; current-revision browser visibility confirmation remains pending | Provide an authorized UPRISE browser tab for Fable’s rerun; keep the single bounded writer record open until that PASS/RETURN. Physical-touch and screen-reader evidence remain separate proof gaps. |
 | Landing Page + Launch Entry readiness | Blocked on required inputs | Marketing must provide an approved landing/content brief and the Manager must record disposition before design continuation or implementation. The existing prototype remains exploration evidence. |
 | Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
 | City-tier RADIYO lifecycle worker | Durable manual capability implemented; still untriggered | Every direct internal run now uses a cross-instance durable lease and factual run record while orchestrating existing ingestion/graduation per active city-tier community. Defer runner activation, automatic retry, recurrence automation, and deployment. |
