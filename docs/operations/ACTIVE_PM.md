@@ -18,11 +18,11 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` at `f96897458439e63e34c64bfbed98b377360498e9`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
+| Branch | `fable/handoff` at `ed677217e878357a38226915db49d2be6fe9d07d`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
 | Base | `main@ba969f8` |
-| Scope | The Listener Profile design package remains the accepted baseline. A bounded Manager lease implemented reduced-motion parity for the existing expanded profile panel only; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
-| Owner | Active writer: Fable (`listener-profile-pointercancel-cleanup`), bounded to pointercancel cleanup on the existing Listener Profile gesture path plus focused coverage and the browser QA rerun. Closes on reviewer PASS/RETURN. Prior interaction fix landed at `9b4400ac`. |
-| Validation | Independent browser QA at `1f5308d1` returned three pre-existing gesture/focus findings (artifact review `listener-profile-browser-qa`); `9b4400ac` fixed them and this writer added `pointercancel` cleanup. Four focused suites (46 tests), `pnpm --filter web typecheck`, and `pnpm run verify` pass; the implementer's browser rerun passed at desktop and mobile widths including reduced motion. Independent review of the resulting commit is pending. |
+| Scope | The Listener Profile design package remains the accepted baseline. Reduced-motion parity and the bounded pointer-gesture/focus correction are implemented and independently reviewed; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
+| Owner | No active writer. The Listener Profile interaction packet closed on reviewer PASS at `ed677217`; any further work requires a new Manager packet. |
+| Validation | Independent browser QA at `1f5308d1` returned three pre-existing gesture/focus findings; `9b4400ac` fixed them and `f9689745` added `pointercancel` cleanup. Four focused suites (46 tests), web typecheck, `pnpm run verify`, workspace audit, and diff check passed. Chromium-emulated browser rerun passed for touch, mouse, pointer cancellation, keyboard focus, scroll, ARIA, and reduced motion; physical-device touch and screen-reader announcement proof remain unverified. |
 | BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 
@@ -30,7 +30,7 @@ as implementation evidence.
 
 | Work | State | Action |
 | --- | --- | --- |
-| Onboarding → Listener Profile | Design package baseline plus reduced-motion source parity; browser proof remains unverified | Run independent browser QA against `docs/screen-packages/listener-profile/` at the implementation commit before accepting the first-session slice as complete. |
+| Onboarding → Listener Profile | Design package baseline plus reduced-motion and pointer/focus parity accepted at `ed677217`; physical-device/browser-assistive proof remains unverified | Obtain physical-touch and screen-reader evidence when that environment is authorized; do not reopen implementation without a new finding. |
 | Landing Page + Launch Entry readiness | Blocked on required inputs | Marketing must provide an approved landing/content brief and the Manager must record disposition before design continuation or implementation. The existing prototype remains exploration evidence. |
 | Hermes automation loadouts | Revalidation needed | Keep documented loadouts narrow; confirm any actually running profile before treating it as an owner. |
 | City-tier RADIYO lifecycle worker | Durable manual capability implemented; still untriggered | Every direct internal run now uses a cross-instance durable lease and factual run record while orchestrating existing ingestion/graduation per active city-tier community. Defer runner activation, automatic retry, recurrence automation, and deployment. |
