@@ -671,6 +671,15 @@ export default function PlotPage() {
     }
   };
 
+  const handleProfilePointerCancel = () => {
+    dragStartY.current = null;
+    dragDelta.current = 0;
+
+    if (profilePanelState === 'peek') {
+      setProfilePanelState('collapsed');
+    }
+  };
+
   const toggleProfilePanel = () => {
     if (profilePanelState === 'expanded') {
       setProfilePanelState('collapsed');
@@ -897,6 +906,7 @@ export default function PlotPage() {
           onProfilePointerDown={handleProfilePointerDown}
           onProfilePointerMove={handleProfilePointerMove}
           onProfilePointerUp={handleProfilePointerUp}
+          onProfilePointerCancel={handleProfilePointerCancel}
           onToggleProfilePanel={toggleProfilePanel}
           onToggleNotificationPanel={() => setIsNotificationPanelOpen((open) => !open)}
           onHomeSceneSelect={handleHomeSceneSelectorSelect}

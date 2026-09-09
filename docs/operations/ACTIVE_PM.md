@@ -21,8 +21,8 @@ as implementation evidence.
 | Branch | `fable/handoff` at `68efa16826ee7636d2702cf68c9144835e87380a`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
 | Base | `main@ba969f8` |
 | Scope | The Listener Profile design package remains the accepted baseline. A bounded Manager lease implemented reduced-motion parity for the existing expanded profile panel only; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
-| Owner | No active writer lease. The bounded Listener Profile reduced-motion lease closed at `df4a0054`; any further work requires a fresh Manager packet and collision check. |
-| Validation | Source lock and four focused regression/contract suites passed (44 tests), and `pnpm --filter web typecheck` passed for the reduced-motion parity implementation. Browser QA has not run. |
+| Owner | Active writer: Fable (`listener-profile-pointercancel-cleanup`), bounded to pointercancel cleanup on the existing Listener Profile gesture path plus focused coverage and the browser QA rerun. Closes on reviewer PASS/RETURN. Prior interaction fix landed at `9b4400ac`. |
+| Validation | Independent browser QA at `1f5308d1` returned three pre-existing gesture/focus findings (artifact review `listener-profile-browser-qa`); `9b4400ac` fixed them and this writer added `pointercancel` cleanup. Four focused suites (46 tests), `pnpm --filter web typecheck`, and `pnpm run verify` pass; the implementer's browser rerun passed at desktop and mobile widths including reduced motion. Independent review of the resulting commit is pending. |
 | BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
 

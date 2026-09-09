@@ -57,6 +57,25 @@ describe('Plot profile/player state contract', () => {
     expect(plotPageSource).toContain('onReturnToPlotTabs={handleReturnToPlotTabs}');
   });
 
+  it('cleans up a cancelled profile pointer gesture without changing a committed panel state', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
+    const cancelHandler = extractFunctionBody(
+      plotPageSource,
+      'const handleProfilePointerCancel = () => {'
+    );
+
+    expect(cancelHandler).toContain('dragStartY.current = null;');
+    expect(cancelHandler).toContain('dragDelta.current = 0;');
+    expect(cancelHandler).toContain("if (profilePanelState === 'peek') {");
+    expect(cancelHandler).toContain("setProfilePanelState('collapsed');");
+    expect(cancelHandler).not.toContain("setProfilePanelState('expanded')");
+    expect(cancelHandler.split('setProfilePanelState(').length - 1).toBe(1);
+    expect(plotPageSource).toContain('onProfilePointerCancel={handleProfilePointerCancel}');
+    expect(topShellSource).toContain('onProfilePointerCancel: () => void;');
+    expect(topShellSource).toContain('onPointerCancel={onProfilePointerCancel}');
+  });
+
   it('keeps the current contract grounded in repo authority rather than prototype state-machine imports', () => {
     const inventory = readWorkspaceFile('docs/handoff/2026-07-02_ux-reference-extraction-inventory.md');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');

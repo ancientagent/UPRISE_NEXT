@@ -33,6 +33,7 @@ interface PlotTopShellProps {
   onProfilePointerDown: (event: PointerEvent<HTMLDivElement>) => void;
   onProfilePointerMove: (event: PointerEvent<HTMLDivElement>) => void;
   onProfilePointerUp: () => void;
+  onProfilePointerCancel: () => void;
   onToggleProfilePanel: () => void;
   onToggleNotificationPanel: () => void;
   onHomeSceneSelect: (item: HomeSceneSelectorItem) => void;
@@ -59,6 +60,7 @@ export default function PlotTopShell({
   onProfilePointerDown,
   onProfilePointerMove,
   onProfilePointerUp,
+  onProfilePointerCancel,
   onToggleProfilePanel,
   onToggleNotificationPanel,
   onHomeSceneSelect,
@@ -77,6 +79,7 @@ export default function PlotTopShell({
           onPointerDown={onProfilePointerDown}
           onPointerMove={onProfilePointerMove}
           onPointerUp={onProfilePointerUp}
+          onPointerCancel={onProfilePointerCancel}
         >
           <div className="flex min-w-0 flex-1 basis-full items-end gap-3 sm:basis-auto">
             <div
