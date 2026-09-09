@@ -162,6 +162,11 @@ export default function PlotPage() {
         top: scrollPosition.top,
         behavior: 'auto',
       });
+      plotTabsToggle?.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest',
+        behavior: 'auto',
+      });
     };
 
     const timeoutId = window.setTimeout(restorePlotTabsFocus, 0);

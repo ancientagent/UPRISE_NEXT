@@ -36,9 +36,13 @@ function extractFunctionBody(source: string, declaration: string): string {
 }
 
 describe('Plot profile/player state contract', () => {
-  it('keeps profile gestures touch-safe and restores Plot Tabs focus after return', () => {
+  it('keeps profile gestures touch-safe and makes the focused Plot Tabs seam visible after clamped return', () => {
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
     const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
+    const restoreFocusBody = extractFunctionBody(
+      plotPageSource,
+      'const restorePlotTabsFocus = () => {'
+    );
 
     expect(topShellSource).toContain(
       'className="flex touch-none select-none flex-wrap items-end justify-between'
@@ -53,6 +57,12 @@ describe('Plot profile/player state contract', () => {
     expect(plotPageSource).toContain('left: window.scrollX');
     expect(plotPageSource).toContain('top: window.scrollY');
     expect(plotPageSource).toContain("behavior: 'auto'");
+    expect(plotPageSource).toContain('plotTabsToggle?.scrollIntoView({');
+    expect(plotPageSource).toContain("block: 'nearest'");
+    expect(plotPageSource).toContain("inline: 'nearest'");
+    expect(restoreFocusBody.indexOf('window.scrollTo({')).toBeLessThan(
+      restoreFocusBody.indexOf('plotTabsToggle?.scrollIntoView({')
+    );
     expect(plotPageSource).toContain('const handleReturnToPlotTabs = () => {');
     expect(plotPageSource).toContain('onReturnToPlotTabs={handleReturnToPlotTabs}');
   });

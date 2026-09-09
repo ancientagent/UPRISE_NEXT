@@ -18,10 +18,10 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` at `ed677217e878357a38226915db49d2be6fe9d07d`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
+| Branch | `fable/handoff` at `5b4b3b8f3517291abd2611208e669dbd02a53da6`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
 | Base | `main@ba969f8` |
 | Scope | The Listener Profile design package remains the accepted baseline. Reduced-motion parity and the bounded pointer-gesture/focus correction are implemented and independently reviewed; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
-| Owner | No active writer. The Listener Profile interaction packet closed on reviewer PASS at `ed677217`; any further work requires a new Manager packet. |
+| Owner | Active writer: Fable (`listener-profile-return-visibility`), bounded to post-return seam visibility in the existing Listener Profile close path plus focused coverage and browser rerun. Closes on reviewer PASS/RETURN. |
 | Validation | Independent browser QA at `1f5308d1` returned three pre-existing gesture/focus findings; `9b4400ac` fixed them and `f9689745` added `pointercancel` cleanup. Four focused suites (46 tests), web typecheck, `pnpm run verify`, workspace audit, and diff check passed. Chromium-emulated browser rerun passed for touch, mouse, pointer cancellation, keyboard focus execution, ARIA, and reduced motion. Visual seam visibility after return remains deferred: the shorter collapsed page clamps scroll from 798 to 486, leaving the focused seam above the viewport (artifact `41-rerun-desktop-after-return-1280.png`). Physical-device touch and screen-reader announcement proof remain unverified. |
 | BUZZ Path | `PENDING`; no UPRISE-specific accepted transport path is recorded. |
 | Out of Scope | Product behavior or decisions, canon, code, design implementation, marketing promises, providers, database/schema work, deployment, preserved-workspace extraction, and any second writer |
