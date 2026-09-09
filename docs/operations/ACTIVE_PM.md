@@ -18,7 +18,7 @@ as implementation evidence.
 
 | Field | Current Value |
 | --- | --- |
-| Branch | `fable/handoff` at `5b4b3b8f3517291abd2611208e669dbd02a53da6`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) at this refresh |
+| Branch | `fable/handoff` at `287c5ccb`; tracking `origin/fable/handoff`, clean and aligned (0 ahead / 0 behind) after this packet is pushed |
 | Base | `main@ba969f8` |
 | Scope | The Listener Profile design package remains the accepted baseline. Reduced-motion parity and the bounded pointer-gesture/focus correction are implemented and independently reviewed; Landing Page + Launch Entry remains separately blocked on an approved Marketing brief and Manager disposition. |
 | Owner | Active writer: Fable (`listener-profile-return-visibility`), bounded to post-return seam visibility in the existing Listener Profile close path plus focused coverage and browser rerun. Closes on reviewer PASS/RETURN. |
