@@ -262,7 +262,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
     expect(plotPageSource).toContain('<PlotListenerProfile');
     expect(plotPageSource).toContain('playerPanel={playerPanel}');
-    expect(plotPageSource).toContain('onReturnToPlotTabs={toggleProfilePanel}');
+    expect(plotPageSource).toContain('onReturnToPlotTabs={handleReturnToPlotTabs}');
     expect(listenerProfileSource).toMatch(
       /<header[\s\S]*Profile Summary[\s\S]*Activity Score[\s\S]*Calendar[\s\S]*<\/header>[\s\S]*expandedProfileSections\.map[\s\S]*data-slot="expanded-profile-player-strip"[\s\S]*\{playerPanel\}[\s\S]*Return to Plot Tabs/
     );

@@ -36,6 +36,27 @@ function extractFunctionBody(source: string, declaration: string): string {
 }
 
 describe('Plot profile/player state contract', () => {
+  it('keeps profile gestures touch-safe and restores Plot Tabs focus after return', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
+
+    expect(topShellSource).toContain(
+      'className="flex touch-none select-none flex-wrap items-end justify-between'
+    );
+    expect(topShellSource).toContain('draggable={false}');
+    expect(topShellSource).toContain('onDragStart={(event) => event.preventDefault()}');
+    expect(plotPageSource).toContain(
+      'const returnFocusScroll = useRef<{ left: number; top: number } | null>(null);'
+    );
+    expect(plotPageSource).toContain('plotTabsToggle?.focus({ preventScroll: true });');
+    expect(plotPageSource).toContain('window.scrollTo({');
+    expect(plotPageSource).toContain('left: window.scrollX');
+    expect(plotPageSource).toContain('top: window.scrollY');
+    expect(plotPageSource).toContain("behavior: 'auto'");
+    expect(plotPageSource).toContain('const handleReturnToPlotTabs = () => {');
+    expect(plotPageSource).toContain('onReturnToPlotTabs={handleReturnToPlotTabs}');
+  });
+
   it('keeps the current contract grounded in repo authority rather than prototype state-machine imports', () => {
     const inventory = readWorkspaceFile('docs/handoff/2026-07-02_ux-reference-extraction-inventory.md');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');
