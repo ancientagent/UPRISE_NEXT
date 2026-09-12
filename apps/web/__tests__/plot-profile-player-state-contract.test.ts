@@ -36,6 +36,56 @@ function extractFunctionBody(source: string, declaration: string): string {
 }
 
 describe('Plot profile/player state contract', () => {
+  it('keeps profile gestures touch-safe and makes the focused Plot Tabs seam visible after clamped return', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
+    const restoreFocusBody = extractFunctionBody(
+      plotPageSource,
+      'const restorePlotTabsFocus = () => {'
+    );
+
+    expect(topShellSource).toContain(
+      'className="flex touch-none select-none flex-wrap items-end justify-between'
+    );
+    expect(topShellSource).toContain('draggable={false}');
+    expect(topShellSource).toContain('onDragStart={(event) => event.preventDefault()}');
+    expect(plotPageSource).toContain(
+      'const returnFocusScroll = useRef<{ left: number; top: number } | null>(null);'
+    );
+    expect(plotPageSource).toContain('plotTabsToggle?.focus({ preventScroll: true });');
+    expect(plotPageSource).toContain('window.scrollTo({');
+    expect(plotPageSource).toContain('left: window.scrollX');
+    expect(plotPageSource).toContain('top: window.scrollY');
+    expect(plotPageSource).toContain("behavior: 'auto'");
+    expect(plotPageSource).toContain('plotTabsToggle?.scrollIntoView({');
+    expect(plotPageSource).toContain("block: 'nearest'");
+    expect(plotPageSource).toContain("inline: 'nearest'");
+    expect(restoreFocusBody.indexOf('window.scrollTo({')).toBeLessThan(
+      restoreFocusBody.indexOf('plotTabsToggle?.scrollIntoView({')
+    );
+    expect(plotPageSource).toContain('const handleReturnToPlotTabs = () => {');
+    expect(plotPageSource).toContain('onReturnToPlotTabs={handleReturnToPlotTabs}');
+  });
+
+  it('cleans up a cancelled profile pointer gesture without changing a committed panel state', () => {
+    const plotPageSource = readRepoFile('src/app/plot/page.tsx');
+    const topShellSource = readRepoFile('src/components/plot/PlotTopShell.tsx');
+    const cancelHandler = extractFunctionBody(
+      plotPageSource,
+      'const handleProfilePointerCancel = () => {'
+    );
+
+    expect(cancelHandler).toContain('dragStartY.current = null;');
+    expect(cancelHandler).toContain('dragDelta.current = 0;');
+    expect(cancelHandler).toContain("if (profilePanelState === 'peek') {");
+    expect(cancelHandler).toContain("setProfilePanelState('collapsed');");
+    expect(cancelHandler).not.toContain("setProfilePanelState('expanded')");
+    expect(cancelHandler.split('setProfilePanelState(').length - 1).toBe(1);
+    expect(plotPageSource).toContain('onProfilePointerCancel={handleProfilePointerCancel}');
+    expect(topShellSource).toContain('onProfilePointerCancel: () => void;');
+    expect(topShellSource).toContain('onPointerCancel={onProfilePointerCancel}');
+  });
+
   it('keeps the current contract grounded in repo authority rather than prototype state-machine imports', () => {
     const inventory = readWorkspaceFile('docs/handoff/2026-07-02_ux-reference-extraction-inventory.md');
     const plotPageSource = readRepoFile('src/app/plot/page.tsx');

@@ -1,0 +1,7 @@
+[mcp_servers.perseus-operations]
+command = "cmd.exe"
+args = ["/d", "/c", "C:\\Users\\baris\\.perseus-vault\\launchers\\uprise.cmd"]
+enabled = true
+required = false
+startup_timeout_sec = 10
+enabled_tools = ["perseus_vault_health", "perseus_vault_recall", "perseus_vault_remember", "perseus_vault_journal", "perseus_vault_timeline"]

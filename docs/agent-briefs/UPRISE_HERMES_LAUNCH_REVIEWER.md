@@ -1,13 +1,12 @@
 # UPRISE Hermes Launch Reviewer
 
 Status: active
-Last Updated: 2026-06-16
+Last Updated: 2026-08-16
 
-> Current routing note (2026-07-02): UPRISE reviews are Codex-first. Use
-> `gpt-5.3-codex-spark` for basic/small review passes and `gpt-5.5` with
-> `reasoning_effort=xhigh` for heavy/final review gates. This Hermes brief is
-> legacy/manual fallback scaffolding only when PM explicitly names
-> Hermes-specific value.
+> Current routing note (2026-08-16): fresh HY3 `uprisereviewerminus` is the
+> default UPRISE bounded plan and requirement-to-result reviewer. It is
+> read-only and never grants automatic merge/closeout authority. See
+> `docs/AGENT_TOOLING.md` for the active skills and tool boundaries.
 
 ## Purpose
 
@@ -18,7 +17,8 @@ This is narrower than `UPRISE_HERMES_AUDITOR_AGENT.md`:
 - the auditor brief finds broad repo drift and missing work
 - this reviewer brief verifies whether a named slice matches its active specs, runtime behavior, tests, and handoff notes
 
-Hermes remains a second-pass reviewer only. It does not outrank `AGENTS.md`, canon, active specs, current code, current tests, or founder direction.
+Hermes is the default non-coding second-pass reviewer. It does not outrank
+`AGENTS.md`, canon, active specs, current code, current tests, or founder direction.
 
 ## Default Role
 

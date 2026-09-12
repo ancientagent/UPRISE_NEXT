@@ -38,6 +38,7 @@ When an external-agent task depends on current branch, PR queue, blocker, or wor
 
 External guidance:
 
+- `docs/agent-briefs/OPEN_SOURCE_TECHNOLOGY_RADAR.md` for evaluated third-party open-source seams and explicit rejection boundaries
 - `docs/solutions/UPRISE_AI_STACK_AND_AGENT_LANES_R1.md`
 - `docs/operations/ACTIVE_PM.md` for current execution-state snapshot when branch/PR/blocker context matters
 - `docs/solutions/EXTERNAL_ASSISTANT_REPO_BRIEF_R1.md`
@@ -73,8 +74,8 @@ Handoffs:
   slice.
 - External assistants should acquire context before answering or designing.
 - External assistants must separate locked now, implemented now, deferred, and historical/later-version context.
-- UPRISE audits and reviews are Codex-first: use `gpt-5.3-codex-spark` for basic/small passes and `gpt-5.5` with `reasoning_effort=xhigh` for heavy/final gates. Hermes reviewer/auditor profiles are manual fallback only when the prompt names Hermes-specific value.
-- `uprisewatchdog` is the only normal Hermes lane; it is heartbeat/wake-up only, not a review/audit gate.
+- UPRISE non-coding audits and reviews are fresh-HY3-first: use `upriseauditorminus` for read-only evidence/drift/branch audits and `uprisereviewerminus` for bounded plan or requirement-to-result review. Codex or another explicitly assigned coding agent remains the implementation writer; reviewer output never bypasses required checks or human/codeowner merge approval.
+- `uprisewatchdog` is heartbeat/wake-up only, not a review/audit gate. See `docs/AGENT_TOOLING.md` for active skill/tool boundaries and task-mode escalation.
 - Design tools can explore visual/layout options but cannot redefine action grammar or surface boundaries.
 - Writing tools can draft briefs/emails/docs but cannot invent doctrine.
 - Coding/delegation agents must implement only from active specs/locks/runtime evidence.

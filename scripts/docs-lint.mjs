@@ -163,7 +163,7 @@ function main() {
   ok('Specs metadata present');
 
   // Keep repo root clean of ad-hoc docs (reduces discoverability drift)
-  const rootAllowlist = new Set(['README.md', 'AGENTS.md']);
+  const rootAllowlist = new Set(['README.md', 'AGENTS.md', 'CLAUDE.md']);
   const rootMarkdown = listGitRootMarkdown().filter((file) => !rootAllowlist.has(file));
   if (rootMarkdown.length) {
     fail(

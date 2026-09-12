@@ -8,6 +8,7 @@ import { FairPlayIngestionController } from './fair-play-ingestion.controller';
 import { FairPlayIngestionService } from './fair-play-ingestion.service';
 import { FairPlayGraduationController } from './fair-play-graduation.controller';
 import { FairPlayGraduationService } from './fair-play-graduation.service';
+import { FairPlayLifecycleWorkerService } from './fair-play-lifecycle-worker.service';
 import { UsersModule } from '../users/users.module';
 
 @Module({
@@ -23,12 +24,14 @@ import { UsersModule } from '../users/users.module';
     FairPlayService,
     FairPlayIngestionService,
     FairPlayGraduationService,
+    FairPlayLifecycleWorkerService,
     RecurrenceAggregationJob,
   ],
   exports: [
     FairPlayService,
     FairPlayIngestionService,
     FairPlayGraduationService,
+    FairPlayLifecycleWorkerService,
     RecurrenceAggregationJob,
   ],
 })

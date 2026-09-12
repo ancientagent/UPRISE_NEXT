@@ -3,7 +3,7 @@
 **ID:** `COMM-PLOT`
 **Status:** `active`
 **Owner:** `platform`
-**Last Updated:** `2026-07-06`
+**Last Updated:** `2026-09-01`
 
 ## Overview & Purpose
 
@@ -208,6 +208,10 @@ Current MVP shell note:
 - Tabs are fixed civic surfaces, not algorithmic sections.
 - Home Scene and optional taste tag are visible context on entry.
 - Profile strip includes notification icon + settings (`...`) on the right side.
+- Listener Profile reduced-motion behavior preserves the existing collapsed,
+  peek, and expanded states, their controls, ARIA relationships, and focus
+  behavior. When reduced motion is preferred, expansion and collapse resolve
+  as immediate state changes; normal-motion behavior remains unchanged.
 - Pioneer onboarding message is discoverable from the notification icon (not as an always-visible blocking modal).
 - Feed uses explicit scene actions and followed-source updates from API; it does not rank or personalize.
 - When intermittent discovery inserts appear in feed, they should present read-only song/artist squares with arrow-based horizontal browsing and artist-profile click handoff rather than direct card actions.
@@ -234,6 +238,14 @@ Current MVP shell note:
 - Followed-source updates are visible in the feed without introducing a separate ranked notification feed.
 - Plot contains no general Discover transport UI outside eligible Feed-card `Travel` handoffs.
 - Plot top shell/profile pull-down contains no saved/custom Uprise playback launcher.
+- With a reduced-motion preference, Listener Profile expansion and collapse
+  retain the collapsed, peek, and expanded semantics plus their controls,
+  ARIA, and focus behavior while resolving without animated transition;
+  normal-motion behavior remains unchanged.
+- Commit `df4a0054` and
+  `.pm/checkins/2026-08-28/1608-listener-profile-reduced-motion.md` provide
+  source-level state/contract and typecheck evidence only. Browser, touch,
+  keyboard, and rendered-motion QA for this behavior remain unverified.
 
 ## Future Work & Open Questions
 

@@ -46,9 +46,14 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
 ### Implemented Behavior (Current)
 - Official Sect identity persistence exists through the parent-community-scoped
   `Sect` model. A named Home Scene listener request now creates and links that
-  identity transactionally through nullable Registrar provenance; Artist/Band
-  Sect membership, lifecycle status, readiness, visibility, update channels,
-  and Sect activation remain unimplemented.
+  identity transactionally through nullable Registrar provenance. Registrar now
+  also persists explicit canonical Artist/Band membership locally on an
+  existing Sect when the recorded Registrar-materialized source owner acts and
+  its preserved source origin matches the parent Community tuple byte-for-byte.
+  Lifecycle status,
+  legitimacy/readiness measurement, visibility, update channels, voting,
+  cross-city official-identity/local-instance mechanics, and Sect activation
+  remain unimplemented.
 - Home Scene selection currently resolves exact `{city, state, musicCommunity}` in `Community` (tier `city`).
 - If the selected city-tier community does not exist or is inactive, onboarding assigns the user to the nearest/relevant active major-node city-tier `Community` for the same parent music community.
 - Major-node/proxy assignment must stay in-state when any same-state active major-node exists for the selected music community. Cross-state assignment is allowed only when no same-state active major-node exists, and remains an edge case for statewide identity policy.
@@ -71,6 +76,19 @@ This spec defines the structural hierarchy of **Scenes**, **Communities**, **Upr
     grant request authority.
   - Request creation requires no Artist/Band ownership and creates no
     Artist/Band membership, threshold state, progress, or activation.
+- Registrar local Artist/Band Sect membership exists:
+  - `POST /registrar/sect/:sectId/membership` accepts only a canonical
+    `artistBandId` from that source's recorded creator/owner.
+  - The persisted source-origin tuple must byte-for-byte match the target Sect's
+    parent `{city, state, musicCommunity}`. Missing/mismatched legacy origin,
+    proxy or tuned Scene, tags, listener preferences, and songs cannot create
+    membership.
+  - One row is allowed per parent-local Sect + Artist/Band and records actor
+    provenance/timestamps. Repeat calls are no-op replays, not duplicate
+    support or a capability change.
+  - This membership alone neither declares legitimacy nor computes the five
+    source/45-minute threshold, publishes discovery/progress, creates an
+    update channel, grants voting/broadcast authority, or activates a Sect.
 - Sect readiness tracking may be built before public visibility is enabled; visibility may remain hidden, admin-only, or read-only until the product surface is activated.
 - Sect readiness should read from the Release Deck/deck-system measurement
   path: current eligible songs, playable duration, source ownership, Home Scene
@@ -221,22 +239,25 @@ justify subcommunity broadcast authority.
   normalized name/slug, nullable linked Sect identity, and scene context.
 - Legacy empty request rows remain readable with null request identity fields;
   runtime does not guess or backfill their Sect identity.
-- Current runtime does not create Artist/Band Sect membership records, validate
-  thresholds, expose progress, create update channels, or activate Sects.
+- Current runtime creates only explicit, parent-Home-Scene-local Artist/Band
+  Sect membership records through the Registrar owner action. It does not
+  validate thresholds, expose progress, create update channels, grant voting
+  or broadcast authority, or activate Sects.
 - Existing `SectTag` / `UserTag` rows remain non-authoritative for Artist/Band Sect membership and Sect activation.
-- No current runtime persists Artist/Band Sect membership or computes Sect
-  readiness from member artists' current Home Scene Release Decks.
+- No current runtime computes Sect readiness from member artists' current Home
+  Scene Release Decks, derives legitimacy/Official status, or creates a Sect
+  Uprise lifecycle from those local membership records.
 
 ### Deferred Behavior (Not Implemented Yet)
 - Dedicated Uprise persistence model and one-to-one Scene/Uprise lifecycle management.
 - Reconcile older tag-era Sect assignment flows so they stop implying that profile tag selection creates Artist/Band membership or activates a Sect.
-- Artist/Band Sect membership records and updates-channel surfaces remain unimplemented.
+- Artist/Band Sect updates-channel surfaces remain unimplemented.
 - Registrar request/support validation and the runtime evaluator that realizes
   an active Sect after the settled artist-support and music thresholds are met.
 - Automated/scheduled city-tier activation and external notification delivery beyond the current profile notice context.
-- Public Sect request UI, Artist/Band membership, progress visibility, and
-  threshold-state presentation remain unimplemented; the named request API and
-  submitter-owned readback are implemented.
+- Public Sect request UI, Artist/Band membership UI, progress visibility, and
+  threshold-state presentation remain unimplemented; the named request API,
+  submitter-owned readback, and source-owner membership action are implemented.
 - City-to-State-to-National propagation thresholds and enforcement jobs (see `docs/specs/DECISIONS_REQUIRED.md`).
 
 ## Non-Functional Requirements
@@ -271,12 +292,17 @@ justify subcommunity broadcast authority.
     `requestRegistrarEntryId` provenance and submitter-owned request readback
   - contains no lifecycle, Artist/Band membership, backing, readiness,
     visibility, or Uprise-activation state
-- Future Artist/Band Sect membership references
-  - should connect a registered Artist/Band source to the requested/legitimate
-    Sect through Registrar-held membership
-  - make that member artist's current eligible Home Scene Release Deck music
-    count dynamically; no track-to-Sect association is required
-  - must preserve the parent Home Scene/music-community context
+- `SectArtistBandMembership`
+  - connects one existing parent-Home-Scene-local `Sect` to one canonical
+    `ArtistBand`, with actor provenance and timestamps
+  - unique constraint on `(sectId, artistBandId)` makes repeat registration a
+    no-op and prevents duplicate local support
+  - is created only by the recorded Registrar-materialized source creator/owner
+    when its persisted source-origin tuple byte-for-byte matches the parent
+    Community; no proxy, tuned
+    context, tag, listener preference, or song substitutes for that evidence
+  - contains no readiness total, legitimacy/Official state, voting right,
+    update channel, visibility, cross-city identity, or activation state
 - `User`
   - Home-scene affinity fields (`homeSceneCity`, `homeSceneState`, `homeSceneCommunity`, `homeSceneTag`, `gpsVerified`)
   - `homeSceneTag` remains relevant to system-order identity where that context is required
@@ -286,6 +312,8 @@ justify subcommunity broadcast authority.
 - `20260213154237_add_scene_and_sect_tags` (scene metadata + sect/user tag tables)
 - `20260216004000_add_user_home_scene_and_track_engagement` (user home-scene/gps fields)
 - `20260714223000_add_official_sects` (empty additive Official Sect identity table; no rows or backfill)
+- `20260903160000_add_sect_artist_band_memberships` (additive local Sect +
+  canonical Artist/Band membership rows; no backfill)
 - Backfill strategy: none required (nullable adds + new tables)
 - Rollback: drop added columns/tables only if no onboarding/tag data is needed
 
@@ -300,6 +328,7 @@ justify subcommunity broadcast authority.
 | POST | `/communities` | required | Create community (supports geofence fields) |
 | GET | `/communities/nearby` | required | Nearby scene lookup by lat/lng |
 | POST | `/communities/:id/verify-location` | required | Verify user location against a community geofence |
+| POST | `/registrar/sect/:sectId/membership` | required | Recorded source-owner action to register one explicit local Artist/Band Sect membership |
 
 ### Request/Response
 - `POST /onboarding/home-scene` request:
@@ -343,9 +372,9 @@ justify subcommunity broadcast authority.
   - Sect Uprises remain inside the parent Home Scene/music community
   - Sect members can vote in their Sect Uprise
   - non-members can listen only according to parent scene/discovery access and cannot vote in the Sect Uprise
-  - current runtime has sect-motion filing/readback only; Artist/Band Sect
-    membership, readiness validation, official membership records, update
-    channels, and Sect activation remain deferred
+  - current runtime has sect-motion filing/readback and explicit local
+    Artist/Band membership only; readiness validation, legitimacy/Official
+    status, update channels, and Sect activation remain deferred
   - future readiness validation must require `2,700` counted seconds total
     across at least `5` distinct eligible registered sources after applying the
     `900`-second per-source contribution cap; it must not require `2,700`
@@ -359,8 +388,9 @@ justify subcommunity broadcast authority.
   user-visible without adding a maturity, approval, or confirmation gate to the
   settled lifecycle.
 - Define implementation artifacts for the remaining Official Sect activation
-  boundary: Registrar-held Artist/Band Sect membership, current Release Deck
-  aggregation, updates channel, threshold-state transitions, and visibility.
+  boundary: current Release Deck aggregation, updates channel, threshold-state
+  transitions, public visibility, local-instance/cross-city official-identity
+  mechanics, and activation.
 - Add explicit Uprise model and Scene<->Uprise lifecycle constraints.
 - Lock propagation thresholds and policy in `docs/specs/DECISIONS_REQUIRED.md`.
 

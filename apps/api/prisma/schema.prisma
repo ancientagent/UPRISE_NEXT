@@ -53,6 +53,7 @@ model User {
   trackVotes                  TrackVote[]
   createdArtistBands          ArtistBand[]
   artistBandMembers           ArtistBandMember[]
+  sectArtistBandMemberships   SectArtistBandMembership[]
   registrarEntries            RegistrarEntry[]
   registrarArtistMemberships  RegistrarArtistMember[]   @relation("RegistrarExistingUser")
   registrarClaimedMemberships RegistrarArtistMember[]   @relation("RegistrarClaimedUser")
@@ -111,6 +112,7 @@ model ArtistBand {
   tracks           Track[]
   events           Event[]
   releaseDeckSchedules ReleaseDeckSchedule[]
+  sectMemberships      SectArtistBandMembership[]
 
   @@index([homeSceneId])
   @@index([sourceOriginCity, sourceOriginState, sourceOriginMusicCommunity])
@@ -188,9 +190,28 @@ model Sect {
 
   parentCommunity       Community       @relation(fields: [parentCommunityId], references: [id], onDelete: Restrict)
   requestRegistrarEntry RegistrarEntry? @relation(fields: [requestRegistrarEntryId], references: [id], onDelete: SetNull)
+  artistBandMemberships SectArtistBandMembership[]
 
   @@unique([parentCommunityId, slug])
   @@map("sects")
+}
+
+model SectArtistBandMembership {
+  id           String   @id @default(uuid())
+  sectId       String
+  artistBandId String
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sect       Sect       @relation(fields: [sectId], references: [id], onDelete: Cascade)
+  artistBand ArtistBand @relation(fields: [artistBandId], references: [id], onDelete: Cascade)
+  createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([sectId, artistBandId])
+  @@index([artistBandId])
+  @@index([createdById])
+  @@map("sect_artist_band_memberships")
 }
 
 model UserSavedScene {
@@ -697,4 +718,50 @@ model FairPlayConfig {
   updatedAt                      DateTime @updatedAt
 
   @@map("fair_play_config")
+}
+
+model FairPlayLifecycleLease {
+  operationKey   String   @id
+  ownerId        String
+  currentRunId   String
+  leaseExpiresAt DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([leaseExpiresAt])
+  @@map("fair_play_lifecycle_leases")
+}
+
+model FairPlayLifecycleRun {
+  id                       String    @id
+  operationKey             String
+  ownerId                  String
+  attemptId                String
+  mode                     FairPlayLifecycleRunMode
+  status                   FairPlayLifecycleRunStatus
+  startedAt                DateTime
+  finishedAt               DateTime?
+  activeCityCommunityCount Int       @default(0)
+  failedStepCount          Int       @default(0)
+  resultSummary            Json?
+  errorSummary             Json?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  @@index([operationKey, startedAt])
+  @@index([status, startedAt])
+  @@map("fair_play_lifecycle_runs")
+}
+
+enum FairPlayLifecycleRunMode {
+  DRY_RUN
+  MUTATION
+}
+
+enum FairPlayLifecycleRunStatus {
+  RUNNING
+  COMPLETED
+  PARTIAL_FAILURE
+  FAILED
+  LEASE_REFUSED
 }

@@ -366,6 +366,23 @@ the readiness and Sect Uprise broadcast boundary at
     identity through nullable `requestRegistrarEntryId` provenance.
   - The request does not create Artist/Band membership, calculate legitimacy or
     readiness, activate the Sect, or perform a discretionary approval step.
+- Registrar-held local Artist/Band Sect membership:
+  - `POST /registrar/sect/:sectId/membership` is an authenticated, source-owner
+    action that records one canonical Artist/Band as an explicit member of an
+    existing parent-Home-Scene-local Sect.
+  - The action accepts only a canonical `artistBandId`; the actor must be that
+    source's recorded creator/owner, must have Registrar materialization
+    provenance, and its persisted source-origin
+    `{city, state, musicCommunity}` must exactly match the Sect parent
+    Community tuple. Missing or mismatched legacy origin is rejected; proxy,
+    tuned-scene, tag, listener-preference, and song context are not substitutes.
+  - The append-oriented membership record persists the Sect, Artist/Band,
+    actor/provenance, and timestamps with a unique local Sect + Artist/Band
+    constraint. Replays return the existing row and do not create a duplicate
+    or change capabilities.
+  - This does not calculate legitimacy/readiness, expose progress or discovery,
+    create update channels, grant voting/broadcast authority, activate a Sect,
+    create cross-city membership, or encode track-to-Sect affiliation.
 - Registrar project web contract scaffolding (slice 98A web lane):
   - API surfaces are implemented and web typed contract/client support is available for:
     - `POST /registrar/project`,
@@ -404,10 +421,11 @@ the readiness and Sect Uprise broadcast boundary at
 - Automated execution lane for queued invite deliveries (scheduler/worker trigger wiring).
 - Project activation lifecycle beyond registrar submission primitive (signal linkage, follow/blast/support handoff).
 - Automated city-tier Home Scene trigger execution and cutover orchestration.
-- Artist/Band Sect membership, legitimacy, and activation state machine beyond
-  the implemented named listener request and linked identity primitive.
+- Sect legitimacy/Official status and activation state machine beyond the
+  implemented listener request, local Artist/Band membership record, and
+  owner-guarded action.
 - Sect readiness tracking visibility and unlock controls.
-- Artist/Band Sect membership, discovery, and updates-channel information architecture.
+- Artist/Band Sect discovery and updates-channel information architecture.
 
 ### Policy Lock (2026-02-24, P3-REV-001)
 - `RegistrarCode` issuance authority is system-only (trusted API-tier registrar paths); no user self-issuance.
@@ -431,15 +449,16 @@ the readiness and Sect Uprise broadcast boundary at
 ### Target Models (Planned)
 - `RegistrarCode` (for capability completion handoff flows)
 - Project linkage to `Signal` rows for follow/blast/support
-- Registrar-held Artist/Band Sect membership
 - Readiness references that join current eligible Home Scene Release Deck
   duration to supporting member artists; no track-to-Sect association
-- Registrar-held Artist/Band Sect membership records and update-channel references
+- Update-channel references for local Sect membership
 - Activation diagnostics/read models for source-origin readiness may be added later, but no migration is required by this R1 contract.
 
 ### Prisma Models (Implemented)
 - `RegistrarEntry` (`type`, `status`, `sceneId`, `createdById`, `artistBandId?`, `payload`, timestamps)
 - `Sect` (`parentCommunityId`, `name`, `slug`, `requestRegistrarEntryId?`, timestamps)
+- `SectArtistBandMembership` (`sectId`, `artistBandId`, `createdById`, timestamps;
+  unique local Sect + Artist/Band)
 - `RegistrarArtistMember` (`registrarEntryId`, `name`, `email`, `city`, `instrument`, `existingUserId?`, `inviteStatus`, timestamps)
 - `RegistrarInviteDelivery` (`registrarArtistMemberId`, `email`, `status`, `payload`, `dispatchedAt`, timestamps)
 - `UserCapabilityGrant` (`userId`, `capability`, `status`, `sourceRegistrarEntryId?`, `sourceRegistrarCodeId?`, `grantedAt`, `revokedAt?`, timestamps)
@@ -455,6 +474,8 @@ the readiness and Sect Uprise broadcast boundary at
   its parent-scoped Sect identity through nullable one-to-one provenance.
 - `20260715033000_add_user_home_scene_anchor` adds the nullable durable
   natural/proxy civic anchor used by Registrar request authority.
+- `20260903160000_add_sect_artist_band_memberships` adds append-oriented,
+  parent-Sect-local canonical Artist/Band membership with actor provenance.
 - `20260224213000_add_capability_grant_audit_logs` adds additive `capability_grant_audit_logs` for registrar capability traceability.
 
 ## API Design
@@ -479,6 +500,7 @@ the readiness and Sect Uprise broadcast boundary at
 | GET | `/registrar/sect-motion/:entryId` | required | Read submitter-owned Sect request detail + normalized request/Sect identity and scene context |
 | POST | `/registrar/project` | required | Register project for signal activation |
 | POST | `/registrar/sect-motion` | required | Legacy-compatible route for a Home Scene listener to submit a named Sect request and create its linked parent-scoped Sect identity |
+| POST | `/registrar/sect/:sectId/membership` | required | Source-owner action to register one canonical Artist/Band as an explicit, parent-Home-Scene-local Sect member |
 
 ## Web UI / Client Behavior
 - Registrar entrypoint should be reachable from The Plot civic surfaces.
@@ -508,9 +530,6 @@ the readiness and Sect Uprise broadcast boundary at
 ## Future Work & Open Questions
 - Finalize schema for role registration code flows with locked policy guardrails (`system-only` issuer authority + `approved` issuance precondition).
 - Lock any future scheduler/approval workflow for activation metrics and trigger authority before replacing the current manual admin trigger.
-- Implement authorized Artist/Band Sect membership actions without adding
-  routine administrator approval; the settled named listener request API,
-  linked identity, provenance, and submitter readback are already implemented.
 - Define when Sect request, membership, legitimacy, readiness, and active-state progress becomes public.
 - Define the Registrar menu architecture for legitimate/active Sect discovery, Artist/Band membership, updates, and cross-scene active-Sect context.
 - Implement readiness by joining Registrar-held member artists to their current

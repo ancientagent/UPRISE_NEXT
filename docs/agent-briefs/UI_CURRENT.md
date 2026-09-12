@@ -56,6 +56,7 @@ Current UI locks:
 4. `docs/solutions/SURFACE_CONTRACT_PLOT_R1.md`
 5. `docs/solutions/MVP_ARTIST_PROFILE_FOUNDER_LOCK_R1.md`
 6. `docs/solutions/MVP_ACTION_SYSTEM_MATRIX_R1.md`
+7. `docs/solutions/UPRISE_VISUAL_THEME_CARDBOARD_AND_TONER_R1.md`
 
 Reference / companion UI files:
 
@@ -72,6 +73,13 @@ Recent handoffs to use only after the locks above:
 
 ## Current Truth
 
+- The primary UPRISE visual theme is founder-settled as `Cardboard and Toner`
+  (2026-07-14): warm paper/board grounds, toner ink and heavy rules, signal
+  lime as the single accent, marker red reserved for boundaries, and the
+  Archivo Black / Libre Franklin / IBM Plex Mono type stack. Canonical tokens:
+  `docs/solutions/UPRISE_VISUAL_THEME_CARDBOARD_AND_TONER_R1.md`. It
+  formalizes the existing `plot-wire` family; token migration in `apps/web`
+  is a separate scoped slice.
 - Home contains Plot.
 - Plot is not a separate destination/screen conceptually.
 - Plot is the tabbed dashboard inside the Home-side community interface.

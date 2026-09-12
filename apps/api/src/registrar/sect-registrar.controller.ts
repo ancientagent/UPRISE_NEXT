@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ZodBody } from '../common/decorators/zod-body.decorator';
 import {
+  SectArtistBandMembershipSchema,
+  type SectArtistBandMembershipDto,
   SectMotionRegistrationSchema,
   type SectMotionRegistrationDto,
 } from './dto/registrar.dto';
@@ -20,6 +22,21 @@ export class SectRegistrarController {
   ) {
     const entry = await this.sectRegistrarService.submitSectRequest(req.user.userId, dto);
     return { success: true, data: entry };
+  }
+
+  @Post('sect/:sectId/membership')
+  @ZodBody(SectArtistBandMembershipSchema)
+  async registerArtistBandMembership(
+    @Param('sectId') sectId: string,
+    @Body() dto: SectArtistBandMembershipDto,
+    @Request() req: { user: { userId: string } },
+  ) {
+    const membership = await this.sectRegistrarService.registerArtistBandMembership(
+      req.user.userId,
+      sectId,
+      dto,
+    );
+    return { success: true, data: membership };
   }
 
   @Get('sect-motion/entries')

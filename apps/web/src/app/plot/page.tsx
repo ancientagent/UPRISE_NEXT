@@ -146,6 +146,32 @@ export default function PlotPage() {
     Boolean(homeScene?.city) && Boolean(homeScene?.state) && Boolean(homeScene?.musicCommunity);
   const dragStartY = useRef<number | null>(null);
   const dragDelta = useRef(0);
+  const returnFocusScroll = useRef<{ left: number; top: number } | null>(null);
+
+  useEffect(() => {
+    if (profilePanelState !== 'collapsed' || !returnFocusScroll.current) return;
+
+    const scrollPosition = returnFocusScroll.current;
+    returnFocusScroll.current = null;
+
+    const restorePlotTabsFocus = () => {
+      const plotTabsToggle = document.getElementById('plot-profile-seam-toggle');
+      plotTabsToggle?.focus({ preventScroll: true });
+      window.scrollTo({
+        left: scrollPosition.left,
+        top: scrollPosition.top,
+        behavior: 'auto',
+      });
+      plotTabsToggle?.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest',
+        behavior: 'auto',
+      });
+    };
+
+    const timeoutId = window.setTimeout(restorePlotTabsFocus, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [profilePanelState]);
 
   const discoveryContextFallback = useMemo(
     () => ({
@@ -650,12 +676,29 @@ export default function PlotPage() {
     }
   };
 
+  const handleProfilePointerCancel = () => {
+    dragStartY.current = null;
+    dragDelta.current = 0;
+
+    if (profilePanelState === 'peek') {
+      setProfilePanelState('collapsed');
+    }
+  };
+
   const toggleProfilePanel = () => {
     if (profilePanelState === 'expanded') {
       setProfilePanelState('collapsed');
       return;
     }
     setProfilePanelState('expanded');
+  };
+
+  const handleReturnToPlotTabs = () => {
+    returnFocusScroll.current = {
+      left: window.scrollX,
+      top: window.scrollY,
+    };
+    setProfilePanelState('collapsed');
   };
 
   const isProfileExpanded = profilePanelState === 'expanded';
@@ -868,6 +911,7 @@ export default function PlotPage() {
           onProfilePointerDown={handleProfilePointerDown}
           onProfilePointerMove={handleProfilePointerMove}
           onProfilePointerUp={handleProfilePointerUp}
+          onProfilePointerCancel={handleProfilePointerCancel}
           onToggleProfilePanel={toggleProfilePanel}
           onToggleNotificationPanel={() => setIsNotificationPanelOpen((open) => !open)}
           onHomeSceneSelect={handleHomeSceneSelectorSelect}
@@ -908,7 +952,7 @@ export default function PlotPage() {
             onActiveProfileSectionChange={setActiveProfileSection}
             onCollectionSelection={handleCollectionSelection}
             onOpenSourceDashboard={() => router.push('/source-dashboard')}
-            onReturnToPlotTabs={toggleProfilePanel}
+            onReturnToPlotTabs={handleReturnToPlotTabs}
           />
         ) : (
           <PlotTabSurface

@@ -1,6 +1,10 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { RotationPool } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  assertFairPlayLifecycleLease,
+  FairPlayLifecycleLeaseContext,
+} from './fair-play-lifecycle-lease';
 
 const NEW_RELEASE_WINDOW_DAYS = 10;
 const MAX_TRACK_SECONDS = 6 * 60;
@@ -9,6 +13,8 @@ type IngestDueSchedulesDto = {
   communityId: string;
   asOf?: string;
   dryRun?: boolean;
+  /** Internal worker-only context; manual endpoint calls intentionally omit it. */
+  lifecycleLease?: FairPlayLifecycleLeaseContext;
 };
 
 type DueSchedule = {
@@ -205,6 +211,8 @@ export class FairPlayIngestionService {
           error: { message: 'Fair Play ingestion is limited to active city-tier communities' },
         });
       }
+
+      await assertFairPlayLifecycleLease(tx, dto.lifecycleLease);
 
       for (const dueSchedule of dueSchedules) {
         const schedule = (await tx.releaseDeckSchedule.findUnique({

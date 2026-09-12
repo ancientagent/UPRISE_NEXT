@@ -33,6 +33,7 @@ interface PlotTopShellProps {
   onProfilePointerDown: (event: PointerEvent<HTMLDivElement>) => void;
   onProfilePointerMove: (event: PointerEvent<HTMLDivElement>) => void;
   onProfilePointerUp: () => void;
+  onProfilePointerCancel: () => void;
   onToggleProfilePanel: () => void;
   onToggleNotificationPanel: () => void;
   onHomeSceneSelect: (item: HomeSceneSelectorItem) => void;
@@ -59,6 +60,7 @@ export default function PlotTopShell({
   onProfilePointerDown,
   onProfilePointerMove,
   onProfilePointerUp,
+  onProfilePointerCancel,
   onToggleProfilePanel,
   onToggleNotificationPanel,
   onHomeSceneSelect,
@@ -71,10 +73,13 @@ export default function PlotTopShell({
       <section className="rounded-[1.15rem] border border-black bg-[#dfdfcf] px-3 py-3 transition-all">
         <div
           data-slot="home-identity-layer"
-          className="flex flex-wrap items-end justify-between gap-3 rounded-[1.15rem] border border-black bg-[#f2f0df] px-3 py-3 sm:flex-nowrap"
+          className="flex touch-none select-none flex-wrap items-end justify-between gap-3 rounded-[1.15rem] border border-black bg-[#f2f0df] px-3 py-3 sm:flex-nowrap"
+          draggable={false}
+          onDragStart={(event) => event.preventDefault()}
           onPointerDown={onProfilePointerDown}
           onPointerMove={onProfilePointerMove}
           onPointerUp={onProfilePointerUp}
+          onPointerCancel={onProfilePointerCancel}
         >
           <div className="flex min-w-0 flex-1 basis-full items-end gap-3 sm:basis-auto">
             <div

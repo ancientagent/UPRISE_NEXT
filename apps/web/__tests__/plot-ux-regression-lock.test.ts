@@ -262,7 +262,7 @@ describe('/plot UX regression lock', () => {
     expect(plotPageSource).toContain('{isProfileExpanded ? (');
     expect(plotPageSource).toContain('<PlotListenerProfile');
     expect(plotPageSource).toContain('playerPanel={playerPanel}');
-    expect(plotPageSource).toContain('onReturnToPlotTabs={toggleProfilePanel}');
+    expect(plotPageSource).toContain('onReturnToPlotTabs={handleReturnToPlotTabs}');
     expect(listenerProfileSource).toMatch(
       /<header[\s\S]*Profile Summary[\s\S]*Activity Score[\s\S]*Calendar[\s\S]*<\/header>[\s\S]*expandedProfileSections\.map[\s\S]*data-slot="expanded-profile-player-strip"[\s\S]*\{playerPanel\}[\s\S]*Return to Plot Tabs/
     );
@@ -327,6 +327,14 @@ describe('/plot UX regression lock', () => {
     expect(listenerProfileSource).not.toContain('Release Deck');
     expect(listenerProfileSource).not.toContain('Print Shop');
     expect(listenerProfileSource).not.toContain('Registrar');
+  });
+
+  it('keeps the expanded profile transition minimal for reduced-motion users', () => {
+    const listenerProfileSource = readRepoFile('src/components/plot/PlotListenerProfile.tsx');
+
+    expect(listenerProfileSource).toContain(
+      'transition-all duration-200 motion-reduce:transition-none'
+    );
   });
 
   it('locks expanded profile header to conditional band and promoter status cards', () => {

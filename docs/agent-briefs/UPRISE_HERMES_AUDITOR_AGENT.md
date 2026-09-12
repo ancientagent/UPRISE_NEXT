@@ -1,19 +1,20 @@
 # UPRISE Hermes Auditor Agent
 
 Status: active
-Last Updated: 2026-06-26
+Last Updated: 2026-08-16
 
-> Current routing note (2026-07-02): UPRISE audits are Codex-first. Use
-> `gpt-5.3-codex-spark` for basic/small audit passes and `gpt-5.5` with
-> `reasoning_effort=xhigh` for heavy/final audit gates. This Hermes brief is
-> legacy/manual fallback scaffolding only when PM explicitly names
-> Hermes-specific value.
+> Current routing note (2026-08-16): fresh HY3 `upriseauditorminus` is the
+> default read-only UPRISE evidence/drift/branch audit profile. It never edits,
+> self-remediates, or grants automatic merge/closeout authority. See
+> `docs/AGENT_TOOLING.md` for the active skills and tool boundaries.
 
 ## Purpose
 
 Use this brief to configure Hermes as a read-only UPRISE audit agent.
 
-Hermes is useful for recurring or delegated audits because it can run with reusable skills, scheduled jobs, webhooks, and different model backends. In this repo, Hermes is a second-pass auditor only. It does not outrank `AGENTS.md`, canon, active specs, founder locks, runtime code, or current tests.
+Hermes is useful for recurring or delegated audits because it can run with a
+narrow reusable skill pack and different model backends. It does not outrank
+`AGENTS.md`, canon, active specs, founder locks, runtime code, or current tests.
 
 ## Default Role
 

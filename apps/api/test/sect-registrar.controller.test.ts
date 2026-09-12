@@ -20,6 +20,23 @@ describe('SectRegistrarController', () => {
     });
   });
 
+  it('registers canonical Artist/Band membership through the authenticated actor', async () => {
+    const data = { id: 'membership-1', sectId: 'sect-1', artistBandId: 'artist-band-1', created: true };
+    const service = { registerArtistBandMembership: jest.fn().mockResolvedValue(data) } as any;
+    const controller = new SectRegistrarController(service);
+
+    await expect(
+      controller.registerArtistBandMembership(
+        'sect-1',
+        { artistBandId: '11111111-1111-1111-1111-111111111111' },
+        { user: { userId: 'owner-1' } },
+      ),
+    ).resolves.toEqual({ success: true, data });
+    expect(service.registerArtistBandMembership).toHaveBeenCalledWith('owner-1', 'sect-1', {
+      artistBandId: '11111111-1111-1111-1111-111111111111',
+    });
+  });
+
   it('lists and reads submitter-owned requests', async () => {
     const list = { total: 0, countsByStatus: {}, entries: [] };
     const detail = { id: 'request-1' };

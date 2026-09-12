@@ -53,6 +53,12 @@ export const SectMotionRegistrationSchema = z.object({
 
 export type SectMotionRegistrationDto = z.infer<typeof SectMotionRegistrationSchema>;
 
+export const SectArtistBandMembershipSchema = z.object({
+  artistBandId: z.string().uuid(),
+}).strict();
+
+export type SectArtistBandMembershipDto = z.infer<typeof SectArtistBandMembershipSchema>;
+
 export const RegistrarCodeVerifySchema = z.object({
   code: z.string().trim().min(6).max(120),
 });

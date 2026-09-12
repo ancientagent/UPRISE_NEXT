@@ -81,7 +81,7 @@ Common pairings:
 - Neon/Postgres work: `neon-postgres:neon-postgres`
 - Linear work: `linear:linear`
 - Product design: `product-design:get-context` plus the relevant product-design skill
-- UPRISE reviews/audits: Codex subagents are default; Hermes is manual fallback/watchdog only.
+- UPRISE non-coding reviews/audits: fresh HY3 `uprisereviewerminus` / `upriseauditorminus` are default; Codex or an explicitly assigned coding model remains the implementation writer.
 
 Do not use a specialist skill just because it exists. Use it when it materially
 improves correctness, verification, or workflow discipline.
